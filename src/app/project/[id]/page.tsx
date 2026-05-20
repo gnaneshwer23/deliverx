@@ -1,5 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import { AiInsights } from "./ai-insights";
+import { getProjectIntelligence } from "@/services/intelligence";
+import { ProjectHealthCard } from "@/components/intelligence/project-health-card";
+import { ConfidenceCard } from "@/components/intelligence/confidence-card";
+import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
+import { DriftPanel } from "@/components/intelligence/drift-panel";
+import { BlockerInsights } from "@/components/intelligence/blocker-insights";
 
 export default async function ProjectOverviewPage({
   params,
@@ -7,8 +12,8 @@ export default async function ProjectOverviewPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
 
+  const supabase = await createClient();
   const { data: project } = await supabase
     .from("projects")
     .select("name, status, delivery_type, timeline, goal")
@@ -16,6 +21,16 @@ export default async function ProjectOverviewPage({
     .single();
 
   const projectName = project?.name ?? "Project";
+
+  const intelligence = await getProjectIntelligence(id);
+
+  const subtitle = `Delivery confidence: ${intelligence.confidence.score}% • ${
+    intelligence.health.tier === "healthy"
+      ? "Low risk"
+      : intelligence.health.tier === "watch"
+        ? "Medium risk"
+        : "High risk"
+  }`;
 
   const kpis = [
     { title: "Tasks", value: "124", live: false },
@@ -29,9 +44,7 @@ export default async function ProjectOverviewPage({
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">{projectName}</h2>
-          <p className="text-sm text-slate-500">
-            Delivery confidence: 76% • Medium risk
-          </p>
+          <p className="text-sm text-slate-500">{subtitle}</p>
         </div>
 
         <div className="flex gap-2">
@@ -50,6 +63,31 @@ export default async function ProjectOverviewPage({
         </div>
       </div>
 
+      {/* Intelligence Layer — Phase 4 */}
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <ProjectHealthCard health={intelligence.health} />
+        <ConfidenceCard confidence={intelligence.confidence} />
+        <div className="rounded-xl border border-dashed border-slate-300 p-6 text-xs text-slate-500 sm:col-span-2 lg:col-span-2">
+          <p className="font-semibold text-slate-600">Why scores are mocked</p>
+          <p className="mt-1">
+            Signals are deterministically seeded from the project ID until the
+            tasks / blockers / standups schema lands. The intelligence engine,
+            API, and UI surfaces are production-ready — only the loader needs
+            swapping.
+          </p>
+        </div>
+      </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <RecommendationsPanel
+          projectId={id}
+          items={intelligence.recommendations}
+        />
+        <DriftPanel insights={intelligence.drift} />
+        <BlockerInsights blockers={intelligence.blockers} />
+      </div>
+
+      {/* Phase 3 surfaces — operational tiles */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
         {kpis.map((card) => (
           <div
@@ -126,15 +164,6 @@ export default async function ProjectOverviewPage({
             <li>Milestone hit</li>
           </ul>
         </Card>
-      </div>
-
-      <AiInsights />
-
-      <div className="mt-6 flex items-center justify-between rounded-xl border border-dashed border-slate-300 bg-white p-4 text-xs text-slate-500">
-        <span>
-          Tasks, Team, Activity and Risks are demo content. Live wire-up lands
-          when the tasks/members schema ships.
-        </span>
       </div>
     </main>
   );
