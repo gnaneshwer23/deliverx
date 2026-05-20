@@ -17,6 +17,12 @@ export default async function DashboardPage() {
     .select("id", { count: "exact", head: true })
     .in("status", ["draft", "active"]);
 
+  const { data: recentProjects } = await supabase
+    .from("projects")
+    .select("id, name, status, delivery_type, created_at")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
   const kpis = [
     {
       title: "Active Projects",
@@ -127,18 +133,54 @@ export default async function DashboardPage() {
 
       <AiInsights />
 
-      <div className="mt-8 flex items-center justify-between rounded-xl border border-dashed border-slate-300 bg-white p-4 text-xs text-slate-500">
-        <span>
-          Demo data shown for non-live tiles. Live: Active Projects. Wire-up
-          continues in Day 5+.
-        </span>
-        <Link
-          href="/project/new"
-          className="inline-flex items-center gap-1 text-[#0F766E] hover:underline"
-        >
-          Add a project <ArrowUpRight size={14} />
-        </Link>
-      </div>
+      <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Recent projects</h2>
+          <Link
+            href="/project/new"
+            className="inline-flex items-center gap-1 text-sm text-[#0F766E] hover:underline"
+          >
+            New project <ArrowUpRight size={14} />
+          </Link>
+        </div>
+        {recentProjects && recentProjects.length > 0 ? (
+          <ul className="divide-y divide-slate-100">
+            {recentProjects.map((p) => (
+              <li key={p.id}>
+                <Link
+                  href={`/project/${p.id}`}
+                  className="flex items-center justify-between py-3 transition hover:bg-slate-50"
+                >
+                  <div>
+                    <div className="font-medium">{p.name}</div>
+                    <div className="text-xs text-slate-500">
+                      {p.delivery_type ?? "—"} ·{" "}
+                      {new Date(p.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-600">
+                      {p.status}
+                    </span>
+                    <ArrowUpRight size={14} className="text-slate-400" />
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+            No projects yet.{" "}
+            <Link
+              href="/project/new"
+              className="font-medium text-[#0F766E] hover:underline"
+            >
+              Create your first project
+            </Link>
+            .
+          </div>
+        )}
+      </section>
     </main>
   );
 }
