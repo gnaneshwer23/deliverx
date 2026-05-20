@@ -13,6 +13,7 @@ export async function createProjectDraftAction(
   const goal = String(formData.get("goal") ?? "").trim() || null;
   const deliveryType = String(formData.get("delivery_type") ?? "").trim() || null;
   const timeline = String(formData.get("timeline") ?? "").trim() || null;
+  const playbookId = String(formData.get("playbook_id") ?? "").trim() || null;
 
   if (!name) return { ok: false, error: "Project name is required." };
 
@@ -31,17 +32,20 @@ export async function createProjectDraftAction(
     return { ok: false, error: "Create an organisation first." };
   }
 
+  const insert: Record<string, unknown> = {
+    organisation_id: profile.organisation_id,
+    created_by: user.id,
+    name,
+    goal,
+    delivery_type: deliveryType,
+    timeline,
+    status: "draft",
+  };
+  if (playbookId) insert.applied_playbook_id = playbookId;
+
   const { data: project, error } = await supabase
     .from("projects")
-    .insert({
-      organisation_id: profile.organisation_id,
-      created_by: user.id,
-      name,
-      goal,
-      delivery_type: deliveryType,
-      timeline,
-      status: "draft",
-    })
+    .insert(insert)
     .select("id")
     .single();
 
@@ -49,5 +53,5 @@ export async function createProjectDraftAction(
     return { ok: false, error: error?.message ?? "Failed to create project." };
   }
 
-  redirect(`/workspace/dashboard?welcome=${project.id}`);
+  redirect(`/project/${project.id}`);
 }

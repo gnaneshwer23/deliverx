@@ -1,10 +1,16 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getProjectIntelligence } from "@/services/intelligence";
+import { loadProjectSignals } from "@/services/projectSignals";
+import { listMemory } from "@/services/memory";
 import { ProjectHealthCard } from "@/components/intelligence/project-health-card";
 import { ConfidenceCard } from "@/components/intelligence/confidence-card";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
 import { DriftPanel } from "@/components/intelligence/drift-panel";
 import { BlockerInsights } from "@/components/intelligence/blocker-insights";
+import { BenchmarkPanel } from "@/components/intelligence/benchmark-panel";
+import { LessonsPanel } from "@/components/intelligence/lessons-panel";
+import { ExtractInsightsButton } from "./extract-insights-button";
 
 export default async function ProjectOverviewPage({
   params,
@@ -16,13 +22,39 @@ export default async function ProjectOverviewPage({
   const supabase = await createClient();
   const { data: project } = await supabase
     .from("projects")
-    .select("name, status, delivery_type, timeline, goal")
+    .select("name, status, delivery_type, timeline, goal, applied_playbook_id")
     .eq("id", id)
     .single();
 
   const projectName = project?.name ?? "Project";
 
-  const intelligence = await getProjectIntelligence(id);
+  const [intelligence, signals, memory] = await Promise.all([
+    getProjectIntelligence(id),
+    loadProjectSignals(id),
+    listMemory({ limit: 200 }),
+  ]);
+
+  // Lessons from this org's memory that share tags with the project's
+  // delivery type — surfaces relevant history without overwhelming.
+  const deliveryTag = (project?.delivery_type ?? "").toLowerCase();
+  const lessons = memory
+    .filter(
+      (m) =>
+        m.type === "lesson" &&
+        (deliveryTag === "" || m.tags.some((t) => t.toLowerCase() === deliveryTag)),
+    )
+    .slice(0, 4)
+    .map((m) => ({ lesson: m.insight, tags: m.tags }));
+
+  const benchmarks = [
+    { name: "Velocity", value: `${Math.round(signals.velocity * 100)}%` },
+    { name: "Blockers", value: String(signals.blockers) },
+    { name: "Overdue tasks", value: String(signals.overdueTasks) },
+    {
+      name: "Avg. close time",
+      value: `${signals.averageCompletionDays.toFixed(1)}d`,
+    },
+  ];
 
   const subtitle = `Delivery confidence: ${intelligence.confidence.score}% • ${
     intelligence.health.tier === "healthy"
@@ -32,22 +64,27 @@ export default async function ProjectOverviewPage({
         : "High risk"
   }`;
 
-  const kpis = [
-    { title: "Tasks", value: "124", live: false },
-    { title: "Completed", value: "86", live: false },
-    { title: "Team", value: "24", live: false },
-    { title: "Risks", value: "7", live: false },
-  ];
-
   return (
     <main className="p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">{projectName}</h2>
           <p className="text-sm text-slate-500">{subtitle}</p>
+          {project?.applied_playbook_id ? (
+            <p className="mt-1 text-xs text-indigo-600">
+              Applied playbook ·{" "}
+              <Link
+                href="/workspace/playbooks"
+                className="underline hover:no-underline"
+              >
+                view library
+              </Link>
+            </p>
+          ) : null}
         </div>
 
         <div className="flex gap-2">
+          <ExtractInsightsButton projectId={id} />
           <button
             type="button"
             className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-[#0F172A] hover:bg-slate-50"
@@ -63,21 +100,18 @@ export default async function ProjectOverviewPage({
         </div>
       </div>
 
-      {/* Intelligence Layer — Phase 4 */}
+      {/* Intelligence row 1 */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         <ProjectHealthCard health={intelligence.health} />
         <ConfidenceCard confidence={intelligence.confidence} />
-        <div className="rounded-xl border border-dashed border-slate-300 p-6 text-xs text-slate-500 sm:col-span-2 lg:col-span-2">
-          <p className="font-semibold text-slate-600">Why scores are mocked</p>
-          <p className="mt-1">
-            Signals are deterministically seeded from the project ID until the
-            tasks / blockers / standups schema lands. The intelligence engine,
-            API, and UI surfaces are production-ready — only the loader needs
-            swapping.
-          </p>
-        </div>
+        <BenchmarkPanel metrics={benchmarks} />
+        <LessonsPanel
+          lessons={lessons}
+          emptyHref="/workspace/memory"
+        />
       </div>
 
+      {/* Intelligence row 2 */}
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <RecommendationsPanel
           projectId={id}
@@ -87,26 +121,7 @@ export default async function ProjectOverviewPage({
         <BlockerInsights blockers={intelligence.blockers} />
       </div>
 
-      {/* Phase 3 surfaces — operational tiles */}
-      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-        {kpis.map((card) => (
-          <div
-            key={card.title}
-            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
-            <div className="flex items-center gap-2">
-              <p className="text-xs text-slate-500">{card.title}</p>
-              {card.live ? null : (
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
-                  Demo
-                </span>
-              )}
-            </div>
-            <p className="mt-1 text-2xl font-bold">{card.value}</p>
-          </div>
-        ))}
-      </div>
-
+      {/* Phase 3 operational tiles */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2" title="Delivery Performance">
           <div className="flex h-48 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-100 to-blue-100 text-sm text-slate-500">
