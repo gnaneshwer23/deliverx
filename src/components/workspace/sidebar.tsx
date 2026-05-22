@@ -17,6 +17,9 @@ import {
   Layers,
   Command,
   Telescope,
+  BrainCircuit,
+  Store,
+  Globe2,
 } from "lucide-react";
 
 type NavItem = {
@@ -24,16 +27,19 @@ type NavItem = {
   label: string;
   icon: React.ComponentType<{ size?: number }>;
   soon?: boolean;
-  section?: "core" | "orchestration" | "intelligence" | "delivery";
+  section?: "core" | "orchestration" | "intelligence" | "ecosystem" | "global" | "delivery";
 };
 
 const nav: NavItem[] = [
   { href: "/workspace/dashboard", label: "Dashboard", icon: LayoutDashboard, section: "core" },
-  { href: "/workspace/dashboard", label: "Projects", icon: FolderKanban, section: "core" },
+  { href: "/workspace/projects", label: "Projects", icon: FolderKanban, section: "core" },
   { href: "/workspace/portfolio", label: "Portfolio", icon: Briefcase, section: "orchestration" },
   { href: "/workspace/programmes", label: "Programmes", icon: Layers, section: "orchestration" },
   { href: "/workspace/pmo", label: "PMO Dashboard", icon: Command, section: "orchestration" },
   { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, section: "orchestration" },
+  { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit, section: "ecosystem" },
+  { href: "/workspace/marketplace", label: "Marketplace", icon: Store, section: "ecosystem" },
+  { href: "/workspace/global", label: "Global Intelligence", icon: Globe2, section: "global" },
   { href: "/workspace/memory", label: "Organisational Memory", icon: Brain, section: "intelligence" },
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
@@ -47,6 +53,8 @@ const SECTION_LABEL: Record<NonNullable<NavItem["section"]>, string> = {
   core: "",
   orchestration: "Orchestration",
   intelligence: "Intelligence",
+  ecosystem: "Ecosystem",
+  global: "Global Network",
   delivery: "Delivery",
 };
 

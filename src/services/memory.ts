@@ -194,16 +194,51 @@ export async function applyPlaybook(playbookId: string, projectId: string) {
 // Closure loop
 // ---------------------------------------------------------------------------
 
-export async function onProjectClose(projectId: string) {
+export async function onProjectClose(
+  projectId: string,
+  opts: { force?: boolean } = {},
+) {
   const { supabase } = await getContext();
 
   const { data: project, error } = await supabase
     .from("projects")
-    .select("id, name, delivery_type")
+    .select("id, name, delivery_type, closure_processed_at")
     .eq("id", projectId)
     .single();
 
   if (error || !project) throw error ?? new Error("Project not found");
+
+  if (project.closure_processed_at && !opts.force) {
+    const { data: existingPlaybook } = await supabase
+      .from("playbooks")
+      .select("*")
+      .contains("source_project_ids", [projectId])
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const { data: existingInsights } = await supabase
+      .from("organisational_memory")
+      .select("*")
+      .eq("project_id", projectId);
+
+    return {
+      insights: (existingInsights ?? []) as MemoryRow[],
+      playbook: (existingPlaybook as PlaybookRow | null) ?? {
+        id: "",
+        organisation_id: "",
+        name: `${project.name} playbook`,
+        description: null,
+        industry: null,
+        delivery_type: project.delivery_type,
+        structure: {},
+        governance: [],
+        source_project_ids: [projectId],
+        created_at: project.closure_processed_at,
+      },
+      skipped: true as const,
+    };
+  }
 
   const { data: org } = await supabase
     .from("users")
@@ -234,5 +269,10 @@ export async function onProjectClose(projectId: string) {
 
   const playbook = await savePlaybook(draft);
 
-  return { insights: savedInsights, playbook };
+  await supabase
+    .from("projects")
+    .update({ closure_processed_at: new Date().toISOString() })
+    .eq("id", projectId);
+
+  return { insights: savedInsights, playbook, skipped: false as const };
 }

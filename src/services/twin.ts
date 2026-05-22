@@ -8,6 +8,8 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   buildTwinState,
   detectCascadingFailures,
@@ -22,11 +24,6 @@ import {
   type CascadingFailure,
   type EnterpriseGraph,
 } from "./twinEngine";
-import {
-  listDependencies,
-  listProgrammes,
-  listProjectsForOrg,
-} from "./portfolio";
 import { loadProjectSignals } from "./projectSignals";
 import {
   computeProjectHealth,
@@ -101,7 +98,10 @@ async function enrichProject(row: {
 // Org-wide telemetry loader (the State Builder)
 // ---------------------------------------------------------------------------
 
-async function loadOrgWideInputs(): Promise<{
+async function loadOrgWideInputsForOrg(
+  orgId: string,
+  supabase: SupabaseClient,
+): Promise<{
   programmes: { id: string; name: string; status: string }[];
   projects: TwinProjectSnapshot[];
   dependencies: DependencyEdge[];
@@ -113,30 +113,44 @@ async function loadOrgWideInputs(): Promise<{
   };
   approxTeamCount: number;
 }> {
-  const supabase = await createClient();
-
-  // Programmes (tolerate missing migration 0003).
   let programmes: { id: string; name: string; status: string }[] = [];
   try {
-    const rows = await listProgrammes();
-    programmes = rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      status: r.status,
-    }));
+    const { data } = await supabase
+      .from("programmes")
+      .select("id, name, status")
+      .eq("organisation_id", orgId)
+      .order("created_at", { ascending: true });
+    programmes = (data ?? []) as typeof programmes;
   } catch {
     programmes = [];
   }
 
-  // Projects.
-  const projectRows = await listProjectsForOrg();
-  const projects = await Promise.all(projectRows.map(enrichProject));
+  const { data: projectRows } = await supabase
+    .from("projects")
+    .select("id, name, programme_id")
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: false });
 
-  // Dependencies.
+  const projects = await Promise.all(
+    ((projectRows ?? []) as Array<{ id: string; name: string; programme_id: string | null }>).map(
+      enrichProject,
+    ),
+  );
+
   let dependencies: DependencyEdge[] = [];
   try {
-    const deps = await listDependencies();
-    dependencies = deps.map((d) => ({
+    const { data: deps } = await supabase
+      .from("cross_project_dependencies")
+      .select("*")
+      .eq("organisation_id", orgId)
+      .order("created_at", { ascending: false });
+    dependencies = ((deps ?? []) as Array<{
+      id: string;
+      source_project_id: string;
+      target_project_id: string;
+      dependency_type: DependencyEdge["type"];
+      severity: DependencyEdge["severity"];
+    }>).map((d) => ({
       id: d.id,
       sourceProjectId: d.source_project_id,
       targetProjectId: d.target_project_id,
@@ -147,7 +161,6 @@ async function loadOrgWideInputs(): Promise<{
     dependencies = [];
   }
 
-  // Review behaviour (Phase 7 audit table).
   let reviewBehaviour = {
     totalReviews: 0,
     approvedCount: 0,
@@ -157,7 +170,8 @@ async function loadOrgWideInputs(): Promise<{
   try {
     const { data } = await supabase
       .from("adaptive_recommendation_reviews")
-      .select("action");
+      .select("action")
+      .eq("organisation_id", orgId);
     for (const row of (data ?? []) as Array<{ action: string }>) {
       reviewBehaviour.totalReviews += 1;
       if (row.action === "approved" || row.action === "approved_with_edit") {
@@ -172,12 +186,12 @@ async function loadOrgWideInputs(): Promise<{
     /* table not applied yet */
   }
 
-  // Approx team count — from public.users in this org.
   let approxTeamCount = 8;
   try {
     const { count } = await supabase
       .from("users")
-      .select("id", { count: "exact", head: true });
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", orgId);
     if (count && count > 0) approxTeamCount = count;
   } catch {
     /* ignore */
@@ -190,6 +204,16 @@ async function loadOrgWideInputs(): Promise<{
     reviewBehaviour,
     approxTeamCount,
   };
+}
+
+async function loadOrgWideInputs() {
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("users")
+    .select("organisation_id")
+    .single();
+  if (!profile?.organisation_id) throw new Error("No organisation");
+  return loadOrgWideInputsForOrg(profile.organisation_id as string, supabase);
 }
 
 // ---------------------------------------------------------------------------
@@ -231,7 +255,8 @@ export async function simulate(
 
 export async function saveTwinSnapshot(): Promise<{ id: string } | null> {
   const { supabase, userId, orgId } = await getContext();
-  const state = await getTwinState();
+  const inputs = await loadOrgWideInputsForOrg(orgId, supabase);
+  const state = buildTwinState(inputs);
 
   const { data, error } = await supabase
     .from("twin_snapshots")
@@ -245,6 +270,30 @@ export async function saveTwinSnapshot(): Promise<{ id: string } | null> {
 
   if (error) return null;
   return data as { id: string };
+}
+
+/** Cron entry point — snapshots every org using the service-role client. */
+export async function captureAllTwinSnapshots(): Promise<{
+  captured: number;
+  orgs: number;
+}> {
+  const admin = createAdminClient();
+  const { data: orgs, error } = await admin.from("organisations").select("id");
+  if (error) throw error;
+
+  let captured = 0;
+  for (const org of orgs ?? []) {
+    const inputs = await loadOrgWideInputsForOrg(org.id, admin);
+    const state = buildTwinState(inputs);
+    const { error: insertError } = await admin.from("twin_snapshots").insert({
+      organisation_id: org.id,
+      state,
+      captured_by: null,
+    });
+    if (!insertError) captured += 1;
+  }
+
+  return { captured, orgs: orgs?.length ?? 0 };
 }
 
 export async function listTwinSnapshots(

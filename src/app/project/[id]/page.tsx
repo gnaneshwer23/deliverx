@@ -20,6 +20,8 @@ import {
   type RecommendationWithReview,
 } from "@/components/adaptive/adaptive-recommendations-panel";
 import { ExtractInsightsButton } from "./extract-insights-button";
+import { ProjectStatusSelect } from "./project-status-select";
+import { listAiReviews } from "@/services/recommendations";
 
 export default async function ProjectOverviewPage({
   params,
@@ -31,19 +33,31 @@ export default async function ProjectOverviewPage({
   const supabase = await createClient();
   const { data: project } = await supabase
     .from("projects")
-    .select("name, status, delivery_type, timeline, goal, applied_playbook_id")
+    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at")
     .eq("id", id)
     .single();
 
   const projectName = project?.name ?? "Project";
+  const projectStatus = (project?.status ?? "draft") as
+    | "draft"
+    | "active"
+    | "paused"
+    | "completed"
+    | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews] = await Promise.all([
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews] =
+    await Promise.all([
     getProjectIntelligence(id),
     loadProjectSignals(id),
     listMemory({ limit: 200 }),
     runAdaptiveLoop(id),
     latestReviewByKey(id),
+    listAiReviews(id),
   ]);
+
+  const aiReviewMap = Object.fromEntries(
+    aiReviews.map((r) => [r.recommendation_id, r.action]),
+  );
 
   const adaptiveRecs: RecommendationWithReview[] = adaptive.recommendations.map(
     (r) => ({ ...r, review: reviews.get(r.key) ?? null }),
@@ -96,9 +110,16 @@ export default async function ProjectOverviewPage({
               </Link>
             </p>
           ) : null}
+          {project?.closure_processed_at ? (
+            <p className="mt-1 text-xs text-emerald-600">
+              Closure insights extracted{" "}
+              {new Date(project.closure_processed_at).toLocaleDateString()}
+            </p>
+          ) : null}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <ProjectStatusSelect projectId={id} current={projectStatus} />
           <ExtractInsightsButton projectId={id} />
           <button
             type="button"
@@ -148,6 +169,7 @@ export default async function ProjectOverviewPage({
         <RecommendationsPanel
           projectId={id}
           items={intelligence.recommendations}
+          initialReviews={aiReviewMap}
         />
         <DriftPanel insights={intelligence.drift} />
         <BlockerInsights blockers={intelligence.blockers} />

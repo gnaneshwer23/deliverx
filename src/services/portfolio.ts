@@ -359,9 +359,56 @@ export async function getPortfolioSnapshot(
   return { snapshot, programmes: programmeSummaries };
 }
 
+async function persistForecast(projectId: string, forecast: Forecast) {
+  try {
+    const { supabase, orgId } = await getContext();
+    const { data: latest } = await supabase
+      .from("delivery_forecasts")
+      .select("prediction, generated_at")
+      .eq("project_id", projectId)
+      .order("generated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    const recent =
+      latest?.generated_at &&
+      new Date(latest.generated_at).getTime() > oneHourAgo;
+    if (recent && latest.prediction === forecast.prediction) return;
+
+    await supabase.from("delivery_forecasts").insert({
+      organisation_id: orgId,
+      project_id: projectId,
+      prediction: forecast.prediction,
+      confidence: forecast.confidence,
+    });
+  } catch {
+    /* table may not exist yet */
+  }
+}
+
 export async function forecastProject(projectId: string): Promise<Forecast> {
   const signals = await loadProjectSignals(projectId);
-  return generateForecast(signals);
+  const forecast = generateForecast(signals);
+  await persistForecast(projectId, forecast);
+  return forecast;
+}
+
+export async function listRecentForecasts(
+  projectId: string,
+  limit = 10,
+): Promise<
+  Array<{ prediction: string; confidence: number; generated_at: string }>
+> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("delivery_forecasts")
+    .select("prediction, confidence, generated_at")
+    .eq("project_id", projectId)
+    .order("generated_at", { ascending: false })
+    .limit(limit);
+  if (error) return [];
+  return data ?? [];
 }
 
 // ---------------------------------------------------------------------------

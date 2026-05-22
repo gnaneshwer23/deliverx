@@ -3,19 +3,26 @@
 import { useState, useTransition } from "react";
 import { Check, X, Sparkles } from "lucide-react";
 import type { Recommendation } from "@/services/intelligenceEngine";
+import type { AiReviewAction } from "@/services/recommendations";
 
 type ReviewState = "pending" | "accepted" | "ignored";
 
 export function RecommendationsPanel({
   projectId,
   items,
+  initialReviews = {},
 }: {
   projectId: string;
   items: Recommendation[];
+  initialReviews?: Record<string, AiReviewAction>;
 }) {
-  const [states, setStates] = useState<Record<string, ReviewState>>(
-    Object.fromEntries(items.map((i) => [i.id, "pending"])),
-  );
+  const [states, setStates] = useState<Record<string, ReviewState>>(() => {
+    const base = Object.fromEntries(items.map((i) => [i.id, "pending" as ReviewState]));
+    for (const [id, action] of Object.entries(initialReviews)) {
+      base[id] = action === "accept" ? "accepted" : "ignored";
+    }
+    return base;
+  });
   const [isPending, startTransition] = useTransition();
 
   function review(id: string, action: "accept" | "ignore") {

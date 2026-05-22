@@ -10,6 +10,8 @@ import {
 import { CascadingRiskPanel } from "@/components/twin/cascading-risk-panel";
 import { OptimizationPanel } from "@/components/twin/optimization-panel";
 import { ScenarioSimulator } from "@/components/twin/scenario-simulator";
+import { TwinSnapshotPanel } from "@/components/twin/twin-snapshot-panel";
+import { listTwinSnapshots } from "@/services/twin";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +48,7 @@ export default async function DigitalTwinPage() {
   }
 
   const { state, cascading, optimization } = await runEnterpriseLoop();
+  const snapshots = await listTwinSnapshots(20);
 
   return (
     <main className="p-8">
@@ -65,6 +68,10 @@ export default async function DigitalTwinPage() {
       </header>
 
       <TwinKpiStrip state={state} />
+
+      <div className="mt-6">
+        <TwinSnapshotPanel initialSnapshots={snapshots} />
+      </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <SystemMetricsPanel state={state} />

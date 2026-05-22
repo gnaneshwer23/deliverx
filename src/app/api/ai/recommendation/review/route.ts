@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { recordAiReview } from "@/services/recommendations";
 
 type ReviewPayload = {
   projectId?: string;
@@ -20,26 +20,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const review = await recordAiReview({
+      projectId,
+      recommendationId: id,
+      action,
+    });
+    return NextResponse.json({ ok: true, review });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed";
+    const status = message === "Not authenticated" ? 401 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
-
-  // RLS-checked access — silently no-op if the user doesn't have this project.
-  const { data: project } = await supabase
-    .from("projects")
-    .select("id")
-    .eq("id", projectId)
-    .single();
-
-  if (!project) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
-  // Persistence will land with the recommendation_reviews table.
-  // For now we acknowledge so the client can complete the validation loop.
-  return NextResponse.json({ ok: true, projectId, id, action });
 }
