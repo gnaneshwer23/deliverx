@@ -124,7 +124,12 @@ export default async function ProjectOverviewPage({
       </div>
 
       <div className="mb-6">
-        <AdaptiveRecommendationsPanel projectId={id} items={adaptiveRecs} />
+        <AdaptiveRecommendationsPanel
+          projectId={id}
+          items={adaptiveRecs}
+          patterns={adaptive.patterns}
+          interpretation={adaptive.interpretation}
+        />
       </div>
 
       {/* Intelligence row 1 */}

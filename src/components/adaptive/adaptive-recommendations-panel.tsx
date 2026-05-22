@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Sparkles, Check, X, Pencil } from "lucide-react";
+import { Sparkles, Check, X, Pencil, Target } from "lucide-react";
 import type {
   AdaptiveRecommendation,
+  ExecutionPattern,
 } from "@/services/adaptiveEngine";
 import type { AdaptiveReviewRow } from "@/services/adaptive";
 
@@ -24,6 +25,13 @@ const CATEGORY_TONE: Record<AdaptiveRecommendation["category"], string> = {
   dependency: "bg-amber-100 text-amber-700",
   cadence: "bg-slate-100 text-slate-700",
   capacity: "bg-emerald-100 text-emerald-700",
+  governance: "bg-violet-100 text-violet-700",
+};
+
+const PATTERN_TONE: Record<ExecutionPattern["severity"], string> = {
+  high: "bg-rose-50 text-rose-700 border-rose-200",
+  medium: "bg-amber-50 text-amber-700 border-amber-200",
+  low: "bg-slate-50 text-slate-600 border-slate-200",
 };
 
 const REVIEW_LABEL: Record<AdaptiveReviewRow["action"], string> = {
@@ -43,9 +51,13 @@ const REVIEW_TONE: Record<AdaptiveReviewRow["action"], string> = {
 export function AdaptiveRecommendationsPanel({
   projectId,
   items,
+  patterns = [],
+  interpretation,
 }: {
   projectId: string;
   items: RecommendationWithReview[];
+  patterns?: ExecutionPattern[];
+  interpretation?: string;
 }) {
   const [state, setState] = useState<ActionState>({
     busy: false,
@@ -85,7 +97,7 @@ export function AdaptiveRecommendationsPanel({
         busy: false,
         editingKey: null,
         edited: "",
-        notice: "Decision recorded.",
+        notice: "Decision recorded — engine will weight future scoring.",
       });
       startTransition(() => {});
     } catch (err) {
@@ -113,6 +125,30 @@ export function AdaptiveRecommendationsPanel({
         </span>
       </div>
 
+      {/* Reasoning header: patterns + interpretation */}
+      {(patterns.length > 0 || interpretation) ? (
+        <div className="mb-4 rounded-lg border border-indigo-100 bg-white/60 p-3">
+          {patterns.length > 0 ? (
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {patterns.map((p) => (
+                <span
+                  key={p.id}
+                  className={`rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wide ${PATTERN_TONE[p.severity]}`}
+                  title={p.description}
+                >
+                  {p.name}
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {interpretation ? (
+            <p className="text-xs leading-relaxed text-slate-700">
+              {interpretation}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {state.notice ? (
         <p className="mb-3 rounded-md bg-slate-100 px-3 py-2 text-xs text-slate-700">
           {state.notice}
@@ -130,7 +166,7 @@ export function AdaptiveRecommendationsPanel({
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span
                       className={`rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wide ${CATEGORY_TONE[rec.category]}`}
                     >
@@ -138,6 +174,9 @@ export function AdaptiveRecommendationsPanel({
                     </span>
                     <span className="text-[10px] text-slate-400">
                       {Math.round(rec.confidence * 100)}% confidence
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      · score {Math.round(rec.composite * 100)}
                     </span>
                     {liveAction ? (
                       <span
@@ -161,7 +200,19 @@ export function AdaptiveRecommendationsPanel({
                       {rec.review?.edited_action_text ?? rec.action}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-slate-500">{rec.rationale}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    <span className="font-medium text-slate-600">Why:</span>{" "}
+                    {rec.rationale}
+                  </p>
+                  {rec.expectedImpact ? (
+                    <p className="mt-1 flex items-start gap-1 text-xs text-indigo-700">
+                      <Target size={11} className="mt-0.5 shrink-0" />
+                      <span>
+                        <span className="font-medium">Expected impact:</span>{" "}
+                        {rec.expectedImpact}
+                      </span>
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -248,7 +299,8 @@ export function AdaptiveRecommendationsPanel({
       </ul>
 
       <p className="mt-3 text-[11px] text-slate-400">
-        Guardrail: nothing is auto-applied. Every action requires PM approval.
+        Guardrail: nothing is auto-applied. Every action requires PM approval —
+        and every decision feeds the engine&apos;s next scoring run.
       </p>
     </section>
   );
