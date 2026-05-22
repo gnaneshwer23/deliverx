@@ -43,8 +43,8 @@ const nav: NavItem[] = [
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
   { href: "/workspace/tasks", label: "Tasks", icon: ListChecks, section: "delivery" },
-  { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, soon: true, section: "delivery" },
-  { href: "/workspace/reports", label: "Reports", icon: FileBarChart2, soon: true, section: "delivery" },
+  { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, section: "delivery" },
+  { href: "/workspace/reports", label: "Reports", icon: FileBarChart2, section: "delivery" },
 ];
 
 const SECTION_LABEL: Record<NonNullable<NavItem["section"]>, string> = {

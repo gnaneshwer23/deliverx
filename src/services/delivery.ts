@@ -286,23 +286,17 @@ export type TaskWithMeta = TaskRow & {
 
 export type OrgDeliveryStats = {
   tasksInProgress: number;
-  openRisks: number;
   teamMembers: number;
 };
 
 export async function getOrgDeliveryStats(): Promise<OrgDeliveryStats> {
   const { supabase, orgId } = await getOrgContext();
 
-  const [inProgress, openRisks, teamMembers] = await Promise.all([
+  const [inProgress, teamMembers] = await Promise.all([
     supabase
       .from("tasks")
       .select("id", { count: "exact", head: true })
       .in("status", ["todo", "in_progress"]),
-    supabase
-      .from("tasks")
-      .select("id", { count: "exact", head: true })
-      .in("priority", ["high", "critical"])
-      .neq("status", "done"),
     supabase
       .from("users")
       .select("id", { count: "exact", head: true })
@@ -310,12 +304,10 @@ export async function getOrgDeliveryStats(): Promise<OrgDeliveryStats> {
   ]);
 
   if (inProgress.error) throw inProgress.error;
-  if (openRisks.error) throw openRisks.error;
   if (teamMembers.error) throw teamMembers.error;
 
   return {
     tasksInProgress: inProgress.count ?? 0,
-    openRisks: openRisks.count ?? 0,
     teamMembers: teamMembers.count ?? 0,
   };
 }

@@ -18,6 +18,17 @@ const VARIANTS: Record<string, string> = {
   medium: "bg-amber-100 text-amber-700",
   high: "bg-orange-100 text-orange-700",
   critical: "bg-rose-100 text-rose-700",
+  open: "bg-amber-100 text-amber-700",
+  mitigated: "bg-amber-100 text-amber-700",
+  closed: "bg-slate-200 text-slate-500",
+  proposed: "bg-sky-100 text-sky-700",
+  rejected: "bg-rose-100 text-rose-700",
+  superseded: "bg-slate-200 text-slate-500",
+  submitted: "bg-indigo-100 text-indigo-700",
+  scheduled: "bg-sky-100 text-sky-700",
+  cancelled: "bg-slate-200 text-slate-500",
+  implemented: "bg-emerald-100 text-emerald-700",
+  revoked: "bg-rose-100 text-rose-700",
 };
 
 export function StatusBadge({

@@ -21,9 +21,12 @@ export function ProjectSidebar({
     { label: "Projects", href: "/workspace/dashboard" },
     { label: "Workstreams", href: `/project/${projectId}/workstreams` },
     { label: "Tasks", href: `/project/${projectId}/tasks` },
-    { label: "Meetings", href: `/project/${projectId}/meetings`, soon: true },
-    { label: "RAID", href: `/project/${projectId}/raid`, soon: true },
-    { label: "Reports", href: `/project/${projectId}/reports`, soon: true },
+    { label: "Meetings", href: `/project/${projectId}/meetings` },
+    { label: "RAID", href: `/project/${projectId}/raid` },
+    { label: "Decisions", href: `/project/${projectId}/decisions` },
+    { label: "Documents", href: `/project/${projectId}/documents` },
+    { label: "Changes", href: `/project/${projectId}/changes` },
+    { label: "Reports", href: `/project/${projectId}/reports` },
   ];
 
   return (
@@ -52,7 +55,8 @@ export function ProjectSidebar({
         {items.map((item) => {
           const active =
             pathname === item.href ||
-            (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`));
+            (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`)) ||
+            (item.href.includes("/reports") && pathname.startsWith(`${item.href}/`));
           return (
             <Link
               key={item.label}

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgDeliveryStats, listOrgTasks } from "@/services/delivery";
+import { getOrgGovernanceStats, listOpenRaidOrg } from "@/services/governance";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
@@ -23,7 +24,7 @@ import { AiInsights } from "./ai-insights";
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const [{ count: activeProjects }, { data: recentProjects }, stats, recentTasks] =
+  const [{ count: activeProjects }, { data: recentProjects }, stats, govStats, recentTasks, openRisks] =
     await Promise.all([
       supabase
         .from("projects")
@@ -35,14 +36,12 @@ export default async function DashboardPage() {
         .order("created_at", { ascending: false })
         .limit(5),
       getOrgDeliveryStats(),
+      getOrgGovernanceStats(),
       listOrgTasks({ limit: 8 }),
+      listOpenRaidOrg(6),
     ]);
 
   const activeTaskRows = recentTasks.filter((t) => t.status !== "done");
-  const riskTasks = recentTasks.filter(
-    (t) =>
-      (t.priority === "high" || t.priority === "critical") && t.status !== "done",
-  );
 
   const topProject = recentProjects?.[0];
   let insightProjectName: string | null = null;
@@ -80,10 +79,9 @@ export default async function DashboardPage() {
     },
     {
       title: "Open Risks",
-      value: String(stats.openRisks),
+      value: String(govStats.openRisks),
       icon: AlertTriangle,
       live: true,
-      hint: "High/critical tasks until RAID (PR4)",
     },
   ];
 
@@ -203,26 +201,25 @@ export default async function DashboardPage() {
         </DashboardCard>
 
         <DashboardCard title="Risk Register">
-          {riskTasks.length === 0 ? (
+          {openRisks.length === 0 ? (
             <p className="text-sm text-slate-500">
-              No high-priority open tasks. Full RAID log arrives in governance
-              (PR4).
+              No open risks in RAID. Log risks from a project RAID page.
             </p>
           ) : (
             <div className="space-y-3 text-sm">
-              {riskTasks.slice(0, 4).map((task) => (
+              {openRisks.map((risk) => (
                 <Link
-                  key={task.id}
-                  href={`/project/${task.project_id}/tasks/${task.id}`}
+                  key={risk.id}
+                  href={`/project/${risk.project_id}/raid?type=risk`}
                   className={`block rounded-lg p-3 ${
-                    task.priority === "critical"
+                    risk.severity === "critical" || risk.severity === "high"
                       ? "bg-red-50 text-red-700"
                       : "bg-yellow-50 text-yellow-700"
                   }`}
                 >
-                  {task.title}
+                  {risk.title}
                   <span className="mt-1 block text-xs opacity-80">
-                    {task.project_name}
+                    {risk.project_name}
                   </span>
                 </Link>
               ))}
