@@ -13,6 +13,9 @@ import {
   Brain,
   BookOpen,
   Gauge,
+  Briefcase,
+  Layers,
+  Command,
 } from "lucide-react";
 
 type NavItem = {
@@ -20,12 +23,15 @@ type NavItem = {
   label: string;
   icon: React.ComponentType<{ size?: number }>;
   soon?: boolean;
-  section?: "core" | "intelligence" | "delivery";
+  section?: "core" | "orchestration" | "intelligence" | "delivery";
 };
 
 const nav: NavItem[] = [
   { href: "/workspace/dashboard", label: "Dashboard", icon: LayoutDashboard, section: "core" },
   { href: "/workspace/dashboard", label: "Projects", icon: FolderKanban, section: "core" },
+  { href: "/workspace/portfolio", label: "Portfolio", icon: Briefcase, section: "orchestration" },
+  { href: "/workspace/programmes", label: "Programmes", icon: Layers, section: "orchestration" },
+  { href: "/workspace/pmo", label: "PMO Dashboard", icon: Command, section: "orchestration" },
   { href: "/workspace/memory", label: "Organisational Memory", icon: Brain, section: "intelligence" },
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
@@ -37,6 +43,7 @@ const nav: NavItem[] = [
 
 const SECTION_LABEL: Record<NonNullable<NavItem["section"]>, string> = {
   core: "",
+  orchestration: "Orchestration",
   intelligence: "Intelligence",
   delivery: "Delivery",
 };
