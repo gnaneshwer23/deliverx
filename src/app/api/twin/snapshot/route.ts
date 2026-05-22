@@ -29,7 +29,7 @@ export async function GET(req: Request) {
 
 /**
  * POST — capture twin state.
- * - Vercel cron: Authorization Bearer CRON_SECRET → all orgs
+ * - Vercel cron (daily on Hobby): Authorization Bearer CRON_SECRET → all orgs
  * - Signed-in user: single org snapshot
  */
 export async function POST(req: Request) {
