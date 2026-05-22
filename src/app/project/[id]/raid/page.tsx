@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { listRaidItems, type RaidItemType } from "@/services/governance";
+import { listRaidItems, countRaidItems, type RaidItemType } from "@/services/governance";
+import {
+  DEFAULT_PAGE_SIZE,
+  Pagination,
+  parsePageParam,
+  totalPages,
+} from "@/components/shared/pagination";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -17,7 +23,7 @@ import { RaidForm } from "./raid-form";
 import { RaidAiPanel } from "./raid-ai-panel";
 
 type Params = Promise<{ id: string }>;
-type Search = Promise<{ type?: string }>;
+type Search = Promise<{ type?: string; page?: string }>;
 
 const TYPES: Array<{ value: RaidItemType | "all"; label: string }> = [
   { value: "all", label: "All" },
@@ -35,7 +41,8 @@ export default async function ProjectRaidPage({
   searchParams: Search;
 }) {
   const { id } = await params;
-  const { type: typeFilter } = await searchParams;
+  const { type: typeFilter, page: pageRaw } = await searchParams;
+  const page = parsePageParam(pageRaw);
 
   const supabase = await createClient();
   const { data: project } = await supabase
@@ -46,7 +53,22 @@ export default async function ProjectRaidPage({
 
   const filterType =
     typeFilter && typeFilter !== "all" ? (typeFilter as RaidItemType) : undefined;
-  const items = await listRaidItems(id, filterType);
+
+  const [items, total] = await Promise.all([
+    listRaidItems(id, filterType, { page, pageSize: DEFAULT_PAGE_SIZE }),
+    countRaidItems(id, filterType),
+  ]);
+  const pages = totalPages(total, DEFAULT_PAGE_SIZE);
+
+  function buildHref(next: { type?: string; page?: number }) {
+    const params = new URLSearchParams();
+    const t = "type" in next ? next.type : typeFilter;
+    const pg = "page" in next ? next.page : page;
+    if (t && t !== "all") params.set("type", t);
+    if (pg && pg > 0) params.set("page", String(pg));
+    const q = params.toString();
+    return q ? `/project/${id}/raid?${q}` : `/project/${id}/raid`;
+  }
 
   return (
     <main className="p-6">
@@ -59,7 +81,9 @@ export default async function ProjectRaidPage({
       <div className="mb-4 flex flex-wrap gap-2">
         {TYPES.map((t) => {
           const href =
-            t.value === "all" ? `/project/${id}/raid` : `/project/${id}/raid?type=${t.value}`;
+            t.value === "all"
+              ? buildHref({ type: undefined, page: 0 })
+              : buildHref({ type: t.value, page: 0 });
           const active =
             t.value === "all"
               ? !typeFilter || typeFilter === "all"
@@ -116,6 +140,12 @@ export default async function ProjectRaidPage({
                   ))}
                 </TableBody>
               </Table>
+              <Pagination
+                page={page}
+                totalPages={pages}
+                totalItems={total}
+                buildHref={(p) => buildHref({ page: p })}
+              />
             </div>
           )}
         </div>

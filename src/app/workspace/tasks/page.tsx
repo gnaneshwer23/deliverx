@@ -2,12 +2,19 @@ import Link from "next/link";
 import { ListChecks } from "lucide-react";
 import {
   listOrgTasks,
+  countOrgTasks,
   listOrgProjects,
   type TaskStatus,
 } from "@/services/delivery";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  DEFAULT_PAGE_SIZE,
+  Pagination,
+  parsePageParam,
+  totalPages,
+} from "@/components/shared/pagination";
 import {
   Table,
   TableBody,
@@ -17,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type Search = Promise<{ project?: string; status?: string }>;
+type Search = Promise<{ project?: string; status?: string; page?: string }>;
 
 const STATUSES: Array<{ value: TaskStatus | "all"; label: string }> = [
   { value: "all", label: "All" },
@@ -32,26 +39,32 @@ export default async function WorkspaceTasksPage({
 }: {
   searchParams: Search;
 }) {
-  const { project: projectId, status: statusFilter } = await searchParams;
+  const { project: projectId, status: statusFilter, page: pageRaw } = await searchParams;
+  const page = parsePageParam(pageRaw);
+  const status =
+    statusFilter && statusFilter !== "all" ? (statusFilter as TaskStatus) : undefined;
 
-  const [projects, tasks] = await Promise.all([
+  const [projects, tasks, total] = await Promise.all([
     listOrgProjects(),
     listOrgTasks({
       projectId: projectId || undefined,
-      status:
-        statusFilter && statusFilter !== "all"
-          ? (statusFilter as TaskStatus)
-          : undefined,
-      limit: 100,
+      status,
+      page,
+      pageSize: DEFAULT_PAGE_SIZE,
     }),
+    countOrgTasks({ projectId: projectId || undefined, status }),
   ]);
 
-  function buildHref(next: { project?: string; status?: string }) {
+  const pages = totalPages(total, DEFAULT_PAGE_SIZE);
+
+  function buildHref(next: { project?: string; status?: string; page?: number }) {
     const params = new URLSearchParams();
     const p = "project" in next ? next.project : projectId;
     const s = "status" in next ? next.status : statusFilter;
+    const pg = "page" in next ? next.page : page;
     if (p) params.set("project", p);
     if (s && s !== "all") params.set("status", s);
+    if (pg && pg > 0) params.set("page", String(pg));
     const q = params.toString();
     return q ? `/workspace/tasks?${q}` : "/workspace/tasks";
   }
@@ -66,7 +79,7 @@ export default async function WorkspaceTasksPage({
 
       <div className="mb-4 flex flex-wrap gap-2">
         <Link
-          href={buildHref({ project: undefined, status: statusFilter })}
+          href={buildHref({ project: undefined, page: 0 })}
           className={`rounded-full px-3 py-1 text-xs font-medium ${
             !projectId
               ? "bg-slate-800 text-white"
@@ -78,7 +91,7 @@ export default async function WorkspaceTasksPage({
         {projects.map((p) => (
           <Link
             key={p.id}
-            href={buildHref({ project: p.id, status: statusFilter })}
+            href={buildHref({ project: p.id, page: 0 })}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               projectId === p.id
                 ? "bg-slate-800 text-white"
@@ -96,6 +109,7 @@ export default async function WorkspaceTasksPage({
             key={s.value}
             href={buildHref({
               status: s.value === "all" ? undefined : s.value,
+              page: 0,
             })}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               (s.value === "all" && (!statusFilter || statusFilter === "all")) ||
@@ -166,6 +180,12 @@ export default async function WorkspaceTasksPage({
               ))}
             </TableBody>
           </Table>
+          <Pagination
+            page={page}
+            totalPages={pages}
+            totalItems={total}
+            buildHref={(p) => buildHref({ page: p })}
+          />
         </div>
       )}
     </main>

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Sparkles } from "lucide-react";
+import { useFormToast } from "@/hooks/use-form-toast";
 import type { CharterRow } from "@/services/charter";
 import type { AlignmentScoreRow } from "@/services/charter";
 import { saveCharterAction, scoreAlignmentAction, type ActionState } from "./actions";
@@ -20,6 +21,8 @@ export function CharterForm({
 }) {
   const [saveState, saveAction, savePending] = useActionState(saveCharterAction, initial);
   const [scoreState, scoreAction, scorePending] = useActionState(scoreAlignmentAction, initial);
+  useFormToast(saveState, { success: "Charter saved" });
+  useFormToast(scoreState, { success: "Alignment score updated" });
 
   return (
     <div className="space-y-6">
@@ -70,9 +73,6 @@ export function CharterForm({
         {saveState.error ? (
           <p className="text-sm text-red-600">{saveState.error}</p>
         ) : null}
-        {saveState.ok ? (
-          <p className="text-sm text-[#0F766E]">Charter saved.</p>
-        ) : null}
         <button
           type="submit"
           disabled={savePending}
@@ -91,9 +91,6 @@ export function CharterForm({
         </p>
         {scoreState.error ? (
           <p className="mt-2 text-sm text-red-600">{scoreState.error}</p>
-        ) : null}
-        {scoreState.ok ? (
-          <p className="mt-2 text-sm text-[#0F766E]">Alignment score updated.</p>
         ) : null}
         <button
           type="submit"

@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { ListChecks } from "lucide-react";
-import { listTasks, listWorkstreams } from "@/services/delivery";
-import type { TaskStatus } from "@/services/delivery";
+import { listTasks, countTasks, listWorkstreams, type TaskStatus } from "@/services/delivery";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  DEFAULT_PAGE_SIZE,
+  Pagination,
+  parsePageParam,
+  totalPages,
+} from "@/components/shared/pagination";
 import {
   Table,
   TableBody,
@@ -17,7 +22,7 @@ import { TaskForm } from "./task-form";
 import { TaskStatusSelect } from "./task-status-select";
 
 type Params = Promise<{ id: string }>;
-type Search = Promise<{ status?: string }>;
+type Search = Promise<{ status?: string; page?: string }>;
 
 const STATUSES: Array<{ value: TaskStatus | "all"; label: string }> = [
   { value: "all", label: "All" },
@@ -35,19 +40,29 @@ export default async function ProjectTasksPage({
   searchParams: Search;
 }) {
   const { id } = await params;
-  const { status: statusFilter } = await searchParams;
+  const { status: statusFilter, page: pageRaw } = await searchParams;
+  const page = parsePageParam(pageRaw);
+  const status =
+    statusFilter && statusFilter !== "all" ? (statusFilter as TaskStatus) : undefined;
 
-  const [workstreams, allTasks] = await Promise.all([
+  const [workstreams, tasks, total] = await Promise.all([
     listWorkstreams(id),
-    listTasks({ projectId: id }),
+    listTasks({ projectId: id, status, page, pageSize: DEFAULT_PAGE_SIZE }),
+    countTasks({ projectId: id, status }),
   ]);
 
   const workstreamMap = Object.fromEntries(workstreams.map((ws) => [ws.id, ws.name]));
+  const pages = totalPages(total, DEFAULT_PAGE_SIZE);
 
-  const tasks =
-    statusFilter && statusFilter !== "all"
-      ? allTasks.filter((t) => t.status === statusFilter)
-      : allTasks;
+  function buildHref(next: { status?: string; page?: number }) {
+    const params = new URLSearchParams();
+    const s = "status" in next ? next.status : statusFilter;
+    const pg = "page" in next ? next.page : page;
+    if (s && s !== "all") params.set("status", s);
+    if (pg && pg > 0) params.set("page", String(pg));
+    const q = params.toString();
+    return q ? `/project/${id}/tasks?${q}` : `/project/${id}/tasks`;
+  }
 
   return (
     <main className="p-6">
@@ -66,29 +81,23 @@ export default async function ProjectTasksPage({
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
-        {STATUSES.map((s) => {
-          const href =
-            s.value === "all"
-              ? `/project/${id}/tasks`
-              : `/project/${id}/tasks?status=${s.value}`;
-          const active =
-            s.value === "all"
-              ? !statusFilter || statusFilter === "all"
-              : statusFilter === s.value;
-          return (
-            <Link
-              key={s.value}
-              href={href}
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                active
-                  ? "bg-[#0F766E] text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {s.label}
-            </Link>
-          );
-        })}
+        {STATUSES.map((s) => (
+          <Link
+            key={s.value}
+            href={buildHref({
+              status: s.value === "all" ? undefined : s.value,
+              page: 0,
+            })}
+            className={`rounded-full px-3 py-1 text-xs font-medium ${
+              (s.value === "all" && (!statusFilter || statusFilter === "all")) ||
+              statusFilter === s.value
+                ? "bg-[#0F766E] text-white"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            {s.label}
+          </Link>
+        ))}
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -145,6 +154,12 @@ export default async function ProjectTasksPage({
                   ))}
                 </TableBody>
               </Table>
+              <Pagination
+                page={page}
+                totalPages={pages}
+                totalItems={total}
+                buildHref={(p) => buildHref({ page: p })}
+              />
             </div>
           )}
         </div>

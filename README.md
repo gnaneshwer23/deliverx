@@ -1,4 +1,4 @@
-# Deliverx
+# DeliverX
 
 A project management workspace for product teams — built with Next.js 16 (App Router), TypeScript, Tailwind v4, shadcn/ui, and Supabase.
 

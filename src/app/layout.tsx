@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Deliverx — Ship projects on time",
+  title: "DeliverX — Delivery intelligence for programs",
   description:
-    "Deliverx is a project management workspace for product teams. Plan sprints, track tasks, and ship outcomes.",
+    "DeliverX turns business cases into executable delivery workflows with charter alignment, governance, and AI-assisted intelligence.",
 };
 
 export default function RootLayout({
@@ -31,6 +32,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground flex flex-col">
         {children}
+        <Toaster richColors closeButton position="top-right" />
       </body>
     </html>
   );

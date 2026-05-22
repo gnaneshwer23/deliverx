@@ -156,8 +156,11 @@ export async function listTasks(opts: {
   workstreamId?: string;
   status?: TaskStatus | TaskStatus[];
   limit?: number;
+  page?: number;
+  pageSize?: number;
 } = {}): Promise<TaskRow[]> {
   const { supabase } = await getOrgContext();
+  const pageSize = opts.pageSize ?? opts.limit ?? undefined;
   let q = supabase
     .from("tasks")
     .select("*")
@@ -169,11 +172,36 @@ export async function listTasks(opts: {
     const statuses = Array.isArray(opts.status) ? opts.status : [opts.status];
     q = q.in("status", statuses);
   }
-  if (opts.limit) q = q.limit(opts.limit);
+  if (opts.page != null && pageSize) {
+    const from = opts.page * pageSize;
+    q = q.range(from, from + pageSize - 1);
+  } else if (opts.limit) {
+    q = q.limit(opts.limit);
+  }
 
   const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as TaskRow[];
+}
+
+export async function countTasks(opts: {
+  projectId?: string;
+  workstreamId?: string;
+  status?: TaskStatus | TaskStatus[];
+} = {}): Promise<number> {
+  const { supabase } = await getOrgContext();
+  let q = supabase.from("tasks").select("id", { count: "exact", head: true });
+
+  if (opts.projectId) q = q.eq("project_id", opts.projectId);
+  if (opts.workstreamId) q = q.eq("workstream_id", opts.workstreamId);
+  if (opts.status) {
+    const statuses = Array.isArray(opts.status) ? opts.status : [opts.status];
+    q = q.in("status", statuses);
+  }
+
+  const { count, error } = await q;
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function getTask(id: string): Promise<TaskRow | null> {
@@ -317,9 +345,12 @@ export async function listOrgTasks(
     projectId?: string;
     status?: TaskStatus | TaskStatus[];
     limit?: number;
+    page?: number;
+    pageSize?: number;
   } = {},
 ): Promise<TaskWithMeta[]> {
   const { supabase } = await getOrgContext();
+  const pageSize = opts.pageSize ?? opts.limit ?? undefined;
 
   let q = supabase
     .from("tasks")
@@ -331,7 +362,12 @@ export async function listOrgTasks(
     const statuses = Array.isArray(opts.status) ? opts.status : [opts.status];
     q = q.in("status", statuses);
   }
-  if (opts.limit) q = q.limit(opts.limit);
+  if (opts.page != null && pageSize) {
+    const from = opts.page * pageSize;
+    q = q.range(from, from + pageSize - 1);
+  } else if (opts.limit) {
+    q = q.limit(opts.limit);
+  }
 
   const { data, error } = await q;
   if (error) throw error;
@@ -347,6 +383,24 @@ export async function listOrgTasks(
       workstream_name: r.workstreams?.name ?? null,
     };
   });
+}
+
+export async function countOrgTasks(opts: {
+  projectId?: string;
+  status?: TaskStatus | TaskStatus[];
+} = {}): Promise<number> {
+  const { supabase } = await getOrgContext();
+  let q = supabase.from("tasks").select("id", { count: "exact", head: true });
+
+  if (opts.projectId) q = q.eq("project_id", opts.projectId);
+  if (opts.status) {
+    const statuses = Array.isArray(opts.status) ? opts.status : [opts.status];
+    q = q.in("status", statuses);
+  }
+
+  const { count, error } = await q;
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function listOrgMembers() {

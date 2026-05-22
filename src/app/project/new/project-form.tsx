@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import { AiStatusBanner } from "@/components/ai/ai-status-banner";
 import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
@@ -36,6 +37,14 @@ export function ProjectForm({
     createProjectDraftAction,
     initial,
   );
+  const errorSeen = useRef("");
+
+  useEffect(() => {
+    if (state.error && state.error !== errorSeen.current) {
+      errorSeen.current = state.error;
+      toast.error(state.error);
+    }
+  }, [state.error]);
   const [brief, setBrief] = useState("");
   const [draft, setDraft] = useState<ProjectStructureDraft | null>(null);
   const [generating, setGenerating] = useState(false);

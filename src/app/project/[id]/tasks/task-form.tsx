@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useFormToast } from "@/hooks/use-form-toast";
 import { createTaskAction, type ActionState } from "../delivery/actions";
 import type { WorkstreamRow } from "@/services/delivery";
 
@@ -14,6 +15,7 @@ export function TaskForm({
   workstreams: WorkstreamRow[];
 }) {
   const [state, action, pending] = useActionState(createTaskAction, initial);
+  useFormToast(state, { success: "Task created" });
 
   return (
     <form action={action} className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">

@@ -17,7 +17,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
 
       {invite ? (
         <div className="mt-4 rounded-md bg-[#0F766E]/10 px-3 py-2 text-xs text-[#0F766E]">
-          You&apos;ve been invited to join a Deliverx workspace.
+          You&apos;ve been invited to join a DeliverX workspace.
         </div>
       ) : null}
 

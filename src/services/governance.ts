@@ -239,6 +239,7 @@ export async function getGovernanceRollup(): Promise<GovernanceRollup[]> {
 export async function listRaidItems(
   projectId: string,
   type?: RaidItemType,
+  opts: { page?: number; pageSize?: number } = {},
 ): Promise<RaidItemRow[]> {
   const { supabase } = await getOrgContext();
   let q = supabase
@@ -247,9 +248,28 @@ export async function listRaidItems(
     .eq("project_id", projectId)
     .order("created_at", { ascending: false });
   if (type) q = q.eq("type", type);
+  if (opts.page != null && opts.pageSize) {
+    const from = opts.page * opts.pageSize;
+    q = q.range(from, from + opts.pageSize - 1);
+  }
   const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as RaidItemRow[];
+}
+
+export async function countRaidItems(
+  projectId: string,
+  type?: RaidItemType,
+): Promise<number> {
+  const { supabase } = await getOrgContext();
+  let q = supabase
+    .from("raid_items")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId);
+  if (type) q = q.eq("type", type);
+  const { count, error } = await q;
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function createRaidItem(input: {
