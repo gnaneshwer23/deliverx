@@ -107,7 +107,7 @@ export function TwinSnapshotPanel({
         </div>
       ) : (
         <p className="text-sm text-slate-500">
-          No history yet — capture a snapshot or wait for the cron job.
+          No history yet — capture a snapshot or wait for the daily cron (06:00 UTC).
         </p>
       )}
 
