@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
+import { brandClass } from "@/lib/brand";
 
 type Item = { label: string; href: string; soon?: boolean };
 
@@ -33,7 +34,7 @@ export function ProjectSidebar({
         </Link>
         <Link
           href="/project/new"
-          className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-[#4F46E5]"
+          className={`rounded-md p-1 text-slate-500 hover:bg-slate-100 ${brandClass.textHover}`}
           title="New project"
         >
           <Plus size={16} />
@@ -57,7 +58,7 @@ export function ProjectSidebar({
               aria-disabled={item.soon}
               className={`flex items-center justify-between rounded-lg px-3 py-2 transition ${
                 active
-                  ? "bg-[#EEF2FF] font-semibold text-[#4F46E5]"
+                  ? brandClass.activeNav
                   : item.soon
                     ? "text-slate-400"
                     : "text-slate-600 hover:bg-slate-100"
