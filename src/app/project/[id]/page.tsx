@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { loadProjectSignals } from "@/services/projectSignals";
 import { listMemory } from "@/services/memory";
+import { runAdaptiveLoop, latestReviewByKey } from "@/services/adaptive";
 import { ProjectHealthCard } from "@/components/intelligence/project-health-card";
 import { ConfidenceCard } from "@/components/intelligence/confidence-card";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
@@ -10,6 +11,14 @@ import { DriftPanel } from "@/components/intelligence/drift-panel";
 import { BlockerInsights } from "@/components/intelligence/blocker-insights";
 import { BenchmarkPanel } from "@/components/intelligence/benchmark-panel";
 import { LessonsPanel } from "@/components/intelligence/lessons-panel";
+import { StabilityPanel } from "@/components/adaptive/stability-panel";
+import { DriftSignalsPanel } from "@/components/adaptive/drift-signals-panel";
+import { PressurePanel } from "@/components/adaptive/pressure-panel";
+import { ScenarioPanel } from "@/components/adaptive/scenario-panel";
+import {
+  AdaptiveRecommendationsPanel,
+  type RecommendationWithReview,
+} from "@/components/adaptive/adaptive-recommendations-panel";
 import { ExtractInsightsButton } from "./extract-insights-button";
 
 export default async function ProjectOverviewPage({
@@ -28,11 +37,17 @@ export default async function ProjectOverviewPage({
 
   const projectName = project?.name ?? "Project";
 
-  const [intelligence, signals, memory] = await Promise.all([
+  const [intelligence, signals, memory, adaptive, reviews] = await Promise.all([
     getProjectIntelligence(id),
     loadProjectSignals(id),
     listMemory({ limit: 200 }),
+    runAdaptiveLoop(id),
+    latestReviewByKey(id),
   ]);
+
+  const adaptiveRecs: RecommendationWithReview[] = adaptive.recommendations.map(
+    (r) => ({ ...r, review: reviews.get(r.key) ?? null }),
+  );
 
   // Lessons from this org's memory that share tags with the project's
   // delivery type — surfaces relevant history without overwhelming.
@@ -98,6 +113,18 @@ export default async function ProjectOverviewPage({
             New Task
           </button>
         </div>
+      </div>
+
+      {/* Phase 7 — Adaptive intelligence banner */}
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <StabilityPanel stability={adaptive.stability} />
+        <DriftSignalsPanel drift={adaptive.drift} />
+        <PressurePanel pressures={adaptive.pressure} />
+        <ScenarioPanel scenarios={adaptive.scenarios} />
+      </div>
+
+      <div className="mb-6">
+        <AdaptiveRecommendationsPanel projectId={id} items={adaptiveRecs} />
       </div>
 
       {/* Intelligence row 1 */}
