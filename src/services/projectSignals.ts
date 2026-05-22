@@ -1,46 +1,89 @@
 /**
- * Project signal loader.
+ * Project signal loader — reads live task telemetry from Supabase.
  *
- * Today: returns deterministic mock signals seeded from the project ID
- * so the intelligence layer renders stable, varied values per project.
- *
- * Tomorrow: replace the body of loadProjectSignals() with real Supabase
- * queries against the tasks / blockers / standups tables. The return
- * type is the contract the intelligence engine consumes.
+ * The return type is the contract the intelligence engine consumes.
+ * RAID-backed risk counts will be added in PR4 (governance schema).
  */
 
+import { createClient } from "@/lib/supabase/server";
 import type { ProjectSignals } from "./intelligenceEngine";
 
-const SAMPLE_BLOCKED_TASKS = [
-  "Identity provider integration",
-  "Data migration dry-run",
-  "Vendor API hand-off",
-  "Procurement sign-off",
-  "Security review pass",
-  "Performance test bed",
-];
+type TaskRow = {
+  title: string;
+  status: string;
+  priority: string;
+  due_date: string | null;
+  blocked_reason: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
-const SAMPLE_RECURRING_BLOCKERS = [
-  "External vendor approvals",
-  "Cross-team dependency on auth platform",
-  "Awaiting clinical safety review",
-];
+const MS_PER_DAY = 86_400_000;
+const VELOCITY_WINDOW_DAYS = 14;
+const ACTIVITY_WINDOW_DAYS = 7;
 
 export async function loadProjectSignals(projectId: string): Promise<ProjectSignals> {
-  const rng = seededRng(projectId);
-  const pick = <T>(arr: readonly T[], n: number): T[] =>
-    [...arr].sort(() => rng() - 0.5).slice(0, n);
+  const supabase = await createClient();
 
-  const totalTasks = 40 + Math.floor(rng() * 80);
-  const overdueTasks = Math.floor(rng() * 14);
-  const blockers = Math.floor(rng() * 7);
-  const risks = Math.floor(rng() * 9);
-  const velocity = 0.45 + rng() * 0.55;
-  const milestoneProgress = rng();
-  const milestoneDelay = milestoneProgress < 0.6 && rng() > 0.4;
-  const dependencyDelay = rng() > 0.5;
-  const standupsComplete = rng() > 0.35;
-  const averageCompletionDays = 2 + rng() * 6;
+  const { data: tasks, error } = await supabase
+    .from("tasks")
+    .select(
+      "title, status, priority, due_date, blocked_reason, completed_at, created_at, updated_at",
+    )
+    .eq("project_id", projectId);
+
+  if (error) throw error;
+
+  const rows = (tasks ?? []) as TaskRow[];
+  if (rows.length === 0) {
+    return emptySignals();
+  }
+
+  const now = Date.now();
+  const today = startOfDay(now);
+
+  const totalTasks = rows.length;
+  const doneTasks = rows.filter((t) => t.status === "done");
+  const blockedTasks = rows.filter((t) => t.status === "blocked");
+  const openTasks = rows.filter((t) => t.status !== "done");
+
+  const overdueTasks = openTasks.filter((t) => {
+    if (!t.due_date) return false;
+    return startOfDay(new Date(t.due_date).getTime()) < today;
+  }).length;
+
+  const blockers = blockedTasks.length;
+
+  // Proxy until raid_items lands in PR4: high/critical open tasks
+  const risks = openTasks.filter(
+    (t) => t.priority === "high" || t.priority === "critical",
+  ).length;
+
+  const standupsComplete = rows.some((t) => {
+    const updated = new Date(t.updated_at).getTime();
+    return now - updated <= ACTIVITY_WINDOW_DAYS * MS_PER_DAY;
+  });
+
+  const velocity = computeVelocity(rows, now);
+
+  const milestoneProgress = doneTasks.length / totalTasks;
+  const overdueRatio = overdueTasks / Math.max(openTasks.length, 1);
+  const milestoneDelay = overdueTasks > 0 && overdueRatio >= 0.15;
+
+  const dependencyDelay =
+    blockedTasks.some((t) =>
+      (t.blocked_reason ?? "").toLowerCase().includes("depend"),
+    ) || blockers > 0;
+
+  const blockedTaskTitles = blockedTasks
+    .slice(0, 5)
+    .map((t) => t.title)
+    .slice(0, 3);
+
+  const recurringBlockers = topRecurringBlockers(blockedTasks);
+
+  const averageCompletionDays = averageCompletion(doneTasks);
 
   return {
     overdueTasks,
@@ -51,26 +94,77 @@ export async function loadProjectSignals(projectId: string): Promise<ProjectSign
     velocity,
     milestoneDelay,
     dependencyDelay,
-    blockedTaskTitles: pick(SAMPLE_BLOCKED_TASKS, Math.max(1, Math.min(blockers, 3))),
-    recurringBlockers: dependencyDelay ? pick(SAMPLE_RECURRING_BLOCKERS, 1) : [],
+    blockedTaskTitles,
+    recurringBlockers,
     averageCompletionDays,
     milestoneProgress,
   };
 }
 
-// Mulberry32 — small, fast, well-distributed seeded PRNG.
-function seededRng(seedStr: string): () => number {
-  let h = 2166136261 >>> 0;
-  for (let i = 0; i < seedStr.length; i++) {
-    h ^= seedStr.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  let s = h >>> 0;
-  return function () {
-    s |= 0;
-    s = (s + 0x6d2b79f5) | 0;
-    let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+function emptySignals(): ProjectSignals {
+  return {
+    overdueTasks: 0,
+    totalTasks: 0,
+    blockers: 0,
+    risks: 0,
+    standupsComplete: true,
+    velocity: 1,
+    milestoneDelay: false,
+    dependencyDelay: false,
+    blockedTaskTitles: [],
+    recurringBlockers: [],
+    averageCompletionDays: 3,
+    milestoneProgress: 0,
   };
+}
+
+function computeVelocity(rows: TaskRow[], now: number): number {
+  const windowStart = now - VELOCITY_WINDOW_DAYS * MS_PER_DAY;
+  const recent = rows.filter((t) => new Date(t.created_at).getTime() >= windowStart);
+  const pool = recent.length > 0 ? recent : rows;
+
+  const done = pool.filter((t) => t.status === "done").length;
+  const total = pool.length;
+  if (total === 0) return 1;
+
+  return clamp(done / total, 0, 1);
+}
+
+function averageCompletion(doneTasks: TaskRow[]): number {
+  const durations = doneTasks
+    .filter((t) => t.completed_at)
+    .map((t) => {
+      const start = new Date(t.created_at).getTime();
+      const end = new Date(t.completed_at!).getTime();
+      return Math.max(0, (end - start) / MS_PER_DAY);
+    });
+
+  if (durations.length === 0) return 3;
+  return durations.reduce((a, b) => a + b, 0) / durations.length;
+}
+
+function topRecurringBlockers(blockedTasks: TaskRow[]): string[] {
+  const counts = new Map<string, number>();
+  for (const task of blockedTasks) {
+    const reason = (task.blocked_reason ?? "").trim();
+    if (!reason) continue;
+    counts.set(reason, (counts.get(reason) ?? 0) + 1);
+  }
+
+  const recurring = [...counts.entries()]
+    .filter(([, n]) => n >= 2)
+    .sort((a, b) => b[1] - a[1])
+    .map(([reason]) => reason);
+
+  return recurring.slice(0, 2);
+}
+
+function startOfDay(ms: number): number {
+  const d = new Date(ms);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+function clamp(n: number, lo: number, hi: number): number {
+  return Math.min(hi, Math.max(lo, n));
 }
