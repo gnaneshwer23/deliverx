@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 import { listRaidItems, type RaidItemType } from "@/services/governance";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -13,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RaidForm } from "./raid-form";
+import { RaidAiPanel } from "./raid-ai-panel";
 
 type Params = Promise<{ id: string }>;
 type Search = Promise<{ type?: string }>;
@@ -34,6 +36,13 @@ export default async function ProjectRaidPage({
 }) {
   const { id } = await params;
   const { type: typeFilter } = await searchParams;
+
+  const supabase = await createClient();
+  const { data: project } = await supabase
+    .from("projects")
+    .select("name")
+    .eq("id", id)
+    .single();
 
   const filterType =
     typeFilter && typeFilter !== "all" ? (typeFilter as RaidItemType) : undefined;
@@ -110,9 +119,12 @@ export default async function ProjectRaidPage({
             </div>
           )}
         </div>
-        <div>
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">New RAID item</h2>
-          <RaidForm projectId={id} defaultType={filterType ?? "risk"} />
+        <div className="space-y-6">
+          <RaidAiPanel projectId={id} projectName={project?.name ?? "Project"} />
+          <div>
+            <h2 className="mb-3 text-sm font-semibold text-slate-700">New RAID item</h2>
+            <RaidForm projectId={id} defaultType={filterType ?? "risk"} />
+          </div>
         </div>
       </div>
     </main>

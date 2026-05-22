@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { MeetingForm } from "./meeting-form";
+import { MeetingAiPanel } from "./meeting-ai-panel";
 
 type Params = Promise<{ id: string }>;
 
@@ -51,6 +52,13 @@ export default async function ProjectMeetingsPage({
                     {m.summary}
                   </div>
                 ) : null}
+                <MeetingAiPanel
+                  projectId={id}
+                  meetingId={m.id}
+                  title={m.title}
+                  notes={m.notes}
+                  hasSummary={Boolean(m.summary)}
+                />
               </article>
             ))
           )}

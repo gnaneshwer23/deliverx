@@ -396,6 +396,66 @@ export async function createMeeting(input: {
   return data as MeetingRow;
 }
 
+export async function updateMeeting(
+  id: string,
+  patch: Partial<Pick<MeetingRow, "title" | "scheduled_at" | "notes" | "summary" | "status">>,
+): Promise<MeetingRow> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("meetings")
+    .update(patch)
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) throw error;
+  return data as MeetingRow;
+}
+
+export async function applyMeetingAiResult(input: {
+  projectId: string;
+  meetingId: string;
+  summary: string;
+  createDecisions: boolean;
+  createRisks: boolean;
+  decisions: Array<{ title: string; context: string }>;
+  risks: Array<{
+    type: "risk" | "issue" | "dependency";
+    title: string;
+    description: string;
+  }>;
+}): Promise<{ decisions: number; risks: number }> {
+  await updateMeeting(input.meetingId, { summary: input.summary.trim() });
+
+  let decisionCount = 0;
+  if (input.createDecisions) {
+    for (const d of input.decisions) {
+      await createDecision({
+        projectId: input.projectId,
+        title: d.title,
+        context: d.context,
+        meetingId: input.meetingId,
+      });
+      decisionCount++;
+    }
+  }
+
+  let riskCount = 0;
+  if (input.createRisks) {
+    for (const r of input.risks) {
+      await createRaidItem({
+        projectId: input.projectId,
+        type: r.type,
+        title: r.title,
+        description: r.description,
+        severity: "medium",
+      });
+      riskCount++;
+    }
+  }
+
+  return { decisions: decisionCount, risks: riskCount };
+}
+
 // ---------------------------------------------------------------------------
 // Documents
 // ---------------------------------------------------------------------------

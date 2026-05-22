@@ -229,6 +229,7 @@ export default async function DashboardPage() {
       </div>
 
       <AiInsights
+        projectId={topProject?.id ?? null}
         projectName={insightProjectName}
         healthTier={healthTier}
         confidenceScore={confidenceScore}

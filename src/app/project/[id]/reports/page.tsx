@@ -4,6 +4,7 @@ import { listReports } from "@/services/governance";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ReportForm } from "./report-form";
+import { ReportAiPanel } from "./report-ai-panel";
 
 type Params = Promise<{ id: string }>;
 
@@ -55,9 +56,12 @@ export default async function ProjectReportsPage({
             ))
           )}
         </div>
-        <div>
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">New report</h2>
-          <ReportForm projectId={id} />
+        <div className="space-y-6">
+          <ReportAiPanel projectId={id} />
+          <div>
+            <h2 className="mb-3 text-sm font-semibold text-slate-700">Manual report</h2>
+            <ReportForm projectId={id} />
+          </div>
         </div>
       </div>
     </main>

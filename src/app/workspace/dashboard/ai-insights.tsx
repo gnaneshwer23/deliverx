@@ -1,25 +1,65 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
+import { AiStatusBanner } from "@/components/ai/ai-status-banner";
+import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
+
+type InsightsResponse = {
+  ok: true;
+  narrative: string;
+};
 
 export function AiInsights({
+  projectId,
   projectName,
   healthTier,
   confidenceScore,
   recommendation,
 }: {
+  projectId: string | null;
   projectName: string | null;
   healthTier: "healthy" | "watch" | "at-risk";
   confidenceScore: number;
   recommendation: string;
 }) {
+  const [narrative, setNarrative] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   const tierLabel =
     healthTier === "healthy"
       ? "On track"
       : healthTier === "watch"
         ? "Needs attention"
         : "At risk";
+
+  useEffect(() => {
+    if (!projectId) return;
+
+    let cancelled = false;
+    setLoading(true);
+    setAiError(null);
+
+    postAi<InsightsResponse>("/api/ai/insights", { projectId }).then((res) => {
+      if (cancelled) return;
+      setLoading(false);
+      if (!res.ok) {
+        if (res.code !== "ai_not_configured") {
+          setAiError(aiErrorMessage(res));
+        }
+        return;
+      }
+      setNarrative(res.data.narrative);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [projectId]);
+
+  const body = narrative ?? recommendation;
 
   return (
     <motion.section
@@ -34,8 +74,9 @@ export function AiInsights({
         </span>
         <h2 className="text-lg font-semibold">AI Insights</h2>
         <span className="rounded bg-[#0F766E]/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#0F766E]">
-          Live
+          {narrative ? "Claude" : "Live"}
         </span>
+        {loading ? <Loader2 size={14} className="animate-spin text-slate-400" /> : null}
       </div>
       {projectName ? (
         <p className="mb-2 text-xs text-slate-500">
@@ -48,7 +89,17 @@ export function AiInsights({
           Create a project and tasks to unlock delivery intelligence.
         </p>
       )}
-      <p className="text-sm text-slate-600">{recommendation}</p>
+      {aiError ? (
+        <div className="mb-2">
+          <AiStatusBanner message={aiError} variant="info" />
+        </div>
+      ) : null}
+      <p className="text-sm text-slate-600">{body}</p>
+      {narrative ? (
+        <p className="mt-2 text-xs text-slate-400">
+          Rule-based signal: {recommendation}
+        </p>
+      ) : null}
     </motion.section>
   );
 }
