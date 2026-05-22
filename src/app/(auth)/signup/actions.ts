@@ -34,7 +34,7 @@ export async function signupAction(
     `https://${requestHeaders.get("host") ?? "localhost:3000"}`;
 
   const next = invite
-    ? `/onboarding/invite?token=${encodeURIComponent(invite)}`
+    ? `/invite/${encodeURIComponent(invite)}`
     : "/onboarding/organisation";
 
   const { error } = await supabase.auth.signUp({

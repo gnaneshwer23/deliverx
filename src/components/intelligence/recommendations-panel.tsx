@@ -1,11 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Check, X, Sparkles } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { Check, X, Sparkles, Loader2 } from "lucide-react";
+import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import type { Recommendation } from "@/services/intelligenceEngine";
 import type { AiReviewAction } from "@/services/recommendations";
 
 type ReviewState = "pending" | "accepted" | "ignored";
+
+type EnrichResponse = {
+  ok: true;
+  rationales: Record<string, string>;
+};
 
 export function RecommendationsPanel({
   projectId,
@@ -23,7 +29,30 @@ export function RecommendationsPanel({
     }
     return base;
   });
+  const [rationales, setRationales] = useState<Record<string, string>>({});
+  const [enriching, setEnriching] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (items.length === 0) return;
+
+    let cancelled = false;
+    setEnriching(true);
+
+    postAi<EnrichResponse>("/api/ai/recommendations/enrich", { projectId }).then(
+      (res) => {
+        if (cancelled) return;
+        setEnriching(false);
+        if (res.ok && Object.keys(res.data.rationales).length > 0) {
+          setRationales(res.data.rationales);
+        }
+      },
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [projectId, items.length]);
 
   function review(id: string, action: "accept" | "ignore") {
     const next: ReviewState = action === "accept" ? "accepted" : "ignored";
@@ -37,7 +66,6 @@ export function RecommendationsPanel({
           body: JSON.stringify({ projectId, id, action }),
         });
       } catch {
-        // Optimistic UI — revert on failure.
         setStates((s) => ({ ...s, [id]: "pending" }));
       }
     });
@@ -55,6 +83,7 @@ export function RecommendationsPanel({
         <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
           Top {items.length}
         </span>
+        {enriching ? <Loader2 size={12} className="animate-spin text-slate-400" /> : null}
       </div>
 
       {visible.length === 0 ? (
@@ -69,7 +98,9 @@ export function RecommendationsPanel({
               className="rounded-lg border border-indigo-100 bg-indigo-50/60 p-3"
             >
               <p className="text-sm text-slate-800">{item.text}</p>
-              <p className="mt-1 text-xs text-slate-500">{item.rationale}</p>
+              <p className="mt-1 text-xs text-slate-500">
+                {rationales[item.id] ?? item.rationale}
+              </p>
               <div className="mt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">
                   Confidence: {Math.round(item.confidence * 100)}%

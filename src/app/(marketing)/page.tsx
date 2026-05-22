@@ -72,7 +72,7 @@ export default function LandingPage() {
             Turn Business Cases Into Structured Delivery.
           </h1>
           <p className="mt-6 text-lg text-slate-600">
-            Deliverx transforms business cases into executable delivery workflows
+            DeliverX transforms business cases into executable delivery workflows
             with AI-assisted planning, governance, and monitoring.
           </p>
           <div className="mt-8 flex gap-4">
@@ -112,7 +112,7 @@ export default function LandingPage() {
 
       <section id="how-it-works" className="bg-white px-8 py-16">
         <h2 className="mb-12 text-center text-2xl font-semibold">
-          How Deliverx Works
+          How DeliverX Works
         </h2>
         <div className="mx-auto grid max-w-6xl gap-6 text-sm md:grid-cols-6">
           {steps.map(([title, desc], i) => (
@@ -145,7 +145,7 @@ export default function LandingPage() {
       </section>
 
       <section id="use-cases" className="bg-white px-8 py-16 text-center">
-        <h2 className="mb-10 text-2xl font-semibold">Inside Deliverx</h2>
+        <h2 className="mb-10 text-2xl font-semibold">Inside DeliverX</h2>
         <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
           {previews.map((item) => (
             <div
@@ -179,7 +179,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-col justify-between gap-6 md:flex-row">
           <div>
             <div className="font-semibold text-[#0F172A]">DeliverX</div>
-            <div className="mt-2">© {new Date().getFullYear()} Deliverx</div>
+            <div className="mt-2">© {new Date().getFullYear()} DeliverX</div>
           </div>
           <div className="flex gap-10">
             <div>

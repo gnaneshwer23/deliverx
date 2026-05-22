@@ -1,7 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
+import { applyProjectStructure } from "@/services/applyProjectStructure";
 
 export type ProjectState = { ok: boolean; error?: string };
 
@@ -14,8 +17,18 @@ export async function createProjectDraftAction(
   const deliveryType = String(formData.get("delivery_type") ?? "").trim() || null;
   const timeline = String(formData.get("timeline") ?? "").trim() || null;
   const playbookId = String(formData.get("playbook_id") ?? "").trim() || null;
+  const aiDraftRaw = String(formData.get("ai_draft") ?? "").trim();
 
   if (!name) return { ok: false, error: "Project name is required." };
+
+  let aiDraft: ProjectStructureDraft | null = null;
+  if (aiDraftRaw) {
+    try {
+      aiDraft = JSON.parse(aiDraftRaw) as ProjectStructureDraft;
+    } catch {
+      return { ok: false, error: "Invalid AI structure draft." };
+    }
+  }
 
   const supabase = await createClient();
   const {
@@ -51,6 +64,22 @@ export async function createProjectDraftAction(
 
   if (error || !project) {
     return { ok: false, error: error?.message ?? "Failed to create project." };
+  }
+
+  if (aiDraft) {
+    try {
+      await applyProjectStructure(project.id, aiDraft);
+      revalidatePath("/workspace/dashboard");
+      revalidatePath("/workspace/tasks");
+    } catch (err) {
+      return {
+        ok: false,
+        error:
+          err instanceof Error
+            ? err.message
+            : "Project created but AI structure failed to apply.",
+      };
+    }
   }
 
   redirect(`/project/${project.id}`);

@@ -1,15 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { loginAction, type LoginState } from "./actions";
 
 const initial: LoginState = { ok: false };
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState(loginAction, initial);
 
   return (
     <form action={formAction} className="mt-6 space-y-4">
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <label className="block">
         <span className="text-sm font-medium text-slate-700">Email</span>
         <input
@@ -23,7 +25,15 @@ export function LoginForm() {
       </label>
 
       <label className="block">
-        <span className="text-sm font-medium text-slate-700">Password</span>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-slate-700">Password</span>
+          <Link
+            href="/login/forgot"
+            className="text-xs font-medium text-[#0F766E] hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <input
           name="password"
           type="password"

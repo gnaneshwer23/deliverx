@@ -46,3 +46,31 @@ export async function updateOrganisationAction(
   revalidatePath("/workspace/dashboard");
   return { ok: true };
 }
+
+export async function updateProfileAction(
+  _prev: SettingsState,
+  formData: FormData,
+): Promise<SettingsState> {
+  const name = String(formData.get("name") ?? "").trim() || null;
+  const avatarUrl = String(formData.get("avatar_url") ?? "").trim() || null;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  const { error } = await supabase
+    .from("users")
+    .update({
+      name,
+      avatar_url: avatarUrl,
+    })
+    .eq("id", user.id);
+
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/workspace/settings");
+  revalidatePath("/workspace/dashboard");
+  return { ok: true };
+}

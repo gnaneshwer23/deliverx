@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
+import { brandClass } from "@/lib/brand";
 
 type Item = { label: string; href: string; soon?: boolean };
 
@@ -17,12 +18,19 @@ export function ProjectSidebar({
 
   const items: Item[] = [
     { label: "Overview", href: `/project/${projectId}` },
+    { label: "Charter", href: `/project/${projectId}/charter` },
     { label: "Projects", href: "/workspace/dashboard" },
-    { label: "Workstreams", href: `/project/${projectId}/workstreams`, soon: true },
-    { label: "Tasks", href: `/project/${projectId}/tasks`, soon: true },
-    { label: "Meetings", href: `/project/${projectId}/meetings`, soon: true },
-    { label: "RAID", href: `/project/${projectId}/raid`, soon: true },
-    { label: "Reports", href: `/project/${projectId}/reports`, soon: true },
+    { label: "Workstreams", href: `/project/${projectId}/workstreams` },
+    { label: "Tasks", href: `/project/${projectId}/tasks` },
+    { label: "Meetings", href: `/project/${projectId}/meetings` },
+    { label: "Standups", href: `/project/${projectId}/standups` },
+    { label: "Stakeholders", href: `/project/${projectId}/stakeholders` },
+    { label: "Traceability", href: `/project/${projectId}/traceability` },
+    { label: "RAID", href: `/project/${projectId}/raid` },
+    { label: "Decisions", href: `/project/${projectId}/decisions` },
+    { label: "Documents", href: `/project/${projectId}/documents` },
+    { label: "Changes", href: `/project/${projectId}/changes` },
+    { label: "Reports", href: `/project/${projectId}/reports` },
   ];
 
   return (
@@ -33,7 +41,7 @@ export function ProjectSidebar({
         </Link>
         <Link
           href="/project/new"
-          className="rounded-md p-1 text-slate-500 hover:bg-slate-100 hover:text-[#4F46E5]"
+          className={`rounded-md p-1 text-slate-500 hover:bg-slate-100 ${brandClass.textHover}`}
           title="New project"
         >
           <Plus size={16} />
@@ -49,7 +57,14 @@ export function ProjectSidebar({
 
       <nav className="flex flex-col gap-1 text-sm">
         {items.map((item) => {
-          const active = pathname === item.href;
+          const active =
+            pathname === item.href ||
+            (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`)) ||
+            (item.href.includes("/reports") && pathname.startsWith(`${item.href}/`)) ||
+            (item.href.includes("/charter") && pathname.startsWith(item.href)) ||
+            (item.href.includes("/standups") && pathname.startsWith(item.href)) ||
+            (item.href.includes("/stakeholders") && pathname.startsWith(item.href)) ||
+            (item.href.includes("/traceability") && pathname.startsWith(item.href));
           return (
             <Link
               key={item.label}
@@ -57,7 +72,7 @@ export function ProjectSidebar({
               aria-disabled={item.soon}
               className={`flex items-center justify-between rounded-lg px-3 py-2 transition ${
                 active
-                  ? "bg-[#EEF2FF] font-semibold text-[#4F46E5]"
+                  ? brandClass.activeNav
                   : item.soon
                     ? "text-slate-400"
                     : "text-slate-600 hover:bg-slate-100"

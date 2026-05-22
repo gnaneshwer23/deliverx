@@ -1,24 +1,37 @@
 import Link from "next/link";
+import { listPendingInvitations } from "@/services/invitations";
+import { InviteForm } from "./invite-form";
 
-export default function InvitePage() {
+export default async function InvitePage() {
+  let pending: Awaited<ReturnType<typeof listPendingInvitations>> = [];
+  try {
+    pending = await listPendingInvitations();
+  } catch {
+    pending = [];
+  }
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-2xl font-semibold tracking-tight">Invite your team</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Coming soon. You&apos;ll be able to invite teammates by email and assign
-        roles.
+        Add teammates by email. They&apos;ll receive a link to join your
+        organisation on DeliverX.
       </p>
 
-      <div className="mt-6 rounded-md border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
-        Team invitations land in Day 4 of the build plan.
-      </div>
+      <InviteForm pending={pending} />
 
-      <div className="mt-6 flex gap-3">
+      <div className="mt-8 flex gap-3 border-t border-slate-100 pt-6">
+        <Link
+          href="/onboarding/complete"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
+          Skip for now
+        </Link>
         <Link
           href="/onboarding/complete"
           className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62]"
         >
-          Skip for now
+          Continue
         </Link>
       </div>
     </div>

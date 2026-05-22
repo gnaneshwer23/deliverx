@@ -17,7 +17,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
 
       {invite ? (
         <div className="mt-4 rounded-md bg-[#0F766E]/10 px-3 py-2 text-xs text-[#0F766E]">
-          You&apos;ve been invited to join a Deliverx workspace.
+          You&apos;ve been invited to join a DeliverX workspace.
         </div>
       ) : null}
 
@@ -25,7 +25,14 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
 
       <p className="mt-6 text-center text-sm text-slate-500">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-[#0F766E] hover:underline">
+        <Link
+          href={
+            invite
+              ? `/login?next=${encodeURIComponent(`/invite/${invite}`)}`
+              : "/login"
+          }
+          className="font-medium text-[#0F766E] hover:underline"
+        >
           Sign in
         </Link>
       </p>

@@ -11,6 +11,7 @@ export async function loginAction(
 ): Promise<LoginState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const next = String(formData.get("next") ?? "").trim();
 
   if (!email || !password) {
     return { ok: false, error: "Email and password are required." };
@@ -29,6 +30,11 @@ export async function loginAction(
     .select("organisation_id")
     .single();
 
-  const dest = profile?.organisation_id ? "/workspace/dashboard" : "/onboarding/organisation";
+  const dest =
+    next.startsWith("/") && !next.startsWith("//")
+      ? next
+      : profile?.organisation_id
+        ? "/workspace/dashboard"
+        : "/onboarding/organisation";
   redirect(dest);
 }
