@@ -14,8 +14,7 @@ export default async function InvitePage() {
     <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-2xl font-semibold tracking-tight">Invite your team</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Add teammates by email. They&apos;ll receive a link to join your
-        organisation on DeliverX.
+        Add teammates by email. Share the invite link so they can create an account.
       </p>
 
       <InviteForm pending={pending} />

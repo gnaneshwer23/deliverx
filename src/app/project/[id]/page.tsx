@@ -24,10 +24,18 @@ import { ExtractInsightsButton } from "./extract-insights-button";
 import { ProjectStatusSelect } from "./project-status-select";
 import { listAiReviews } from "@/services/recommendations";
 import { getProjectAlignment } from "@/services/alignment";
-import { getProjectTraceability } from "@/services/traceability";
+import { getProjectTraceability, listStandups, hasStandupToday } from "@/services/traceability";
+import {
+  listRaidItems,
+  listDecisions,
+  listMeetings,
+  listReports,
+} from "@/services/governance";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
 import { TraceabilityPanel } from "@/components/traceability/traceability-panel";
 import { ProjectOverviewTabs } from "@/components/project/project-overview-tabs";
+import { ProjectQuickNav } from "@/components/project/project-quick-nav";
+import { ProjectGovernanceOverview } from "@/components/project/project-governance-overview";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Table,
@@ -60,7 +68,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday] =
     await Promise.all([
       getProjectIntelligence(id),
       loadProjectSignals(id),
@@ -72,6 +80,12 @@ export default async function ProjectOverviewPage({
       listOrgMembers(),
       getProjectAlignment(id),
       getProjectTraceability(id),
+      listRaidItems(id, undefined, { pageSize: 20 }),
+      listDecisions(id, { pageSize: 10 }),
+      listMeetings(id, { pageSize: 6 }),
+      listStandups(id, { limit: 5 }),
+      listReports(id, { pageSize: 4 }),
+      hasStandupToday(id),
     ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -149,6 +163,10 @@ export default async function ProjectOverviewPage({
         </div>
       </div>
 
+      <div className="mb-6">
+        <ProjectQuickNav projectId={id} />
+      </div>
+
       <ProjectOverviewTabs
         overview={
           <div className="space-y-6">
@@ -168,6 +186,16 @@ export default async function ProjectOverviewPage({
             </div>
 
             <TraceabilityPanel projectId={id} trace={trace} compact />
+
+            <ProjectGovernanceOverview
+              projectId={id}
+              raid={raid}
+              decisions={decisions}
+              meetings={meetings}
+              standups={standups}
+              reports={reports}
+              standupToday={standupToday}
+            />
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <OverviewCard className="lg:col-span-2" title="Recent tasks">

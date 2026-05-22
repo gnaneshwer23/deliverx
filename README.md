@@ -69,7 +69,7 @@ middleware.ts        # Next.js middleware — refreshes auth on every request
 
 Run this smoke path after `npm run dev` (or on your deployed URL) to confirm the core loop:
 
-1. **Auth** — Sign up or log in → complete onboarding
+1. **Auth** — Sign up or log in with email and password → complete onboarding
 2. **Project** — Create a project (optionally with AI structure)
 3. **Charter** — Save charter at `/project/[id]/charter` → confirm alignment ring on overview
 4. **Tasks** — Add at least one task

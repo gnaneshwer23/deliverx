@@ -69,7 +69,7 @@ export function InviteForm({
             <p className="font-medium">Invitation created for {state.email}</p>
             <p className="mt-1 break-all text-xs text-emerald-700">{state.inviteUrl}</p>
             <p className="mt-2 text-xs text-emerald-600">
-              Copy the link and send it to your teammate (email delivery can be wired later).
+              Copy the link and send it to your teammate.
             </p>
           </div>
         ) : null}
@@ -78,7 +78,7 @@ export function InviteForm({
           disabled={pendingSubmit}
           className="inline-flex h-10 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62] disabled:opacity-60"
         >
-          {pendingSubmit ? "Sending…" : "Send invitation"}
+          {pendingSubmit ? "Creating…" : "Create invitation"}
         </button>
       </form>
 

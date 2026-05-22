@@ -26,7 +26,6 @@ export type InvitationPreview = {
   expires_at: string;
 };
 
-
 async function getOrgContext() {
   const supabase = await createClient();
   const {
@@ -55,6 +54,7 @@ export async function listPendingInvitations(): Promise<InvitationRow[]> {
     .from("invitations")
     .select("id, email, role, status, token, created_at, expires_at")
     .eq("status", "pending")
+    .not("email", "is", null)
     .order("created_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as InvitationRow[];

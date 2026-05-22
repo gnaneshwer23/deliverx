@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { formatAuthError } from "@/lib/auth-errors";
 
 export type ResetState = { ok: boolean; error?: string };
 
@@ -25,12 +26,12 @@ export async function resetPasswordAction(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { ok: false, error: "Sign in via the reset link in your email first." };
+    return { ok: false, error: "Open the reset link from your email first." };
   }
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: formatAuthError(error.message) };
   }
 
   redirect("/login?reset=1");

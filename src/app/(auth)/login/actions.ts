@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { formatAuthError } from "@/lib/auth-errors";
 
 export type LoginState = { ok: boolean; error?: string };
 
@@ -18,13 +19,12 @@ export async function loginAction(
   }
 
   const supabase = await createClient();
-
   const { error } = await supabase.auth.signInWithPassword({ email, password });
+
   if (error) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: formatAuthError(error.message) };
   }
 
-  // Decide destination: if the user has no organisation yet, send to onboarding.
   const { data: profile } = await supabase
     .from("users")
     .select("organisation_id")
@@ -36,5 +36,6 @@ export async function loginAction(
       : profile?.organisation_id
         ? "/workspace/dashboard"
         : "/onboarding/organisation";
+
   redirect(dest);
 }

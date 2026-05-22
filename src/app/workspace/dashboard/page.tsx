@@ -1,18 +1,28 @@
 import Link from "next/link";
 import {
-  BarChart3,
-  Users,
-  Layers,
   AlertTriangle,
   ArrowUpRight,
+  Ban,
+  CalendarClock,
+  CheckSquare,
+  Clock,
+  Layers,
+  Scale,
+  ShieldAlert,
+  Users,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
-import { getOrgDeliveryStats, listOrgTasks } from "@/services/delivery";
-import { getOrgGovernanceStats, listOpenRaidOrg } from "@/services/governance";
+import { getWorkspaceDashboard } from "@/services/dashboard";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getProjectAlignment } from "@/services/alignment";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { KpiStrip } from "@/components/dashboard/kpi-strip";
+import { QuickActionsBar } from "@/components/dashboard/quick-actions-bar";
+import { DeliveryVelocityChart } from "@/components/dashboard/delivery-velocity-chart";
+import { ProjectHealthGrid } from "@/components/dashboard/project-health-grid";
+import { GovernancePulse } from "@/components/dashboard/governance-pulse";
+import { DashboardSection } from "@/components/dashboard/dashboard-section";
+import { StandupsFeed } from "@/components/dashboard/standups-feed";
 import {
   Table,
   TableBody,
@@ -23,34 +33,36 @@ import {
 } from "@/components/ui/table";
 import { AiInsights } from "./ai-insights";
 
+export const dynamic = "force-dynamic";
+
+function roleHeading(role: string, name: string | null) {
+  const greeting = name ? `, ${name}` : "";
+  if (role === "executive") return `Executive overview${greeting}`;
+  if (role === "team_member") return `My workspace${greeting}`;
+  return `Delivery command centre${greeting}`;
+}
+
+function roleSubtitle(role: string, orgName: string | null) {
+  const org = orgName ? `${orgName} · ` : "";
+  if (role === "executive") {
+    return `${org}Portfolio health, governance, and delivery signals at a glance.`;
+  }
+  if (role === "team_member") {
+    return `${org}Your tasks, standups, and project updates in one place.`;
+  }
+  return `${org}Tasks, RAID, meetings, decisions, standups, and intelligence — unified.`;
+}
+
 export default async function DashboardPage() {
-  const supabase = await createClient();
+  const data = await getWorkspaceDashboard();
+  const activeTaskRows = data.recentTasks.filter((t) => t.status !== "done");
 
-  const [{ count: activeProjects }, { data: recentProjects }, stats, govStats, recentTasks, openRisks] =
-    await Promise.all([
-      supabase
-        .from("projects")
-        .select("id", { count: "exact", head: true })
-        .in("status", ["draft", "active"]),
-      supabase
-        .from("projects")
-        .select("id, name, status, delivery_type, created_at")
-        .order("created_at", { ascending: false })
-        .limit(5),
-      getOrgDeliveryStats(),
-      getOrgGovernanceStats(),
-      listOrgTasks({ limit: 8 }),
-      listOpenRaidOrg(6),
-    ]);
-
-  const activeTaskRows = recentTasks.filter((t) => t.status !== "done");
-
-  const topProject = recentProjects?.[0];
-  let insightProjectName: string | null = null;
-  let healthTier: "healthy" | "watch" | "at-risk" = "healthy";
-  let confidenceScore = 100;
+  const topProject = data.projectHealth[0] ?? data.recentProjects[0] ?? null;
+  let insightProjectName: string | null = topProject?.name ?? null;
+  let healthTier: "healthy" | "watch" | "at-risk" = topProject?.healthTier ?? "healthy";
+  let confidenceScore = topProject?.confidenceScore ?? 100;
   let recommendation =
-    "No interventions recommended — add tasks to projects to generate delivery signals.";
+    "Add tasks and governance items to projects to generate delivery signals.";
   let topAlignment: Awaited<ReturnType<typeof getProjectAlignment>> | null = null;
 
   if (topProject) {
@@ -59,131 +71,151 @@ export default async function DashboardPage() {
       getProjectAlignment(topProject.id),
     ]);
     topAlignment = alignment;
-    insightProjectName = topProject.name;
+    recommendation = intel.recommendations[0]?.text ?? recommendation;
     healthTier = intel.health.tier;
     confidenceScore = intel.confidence.score;
-    recommendation = intel.recommendations[0]?.text ?? recommendation;
   }
 
   const kpis = [
     {
-      title: "Active Projects",
-      value: String(activeProjects ?? 0),
+      label: "Active projects",
+      value: data.activeProjectCount,
+      href: "/workspace/projects",
       icon: Layers,
-      live: true,
+      accent: "teal" as const,
+    },
+    ...(data.portfolioHealth != null
+      ? [
+          {
+            label: "Portfolio health",
+            value: data.portfolioHealth,
+            hint: "/ 100",
+            href: "/workspace/portfolio",
+            icon: Scale,
+            accent:
+              data.portfolioHealth >= 80
+                ? ("teal" as const)
+                : data.portfolioHealth >= 60
+                  ? ("amber" as const)
+                  : ("rose" as const),
+          },
+        ]
+      : []),
+    {
+      label: "Tasks in progress",
+      value: data.delivery.tasksInProgress,
+      href: "/workspace/tasks",
+      icon: CheckSquare,
+      accent: "teal" as const,
     },
     {
-      title: "Tasks In Progress",
-      value: String(stats.tasksInProgress),
-      icon: BarChart3,
-      live: true,
+      label: "Overdue",
+      value: data.delivery.overdueTasks,
+      href: "/workspace/tasks",
+      icon: Clock,
+      accent: data.delivery.overdueTasks > 0 ? ("amber" as const) : ("slate" as const),
     },
     {
-      title: "Team Members",
-      value: String(stats.teamMembers),
-      icon: Users,
-      live: true,
+      label: "Blocked",
+      value: data.delivery.blockedTasks,
+      href: "/workspace/tasks",
+      icon: Ban,
+      accent: data.delivery.blockedTasks > 0 ? ("rose" as const) : ("slate" as const),
     },
     {
-      title: "Open Risks",
-      value: String(govStats.openRisks),
+      label: "Open risks",
+      value: data.governance.openRisks,
+      href: "/workspace/governance",
       icon: AlertTriangle,
-      live: true,
+      accent: data.governance.openRisks > 0 ? ("rose" as const) : ("slate" as const),
+    },
+    {
+      label: "Pending decisions",
+      value: data.governance.pendingDecisions,
+      href: "/workspace/governance",
+      icon: ShieldAlert,
+      accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
+    },
+    {
+      label: "Standups (7d)",
+      value: data.delivery.standupsThisWeek,
+      href: "/workspace/standups",
+      icon: Users,
+      accent: "teal" as const,
     },
   ];
 
+  const atRiskProjects = data.governanceRollup.filter(
+    (r) => r.open_risks > 0 || r.open_issues > 0 || r.pending_decisions > 0,
+  );
+
   return (
-    <main className="p-8">
-      <div className="mb-8 flex items-center justify-between">
+    <main className="p-6 lg:p-8">
+      <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Project Overview</h1>
-          <p className="text-sm text-slate-500">Operational delivery dashboard</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-[#0F766E]">
+            {data.userRole.replace(/_/g, " ")} dashboard
+          </p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight">
+            {roleHeading(data.userRole, data.userName)}
+          </h1>
+          <p className="mt-1 max-w-2xl text-sm text-slate-500">
+            {roleSubtitle(data.userRole, data.orgName)}
+          </p>
         </div>
         <Link
           href="/project/new"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62]"
+          className="inline-flex h-9 shrink-0 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62]"
         >
-          New Project
+          New project
         </Link>
+      </header>
+
+      <div className="mb-6">
+        <QuickActionsBar role={data.userRole} />
       </div>
 
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-        {kpis.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.title}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">{card.title}</p>
-                  <p className="mt-1 text-2xl font-bold">{card.value}</p>
-                </div>
-                <div className="text-[#0F766E]">
-                  <Icon size={18} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      <div className="mb-8">
+        <KpiStrip items={kpis} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <DashboardCard className="lg:col-span-2" title="Delivery Performance">
-          <div className="flex h-40 items-center justify-center rounded-xl bg-slate-100 text-sm text-slate-400">
-            Chart Placeholder
-          </div>
-        </DashboardCard>
+      <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <DashboardSection title="Delivery velocity" className="xl:col-span-2">
+          <DeliveryVelocityChart weeks={data.weeklyVelocity} />
+        </DashboardSection>
+        <DashboardSection title="Governance pulse" href="/workspace/governance">
+          <GovernancePulse stats={data.governance} />
+        </DashboardSection>
+      </div>
 
-        <DashboardCard title="Recent Activity">
-          {recentTasks.length === 0 ? (
-            <p className="text-sm text-slate-500">No task activity yet.</p>
-          ) : (
-            <ul className="space-y-3 text-sm text-slate-600">
-              {recentTasks.slice(0, 5).map((task) => (
-                <li key={task.id}>
-                  <Link
-                    href={`/project/${task.project_id}/tasks/${task.id}`}
-                    className="hover:text-[#0F766E]"
-                  >
-                    Task updated: {task.title}
-                  </Link>
-                  <span className="block text-xs text-slate-400">
-                    {task.project_name} ·{" "}
-                    {new Date(task.updated_at).toLocaleDateString()}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </DashboardCard>
+      <DashboardSection title="Project health" href="/workspace/projects" className="mb-8">
+        <ProjectHealthGrid projects={data.projectHealth} />
+      </DashboardSection>
 
-        <DashboardCard className="lg:col-span-2" title="Active Tasks">
+      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+        <DashboardSection title="Active tasks" href="/workspace/tasks" className="xl:col-span-2">
           {activeTaskRows.length === 0 ? (
             <p className="text-sm text-slate-500">
               No open tasks.{" "}
-              <Link href="/workspace/projects" className="text-[#0F766E] hover:underline">
+              <Link href="/project/new" className="text-[#0F766E] hover:underline">
                 Create a project
-              </Link>{" "}
-              to get started.
+              </Link>
             </p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="text-slate-500">
-                    <TableHead className="pb-2 font-medium">Task</TableHead>
-                    <TableHead className="pb-2 font-medium">Project</TableHead>
-                    <TableHead className="pb-2 font-medium">Workstream</TableHead>
-                    <TableHead className="pb-2 font-medium">Status</TableHead>
-                    <TableHead className="pb-2 font-medium">Priority</TableHead>
+                    <TableHead>Task</TableHead>
+                    <TableHead>Project</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Priority</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {activeTaskRows.slice(0, 6).map((task) => (
+                  {activeTaskRows.slice(0, 8).map((task) => (
                     <TableRow key={task.id} className="border-t border-slate-100">
-                      <TableCell className="py-3">
+                      <TableCell>
                         <Link
                           href={`/project/${task.project_id}/tasks/${task.id}`}
                           className="font-medium text-[#0F766E] hover:underline"
@@ -191,8 +223,7 @@ export default async function DashboardPage() {
                           {task.title}
                         </Link>
                       </TableCell>
-                      <TableCell>{task.project_name}</TableCell>
-                      <TableCell>{task.workstream_name ?? "—"}</TableCell>
+                      <TableCell className="text-sm text-slate-600">{task.project_name}</TableCell>
                       <TableCell>
                         <StatusBadge status={task.status} />
                       </TableCell>
@@ -205,38 +236,142 @@ export default async function DashboardPage() {
               </Table>
             </div>
           )}
-        </DashboardCard>
+        </DashboardSection>
 
-        <DashboardCard title="Risk Register">
-          {openRisks.length === 0 ? (
-            <p className="text-sm text-slate-500">
-              No open risks in RAID. Log risks from a project RAID page.
-            </p>
+        <DashboardSection title="Risk register" href="/workspace/governance">
+          {data.openRisks.length === 0 ? (
+            <p className="text-sm text-slate-500">No open risks logged.</p>
           ) : (
-            <div className="space-y-3 text-sm">
-              {openRisks.map((risk) => (
+            <div className="space-y-2">
+              {data.openRisks.map((risk) => (
                 <Link
                   key={risk.id}
                   href={`/project/${risk.project_id}/raid?type=risk`}
-                  className={`block rounded-lg p-3 ${
+                  className={`block rounded-lg p-3 text-sm ${
                     risk.severity === "critical" || risk.severity === "high"
-                      ? "bg-red-50 text-red-700"
-                      : "bg-yellow-50 text-yellow-700"
+                      ? "bg-red-50 text-red-800"
+                      : "bg-amber-50 text-amber-800"
                   }`}
                 >
                   {risk.title}
-                  <span className="mt-1 block text-xs opacity-80">
-                    {risk.project_name}
-                  </span>
+                  <span className="mt-0.5 block text-xs opacity-75">{risk.project_name}</span>
                 </Link>
               ))}
             </div>
           )}
-        </DashboardCard>
+        </DashboardSection>
+
+        <DashboardSection title="Recent meetings" href="/workspace/projects">
+          {data.recentMeetings.length === 0 ? (
+            <p className="text-sm text-slate-500">
+              No meetings yet. Log one from a project&apos;s Meetings page.
+            </p>
+          ) : (
+            <ul className="space-y-3 text-sm">
+              {data.recentMeetings.map((m) => (
+                <li key={m.id}>
+                  <Link
+                    href={`/project/${m.project_id}/meetings`}
+                    className="font-medium text-[#0F766E] hover:underline"
+                  >
+                    {m.title}
+                  </Link>
+                  <span className="mt-0.5 flex items-center gap-1 text-xs text-slate-400">
+                    <CalendarClock size={11} />
+                    {m.project_name}
+                    {m.scheduled_at
+                      ? ` · ${new Date(m.scheduled_at).toLocaleDateString()}`
+                      : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardSection>
+
+        <DashboardSection title="Pending decisions" href="/workspace/governance">
+          {data.pendingDecisions.length === 0 ? (
+            <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
+          ) : (
+            <ul className="space-y-3 text-sm">
+              {data.pendingDecisions.map((d) => (
+                <li key={d.id} className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
+                  <Link
+                    href={`/project/${d.project_id}/decisions`}
+                    className="font-medium text-indigo-900 hover:underline"
+                  >
+                    {d.title}
+                  </Link>
+                  <span className="mt-0.5 block text-xs text-indigo-600/70">{d.project_name}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardSection>
+
+        <DashboardSection title="Standups this week" href="/workspace/standups">
+          <StandupsFeed standups={data.recentStandups} />
+        </DashboardSection>
+
+        <DashboardSection title="Latest reports" href="/workspace/reports">
+          {data.recentReports.length === 0 ? (
+            <p className="text-sm text-slate-500">No status reports generated yet.</p>
+          ) : (
+            <ul className="space-y-3 text-sm">
+              {data.recentReports.map((r) => (
+                <li key={r.id}>
+                  <Link
+                    href={`/project/${r.project_id}/reports/${r.id}`}
+                    className="font-medium text-[#0F766E] hover:underline"
+                  >
+                    {r.title}
+                  </Link>
+                  <span className="mt-0.5 block text-xs text-slate-400">
+                    {r.project_name} · {new Date(r.generated_at).toLocaleDateString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardSection>
       </div>
 
+      {atRiskProjects.length > 0 ? (
+        <DashboardSection title="Governance by project" href="/workspace/governance" className="mb-8">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="text-slate-500">
+                  <TableHead>Project</TableHead>
+                  <TableHead>Open risks</TableHead>
+                  <TableHead>Open issues</TableHead>
+                  <TableHead>Pending decisions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {atRiskProjects.slice(0, 8).map((row) => (
+                  <TableRow key={row.project_id} className="border-t border-slate-100">
+                    <TableCell>
+                      <Link
+                        href={`/project/${row.project_id}`}
+                        className="font-medium text-[#0F766E] hover:underline"
+                      >
+                        {row.project_name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{row.open_risks}</TableCell>
+                    <TableCell>{row.open_issues}</TableCell>
+                    <TableCell>{row.pending_decisions}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </DashboardSection>
+      ) : null}
+
       {topProject && topAlignment ? (
-        <div className="mt-8">
+        <div className="mb-8">
           <AlignmentSummaryCard
             projectId={topProject.id}
             projectName={topProject.name}
@@ -261,69 +396,62 @@ export default async function DashboardPage() {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Recent projects</h2>
           <Link
-            href="/project/new"
+            href="/workspace/projects"
             className="inline-flex items-center gap-1 text-sm text-[#0F766E] hover:underline"
           >
-            New project <ArrowUpRight size={14} />
+            All projects <ArrowUpRight size={14} />
           </Link>
         </div>
-        {recentProjects && recentProjects.length > 0 ? (
+        {data.recentProjects.length > 0 ? (
           <ul className="divide-y divide-slate-100">
-            {recentProjects.map((p) => (
-              <li key={p.id}>
-                <Link
-                  href={`/project/${p.id}`}
-                  className="flex items-center justify-between py-3 transition hover:bg-slate-50"
-                >
-                  <div>
-                    <div className="font-medium">{p.name}</div>
-                    <div className="text-xs text-slate-500">
-                      {p.delivery_type ?? "—"} ·{" "}
-                      {new Date(p.created_at).toLocaleDateString()}
+            {data.recentProjects.map((p) => {
+              const health = data.projectHealth.find((h) => h.id === p.id);
+              return (
+                <li key={p.id}>
+                  <Link
+                    href={`/project/${p.id}`}
+                    className="flex items-center justify-between gap-4 py-3 transition hover:bg-slate-50"
+                  >
+                    <div>
+                      <div className="font-medium">{p.name}</div>
+                      <div className="text-xs text-slate-500">
+                        {p.delivery_type ?? "—"} ·{" "}
+                        {new Date(p.created_at).toLocaleDateString()}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-600">
-                      {p.status}
-                    </span>
-                    <ArrowUpRight size={14} className="text-slate-400" />
-                  </div>
-                </Link>
-              </li>
-            ))}
+                    <div className="flex items-center gap-3">
+                      {health ? (
+                        <span
+                          className={`text-sm font-semibold ${
+                            health.healthScore >= 80
+                              ? "text-emerald-600"
+                              : health.healthScore >= 60
+                                ? "text-amber-600"
+                                : "text-rose-600"
+                          }`}
+                        >
+                          {health.healthScore}
+                        </span>
+                      ) : null}
+                      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-600">
+                        {p.status}
+                      </span>
+                      <ArrowUpRight size={14} className="text-slate-400" />
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
             No projects yet.{" "}
-            <Link
-              href="/project/new"
-              className="font-medium text-[#0F766E] hover:underline"
-            >
+            <Link href="/project/new" className="font-medium text-[#0F766E] hover:underline">
               Create your first project
             </Link>
-            .
           </div>
         )}
       </section>
     </main>
-  );
-}
-
-function DashboardCard({
-  title,
-  children,
-  className,
-}: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <section
-      className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ${className ?? ""}`}
-    >
-      <h2 className="mb-4 text-lg font-semibold">{title}</h2>
-      {children}
-    </section>
   );
 }

@@ -771,3 +771,74 @@ export async function listOpenRaidOrg(limit = 8) {
     };
   });
 }
+
+export async function listOrgMeetingsRecent(limit = 6): Promise<
+  Array<Pick<MeetingRow, "id" | "title" | "status" | "scheduled_at" | "project_id" | "created_at"> & {
+    project_name: string;
+  }>
+> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("meetings")
+    .select("id, title, status, scheduled_at, project_id, created_at, projects!inner(name)")
+    .order("scheduled_at", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as {
+      id: string;
+      title: string;
+      status: MeetingStatus;
+      scheduled_at: string | null;
+      project_id: string;
+      created_at: string;
+      projects: { name: string };
+    };
+    return {
+      id: r.id,
+      title: r.title,
+      status: r.status,
+      scheduled_at: r.scheduled_at,
+      project_id: r.project_id,
+      created_at: r.created_at,
+      project_name: r.projects.name,
+    };
+  });
+}
+
+export async function listOrgDecisionsPending(limit = 6): Promise<
+  Array<Pick<DecisionRow, "id" | "title" | "status" | "project_id" | "created_at"> & {
+    project_name: string;
+  }>
+> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("decisions")
+    .select("id, title, status, project_id, created_at, projects!inner(name)")
+    .eq("status", "proposed")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as {
+      id: string;
+      title: string;
+      status: DecisionStatus;
+      project_id: string;
+      created_at: string;
+      projects: { name: string };
+    };
+    return {
+      id: r.id,
+      title: r.title,
+      status: r.status,
+      project_id: r.project_id,
+      created_at: r.created_at,
+      project_name: r.projects.name,
+    };
+  });
+}

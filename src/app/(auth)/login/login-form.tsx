@@ -2,6 +2,12 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import {
+  authButtonClass,
+  authInputClass,
+  authLabelClass,
+  authLinkClass,
+} from "@/components/marketing/auth-panel";
 import { loginAction, type LoginState } from "./actions";
 
 const initial: LoginState = { ok: false };
@@ -12,25 +18,23 @@ export function LoginForm({ next }: { next?: string }) {
   return (
     <form action={formAction} className="mt-6 space-y-4">
       {next ? <input type="hidden" name="next" value={next} /> : null}
+
       <label className="block">
-        <span className="text-sm font-medium text-slate-700">Email</span>
+        <span className={authLabelClass}>Email</span>
         <input
           name="email"
           type="email"
           required
           autoComplete="email"
           placeholder="you@company.com"
-          className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none ring-[#0F766E]/40 transition focus:border-[#0F766E] focus:ring-2"
+          className={authInputClass}
         />
       </label>
 
       <label className="block">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-slate-700">Password</span>
-          <Link
-            href="/login/forgot"
-            className="text-xs font-medium text-[#0F766E] hover:underline"
-          >
+          <span className={authLabelClass}>Password</span>
+          <Link href="/login/forgot" className={`text-xs ${authLinkClass}`}>
             Forgot password?
           </Link>
         </div>
@@ -39,21 +43,17 @@ export function LoginForm({ next }: { next?: string }) {
           type="password"
           required
           autoComplete="current-password"
-          className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none ring-[#0F766E]/40 transition focus:border-[#0F766E] focus:ring-2"
+          className={authInputClass}
         />
       </label>
 
       {state.error ? (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
           {state.error}
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex h-10 w-full items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white transition hover:bg-[#0E6B62] disabled:opacity-60"
-      >
+      <button type="submit" disabled={pending} className={authButtonClass}>
         {pending ? "Signing in…" : "Sign in"}
       </button>
     </form>

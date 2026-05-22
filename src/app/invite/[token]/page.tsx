@@ -31,7 +31,7 @@ export default async function InviteAcceptPage({ params }: { params: Params }) {
             </h1>
             <p className="mt-2 text-sm text-slate-500">
               Sign in or create an account with the email address that received
-              this invitation to join your team on DeliverX.
+              this invitation.
             </p>
             <div className="mt-6 flex flex-col gap-3">
               <Link
