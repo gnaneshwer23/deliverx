@@ -9,6 +9,7 @@ import {
   FileBarChart2,
   GitBranch,
   ShieldCheck,
+  Sparkles,
   Users,
 } from "lucide-react";
 import type { UserRole } from "@/services/dashboard";
@@ -21,6 +22,7 @@ type Action = {
 };
 
 const ACTIONS: Action[] = [
+  { href: "/workspace/assistant", label: "Ask assistant", icon: Sparkles },
   { href: "/project/new", label: "New project", icon: GitBranch },
   { href: "/workspace/tasks", label: "Task inbox", icon: CheckSquare },
   { href: "/workspace/governance", label: "Governance", icon: ShieldCheck },
@@ -43,7 +45,7 @@ export function QuickActionsBar({ role }: { role: UserRole }) {
           <Link
             key={action.href}
             href={action.href}
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:border-[#0F766E]/40 hover:text-[#0F766E]"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#1a1a1a]/10 bg-white px-3 py-1.5 text-xs font-medium text-[#4b5563] shadow-sm transition hover:border-[#6ee7c7]/50 hover:text-[#0a0e14]"
           >
             <Icon size={13} />
             {action.label}

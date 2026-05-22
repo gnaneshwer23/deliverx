@@ -32,6 +32,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AiInsights } from "./ai-insights";
+import { SovereignPageHeader } from "@/components/sovereign/sovereign-page-header";
+import { sovereignClass } from "@/lib/sovereign-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -151,25 +153,16 @@ export default async function DashboardPage() {
 
   return (
     <main className="p-6 lg:p-8">
-      <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-[#0F766E]">
-            {data.userRole.replace(/_/g, " ")} dashboard
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight">
-            {roleHeading(data.userRole, data.userName)}
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-slate-500">
-            {roleSubtitle(data.userRole, data.orgName)}
-          </p>
-        </div>
-        <Link
-          href="/project/new"
-          className="inline-flex h-9 shrink-0 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62]"
-        >
-          New project
-        </Link>
-      </header>
+      <SovereignPageHeader
+        eyebrow={`${data.userRole.replace(/_/g, " ")} dashboard`}
+        title={roleHeading(data.userRole, data.userName)}
+        description={roleSubtitle(data.userRole, data.orgName)}
+        action={
+          <Link href="/project/new" className={`${sovereignClass.pillPrimary} h-11 shrink-0`}>
+            New project
+          </Link>
+        }
+      />
 
       <div className="mb-6">
         <QuickActionsBar role={data.userRole} />
@@ -195,9 +188,9 @@ export default async function DashboardPage() {
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <DashboardSection title="Active tasks" href="/workspace/tasks" className="xl:col-span-2">
           {activeTaskRows.length === 0 ? (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-[#6b7280]">
               No open tasks.{" "}
-              <Link href="/project/new" className="text-[#0F766E] hover:underline">
+              <Link href="/project/new" className="text-[#0a0e14] underline decoration-[#6ee7c7]/60 hover:decoration-[#6ee7c7]">
                 Create a project
               </Link>
             </p>
@@ -218,7 +211,7 @@ export default async function DashboardPage() {
                       <TableCell>
                         <Link
                           href={`/project/${task.project_id}/tasks/${task.id}`}
-                          className="font-medium text-[#0F766E] hover:underline"
+                          className="font-medium text-[#0a0e14] underline decoration-[#6ee7c7]/40 hover:decoration-[#6ee7c7]"
                         >
                           {task.title}
                         </Link>
@@ -392,12 +385,12 @@ export default async function DashboardPage() {
         recommendation={recommendation}
       />
 
-      <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className={`${sovereignClass.card} mt-8 p-6`}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Recent projects</h2>
+          <h2 className={sovereignClass.sectionTitle}>Recent projects</h2>
           <Link
             href="/workspace/projects"
-            className="inline-flex items-center gap-1 text-sm text-[#0F766E] hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#4b5563] hover:text-[#0a0e14]"
           >
             All projects <ArrowUpRight size={14} />
           </Link>
@@ -446,7 +439,7 @@ export default async function DashboardPage() {
         ) : (
           <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
             No projects yet.{" "}
-            <Link href="/project/new" className="font-medium text-[#0F766E] hover:underline">
+            <Link href="/project/new" className="font-medium text-[#0a0e14] underline decoration-[#6ee7c7]/60">
               Create your first project
             </Link>
           </div>

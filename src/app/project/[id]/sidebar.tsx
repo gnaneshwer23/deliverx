@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
-import { brandClass } from "@/lib/brand";
 
 type NavItem = { label: string; href: string };
 
@@ -71,28 +70,31 @@ export function ProjectSidebar({
   ];
 
   return (
-    <aside className="hidden w-72 shrink-0 flex-col border-r bg-white p-6 md:flex">
+    <aside className="hidden w-72 shrink-0 flex-col border-r border-white/10 bg-[#0a0e14] p-6 text-[#f8f6f2] md:flex">
       <div className="mb-8 flex items-center justify-between">
-        <Link href="/" className="text-lg font-bold tracking-tight">
+        <Link
+          href="/"
+          className="font-[family-name:var(--font-display)] text-lg tracking-tight"
+        >
           DeliverX
         </Link>
         <Link
           href="/project/new"
-          className={`rounded-md p-1 text-slate-500 hover:bg-slate-100 ${brandClass.textHover}`}
+          className="rounded-md p-1 text-[#9ca3af] transition hover:bg-white/5 hover:text-[#6ee7c7]"
           title="New project"
         >
           <Plus size={16} />
         </Link>
       </div>
 
-      <div className="mb-6 truncate text-sm font-semibold" title={projectName}>
+      <div className="mb-6 truncate text-sm font-semibold text-[#f8f6f2]" title={projectName}>
         {projectName}
       </div>
 
       <nav className="flex flex-col gap-1 text-sm">
         {sections.map((section) => (
           <div key={section.label}>
-            <div className="mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 first:mt-0">
+            <div className="mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] first:mt-0">
               {section.label}
             </div>
             {section.items.map((item) => {
@@ -103,8 +105,8 @@ export function ProjectSidebar({
                   href={item.href}
                   className={`flex items-center rounded-lg px-3 py-2 transition ${
                     active
-                      ? brandClass.activeNav
-                      : "text-slate-600 hover:bg-slate-100"
+                      ? "bg-[#6ee7c7]/10 font-semibold text-[#6ee7c7]"
+                      : "text-[#9ca3af] hover:bg-white/5 hover:text-[#f8f6f2]"
                   }`}
                 >
                   {item.label}
@@ -118,7 +120,7 @@ export function ProjectSidebar({
       <div className="mt-auto space-y-3 pt-6">
         <Link
           href="/workspace/projects"
-          className="flex items-center gap-2 text-xs text-slate-500 hover:text-[#0F766E]"
+          className="flex items-center gap-2 text-xs text-[#9ca3af] transition hover:text-[#6ee7c7]"
         >
           <ArrowLeft size={14} />
           All projects

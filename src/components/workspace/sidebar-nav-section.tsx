@@ -37,7 +37,7 @@ export function SidebarNavSection({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="mt-4 mb-1 flex w-full items-center justify-between rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-600"
+        className="mt-4 mb-1 flex w-full items-center justify-between rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] hover:text-[#9ca3af]"
         aria-expanded={open}
       >
         {label}
@@ -74,8 +74,8 @@ export function SidebarNavLink({
       href={item.href}
       className={`group flex items-center gap-2 rounded-md px-2 py-1.5 transition ${
         active
-          ? "bg-[#0F766E]/10 font-semibold text-[#0F766E]"
-          : "text-slate-700 hover:bg-slate-100"
+          ? "bg-[#6ee7c7]/10 font-semibold text-[#6ee7c7]"
+          : "text-[#9ca3af] hover:bg-white/5 hover:text-[#f8f6f2]"
       }`}
     >
       <Icon size={16} />

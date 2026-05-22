@@ -5,6 +5,8 @@ import { Copy, Check } from "lucide-react";
 import { sendInviteAction, type InviteState } from "./actions";
 import { buildInviteUrl } from "@/lib/invite-url";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { SovereignError, SovereignLabel } from "@/components/sovereign/sovereign-form";
+import { sovereignClass } from "@/lib/sovereign-theme";
 
 const initial: InviteState = { ok: false };
 
@@ -36,24 +38,24 @@ export function InviteForm({
 
   return (
     <div className="mt-6 space-y-6">
-      <form action={action} className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+      <form action={action} className="space-y-4 rounded-xl border border-[#1a1a1a]/8 bg-[#f5f2ed]/60 p-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-1">
-            <span className="text-sm font-medium text-slate-700">Email</span>
+            <SovereignLabel>Email</SovereignLabel>
             <input
               name="email"
               type="email"
               required
               placeholder="colleague@company.com"
-              className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none ring-[#0F766E]/40 focus:border-[#0F766E] focus:ring-2"
+              className={sovereignClass.input}
             />
           </label>
           <label className="block sm:col-span-1">
-            <span className="text-sm font-medium text-slate-700">Role</span>
+            <SovereignLabel>Role</SovereignLabel>
             <select
               name="role"
               defaultValue="team_member"
-              className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm"
+              className={sovereignClass.input}
             >
               <option value="team_member">Team member</option>
               <option value="pm">Project Manager</option>
@@ -61,9 +63,7 @@ export function InviteForm({
             </select>
           </label>
         </div>
-        {state.error ? (
-          <p className="text-sm text-rose-600">{state.error}</p>
-        ) : null}
+        {state.error ? <SovereignError>{state.error}</SovereignError> : null}
         {state.ok && state.inviteUrl ? (
           <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
             <p className="font-medium">Invitation created for {state.email}</p>
@@ -76,7 +76,7 @@ export function InviteForm({
         <button
           type="submit"
           disabled={pendingSubmit}
-          className="inline-flex h-10 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62] disabled:opacity-60"
+          className={`${sovereignClass.pillPrimary} h-11 disabled:opacity-50`}
         >
           {pendingSubmit ? "Creating…" : "Create invitation"}
         </button>
@@ -84,12 +84,12 @@ export function InviteForm({
 
       {pending.length > 0 ? (
         <div>
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">Pending invitations</h2>
+          <h2 className="mb-3 text-sm font-semibold text-[#1a1a1a]">Pending invitations</h2>
           <ul className="space-y-2">
             {pending.map((inv) => (
               <li
                 key={inv.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#1a1a1a]/8 bg-white px-3 py-2 text-sm"
               >
                 <div>
                   <span className="font-medium">{inv.email}</span>

@@ -19,6 +19,7 @@ import {
   BrainCircuit,
   Store,
   Globe2,
+  Sparkles,
   MessageSquare,
 } from "lucide-react";
 import {
@@ -29,6 +30,7 @@ import {
 
 const coreNav: SidebarNavItem[] = [
   { href: "/workspace/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/workspace/assistant", label: "Assistant", icon: Sparkles },
   { href: "/workspace/projects", label: "Projects", icon: FolderKanban },
   { href: "/workspace/tasks", label: "Tasks", icon: ListChecks },
   { href: "/workspace/standups", label: "Standups", icon: MessageSquare },
@@ -59,11 +61,16 @@ export function WorkspaceSidebar({
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r bg-white p-6 md:flex">
-      <Link href="/workspace/dashboard" className="text-xl font-bold tracking-tight">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-[#0a0e14] p-6 md:flex">
+      <Link
+        href="/workspace/dashboard"
+        className="font-[family-name:var(--font-display)] text-xl tracking-tight text-[#f8f6f2]"
+      >
         DeliverX
       </Link>
-      <div className="mt-1 truncate text-xs text-slate-500">{orgName ?? "Workspace"}</div>
+      <div className="mt-1 truncate text-[11px] uppercase tracking-[0.15em] text-[#9ca3af]">
+        {orgName ?? "Workspace"}
+      </div>
 
       <nav className="mt-8 flex flex-col gap-1 text-sm">
         <SidebarNavLinks items={coreNav} pathname={pathname} />
@@ -75,14 +82,14 @@ export function WorkspaceSidebar({
         />
       </nav>
 
-      <div className="mt-auto flex flex-col gap-3 border-t pt-4 text-xs">
+      <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-4 text-xs">
         <Link
           href="/workspace/settings"
-          className="flex items-center gap-2 text-slate-600 hover:text-[#0F766E]"
+          className="flex items-center gap-2 text-[#9ca3af] transition hover:text-[#6ee7c7]"
         >
           <Settings size={14} /> Settings
         </Link>
-        <div className="truncate text-slate-500" title={userEmail ?? undefined}>
+        <div className="truncate text-[#6b7280]" title={userEmail ?? undefined}>
           {userEmail}
         </div>
       </div>

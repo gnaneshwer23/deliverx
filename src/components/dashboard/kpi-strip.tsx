@@ -11,10 +11,10 @@ export type KpiItem = {
 };
 
 const ACCENT: Record<NonNullable<KpiItem["accent"]>, string> = {
-  teal: "border-l-[#0F766E] text-[#0F766E]",
-  amber: "border-l-amber-500 text-amber-600",
-  rose: "border-l-rose-500 text-rose-600",
-  slate: "border-l-slate-300 text-slate-600",
+  teal: "border-l-[#6ee7c7] text-[#0a0e14]",
+  amber: "border-l-amber-500 text-amber-700",
+  rose: "border-l-rose-500 text-rose-700",
+  slate: "border-l-[#1a1a1a]/20 text-[#4b5563]",
 };
 
 export function KpiStrip({ items }: { items: KpiItem[] }) {
@@ -25,16 +25,18 @@ export function KpiStrip({ items }: { items: KpiItem[] }) {
         const accent = ACCENT[item.accent ?? "slate"];
         const inner = (
           <div
-            className={`rounded-xl border border-l-4 border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md ${accent.split(" ")[0]}`}
+            className={`rounded-xl border border-[#1a1a1a]/8 border-l-4 bg-white p-4 shadow-sm transition hover:shadow-md ${accent.split(" ")[0]}`}
           >
             <div className="flex items-start justify-between gap-2">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[#6b7280]">
                 {item.label}
               </p>
               {Icon ? <Icon size={14} className={accent.split(" ").slice(1).join(" ")} /> : null}
             </div>
-            <p className="mt-1 text-2xl font-bold tracking-tight text-[#0F172A]">{item.value}</p>
-            {item.hint ? <p className="mt-0.5 text-xs text-slate-400">{item.hint}</p> : null}
+            <p className="mt-1 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[#1a1a1a]">
+              {item.value}
+            </p>
+            {item.hint ? <p className="mt-0.5 text-xs text-[#9ca3af]">{item.hint}</p> : null}
           </div>
         );
 

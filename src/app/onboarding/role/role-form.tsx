@@ -2,6 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { setRoleAction, type RoleState } from "./actions";
+import { SovereignError } from "@/components/sovereign/sovereign-form";
+import { sovereignClass } from "@/lib/sovereign-theme";
 
 const initial: RoleState = { ok: false };
 
@@ -28,7 +30,7 @@ export function RoleForm() {
   const [selected, setSelected] = useState<string>("pm");
 
   return (
-    <form action={formAction} className="mt-6 space-y-4">
+    <form action={formAction} className="space-y-4">
       <input type="hidden" name="role" value={selected} />
 
       <div className="space-y-3">
@@ -39,18 +41,18 @@ export function RoleForm() {
               type="button"
               key={r.value}
               onClick={() => setSelected(r.value)}
-              className={`flex w-full items-start gap-3 rounded-lg border p-4 text-left transition ${
+              className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${
                 active
-                  ? "border-[#0F766E] bg-[#0F766E]/5 ring-2 ring-[#0F766E]/30"
-                  : "border-slate-200 bg-white hover:border-slate-300"
+                  ? "border-[#6ee7c7]/50 bg-[#6ee7c7]/10 ring-2 ring-[#6ee7c7]/20"
+                  : "border-[#1a1a1a]/10 bg-white hover:border-[#1a1a1a]/20"
               }`}
             >
               <span
                 aria-hidden
                 className={`mt-0.5 flex size-5 items-center justify-center rounded-full border ${
                   active
-                    ? "border-[#0F766E] bg-[#0F766E] text-white"
-                    : "border-slate-300 bg-white"
+                    ? "border-[#0a0e14] bg-[#0a0e14] text-[#6ee7c7]"
+                    : "border-[#1a1a1a]/15 bg-white"
                 }`}
               >
                 {active ? (
@@ -70,24 +72,20 @@ export function RoleForm() {
                 ) : null}
               </span>
               <span>
-                <span className="block text-sm font-semibold">{r.title}</span>
-                <span className="block text-xs text-slate-500">{r.desc}</span>
+                <span className="block text-sm font-semibold text-[#1a1a1a]">{r.title}</span>
+                <span className="block text-xs text-[#6b7280]">{r.desc}</span>
               </span>
             </button>
           );
         })}
       </div>
 
-      {state.error ? (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-          {state.error}
-        </p>
-      ) : null}
+      {state.error ? <SovereignError>{state.error}</SovereignError> : null}
 
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex h-10 w-full items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white transition hover:bg-[#0E6B62] disabled:opacity-60"
+        className={`${sovereignClass.pillPrimary} h-11 w-full disabled:opacity-50`}
       >
         {pending ? "Saving…" : "Continue"}
       </button>
