@@ -21,42 +21,33 @@ import {
   Globe2,
   MessageSquare,
 } from "lucide-react";
+import {
+  SidebarNavLinks,
+  SidebarNavSection,
+  type SidebarNavItem,
+} from "@/components/workspace/sidebar-nav-section";
 
-type NavItem = {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ size?: number }>;
-  soon?: boolean;
-  section?: "core" | "orchestration" | "intelligence" | "ecosystem" | "global" | "delivery";
-};
-
-const nav: NavItem[] = [
-  { href: "/workspace/dashboard", label: "Dashboard", icon: LayoutDashboard, section: "core" },
-  { href: "/workspace/projects", label: "Projects", icon: FolderKanban, section: "core" },
-  { href: "/workspace/portfolio", label: "Portfolio", icon: Briefcase, section: "orchestration" },
-  { href: "/workspace/programmes", label: "Programmes", icon: Layers, section: "orchestration" },
-  { href: "/workspace/pmo", label: "PMO Dashboard", icon: Command, section: "orchestration" },
-  { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, section: "orchestration" },
-  { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit, section: "ecosystem" },
-  { href: "/workspace/marketplace", label: "Marketplace", icon: Store, section: "ecosystem" },
-  { href: "/workspace/global", label: "Global Intelligence", icon: Globe2, section: "global" },
-  { href: "/workspace/memory", label: "Organisational Memory", icon: Brain, section: "intelligence" },
-  { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
-  { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
-  { href: "/workspace/tasks", label: "Tasks", icon: ListChecks, section: "delivery" },
-  { href: "/workspace/standups", label: "Standups", icon: MessageSquare, section: "delivery" },
-  { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, section: "delivery" },
-  { href: "/workspace/reports", label: "Reports", icon: FileBarChart2, section: "delivery" },
+const coreNav: SidebarNavItem[] = [
+  { href: "/workspace/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/workspace/projects", label: "Projects", icon: FolderKanban },
+  { href: "/workspace/tasks", label: "Tasks", icon: ListChecks },
+  { href: "/workspace/standups", label: "Standups", icon: MessageSquare },
+  { href: "/workspace/governance", label: "Governance", icon: ShieldCheck },
+  { href: "/workspace/reports", label: "Reports", icon: FileBarChart2 },
 ];
 
-const SECTION_LABEL: Record<NonNullable<NavItem["section"]>, string> = {
-  core: "",
-  orchestration: "Orchestration",
-  intelligence: "Intelligence",
-  ecosystem: "Ecosystem",
-  global: "Global Network",
-  delivery: "Delivery",
-};
+const advancedNav: SidebarNavItem[] = [
+  { href: "/workspace/portfolio", label: "Portfolio", icon: Briefcase },
+  { href: "/workspace/programmes", label: "Programmes", icon: Layers },
+  { href: "/workspace/pmo", label: "PMO Dashboard", icon: Command },
+  { href: "/workspace/twin", label: "Digital Twin", icon: Telescope },
+  { href: "/workspace/memory", label: "Organisational Memory", icon: Brain },
+  { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen },
+  { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge },
+  { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit },
+  { href: "/workspace/marketplace", label: "Marketplace", icon: Store },
+  { href: "/workspace/global", label: "Global Intelligence", icon: Globe2 },
+];
 
 export function WorkspaceSidebar({
   orgName,
@@ -75,45 +66,13 @@ export function WorkspaceSidebar({
       <div className="mt-1 truncate text-xs text-slate-500">{orgName ?? "Workspace"}</div>
 
       <nav className="mt-8 flex flex-col gap-1 text-sm">
-        {nav.map((item, idx) => {
-          const Icon = item.icon;
-          const active =
-            pathname === item.href ||
-            (item.href !== "/workspace/dashboard" && pathname.startsWith(item.href + "/"));
-          const prevSection = idx > 0 ? nav[idx - 1].section : undefined;
-          const showHeader =
-            item.section &&
-            item.section !== prevSection &&
-            SECTION_LABEL[item.section];
-          return (
-            <div key={`${item.href}-${item.label}`}>
-              {showHeader ? (
-                <div className="mt-4 mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                  {SECTION_LABEL[item.section!]}
-                </div>
-              ) : null}
-              <Link
-                href={item.soon ? "#" : item.href}
-                aria-disabled={item.soon}
-                className={`group flex items-center gap-2 rounded-md px-2 py-1.5 transition ${
-                  active
-                    ? "bg-[#0F766E]/10 font-semibold text-[#0F766E]"
-                    : item.soon
-                      ? "text-slate-400"
-                      : "text-slate-700 hover:bg-slate-100"
-                }`}
-              >
-                <Icon size={16} />
-                <span className="flex-1">{item.label}</span>
-                {item.soon ? (
-                  <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
-                    Soon
-                  </span>
-                ) : null}
-              </Link>
-            </div>
-          );
-        })}
+        <SidebarNavLinks items={coreNav} pathname={pathname} />
+        <SidebarNavSection
+          label="Advanced"
+          items={advancedNav}
+          pathname={pathname}
+          defaultOpen={false}
+        />
       </nav>
 
       <div className="mt-auto flex flex-col gap-3 border-t pt-4 text-xs">

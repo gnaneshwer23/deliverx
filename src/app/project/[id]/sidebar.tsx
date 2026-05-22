@@ -2,10 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { brandClass } from "@/lib/brand";
 
-type Item = { label: string; href: string; soon?: boolean };
+type NavItem = { label: string; href: string };
+
+type NavSection = {
+  label: string;
+  items: NavItem[];
+};
+
+function isActive(pathname: string, href: string) {
+  if (pathname === href) return true;
+  if (href.endsWith("/tasks") && pathname.startsWith(`${href}/`)) return true;
+  if (href.endsWith("/reports") && pathname.startsWith(`${href}/`)) return true;
+  if (href.includes("/charter") && pathname.startsWith(href)) return true;
+  if (href.includes("/standups") && pathname.startsWith(href)) return true;
+  if (href.includes("/stakeholders") && pathname.startsWith(href)) return true;
+  if (href.includes("/traceability") && pathname.startsWith(href)) return true;
+  if (href.includes("/meetings") && pathname.startsWith(href)) return true;
+  if (href.includes("/workstreams") && pathname.startsWith(href)) return true;
+  return false;
+}
 
 export function ProjectSidebar({
   projectId,
@@ -16,21 +34,40 @@ export function ProjectSidebar({
 }) {
   const pathname = usePathname();
 
-  const items: Item[] = [
-    { label: "Overview", href: `/project/${projectId}` },
-    { label: "Charter", href: `/project/${projectId}/charter` },
-    { label: "Projects", href: "/workspace/dashboard" },
-    { label: "Workstreams", href: `/project/${projectId}/workstreams` },
-    { label: "Tasks", href: `/project/${projectId}/tasks` },
-    { label: "Meetings", href: `/project/${projectId}/meetings` },
-    { label: "Standups", href: `/project/${projectId}/standups` },
-    { label: "Stakeholders", href: `/project/${projectId}/stakeholders` },
-    { label: "Traceability", href: `/project/${projectId}/traceability` },
-    { label: "RAID", href: `/project/${projectId}/raid` },
-    { label: "Decisions", href: `/project/${projectId}/decisions` },
-    { label: "Documents", href: `/project/${projectId}/documents` },
-    { label: "Changes", href: `/project/${projectId}/changes` },
-    { label: "Reports", href: `/project/${projectId}/reports` },
+  const sections: NavSection[] = [
+    {
+      label: "Project",
+      items: [
+        { label: "Overview", href: `/project/${projectId}` },
+        { label: "Charter", href: `/project/${projectId}/charter` },
+      ],
+    },
+    {
+      label: "Delivery",
+      items: [
+        { label: "Workstreams", href: `/project/${projectId}/workstreams` },
+        { label: "Tasks", href: `/project/${projectId}/tasks` },
+        { label: "Meetings", href: `/project/${projectId}/meetings` },
+        { label: "Standups", href: `/project/${projectId}/standups` },
+      ],
+    },
+    {
+      label: "Governance",
+      items: [
+        { label: "RAID", href: `/project/${projectId}/raid` },
+        { label: "Decisions", href: `/project/${projectId}/decisions` },
+        { label: "Documents", href: `/project/${projectId}/documents` },
+        { label: "Changes", href: `/project/${projectId}/changes` },
+        { label: "Reports", href: `/project/${projectId}/reports` },
+      ],
+    },
+    {
+      label: "People & trace",
+      items: [
+        { label: "Stakeholders", href: `/project/${projectId}/stakeholders` },
+        { label: "Traceability", href: `/project/${projectId}/traceability` },
+      ],
+    },
   ];
 
   return (
@@ -48,52 +85,44 @@ export function ProjectSidebar({
         </Link>
       </div>
 
-      <div className="mb-3 text-xs uppercase tracking-wide text-slate-400">
-        Project
-      </div>
       <div className="mb-6 truncate text-sm font-semibold" title={projectName}>
         {projectName}
       </div>
 
       <nav className="flex flex-col gap-1 text-sm">
-        {items.map((item) => {
-          const active =
-            pathname === item.href ||
-            (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`)) ||
-            (item.href.includes("/reports") && pathname.startsWith(`${item.href}/`)) ||
-            (item.href.includes("/charter") && pathname.startsWith(item.href)) ||
-            (item.href.includes("/standups") && pathname.startsWith(item.href)) ||
-            (item.href.includes("/stakeholders") && pathname.startsWith(item.href)) ||
-            (item.href.includes("/traceability") && pathname.startsWith(item.href));
-          return (
-            <Link
-              key={item.label}
-              href={item.soon ? "#" : item.href}
-              aria-disabled={item.soon}
-              className={`flex items-center justify-between rounded-lg px-3 py-2 transition ${
-                active
-                  ? brandClass.activeNav
-                  : item.soon
-                    ? "text-slate-400"
-                    : "text-slate-600 hover:bg-slate-100"
-              }`}
-            >
-              <span>{item.label}</span>
-              {item.soon ? (
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
-                  Soon
-                </span>
-              ) : null}
-            </Link>
-          );
-        })}
+        {sections.map((section) => (
+          <div key={section.label}>
+            <div className="mb-1 mt-3 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 first:mt-0">
+              {section.label}
+            </div>
+            {section.items.map((item) => {
+              const active = isActive(pathname, item.href);
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`flex items-center rounded-lg px-3 py-2 transition ${
+                    active
+                      ? brandClass.activeNav
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
-      <div className="mt-auto">
-        <div className="rounded-xl border border-slate-200 bg-white p-4 text-xs">
-          <p className="mb-2 font-semibold">Project Health</p>
-          <p className="text-slate-500">Delivery stable</p>
-        </div>
+      <div className="mt-auto space-y-3 pt-6">
+        <Link
+          href="/workspace/projects"
+          className="flex items-center gap-2 text-xs text-slate-500 hover:text-[#0F766E]"
+        >
+          <ArrowLeft size={14} />
+          All projects
+        </Link>
       </div>
     </aside>
   );

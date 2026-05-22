@@ -1,11 +1,6 @@
 /**
  * Forecast Engine — pure compute. Given a project's signals, emits a
  * short-horizon prediction and a confidence score.
- *
- * Today the inputs come from the deterministic mock signal loader, so
- * outputs are stable per project ID. When the tasks/blockers schema
- * lands, the same signal interface gets populated with real telemetry
- * and the forecast becomes meaningful without any engine changes.
  */
 
 import type { ProjectSignals } from "./intelligenceEngine";

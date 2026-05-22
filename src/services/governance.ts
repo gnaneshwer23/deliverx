@@ -334,15 +334,33 @@ export async function updateRaidItem(
 // Decisions
 // ---------------------------------------------------------------------------
 
-export async function listDecisions(projectId: string): Promise<DecisionRow[]> {
+export async function listDecisions(
+  projectId: string,
+  opts: { page?: number; pageSize?: number } = {},
+): Promise<DecisionRow[]> {
   const { supabase } = await getOrgContext();
-  const { data, error } = await supabase
+  let q = supabase
     .from("decisions")
     .select("*")
     .eq("project_id", projectId)
     .order("created_at", { ascending: false });
+  if (opts.page != null && opts.pageSize) {
+    const from = opts.page * opts.pageSize;
+    q = q.range(from, from + opts.pageSize - 1);
+  }
+  const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as DecisionRow[];
+}
+
+export async function countDecisions(projectId: string): Promise<number> {
+  const { supabase } = await getOrgContext();
+  const { count, error } = await supabase
+    .from("decisions")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId);
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function createDecision(input: {
@@ -379,15 +397,33 @@ export async function createDecision(input: {
 // Meetings
 // ---------------------------------------------------------------------------
 
-export async function listMeetings(projectId: string): Promise<MeetingRow[]> {
+export async function listMeetings(
+  projectId: string,
+  opts: { page?: number; pageSize?: number } = {},
+): Promise<MeetingRow[]> {
   const { supabase } = await getOrgContext();
-  const { data, error } = await supabase
+  let q = supabase
     .from("meetings")
     .select("*")
     .eq("project_id", projectId)
     .order("scheduled_at", { ascending: false, nullsFirst: false });
+  if (opts.page != null && opts.pageSize) {
+    const from = opts.page * opts.pageSize;
+    q = q.range(from, from + opts.pageSize - 1);
+  }
+  const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as MeetingRow[];
+}
+
+export async function countMeetings(projectId: string): Promise<number> {
+  const { supabase } = await getOrgContext();
+  const { count, error } = await supabase
+    .from("meetings")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId);
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function getMeeting(id: string): Promise<MeetingRow | null> {
@@ -506,15 +542,33 @@ export async function applyMeetingAiResult(input: {
 // Documents
 // ---------------------------------------------------------------------------
 
-export async function listDocuments(projectId: string): Promise<DocumentRow[]> {
+export async function listDocuments(
+  projectId: string,
+  opts: { page?: number; pageSize?: number } = {},
+): Promise<DocumentRow[]> {
   const { supabase } = await getOrgContext();
-  const { data, error } = await supabase
+  let q = supabase
     .from("documents")
     .select("*")
     .eq("project_id", projectId)
     .order("created_at", { ascending: false });
+  if (opts.page != null && opts.pageSize) {
+    const from = opts.page * opts.pageSize;
+    q = q.range(from, from + opts.pageSize - 1);
+  }
+  const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as DocumentRow[];
+}
+
+export async function countDocuments(projectId: string): Promise<number> {
+  const { supabase } = await getOrgContext();
+  const { count, error } = await supabase
+    .from("documents")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId);
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function createDocument(input: {
@@ -594,15 +648,33 @@ export async function createChangeRequest(input: {
 // Reports
 // ---------------------------------------------------------------------------
 
-export async function listReports(projectId: string): Promise<ReportRow[]> {
+export async function listReports(
+  projectId: string,
+  opts: { page?: number; pageSize?: number } = {},
+): Promise<ReportRow[]> {
   const { supabase } = await getOrgContext();
-  const { data, error } = await supabase
+  let q = supabase
     .from("reports")
     .select("*")
     .eq("project_id", projectId)
     .order("generated_at", { ascending: false });
+  if (opts.page != null && opts.pageSize) {
+    const from = opts.page * opts.pageSize;
+    q = q.range(from, from + opts.pageSize - 1);
+  }
+  const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as ReportRow[];
+}
+
+export async function countReports(projectId: string): Promise<number> {
+  const { supabase } = await getOrgContext();
+  const { count, error } = await supabase
+    .from("reports")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId);
+  if (error) throw error;
+  return count ?? 0;
 }
 
 export async function listOrgReports(limit = 50): Promise<

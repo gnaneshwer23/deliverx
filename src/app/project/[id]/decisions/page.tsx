@@ -1,5 +1,11 @@
 import { Scale } from "lucide-react";
-import { listDecisions, listMeetings } from "@/services/governance";
+import { countDecisions, listDecisions, listMeetings } from "@/services/governance";
+import {
+  DEFAULT_PAGE_SIZE,
+  Pagination,
+  parsePageParam,
+  totalPages,
+} from "@/components/shared/pagination";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -14,19 +20,31 @@ import {
 import { DecisionForm } from "./decision-form";
 
 type Params = Promise<{ id: string }>;
+type Search = Promise<{ page?: string }>;
 
 export default async function ProjectDecisionsPage({
   params,
+  searchParams,
 }: {
   params: Params;
+  searchParams: Search;
 }) {
   const { id } = await params;
-  const [decisions, meetings] = await Promise.all([
-    listDecisions(id),
+  const { page: pageRaw } = await searchParams;
+  const page = parsePageParam(pageRaw);
+
+  const [decisions, total, meetings] = await Promise.all([
+    listDecisions(id, { page, pageSize: DEFAULT_PAGE_SIZE }),
+    countDecisions(id),
     listMeetings(id),
   ]);
+  const pages = totalPages(total, DEFAULT_PAGE_SIZE);
 
   const meetingMap = Object.fromEntries(meetings.map((m) => [m.id, m.title]));
+
+  function buildHref(nextPage: number) {
+    return nextPage > 0 ? `/project/${id}/decisions?page=${nextPage}` : `/project/${id}/decisions`;
+  }
 
   return (
     <main className="p-6">
@@ -73,6 +91,12 @@ export default async function ProjectDecisionsPage({
                   ))}
                 </TableBody>
               </Table>
+              <Pagination
+                page={page}
+                totalPages={pages}
+                totalItems={total}
+                buildHref={buildHref}
+              />
             </div>
           )}
         </div>

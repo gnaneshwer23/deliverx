@@ -64,3 +64,18 @@ middleware.ts        # Next.js middleware — refreshes auth on every request
 | `npm run build` | Production build             |
 | `npm run start` | Start the production server  |
 | `npm run lint`  | Lint with ESLint             |
+
+## Launch verification
+
+Run this smoke path after `npm run dev` (or on your deployed URL) to confirm the core loop:
+
+1. **Auth** — Sign up or log in → complete onboarding
+2. **Project** — Create a project (optionally with AI structure)
+3. **Charter** — Save charter at `/project/[id]/charter` → confirm alignment ring on overview
+4. **Tasks** — Add at least one task
+5. **Meeting** — Paste notes or upload audio → AI summary → approve decisions/RAID
+6. **Traceability** — Open `/project/[id]/traceability` and confirm graph links
+7. **Standup** — Submit at `/project/[id]/standups` → check health on project overview
+8. **AI status** — `GET /api/ai/status` returns `{ "configured": true }` when `MINIMAX_API_KEY` is set
+
+Required env vars for the full path: Supabase keys, `MINIMAX_API_KEY`. Optional: `OPENAI_API_KEY` for transcription and charter embeddings.

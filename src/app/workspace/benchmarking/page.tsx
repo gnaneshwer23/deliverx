@@ -96,8 +96,8 @@ export default async function BenchmarkingPage() {
           </section>
 
           <p className="mt-6 text-xs text-slate-500">
-            Scores derive from the deterministic mock signal loader. Once the
-            tasks/blockers schema lands, benchmarks update automatically.
+            Scores are computed from live task, RAID, and standup data across your
+            portfolio.
           </p>
         </>
       )}

@@ -19,12 +19,31 @@ const steps: Array<[string, string]> = [
   ["Generate Intelligence", "Reports & learning"],
 ];
 
-const capabilities = [
-  "AI Project Structuring",
-  "Governance Intelligence",
-  "Delivery Monitoring",
-  "Decision Tracking",
-  "Organisational Memory",
+const capabilities: Array<{ title: string; description: string }> = [
+  {
+    title: "AI Project Structuring",
+    description: "Turn a business brief into workstreams, tasks, and RAID items.",
+  },
+  {
+    title: "Charter Alignment",
+    description: "Score delivery against your charter with meeting-level deltas.",
+  },
+  {
+    title: "Governance Intelligence",
+    description: "RAID, decisions, meetings, and traceability in one project hub.",
+  },
+  {
+    title: "Delivery Monitoring",
+    description: "Health, confidence, and standup signals from live task data.",
+  },
+  {
+    title: "Meeting Intelligence",
+    description: "Upload recordings, transcribe, summarize, and approve AI outputs.",
+  },
+  {
+    title: "Organisational Memory",
+    description: "Capture lessons and playbooks as projects close.",
+  },
 ];
 
 const previews = ["AI Setup", "Task Workspace", "PM Dashboard", "Governance"];
@@ -134,11 +153,11 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
           {capabilities.map((item) => (
             <div
-              key={item}
+              key={item.title}
               className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-100"
             >
-              <div className="font-semibold">{item}</div>
-              <div className="mt-2 text-sm text-slate-500">Coming soon.</div>
+              <div className="font-semibold">{item.title}</div>
+              <div className="mt-2 text-sm text-slate-500">{item.description}</div>
             </div>
           ))}
         </div>
