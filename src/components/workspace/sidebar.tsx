@@ -16,6 +16,7 @@ import {
   Briefcase,
   Layers,
   Command,
+  Telescope,
 } from "lucide-react";
 
 type NavItem = {
@@ -32,6 +33,7 @@ const nav: NavItem[] = [
   { href: "/workspace/portfolio", label: "Portfolio", icon: Briefcase, section: "orchestration" },
   { href: "/workspace/programmes", label: "Programmes", icon: Layers, section: "orchestration" },
   { href: "/workspace/pmo", label: "PMO Dashboard", icon: Command, section: "orchestration" },
+  { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, section: "orchestration" },
   { href: "/workspace/memory", label: "Organisational Memory", icon: Brain, section: "intelligence" },
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
