@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FolderKanban,
-  GitBranch,
   ListChecks,
   ShieldCheck,
   FileBarChart2,
@@ -43,8 +42,7 @@ const nav: NavItem[] = [
   { href: "/workspace/memory", label: "Organisational Memory", icon: Brain, section: "intelligence" },
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
-  { href: "/workspace/workstreams", label: "Workstreams", icon: GitBranch, soon: true, section: "delivery" },
-  { href: "/workspace/tasks", label: "Tasks", icon: ListChecks, soon: true, section: "delivery" },
+  { href: "/workspace/tasks", label: "Tasks", icon: ListChecks, section: "delivery" },
   { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, soon: true, section: "delivery" },
   { href: "/workspace/reports", label: "Reports", icon: FileBarChart2, soon: true, section: "delivery" },
 ];

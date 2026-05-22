@@ -9,7 +9,15 @@ const VARIANTS: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
   accepted: "bg-emerald-100 text-emerald-700",
   expired: "bg-slate-200 text-slate-500",
-  revoked: "bg-rose-100 text-rose-700",
+  blocked: "bg-rose-100 text-rose-700",
+  done: "bg-emerald-100 text-emerald-700",
+  todo: "bg-slate-100 text-slate-600",
+  in_progress: "bg-sky-100 text-sky-700",
+  planned: "bg-slate-100 text-slate-600",
+  low: "bg-slate-100 text-slate-600",
+  medium: "bg-amber-100 text-amber-700",
+  high: "bg-orange-100 text-orange-700",
+  critical: "bg-rose-100 text-rose-700",
 };
 
 export function StatusBadge({

@@ -3,7 +3,24 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
-export function AiInsights() {
+export function AiInsights({
+  projectName,
+  healthTier,
+  confidenceScore,
+  recommendation,
+}: {
+  projectName: string | null;
+  healthTier: "healthy" | "watch" | "at-risk";
+  confidenceScore: number;
+  recommendation: string;
+}) {
+  const tierLabel =
+    healthTier === "healthy"
+      ? "On track"
+      : healthTier === "watch"
+        ? "Needs attention"
+        : "At risk";
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 16 }}
@@ -16,14 +33,22 @@ export function AiInsights() {
           <Sparkles size={14} />
         </span>
         <h2 className="text-lg font-semibold">AI Insights</h2>
-        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
-          Preview
+        <span className="rounded bg-[#0F766E]/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-[#0F766E]">
+          Live
         </span>
       </div>
-      <p className="text-sm text-slate-600">
-        Delivery risk increasing due to repeated delays in infrastructure tasks.
-        Consider resource reallocation.
-      </p>
+      {projectName ? (
+        <p className="mb-2 text-xs text-slate-500">
+          Top signal from{" "}
+          <span className="font-medium text-slate-700">{projectName}</span> ·{" "}
+          {tierLabel} · {confidenceScore}% confidence
+        </p>
+      ) : (
+        <p className="mb-2 text-xs text-slate-500">
+          Create a project and tasks to unlock delivery intelligence.
+        </p>
+      )}
+      <p className="text-sm text-slate-600">{recommendation}</p>
     </motion.section>
   );
 }

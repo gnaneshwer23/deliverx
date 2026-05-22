@@ -278,3 +278,104 @@ export async function countTasksByProject(projectId: string) {
   if (error) throw error;
   return count ?? 0;
 }
+
+export type TaskWithMeta = TaskRow & {
+  project_name: string;
+  workstream_name: string | null;
+};
+
+export type OrgDeliveryStats = {
+  tasksInProgress: number;
+  openRisks: number;
+  teamMembers: number;
+};
+
+export async function getOrgDeliveryStats(): Promise<OrgDeliveryStats> {
+  const { supabase, orgId } = await getOrgContext();
+
+  const [inProgress, openRisks, teamMembers] = await Promise.all([
+    supabase
+      .from("tasks")
+      .select("id", { count: "exact", head: true })
+      .in("status", ["todo", "in_progress"]),
+    supabase
+      .from("tasks")
+      .select("id", { count: "exact", head: true })
+      .in("priority", ["high", "critical"])
+      .neq("status", "done"),
+    supabase
+      .from("users")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", orgId),
+  ]);
+
+  if (inProgress.error) throw inProgress.error;
+  if (openRisks.error) throw openRisks.error;
+  if (teamMembers.error) throw teamMembers.error;
+
+  return {
+    tasksInProgress: inProgress.count ?? 0,
+    openRisks: openRisks.count ?? 0,
+    teamMembers: teamMembers.count ?? 0,
+  };
+}
+
+export async function listOrgTasks(
+  opts: {
+    projectId?: string;
+    status?: TaskStatus | TaskStatus[];
+    limit?: number;
+  } = {},
+): Promise<TaskWithMeta[]> {
+  const { supabase } = await getOrgContext();
+
+  let q = supabase
+    .from("tasks")
+    .select("*, projects!inner(name), workstreams(name)")
+    .order("updated_at", { ascending: false });
+
+  if (opts.projectId) q = q.eq("project_id", opts.projectId);
+  if (opts.status) {
+    const statuses = Array.isArray(opts.status) ? opts.status : [opts.status];
+    q = q.in("status", statuses);
+  }
+  if (opts.limit) q = q.limit(opts.limit);
+
+  const { data, error } = await q;
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as TaskRow & {
+      projects: { name: string };
+      workstreams: { name: string } | null;
+    };
+    return {
+      ...r,
+      project_name: r.projects.name,
+      workstream_name: r.workstreams?.name ?? null,
+    };
+  });
+}
+
+export async function listOrgMembers() {
+  const { supabase, orgId } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, name, email, role")
+    .eq("organisation_id", orgId)
+    .order("name", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function listOrgProjects() {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("projects")
+    .select("id, name")
+    .order("name", { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}

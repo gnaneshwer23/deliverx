@@ -19,8 +19,8 @@ export function ProjectSidebar({
   const items: Item[] = [
     { label: "Overview", href: `/project/${projectId}` },
     { label: "Projects", href: "/workspace/dashboard" },
-    { label: "Workstreams", href: `/project/${projectId}/workstreams`, soon: true },
-    { label: "Tasks", href: `/project/${projectId}/tasks`, soon: true },
+    { label: "Workstreams", href: `/project/${projectId}/workstreams` },
+    { label: "Tasks", href: `/project/${projectId}/tasks` },
     { label: "Meetings", href: `/project/${projectId}/meetings`, soon: true },
     { label: "RAID", href: `/project/${projectId}/raid`, soon: true },
     { label: "Reports", href: `/project/${projectId}/reports`, soon: true },
@@ -50,7 +50,9 @@ export function ProjectSidebar({
 
       <nav className="flex flex-col gap-1 text-sm">
         {items.map((item) => {
-          const active = pathname === item.href;
+          const active =
+            pathname === item.href ||
+            (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`));
           return (
             <Link
               key={item.label}

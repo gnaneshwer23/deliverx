@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { loadProjectSignals } from "@/services/projectSignals";
 import { listMemory } from "@/services/memory";
+import { listTasks, listOrgMembers } from "@/services/delivery";
 import { runAdaptiveLoop, latestReviewByKey } from "@/services/adaptive";
 import { ProjectHealthCard } from "@/components/intelligence/project-health-card";
 import { ConfidenceCard } from "@/components/intelligence/confidence-card";
@@ -22,6 +23,15 @@ import {
 import { ExtractInsightsButton } from "./extract-insights-button";
 import { ProjectStatusSelect } from "./project-status-select";
 import { listAiReviews } from "@/services/recommendations";
+import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default async function ProjectOverviewPage({
   params,
@@ -45,7 +55,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members] =
     await Promise.all([
     getProjectIntelligence(id),
     loadProjectSignals(id),
@@ -53,6 +63,8 @@ export default async function ProjectOverviewPage({
     runAdaptiveLoop(id),
     latestReviewByKey(id),
     listAiReviews(id),
+    listTasks({ projectId: id, limit: 6 }),
+    listOrgMembers(),
   ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -127,12 +139,12 @@ export default async function ProjectOverviewPage({
           >
             Export
           </button>
-          <button
-            type="button"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-[#4F46E5] px-4 text-sm font-medium text-white hover:bg-[#4338CA]"
+          <Link
+            href={`/project/${id}/tasks`}
+            className="inline-flex h-9 items-center justify-center rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62]"
           >
             New Task
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -184,54 +196,88 @@ export default async function ProjectOverviewPage({
         </Card>
 
         <Card title="Team">
-          <ul className="space-y-3 text-sm">
-            {[
-              ["Sarah", "Online"],
-              ["Tom", "Online"],
-              ["Alex", "Away"],
-            ].map(([name, status]) => (
-              <li key={name} className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <span className="flex size-7 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
-                    {name.charAt(0)}
+          {members.length === 0 ? (
+            <p className="text-sm text-slate-500">No team members in org yet.</p>
+          ) : (
+            <ul className="space-y-3 text-sm">
+              {members.slice(0, 6).map((m) => (
+                <li key={m.id} className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <span className="flex size-7 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
+                      {(m.name ?? m.email ?? "?").charAt(0).toUpperCase()}
+                    </span>
+                    {m.name ?? m.email}
                   </span>
-                  {name}
-                </span>
-                <span className="text-xs text-slate-400">{status}</span>
-              </li>
-            ))}
-          </ul>
+                  <span className="text-xs capitalize text-slate-400">
+                    {m.role?.replace(/_/g, " ") ?? "member"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
 
         <Card className="lg:col-span-2" title="Tasks">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-slate-400">
-                  <th className="pb-2 font-medium">Task</th>
-                  <th className="pb-2 font-medium">Status</th>
-                  <th className="pb-2 font-medium">Owner</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[1, 2, 3].map((i) => (
-                  <tr key={i} className="border-t border-slate-100">
-                    <td className="py-3">System Integration</td>
-                    <td className="text-blue-500">In Progress</td>
-                    <td>Sarah</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {tasks.length === 0 ? (
+            <p className="text-sm text-slate-500">
+              No tasks yet.{" "}
+              <Link
+                href={`/project/${id}/tasks`}
+                className="font-medium text-[#0F766E] hover:underline"
+              >
+                Add tasks
+              </Link>
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="text-slate-400">
+                    <TableHead className="pb-2 font-medium">Task</TableHead>
+                    <TableHead className="pb-2 font-medium">Status</TableHead>
+                    <TableHead className="pb-2 font-medium">Priority</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {tasks.map((task) => (
+                    <TableRow key={task.id} className="border-t border-slate-100">
+                      <TableCell className="py-3">
+                        <Link
+                          href={`/project/${id}/tasks/${task.id}`}
+                          className="font-medium text-[#0F766E] hover:underline"
+                        >
+                          {task.title}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={task.status} />
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={task.priority} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </Card>
 
         <Card title="Activity">
-          <ul className="space-y-2 text-sm text-slate-600">
-            <li>Task updated</li>
-            <li>Risk added</li>
-            <li>Milestone hit</li>
-          </ul>
+          {tasks.length === 0 ? (
+            <p className="text-sm text-slate-500">No recent task updates.</p>
+          ) : (
+            <ul className="space-y-2 text-sm text-slate-600">
+              {tasks.slice(0, 4).map((task) => (
+                <li key={task.id}>
+                  {task.title} ·{" "}
+                  <span className="capitalize text-slate-400">
+                    {task.status.replace(/_/g, " ")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
       </div>
     </main>

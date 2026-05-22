@@ -7,21 +7,57 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getOrgDeliveryStats, listOrgTasks } from "@/services/delivery";
+import { getProjectIntelligence } from "@/services/intelligence";
+import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { AiInsights } from "./ai-insights";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const { count: activeProjects } = await supabase
-    .from("projects")
-    .select("id", { count: "exact", head: true })
-    .in("status", ["draft", "active"]);
+  const [{ count: activeProjects }, { data: recentProjects }, stats, recentTasks] =
+    await Promise.all([
+      supabase
+        .from("projects")
+        .select("id", { count: "exact", head: true })
+        .in("status", ["draft", "active"]),
+      supabase
+        .from("projects")
+        .select("id, name, status, delivery_type, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5),
+      getOrgDeliveryStats(),
+      listOrgTasks({ limit: 8 }),
+    ]);
 
-  const { data: recentProjects } = await supabase
-    .from("projects")
-    .select("id, name, status, delivery_type, created_at")
-    .order("created_at", { ascending: false })
-    .limit(5);
+  const activeTaskRows = recentTasks.filter((t) => t.status !== "done");
+  const riskTasks = recentTasks.filter(
+    (t) =>
+      (t.priority === "high" || t.priority === "critical") && t.status !== "done",
+  );
+
+  const topProject = recentProjects?.[0];
+  let insightProjectName: string | null = null;
+  let healthTier: "healthy" | "watch" | "at-risk" = "healthy";
+  let confidenceScore = 100;
+  let recommendation =
+    "No interventions recommended — add tasks to projects to generate delivery signals.";
+
+  if (topProject) {
+    const intel = await getProjectIntelligence(topProject.id);
+    insightProjectName = topProject.name;
+    healthTier = intel.health.tier;
+    confidenceScore = intel.confidence.score;
+    recommendation = intel.recommendations[0]?.text ?? recommendation;
+  }
 
   const kpis = [
     {
@@ -30,9 +66,25 @@ export default async function DashboardPage() {
       icon: Layers,
       live: true,
     },
-    { title: "Tasks In Progress", value: "—", icon: BarChart3, live: false },
-    { title: "Team Members", value: "—", icon: Users, live: false },
-    { title: "Open Risks", value: "—", icon: AlertTriangle, live: false },
+    {
+      title: "Tasks In Progress",
+      value: String(stats.tasksInProgress),
+      icon: BarChart3,
+      live: true,
+    },
+    {
+      title: "Team Members",
+      value: String(stats.teamMembers),
+      icon: Users,
+      live: true,
+    },
+    {
+      title: "Open Risks",
+      value: String(stats.openRisks),
+      icon: AlertTriangle,
+      live: true,
+      hint: "High/critical tasks until RAID (PR4)",
+    },
   ];
 
   return (
@@ -60,14 +112,7 @@ export default async function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm text-slate-500">{card.title}</p>
-                    {card.live ? null : (
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500">
-                        Soon
-                      </span>
-                    )}
-                  </div>
+                  <p className="text-sm text-slate-500">{card.title}</p>
                   <p className="mt-1 text-2xl font-bold">{card.value}</p>
                 </div>
                 <div className="text-[#0F766E]">
@@ -87,51 +132,111 @@ export default async function DashboardPage() {
         </DashboardCard>
 
         <DashboardCard title="Recent Activity">
-          <ul className="space-y-3 text-sm text-slate-600">
-            <li>Task updated: Data migration</li>
-            <li>New risk logged: Vendor delay</li>
-            <li>Milestone reached: Phase 1 complete</li>
-          </ul>
+          {recentTasks.length === 0 ? (
+            <p className="text-sm text-slate-500">No task activity yet.</p>
+          ) : (
+            <ul className="space-y-3 text-sm text-slate-600">
+              {recentTasks.slice(0, 5).map((task) => (
+                <li key={task.id}>
+                  <Link
+                    href={`/project/${task.project_id}/tasks/${task.id}`}
+                    className="hover:text-[#0F766E]"
+                  >
+                    Task updated: {task.title}
+                  </Link>
+                  <span className="block text-xs text-slate-400">
+                    {task.project_name} ·{" "}
+                    {new Date(task.updated_at).toLocaleDateString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </DashboardCard>
 
         <DashboardCard className="lg:col-span-2" title="Active Tasks">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-slate-500">
-                  <th className="pb-2 font-medium">Task</th>
-                  <th className="pb-2 font-medium">Workstream</th>
-                  <th className="pb-2 font-medium">Status</th>
-                  <th className="pb-2 font-medium">Priority</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[1, 2, 3].map((i) => (
-                  <tr key={i} className="border-t border-slate-100">
-                    <td className="py-3">System integration</td>
-                    <td>Infrastructure</td>
-                    <td className="text-blue-500">In Progress</td>
-                    <td>High</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {activeTaskRows.length === 0 ? (
+            <p className="text-sm text-slate-500">
+              No open tasks.{" "}
+              <Link href="/workspace/projects" className="text-[#0F766E] hover:underline">
+                Create a project
+              </Link>{" "}
+              to get started.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="text-slate-500">
+                    <TableHead className="pb-2 font-medium">Task</TableHead>
+                    <TableHead className="pb-2 font-medium">Project</TableHead>
+                    <TableHead className="pb-2 font-medium">Workstream</TableHead>
+                    <TableHead className="pb-2 font-medium">Status</TableHead>
+                    <TableHead className="pb-2 font-medium">Priority</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {activeTaskRows.slice(0, 6).map((task) => (
+                    <TableRow key={task.id} className="border-t border-slate-100">
+                      <TableCell className="py-3">
+                        <Link
+                          href={`/project/${task.project_id}/tasks/${task.id}`}
+                          className="font-medium text-[#0F766E] hover:underline"
+                        >
+                          {task.title}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{task.project_name}</TableCell>
+                      <TableCell>{task.workstream_name ?? "—"}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={task.status} />
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={task.priority} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </DashboardCard>
 
         <DashboardCard title="Risk Register">
-          <div className="space-y-3 text-sm">
-            <div className="rounded-lg bg-red-50 p-3 text-red-700">
-              Vendor delivery delays
+          {riskTasks.length === 0 ? (
+            <p className="text-sm text-slate-500">
+              No high-priority open tasks. Full RAID log arrives in governance
+              (PR4).
+            </p>
+          ) : (
+            <div className="space-y-3 text-sm">
+              {riskTasks.slice(0, 4).map((task) => (
+                <Link
+                  key={task.id}
+                  href={`/project/${task.project_id}/tasks/${task.id}`}
+                  className={`block rounded-lg p-3 ${
+                    task.priority === "critical"
+                      ? "bg-red-50 text-red-700"
+                      : "bg-yellow-50 text-yellow-700"
+                  }`}
+                >
+                  {task.title}
+                  <span className="mt-1 block text-xs opacity-80">
+                    {task.project_name}
+                  </span>
+                </Link>
+              ))}
             </div>
-            <div className="rounded-lg bg-yellow-50 p-3 text-yellow-700">
-              Resource constraints
-            </div>
-          </div>
+          )}
         </DashboardCard>
       </div>
 
-      <AiInsights />
+      <AiInsights
+        projectName={insightProjectName}
+        healthTier={healthTier}
+        confidenceScore={confidenceScore}
+        recommendation={recommendation}
+      />
 
       <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
