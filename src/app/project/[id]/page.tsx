@@ -24,7 +24,9 @@ import { ExtractInsightsButton } from "./extract-insights-button";
 import { ProjectStatusSelect } from "./project-status-select";
 import { listAiReviews } from "@/services/recommendations";
 import { getProjectAlignment } from "@/services/alignment";
+import { getProjectTraceability } from "@/services/traceability";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
+import { TraceabilityPanel } from "@/components/traceability/traceability-panel";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Table,
@@ -57,7 +59,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace] =
     await Promise.all([
     getProjectIntelligence(id),
     loadProjectSignals(id),
@@ -68,6 +70,7 @@ export default async function ProjectOverviewPage({
     listTasks({ projectId: id, limit: 6 }),
     listOrgMembers(),
     getProjectAlignment(id),
+    getProjectTraceability(id),
   ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -179,6 +182,10 @@ export default async function ProjectOverviewPage({
           delta={alignment.latest?.delta ?? null}
           hasCharter={Boolean(alignment.charter?.content?.trim())}
         />
+      </div>
+
+      <div className="mb-6">
+        <TraceabilityPanel projectId={id} trace={trace} compact />
       </div>
 
       {/* Intelligence row 1 */}

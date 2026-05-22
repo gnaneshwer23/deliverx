@@ -8,6 +8,7 @@ import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import type { MeetingSummaryResult } from "@/services/aiGovernance";
 import { saveMeetingSummaryAction, type ActionState } from "../ai/actions";
 import { MeetingAlignmentPreview } from "@/components/alignment/meeting-alignment-preview";
+import { MeetingAudioUpload } from "@/components/meetings/meeting-audio-upload";
 
 const initial: ActionState = { ok: false };
 
@@ -43,7 +44,7 @@ export function MeetingAiPanel({
 
   async function generate() {
     if (!notes?.trim()) {
-      setError("Add meeting notes before generating a summary.");
+      setError("Add notes or upload a recording before generating a summary.");
       return;
     }
 
@@ -66,15 +67,28 @@ export function MeetingAiPanel({
   }
 
   if (state.ok) {
+    const delta =
+      state.alignmentDelta != null
+        ? `${state.alignmentDelta >= 0 ? "+" : ""}${state.alignmentDelta} pts`
+        : null;
+
     return (
       <p className="mt-2 text-xs font-medium text-[#0F766E]">
         Summary saved{hasSummary ? " (updated)" : ""}.
+        {state.alignmentScore != null ? (
+          <>
+            {" "}
+            Charter alignment {state.alignmentScore}%
+            {delta ? ` (${delta})` : ""}.
+          </>
+        ) : null}
       </p>
     );
   }
 
   return (
     <div className="mt-3 border-t border-slate-100 pt-3">
+      <MeetingAudioUpload projectId={projectId} meetingId={meetingId} />
       {!draft ? (
         <>
           <button

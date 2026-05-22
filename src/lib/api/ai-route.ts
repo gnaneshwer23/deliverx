@@ -5,7 +5,7 @@ export function aiRouteError(err: unknown) {
   if (err instanceof AiConfigError) {
     return Response.json(
       {
-        error: "Anthropic API is not configured. Set ANTHROPIC_API_KEY.",
+        error: "AI is not configured. Set MINIMAX_API_KEY.",
         code: "ai_not_configured",
       },
       { status: 503 },

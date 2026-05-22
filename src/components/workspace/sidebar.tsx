@@ -19,6 +19,7 @@ import {
   BrainCircuit,
   Store,
   Globe2,
+  MessageSquare,
 } from "lucide-react";
 
 type NavItem = {
@@ -43,6 +44,7 @@ const nav: NavItem[] = [
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen, section: "intelligence" },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge, section: "intelligence" },
   { href: "/workspace/tasks", label: "Tasks", icon: ListChecks, section: "delivery" },
+  { href: "/workspace/standups", label: "Standups", icon: MessageSquare, section: "delivery" },
   { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, section: "delivery" },
   { href: "/workspace/reports", label: "Reports", icon: FileBarChart2, section: "delivery" },
 ];

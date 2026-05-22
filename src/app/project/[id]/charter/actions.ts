@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { upsertCharter } from "@/services/charter";
 import { extractCharterFields } from "@/services/aiCharterAlignment";
 import { computeProjectAlignment } from "@/services/alignment";
+import { syncCharterEmbeddings } from "@/services/charterEmbeddings";
 
 export type ActionState = { ok: boolean; error?: string };
 
@@ -42,7 +43,7 @@ export async function saveCharterAction(
       }
     }
 
-    await upsertCharter({
+    const charter = await upsertCharter({
       projectId,
       title: charterTitle,
       content,
@@ -50,6 +51,8 @@ export async function saveCharterAction(
       successCriteria,
       scopeSummary,
     });
+
+    await syncCharterEmbeddings(charter);
 
     revalidateCharter(projectId);
     return { ok: true };

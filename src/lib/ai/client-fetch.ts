@@ -46,7 +46,7 @@ export async function postAi<T>(
 
 export function aiErrorMessage(err: AiFetchError): string {
   if (err.code === "ai_not_configured") {
-    return "AI is not configured. Add ANTHROPIC_API_KEY to enable this feature.";
+    return "AI is not configured. Add MINIMAX_API_KEY to enable this feature.";
   }
   return err.error;
 }

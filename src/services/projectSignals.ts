@@ -30,7 +30,7 @@ const ACTIVITY_WINDOW_DAYS = 7;
 export async function loadProjectSignals(projectId: string): Promise<ProjectSignals> {
   const supabase = await createClient();
 
-  const [{ data: tasks, error: taskErr }, { data: raid, error: raidErr }] =
+  const [{ data: tasks, error: taskErr }, { data: raid, error: raidErr }, standupToday] =
     await Promise.all([
       supabase
         .from("tasks")
@@ -43,6 +43,13 @@ export async function loadProjectSignals(projectId: string): Promise<ProjectSign
         .select("type, title, status, severity")
         .eq("project_id", projectId)
         .in("status", ["open", "mitigated"]),
+      supabase
+        .from("standups")
+        .select("id, today")
+        .eq("project_id", projectId)
+        .eq("standup_date", new Date().toISOString().slice(0, 10))
+        .limit(1)
+        .maybeSingle(),
     ]);
 
   if (taskErr) throw taskErr;
@@ -84,7 +91,8 @@ export async function loadProjectSignals(projectId: string): Promise<ProjectSign
     ).length;
 
   const standupsComplete =
-    taskRows.length === 0 ||
+    Boolean(standupToday.data?.today?.trim()) ||
+    (taskRows.length === 0 && raidRows.length === 0) ||
     taskRows.some((t) => {
       const updated = new Date(t.updated_at).getTime();
       return now - updated <= ACTIVITY_WINDOW_DAYS * MS_PER_DAY;

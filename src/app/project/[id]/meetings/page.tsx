@@ -20,7 +20,7 @@ export default async function ProjectMeetingsPage({
     <main className="p-6">
       <PageHeader
         title="Meetings"
-        description="Schedule meetings and capture notes and summaries."
+        description="Upload recordings for transcription, capture notes, and generate AI summaries."
         icon={CalendarDays}
       />
 
@@ -36,7 +36,14 @@ export default async function ProjectMeetingsPage({
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <h2 className="font-semibold">{m.title}</h2>
-                  <StatusBadge status={m.status} />
+                  <div className="flex items-center gap-2">
+                    {m.recording_path ? (
+                      <span className="rounded bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-700">
+                        Recording
+                      </span>
+                    ) : null}
+                    <StatusBadge status={m.status} />
+                  </div>
                 </div>
                 {m.scheduled_at ? (
                   <p className="mt-1 text-xs text-slate-500">
@@ -45,6 +52,14 @@ export default async function ProjectMeetingsPage({
                 ) : null}
                 {m.notes ? (
                   <p className="mt-3 whitespace-pre-wrap text-sm text-slate-600">{m.notes}</p>
+                ) : null}
+                {m.transcript ? (
+                  <details className="mt-3 rounded-lg border border-slate-100 bg-slate-50/50 px-3 py-2">
+                    <summary className="cursor-pointer text-xs font-semibold uppercase text-slate-400">
+                      Transcript
+                    </summary>
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{m.transcript}</p>
+                  </details>
                 ) : null}
                 {m.summary ? (
                   <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">

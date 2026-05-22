@@ -4,7 +4,9 @@ import { requireAuth } from "@/lib/api/auth";
 export async function GET() {
   try {
     await requireAuth();
-    const configured = Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+    const configured = Boolean(
+      process.env.MINIMAX_API_KEY?.trim() || process.env.ANTHROPIC_API_KEY?.trim(),
+    );
     return Response.json({
       configured,
       model: DEFAULT_AI_MODEL,

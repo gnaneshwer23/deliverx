@@ -1,5 +1,5 @@
 export class AiConfigError extends Error {
-  constructor(message = "Anthropic API is not configured") {
+  constructor(message = "AI API is not configured") {
     super(message);
     this.name = "AiConfigError";
   }
@@ -12,16 +12,29 @@ export class AiGenerationError extends Error {
   }
 }
 
+/** MiniMax Anthropic-compatible endpoint — https://platform.minimax.io/docs/api-reference/text-chat-anthropic */
+const MINIMAX_ANTHROPIC_BASE_URL =
+  process.env.MINIMAX_BASE_URL?.trim() || "https://api.minimax.io/anthropic";
+
 export const DEFAULT_AI_MODEL =
-  process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514";
+  process.env.MINIMAX_MODEL?.trim() ||
+  process.env.ANTHROPIC_MODEL?.trim() ||
+  "MiniMax-M2.7";
 
 export const DEFAULT_MAX_TOKENS = 4096;
 export const DEFAULT_TIMEOUT_MS = 60_000;
 
-function getApiKey() {
-  const key = process.env.ANTHROPIC_API_KEY?.trim();
-  if (!key) throw new AiConfigError();
+function getApiKey(): string {
+  const key =
+    process.env.MINIMAX_API_KEY?.trim() || process.env.ANTHROPIC_API_KEY?.trim();
+  if (!key) {
+    throw new AiConfigError("Set MINIMAX_API_KEY (or ANTHROPIC_API_KEY) to enable AI.");
+  }
   return key;
+}
+
+function usesMinimax(): boolean {
+  return Boolean(process.env.MINIMAX_API_KEY?.trim());
 }
 
 function parseJsonBlock<T>(raw: string): T {
@@ -42,7 +55,10 @@ export async function generateText(opts: {
   timeoutMs?: number;
 }): Promise<string> {
   const Anthropic = (await import("@anthropic-ai/sdk")).default;
-  const client = new Anthropic({ apiKey: getApiKey() });
+  const client = new Anthropic({
+    apiKey: getApiKey(),
+    ...(usesMinimax() ? { baseURL: MINIMAX_ANTHROPIC_BASE_URL } : {}),
+  });
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), opts.timeoutMs ?? DEFAULT_TIMEOUT_MS);

@@ -19,6 +19,7 @@ import {
   type CharterRow,
 } from "./charter";
 import { scoreCharterWithAi } from "./aiCharterAlignment";
+import { semanticCharterBoost } from "./charterEmbeddings";
 import { listTasks } from "./delivery";
 import { listRaidItems, listDecisions, listMeetings } from "./governance";
 import { getProjectIntelligence } from "./intelligence";
@@ -149,8 +150,18 @@ export async function computeProjectAlignment(
     meetingContext: opts.meetingContext,
   });
 
-  const finalScore = blendAlignmentScores(heuristic.score, ai?.score ?? null);
-  const factors = ai?.factors?.length ? ai.factors : heuristic.factors;
+  const semanticBoost = await semanticCharterBoost(
+    charter.id,
+    `${delivery.snapshot}\n${opts.meetingContext ?? ""}`,
+  );
+
+  let finalScore = blendAlignmentScores(heuristic.score, ai?.score ?? null) + semanticBoost;
+  finalScore = Math.max(0, Math.min(100, finalScore));
+
+  const factors = [
+    ...(ai?.factors?.length ? ai.factors : heuristic.factors),
+    ...(semanticBoost > 0 ? [`Semantic charter match boost +${semanticBoost}`] : []),
+  ].slice(0, 4);
   const trend = alignmentTrendFromHistory(finalScore, previous?.score ?? null);
   const tier = tierForScore(finalScore);
   const delta = previous?.score != null ? finalScore - previous.score : null;

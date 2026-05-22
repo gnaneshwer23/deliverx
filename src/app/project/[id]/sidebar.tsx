@@ -23,6 +23,9 @@ export function ProjectSidebar({
     { label: "Workstreams", href: `/project/${projectId}/workstreams` },
     { label: "Tasks", href: `/project/${projectId}/tasks` },
     { label: "Meetings", href: `/project/${projectId}/meetings` },
+    { label: "Standups", href: `/project/${projectId}/standups` },
+    { label: "Stakeholders", href: `/project/${projectId}/stakeholders` },
+    { label: "Traceability", href: `/project/${projectId}/traceability` },
     { label: "RAID", href: `/project/${projectId}/raid` },
     { label: "Decisions", href: `/project/${projectId}/decisions` },
     { label: "Documents", href: `/project/${projectId}/documents` },
@@ -58,7 +61,10 @@ export function ProjectSidebar({
             pathname === item.href ||
             (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`)) ||
             (item.href.includes("/reports") && pathname.startsWith(`${item.href}/`)) ||
-            (item.href.includes("/charter") && pathname.startsWith(item.href));
+            (item.href.includes("/charter") && pathname.startsWith(item.href)) ||
+            (item.href.includes("/standups") && pathname.startsWith(item.href)) ||
+            (item.href.includes("/stakeholders") && pathname.startsWith(item.href)) ||
+            (item.href.includes("/traceability") && pathname.startsWith(item.href));
           return (
             <Link
               key={item.label}

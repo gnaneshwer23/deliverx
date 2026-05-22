@@ -9,14 +9,23 @@ import {
   type RaidSeverity,
 } from "@/services/governance";
 import type { MeetingSummaryResult, RaidSuggestion } from "@/services/aiGovernance";
+import { computeProjectAlignment } from "@/services/alignment";
 
-export type ActionState = { ok: boolean; error?: string };
+export type ActionState = {
+  ok: boolean;
+  error?: string;
+  alignmentScore?: number;
+  alignmentDelta?: number | null;
+};
 
 function revalidateProject(projectId: string) {
   revalidatePath(`/project/${projectId}/meetings`);
   revalidatePath(`/project/${projectId}/decisions`);
   revalidatePath(`/project/${projectId}/raid`);
   revalidatePath(`/project/${projectId}/reports`);
+  revalidatePath(`/project/${projectId}/charter`);
+  revalidatePath(`/project/${projectId}/traceability`);
+  revalidatePath(`/project/${projectId}`);
   revalidatePath("/workspace/dashboard");
 }
 
@@ -52,8 +61,19 @@ export async function saveMeetingSummaryAction(
       decisions: payload.decisions ?? [],
       risks: payload.risks ?? [],
     });
+
+    const alignment = await computeProjectAlignment(projectId, {
+      meetingId,
+      meetingContext: summary.trim(),
+      source: "meeting",
+    });
+
     revalidateProject(projectId);
-    return { ok: true };
+    return {
+      ok: true,
+      alignmentScore: alignment.score,
+      alignmentDelta: alignment.delta,
+    };
   } catch (err) {
     return {
       ok: false,

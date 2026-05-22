@@ -58,6 +58,8 @@ export type MeetingRow = {
   scheduled_at: string | null;
   notes: string | null;
   summary: string | null;
+  transcript: string | null;
+  recording_path: string | null;
   ai_summary: string | null;
   status: MeetingStatus;
   created_by: string | null;
@@ -281,6 +283,7 @@ export async function createRaidItem(input: {
   severity?: RaidSeverity;
   dueDate?: string;
   mitigation?: string;
+  sourceMeetingId?: string;
 }): Promise<RaidItemRow> {
   const { supabase, orgId, userId } = await getOrgContext();
   await assertProjectInOrg(supabase, orgId, input.projectId);
@@ -297,6 +300,7 @@ export async function createRaidItem(input: {
       severity: input.severity ?? "medium",
       due_date: input.dueDate ?? null,
       mitigation: input.mitigation?.trim() || null,
+      source_meeting_id: input.sourceMeetingId ?? null,
       created_by: userId,
     })
     .select("*")
@@ -386,6 +390,17 @@ export async function listMeetings(projectId: string): Promise<MeetingRow[]> {
   return (data ?? []) as MeetingRow[];
 }
 
+export async function getMeeting(id: string): Promise<MeetingRow | null> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("meetings")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as MeetingRow | null) ?? null;
+}
+
 export async function createMeeting(input: {
   projectId: string;
   title: string;
@@ -418,7 +433,12 @@ export async function createMeeting(input: {
 
 export async function updateMeeting(
   id: string,
-  patch: Partial<Pick<MeetingRow, "title" | "scheduled_at" | "notes" | "summary" | "status">>,
+  patch: Partial<
+    Pick<
+      MeetingRow,
+      "title" | "scheduled_at" | "notes" | "summary" | "status" | "transcript" | "recording_path"
+    >
+  >,
 ): Promise<MeetingRow> {
   const { supabase } = await getOrgContext();
   const { data, error } = await supabase
@@ -444,6 +464,11 @@ export async function applyMeetingAiResult(input: {
     description: string;
   }>;
 }): Promise<{ decisions: number; risks: number }> {
+  const meeting = await getMeeting(input.meetingId);
+  if (!meeting || meeting.project_id !== input.projectId) {
+    throw new Error("Meeting not found for this project");
+  }
+
   await updateMeeting(input.meetingId, { summary: input.summary.trim() });
 
   let decisionCount = 0;
@@ -468,6 +493,7 @@ export async function applyMeetingAiResult(input: {
         title: r.title,
         description: r.description,
         severity: "medium",
+        sourceMeetingId: input.meetingId,
       });
       riskCount++;
     }

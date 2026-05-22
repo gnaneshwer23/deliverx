@@ -37,12 +37,12 @@ export async function POST(req: Request) {
         return Response.json({ error: "Meeting not found" }, { status: 404 });
       }
       title = meeting.title;
-      notes = meeting.notes ?? notes;
+      notes = meeting.notes?.trim() || meeting.transcript?.trim() || notes;
     }
 
     if (!notes) {
       return Response.json(
-        { error: "notes or meetingId with notes is required" },
+        { error: "Add notes, upload a recording, or provide meetingId with content" },
         { status: 400 },
       );
     }
