@@ -18,6 +18,7 @@ export function ProjectSidebar({
 
   const items: Item[] = [
     { label: "Overview", href: `/project/${projectId}` },
+    { label: "Charter", href: `/project/${projectId}/charter` },
     { label: "Projects", href: "/workspace/dashboard" },
     { label: "Workstreams", href: `/project/${projectId}/workstreams` },
     { label: "Tasks", href: `/project/${projectId}/tasks` },
@@ -56,7 +57,8 @@ export function ProjectSidebar({
           const active =
             pathname === item.href ||
             (item.href.includes("/tasks") && pathname.startsWith(`${item.href}/`)) ||
-            (item.href.includes("/reports") && pathname.startsWith(`${item.href}/`));
+            (item.href.includes("/reports") && pathname.startsWith(`${item.href}/`)) ||
+            (item.href.includes("/charter") && pathname.startsWith(item.href));
           return (
             <Link
               key={item.label}

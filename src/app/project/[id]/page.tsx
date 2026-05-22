@@ -23,6 +23,8 @@ import {
 import { ExtractInsightsButton } from "./extract-insights-button";
 import { ProjectStatusSelect } from "./project-status-select";
 import { listAiReviews } from "@/services/recommendations";
+import { getProjectAlignment } from "@/services/alignment";
+import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Table,
@@ -55,7 +57,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment] =
     await Promise.all([
     getProjectIntelligence(id),
     loadProjectSignals(id),
@@ -65,6 +67,7 @@ export default async function ProjectOverviewPage({
     listAiReviews(id),
     listTasks({ projectId: id, limit: 6 }),
     listOrgMembers(),
+    getProjectAlignment(id),
   ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -162,6 +165,19 @@ export default async function ProjectOverviewPage({
           items={adaptiveRecs}
           patterns={adaptive.patterns}
           interpretation={adaptive.interpretation}
+        />
+      </div>
+
+      {/* Charter alignment — core DeliverX signal */}
+      <div className="mb-6">
+        <AlignmentSummaryCard
+          projectId={id}
+          projectName={projectName}
+          score={alignment.score}
+          tier={alignment.tier}
+          trend={alignment.trend}
+          delta={alignment.latest?.delta ?? null}
+          hasCharter={Boolean(alignment.charter?.content?.trim())}
         />
       </div>
 

@@ -10,6 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getOrgDeliveryStats, listOrgTasks } from "@/services/delivery";
 import { getOrgGovernanceStats, listOpenRaidOrg } from "@/services/governance";
 import { getProjectIntelligence } from "@/services/intelligence";
+import { getProjectAlignment } from "@/services/alignment";
+import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Table,
@@ -49,9 +51,14 @@ export default async function DashboardPage() {
   let confidenceScore = 100;
   let recommendation =
     "No interventions recommended — add tasks to projects to generate delivery signals.";
+  let topAlignment: Awaited<ReturnType<typeof getProjectAlignment>> | null = null;
 
   if (topProject) {
-    const intel = await getProjectIntelligence(topProject.id);
+    const [intel, alignment] = await Promise.all([
+      getProjectIntelligence(topProject.id),
+      getProjectAlignment(topProject.id),
+    ]);
+    topAlignment = alignment;
     insightProjectName = topProject.name;
     healthTier = intel.health.tier;
     confidenceScore = intel.confidence.score;
@@ -227,6 +234,20 @@ export default async function DashboardPage() {
           )}
         </DashboardCard>
       </div>
+
+      {topProject && topAlignment ? (
+        <div className="mt-8">
+          <AlignmentSummaryCard
+            projectId={topProject.id}
+            projectName={topProject.name}
+            score={topAlignment.score}
+            tier={topAlignment.tier}
+            trend={topAlignment.trend}
+            delta={topAlignment.latest?.delta ?? null}
+            hasCharter={Boolean(topAlignment.charter?.content?.trim())}
+          />
+        </div>
+      ) : null}
 
       <AiInsights
         projectId={topProject?.id ?? null}

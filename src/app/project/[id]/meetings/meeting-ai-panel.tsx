@@ -7,6 +7,7 @@ import { AiStatusBanner } from "@/components/ai/ai-status-banner";
 import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import type { MeetingSummaryResult } from "@/services/aiGovernance";
 import { saveMeetingSummaryAction, type ActionState } from "../ai/actions";
+import { MeetingAlignmentPreview } from "@/components/alignment/meeting-alignment-preview";
 
 const initial: ActionState = { ok: false };
 
@@ -115,6 +116,11 @@ export function MeetingAiPanel({
               <span className="font-medium">Actions:</span> {draft.actions.join("; ")}
             </div>
           ) : null}
+          <MeetingAlignmentPreview
+            projectId={projectId}
+            meetingId={meetingId}
+            meetingContext={draft.summary}
+          />
           <label className="flex items-center gap-2 text-xs text-slate-600">
             <input
               type="checkbox"
