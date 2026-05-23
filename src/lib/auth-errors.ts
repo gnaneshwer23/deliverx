@@ -10,6 +10,13 @@ export function formatAuthError(message: string): string {
     return "Incorrect email or password.";
   }
 
+  if (
+    lower.includes("email logins are disabled") ||
+    lower.includes("email_provider_disabled")
+  ) {
+    return "Email sign-in is turned off in Supabase. Enable it under Authentication → Sign In / Providers → Email.";
+  }
+
   if (lower.includes("email not confirmed")) {
     return "Email confirmation is enabled in Supabase. Turn off “Confirm email” under Authentication → Providers → Email, or confirm your email first.";
   }
