@@ -15,10 +15,6 @@ const STARTERS = [
   "Write executive summary report",
 ];
 
-const WORKSPACES = [
-  { type: "Programme", name: "Active programme", when: "Today", active: true },
-];
-
 export function AiWorkspace({
   projects,
 }: {
@@ -32,7 +28,7 @@ export function AiWorkspace({
     },
   ]);
   const [input, setInput] = useState("");
-  const [projectId, setProjectId] = useState("");
+  const [projectId, setProjectId] = useState(projects[0]?.id ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -85,18 +81,26 @@ export function AiWorkspace({
         </div>
         <div className="flex-1 overflow-y-auto p-1.5">
           <DxCaps className="px-2 py-1.5 text-[7px]">Recent</DxCaps>
-          {WORKSPACES.map((w) => (
-            <div
-              key={w.name}
-              className={`border-t-2 px-3 py-2.5 ${w.active ? "border-[#1C4A2E] bg-[#EEF5F1]" : "border-transparent"}`}
-            >
-              <DxCaps className="text-[7px]">{w.type}</DxCaps>
-              <div className={`text-[13px] font-medium ${w.active ? "text-[#1C4A2E]" : "text-[#0D0D0B]"}`}>
-                {projects[0]?.name ?? w.name}
-              </div>
-              <DxCaps className="text-[7px]">{w.when}</DxCaps>
-            </div>
-          ))}
+          {projects.length === 0 ? (
+            <p className="px-3 py-2 text-xs text-[#A8A89E]">Create a project to start an AI workspace.</p>
+          ) : (
+            projects.slice(0, 8).map((p) => {
+              const active = p.id === projectId;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setProjectId(p.id)}
+                  className={`w-full border-t-2 px-3 py-2.5 text-left ${active ? "border-[#1C4A2E] bg-[#EEF5F1]" : "border-transparent hover:bg-[#F7F7F2]"}`}
+                >
+                  <DxCaps className="text-[7px]">Project</DxCaps>
+                  <div className={`text-[13px] font-medium ${active ? "text-[#1C4A2E]" : "text-[#0D0D0B]"}`}>
+                    {p.name}
+                  </div>
+                </button>
+              );
+            })
+          )}
         </div>
       </aside>
 

@@ -8,6 +8,8 @@ import {
   createDocument,
   createChangeRequest,
   createReport,
+  updateReportReviewStatus,
+  publishReport,
   type RaidItemType,
   type RaidSeverity,
   type DecisionStatus,
@@ -189,6 +191,51 @@ export async function createReportAction(
     return {
       ok: false,
       error: err instanceof Error ? err.message : "Failed to create report",
+    };
+  }
+}
+
+export async function markReportReviewedAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const projectId = String(formData.get("projectId") ?? "");
+  const reportId = String(formData.get("reportId") ?? "");
+
+  try {
+    await updateReportReviewStatus(reportId, "reviewed");
+    revalidateGovernance(projectId);
+    revalidatePath(`/project/${projectId}/reports/${reportId}`);
+    return { ok: true };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Failed to mark report reviewed",
+    };
+  }
+}
+
+export async function publishReportAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const projectId = String(formData.get("projectId") ?? "");
+  const reportId = String(formData.get("reportId") ?? "");
+  const emailsRaw = String(formData.get("stakeholderEmails") ?? "");
+  const stakeholderEmails = emailsRaw
+    .split(/[,;\n]/)
+    .map((e) => e.trim())
+    .filter(Boolean);
+
+  try {
+    await publishReport(reportId, stakeholderEmails);
+    revalidateGovernance(projectId);
+    revalidatePath(`/project/${projectId}/reports/${reportId}`);
+    return { ok: true };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Failed to publish report",
     };
   }
 }

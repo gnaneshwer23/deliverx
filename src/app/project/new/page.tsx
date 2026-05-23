@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { listPlaybooks, type PlaybookRow } from "@/services/memory";
 import { ProjectForm } from "./project-form";
+import { dxClass } from "@/lib/dx-theme";
 
 type Search = Promise<{ playbook?: string }>;
 
@@ -15,22 +16,21 @@ export default async function NewProjectPage({
   const selected = playbooks.find((p) => p.id === selectedId) ?? null;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-3xl flex-col bg-[#F8FAFC] px-6 py-10 text-[#0F172A]">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Start your project
-      </h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Capture the basics. AI structuring kicks in next.
+    <div className="mx-auto max-w-2xl px-6 py-10 md:py-14">
+      <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Start your project</h1>
+      <p className="mt-2 text-[15px] font-light text-[#6B6B64]">
+        Upload your business case, review with AI, then launch a governed delivery workspace.
       </p>
 
       {playbooks.length > 0 ? (
-        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className={`${dxClass.cardPad} mt-8`}>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <BookOpen size={14} className="text-[#0F766E]" /> Start from a
-              playbook
+              <BookOpen size={14} className="text-[#1C4A2E]" /> Start from a playbook
             </h2>
-            <span className="text-xs text-slate-500">Optional</span>
+            <span className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase text-[#A8A89E]">
+              Optional
+            </span>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -40,14 +40,14 @@ export default async function NewProjectPage({
                 <Link
                   key={pb.id}
                   href={`/project/new?playbook=${encodeURIComponent(pb.id)}`}
-                  className={`rounded-lg border p-3 text-left transition ${
+                  className={`border p-3 text-left transition ${
                     active
-                      ? "border-[#0F766E] bg-[#0F766E]/5 ring-2 ring-[#0F766E]/30"
-                      : "border-slate-200 hover:border-slate-300"
+                      ? "border-[#1C4A2E] bg-[#EEF5F1]"
+                      : "border-[#E4E4DC] hover:border-[#1C4A2E]/40"
                   }`}
                 >
                   <p className="text-sm font-medium">{pb.name}</p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-[#6B6B64]">
                     {[pb.industry, pb.delivery_type].filter(Boolean).join(" · ") || "Generic"}
                   </p>
                 </Link>
@@ -57,13 +57,10 @@ export default async function NewProjectPage({
 
           {selected ? (
             <div className="mt-3 flex items-center justify-between text-xs">
-              <span className="text-slate-500">
-                Selected: <span className="font-medium text-[#0F172A]">{selected.name}</span>
+              <span className="text-[#6B6B64]">
+                Selected: <span className="font-medium text-[#0D0D0B]">{selected.name}</span>
               </span>
-              <Link
-                href="/project/new"
-                className="text-slate-500 hover:text-slate-700"
-              >
+              <Link href="/project/new" className="text-[#6B6B64] hover:text-[#1C4A2E]">
                 Clear
               </Link>
             </div>
@@ -71,7 +68,7 @@ export default async function NewProjectPage({
         </section>
       ) : null}
 
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className={`${dxClass.cardPad} mt-6`}>
         <ProjectForm
           playbookId={selected?.id}
           deliveryTypeDefault={selected?.delivery_type ?? undefined}
@@ -85,7 +82,6 @@ async function safeListPlaybooks(): Promise<PlaybookRow[]> {
   try {
     return await listPlaybooks();
   } catch {
-    // Migration 0002 may not be applied yet — degrade gracefully.
     return [];
   }
 }

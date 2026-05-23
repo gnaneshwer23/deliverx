@@ -1,12 +1,23 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { SignupForm } from "./signup-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
+import { createClient } from "@/lib/supabase/server";
+import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 
 type Search = Promise<{ invite?: string }>;
 
 export default async function SignupPage({ searchParams }: { searchParams: Search }) {
   const { invite } = await searchParams;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    redirect(await resolveAuthenticatedPath(supabase, invite ? `/invite/${invite}` : null));
+  }
 
   return (
     <div className="w-full max-w-[388px]">

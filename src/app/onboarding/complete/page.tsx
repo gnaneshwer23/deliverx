@@ -1,19 +1,27 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
+import { getOnboardingProfile } from "@/lib/auth/onboarding";
 
 export default async function CompletePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, profile } = await getOnboardingProfile();
 
-  const { data: profile } = await supabase
+  if (!profile?.organisation_id) {
+    redirect("/onboarding/organisation");
+  }
+  if (!profile.role) {
+    redirect("/onboarding/role");
+  }
+
+  const supabase = await createClient();
+  const { data: orgRow } = await supabase
     .from("users")
-    .select("organisation_id, organisations(name)")
+    .select("organisations(name)")
+    .eq("id", user!.id)
     .single();
 
-  const orgName = (profile?.organisations as { name?: string } | null)?.name;
+  const orgName = (orgRow?.organisations as { name?: string } | null)?.name;
 
   return (
     <ObCard step="Step 4 of 4" title="Your workspace is ready" className="text-center">

@@ -18,6 +18,7 @@ export async function createProjectDraftAction(
   const timeline = String(formData.get("timeline") ?? "").trim() || null;
   const playbookId = String(formData.get("playbook_id") ?? "").trim() || null;
   const aiDraftRaw = String(formData.get("ai_draft") ?? "").trim();
+  const publish = formData.get("publish") === "on";
 
   if (!name) return { ok: false, error: "Project name is required." };
 
@@ -52,7 +53,8 @@ export async function createProjectDraftAction(
     goal,
     delivery_type: deliveryType,
     timeline,
-    status: "draft",
+    status: publish ? "active" : "draft",
+    published_at: publish ? new Date().toISOString() : null,
   };
   if (playbookId) insert.applied_playbook_id = playbookId;
 

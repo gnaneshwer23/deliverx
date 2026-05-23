@@ -6,6 +6,10 @@ import { structureProjectFromBrief } from "@/services/aiProjectStructuring";
 type Body = {
   brief?: string;
   projectId?: string;
+  projectName?: string;
+  deliveryType?: string;
+  goal?: string;
+  discoveryAnswers?: Record<string, string>;
 };
 
 export async function POST(req: Request) {
@@ -22,9 +26,9 @@ export async function POST(req: Request) {
   }
 
   try {
-    let projectName: string | undefined;
-    let deliveryType: string | null | undefined;
-    let goal: string | null | undefined;
+    let projectName: string | undefined = body.projectName?.trim();
+    let deliveryType: string | null | undefined = body.deliveryType?.trim();
+    let goal: string | null | undefined = body.goal?.trim();
 
     if (body.projectId) {
       const { project } = await requireProjectAccess(body.projectId);
@@ -38,6 +42,7 @@ export async function POST(req: Request) {
       projectName,
       deliveryType,
       goal,
+      discoveryAnswers: body.discoveryAnswers,
     });
 
     return Response.json({ ok: true, draft, model: DEFAULT_AI_MODEL });

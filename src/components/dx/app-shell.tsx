@@ -10,10 +10,12 @@ import {
   FileText,
   FolderKanban,
   GitBranch,
+  Gauge,
   LayoutDashboard,
   MessageSquare,
   RefreshCw,
   Shield,
+  Target,
   Users,
 } from "lucide-react";
 import { DxLogo } from "@/components/dx/dx-logo";
@@ -27,19 +29,24 @@ const core = [
 const workspace = [
   { href: "/workspace/projects", label: "Projects", icon: FolderKanban, id: "proj" },
   { href: "/workspace/tasks", label: "Tasks", icon: CheckSquare, id: "task" },
-  { href: "/workspace/governance", label: "Team & Gov", icon: Users, id: "team" },
+  { href: "/workspace/team", label: "Team & Gov", icon: Users, id: "team" },
 ];
 
 const intelligence = [
-  { href: "/workspace/standups", label: "Meetings", icon: MessageSquare, id: "meet" },
-  { href: "/workspace/reports", label: "Documents", icon: FileText, id: "docs" },
+  { href: "/workspace/alerts", label: "Alert Queue", icon: Brain, id: "alert" },
+  { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
+  { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
+  { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },
+  { href: "/workspace/documents", label: "Documents", icon: FileText, id: "docs" },
   { href: "/workspace/reports", label: "Reports", icon: BarChart3, id: "rep" },
+  { href: "/workspace/executive", label: "Executive", icon: LayoutDashboard, id: "exec" },
 ];
 
 const governance = [
-  { href: "/workspace/governance", label: "RAID Log", icon: Shield, id: "raid" },
-  { href: "/workspace/governance", label: "Decisions", icon: GitBranch, id: "dec" },
-  { href: "/workspace/governance", label: "Changes", icon: RefreshCw, id: "cr" },
+  { href: "/workspace/raid", label: "RAID Log", icon: Shield, id: "raid" },
+  { href: "/workspace/decisions", label: "Decisions", icon: GitBranch, id: "dec" },
+  { href: "/workspace/changes", label: "Changes", icon: RefreshCw, id: "cr" },
+  { href: "/workspace/governance/approvals", label: "Approvals", icon: Shield, id: "appr" },
 ];
 
 function NavSection({
@@ -131,7 +138,7 @@ export function AppNav({
 
       <div className="ml-auto flex items-center gap-2">
         <Link
-          href="/workspace/governance"
+          href="/workspace/raid"
           className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
         >
           Alerts

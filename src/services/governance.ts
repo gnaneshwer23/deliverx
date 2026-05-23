@@ -3,6 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { requestApproval } from "@/services/approvals";
 
 export type RaidItemType = "risk" | "assumption" | "issue" | "dependency";
 export type RaidStatus = "open" | "mitigated" | "closed" | "accepted";
@@ -94,6 +95,8 @@ export type ChangeRequestRow = {
   updated_at: string;
 };
 
+export type ReportReviewStatus = "draft" | "reviewed" | "published";
+
 export type ReportRow = {
   id: string;
   organisation_id: string;
@@ -104,6 +107,9 @@ export type ReportRow = {
   generated_at: string;
   generated_by: string | null;
   ai_generated: boolean;
+  review_status?: ReportReviewStatus;
+  published_at?: string | null;
+  stakeholder_emails?: string[] | null;
   created_at: string;
   updated_at: string;
 };
@@ -390,7 +396,18 @@ export async function createDecision(input: {
     .single();
 
   if (error) throw error;
-  return data as DecisionRow;
+  const row = data as DecisionRow;
+
+  if (row.status === "proposed") {
+    await requestApproval({
+      projectId: input.projectId,
+      entityType: "decision",
+      entityId: row.id,
+      notes: `Decision proposed: ${row.title}`,
+    }).catch(() => undefined);
+  }
+
+  return row;
 }
 
 // ---------------------------------------------------------------------------
@@ -641,7 +658,18 @@ export async function createChangeRequest(input: {
     .single();
 
   if (error) throw error;
-  return data as ChangeRequestRow;
+  const row = data as ChangeRequestRow;
+
+  if (row.status === "submitted") {
+    await requestApproval({
+      projectId: input.projectId,
+      entityType: "change",
+      entityId: row.id,
+      notes: `Change request submitted: ${row.title}`,
+    }).catch(() => undefined);
+  }
+
+  return row;
 }
 
 // ---------------------------------------------------------------------------
@@ -716,6 +744,49 @@ export async function createReport(input: {
       generated_by: userId,
       ai_generated: input.aiGenerated ?? false,
     })
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as ReportRow;
+}
+
+export async function updateReportReviewStatus(
+  reportId: string,
+  reviewStatus: ReportReviewStatus,
+): Promise<ReportRow> {
+  const { supabase } = await getOrgContext();
+  const patch: Record<string, unknown> = { review_status: reviewStatus };
+  if (reviewStatus === "published") {
+    patch.published_at = new Date().toISOString();
+  }
+
+  const { data, error } = await supabase
+    .from("reports")
+    .update(patch)
+    .eq("id", reportId)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as ReportRow;
+}
+
+export async function publishReport(
+  reportId: string,
+  stakeholderEmails: string[],
+): Promise<ReportRow> {
+  const { supabase } = await getOrgContext();
+  const emails = stakeholderEmails.map((e) => e.trim()).filter(Boolean);
+
+  const { data, error } = await supabase
+    .from("reports")
+    .update({
+      review_status: "published",
+      published_at: new Date().toISOString(),
+      stakeholder_emails: emails,
+    })
+    .eq("id", reportId)
     .select("*")
     .single();
 
@@ -813,14 +884,27 @@ export async function listOrgDecisionsPending(limit = 6): Promise<
     project_name: string;
   }>
 > {
+  return listOrgDecisions({ status: "proposed", limit });
+}
+
+export async function listOrgDecisions(opts: {
+  status?: DecisionStatus;
+  limit?: number;
+} = {}): Promise<
+  Array<Pick<DecisionRow, "id" | "title" | "status" | "project_id" | "created_at"> & {
+    project_name: string;
+  }>
+> {
   const { supabase } = await getOrgContext();
-  const { data, error } = await supabase
+  const limit = opts.limit ?? 100;
+  let q = supabase
     .from("decisions")
     .select("id, title, status, project_id, created_at, projects!inner(name)")
-    .eq("status", "proposed")
     .order("created_at", { ascending: false })
     .limit(limit);
+  if (opts.status) q = q.eq("status", opts.status);
 
+  const { data, error } = await q;
   if (error) throw error;
 
   return (data ?? []).map((row) => {
@@ -838,6 +922,141 @@ export async function listOrgDecisionsPending(limit = 6): Promise<
       status: r.status,
       project_id: r.project_id,
       created_at: r.created_at,
+      project_name: r.projects.name,
+    };
+  });
+}
+
+export async function listOrgRaidItems(opts: {
+  type?: RaidItemType;
+  status?: RaidStatus[];
+  limit?: number;
+} = {}): Promise<
+  Array<
+    Pick<
+      RaidItemRow,
+      "id" | "title" | "type" | "status" | "severity" | "project_id" | "created_at" | "due_date"
+    > & { project_name: string }
+  >
+> {
+  const { supabase } = await getOrgContext();
+  const limit = opts.limit ?? 100;
+  let q = supabase
+    .from("raid_items")
+    .select(
+      "id, title, type, status, severity, project_id, created_at, due_date, projects!inner(name)",
+    )
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+  if (opts.type) q = q.eq("type", opts.type);
+  if (opts.status?.length) q = q.in("status", opts.status);
+
+  const { data, error } = await q;
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as {
+      id: string;
+      title: string;
+      type: RaidItemType;
+      status: RaidStatus;
+      severity: RaidSeverity;
+      project_id: string;
+      created_at: string;
+      due_date: string | null;
+      projects: { name: string };
+    };
+    return {
+      id: r.id,
+      title: r.title,
+      type: r.type,
+      status: r.status,
+      severity: r.severity,
+      project_id: r.project_id,
+      created_at: r.created_at,
+      due_date: r.due_date,
+      project_name: r.projects.name,
+    };
+  });
+}
+
+export async function listOrgChangeRequests(opts: {
+  status?: ChangeStatus[];
+  limit?: number;
+} = {}): Promise<
+  Array<
+    Pick<ChangeRequestRow, "id" | "title" | "status" | "project_id" | "created_at" | "impact"> & {
+      project_name: string;
+    }
+  >
+> {
+  const { supabase } = await getOrgContext();
+  const limit = opts.limit ?? 100;
+  let q = supabase
+    .from("change_requests")
+    .select("id, title, status, project_id, created_at, impact, projects!inner(name)")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (opts.status?.length) q = q.in("status", opts.status);
+
+  const { data, error } = await q;
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as {
+      id: string;
+      title: string;
+      status: ChangeStatus;
+      project_id: string;
+      created_at: string;
+      impact: string | null;
+      projects: { name: string };
+    };
+    return {
+      id: r.id,
+      title: r.title,
+      status: r.status,
+      project_id: r.project_id,
+      created_at: r.created_at,
+      impact: r.impact,
+      project_name: r.projects.name,
+    };
+  });
+}
+
+export async function listOrgDocuments(limit = 100): Promise<
+  Array<
+    Pick<DocumentRow, "id" | "title" | "doc_type" | "project_id" | "created_at" | "file_url"> & {
+      project_name: string;
+    }
+  >
+> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("documents")
+    .select("id, title, doc_type, project_id, created_at, file_url, projects!inner(name)")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const r = row as unknown as {
+      id: string;
+      title: string;
+      doc_type: string;
+      project_id: string;
+      created_at: string;
+      file_url: string | null;
+      projects: { name: string };
+    };
+    return {
+      id: r.id,
+      title: r.title,
+      doc_type: r.doc_type,
+      project_id: r.project_id,
+      created_at: r.created_at,
+      file_url: r.file_url,
       project_name: r.projects.name,
     };
   });

@@ -11,7 +11,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listProjectsForOrg, listDependencies, listProgrammes } from "./portfolio";
 import { getTwinState } from "./twin";
-import { runEnterpriseCoordinationLoop } from "./coordination";
 import { loadProjectSignals } from "./projectSignals";
 import { computeProjectHealth } from "./intelligenceEngine";
 import {
@@ -83,19 +82,19 @@ async function loadLocalOrgMetrics(
 
   const n = Math.max(projects.length, 1);
   const twin = await getTwinState().catch(() => null);
-  const coordination = await runEnterpriseCoordinationLoop().catch(() => null);
 
   const maxDeps = Math.max(projects.length * (projects.length - 1), 1);
+  const coordinationEfficiency = twin?.behavioralPatterns.coordinationEfficiency;
+  const coordinationStability =
+    twin?.portfolio.stability ??
+    (coordinationEfficiency != null ? Math.round(coordinationEfficiency * 100) : 70);
 
   return {
     industry,
     deliveryType,
     governanceLatency: twin?.systemMetrics.governanceLatency ?? 0.45,
     executionPressure: twin?.systemMetrics.executionPressure ?? 0.35,
-    coordinationStability:
-      coordination?.coordinationStability ??
-      twin?.portfolio.stability ??
-      70,
+    coordinationStability,
     dependencyDensity: deps.length / maxDeps,
     avgBlockers: blockerSum / n,
     avgHealth: healthSum / n,

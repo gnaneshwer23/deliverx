@@ -12,6 +12,8 @@ import {
   Users,
 } from "lucide-react";
 import { getWorkspaceDashboard } from "@/services/dashboard";
+import { getOrgAlertQueue } from "@/services/alerts";
+import { getDeliveryCoachSuggestions } from "@/services/deliveryCoach";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getProjectAlignment } from "@/services/alignment";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
@@ -32,6 +34,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AiInsights } from "./ai-insights";
+import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
+import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -58,7 +62,11 @@ function roleSubtitle(role: string, orgName: string | null) {
 }
 
 export default async function DashboardPage() {
-  const data = await getWorkspaceDashboard();
+  const [data, alerts, coach] = await Promise.all([
+    getWorkspaceDashboard(),
+    getOrgAlertQueue(6),
+    getDeliveryCoachSuggestions(4),
+  ]);
   const activeTaskRows = data.recentTasks.filter((t) => t.status !== "done");
 
   const topProject = data.projectHealth[0] ?? data.recentProjects[0] ?? null;
@@ -129,21 +137,21 @@ export default async function DashboardPage() {
     {
       label: "Open risks",
       value: data.governance.openRisks,
-      href: "/workspace/governance",
+      href: "/workspace/raid",
       icon: AlertTriangle,
       accent: data.governance.openRisks > 0 ? ("rose" as const) : ("slate" as const),
     },
     {
       label: "Pending decisions",
       value: data.governance.pendingDecisions,
-      href: "/workspace/governance",
+      href: "/workspace/decisions",
       icon: ShieldAlert,
       accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
     },
     {
       label: "Standups (7d)",
       value: data.delivery.standupsThisWeek,
-      href: "/workspace/standups",
+      href: "/workspace/meetings",
       icon: Users,
       accent: "teal" as const,
     },
@@ -182,6 +190,15 @@ export default async function DashboardPage() {
 
       <div className="mb-8">
         <KpiStrip items={kpis} />
+      </div>
+
+      <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <DashboardSection title="AI alert queue" href="/workspace/alerts">
+          <AlertQueuePanel alerts={alerts} />
+        </DashboardSection>
+        <DashboardSection title="Delivery coach" href="/workspace/alerts">
+          <DeliveryCoachPanel suggestions={coach} />
+        </DashboardSection>
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -243,7 +260,7 @@ export default async function DashboardPage() {
           )}
         </DashboardSection>
 
-        <DashboardSection title="Risk register" href="/workspace/governance">
+        <DashboardSection title="Risk register" href="/workspace/raid">
           {data.openRisks.length === 0 ? (
             <p className="text-sm text-slate-500">No open risks logged.</p>
           ) : (
@@ -266,7 +283,7 @@ export default async function DashboardPage() {
           )}
         </DashboardSection>
 
-        <DashboardSection title="Recent meetings" href="/workspace/projects">
+        <DashboardSection title="Recent meetings" href="/workspace/meetings">
           {data.recentMeetings.length === 0 ? (
             <p className="text-sm text-slate-500">
               No meetings yet. Log one from a project&apos;s Meetings page.
@@ -294,7 +311,7 @@ export default async function DashboardPage() {
           )}
         </DashboardSection>
 
-        <DashboardSection title="Pending decisions" href="/workspace/governance">
+        <DashboardSection title="Pending decisions" href="/workspace/decisions">
           {data.pendingDecisions.length === 0 ? (
             <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
           ) : (
@@ -314,7 +331,7 @@ export default async function DashboardPage() {
           )}
         </DashboardSection>
 
-        <DashboardSection title="Standups this week" href="/workspace/standups">
+        <DashboardSection title="Standups this week" href="/workspace/meetings">
           <StandupsFeed standups={data.recentStandups} />
         </DashboardSection>
 

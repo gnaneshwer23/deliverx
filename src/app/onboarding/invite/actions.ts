@@ -24,6 +24,7 @@ export async function sendInviteAction(
   try {
     const { inviteUrl } = await createInvitation({ email, role });
     revalidatePath("/onboarding/invite");
+    revalidatePath("/workspace/team");
     return { ok: true, inviteUrl, email: email.trim().toLowerCase() };
   } catch (err) {
     return {
@@ -37,6 +38,7 @@ export async function revokeInviteAction(id: string) {
   try {
     await revokeInvitation(id);
     revalidatePath("/onboarding/invite");
+    revalidatePath("/workspace/team");
     return { ok: true as const };
   } catch (err) {
     return {

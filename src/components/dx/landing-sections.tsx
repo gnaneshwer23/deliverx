@@ -29,7 +29,9 @@ export function LandingNav() {
   );
 }
 
-export function LandingHero() {
+import type { LandingPreviewStats } from "@/services/landing";
+
+export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden px-6 pb-20 pt-[calc(var(--dx-navh)+4rem)] md:px-11">
       <div
@@ -79,17 +81,17 @@ export function LandingHero() {
             <span className="flex items-center gap-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#1A6B3A]">
               <span
                 className="size-1 rounded-full bg-[#1A6B3A]"
-                style={{ animation: "dx-pulse 2s ease-in-out infinite" }}
+                style={{ animation: preview.live ? "dx-pulse 2s ease-in-out infinite" : undefined }}
               />
-              Live
+              {preview.live ? "Live" : "Sample"}
             </span>
           </div>
           <div className="p-4">
             <div className="mb-3.5 grid grid-cols-3 gap-2.5">
               {[
-                { v: "84%", l: "Confidence", c: "text-[#1A6B3A]" },
-                { v: "3", l: "At Risk", c: "text-[#B7620A]" },
-                { v: "4", l: "Blocked", c: "text-[#C0392B]" },
+                { v: `${preview.confidence}%`, l: "Confidence", c: "text-[#1A6B3A]" },
+                { v: String(preview.atRisk), l: "At Risk", c: "text-[#B7620A]" },
+                { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
               ].map((s) => (
                 <div key={s.l} className="border border-[#F0F0E8] bg-[#F7F7F2] p-3">
                   <div className={`${dxClass.display} text-[1.75rem] leading-none ${s.c}`}>
@@ -100,21 +102,14 @@ export function LandingHero() {
               ))}
             </div>
             <div className="flex flex-col gap-1.5">
-              <SignalPreview
-                tone="red"
-                text="NHS EHR scope increased 34%. Finance approval outstanding 12 days."
-                badge="High"
-              />
-              <SignalPreview
-                tone="amber"
-                text="Sprint velocity down 22% — QA bottleneck detected."
-                badge="Med"
-              />
-              <SignalPreview
-                tone="green"
-                text="Architecture sign-off received. Phase 2 can proceed."
-                badge="OK"
-              />
+              {preview.signals.map((signal) => (
+                <SignalPreview
+                  key={signal.text}
+                  tone={signal.tone}
+                  text={signal.text}
+                  badge={signal.badge}
+                />
+              ))}
             </div>
           </div>
         </div>

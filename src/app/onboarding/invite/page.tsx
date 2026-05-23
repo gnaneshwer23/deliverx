@@ -1,10 +1,23 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 import { listPendingInvitations } from "@/services/invitations";
 import { InviteForm } from "./invite-form";
 import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
+import { getOnboardingProfile, isOnboardingComplete } from "@/lib/auth/onboarding";
 
 export default async function InvitePage() {
+  const { profile } = await getOnboardingProfile();
+
+  if (isOnboardingComplete(profile)) {
+    redirect("/workspace/dashboard");
+  }
+  if (!profile?.organisation_id) {
+    redirect("/onboarding/organisation");
+  }
+  if (!profile.role) {
+    redirect("/onboarding/role");
+  }
+
   let pending: Awaited<ReturnType<typeof listPendingInvitations>> = [];
   try {
     pending = await listPendingInvitations();
