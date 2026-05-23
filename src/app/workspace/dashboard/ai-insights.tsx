@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { Loader2, Sparkles } from "lucide-react";
 import { AiStatusBanner } from "@/components/ai/ai-status-banner";
@@ -27,6 +27,7 @@ export function AiInsights({
   const [narrative, setNarrative] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
   const tierLabel =
     healthTier === "healthy"
@@ -39,8 +40,10 @@ export function AiInsights({
     if (!projectId) return;
 
     let cancelled = false;
-    setLoading(true);
-    setAiError(null);
+    startTransition(() => {
+      setLoading(true);
+      setAiError(null);
+    });
 
     postAi<InsightsResponse>("/api/ai/insights", { projectId }).then((res) => {
       if (cancelled) return;

@@ -161,7 +161,7 @@ async function loadOrgWideInputsForOrg(
     dependencies = [];
   }
 
-  let reviewBehaviour = {
+  const reviewBehaviour = {
     totalReviews: 0,
     approvedCount: 0,
     rejectedCount: 0,

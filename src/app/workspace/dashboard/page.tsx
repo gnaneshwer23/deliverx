@@ -70,7 +70,7 @@ export default async function DashboardPage() {
   const activeTaskRows = data.recentTasks.filter((t) => t.status !== "done");
 
   const topProject = data.projectHealth[0] ?? data.recentProjects[0] ?? null;
-  let insightProjectName: string | null = topProject?.name ?? null;
+  const insightProjectName: string | null = topProject?.name ?? null;
   let healthTier: "healthy" | "watch" | "at-risk" = topProject?.healthTier ?? "healthy";
   let confidenceScore = topProject?.confidenceScore ?? 100;
   let recommendation =

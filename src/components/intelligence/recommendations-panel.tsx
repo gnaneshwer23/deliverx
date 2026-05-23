@@ -32,12 +32,13 @@ export function RecommendationsPanel({
   const [rationales, setRationales] = useState<Record<string, string>>({});
   const [enriching, setEnriching] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [, startEnrichTransition] = useTransition();
 
   useEffect(() => {
     if (items.length === 0) return;
 
     let cancelled = false;
-    setEnriching(true);
+    startEnrichTransition(() => setEnriching(true));
 
     postAi<EnrichResponse>("/api/ai/recommendations/enrich", { projectId }).then(
       (res) => {

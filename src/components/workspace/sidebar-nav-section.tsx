@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export type SidebarNavItem = {
   href: string;
@@ -26,17 +26,14 @@ export function SidebarNavSection({
       pathname === item.href ||
       (item.href !== "/workspace/dashboard" && pathname.startsWith(item.href + "/")),
   );
-  const [open, setOpen] = useState(defaultOpen || activeInSection);
-
-  useEffect(() => {
-    if (activeInSection) setOpen(true);
-  }, [activeInSection]);
+  const [userOpen, setUserOpen] = useState<boolean | null>(null);
+  const open = userOpen ?? (defaultOpen || activeInSection);
 
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setUserOpen(!(userOpen ?? open))}
         className="mt-4 mb-1 flex w-full items-center justify-between rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#6b7280] hover:text-[#9ca3af]"
         aria-expanded={open}
       >

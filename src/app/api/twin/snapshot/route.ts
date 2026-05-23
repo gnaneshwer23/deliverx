@@ -11,8 +11,20 @@ function isCronAuthorized(req: Request): boolean {
   return req.headers.get("authorization") === `Bearer ${secret}`;
 }
 
-/** GET — recent snapshot history for the current org. */
+/** GET — recent snapshot history, or cron capture when Bearer CRON_SECRET is sent. */
 export async function GET(req: Request) {
+  if (isCronAuthorized(req)) {
+    try {
+      const result = await captureAllTwinSnapshots();
+      return NextResponse.json({ ok: true, cron: true, ...result });
+    } catch (err) {
+      return NextResponse.json(
+        { error: err instanceof Error ? err.message : "Cron snapshot failed" },
+        { status: 500 },
+      );
+    }
+  }
+
   const url = new URL(req.url);
   const limit = Math.min(50, Number(url.searchParams.get("limit") ?? 20) || 20);
 

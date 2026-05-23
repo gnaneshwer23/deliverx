@@ -5,17 +5,20 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Brain,
+  BrainCircuit,
   CheckSquare,
   Cpu,
   FileText,
   FolderKanban,
-  GitBranch,
   Gauge,
+  GitBranch,
+  Globe2,
   LayoutDashboard,
   MessageSquare,
   RefreshCw,
   Shield,
   Target,
+  Telescope,
   Users,
 } from "lucide-react";
 import { DxLogo } from "@/components/dx/dx-logo";
@@ -37,9 +40,13 @@ const intelligence = [
   { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
   { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
   { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },
+  { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, id: "twin" },
+  { href: "/workspace/global", label: "Global Intel", icon: Globe2, id: "global" },
+  { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit, id: "coord" },
   { href: "/workspace/documents", label: "Documents", icon: FileText, id: "docs" },
   { href: "/workspace/reports", label: "Reports", icon: BarChart3, id: "rep" },
   { href: "/workspace/executive", label: "Executive", icon: LayoutDashboard, id: "exec" },
+  { href: "/workspace/portfolio", label: "Portfolio", icon: FolderKanban, id: "port" },
 ];
 
 const governance = [
@@ -138,7 +145,7 @@ export function AppNav({
 
       <div className="ml-auto flex items-center gap-2">
         <Link
-          href="/workspace/raid"
+          href="/workspace/alerts"
           className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
         >
           Alerts
