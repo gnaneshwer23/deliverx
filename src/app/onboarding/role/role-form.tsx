@@ -2,8 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { setRoleAction, type RoleState } from "./actions";
-import { SovereignError } from "@/components/sovereign/sovereign-form";
-import { sovereignClass } from "@/lib/sovereign-theme";
+import { dxClass } from "@/lib/dx-theme";
 
 const initial: RoleState = { ok: false };
 
@@ -30,10 +29,10 @@ export function RoleForm() {
   const [selected, setSelected] = useState<string>("pm");
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form action={formAction} className="flex flex-col gap-3.5">
       <input type="hidden" name="role" value={selected} />
 
-      <div className="space-y-3">
+      <div className="flex flex-col gap-2.5">
         {roles.map((r) => {
           const active = selected === r.value;
           return (
@@ -41,53 +40,39 @@ export function RoleForm() {
               type="button"
               key={r.value}
               onClick={() => setSelected(r.value)}
-              className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${
+              className={`flex w-full items-start gap-3 border p-4 text-left transition ${
                 active
-                  ? "border-[#6ee7c7]/50 bg-[#6ee7c7]/10 ring-2 ring-[#6ee7c7]/20"
-                  : "border-[#1a1a1a]/10 bg-white hover:border-[#1a1a1a]/20"
+                  ? "border-[#1C4A2E] bg-[#EEF5F1] ring-1 ring-[#C6DDD0]"
+                  : "border-[#E4E4DC] bg-white hover:border-[#A8A89E]"
               }`}
             >
               <span
                 aria-hidden
-                className={`mt-0.5 flex size-5 items-center justify-center rounded-full border ${
+                className={`mt-0.5 flex size-5 items-center justify-center rounded-full border-[1.5px] ${
                   active
-                    ? "border-[#0a0e14] bg-[#0a0e14] text-[#6ee7c7]"
-                    : "border-[#1a1a1a]/15 bg-white"
+                    ? "border-[#1C4A2E] bg-[#1C4A2E] text-white"
+                    : "border-[#E4E4DC] bg-white"
                 }`}
               >
-                {active ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : null}
+                {active ? "✓" : null}
               </span>
               <span>
-                <span className="block text-sm font-semibold text-[#1a1a1a]">{r.title}</span>
-                <span className="block text-xs text-[#6b7280]">{r.desc}</span>
+                <span className="block text-sm font-semibold text-[#0D0D0B]">{r.title}</span>
+                <span className="block text-xs text-[#6B6B64]">{r.desc}</span>
               </span>
             </button>
           );
         })}
       </div>
 
-      {state.error ? <SovereignError>{state.error}</SovereignError> : null}
+      {state.error ? (
+        <p className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
+          {state.error}
+        </p>
+      ) : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className={`${sovereignClass.pillPrimary} h-11 w-full disabled:opacity-50`}
-      >
-        {pending ? "Saving…" : "Continue"}
+      <button type="submit" disabled={pending} className={`${dxClass.btnPrimary} w-full`}>
+        {pending ? "Saving…" : "Continue →"}
       </button>
     </form>
   );

@@ -5,8 +5,7 @@ import { Copy, Check } from "lucide-react";
 import { sendInviteAction, type InviteState } from "./actions";
 import { buildInviteUrl } from "@/lib/invite-url";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { SovereignError, SovereignLabel } from "@/components/sovereign/sovereign-form";
-import { sovereignClass } from "@/lib/sovereign-theme";
+import { dxClass } from "@/lib/dx-theme";
 
 const initial: InviteState = { ok: false };
 
@@ -38,25 +37,21 @@ export function InviteForm({
 
   return (
     <div className="mt-6 space-y-6">
-      <form action={action} className="space-y-4 rounded-xl border border-[#1a1a1a]/8 bg-[#f5f2ed]/60 p-4">
+      <form action={action} className="space-y-4 border border-[#E4E4DC] bg-[#F7F7F2] p-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-1">
-            <SovereignLabel>Email</SovereignLabel>
+            <span className={dxClass.label}>Email</span>
             <input
               name="email"
               type="email"
               required
               placeholder="colleague@company.com"
-              className={sovereignClass.input}
+              className={dxClass.input}
             />
           </label>
           <label className="block sm:col-span-1">
-            <SovereignLabel>Role</SovereignLabel>
-            <select
-              name="role"
-              defaultValue="team_member"
-              className={sovereignClass.input}
-            >
+            <span className={dxClass.label}>Role</span>
+            <select name="role" defaultValue="team_member" className={dxClass.input}>
               <option value="team_member">Team member</option>
               <option value="pm">Project Manager</option>
               <option value="executive">Executive</option>

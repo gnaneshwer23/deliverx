@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { sovereignClass } from "@/lib/sovereign-theme";
+import { dxClass } from "@/lib/dx-theme";
 
 export function DashboardSection({
   title,
@@ -15,13 +15,15 @@ export function DashboardSection({
   className?: string;
 }) {
   return (
-    <section className={`${sovereignClass.card} p-5 ${className ?? ""}`}>
+    <section className={`${dxClass.cardPad} ${className ?? ""}`}>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className={sovereignClass.sectionTitle}>{title}</h2>
+        <h2 className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[#6B6B64]">
+          {title}
+        </h2>
         {href ? (
           <Link
             href={href}
-            className="inline-flex items-center gap-0.5 text-xs font-medium uppercase tracking-[0.1em] text-[#4b5563] transition hover:text-[#0a0e14]"
+            className="inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.06em] text-[#1C4A2E] hover:text-[#2D7048]"
           >
             View all <ArrowUpRight size={12} />
           </Link>

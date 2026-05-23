@@ -38,14 +38,14 @@ export function QuickActionsBar({ role }: { role: UserRole }) {
   const visible = ACTIONS.filter((a) => !a.roles || a.roles.includes(role));
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5">
       {visible.map((action) => {
         const Icon = action.icon;
         return (
           <Link
             key={action.href}
             href={action.href}
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#1a1a1a]/10 bg-white px-3 py-1.5 text-xs font-medium text-[#4b5563] shadow-sm transition hover:border-[#6ee7c7]/50 hover:text-[#0a0e14]"
+            className="inline-flex items-center gap-1.5 border border-[#E4E4DC] bg-white px-3 py-1.5 text-xs text-[#6B6B64] transition hover:border-[#1C4A2E] hover:text-[#0D0D0B]"
           >
             <Icon size={13} />
             {action.label}

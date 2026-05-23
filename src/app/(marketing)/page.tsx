@@ -1,21 +1,25 @@
-import { MarketingHero } from "@/components/marketing/marketing-hero";
-import { MarketingStatsBand } from "@/components/marketing/marketing-stats-band";
-import { MarketingIntro } from "@/components/marketing/marketing-intro";
-import { MarketingFeatureCards } from "@/components/marketing/marketing-feature-cards";
-import { MarketingProcess } from "@/components/marketing/marketing-process";
-import { MarketingCta } from "@/components/marketing/marketing-cta";
-import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import {
+  LandingCta,
+  LandingFeatures,
+  LandingFooter,
+  LandingHero,
+  LandingHow,
+  LandingNav,
+  LandingPricing,
+  LandingProblem,
+} from "@/components/dx/landing-sections";
 
 export default function LandingPage() {
   return (
-    <div className="bg-[#0a0e14] text-[#f8f6f2]">
-      <MarketingHero />
-      <MarketingStatsBand />
-      <MarketingIntro />
-      <MarketingFeatureCards />
-      <MarketingProcess />
-      <MarketingCta />
-      <MarketingFooter />
+    <div className="min-h-screen bg-[#FAFAF5]">
+      <LandingNav />
+      <LandingHero />
+      <LandingProblem />
+      <LandingHow />
+      <LandingFeatures />
+      <LandingPricing />
+      <LandingCta />
+      <LandingFooter />
     </div>
   );
 }

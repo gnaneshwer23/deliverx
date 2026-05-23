@@ -32,8 +32,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AiInsights } from "./ai-insights";
-import { SovereignPageHeader } from "@/components/sovereign/sovereign-page-header";
-import { sovereignClass } from "@/lib/sovereign-theme";
+import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { DxButtonLink } from "@/components/dx/dx-button";
+import { DxBadge } from "@/components/dx/dx-badge";
+import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -152,17 +154,27 @@ export default async function DashboardPage() {
   );
 
   return (
-    <main className="p-6 lg:p-8">
-      <SovereignPageHeader
-        eyebrow={`${data.userRole.replace(/_/g, " ")} dashboard`}
+    <>
+      <DxPageHeader
+        breadcrumb="DeliverX OS · Command Centre"
         title={roleHeading(data.userRole, data.userName)}
-        description={roleSubtitle(data.userRole, data.orgName)}
+        titleEm={
+          data.governance.openRisks + data.delivery.blockedTasks > 0
+            ? `${data.governance.openRisks + data.delivery.blockedTasks} signals need attention.`
+            : undefined
+        }
         action={
-          <Link href="/project/new" className={`${sovereignClass.pillPrimary} h-11 shrink-0`}>
-            New project
-          </Link>
+          <div className="flex items-center gap-2">
+            <DxBadge tone="green" dot>
+              Operational
+            </DxBadge>
+            <DxButtonLink href="/project/new" variant="primarySm">
+              New project
+            </DxButtonLink>
+          </div>
         }
       />
+      <div className="p-6 md:p-8">
 
       <div className="mb-6">
         <QuickActionsBar role={data.userRole} />
@@ -385,9 +397,9 @@ export default async function DashboardPage() {
         recommendation={recommendation}
       />
 
-      <section className={`${sovereignClass.card} mt-8 p-6`}>
+      <section className={`${dxClass.cardPad} mt-8`}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className={sovereignClass.sectionTitle}>Recent projects</h2>
+          <h2 className={`${dxClass.display} text-xl`}>Recent projects</h2>
           <Link
             href="/workspace/projects"
             className="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#4b5563] hover:text-[#0a0e14]"
@@ -445,6 +457,7 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
-    </main>
+      </div>
+    </>
   );
 }

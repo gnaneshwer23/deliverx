@@ -1,13 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
 import Link from "next/link";
-import {
-  authButtonClass,
-  authInputClass,
-  authLabelClass,
-  authLinkClass,
-} from "@/components/marketing/auth-panel";
+import { useActionState } from "react";
+import { dxClass } from "@/lib/dx-theme";
 import { loginAction, type LoginState } from "./actions";
 
 const initial: LoginState = { ok: false };
@@ -16,25 +11,28 @@ export function LoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState(loginAction, initial);
 
   return (
-    <form action={formAction} className="mt-6 space-y-4">
+    <form action={formAction} className="flex flex-col gap-3.5">
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       <label className="block">
-        <span className={authLabelClass}>Email</span>
+        <span className={dxClass.label}>Email</span>
         <input
           name="email"
           type="email"
           required
           autoComplete="email"
-          placeholder="you@company.com"
-          className={authInputClass}
+          placeholder="alex@company.com"
+          className={dxClass.input}
         />
       </label>
 
       <label className="block">
         <div className="flex items-center justify-between">
-          <span className={authLabelClass}>Password</span>
-          <Link href="/login/forgot" className={`text-xs ${authLinkClass}`}>
+          <span className={dxClass.label}>Password</span>
+          <Link
+            href="/login/forgot"
+            className="text-xs text-[#1C4A2E] hover:underline"
+          >
             Forgot password?
           </Link>
         </div>
@@ -43,18 +41,18 @@ export function LoginForm({ next }: { next?: string }) {
           type="password"
           required
           autoComplete="current-password"
-          className={authInputClass}
+          className={dxClass.input}
         />
       </label>
 
       {state.error ? (
-        <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+        <p className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
           {state.error}
         </p>
       ) : null}
 
-      <button type="submit" disabled={pending} className={authButtonClass}>
-        {pending ? "Signing in…" : "Sign in"}
+      <button type="submit" disabled={pending} className={`${dxClass.btnPrimary} w-full`}>
+        {pending ? "Signing in…" : "Sign In →"}
       </button>
     </form>
   );

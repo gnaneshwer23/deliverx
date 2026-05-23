@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import { dxClass } from "@/lib/dx-theme";
 
 export type KpiItem = {
   label: string;
@@ -11,32 +12,39 @@ export type KpiItem = {
 };
 
 const ACCENT: Record<NonNullable<KpiItem["accent"]>, string> = {
-  teal: "border-l-[#6ee7c7] text-[#0a0e14]",
-  amber: "border-l-amber-500 text-amber-700",
-  rose: "border-l-rose-500 text-rose-700",
-  slate: "border-l-[#1a1a1a]/20 text-[#4b5563]",
+  teal: "text-[#1A6B3A]",
+  amber: "text-[#B7620A]",
+  rose: "text-[#C0392B]",
+  slate: "text-[#0D0D0B]",
+};
+
+const BAR: Record<NonNullable<KpiItem["accent"]>, string> = {
+  teal: "bg-[#1A6B3A]",
+  amber: "bg-[#B7620A]",
+  rose: "bg-[#C0392B]",
+  slate: "bg-[#1C4A2E]",
 };
 
 export function KpiStrip({ items }: { items: KpiItem[] }) {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-4">
       {items.map((item) => {
-        const Icon = item.icon;
         const accent = ACCENT[item.accent ?? "slate"];
+        const bar = BAR[item.accent ?? "slate"];
         const inner = (
-          <div
-            className={`rounded-xl border border-[#1a1a1a]/8 border-l-4 bg-white p-4 shadow-sm transition hover:shadow-md ${accent.split(" ")[0]}`}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[#6b7280]">
-                {item.label}
-              </p>
-              {Icon ? <Icon size={14} className={accent.split(" ").slice(1).join(" ")} /> : null}
-            </div>
-            <p className="mt-1 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[#1a1a1a]">
-              {item.value}
+          <div className={`${dxClass.card} p-4 transition hover:shadow-[0_4px_20px_rgba(13,13,11,0.09)]`}>
+            <p className="mb-1.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
+              {item.label}
             </p>
-            {item.hint ? <p className="mt-0.5 text-xs text-[#9ca3af]">{item.hint}</p> : null}
+            <p className={`${dxClass.display} text-[2rem] leading-none ${accent}`}>{item.value}</p>
+            {item.hint ? (
+              <p className="mt-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#6B6B64]">
+                {item.hint}
+              </p>
+            ) : null}
+            <div className="mt-2 h-[3px] overflow-hidden bg-[#F0F0E8]">
+              <div className={`h-full w-3/4 ${bar}`} />
+            </div>
           </div>
         );
 

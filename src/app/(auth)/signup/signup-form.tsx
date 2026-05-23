@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  authButtonClass,
-  authInputClass,
-  authLabelClass,
-} from "@/components/marketing/auth-panel";
 import { createClient } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/auth-errors";
+import { dxClass } from "@/lib/dx-theme";
 
 export function SignupForm({ invite }: { invite?: string }) {
   const router = useRouter();
@@ -63,21 +59,15 @@ export function SignupForm({ invite }: { invite?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-      <Field
-        label="Full name"
-        name="name"
-        type="text"
-        autoComplete="name"
-        placeholder="Ada Lovelace"
-      />
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+      <Field label="Full name" name="name" type="text" autoComplete="name" placeholder="Alex Chen" />
       <Field
         label="Work email"
         name="email"
         type="email"
         autoComplete="email"
         required
-        placeholder="you@company.com"
+        placeholder="alex@company.com"
       />
       <Field
         label="Password"
@@ -85,22 +75,18 @@ export function SignupForm({ invite }: { invite?: string }) {
         type="password"
         autoComplete="new-password"
         required
-        placeholder="At least 8 characters"
+        placeholder="Minimum 8 characters"
       />
 
       {error ? (
-        <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+        <p className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
           {error}
         </p>
       ) : null}
 
-      <button type="submit" disabled={pending} className={authButtonClass}>
-        {pending ? "Creating account…" : "Create account"}
+      <button type="submit" disabled={pending} className={`${dxClass.btnPrimary} w-full`}>
+        {pending ? "Creating account…" : "Create Account →"}
       </button>
-
-      <p className="text-center text-xs text-[#6b7280]">
-        By signing up you agree to our Terms and Privacy Policy.
-      </p>
     </form>
   );
 }
@@ -110,8 +96,8 @@ type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & { label: string 
 function Field({ label, name, ...rest }: FieldProps) {
   return (
     <label className="block">
-      <span className={authLabelClass}>{label}</span>
-      <input name={name} {...rest} className={authInputClass} />
+      <span className={dxClass.label}>{label}</span>
+      <input name={name} {...rest} className={dxClass.input} />
     </label>
   );
 }

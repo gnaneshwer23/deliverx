@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AuthPanel, authLinkClass } from "@/components/marketing/auth-panel";
 import { LoginForm } from "./login-form";
+import { DxCaps } from "@/components/dx/dx-logo";
+import { dxClass } from "@/lib/dx-theme";
 
 type Search = Promise<{ next?: string; reset?: string; error?: string }>;
 
@@ -12,39 +13,35 @@ export default async function LoginPage({
   const { next, reset, error } = await searchParams;
 
   return (
-    <AuthPanel>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight">
-        Welcome back
-      </h1>
-      <p className="mt-2 text-sm text-[#9ca3af]">Sign in to continue to your workspace.</p>
+    <div className="w-full max-w-[388px]">
+      <h1 className={`${dxClass.display} text-[1.625rem] text-[#0D0D0B]`}>Welcome back</h1>
+      <p className="mb-7 mt-1 text-[15px] font-light text-[#6B6B64]">
+        Sign in to your DeliverX workspace.
+      </p>
 
       {reset ? (
-        <div className="mt-4 rounded-lg border border-[#6ee7c7]/30 bg-[#6ee7c7]/10 px-3 py-2 text-sm text-[#6ee7c7]">
+        <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-sm text-[#1C4A2E]">
           Password updated. Sign in with your new password.
         </div>
       ) : null}
 
       {error ? (
-        <div className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+        <div className="mb-4 border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
           {error}
         </div>
       ) : null}
 
       <LoginForm next={next} />
 
-      <p className="mt-6 text-center text-sm text-[#9ca3af]">
-        Don&apos;t have an account?{" "}
-        <Link
-          href={
-            next
-              ? `/signup?invite=${encodeURIComponent(next.replace(/^\/invite\//, ""))}`
-              : "/signup"
-          }
-          className={authLinkClass}
-        >
-          Start free trial
+      <p className="mt-5 text-center text-sm text-[#6B6B64]">
+        No account?{" "}
+        <Link href="/signup" className="font-medium text-[#1C4A2E] hover:underline">
+          Create one
         </Link>
       </p>
-    </AuthPanel>
+      <DxCaps className="mt-8 block text-center text-[7px] text-[#A8A89E]">
+        30-day free trial · No credit card
+      </DxCaps>
+    </div>
   );
 }

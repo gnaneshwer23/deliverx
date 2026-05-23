@@ -1,10 +1,9 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Grain } from "@/components/marketing/grain";
-import { SovereignFonts } from "@/components/sovereign/sovereign-fonts";
-import { SovereignStepper } from "@/components/sovereign/sovereign-stepper";
+import { DxCaps, DxLogo } from "@/components/dx/dx-logo";
+import { DxStepper } from "@/components/dx/dx-stepper";
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function OnboardingLayout({
   children,
@@ -16,35 +15,24 @@ export default async function OnboardingLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
   return (
-    <SovereignFonts className="flex min-h-screen flex-col bg-[#0a0e14] text-[#f8f6f2]">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a2838] via-[#0a0e14] to-[#050608]" aria-hidden />
-      <Grain />
-
-      <header className="relative z-10 border-b border-white/10">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-5">
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-xl tracking-tight md:text-2xl"
-          >
-            DeliverX
-          </Link>
-          <span className="text-[11px] uppercase tracking-[0.15em] text-[#9ca3af]">
-            {user.email}
-          </span>
-        </div>
-        <div className="mx-auto max-w-4xl overflow-x-auto px-6 pb-5">
-          <SovereignStepper />
-        </div>
+    <div className="flex min-h-screen flex-col bg-[#FAFAF5]">
+      <header className="flex h-[var(--dx-navh)] shrink-0 items-center justify-between border-b border-[#E4E4DC] bg-white px-6 md:px-11">
+        <DxLogo />
+        <DxStepper />
+        <Link
+          href="/workspace/dashboard"
+          className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.1em] text-[#A8A89E] hover:text-[#1C4A2E]"
+        >
+          Skip to workspace
+        </Link>
       </header>
-
-      <main className="relative z-10 flex flex-1 items-start justify-center bg-[#f5f2ed] px-4 py-10 text-[#1a1a1a]">
-        <div className="w-full max-w-xl">{children}</div>
-      </main>
-    </SovereignFonts>
+      <main className="flex flex-1 items-start justify-center px-4 py-12">{children}</main>
+      <footer className="border-t border-[#E4E4DC] py-4 text-center">
+        <DxCaps className="text-[7px] text-[#A8A89E]">{user.email}</DxCaps>
+      </footer>
+    </div>
   );
 }

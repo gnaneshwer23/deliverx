@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { SovereignFonts } from "@/components/sovereign/sovereign-fonts";
-import { WorkspaceSidebar } from "@/components/workspace/sidebar";
+import { AppNav, AppSidebar } from "@/components/dx/app-shell";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function WorkspaceLayout({
@@ -25,9 +24,12 @@ export default async function WorkspaceLayout({
   const orgName = (profile.organisations as { name?: string } | null)?.name ?? null;
 
   return (
-    <SovereignFonts className="flex h-screen bg-[#0a0e14] text-[#f8f6f2]">
-      <WorkspaceSidebar orgName={orgName} userEmail={user.email} />
-      <div className="flex-1 overflow-y-auto bg-[#f5f2ed] text-[#1a1a1a]">{children}</div>
-    </SovereignFonts>
+    <div className="min-h-screen bg-[#FAFAF5]">
+      <AppNav userEmail={user.email} orgName={orgName} />
+      <AppSidebar />
+      <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
+        {children}
+      </main>
+    </div>
   );
 }

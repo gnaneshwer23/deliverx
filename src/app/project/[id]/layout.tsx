@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { SovereignFonts } from "@/components/sovereign/sovereign-fonts";
+import { AppNav } from "@/components/dx/app-shell";
 import { createClient } from "@/lib/supabase/server";
 import { ProjectSidebar } from "./sidebar";
 import { ProjectTopbar } from "./topbar";
@@ -28,13 +28,23 @@ export default async function ProjectLayout({
 
   if (!project) notFound();
 
+  const { data: profile } = await supabase
+    .from("users")
+    .select("organisations(name)")
+    .single();
+
+  const orgName = (profile?.organisations as { name?: string } | null)?.name ?? null;
+
   return (
-    <SovereignFonts className="flex h-screen bg-[#0a0e14] text-[#f8f6f2]">
-      <ProjectSidebar projectId={project.id} projectName={project.name} />
-      <div className="flex flex-1 flex-col bg-[#f5f2ed] text-[#1a1a1a]">
-        <ProjectTopbar userEmail={user.email ?? null} />
-        <div className="flex-1 overflow-y-auto">{children}</div>
+    <div className="min-h-screen bg-[#FAFAF5]">
+      <AppNav userEmail={user.email} orgName={orgName} />
+      <div className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] flex min-h-[calc(100vh-var(--dx-navh))]">
+        <ProjectSidebar projectId={project.id} projectName={project.name} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <ProjectTopbar userEmail={user.email ?? null} />
+          <div className="flex-1 overflow-y-auto">{children}</div>
+        </div>
       </div>
-    </SovereignFonts>
+    </div>
   );
 }

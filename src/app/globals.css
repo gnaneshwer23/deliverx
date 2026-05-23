@@ -128,3 +128,52 @@
     @apply font-sans;
   }
 }
+
+/* DeliverX OS tokens */
+:root {
+  --dx-ink: #0d0d0b;
+  --dx-ink2: #1a1a17;
+  --dx-ink3: #2c2c28;
+  --dx-mut: #6b6b64;
+  --dx-fnt: #a8a89e;
+  --dx-rul: #e4e4dc;
+  --dx-rul2: #f0f0e8;
+  --dx-srf: #f7f7f2;
+  --dx-bas: #fafaf5;
+  --dx-wht: #ffffff;
+  --dx-acc: #1c4a2e;
+  --dx-acm: #2d7048;
+  --dx-acl: #3d9660;
+  --dx-acb: #eef5f1;
+  --dx-acr: #c6ddd0;
+  --dx-red: #c0392b;
+  --dx-rdb: #fdf1f0;
+  --dx-amb: #b7620a;
+  --dx-abb: #fef6ec;
+  --dx-grn: #1a6b3a;
+  --dx-gnb: #edf7f1;
+  --dx-blu: #1a3f6b;
+  --dx-blb: #edf2f9;
+  --dx-navh: 60px;
+  --dx-sbw: 220px;
+}
+
+@keyframes dx-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes dx-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}

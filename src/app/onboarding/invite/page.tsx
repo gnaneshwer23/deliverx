@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { listPendingInvitations } from "@/services/invitations";
 import { InviteForm } from "./invite-form";
-import { SovereignCard } from "@/components/sovereign/sovereign-card";
-import { sovereignClass } from "@/lib/sovereign-theme";
+import { ObCard } from "@/components/dx/ob-card";
+import { DxButtonLink } from "@/components/dx/dx-button";
 
 export default async function InvitePage() {
   let pending: Awaited<ReturnType<typeof listPendingInvitations>> = [];
@@ -13,26 +13,20 @@ export default async function InvitePage() {
   }
 
   return (
-    <SovereignCard
+    <ObCard
+      step="Step 3 of 4"
       title="Invite your team"
       description="Add teammates by email. Share the invite link so they can create an account."
     >
       <InviteForm pending={pending} />
-
-      <div className="mt-8 flex gap-3 border-t border-[#1a1a1a]/8 pt-6">
-        <Link
-          href="/onboarding/complete"
-          className={`${sovereignClass.pillGhost} h-11 flex-1`}
-        >
+      <div className="mt-8 flex gap-3 border-t border-[#E4E4DC] pt-6">
+        <DxButtonLink href="/onboarding/complete" variant="ghost" className="flex-1">
           Skip for now
-        </Link>
-        <Link
-          href="/onboarding/complete"
-          className={`${sovereignClass.pillPrimary} h-11 flex-1`}
-        >
-          Continue
-        </Link>
+        </DxButtonLink>
+        <DxButtonLink href="/onboarding/complete" className="flex-1">
+          Continue →
+        </DxButtonLink>
       </div>
-    </SovereignCard>
+    </ObCard>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { dxFontClassName, dxSans } from "@/lib/dx-fonts";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DeliverX — Delivery intelligence for programs",
+  title: "DeliverX — AI Delivery Operating System",
   description:
-    "DeliverX turns business cases into executable delivery workflows with charter alignment, governance, and AI-assisted intelligence.",
+    "DeliverX turns business cases into executable delivery workflows with AI-assisted planning, governance, and monitoring.",
 };
 
 export default function RootLayout({
@@ -27,10 +28,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${dxFontClassName} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-background text-foreground flex flex-col">
+      <body
+        className={`${dxSans.className} min-h-full bg-[#FAFAF5] text-[#0D0D0B] flex flex-col`}
+      >
         {children}
         <Toaster richColors closeButton position="top-right" />
       </body>

@@ -1,13 +1,14 @@
 import { RoleForm } from "./role-form";
-import { SovereignCard } from "@/components/sovereign/sovereign-card";
+import { ObCard } from "@/components/dx/ob-card";
 
 export default function RolePage() {
   return (
-    <SovereignCard
+    <ObCard
+      step="Step 2 of 4"
       title="What's your role?"
-      description="We'll tailor your workspace — dashboards, shortcuts, and intelligence — to how you deliver."
+      description="We'll tailor dashboards, shortcuts, and intelligence to how you deliver."
     >
       <RoleForm />
-    </SovereignCard>
+    </ObCard>
   );
 }

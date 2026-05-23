@@ -2,12 +2,7 @@
 
 import { useActionState } from "react";
 import { createOrganisationAction, type OrgState } from "./actions";
-import {
-  SovereignError,
-  SovereignInput,
-  SovereignSelect,
-} from "@/components/sovereign/sovereign-form";
-import { sovereignClass } from "@/lib/sovereign-theme";
+import { dxClass } from "@/lib/dx-theme";
 
 const initial: OrgState = { ok: false };
 
@@ -34,32 +29,60 @@ const deliveryTypes = [
 ];
 
 export function OrganisationForm() {
-  const [state, formAction, pending] = useActionState(
-    createOrganisationAction,
-    initial,
-  );
+  const [state, formAction, pending] = useActionState(createOrganisationAction, initial);
 
   return (
-    <form action={formAction} className="space-y-4">
-      <SovereignInput
-        label="Organisation name"
-        name="name"
-        required
-        placeholder="NHS Transformation Unit"
-      />
-      <SovereignSelect label="Industry" name="industry" options={industries} />
-      <SovereignSelect label="Team size" name="team_size" options={teamSizes} />
-      <SovereignSelect label="Delivery type" name="delivery_type" options={deliveryTypes} />
+    <form action={formAction} className="flex flex-col gap-3.5">
+      <Field label="Organisation name" name="name" required placeholder="NHS Transformation Unit" />
+      <Select label="Industry" name="industry" options={industries} />
+      <Select label="Team size" name="team_size" options={teamSizes} />
+      <Select label="Delivery type" name="delivery_type" options={deliveryTypes} />
 
-      {state.error ? <SovereignError>{state.error}</SovereignError> : null}
+      {state.error ? (
+        <p className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
+          {state.error}
+        </p>
+      ) : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className={`${sovereignClass.pillPrimary} mt-2 h-11 w-full disabled:opacity-50`}
-      >
-        {pending ? "Saving…" : "Continue"}
+      <button type="submit" disabled={pending} className={`${dxClass.btnPrimary} w-full`}>
+        {pending ? "Saving…" : "Continue →"}
       </button>
     </form>
+  );
+}
+
+function Field(props: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
+  const { label, ...rest } = props;
+  return (
+    <label className="block">
+      <span className={dxClass.label}>{label}</span>
+      <input {...rest} className={dxClass.input} />
+    </label>
+  );
+}
+
+function Select({
+  label,
+  name,
+  options,
+}: {
+  label: string;
+  name: string;
+  options: string[];
+}) {
+  return (
+    <label className="block">
+      <span className={dxClass.label}>{label}</span>
+      <select name={name} defaultValue="" className={dxClass.input}>
+        <option value="" disabled>
+          Select…
+        </option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
