@@ -58,7 +58,11 @@ export function InviteForm({
             </select>
           </label>
         </div>
-        {state.error ? <SovereignError>{state.error}</SovereignError> : null}
+        {state.error ? (
+          <p className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
+            {state.error}
+          </p>
+        ) : null}
         {state.ok && state.inviteUrl ? (
           <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
             <p className="font-medium">Invitation created for {state.email}</p>
@@ -71,7 +75,7 @@ export function InviteForm({
         <button
           type="submit"
           disabled={pendingSubmit}
-          className={`${sovereignClass.pillPrimary} h-11 disabled:opacity-50`}
+          className={`${dxClass.btnPrimary} disabled:opacity-50`}
         >
           {pendingSubmit ? "Creating…" : "Create invitation"}
         </button>
