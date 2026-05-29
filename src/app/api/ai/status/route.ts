@@ -1,15 +1,16 @@
 import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
+import { getEnvDiagnostics } from "@/lib/env-check";
 import { requireAuth } from "@/lib/api/auth";
 
 export async function GET() {
   try {
     await requireAuth();
-    const configured = Boolean(
-      process.env.MINIMAX_API_KEY?.trim() || process.env.ANTHROPIC_API_KEY?.trim(),
-    );
+    const diag = getEnvDiagnostics(DEFAULT_AI_MODEL);
     return Response.json({
-      configured,
-      model: DEFAULT_AI_MODEL,
+      configured: diag.ai.configured,
+      model: diag.ai.model,
+      provider: diag.ai.provider,
+      missing: diag.ai.missing,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unauthorized";

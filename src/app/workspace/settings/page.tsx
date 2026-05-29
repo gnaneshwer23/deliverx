@@ -3,6 +3,7 @@ import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { AiIntegrationStatus } from "@/components/settings/ai-integration-status";
 import { EnvKeysGuide } from "@/components/settings/env-keys-guide";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { SetupDiagnostics } from "@/components/settings/setup-diagnostics";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -28,6 +29,7 @@ export default async function SettingsPage() {
     <>
       <DxPageHeader breadcrumb="DeliverX OS · Settings" title="Settings" />
       <div className="space-y-6 p-6 md:p-8">
+        <SetupDiagnostics />
         <div className="grid gap-6 lg:grid-cols-2">
           <section className={`${dxClass.cardPad}`}>
             <h2 className="mb-4 font-semibold">Profile</h2>

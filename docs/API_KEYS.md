@@ -28,10 +28,12 @@ Then fill in each value below.
 | Variable | Where to get it | Used for |
 |----------|-----------------|----------|
 | `MINIMAX_API_KEY` | [MiniMax](https://www.minimax.io/) platform | Assistant, insights, RAID, reports, business case review, structure project |
-| `MINIMAX_MODEL` | Optional, default `MiniMax-M2.7` | Model name |
+| `MINIMAX_MODEL` | Optional, default `MiniMax-M2.7` | Model name only — **does not work without `MINIMAX_API_KEY`** |
 | **OR** `ANTHROPIC_API_KEY` | [Anthropic Console](https://console.anthropic.com/) | Same features if MiniMax is not set |
 
-**Check status:** Settings → **Integrations** in the app, or `GET /api/ai/status` when logged in.
+**Check status:** Settings → **Setup audit** (recommended), or `GET /api/setup/diagnostics` when logged in.
+
+**Common mistake:** Setting `MINIMAX_MODEL` on Vercel without `MINIMAX_API_KEY` — chat and reviews will return 503 / no response. See [SETUP_AUDIT.md](./SETUP_AUDIT.md).
 
 ---
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { listPlaybooks, type PlaybookRow } from "@/services/memory";
+import { AiConfigBanner } from "@/components/ai/ai-config-banner";
 import { ProjectForm } from "./project-form";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -71,6 +72,7 @@ export default async function NewProjectPage({
       ) : null}
 
       <div className={`${dxClass.cardPad} mt-6`}>
+        <AiConfigBanner />
         <ProjectForm
           playbookId={selected?.id}
           deliveryTypeDefault={selected?.delivery_type ?? undefined}
