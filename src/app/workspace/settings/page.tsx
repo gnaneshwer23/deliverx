@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { AiIntegrationStatus } from "@/components/settings/ai-integration-status";
 import { EnvKeysGuide } from "@/components/settings/env-keys-guide";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -61,6 +62,17 @@ export default async function SettingsPage() {
 
         <AiIntegrationStatus />
         <EnvKeysGuide />
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-2 font-semibold">Session</h2>
+          <p className="mb-4 text-sm text-[#6B6B64]">
+            Signed in as {user?.email ?? "unknown"}. Sign out to switch accounts.
+          </p>
+          <SignOutButton
+            showIcon
+            className={`${dxClass.btnGhost} text-[#C0392B] hover:border-[#C0392B]/30 hover:bg-[#FDF1F0]`}
+          />
+        </section>
       </div>
     </>
   );

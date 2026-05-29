@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Plus, Send } from "lucide-react";
 import type { ChatMessage } from "@/services/assistant";
 import { DxBadge } from "@/components/dx/dx-badge";
 import { DxCaps } from "@/components/dx/dx-logo";
@@ -75,14 +76,25 @@ export function AiWorkspace({
       <aside className="hidden border-r border-[#E4E4DC] bg-white lg:flex lg:flex-col">
         <div className="border-b border-[#E4E4DC] p-3">
           <DxCaps className="mb-2 block">AI Workspaces</DxCaps>
-          <button type="button" className={`${dxClass.btnSm} w-full justify-center text-[8px]`}>
-            + New Workspace
-          </button>
+          <Link
+            href="/project/new?mode=chat"
+            className={`${dxClass.btnSm} w-full justify-center text-[8px]`}
+          >
+            <Plus size={12} /> New programme (guided)
+          </Link>
         </div>
         <div className="flex-1 overflow-y-auto p-1.5">
           <DxCaps className="px-2 py-1.5 text-[7px]">Recent</DxCaps>
           {projects.length === 0 ? (
-            <p className="px-3 py-2 text-xs text-[#A8A89E]">Create a project to start an AI workspace.</p>
+            <div className="space-y-2 px-3 py-2">
+              <p className="text-xs text-[#A8A89E]">No projects yet.</p>
+              <Link
+                href="/project/new?mode=chat"
+                className="block text-xs font-medium text-[#1C4A2E] underline"
+              >
+                Start guided questionnaire →
+              </Link>
+            </div>
           ) : (
             projects.slice(0, 8).map((p) => {
               const active = p.id === projectId;
@@ -225,7 +237,12 @@ export function AiWorkspace({
         <div className="flex-1 overflow-y-auto p-3">
           <DxCaps className="mb-2 block">Projects</DxCaps>
           {projects.length === 0 ? (
-            <p className="text-xs text-[#A8A89E]">No projects yet.</p>
+            <div className="space-y-2">
+              <p className="text-xs text-[#A8A89E]">No projects yet.</p>
+              <Link href="/project/new" className="text-xs font-medium text-[#1C4A2E] underline">
+                Create project →
+              </Link>
+            </div>
           ) : (
             projects.slice(0, 5).map((p) => (
               <div
