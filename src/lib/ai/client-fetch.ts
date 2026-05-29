@@ -46,7 +46,7 @@ export async function postAi<T>(
 
 export function aiErrorMessage(err: AiFetchError): string {
   if (err.code === "ai_not_configured") {
-    return "AI is not configured. Add MINIMAX_API_KEY or ANTHROPIC_API_KEY in Settings → Setup audit, then redeploy on Vercel.";
+    return "AI is not configured. Add OPENAI_API_KEY in Settings → Setup audit, then redeploy on Vercel.";
   }
   return err.error;
 }

@@ -62,7 +62,7 @@ export function AiWorkspace({
         if (!res.ok) {
           const msg =
             data.code === "ai_not_configured"
-              ? "AI is not configured. Add MINIMAX_API_KEY or ANTHROPIC_API_KEY in Settings, then redeploy."
+              ? "AI is not configured. Add OPENAI_API_KEY in Settings, then redeploy."
               : (data.error ?? "Assistant unavailable");
           setError(msg);
           return;

@@ -25,19 +25,19 @@ function ok(name, env) {
   const v = env[name] || process.env[name];
   if (!v) return false;
   if (/your-|YOUR-|sk-your|any-random-string/i.test(v)) return false;
+  if (name === "OPENAI_API_KEY" && !v.startsWith("sk-")) return false;
   return true;
 }
 
 const env = { ...process.env, ...loadEnv() };
-process.env = env;
 
 const required = [
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
   "NEXT_PUBLIC_APP_URL",
+  "OPENAI_API_KEY",
 ];
-const ai = ["MINIMAX_API_KEY", "ANTHROPIC_API_KEY"];
 
 console.log("DeliverX environment check\n");
 
@@ -48,19 +48,10 @@ for (const k of required) {
   if (!pass) fail = true;
 }
 
-const aiOk = ai.some((k) => ok(k, env));
-console.log(`${aiOk ? "✓" : "✗"} MINIMAX_API_KEY or ANTHROPIC_API_KEY${aiOk ? "" : " (required for AI)"}`);
-if (!aiOk) fail = true;
-
-if (ok("MINIMAX_MODEL", env) && !ok("MINIMAX_API_KEY", env) && !ok("ANTHROPIC_API_KEY", env)) {
-  console.log("⚠ MINIMAX_MODEL is set but no API key — AI will not work");
-  fail = true;
-}
-
-console.log(`${ok("OPENAI_API_KEY", env) ? "✓" : "○"} OPENAI_API_KEY (optional)`);
+console.log(`${ok("OPENAI_MODEL", env) ? "✓" : "○"} OPENAI_MODEL (optional, default gpt-4o-mini)`);
 
 if (fail) {
-  console.log("\nFix: docs/API_KEYS.md and docs/SETUP_AUDIT.md");
+  console.log("\nFix: docs/API_KEYS.md");
   process.exit(1);
 }
-console.log("\nAll required variables look set.");
+console.log("\nAll required variables look set. Text AI uses OpenAI.");

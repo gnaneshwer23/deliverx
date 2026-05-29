@@ -1,68 +1,44 @@
-# Setup audit (May 2026)
+# Setup audit
 
-## Why AI features return no response
+## Primary AI: OpenAI
 
-Production on Vercel project **`deliverx`** was checked via `vercel env ls`:
+DeliverX uses **`OPENAI_API_KEY`** for:
 
-| Variable | Production |
-|----------|------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | ✅ Set |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ Set |
-| `SUPABASE_SERVICE_ROLE_KEY` | ✅ Set |
-| `NEXT_PUBLIC_APP_URL` | ✅ Set |
-| `MINIMAX_MODEL` | ✅ Set |
-| `CRON_SECRET` | ✅ Set |
-| **`MINIMAX_API_KEY`** | ❌ **Missing** |
-| **`ANTHROPIC_API_KEY`** | ❌ **Missing** |
-| `OPENAI_API_KEY` | ❌ Missing (optional) |
+- AI Assistant (`/workspace/assistant`)
+- Business case review & guided project chat (`/project/new`)
+- Structure generation, RAID, reports, insights
+- Meeting transcription (Whisper)
+- Charter embeddings
 
-**`MINIMAX_MODEL` alone does not enable AI.** You must add **`MINIMAX_API_KEY`** (or `ANTHROPIC_API_KEY`).
-
-In-app: **Settings → Setup audit** (or `GET /api/setup/diagnostics` when logged in).
+Default model: **`gpt-4o-mini`** (override with `OPENAI_MODEL`).
 
 ---
 
-## Fix AI (5 minutes)
+## Fix “no AI response”
 
-### Vercel (production)
+1. [OpenAI API keys](https://platform.openai.com/api-keys) → create key
+2. Vercel → **deliverx** → **Settings → Environment Variables**
+3. Add **`OPENAI_API_KEY`** = `sk-...` → **Production**
+4. **Redeploy** (required)
 
-1. Get a key from [MiniMax](https://www.minimax.io/) or [Anthropic](https://console.anthropic.com/).
-2. [Vercel Dashboard](https://vercel.com/) → project **deliverx** → **Settings → Environment Variables**.
-3. Add **`MINIMAX_API_KEY`** = your key → **Production** (and Preview if needed).
-4. **Deployments → Redeploy** latest (env vars apply only after redeploy).
+In-app: **Settings → Setup audit** should show OpenAI as configured.
 
-Or CLI:
+---
 
-```bash
-vercel env add MINIMAX_API_KEY production
-vercel --prod
-```
+## Auth (if login fails)
 
-### Local (`.env.local`)
+[Supabase → Email provider](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/providers) — enable **Email**.
+
+Site URL: `https://www.deliverx.dev`  
+Redirect: `https://www.deliverx.dev/auth/callback`
+
+---
+
+## Local check
 
 ```bash
 cp .env.example .env.local
-# Edit .env.local — set MINIMAX_API_KEY=...
+# set OPENAI_API_KEY=sk-...
+node scripts/check-env.mjs
 npm run dev
 ```
-
----
-
-## Login / auth
-
-If sign-in fails with “email logins disabled”:
-
-1. [Supabase Auth Providers](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/providers)
-2. Enable **Email**
-3. **URL configuration**: Site URL `https://www.deliverx.dev`, redirect `https://www.deliverx.dev/auth/callback`
-
----
-
-## Optional
-
-| Variable | Purpose |
-|----------|---------|
-| `OPENAI_API_KEY` | Meeting Whisper transcription |
-| `CRON_SECRET` | Already set — twin daily snapshot |
-
-See [API_KEYS.md](./API_KEYS.md) for full reference.

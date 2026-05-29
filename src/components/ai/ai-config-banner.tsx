@@ -34,8 +34,7 @@ export function AiConfigBanner() {
       <AlertTriangle size={18} className="shrink-0 text-amber-600" />
       <p>
         <strong>AI is not configured on this server.</strong> Chat and reviews will not respond until
-        you add <code className="rounded bg-amber-100 px-1">MINIMAX_API_KEY</code> or{" "}
-        <code className="rounded bg-amber-100 px-1">ANTHROPIC_API_KEY</code>
+        you add <code className="rounded bg-amber-100 px-1">OPENAI_API_KEY</code>
         {model ? <> (model: {model})</> : null}, then redeploy.{" "}
         <Link href="/workspace/settings" className="font-medium text-[#1C4A2E] underline">
           Open setup audit →

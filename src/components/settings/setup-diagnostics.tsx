@@ -70,11 +70,10 @@ export function SetupDiagnostics() {
         <div className="mb-4 flex gap-2 rounded-lg border border-amber-300 bg-white px-3 py-3 text-sm text-amber-950">
           <AlertTriangle size={18} className="shrink-0 text-amber-600" />
           <div>
-            <p className="font-medium">AI is not responding — API key missing</p>
+            <p className="font-medium">AI is not responding — OpenAI key missing</p>
             <p className="mt-1 text-amber-900/90">
               Assistant, business case review, guided project chat, and structure generation need{" "}
-              <code className="rounded bg-amber-100 px-1">MINIMAX_API_KEY</code> or{" "}
-              <code className="rounded bg-amber-100 px-1">ANTHROPIC_API_KEY</code> on the server.
+              <code className="rounded bg-amber-100 px-1">OPENAI_API_KEY</code> on the server.
             </p>
           </div>
         </div>
@@ -143,8 +142,8 @@ export function SetupDiagnostics() {
         <summary className="cursor-pointer font-medium">Add keys via Vercel CLI</summary>
         <pre className="mt-2 overflow-x-auto rounded bg-[#F7F7F2] p-3 text-[11px] leading-relaxed">
 {`# From repo root (paste your real key when prompted)
-vercel env add MINIMAX_API_KEY production
-vercel env add ANTHROPIC_API_KEY production   # optional alternative
+vercel env add OPENAI_API_KEY production
+vercel env add OPENAI_MODEL production   # optional, e.g. gpt-4o-mini
 
 # Then redeploy
 vercel --prod`}

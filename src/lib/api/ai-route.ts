@@ -6,7 +6,7 @@ export function aiRouteError(err: unknown) {
     return Response.json(
       {
         error:
-          "AI is not configured. Set MINIMAX_API_KEY or ANTHROPIC_API_KEY in .env.local (dev) or Vercel Environment Variables (production), then redeploy.",
+          "AI is not configured. Set OPENAI_API_KEY in .env.local (dev) or Vercel Environment Variables (production), then redeploy.",
         code: "ai_not_configured",
       },
       { status: 503 },

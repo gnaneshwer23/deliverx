@@ -64,19 +64,15 @@ export function AiIntegrationStatus() {
           </div>
           {!status.configured ? (
             <p className="text-sm text-[#6B6B64]">
-              Add <code className="text-[#1C4A2E]">MINIMAX_API_KEY</code> or{" "}
-              <code className="text-[#1C4A2E]">ANTHROPIC_API_KEY</code> to{" "}
+              Add <code className="text-[#1C4A2E]">OPENAI_API_KEY</code> to{" "}
               <code className="text-[#1C4A2E]">.env.local</code> (local) or Vercel Environment
-              Variables (production). See the environment variables section below.
+              Variables (production), then redeploy.
             </p>
           ) : (
             <p className="text-sm text-[#6B6B64]">
-              Assistant, insights, business case review, and structure generation are available.
+              OpenAI powers assistant, reviews, structure generation, transcription, and embeddings.
             </p>
           )}
-          <p className="text-xs text-[#A8A89E]">
-            Optional: <code>OPENAI_API_KEY</code> for meeting transcription and charter embeddings.
-          </p>
         </div>
       ) : null}
     </section>
