@@ -1,6 +1,7 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppNav } from "@/components/dx/app-shell";
+import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { ProjectSidebar } from "./sidebar";
 import { ProjectTopbar } from "./topbar";
@@ -14,11 +15,8 @@ export default async function ProjectLayout({
 }) {
   const { id } = await params;
 
+  const { user } = await requireCompleteOnboarding();
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
 
   const { data: project } = await supabase
     .from("projects")

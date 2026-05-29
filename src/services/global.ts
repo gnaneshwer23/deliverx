@@ -136,8 +136,27 @@ async function contributeToNetwork(
   await supabase.from("global_benchmark_contributions").insert(benchmarkRows);
 }
 
-async function loadNetworkAggregates() {
-  const admin = createAdminClient();
+async function loadNetworkAggregates(): Promise<{
+  aggregated: ReturnType<typeof aggregatePatterns>;
+  contributorOrgCount: number;
+  benchmarkNetwork: Array<{
+    metricKey: string;
+    value: number;
+    organisationId: string;
+  }>;
+  networkUnavailable: boolean;
+}> {
+  let admin;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return {
+      aggregated: [],
+      contributorOrgCount: 0,
+      benchmarkNetwork: [],
+      networkUnavailable: true,
+    };
+  }
 
   const { data: patternRows } = await admin
     .from("global_pattern_contributions")
@@ -174,7 +193,12 @@ async function loadNetworkAggregates() {
     organisationId: r.organisation_id as string,
   }));
 
-  return { aggregated, contributorOrgCount, benchmarkNetwork };
+  return {
+    aggregated,
+    contributorOrgCount,
+    benchmarkNetwork,
+    networkUnavailable: false,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -186,17 +210,23 @@ export async function runGlobalLoop(): Promise<GlobalIntelligenceSnapshot> {
   const localRaw = await loadLocalOrgMetrics(industry, deliveryType);
   const localMetrics = anonymize(localRaw);
 
-  await contributeToNetwork(orgId, localMetrics);
+  try {
+    await contributeToNetwork(orgId, localMetrics);
+  } catch {
+    /* contribution tables may be missing in dev */
+  }
 
-  const { aggregated, contributorOrgCount, benchmarkNetwork } =
+  const { aggregated, contributorOrgCount, benchmarkNetwork, networkUnavailable } =
     await loadNetworkAggregates();
 
-  return runGlobalIntelligenceLoop({
+  const snapshot = runGlobalIntelligenceLoop({
     localMetrics,
     aggregatedPatterns: aggregated,
     contributorOrgCount,
     benchmarkNetwork,
   });
+
+  return { ...snapshot, networkUnavailable };
 }
 
 export async function getGlobalPatterns(): Promise<GlobalPattern[]> {

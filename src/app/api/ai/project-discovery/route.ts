@@ -1,3 +1,4 @@
+import { requireAuth } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { runProjectDiscovery } from "@/services/aiProjectStructuring";
 
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
   if (!brief) return Response.json({ error: "brief is required" }, { status: 400 });
 
   try {
+    await requireAuth();
     const result = await runProjectDiscovery(brief, body.answers);
     return Response.json({ ok: true, ...result });
   } catch (err) {

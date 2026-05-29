@@ -3,6 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { throwIfMissingTable } from "@/lib/db-errors";
 
 export type MilestoneStatus = "planned" | "at_risk" | "completed" | "slipped";
 
@@ -42,7 +43,7 @@ export async function listMilestones(projectId: string): Promise<MilestoneRow[]>
     .eq("project_id", projectId)
     .order("target_date", { ascending: true, nullsFirst: false });
   if (error) {
-    if (error.code === "42P01") return [];
+    throwIfMissingTable(error, "milestones");
     throw error;
   }
   return (data ?? []) as MilestoneRow[];
@@ -59,7 +60,7 @@ export async function listOrgMilestones(limit = 80): Promise<
     .order("target_date", { ascending: true, nullsFirst: false })
     .limit(limit);
   if (error) {
-    if (error.code === "42P01") return [];
+    throwIfMissingTable(error, "milestones");
     throw error;
   }
   return (data ?? []).map((row) => {

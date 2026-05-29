@@ -2,22 +2,14 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { DxLogo } from "@/components/dx/dx-logo";
-import { createClient } from "@/lib/supabase/server";
+import { getOnboardingProfile } from "@/lib/auth/onboarding";
 
 export default async function ProjectNewLayout({ children }: { children: ReactNode }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { user, profile } = await getOnboardingProfile();
 
   if (!user) redirect("/login?next=/project/new");
-
-  const { data: profile } = await supabase
-    .from("users")
-    .select("organisation_id")
-    .single();
-
   if (!profile?.organisation_id) redirect("/onboarding/organisation");
+  if (!profile?.role) redirect("/onboarding/role");
 
   return (
     <div className="min-h-screen bg-[#FAFAF5]">
