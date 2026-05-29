@@ -656,6 +656,8 @@ export type GlobalIntelligenceSnapshot = {
     contributorOrgCount: number;
     dataLevel: "pattern_only";
   };
+  /** Set by façade when service-role aggregation is unavailable. */
+  networkUnavailable?: boolean;
 };
 
 export function runGlobalIntelligenceLoop(input: {

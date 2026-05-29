@@ -9,6 +9,8 @@ import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import { dxClass } from "@/lib/dx-theme";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
+import { ProjectCreationStepper } from "@/components/project/project-creation-stepper";
+import { ProjectDiscoveryChat } from "@/components/project/project-discovery-chat";
 import { createProjectDraftAction, type ProjectState } from "./actions";
 
 const initial: ProjectState = { ok: false };
@@ -28,6 +30,7 @@ type StructureResponse = { ok: true; draft: ProjectStructureDraft };
 type ReviewResponse = { ok: true; review: BusinessCaseReview };
 
 type Step = "brief" | "review" | "discovery" | "create";
+type InputMode = "form" | "chat";
 
 type DiscoveryResponse = {
   ok: true;
@@ -39,9 +42,11 @@ type DiscoveryResponse = {
 export function ProjectForm({
   playbookId,
   deliveryTypeDefault,
+  initialMode = "form",
 }: {
   playbookId?: string;
   deliveryTypeDefault?: string;
+  initialMode?: InputMode;
 }) {
   const [state, formAction, pending] = useActionState(createProjectDraftAction, initial);
   const errorSeen = useRef("");
@@ -54,6 +59,7 @@ export function ProjectForm({
   }, [state.error]);
 
   const [step, setStep] = useState<Step>("brief");
+  const [inputMode, setInputMode] = useState<InputMode>(initialMode);
   const [brief, setBrief] = useState("");
   const [review, setReview] = useState<BusinessCaseReview | null>(null);
   const [projectName, setProjectName] = useState("");
@@ -185,10 +191,63 @@ export function ProjectForm({
     reader.readAsText(file);
   }
 
+  function onChatDiscoveryComplete(payload: { brief: string; answers: Record<string, string> }) {
+    setBrief(payload.brief);
+    setDiscoveryAnswers(payload.answers);
+    void runReviewFromBrief(payload.brief, true);
+  }
+
+  async function runReviewFromBrief(text: string, skipToCreate = false) {
+    setReviewing(true);
+    setAiError(null);
+    const res = await postAi<ReviewResponse>("/api/ai/review-business-case", { content: text });
+    setReviewing(false);
+    if (!res.ok) {
+      setAiError(aiErrorMessage(res));
+      setStep("brief");
+      return;
+    }
+    const r = res.data.review;
+    setReview(r);
+    setProjectName(r.suggestedProjectName);
+    setGoal(r.suggestedGoal);
+    if (deliveryTypes.includes(r.suggestedDeliveryType)) {
+      setDeliveryType(r.suggestedDeliveryType);
+    }
+    setStep(skipToCreate ? "create" : "review");
+  }
+
   if (step === "brief") {
     return (
       <div className="space-y-5">
+        <ProjectCreationStepper current="brief" />
         <StepHeader n={1} label="Business case" />
+
+        <div className="flex gap-1 border border-[#E4E4DC] p-0.5">
+          <button
+            type="button"
+            onClick={() => setInputMode("form")}
+            className={`flex-1 px-3 py-2 text-xs font-medium ${
+              inputMode === "form" ? "bg-[#1C4A2E] text-white" : "text-[#6B6B64] hover:bg-[#F7F7F2]"
+            }`}
+          >
+            Paste business case
+          </button>
+          <button
+            type="button"
+            onClick={() => setInputMode("chat")}
+            className={`flex-1 px-3 py-2 text-xs font-medium ${
+              inputMode === "chat" ? "bg-[#1C4A2E] text-white" : "text-[#6B6B64] hover:bg-[#F7F7F2]"
+            }`}
+          >
+            Guided questionnaire (chat)
+          </button>
+        </div>
+
+        {inputMode === "chat" ? (
+          <ProjectDiscoveryChat onComplete={onChatDiscoveryComplete} />
+        ) : (
+          <>
         <p className="text-sm text-[#6B6B64]">
           Paste or upload your business case. AI will review readiness and pre-fill project details.
         </p>
@@ -236,6 +295,13 @@ export function ProjectForm({
         >
           Skip — enter project details manually
         </button>
+          </>
+        )}
+        {reviewing ? (
+          <p className="flex items-center gap-2 text-sm text-[#6B6B64]">
+            <Loader2 size={14} className="animate-spin" /> Running AI review…
+          </p>
+        ) : null}
       </div>
     );
   }
@@ -246,6 +312,7 @@ export function ProjectForm({
 
     return (
       <div className="space-y-5">
+        <ProjectCreationStepper current="review" />
         <StepHeader n={2} label="AI review" />
         <div className={`${dxClass.cardPad} flex items-center justify-between gap-4`}>
           <div>
@@ -287,7 +354,8 @@ export function ProjectForm({
   if (step === "discovery") {
     return (
       <div className="space-y-5">
-        <StepHeader n={3} label="AI discovery" />
+        <ProjectCreationStepper current="discovery" />
+        <StepHeader n={3} label="AI discovery questionnaire" />
         <p className="text-sm text-[#6B6B64]">
           Answer follow-up questions so DeliverX can generate a complete delivery structure.
         </p>
@@ -319,6 +387,7 @@ export function ProjectForm({
 
   return (
     <form action={formAction} className="space-y-4">
+      <ProjectCreationStepper current="create" />
       <StepHeader n={review ? 4 : 3} label="Project setup" />
 
       {playbookId ? <input type="hidden" name="playbook_id" value={playbookId} /> : null}

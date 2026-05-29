@@ -1,3 +1,4 @@
+import { requireAuth } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { reviewBusinessCase } from "@/services/aiBusinessCaseReview";
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
   }
 
   try {
+    await requireAuth();
     const review = await reviewBusinessCase(content);
     return Response.json({ ok: true, review, model: DEFAULT_AI_MODEL });
   } catch (err) {

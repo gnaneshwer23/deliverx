@@ -15,13 +15,17 @@ import {
   Globe2,
   LayoutDashboard,
   MessageSquare,
+  Plus,
   RefreshCw,
+  Settings,
   Shield,
   Target,
   Telescope,
   Users,
 } from "lucide-react";
 import { DxLogo } from "@/components/dx/dx-logo";
+import { SignOutButton } from "@/components/auth/sign-out-button";
+import { UserMenu } from "@/components/dx/user-menu";
 import { dxClass } from "@/lib/dx-theme";
 
 const core = [
@@ -30,6 +34,8 @@ const core = [
 ];
 
 const workspace = [
+  { href: "/project/new", label: "New project", icon: Plus, id: "newproj" },
+  { href: "/project/new?mode=chat", label: "Guided setup (chat)", icon: MessageSquare, id: "chatproj" },
   { href: "/workspace/projects", label: "Projects", icon: FolderKanban, id: "proj" },
   { href: "/workspace/tasks", label: "Tasks", icon: CheckSquare, id: "task" },
   { href: "/workspace/team", label: "Team & Gov", icon: Users, id: "team" },
@@ -107,11 +113,23 @@ export function AppSidebar() {
       </div>
       <div className="border-t border-[#E4E4DC] py-2.5">
         <Link
+          href="/workspace/settings"
+          className="flex items-center gap-2 px-3.5 py-1.5 text-[12px] text-[#6B6B64] hover:text-[#1C4A2E]"
+        >
+          <Settings size={14} /> Settings
+        </Link>
+        <Link
           href="/"
           className="flex items-center gap-2 px-3.5 py-1.5 text-[12px] text-[#A8A89E] hover:text-[#6B6B64]"
         >
           ← Back to site
         </Link>
+        <div className="px-3.5 py-1.5">
+          <SignOutButton
+            showIcon
+            className="flex items-center gap-2 text-[12px] text-[#6B6B64] hover:text-[#C0392B] disabled:opacity-60"
+          />
+        </div>
       </div>
     </aside>
   );
@@ -124,8 +142,6 @@ export function AppNav({
   userEmail?: string | null;
   orgName?: string | null;
 }) {
-  const initial = (userEmail ?? "?").charAt(0).toUpperCase();
-
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-3 border-b border-[#E4E4DC] bg-white px-4 md:px-5">
       <div className="mr-1 border-r border-[#E4E4DC] pr-3">
@@ -150,16 +166,14 @@ export function AppNav({
         >
           Alerts
         </Link>
+        <Link href="/project/new" className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] md:inline-flex`}>
+          <Plus size={12} /> New project
+        </Link>
         <Link href="/workspace/assistant" className={`${dxClass.btnSm} hidden sm:inline-flex`}>
           <Cpu size={12} /> AI Assistant
         </Link>
         <div className="hidden h-5 w-px bg-[#E4E4DC] sm:block" />
-        <div
-          className="flex size-7 items-center justify-center rounded-full bg-[#0D0D0B] font-[family-name:var(--font-dx-display)] text-[13px] text-white"
-          title={userEmail ?? orgName ?? undefined}
-        >
-          {initial}
-        </div>
+        <UserMenu userEmail={userEmail} orgName={orgName} />
       </div>
     </header>
   );

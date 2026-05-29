@@ -1,4 +1,4 @@
-import { requireProjectAccess } from "@/lib/api/auth";
+import { requireAuth, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { structureProjectFromBrief } from "@/services/aiProjectStructuring";
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
   }
 
   try {
+    await requireAuth();
     let projectName: string | undefined = body.projectName?.trim();
     let deliveryType: string | null | undefined = body.deliveryType?.trim();
     let goal: string | null | undefined = body.goal?.trim();

@@ -4,14 +4,15 @@ import { listPlaybooks, type PlaybookRow } from "@/services/memory";
 import { ProjectForm } from "./project-form";
 import { dxClass } from "@/lib/dx-theme";
 
-type Search = Promise<{ playbook?: string }>;
+type Search = Promise<{ playbook?: string; mode?: string }>;
 
 export default async function NewProjectPage({
   searchParams,
 }: {
   searchParams: Search;
 }) {
-  const { playbook: selectedId } = await searchParams;
+  const { playbook: selectedId, mode } = await searchParams;
+  const initialMode = mode === "chat" ? "chat" : "form";
   const playbooks = await safeListPlaybooks();
   const selected = playbooks.find((p) => p.id === selectedId) ?? null;
 
@@ -19,7 +20,8 @@ export default async function NewProjectPage({
     <div className="mx-auto max-w-2xl px-6 py-10 md:py-14">
       <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Start your project</h1>
       <p className="mt-2 text-[15px] font-light text-[#6B6B64]">
-        Upload your business case, review with AI, then launch a governed delivery workspace.
+        Paste a business case or use the guided questionnaire — AI review, follow-up questions,
+        then optional structure generation for workstreams, tasks, and RAID.
       </p>
 
       {playbooks.length > 0 ? (
@@ -72,6 +74,7 @@ export default async function NewProjectPage({
         <ProjectForm
           playbookId={selected?.id}
           deliveryTypeDefault={selected?.delivery_type ?? undefined}
+          initialMode={initialMode}
         />
       </div>
     </div>

@@ -3,7 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { listOrgMembers } from "./delivery";
+import { listOrgMembers, updateTask } from "./delivery";
 
 export type MemberWorkload = {
   userId: string;
@@ -123,4 +123,26 @@ export async function getOrgCapacitySnapshot(): Promise<CapacitySnapshot> {
     suggestions,
     deliveryStrain: strainScore > 0.35 ? "high" : strainScore > 0.15 ? "medium" : "low",
   };
+}
+
+/** Reassign open tasks from an overloaded member to a lighter-loaded peer. */
+export async function applyRebalanceSuggestion(
+  suggestion: RebalanceSuggestion,
+): Promise<{ moved: number }> {
+  const { supabase } = await getOrgContext();
+
+  const { data: tasks, error } = await supabase
+    .from("tasks")
+    .select("id")
+    .eq("assignee_id", suggestion.fromUserId)
+    .in("status", ["todo", "in_progress"])
+    .order("created_at", { ascending: true })
+    .limit(Math.max(1, suggestion.taskCount));
+
+  if (error) throw error;
+  const ids = (tasks ?? []).map((t) => t.id as string);
+  for (const id of ids) {
+    await updateTask(id, { assignee_id: suggestion.toUserId });
+  }
+  return { moved: ids.length };
 }

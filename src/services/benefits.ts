@@ -3,6 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { throwIfMissingTable } from "@/lib/db-errors";
 
 export type BenefitHypothesisRow = {
   id: string;
@@ -41,7 +42,7 @@ export async function listBenefits(projectId: string): Promise<BenefitHypothesis
     .eq("project_id", projectId)
     .order("created_at");
   if (error) {
-    if (error.code === "42P01") return [];
+    throwIfMissingTable(error, "benefit_hypotheses");
     throw error;
   }
   return (data ?? []) as BenefitHypothesisRow[];
@@ -57,7 +58,7 @@ export async function listOrgBenefits(limit = 100): Promise<
     .order("updated_at", { ascending: false })
     .limit(limit);
   if (error) {
-    if (error.code === "42P01") return [];
+    throwIfMissingTable(error, "benefit_hypotheses");
     throw error;
   }
   return (data ?? []).map((row) => {

@@ -61,11 +61,14 @@ export function RecommendationsPanel({
 
     startTransition(async () => {
       try {
-        await fetch("/api/ai/recommendation/review", {
+        const res = await fetch("/api/ai/recommendation/review", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ projectId, id, action }),
         });
+        if (!res.ok) {
+          setStates((s) => ({ ...s, [id]: "pending" }));
+        }
       } catch {
         setStates((s) => ({ ...s, [id]: "pending" }));
       }

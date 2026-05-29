@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { listBenefits, benefitProgress } from "@/services/benefits";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { SchemaMigrationBanner, schemaErrorMessage } from "@/components/dx/schema-migration-banner";
 import { dxClass } from "@/lib/dx-theme";
+import { BenefitForm } from "./benefit-form";
+import { BenefitCurrentForm } from "./benefit-current-form";
 
 export default async function ProjectBenefitsPage({
   params,
@@ -9,15 +12,24 @@ export default async function ProjectBenefitsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const benefits = await listBenefits(id);
+  let benefits: Awaited<ReturnType<typeof listBenefits>> = [];
+  let schemaError: string | null = null;
+
+  try {
+    benefits = await listBenefits(id);
+  } catch (err) {
+    schemaError = schemaErrorMessage(err);
+    if (!schemaError) throw err;
+  }
 
   return (
     <>
       <DxPageHeader breadcrumb="Project · Benefits" title="Benefits" titleEm="realisation" />
       <div className="p-6 md:p-8">
-        {benefits.length === 0 ? (
+        {schemaError ? <SchemaMigrationBanner message={schemaError} /> : <BenefitForm projectId={id} />}
+        {benefits.length === 0 && !schemaError ? (
           <p className="text-sm text-[#6B6B64]">
-            No benefit hypotheses yet. Re-run AI structure or add from project charter.
+            No benefit hypotheses yet. Add one above or re-run AI project structure.
           </p>
         ) : (
           <ul className="space-y-3">
@@ -32,6 +44,9 @@ export default async function ProjectBenefitsPage({
                       {b.kpi_name}: {b.baseline_value ?? "—"} → {b.target_value ?? "—"} {b.unit ?? ""}
                       {p != null ? ` (${p}% to target)` : ""}
                     </p>
+                  ) : null}
+                  {!schemaError && b.kpi_name ? (
+                    <BenefitCurrentForm projectId={id} benefitId={b.id} currentValue={b.current_value} />
                   ) : null}
                 </li>
               );

@@ -26,6 +26,13 @@ export default async function GlobalIntelligencePage() {
           learning from enterprise delivery signals — localized recommendations
           for your organisation, never raw cross-org data exposure.
         </p>
+        {"networkUnavailable" in snapshot && snapshot.networkUnavailable ? (
+          <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Cross-org network aggregates are unavailable (set{" "}
+            <code className="rounded bg-amber-100 px-1">SUPABASE_SERVICE_ROLE_KEY</code> on the server).
+            Local metrics and recommendations still run from your organisation data.
+          </p>
+        ) : null}
       </header>
 
       <div className="mb-6">

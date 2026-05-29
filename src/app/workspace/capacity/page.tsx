@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getOrgCapacitySnapshot } from "@/services/capacity";
 import { DxPageHeader, DxStatCard } from "@/components/dx/dx-page-chrome";
 import { dxClass } from "@/lib/dx-theme";
+import { RebalanceButton } from "./rebalance-button";
 
 export const dynamic = "force-dynamic";
 
@@ -64,13 +65,14 @@ export default async function CapacityPage() {
                   Move ~{s.taskCount} tasks from <strong>{s.fromName}</strong> →{" "}
                   <strong>{s.toName}</strong>
                   <p className="mt-1 text-xs text-[#6B6B64]">{s.reason}</p>
+                  <RebalanceButton suggestion={s} />
                 </li>
               ))}
             </ul>
             <p className="mt-3 text-xs text-[#A8A89E]">
-              PM approves rebalancing from{" "}
+              You can also adjust assignments in{" "}
               <Link href="/workspace/tasks" className="text-[#1C4A2E] underline">
-                task assignments
+                tasks
               </Link>
               .
             </p>
