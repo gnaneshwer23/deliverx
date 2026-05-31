@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { FormEvent, useState } from "react";
 import {
   BarChart3,
   Brain,
@@ -135,6 +136,32 @@ export function AppSidebar() {
   );
 }
 
+function NavSearch() {
+  const router = useRouter();
+  const [q, setQ] = useState("");
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    const trimmed = q.trim();
+    if (trimmed) router.push(`/workspace/search?q=${encodeURIComponent(trimmed)}`);
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="relative hidden max-w-[340px] flex-1 md:block">
+      <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[#A8A89E]">
+        <Brain size={13} />
+      </span>
+      <input
+        type="search"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Search projects, tasks, docs…"
+        className="w-full border border-[#E4E4DC] bg-[#F7F7F2] py-1.5 pl-8 pr-3 text-[13px] outline-none focus:border-[#1C4A2E]"
+      />
+    </form>
+  );
+}
+
 export function AppNav({
   userEmail,
   orgName,
@@ -148,16 +175,7 @@ export function AppNav({
         <DxLogo href="/workspace/dashboard" showTag />
       </div>
 
-      <div className="relative hidden max-w-[340px] flex-1 md:block">
-        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[#A8A89E]">
-          <Brain size={13} />
-        </span>
-        <input
-          type="search"
-          placeholder="Search projects, tasks, docs…"
-          className="w-full border border-[#E4E4DC] bg-[#F7F7F2] py-1.5 pl-8 pr-3 text-[13px] outline-none focus:border-[#1C4A2E]"
-        />
-      </div>
+      <NavSearch />
 
       <div className="ml-auto flex items-center gap-2">
         <Link

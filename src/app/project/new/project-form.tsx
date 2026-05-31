@@ -73,6 +73,7 @@ export function ProjectForm({
   const [reviewing, setReviewing] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [extracting, setExtracting] = useState(false);
 
   async function runReview() {
     const trimmed = brief.trim();
@@ -172,23 +173,51 @@ export function ProjectForm({
     setStep("create");
   }
 
-  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const allowed = [".txt", ".md", ".csv"];
     const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-    if (!allowed.includes(ext)) {
-      setAiError("Upload .txt, .md, or .csv files — or paste content directly.");
+    const textLocal = [".txt", ".md", ".csv"];
+    const serverExtract = [".pdf", ".docx"];
+
+    if (!textLocal.includes(ext) && !serverExtract.includes(ext)) {
+      setAiError("Upload PDF, DOCX, TXT, MD, or CSV — or paste content directly.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setBrief(String(reader.result ?? ""));
-      setAiError(null);
-    };
-    reader.readAsText(file);
+    setAiError(null);
+
+    if (textLocal.includes(ext)) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setBrief(String(reader.result ?? ""));
+      };
+      reader.readAsText(file);
+      return;
+    }
+
+    setExtracting(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch("/api/documents/extract-text", {
+        method: "POST",
+        body: formData,
+      });
+      const data = (await res.json()) as { ok?: boolean; text?: string; error?: string };
+      if (!res.ok || !data.text) {
+        setAiError(data.error ?? "Could not extract text from file.");
+        return;
+      }
+      setBrief(data.text);
+      toast.success(`Loaded ${file.name} (${data.text.length.toLocaleString()} characters)`);
+    } catch {
+      setAiError("Upload failed. Try a smaller file or paste text directly.");
+    } finally {
+      setExtracting(false);
+      event.target.value = "";
+    }
   }
 
   function onChatDiscoveryComplete(payload: { brief: string; answers: Record<string, string> }) {
@@ -265,8 +294,16 @@ export function ProjectForm({
 
         <label className="flex cursor-pointer items-center gap-2 text-sm text-[#1C4A2E]">
           <Upload size={14} />
-          <span>Upload text file (.txt, .md, .csv)</span>
-          <input type="file" accept=".txt,.md,.csv,text/plain,text/markdown" className="sr-only" onChange={handleFileUpload} />
+          <span>
+            {extracting ? "Extracting document…" : "Upload business case (PDF, DOCX, TXT, MD, CSV)"}
+          </span>
+          <input
+            type="file"
+            accept=".pdf,.docx,.txt,.md,.csv,application/pdf"
+            className="sr-only"
+            disabled={extracting}
+            onChange={handleFileUpload}
+          />
         </label>
 
         {aiError ? <AiStatusBanner message={aiError} /> : null}

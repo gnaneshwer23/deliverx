@@ -51,6 +51,17 @@ Local dev does **not** need `CRON_SECRET` unless you test the cron route manuall
 
 ---
 
+## Report emails (optional — Phase 1)
+
+| Variable | Where to get it | Used for |
+|----------|-----------------|----------|
+| `RESEND_API_KEY` | [Resend](https://resend.com) → API Keys | Sending stakeholder emails when a report is published |
+| `EMAIL_FROM` | Resend → verified domain, e.g. `DeliverX <reports@yourdomain.com>` | From address (defaults to Resend onboarding address if unset) |
+
+Publishing a report still works without these keys; the UI shows a warning if emails were requested but not sent.
+
+---
+
 ## Local development
 
 1. Create `.env.local` from `.env.example`

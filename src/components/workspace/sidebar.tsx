@@ -21,6 +21,7 @@ import {
   Globe2,
   Sparkles,
   MessageSquare,
+  Search,
 } from "lucide-react";
 import {
   SidebarNavLinks,
@@ -31,6 +32,7 @@ import {
 const coreNav: SidebarNavItem[] = [
   { href: "/workspace/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/workspace/assistant", label: "Assistant", icon: Sparkles },
+  { href: "/workspace/search", label: "Search", icon: Search },
   { href: "/workspace/projects", label: "Projects", icon: FolderKanban },
   { href: "/workspace/tasks", label: "Tasks", icon: ListChecks },
   { href: "/workspace/standups", label: "Standups", icon: MessageSquare },

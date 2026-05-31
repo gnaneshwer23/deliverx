@@ -775,7 +775,7 @@ export async function updateReportReviewStatus(
 export async function publishReport(
   reportId: string,
   stakeholderEmails: string[],
-): Promise<ReportRow> {
+): Promise<ReportRow & { emailSent?: boolean; emailError?: string }> {
   const { supabase } = await getOrgContext();
   const emails = stakeholderEmails.map((e) => e.trim()).filter(Boolean);
 
@@ -791,7 +791,33 @@ export async function publishReport(
     .single();
 
   if (error) throw error;
-  return data as ReportRow;
+  const report = data as ReportRow;
+
+  let emailSent: boolean | undefined;
+  let emailError: string | undefined;
+
+  if (emails.length > 0) {
+    const { data: project } = await supabase
+      .from("projects")
+      .select("name")
+      .eq("id", report.project_id)
+      .single();
+
+    const { sendReportPublishedEmail } = await import("@/lib/email/resend");
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000";
+    const result = await sendReportPublishedEmail({
+      reportTitle: report.title,
+      projectName: (project?.name as string) ?? "Project",
+      content: report.content,
+      recipients: emails,
+      appUrl: `${appUrl}/project/${report.project_id}/reports/${report.id}`,
+    });
+    emailSent = result.sent;
+    if (!result.sent) emailError = result.reason;
+  }
+
+  return { ...report, emailSent, emailError };
 }
 
 export async function listOpenRaidForProject(projectId: string) {
