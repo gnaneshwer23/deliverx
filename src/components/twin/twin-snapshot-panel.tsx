@@ -67,8 +67,8 @@ export function TwinSnapshotPanel({
         <div>
           <h3 className="font-semibold text-slate-800">Snapshot history</h3>
           <p className="mt-1 text-xs text-slate-500">
-            Portfolio health trend from stored twin captures. Cron runs every 15
-            minutes on Vercel.
+            Portfolio health trend from stored twin captures. Daily cron 06:00 UTC
+            on Vercel.
           </p>
         </div>
         <button

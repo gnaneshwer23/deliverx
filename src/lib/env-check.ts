@@ -86,7 +86,7 @@ export function getEnvDiagnostics(): EnvDiagnostics {
       key: "CRON_SECRET",
       ok: isEnvSet("CRON_SECRET"),
       required: false,
-      hint: "Vercel production — twin snapshot cron",
+      hint: "Vercel production — twin (06:00 UTC) + coordination/global loops (07:00 UTC)",
     },
   ];
 

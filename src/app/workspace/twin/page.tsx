@@ -11,6 +11,7 @@ import { CascadingRiskPanel } from "@/components/twin/cascading-risk-panel";
 import { OptimizationPanel } from "@/components/twin/optimization-panel";
 import { ScenarioSimulator } from "@/components/twin/scenario-simulator";
 import { TwinSnapshotPanel } from "@/components/twin/twin-snapshot-panel";
+import { IntelligenceLiveRefresh } from "@/components/intelligence/intelligence-live-refresh";
 import { listTwinSnapshots } from "@/services/twin";
 
 export const dynamic = "force-dynamic";
@@ -51,6 +52,7 @@ export default async function DigitalTwinPage() {
   const snapshots = await listTwinSnapshots(20);
 
   return (
+    <IntelligenceLiveRefresh table="twin_snapshots">
     <main className="p-8">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
@@ -95,5 +97,6 @@ export default async function DigitalTwinPage() {
         timelines. The twin simulates — your team decides.
       </p>
     </main>
+    </IntelligenceLiveRefresh>
   );
 }

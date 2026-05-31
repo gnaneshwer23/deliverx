@@ -9,6 +9,7 @@ import {
   LocalizedRecsPanel,
   PrivacyBadge,
 } from "@/components/global/localized-recs-panel";
+import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 
 export const dynamic = "force-dynamic";
 
@@ -18,14 +19,28 @@ export default async function GlobalIntelligencePage() {
   return (
     <main className="p-8">
       <header className="mb-8">
-        <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-          <Globe2 size={22} className="text-sky-600" /> Global Intelligence
-        </h1>
-        <p className="mt-1 max-w-3xl text-sm text-slate-500">
-          Privacy-preserving global intelligence infrastructure. Pattern-level
-          learning from enterprise delivery signals — localized recommendations
-          for your organisation, never raw cross-org data exposure.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
+              <Globe2 size={22} className="text-sky-600" /> Global Intelligence
+            </h1>
+            <p className="mt-1 max-w-3xl text-sm text-slate-500">
+              Privacy-preserving global intelligence infrastructure. Pattern-level
+              learning from enterprise delivery signals — localized recommendations
+              for your organisation, never raw cross-org data exposure.
+            </p>
+          </div>
+          <div className="shrink-0 space-y-1 text-right">
+            <RunLoopButton
+              postUrl="/api/global/loop"
+              label="Run global loop"
+              successMessage="Contributions updated — refreshing…"
+            />
+            <p className="text-[11px] text-slate-400">
+              Daily cron 07:00 UTC (with coordination)
+            </p>
+          </div>
+        </div>
         {"networkUnavailable" in snapshot && snapshot.networkUnavailable ? (
           <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
             Cross-org network aggregates are unavailable (set{" "}

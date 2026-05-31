@@ -34,8 +34,9 @@ Pages use services instead; these routes remain for API consumers:
 - `/api/forecast/project/[id]`, `/scenarios`
 - `/api/memory/search`
 - `/api/adaptive/stability`, `/drift`, `/recommendations`
-- `/api/coordination/loop`, `/graph`, `/snapshot`, `/agents`
-- `/api/global/loop`, `/benchmarks`, `/patterns`, `/graph`
+- `/api/cron/loops` — daily coordination + global cron (Bearer `CRON_SECRET`)
+- `/api/coordination/loop`, `/graph`, `/snapshot`, `/agents` — loop GET/POST + cron on loop GET
+- `/api/global/loop`, `/benchmarks`, `/patterns`, `/graph` — loop GET/POST + cron on loop GET
 - `/api/marketplace/assets`, `/share`
 - `/api/twin/state`, `/optimize`
 - `/api/playbooks` (list)

@@ -9,9 +9,9 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { listProjectsForOrg, listDependencies, listProgrammes } from "./portfolio";
-import { getTwinState } from "./twin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { loadProjectSignals } from "./projectSignals";
+import { getTwinStateForOrg } from "./twin";
 import { computeProjectHealth } from "./intelligenceEngine";
 import {
   anonymize,
@@ -65,23 +65,51 @@ async function getContext() {
 // ---------------------------------------------------------------------------
 
 async function loadLocalOrgMetrics(
+  orgId: string,
+  supabase: SupabaseClient,
   industry: string | null,
   deliveryType: string | null,
 ): Promise<LocalOrgMetrics> {
-  const projects = await listProjectsForOrg();
-  const programmes = await listProgrammes().catch(() => []);
-  const deps = await listDependencies().catch(() => []);
+  const { data: projectRows } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: false });
+
+  const projects = projectRows ?? [];
+
+  let programmeCount = 0;
+  try {
+    const { count } = await supabase
+      .from("programmes")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", orgId);
+    programmeCount = count ?? 0;
+  } catch {
+    programmeCount = 0;
+  }
+
+  let depCount = 0;
+  try {
+    const { count } = await supabase
+      .from("cross_project_dependencies")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", orgId);
+    depCount = count ?? 0;
+  } catch {
+    depCount = 0;
+  }
 
   let healthSum = 0;
   let blockerSum = 0;
   for (const p of projects) {
-    const signals = await loadProjectSignals(p.id);
+    const signals = await loadProjectSignals(p.id as string, supabase);
     healthSum += computeProjectHealth(signals).score;
     blockerSum += signals.blockers;
   }
 
   const n = Math.max(projects.length, 1);
-  const twin = await getTwinState().catch(() => null);
+  const twin = await getTwinStateForOrg(orgId, supabase).catch(() => null);
 
   const maxDeps = Math.max(projects.length * (projects.length - 1), 1);
   const coordinationEfficiency = twin?.behavioralPatterns.coordinationEfficiency;
@@ -95,11 +123,11 @@ async function loadLocalOrgMetrics(
     governanceLatency: twin?.systemMetrics.governanceLatency ?? 0.45,
     executionPressure: twin?.systemMetrics.executionPressure ?? 0.35,
     coordinationStability,
-    dependencyDensity: deps.length / maxDeps,
+    dependencyDensity: depCount / maxDeps,
     avgBlockers: blockerSum / n,
     avgHealth: healthSum / n,
     projectCount: projects.length,
-    programmeCount: programmes.length,
+    programmeCount,
   };
 }
 
@@ -110,8 +138,8 @@ async function loadLocalOrgMetrics(
 async function contributeToNetwork(
   orgId: string,
   metrics: AnonymizedMetrics,
+  supabase: SupabaseClient,
 ) {
-  const supabase = await createClient();
   const patterns = extractGlobalPatterns(metrics);
   const benchmarks = extractBenchmarkContributions(metrics);
 
@@ -206,12 +234,12 @@ async function loadNetworkAggregates(): Promise<{
 // ---------------------------------------------------------------------------
 
 export async function runGlobalLoop(): Promise<GlobalIntelligenceSnapshot> {
-  const { orgId, industry, deliveryType } = await getContext();
-  const localRaw = await loadLocalOrgMetrics(industry, deliveryType);
+  const { supabase, orgId, industry, deliveryType } = await getContext();
+  const localRaw = await loadLocalOrgMetrics(orgId, supabase, industry, deliveryType);
   const localMetrics = anonymize(localRaw);
 
   try {
-    await contributeToNetwork(orgId, localMetrics);
+    await contributeToNetwork(orgId, localMetrics, supabase);
   } catch {
     /* contribution tables may be missing in dev */
   }
@@ -244,12 +272,42 @@ export async function getGlobalGraph(): Promise<GlobalKnowledgeGraph> {
   return snapshot.graph;
 }
 
+/** Cron — anonymized pattern/benchmark contribution for every organisation. */
+export async function captureAllGlobalContributions(): Promise<{
+  contributed: number;
+  orgs: number;
+}> {
+  const admin = createAdminClient();
+  const { data: orgs, error } = await admin
+    .from("organisations")
+    .select("id, industry, delivery_type");
+  if (error) throw error;
+
+  let contributed = 0;
+  for (const org of orgs ?? []) {
+    try {
+      const localRaw = await loadLocalOrgMetrics(
+        org.id,
+        admin,
+        (org.industry as string | null) ?? null,
+        (org.delivery_type as string | null) ?? null,
+      );
+      await contributeToNetwork(org.id, anonymize(localRaw), admin);
+      contributed += 1;
+    } catch {
+      /* skip org on missing tables */
+    }
+  }
+
+  return { contributed, orgs: orgs?.length ?? 0 };
+}
+
 export async function simulateCopilot(
   scenarioId: CopilotScenarioId,
 ): Promise<CopilotResult> {
   const { supabase, userId, orgId, industry, deliveryType } =
     await getContext();
-  const localRaw = await loadLocalOrgMetrics(industry, deliveryType);
+  const localRaw = await loadLocalOrgMetrics(orgId, supabase, industry, deliveryType);
   const localMetrics = anonymize(localRaw);
   const { aggregated } = await loadNetworkAggregates();
 

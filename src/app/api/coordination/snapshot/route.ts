@@ -29,8 +29,7 @@ export async function POST() {
         { status: 500 },
       );
     }
-    const snapshot = await runEnterpriseCoordinationLoop();
-    return NextResponse.json({ ok: true, id: out.id, snapshot });
+    return NextResponse.json({ ok: true, id: out.id, snapshot: out.snapshot });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Failed" },

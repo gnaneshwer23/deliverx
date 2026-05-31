@@ -3,6 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ProjectSignals } from "./intelligenceEngine";
 
 type TaskRow = {
@@ -27,8 +28,11 @@ const MS_PER_DAY = 86_400_000;
 const VELOCITY_WINDOW_DAYS = 14;
 const ACTIVITY_WINDOW_DAYS = 7;
 
-export async function loadProjectSignals(projectId: string): Promise<ProjectSignals> {
-  const supabase = await createClient();
+export async function loadProjectSignals(
+  projectId: string,
+  client?: SupabaseClient,
+): Promise<ProjectSignals> {
+  const supabase = client ?? (await createClient());
 
   const [{ data: tasks, error: taskErr }, { data: raid, error: raidErr }, standupToday] =
     await Promise.all([
