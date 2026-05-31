@@ -177,3 +177,36 @@
     transform: translateY(-4px);
   }
 }
+
+@keyframes landing-mock-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.landing-mock-float {
+  animation: landing-mock-float 7s ease-in-out infinite;
+}
+
+.landing-page .landing-nav-link {
+  position: relative;
+}
+
+.landing-page .landing-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 1px;
+  background: #1c4a2e;
+  transition: width 0.2s ease;
+}
+
+.landing-page .landing-nav-link:hover::after {
+  width: 100%;
+}

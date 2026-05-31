@@ -1,3 +1,4 @@
+import { LandingPageShell } from "@/components/dx/landing-layout";
 import {
   LandingCta,
   LandingFeatures,
@@ -18,17 +19,19 @@ export default async function LandingPage() {
   const preview = await getLandingPreviewStats();
 
   return (
-    <div className="min-h-screen bg-[#FAFAF5]">
+    <LandingPageShell>
       <LandingNav />
-      <LandingHero preview={preview} />
-      <LandingProblem />
-      <LandingJourney />
-      <LandingPlatform />
-      <LandingFeatures />
-      <LandingCapabilities />
-      <LandingPricing />
-      <LandingCta />
+      <main>
+        <LandingHero preview={preview} />
+        <LandingProblem />
+        <LandingJourney />
+        <LandingPlatform />
+        <LandingFeatures />
+        <LandingCapabilities />
+        <LandingPricing />
+        <LandingCta />
+      </main>
       <LandingFooter />
-    </div>
+    </LandingPageShell>
   );
 }
