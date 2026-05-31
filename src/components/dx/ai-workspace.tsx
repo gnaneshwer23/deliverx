@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { Loader2, Plus, Send } from "lucide-react";
 import type { ChatMessage } from "@/services/assistant";
+import type { ProposedAction } from "@/services/assistantActions";
+import { AssistantActionCards } from "@/components/assistant/assistant-action-cards";
 import { AiConfigBanner } from "@/components/ai/ai-config-banner";
+
+type UiMessage = ChatMessage & { proposedActions?: ProposedAction[] };
 import { DxBadge } from "@/components/dx/dx-badge";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
@@ -22,7 +26,7 @@ export function AiWorkspace({
 }: {
   projects: Array<{ id: string; name: string }>;
 }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<UiMessage[]>([
     {
       role: "assistant",
       content:
@@ -39,7 +43,7 @@ export function AiWorkspace({
     const trimmed = text.trim();
     if (!trimmed || isPending) return;
 
-    const next: ChatMessage[] = [...messages, { role: "user", content: trimmed }];
+    const next: UiMessage[] = [...messages, { role: "user", content: trimmed }];
     setMessages(next);
     setInput("");
     setError(null);
@@ -56,6 +60,7 @@ export function AiWorkspace({
         });
         const data = (await res.json()) as {
           reply?: string;
+          proposedActions?: ProposedAction[];
           error?: string;
           code?: string;
         };
@@ -72,7 +77,14 @@ export function AiWorkspace({
           setError("Assistant returned an empty response. Check API keys in Settings.");
           return;
         }
-        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: reply,
+            proposedActions: data.proposedActions ?? [],
+          },
+        ]);
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
       } catch {
         setError("Could not reach the assistant. Try again.");
@@ -169,6 +181,9 @@ export function AiWorkspace({
                 >
                   {m.content}
                 </div>
+                {m.role === "assistant" && m.proposedActions?.length ? (
+                  <AssistantActionCards actions={m.proposedActions} />
+                ) : null}
               </div>
             </div>
           ))}

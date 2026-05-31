@@ -100,10 +100,13 @@ export function ReportWorkflowPanel({
       {publishState.error ? (
         <p className="text-sm text-red-600">{publishState.error}</p>
       ) : null}
+      {publishState.warning ? (
+        <p className="text-sm text-amber-700">{publishState.warning}</p>
+      ) : null}
       {reviewState.ok && reviewStatus === "draft" ? (
         <p className="text-sm text-[#1C4A2E]">Marked as reviewed.</p>
       ) : null}
-      {publishState.ok ? (
+      {publishState.ok && !publishState.warning ? (
         <p className="text-sm text-[#1C4A2E]">Report published.</p>
       ) : null}
     </section>

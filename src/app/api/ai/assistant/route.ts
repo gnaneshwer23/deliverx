@@ -1,6 +1,7 @@
 import { aiRouteError } from "@/lib/api/ai-route";
 import { apiErrorResponse } from "@/lib/api/auth";
 import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
+import { proposeAssistantActions } from "@/services/assistantActions";
 import { runAssistantChat, type ChatMessage } from "@/services/assistant";
 
 type Body = {
@@ -25,8 +26,12 @@ export async function POST(req: Request) {
   }
 
   try {
-    const reply = await runAssistantChat(messages, body.projectId?.trim() || null);
-    return Response.json({ ok: true, reply, model: DEFAULT_AI_MODEL });
+    const projectId = body.projectId?.trim() || null;
+    const reply = await runAssistantChat(messages, projectId);
+    const proposedActions = projectId
+      ? await proposeAssistantActions(messages, projectId, reply).catch(() => [])
+      : [];
+    return Response.json({ ok: true, reply, proposedActions, model: DEFAULT_AI_MODEL });
   } catch (err) {
     if (err instanceof Error && err.message === "Not authenticated") {
       return apiErrorResponse(err);
