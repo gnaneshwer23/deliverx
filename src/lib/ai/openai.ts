@@ -15,9 +15,11 @@ export class OpenAiRequestError extends Error {
 const WHISPER_MODEL = "whisper-1";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 
+import { getOpenAiApiKey } from "@/lib/ai/config";
+
 function getApiKey(): string {
-  const key = process.env.OPENAI_API_KEY?.trim();
-  if (!key) throw new OpenAiConfigError();
+  const key = getOpenAiApiKey();
+  if (!key) throw new OpenAiConfigError("Set OPENAI_API_KEY to enable OpenAI features.");
   return key;
 }
 

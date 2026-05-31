@@ -22,14 +22,14 @@ const ROWS = [
     where: "http://localhost:3000 locally, or your Vercel URL",
   },
   {
-    name: "MINIMAX_API_KEY or ANTHROPIC_API_KEY",
+    name: "OPENAI_API_KEY",
     required: true,
-    where: "MiniMax or Anthropic console — text AI features",
+    where: "OpenAI platform — all text AI, Whisper, embeddings",
   },
   {
-    name: "OPENAI_API_KEY",
+    name: "OPENAI_MODEL",
     required: false,
-    where: "OpenAI platform — Whisper + embeddings (optional)",
+    where: "Optional — default gpt-4o-mini",
   },
   {
     name: "CRON_SECRET",

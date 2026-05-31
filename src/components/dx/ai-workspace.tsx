@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { Loader2, Plus, Send } from "lucide-react";
 import type { ChatMessage } from "@/services/assistant";
+import { AiConfigBanner } from "@/components/ai/ai-config-banner";
 import { DxBadge } from "@/components/dx/dx-badge";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
@@ -53,12 +54,25 @@ export function AiWorkspace({
             projectId: projectId || undefined,
           }),
         });
-        const data = (await res.json()) as { reply?: string; error?: string };
+        const data = (await res.json()) as {
+          reply?: string;
+          error?: string;
+          code?: string;
+        };
         if (!res.ok) {
-          setError(data.error ?? "Assistant unavailable");
+          const msg =
+            data.code === "ai_not_configured"
+              ? "AI is not configured. Add OPENAI_API_KEY in Settings, then redeploy."
+              : (data.error ?? "Assistant unavailable");
+          setError(msg);
           return;
         }
-        setMessages((prev) => [...prev, { role: "assistant", content: data.reply ?? "" }]);
+        const reply = data.reply?.trim();
+        if (!reply) {
+          setError("Assistant returned an empty response. Check API keys in Settings.");
+          return;
+        }
+        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
       } catch {
         setError("Could not reach the assistant. Try again.");
@@ -132,6 +146,7 @@ export function AiWorkspace({
         </div>
 
         <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-5 py-5 md:px-6">
+          <AiConfigBanner />
           {messages.map((m, i) => (
             <div
               key={i}
