@@ -3,18 +3,14 @@ import {
   LandingFeatures,
   LandingFooter,
   LandingHero,
-  LandingHow,
   LandingNav,
   LandingPricing,
   LandingProblem,
 } from "@/components/dx/landing-sections";
 import {
-  LandingDashboardPreview,
-  LandingDeliveryLoops,
-  LandingIntelligence,
-  LandingOnboardingPath,
-  LandingOsStack,
-  LandingWorkspaceMap,
+  LandingCapabilities,
+  LandingJourney,
+  LandingPlatform,
 } from "@/components/dx/landing-platform-sections";
 import { getLandingPreviewStats } from "@/services/landing";
 
@@ -26,14 +22,10 @@ export default async function LandingPage() {
       <LandingNav />
       <LandingHero preview={preview} />
       <LandingProblem />
-      <LandingOsStack />
-      <LandingDeliveryLoops />
-      <LandingHow />
-      <LandingDashboardPreview />
-      <LandingIntelligence />
-      <LandingWorkspaceMap />
-      <LandingOnboardingPath />
+      <LandingJourney />
+      <LandingPlatform />
       <LandingFeatures />
+      <LandingCapabilities />
       <LandingPricing />
       <LandingCta />
       <LandingFooter />

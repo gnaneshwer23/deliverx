@@ -9,16 +9,13 @@ export function LandingNav() {
     <nav className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-9 border-b border-[#E4E4DC] bg-[#FAFAF5]/95 px-6 backdrop-blur-md md:px-11">
       <DxLogo showTag />
       <div className="ml-auto flex items-center gap-7">
-        <a href="#platform" className={`${dxClass.caps} hidden sm:inline`}>
-          Platform
-        </a>
         <a href="#how" className={dxClass.caps}>
-          How It Works
+          How it works
         </a>
-        <a href="#loops" className={`${dxClass.caps} hidden md:inline`}>
-          Loops
+        <a href="#platform" className={`${dxClass.caps} hidden sm:inline`}>
+          Product
         </a>
-        <a href="#feat" className={dxClass.caps}>
+        <a href="#features" className={`${dxClass.caps} hidden sm:inline`}>
           Features
         </a>
         <a href="#price" className={dxClass.caps}>
@@ -63,8 +60,8 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
             Organisation.
           </h1>
           <p className="mb-9 max-w-md text-[17px] font-light leading-relaxed text-[#6B6B64]">
-            One workspace for projects, governance, portfolio intelligence, and AI-assisted
-            delivery — from business case to closure, with human approval on every AI action.
+            Upload your business case. Your team executes in one place. AI watches the signals —
+            and only acts when you approve.
           </p>
           <div className="mb-10 flex flex-wrap items-center gap-3">
             <DxButtonLink href="/signup">Start Free Trial</DxButtonLink>
@@ -81,42 +78,40 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
           </div>
         </div>
 
-        <div className={`${dxClass.card} shadow-[0_8px_40px_rgba(13,13,11,0.12)]`}>
-          <div className="flex items-center justify-between border-b border-[#F0F0E8] px-4 py-3">
-            <DxCaps>Delivery command centre</DxCaps>
-            <span className="flex items-center gap-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#1A6B3A]">
+        <div
+          className={`${dxClass.card} overflow-hidden shadow-[0_24px_80px_rgba(13,13,11,0.1)]`}
+        >
+          <div className="flex items-center border-b border-[#F0F0E8] bg-[#0a0e14] px-4 py-2.5">
+            <DxCaps className="text-[#9ca3af]">Command centre</DxCaps>
+            <span className="ml-auto flex items-center gap-1.5 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#1A6B3A]">
               <span
-                className="size-1 rounded-full bg-[#1A6B3A]"
+                className="size-1.5 rounded-full bg-[#1A6B3A]"
                 style={{ animation: preview.live ? "dx-pulse 2s ease-in-out infinite" : undefined }}
               />
-              {preview.live ? "Live" : "Sample"}
+              {preview.live ? "Live" : "Preview"}
             </span>
           </div>
-          <div className="p-4">
-            <div className="mb-3.5 grid grid-cols-3 gap-2.5">
-              {[
-                { v: `${preview.confidence}%`, l: "Confidence", c: "text-[#1A6B3A]" },
-                { v: String(preview.atRisk), l: "At Risk", c: "text-[#B7620A]" },
-                { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
-              ].map((s) => (
-                <div key={s.l} className="border border-[#F0F0E8] bg-[#F7F7F2] p-3">
-                  <div className={`${dxClass.display} text-[1.75rem] leading-none ${s.c}`}>
-                    {s.v}
-                  </div>
-                  <DxCaps className="mt-0.5 text-[7px]">{s.l}</DxCaps>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {preview.signals.map((signal) => (
-                <SignalPreview
-                  key={signal.text}
-                  tone={signal.tone}
-                  text={signal.text}
-                  badge={signal.badge}
-                />
-              ))}
-            </div>
+          <div className="grid grid-cols-3 gap-px border-b border-[#F0F0E8] bg-[#F0F0E8]">
+            {[
+              { v: `${preview.confidence}%`, l: "Confidence", c: "text-[#1A6B3A]" },
+              { v: String(preview.atRisk), l: "At risk", c: "text-[#B7620A]" },
+              { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
+            ].map((s) => (
+              <div key={s.l} className="bg-white px-3 py-3 text-center">
+                <div className={`${dxClass.display} text-xl leading-none ${s.c}`}>{s.v}</div>
+                <DxCaps className="mt-0.5 text-[6px]">{s.l}</DxCaps>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col gap-1.5 p-4">
+            {preview.signals.map((signal) => (
+              <SignalPreview
+                key={signal.text}
+                tone={signal.tone}
+                text={signal.text}
+                badge={signal.badge}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -257,7 +252,7 @@ export function LandingHow() {
 
 export function LandingFeatures() {
   return (
-    <section id="feat" className="bg-[#F7F7F2] px-6 py-24 md:px-11">
+    <section id="features" className="scroll-mt-[var(--dx-navh)] bg-[#F7F7F2] px-6 py-24 md:px-11">
       <div className="mx-auto max-w-7xl">
         <DxCaps accent className="mb-3">
           Features
@@ -265,65 +260,45 @@ export function LandingFeatures() {
         <h2 className={`${dxClass.sectionTitle} mb-12`}>
           Built for delivery, not <em className="text-[#1C4A2E] not-italic">task management.</em>
         </h2>
-        <div className="grid gap-px bg-[#E4E4DC] md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-px bg-[#E4E4DC] md:grid-cols-2">
           <FeatureBlock
-            eyebrow="AI Intelligence Layer"
+            eyebrow="Signals"
             title="Risks surface before they escalate"
             dark={false}
             bullets={[
-              "RAID log auto-populated from standups",
-              "Milestone confidence updated daily",
-              "5 alert types with PM review queue",
+              "RAID fed from standups and tasks",
+              "Alert queue with PM review",
+              "Milestone confidence on the dashboard",
             ]}
           />
           <FeatureBlock
-            eyebrow="Reporting Engine"
+            eyebrow="Reporting"
             title="Status reports that write themselves"
             dark
             bullets={[
-              "Weekly report — every Monday at 07:00",
-              "Executive summary to sponsor",
-              "AI citations on every generated output",
+              "Draft → review → publish pipeline",
+              "Executive summaries for sponsors",
+              "Optional email on publish",
             ]}
           />
           <FeatureBlock
-            eyebrow="Meeting Intelligence"
+            eyebrow="Meetings"
             title="Meetings become operational records"
             dark={false}
             bullets={[
-              "Decision Register auto-population",
-              "Action items with suggested owners",
-              "Change requests from meeting output",
+              "Summaries and decision capture",
+              "Actions with suggested owners",
+              "Change requests from outcomes",
             ]}
           />
           <FeatureBlock
-            eyebrow="Organisational Memory"
+            eyebrow="Memory"
             title="Every project makes the next one smarter"
             dark={false}
             bullets={[
-              "Searchable lessons learned library",
-              "Risk patterns across projects",
-              "Delivery playbooks enriched automatically",
-            ]}
-          />
-          <FeatureBlock
-            eyebrow="Portfolio & Twin"
-            title="See the whole programme, not just tasks"
-            dark
-            bullets={[
-              "Portfolio & programme dependencies",
-              "Digital twin scenarios & snapshots",
-              "Coordination + global intelligence loops",
-            ]}
-          />
-          <FeatureBlock
-            eyebrow="Workspace search"
-            title="Find anything across your org"
-            dark={false}
-            bullets={[
-              "Projects, tasks, RAID, documents",
-              "Nav search + dedicated search page",
-              "Tied to your organisation boundary",
+              "Lessons learned you can search",
+              "Playbooks across programmes",
+              "Patterns from closed work",
             ]}
           />
         </div>
