@@ -1,15 +1,10 @@
 import { NextResponse } from "next/server";
+import { isCronAuthorized } from "@/lib/api/cron-auth";
 import {
   captureAllTwinSnapshots,
   listTwinSnapshots,
   saveTwinSnapshot,
 } from "@/services/twin";
-
-function isCronAuthorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
-  return req.headers.get("authorization") === `Bearer ${secret}`;
-}
 
 /** GET — recent snapshot history, or cron capture when Bearer CRON_SECRET is sent. */
 export async function GET(req: Request) {

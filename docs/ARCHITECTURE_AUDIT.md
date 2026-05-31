@@ -114,14 +114,12 @@ Portfolio, programmes, PMO, executive, coordination, global, twin, adaptive, ale
 
 ---
 
-## Known gaps (Phase 1+ priority)
+## Known gaps (post Phase 2)
 
-1. **PDF/PPT/Word** extraction for project brief upload.
-2. **Outbound email** on report publish.
-3. **Assistant approve-to-apply** (structured actions with user confirm).
-4. **Workspace search** (nav search is UI-only).
-5. **Extra cron jobs** for coordination/global loops (twin snapshot cron exists).
-6. **Realtime** updates (optional).
+1. **Phase 1 product workflows** — see PR #12 / `docs/PHASE1.md` (may be on a separate branch until merged).
+2. **Assistant action types** beyond RAID/tasks (milestones, stakeholders).
+3. **Search** — embeddings / semantic search across memory.
+4. **E2E tests** and rate limits on AI routes.
 
 ---
 

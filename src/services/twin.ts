@@ -61,12 +61,15 @@ async function getContext() {
 // Hydrate per-project snapshot
 // ---------------------------------------------------------------------------
 
-async function enrichProject(row: {
-  id: string;
-  name: string;
-  programme_id: string | null;
-}): Promise<TwinProjectSnapshot> {
-  const signals = await loadProjectSignals(row.id);
+async function enrichProject(
+  row: {
+    id: string;
+    name: string;
+    programme_id: string | null;
+  },
+  supabase?: SupabaseClient,
+): Promise<TwinProjectSnapshot> {
+  const signals = await loadProjectSignals(row.id, supabase);
   const health = computeProjectHealth(signals);
   const confidence = computeDeliveryConfidence(signals);
   const data = toExecutionData(signals, {
@@ -133,7 +136,7 @@ async function loadOrgWideInputsForOrg(
 
   const projects = await Promise.all(
     ((projectRows ?? []) as Array<{ id: string; name: string; programme_id: string | null }>).map(
-      enrichProject,
+      (row) => enrichProject(row, supabase),
     ),
   );
 
@@ -222,6 +225,15 @@ async function loadOrgWideInputs() {
 
 export async function getTwinState(): Promise<DigitalTwinState> {
   const inputs = await loadOrgWideInputs();
+  return buildTwinState(inputs);
+}
+
+/** Org-scoped twin state (cron / admin jobs). */
+export async function getTwinStateForOrg(
+  orgId: string,
+  supabase: SupabaseClient,
+): Promise<DigitalTwinState> {
+  const inputs = await loadOrgWideInputsForOrg(orgId, supabase);
   return buildTwinState(inputs);
 }
 

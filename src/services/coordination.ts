@@ -7,14 +7,11 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { loadProjectSignals } from "./projectSignals";
 import { computeProjectHealth } from "./intelligenceEngine";
-import {
-  listDependencies,
-  listProgrammes,
-  listProjectsForOrg,
-} from "./portfolio";
-import { getTwinState } from "./twin";
+import { getTwinStateForOrg } from "./twin";
 import {
   buildKnowledgeGraph,
   processSignals,
@@ -93,31 +90,39 @@ async function getContext() {
 // Context loader
 // ---------------------------------------------------------------------------
 
-async function loadCoordinationContext(): Promise<Parameters<
-  typeof runCoordinationLoop
->[0]> {
-  await getContext();
-
+async function loadCoordinationContextForOrg(
+  orgId: string,
+  supabase: SupabaseClient,
+): Promise<Parameters<typeof runCoordinationLoop>[0]> {
   let programmes: Array<{ id: string; name: string; status: string }> = [];
   try {
-    const rows = await listProgrammes();
-    programmes = rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      status: r.status,
-    }));
+    const { data } = await supabase
+      .from("programmes")
+      .select("id, name, status")
+      .eq("organisation_id", orgId)
+      .order("created_at", { ascending: true });
+    programmes = (data ?? []) as typeof programmes;
   } catch {
     programmes = [];
   }
 
-  const projectRows = await listProjectsForOrg();
+  const { data: projectRows } = await supabase
+    .from("projects")
+    .select("id, name, programme_id")
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: false });
+
   const programmeNameById = new Map(programmes.map((p) => [p.id, p.name]));
 
   const projects: ProjectCoordinationSnapshot[] = [];
   const rawSignals: RawOperationalSignal[] = [];
 
-  for (const row of projectRows) {
-    const signals = await loadProjectSignals(row.id);
+  for (const row of (projectRows ?? []) as Array<{
+    id: string;
+    name: string;
+    programme_id: string | null;
+  }>) {
+    const signals = await loadProjectSignals(row.id, supabase);
     const health = computeProjectHealth(signals);
     const velocityChange = signals.velocity - 0.85;
     const blockerSpike = signals.blockers > 5;
@@ -161,8 +166,18 @@ async function loadCoordinationContext(): Promise<Parameters<
 
   let dependencies: DependencyEdge[] = [];
   try {
-    const deps = await listDependencies();
-    dependencies = deps.map((d) => ({
+    const { data: deps } = await supabase
+      .from("cross_project_dependencies")
+      .select("id, source_project_id, target_project_id, dependency_type, severity")
+      .eq("organisation_id", orgId)
+      .order("created_at", { ascending: false });
+    dependencies = ((deps ?? []) as Array<{
+      id: string;
+      source_project_id: string;
+      target_project_id: string;
+      dependency_type: DependencyEdge["type"];
+      severity: DependencyEdge["severity"];
+    }>).map((d) => ({
       id: d.id,
       sourceProjectId: d.source_project_id,
       targetProjectId: d.target_project_id,
@@ -173,10 +188,37 @@ async function loadCoordinationContext(): Promise<Parameters<
     dependencies = [];
   }
 
-  const partners = await listPartners();
-  const sharedLinks = await listSharedLinks(partners);
+  const { data: partnerRows } = await supabase
+    .from("ecosystem_partners")
+    .select("*")
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: true });
 
-  const twinState = await getTwinState().catch(() => null);
+  const partners: EcosystemPartner[] = ((partnerRows ?? []) as PartnerRow[]).map((p) => ({
+    id: p.id,
+    name: p.name,
+    partnerType: p.partner_type,
+    status: p.status,
+  }));
+
+  const partnerNameById = new Map(partners.map((p) => [p.id, p.name]));
+  const { data: linkRows } = await supabase
+    .from("ecosystem_shared_links")
+    .select("*")
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: false });
+
+  const sharedLinks: SharedLink[] = ((linkRows ?? []) as SharedLinkRow[]).map((l) => ({
+    id: l.id,
+    partnerId: l.partner_id,
+    partnerName: partnerNameById.get(l.partner_id) ?? "Partner",
+    projectId: l.project_id,
+    label: l.label,
+    linkType: l.link_type,
+    delayed: Boolean((l.meta as { delayed?: boolean })?.delayed),
+  }));
+
+  const twinState = await getTwinStateForOrg(orgId, supabase).catch(() => null);
   const twinMetrics = {
     governanceLatency: twinState?.systemMetrics.governanceLatency ?? 0.4,
     executionPressure: twinState?.systemMetrics.executionPressure ?? 0.35,
@@ -207,6 +249,13 @@ async function loadCoordinationContext(): Promise<Parameters<
   };
 }
 
+async function loadCoordinationContext(): Promise<Parameters<
+  typeof runCoordinationLoop
+>[0]> {
+  const { supabase, orgId } = await getContext();
+  return loadCoordinationContextForOrg(orgId, supabase);
+}
+
 function clamp01(n: number) {
   return Math.max(0, Math.min(1, n));
 }
@@ -225,9 +274,13 @@ export async function getKnowledgeGraph(): Promise<KnowledgeGraph> {
   return ctx.graph;
 }
 
-export async function saveCoordinationRun(): Promise<{ id: string } | null> {
+export async function saveCoordinationRun(): Promise<{
+  id: string;
+  snapshot: CoordinationSnapshot;
+} | null> {
   const { supabase, userId, orgId } = await getContext();
-  const snapshot = await runEnterpriseCoordinationLoop();
+  const ctx = await loadCoordinationContextForOrg(orgId, supabase);
+  const snapshot = runCoordinationLoop(ctx);
 
   const { data, error } = await supabase
     .from("coordination_runs")
@@ -240,7 +293,31 @@ export async function saveCoordinationRun(): Promise<{ id: string } | null> {
     .single();
 
   if (error) return null;
-  return data as { id: string };
+  return { id: (data as { id: string }).id, snapshot };
+}
+
+/** Cron — coordination loop snapshot for every organisation. */
+export async function captureAllCoordinationRuns(): Promise<{
+  captured: number;
+  orgs: number;
+}> {
+  const admin = createAdminClient();
+  const { data: orgs, error } = await admin.from("organisations").select("id");
+  if (error) throw error;
+
+  let captured = 0;
+  for (const org of orgs ?? []) {
+    const ctx = await loadCoordinationContextForOrg(org.id, admin);
+    const snapshot = runCoordinationLoop(ctx);
+    const { error: insertError } = await admin.from("coordination_runs").insert({
+      organisation_id: org.id,
+      snapshot,
+      captured_by: null,
+    });
+    if (!insertError) captured += 1;
+  }
+
+  return { captured, orgs: orgs?.length ?? 0 };
 }
 
 export async function listCoordinationRuns(limit = 10) {

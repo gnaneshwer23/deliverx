@@ -12,27 +12,50 @@ import {
 import { RecommendationChainPanel } from "@/components/coordination/recommendation-chain-panel";
 import { CrossOrgAlertsPanel } from "@/components/coordination/cross-org-panel";
 import { PartnerForm } from "./partner-form";
+import { RunLoopButton } from "@/components/intelligence/run-loop-button";
+import { IntelligenceLiveRefresh } from "@/components/intelligence/intelligence-live-refresh";
+import { listCoordinationRuns } from "@/services/coordination";
 
 export const dynamic = "force-dynamic";
 
 export default async function CoordinationPage() {
-  const [snapshot, partners] = await Promise.all([
+  const [snapshot, partners, recentRuns] = await Promise.all([
     runEnterpriseCoordinationLoop(),
     listPartners(),
+    listCoordinationRuns(5),
   ]);
 
+  const lastRunAt = recentRuns[0]?.captured_at;
+
   return (
-    <main className="p-8">
+    <IntelligenceLiveRefresh table="coordination_runs">
+      <main className="p-8">
       <header className="mb-8">
-        <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-          <BrainCircuit size={22} className="text-violet-600" /> Coordination
-          Intelligence
-        </h1>
-        <p className="mt-1 max-w-2xl text-sm text-slate-500">
-          Multi-agent coordination across your enterprise ecosystem. Agents
-          analyse signals, traverse the knowledge graph, and propose unified
-          recommendations — always subject to human governance.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
+              <BrainCircuit size={22} className="text-violet-600" /> Coordination
+              Intelligence
+            </h1>
+            <p className="mt-1 max-w-2xl text-sm text-slate-500">
+              Multi-agent coordination across your enterprise ecosystem. Agents
+              analyse signals, traverse the knowledge graph, and propose unified
+              recommendations — always subject to human governance.
+            </p>
+          </div>
+          <div className="shrink-0 space-y-1 text-right">
+            <RunLoopButton
+              postUrl="/api/coordination/loop"
+              label="Run coordination loop"
+            />
+            <p className="text-[11px] text-slate-400">
+              Daily cron 07:00 UTC ·{" "}
+              {lastRunAt
+                ? `Last saved ${new Date(lastRunAt).toLocaleString()}`
+                : "No saved runs yet"}
+            </p>
+          </div>
+        </div>
       </header>
 
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -87,5 +110,6 @@ export default async function CoordinationPage() {
         override governance, or resolve conflicts without human approval.
       </p>
     </main>
+    </IntelligenceLiveRefresh>
   );
 }
