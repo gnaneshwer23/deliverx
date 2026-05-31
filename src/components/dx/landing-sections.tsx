@@ -9,8 +9,14 @@ export function LandingNav() {
     <nav className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-9 border-b border-[#E4E4DC] bg-[#FAFAF5]/95 px-6 backdrop-blur-md md:px-11">
       <DxLogo showTag />
       <div className="ml-auto flex items-center gap-7">
+        <a href="#platform" className={`${dxClass.caps} hidden sm:inline`}>
+          Platform
+        </a>
         <a href="#how" className={dxClass.caps}>
           How It Works
+        </a>
+        <a href="#loops" className={`${dxClass.caps} hidden md:inline`}>
+          Loops
         </a>
         <a href="#feat" className={dxClass.caps}>
           Features
@@ -57,8 +63,8 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
             Organisation.
           </h1>
           <p className="mb-9 max-w-md text-[17px] font-light leading-relaxed text-[#6B6B64]">
-            Upload your business case, invite your team, and the AI monitors every workstream —
-            surfacing risks before they escalate and writing reports automatically.
+            One workspace for projects, governance, portfolio intelligence, and AI-assisted
+            delivery — from business case to closure, with human approval on every AI action.
           </p>
           <div className="mb-10 flex flex-wrap items-center gap-3">
             <DxButtonLink href="/signup">Start Free Trial</DxButtonLink>
@@ -77,7 +83,7 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
 
         <div className={`${dxClass.card} shadow-[0_8px_40px_rgba(13,13,11,0.12)]`}>
           <div className="flex items-center justify-between border-b border-[#F0F0E8] px-4 py-3">
-            <DxCaps>PM Command Centre</DxCaps>
+            <DxCaps>Delivery command centre</DxCaps>
             <span className="flex items-center gap-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#1A6B3A]">
               <span
                 className="size-1 rounded-full bg-[#1A6B3A]"
@@ -210,7 +216,7 @@ export function LandingHow() {
     {
       n: "03",
       t: "Execute with AI monitoring",
-      d: "Daily standups in 90 seconds. AI monitors velocity, extracts risks, and alerts you before problems escalate.",
+      d: "Dashboard command centre, standups, RAID, and alert queue. Assistant proposes actions — you approve before they apply.",
     },
     {
       n: "04",
@@ -259,7 +265,7 @@ export function LandingFeatures() {
         <h2 className={`${dxClass.sectionTitle} mb-12`}>
           Built for delivery, not <em className="text-[#1C4A2E] not-italic">task management.</em>
         </h2>
-        <div className="grid gap-px bg-[#E4E4DC] md:grid-cols-2">
+        <div className="grid gap-px bg-[#E4E4DC] md:grid-cols-2 lg:grid-cols-3">
           <FeatureBlock
             eyebrow="AI Intelligence Layer"
             title="Risks surface before they escalate"
@@ -298,6 +304,26 @@ export function LandingFeatures() {
               "Searchable lessons learned library",
               "Risk patterns across projects",
               "Delivery playbooks enriched automatically",
+            ]}
+          />
+          <FeatureBlock
+            eyebrow="Portfolio & Twin"
+            title="See the whole programme, not just tasks"
+            dark
+            bullets={[
+              "Portfolio & programme dependencies",
+              "Digital twin scenarios & snapshots",
+              "Coordination + global intelligence loops",
+            ]}
+          />
+          <FeatureBlock
+            eyebrow="Workspace search"
+            title="Find anything across your org"
+            dark={false}
+            bullets={[
+              "Projects, tasks, RAID, documents",
+              "Nav search + dedicated search page",
+              "Tied to your organisation boundary",
             ]}
           />
         </div>
