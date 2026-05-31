@@ -1,5 +1,7 @@
 # Setup audit
 
+**Phase 0 (2026-05-31):** PR #11 merged to `main`. Vercel should redeploy automatically. Migration `architecture_os` is applied on Supabase.
+
 ## Primary AI: OpenAI
 
 DeliverX uses **`OPENAI_API_KEY`** for:
