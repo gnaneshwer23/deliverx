@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -21,6 +22,12 @@ import {
   NavLink,
   SectionIntro,
 } from "@/components/dx/landing-layout";
+import {
+  MeetingsFeatureVisual,
+  MemoryFeatureVisual,
+  ReportingFeatureVisual,
+  SignalsFeatureVisual,
+} from "@/components/dx/landing-feature-visual";
 import { LandingStatCard } from "@/components/dx/landing-stat";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -154,13 +161,14 @@ export function LandingFeatures() {
             description="Reporting, RAID, meetings, and memory stay linked to the same project health score."
           />
         </LandingReveal>
-        <div className="grid auto-rows-[minmax(200px,auto)] gap-4 md:grid-cols-12 md:gap-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
           <FeatureBlock
-            className="md:col-span-7 md:row-span-2"
             icon={FileBarChart2}
             eyebrow="Reporting"
             title="Status reports that write themselves"
+            summary="AI drafts from live RAID and tasks — you review before anything goes to sponsors."
             dark
+            visual={<ReportingFeatureVisual />}
             bullets={[
               "Draft → review → publish pipeline",
               "Executive summaries for sponsors",
@@ -168,10 +176,11 @@ export function LandingFeatures() {
             ]}
           />
           <FeatureBlock
-            className="md:col-span-5"
             icon={Radar}
             eyebrow="Signals"
             title="Risks surface before they escalate"
+            summary="Standups and tasks feed RAID; the alert queue flags what needs a PM decision."
+            visual={<SignalsFeatureVisual />}
             bullets={[
               "RAID fed from standups and tasks",
               "Alert queue with PM review",
@@ -179,10 +188,11 @@ export function LandingFeatures() {
             ]}
           />
           <FeatureBlock
-            className="md:col-span-5"
             icon={MessageSquare}
             eyebrow="Meetings"
             title="Meetings become operational records"
+            summary="Decisions, actions, and change requests stay linked — not buried in notes."
+            visual={<MeetingsFeatureVisual />}
             bullets={[
               "Summaries and decision capture",
               "Actions with suggested owners",
@@ -190,11 +200,12 @@ export function LandingFeatures() {
             ]}
           />
           <FeatureBlock
-            className="md:col-span-7"
             icon={Sparkles}
             eyebrow="Memory"
             title="Every project makes the next one smarter"
+            summary="Search lessons and playbooks across programmes when you start the next delivery."
             accent
+            visual={<MemoryFeatureVisual />}
             bullets={[
               "Lessons learned you can search",
               "Playbooks across programmes",
@@ -210,73 +221,88 @@ export function LandingFeatures() {
 function FeatureBlock({
   eyebrow,
   title,
+  summary,
   dark,
   accent,
   bullets,
+  visual,
   icon: Icon,
   className = "",
 }: {
   eyebrow: string;
   title: string;
+  summary: string;
   dark?: boolean;
   accent?: boolean;
   bullets: string[];
+  visual: ReactNode;
   icon: LucideIcon;
   className?: string;
 }) {
+  const titleClass = dark
+    ? "text-white"
+    : accent
+      ? "text-[#0D0D0B]"
+      : "text-[#0D0D0B]";
+  const summaryClass = dark ? "text-white/75" : "text-[#6B6B64]";
+
   return (
     <LandingReveal className={`h-full ${className}`}>
       <div
-        className={`relative flex h-full min-h-[200px] flex-col overflow-hidden p-8 md:p-10 ${
+        className={`relative flex h-full min-h-[360px] flex-col overflow-hidden p-6 md:p-8 ${
           dark
-            ? "bg-[#1C4A2E] text-white shadow-[0_28px_70px_-28px_rgba(28,74,46,0.45)]"
+            ? "bg-[#1C4A2E] shadow-[0_28px_70px_-28px_rgba(28,74,46,0.45)]"
             : accent
-              ? "border border-[#C6DDD0] bg-gradient-to-br from-[#EEF5F1] to-white shadow-[0_20px_50px_-24px_rgba(28,74,46,0.12)]"
-              : `${landingCard} shadow-[0_16px_40px_-28px_rgba(13,13,11,0.1)]`
+              ? "border border-[#C6DDD0] bg-[#EEF5F1] shadow-[0_20px_50px_-24px_rgba(28,74,46,0.12)]"
+              : `${landingCard} bg-white shadow-[0_16px_40px_-28px_rgba(13,13,11,0.1)]`
         }`}
       >
-        {dark ? (
+        <div className="flex items-start gap-3">
           <span
-            className="pointer-events-none absolute -right-6 -top-8 font-[family-name:var(--font-dx-mono)] text-[7rem] leading-none text-white/[0.06]"
-            aria-hidden
+            className={`flex size-11 shrink-0 items-center justify-center border ${
+              dark
+                ? "border-[#3D9660]/40 bg-[#3D9660]/15"
+                : "border-[#C6DDD0] bg-white"
+            }`}
           >
-            AI
-          </span>
-        ) : null}
-        <span
-          className={`mb-4 flex size-11 items-center justify-center border ${
-            dark
-              ? "border-[#3D9660]/40 bg-[#3D9660]/15"
-              : "border-[#C6DDD0] bg-white"
-          }`}
-        >
-          <Icon
-            size={20}
-            className={dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}
-            strokeWidth={1.5}
-          />
-        </span>
-        <DxCaps className={`mb-3 ${dark ? "text-[#3D9660]" : ""}`} accent={!dark}>
-          {eyebrow}
-        </DxCaps>
-      <h3 className={`${dxClass.display} mb-6 text-2xl leading-snug md:text-[1.65rem]`}>
-        {title}
-      </h3>
-      <ul className="mt-auto space-y-2.5">
-        {bullets.map((b) => (
-          <li
-            key={b}
-            className={`flex items-start gap-2.5 text-sm leading-snug ${dark ? "text-white/85" : "text-[#2C2C28]"}`}
-          >
-            <Check
-              size={14}
-              className={`mt-0.5 shrink-0 ${dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}`}
-              strokeWidth={2.5}
+            <Icon
+              size={20}
+              className={dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}
+              strokeWidth={1.5}
             />
-            {b}
-          </li>
-        ))}
-      </ul>
+          </span>
+          <div className="min-w-0">
+            <DxCaps className={dark ? "text-[#3D9660]" : "text-[#6B6B64]"} accent={!dark && !accent}>
+              {eyebrow}
+            </DxCaps>
+            <h3
+              className={`${dxClass.display} mt-2 text-xl leading-snug md:text-2xl ${titleClass}`}
+            >
+              {title}
+            </h3>
+            <p className={`mt-2 text-sm leading-relaxed ${summaryClass}`}>{summary}</p>
+          </div>
+        </div>
+
+        <div className="my-5 min-h-[140px] flex-1">{visual}</div>
+
+        <ul className="space-y-2 border-t border-[#E4E4DC]/80 pt-4 dark:border-white/15">
+          {bullets.map((b) => (
+            <li
+              key={b}
+              className={`flex items-start gap-2.5 text-sm leading-snug ${
+                dark ? "text-white/90" : "text-[#2C2C28]"
+              }`}
+            >
+              <Check
+                size={14}
+                className={`mt-0.5 shrink-0 ${dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}`}
+                strokeWidth={2.5}
+              />
+              {b}
+            </li>
+          ))}
+        </ul>
       </div>
     </LandingReveal>
   );

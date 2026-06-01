@@ -202,12 +202,27 @@
 }
 
 .landing-section-muted {
+  position: relative;
+  isolation: isolate;
+}
+
+.landing-section-muted::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background-image:
     linear-gradient(#e4e4dc 1px, transparent 1px),
     linear-gradient(90deg, #e4e4dc 1px, transparent 1px);
   background-size: 48px 48px;
   background-position: center;
-  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+  opacity: 0.45;
+}
+
+.landing-section-muted > * {
+  position: relative;
+  z-index: 1;
 }
 
 .landing-section-ink {
