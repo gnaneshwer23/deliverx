@@ -1,21 +1,18 @@
 import Link from "next/link";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxCaps, DxLogo } from "@/components/dx/dx-logo";
-import { DxBadge } from "@/components/dx/dx-badge";
 import {
   LandingContainer,
-  LandingDashboardMockup,
   LandingSection,
   NavLink,
   SectionIntro,
 } from "@/components/dx/landing-layout";
 import { dxClass } from "@/lib/dx-theme";
-import type { LandingPreviewStats } from "@/services/landing";
 
 export function LandingNav() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#E4E4DC]/80 bg-[#FAFAF5]/90 backdrop-blur-lg">
-      <LandingContainer className="flex h-[var(--dx-navh)] items-center justify-between gap-6">
+    <header className="landing-nav fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6">
+      <LandingContainer className="landing-nav-bar flex h-[calc(var(--dx-navh)-12px)] items-center justify-between gap-6 border border-[#E4E4DC]/70 bg-[#FAFAF5]/75 px-5 shadow-[0_8px_40px_-16px_rgba(13,13,11,0.12)] backdrop-blur-xl md:px-8">
         <DxLogo showTag />
         <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
           <NavLink href="#how">How it works</NavLink>
@@ -36,137 +33,7 @@ export function LandingNav() {
   );
 }
 
-export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
-  return (
-    <section className="relative min-h-[100svh] overflow-hidden pt-[var(--dx-navh)]">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.4]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#E4E4DC 1px, transparent 1px), linear-gradient(90deg, #E4E4DC 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          maskImage: "linear-gradient(to bottom, black 0%, transparent 85%)",
-        }}
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-32 top-20 h-[480px] w-[480px] rounded-full bg-[#C6DDD0]/30 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -left-24 bottom-0 h-[320px] w-[320px] rounded-full bg-[#EEF5F1]/80 blur-3xl"
-        aria-hidden
-      />
-
-      <LandingContainer className="relative grid min-h-[calc(100svh-var(--dx-navh))] items-center gap-14 py-16 lg:grid-cols-2 lg:gap-20 lg:py-24">
-        <div className="max-w-xl">
-          <div className="mb-6 inline-flex items-center gap-2 border border-[#C6DDD0] bg-white/80 px-3 py-1.5 backdrop-blur-sm">
-            <span className="size-1.5 rounded-full bg-[#1C4A2E]" />
-            <DxCaps accent className="!text-[9px]">
-              AI-native delivery OS
-            </DxCaps>
-          </div>
-          <h1 className={`${dxClass.sectionTitle} mb-6 lg:text-[3.25rem] lg:leading-[1.08]`}>
-            Deliver projects like an{" "}
-            <em className="text-[#1C4A2E] not-italic">intelligent</em> organisation.
-          </h1>
-          <p className="mb-10 max-w-md text-lg font-light leading-relaxed text-[#6B6B64]">
-            Upload your business case. Your team executes in one place. AI watches the signals —
-            and only acts when you approve.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <DxButtonLink href="/signup">Start free trial</DxButtonLink>
-            <DxButtonLink href="#platform" variant="ghost">
-              See the product
-            </DxButtonLink>
-          </div>
-          <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-[#A8A89E]">
-            <li>No credit card</li>
-            <li>15 min setup</li>
-            <li>GDPR ready</li>
-          </ul>
-        </div>
-
-        <div className="relative lg:pl-4">
-          {preview.live ? (
-            <HeroLiveCard preview={preview} />
-          ) : (
-            <LandingDashboardMockup float />
-          )}
-        </div>
-      </LandingContainer>
-    </section>
-  );
-}
-
-function HeroLiveCard({ preview }: { preview: LandingPreviewStats }) {
-  return (
-    <div className="landing-mock-float">
-      <div className="overflow-hidden border border-[#E4E4DC] bg-white shadow-[0_32px_100px_-20px_rgba(13,13,11,0.18)] ring-1 ring-[#0D0D0B]/[0.04]">
-        <div className="flex items-center border-b border-[#F0F0E8] bg-[#0a0e14] px-5 py-3">
-          <DxCaps className="text-[#9ca3af]">Your workspace</DxCaps>
-          <span className="ml-auto inline-flex items-center gap-1.5 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#3D9660]">
-            <span
-              className="size-1.5 rounded-full bg-[#1A6B3A]"
-              style={{ animation: "dx-pulse 2s ease-in-out infinite" }}
-            />
-            Live data
-          </span>
-        </div>
-        <div className="grid grid-cols-3 gap-px bg-[#F0F0E8]">
-          {[
-            { v: `${preview.confidence}%`, l: "Confidence", c: "text-[#1A6B3A]" },
-            { v: String(preview.atRisk), l: "At risk", c: "text-[#B7620A]" },
-            { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
-          ].map((s) => (
-            <div key={s.l} className="bg-white px-4 py-4 text-center">
-              <div className={`${dxClass.display} text-xl leading-none ${s.c}`}>{s.v}</div>
-              <DxCaps className="mt-1 text-[6px]">{s.l}</DxCaps>
-            </div>
-          ))}
-        </div>
-        <div className="space-y-2 p-4">
-          {preview.signals.map((signal) => (
-            <SignalPreview
-              key={signal.text}
-              tone={signal.tone}
-              text={signal.text}
-              badge={signal.badge}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SignalPreview({
-  tone,
-  text,
-  badge,
-}: {
-  tone: "red" | "amber" | "green";
-  text: string;
-  badge: string;
-}) {
-  const styles = {
-    red: { border: "#C0392B", bg: "bg-[#FDF1F0]/80" },
-    amber: { border: "#B7620A", bg: "bg-[#FEF6EC]/80" },
-    green: { border: "#1A6B3A", bg: "bg-[#EDF7F1]/80" },
-  }[tone];
-
-  return (
-    <div
-      className={`flex items-center justify-between gap-3 border-l-[3px] px-3 py-2.5 ${styles.bg}`}
-      style={{ borderLeftColor: styles.border }}
-    >
-      <span className="text-[13px] leading-snug text-[#2C2C28]">{text}</span>
-      <DxBadge tone={tone === "green" ? "green" : tone === "amber" ? "amber" : "red"}>
-        {badge}
-      </DxBadge>
-    </div>
-  );
-}
+export { LandingHero } from "@/components/dx/landing-hero";
 
 export function LandingProblem() {
   const stats = [
@@ -210,7 +77,7 @@ export function LandingProblem() {
           {stats.map((s) => (
             <article
               key={s.n}
-              className="relative overflow-hidden border border-white/[0.08] bg-white/[0.03] p-8 md:p-9"
+              className="relative overflow-hidden border border-white/[0.08] bg-white/[0.03] p-8 transition duration-300 hover:border-white/[0.14] hover:bg-white/[0.06] md:p-9"
             >
               <span
                 className={`${dxClass.display} pointer-events-none absolute -right-2 -top-4 text-[5.5rem] leading-none text-white/[0.04]`}
@@ -246,18 +113,9 @@ export function LandingFeatures() {
             </>
           }
         />
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid auto-rows-[minmax(200px,auto)] gap-4 md:grid-cols-12 md:gap-5">
           <FeatureBlock
-            eyebrow="Signals"
-            title="Risks surface before they escalate"
-            dark={false}
-            bullets={[
-              "RAID fed from standups and tasks",
-              "Alert queue with PM review",
-              "Milestone confidence on the dashboard",
-            ]}
-          />
-          <FeatureBlock
+            className="md:col-span-7 md:row-span-2"
             eyebrow="Reporting"
             title="Status reports that write themselves"
             dark
@@ -268,9 +126,19 @@ export function LandingFeatures() {
             ]}
           />
           <FeatureBlock
+            className="md:col-span-5"
+            eyebrow="Signals"
+            title="Risks surface before they escalate"
+            bullets={[
+              "RAID fed from standups and tasks",
+              "Alert queue with PM review",
+              "Milestone confidence on the dashboard",
+            ]}
+          />
+          <FeatureBlock
+            className="md:col-span-5"
             eyebrow="Meetings"
             title="Meetings become operational records"
-            dark={false}
             bullets={[
               "Summaries and decision capture",
               "Actions with suggested owners",
@@ -278,9 +146,10 @@ export function LandingFeatures() {
             ]}
           />
           <FeatureBlock
+            className="md:col-span-7"
             eyebrow="Memory"
             title="Every project makes the next one smarter"
-            dark={false}
+            accent
             bullets={[
               "Lessons learned you can search",
               "Playbooks across programmes",
@@ -297,19 +166,25 @@ function FeatureBlock({
   eyebrow,
   title,
   dark,
+  accent,
   bullets,
+  className = "",
 }: {
   eyebrow: string;
   title: string;
   dark?: boolean;
+  accent?: boolean;
   bullets: string[];
+  className?: string;
 }) {
   return (
     <div
-      className={`flex min-h-[220px] flex-col p-8 md:p-10 ${
+      className={`flex min-h-[200px] flex-col p-8 transition hover:shadow-[0_20px_50px_-24px_rgba(13,13,11,0.15)] md:p-10 ${className} ${
         dark
-          ? "bg-[#1C4A2E] text-white md:min-h-[260px]"
-          : "border border-[#E4E4DC] bg-white"
+          ? "bg-[#1C4A2E] text-white"
+          : accent
+            ? "border border-[#C6DDD0] bg-gradient-to-br from-[#EEF5F1] to-white"
+            : "border border-[#E4E4DC] bg-white"
       }`}
     >
       <DxCaps className={`mb-3 ${dark ? "text-[#3D9660]" : ""}`} accent={!dark}>
@@ -483,8 +358,9 @@ function CheckIcon({ featured }: { featured: boolean }) {
 
 export function LandingCta() {
   return (
-    <LandingSection tone="ink" className="!py-28 md:!py-36">
-      <LandingContainer className="text-center">
+    <LandingSection tone="ink" className="relative !py-28 overflow-hidden md:!py-36">
+      <div className="landing-mesh-dark pointer-events-none absolute inset-0 opacity-50" aria-hidden />
+      <LandingContainer className="relative text-center">
         <SectionIntro
           eyebrow="Get started"
           light

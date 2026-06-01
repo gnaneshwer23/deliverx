@@ -210,3 +210,78 @@
 .landing-page .landing-nav-link:hover::after {
   width: 100%;
 }
+
+/* Landing — mesh, grain, 3D mock (Dribbble-inspired) */
+.landing-mesh {
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(198, 221, 208, 0.55), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 10%, rgba(238, 245, 241, 0.9), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 70% 90%, rgba(228, 228, 220, 0.5), transparent 45%);
+}
+
+.landing-mesh-dark {
+  background:
+    radial-gradient(circle at 20% 50%, rgba(61, 150, 96, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(28, 74, 46, 0.15) 0%, transparent 45%);
+}
+
+.landing-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.landing-mock-3d {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.landing-mock-3d > .landing-mock-float {
+  transform: rotateY(-6deg) rotateX(4deg);
+  transform-origin: center right;
+}
+
+@media (max-width: 1023px) {
+  .landing-mock-3d > .landing-mock-float {
+    transform: none;
+  }
+}
+
+@keyframes landing-badge-float-a {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(20px);
+  }
+  50% {
+    transform: translateY(-6px) translateZ(20px);
+  }
+}
+
+@keyframes landing-badge-float-b {
+  0%,
+  100% {
+    transform: translateY(0) translateZ(30px);
+  }
+  50% {
+    transform: translateY(8px) translateZ(30px);
+  }
+}
+
+.landing-badge-float-a {
+  animation: landing-badge-float-a 5s ease-in-out infinite;
+}
+
+.landing-badge-float-b {
+  animation: landing-badge-float-b 6.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-mock-float,
+  .landing-badge-float-a,
+  .landing-badge-float-b {
+    animation: none !important;
+  }
+
+  .landing-mock-3d > .landing-mock-float {
+    transform: none !important;
+  }
+}

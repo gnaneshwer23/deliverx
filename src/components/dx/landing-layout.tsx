@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { DxBadge } from "@/components/dx/dx-badge";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
+import type { LandingPreviewStats } from "@/services/landing";
 
 type SectionTone = "base" | "white" | "muted" | "ink" | "accent";
 
@@ -107,6 +109,150 @@ export function NavLink({ href, children }: { href: string; children: ReactNode 
     >
       {children}
     </a>
+  );
+}
+
+export function SocialProofStrip({ className = "" }: { className?: string }) {
+  const teams = ["PMO", "Digital", "Transformation", "Platform", "Programme"];
+  return (
+    <div className={className}>
+      <p className="mb-4 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.16em] text-[#A8A89E]">
+        Built for delivery teams
+      </p>
+      <div className="flex flex-wrap items-center gap-5">
+        <div className="flex -space-x-2.5" aria-hidden>
+          {["SK", "JM", "AL", "RP", "TC"].map((initials, i) => (
+            <span
+              key={initials}
+              className="flex size-9 items-center justify-center border-2 border-[#FAFAF5] bg-[#EEF5F1] font-[family-name:var(--font-dx-mono)] text-[10px] font-medium text-[#1C4A2E] shadow-sm"
+              style={{ zIndex: 5 - i }}
+            >
+              {initials}
+            </span>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.12em] text-[#A8A89E]">
+          {teams.map((t) => (
+            <span key={t} className="text-[#6B6B64]/80">
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+      <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-[#A8A89E]">
+        <li>No credit card</li>
+        <li>15 min setup</li>
+        <li>GDPR ready</li>
+      </ul>
+    </div>
+  );
+}
+
+function MockFloatingBadge({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className: string;
+}) {
+  return (
+    <div
+      className={`absolute z-20 hidden border border-[#E4E4DC]/90 bg-white/95 px-3 py-2 shadow-[0_16px_40px_-12px_rgba(13,13,11,0.2)] backdrop-blur-md md:block ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function LandingMockupScene({ preview }: { preview: LandingPreviewStats }) {
+  return (
+    <div className="landing-mock-3d relative">
+      <MockFloatingBadge className="-left-6 top-8 max-w-[11rem] landing-badge-float-a">
+        <p className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#3D9660]">
+          AI Coach
+        </p>
+        <p className="mt-1 text-[11px] leading-snug text-[#2C2C28]">
+          Rebalance QA before sprint 14
+        </p>
+      </MockFloatingBadge>
+      <MockFloatingBadge className="-right-4 bottom-16 landing-badge-float-b">
+        <p className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#B7620A]">
+          Alert queue
+        </p>
+        <p className="mt-1 text-[11px] leading-snug text-[#2C2C28]">2 items awaiting approval</p>
+      </MockFloatingBadge>
+
+      <div className="landing-mock-float relative">
+        {preview.live ? (
+          <LandingLiveMockup preview={preview} />
+        ) : (
+          <LandingDashboardMockup />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function LandingLiveMockup({ preview }: { preview: LandingPreviewStats }) {
+  return (
+    <div
+      className="overflow-hidden border border-[#E4E4DC] bg-white shadow-[0_40px_120px_-24px_rgba(13,13,11,0.22)] ring-1 ring-[#0D0D0B]/[0.05]"
+      aria-label="DeliverX live workspace preview"
+    >
+      <div className="flex items-center border-b border-[#F0F0E8] bg-[#0a0e14] px-5 py-3">
+        <DxCaps className="text-[#9ca3af]">Your workspace</DxCaps>
+        <span className="ml-auto inline-flex items-center gap-1.5 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#3D9660]">
+          <span
+            className="size-1.5 rounded-full bg-[#1A6B3A]"
+            style={{ animation: "dx-pulse 2s ease-in-out infinite" }}
+          />
+          Live data
+        </span>
+      </div>
+      <div className="grid grid-cols-3 gap-px bg-[#F0F0E8]">
+        {[
+          { v: `${preview.confidence}%`, l: "Confidence", c: "text-[#1A6B3A]" },
+          { v: String(preview.atRisk), l: "At risk", c: "text-[#B7620A]" },
+          { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
+        ].map((s) => (
+          <div key={s.l} className="bg-white px-4 py-4 text-center">
+            <div className={`${dxClass.display} text-xl leading-none ${s.c}`}>{s.v}</div>
+            <DxCaps className="mt-1 text-[6px]">{s.l}</DxCaps>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-2 p-4">
+        {preview.signals.map((signal) => (
+          <div
+            key={signal.text}
+            className={`flex items-center justify-between gap-3 border-l-[3px] px-3 py-2.5 ${
+              signal.tone === "red"
+                ? "bg-[#FDF1F0]/80"
+                : signal.tone === "amber"
+                  ? "bg-[#FEF6EC]/80"
+                  : "bg-[#EDF7F1]/80"
+            }`}
+            style={{
+              borderLeftColor:
+                signal.tone === "red"
+                  ? "#C0392B"
+                  : signal.tone === "amber"
+                    ? "#B7620A"
+                    : "#1A6B3A",
+            }}
+          >
+            <span className="text-[13px] leading-snug text-[#2C2C28]">{signal.text}</span>
+            <DxBadge
+              tone={
+                signal.tone === "green" ? "green" : signal.tone === "amber" ? "amber" : "red"
+              }
+            >
+              {signal.badge}
+            </DxBadge>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
