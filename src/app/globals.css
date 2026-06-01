@@ -231,6 +231,19 @@
   box-shadow: 0 24px 60px -32px rgba(28, 74, 46, 0.15);
 }
 
+.landing-stat-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.landing-section-bridge {
+  background-image: linear-gradient(180deg, #eef5f1 0%, #f4f8f5 100%);
+}
+
+.landing-problem-section {
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
 .landing-page .landing-nav-link {
   position: relative;
 }

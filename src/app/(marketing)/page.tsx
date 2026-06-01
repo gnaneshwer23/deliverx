@@ -1,5 +1,5 @@
 import { LandingFaq } from "@/components/dx/landing-faq";
-import { LandingPageShell } from "@/components/dx/landing-layout";
+import { LandingPageShell, LandingSectionBridge } from "@/components/dx/landing-layout";
 import {
   LandingCta,
   LandingFeatures,
@@ -24,6 +24,15 @@ export default async function LandingPage() {
       <LandingNav />
       <main id="main-content">
         <LandingHero preview={preview} />
+        <LandingSectionBridge
+          headline={
+            <>
+              Stop reconciling twelve tools.{" "}
+              <span className="text-[#1C4A2E]">Run delivery on one signal graph.</span>
+            </>
+          }
+          sub="Every risk, task, report, and decision links to the same project — so status is always current and AI never acts without approval."
+        />
         <LandingProblem />
         <LandingJourney />
         <LandingPlatform preview={preview} />

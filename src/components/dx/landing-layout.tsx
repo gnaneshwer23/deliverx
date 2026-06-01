@@ -56,26 +56,62 @@ export function LandingContainer({
   );
 }
 
+const SECTION_PAD = {
+  default: "py-16 md:py-20",
+  compact: "py-12 md:py-16",
+  tight: "py-10 md:py-12",
+} as const;
+
 export function LandingSection({
   id,
   tone = "base",
   className = "",
   children,
-  bleed,
+  density = "default",
 }: {
   id?: string;
   tone?: SectionTone;
   className?: string;
   children: ReactNode;
-  bleed?: boolean;
+  density?: keyof typeof SECTION_PAD;
 }) {
   return (
     <section
       id={id}
-      className={`scroll-mt-[var(--dx-navh)] py-24 md:py-32 ${TONE[tone]} ${bleed ? "" : ""} ${className}`}
+      className={`scroll-mt-[var(--dx-navh)] ${SECTION_PAD[density]} ${TONE[tone]} ${className}`}
     >
       {children}
     </section>
+  );
+}
+
+/** Short transition band between major landing sections */
+export function LandingSectionBridge({
+  headline,
+  sub,
+  children,
+}: {
+  headline: ReactNode;
+  sub?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="landing-section-bridge border-y border-[#C6DDD0]/80 bg-[#EEF5F1] py-8 md:py-10">
+      <LandingContainer>
+        <p className="font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.2em] text-[#1C4A2E]">
+          Why DeliverX
+        </p>
+        <p className={`${dxClass.display} mt-2 max-w-3xl text-xl leading-snug text-[#0D0D0B] md:text-2xl`}>
+          {headline}
+        </p>
+        {sub ? (
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#6B6B64] md:text-base">
+            {sub}
+          </p>
+        ) : null}
+        {children ? <div className="mt-6">{children}</div> : null}
+      </LandingContainer>
+    </div>
   );
 }
 
@@ -85,16 +121,19 @@ export function SectionIntro({
   description,
   align = "left",
   light,
+  lead,
 }: {
   eyebrow: string;
   title: ReactNode;
   description?: string;
+  /** One-line outcome shown above the title */
+  lead?: string;
   align?: "left" | "center";
   light?: boolean;
 }) {
   const alignClass = align === "center" ? "mx-auto text-center" : "max-w-2xl";
   return (
-    <header className={`mb-14 md:mb-20 ${alignClass}`}>
+    <header className={`mb-10 md:mb-12 ${alignClass}`}>
       <div className={`mb-4 flex items-center gap-3 ${align === "center" ? "justify-center" : ""}`}>
         <span
           className={`h-px w-8 ${light ? "bg-[#3D9660]" : "bg-[#1C4A2E]"}`}
@@ -104,6 +143,15 @@ export function SectionIntro({
           {eyebrow}
         </DxCaps>
       </div>
+      {lead ? (
+        <p
+          className={`mb-3 text-sm font-medium leading-snug md:text-base ${
+            light ? "text-[#3D9660]" : "text-[#1C4A2E]"
+          } ${align === "center" ? "mx-auto" : ""}`}
+        >
+          {lead}
+        </p>
+      ) : null}
       <h2
         className={`${dxClass.sectionTitle} ${light ? "text-white" : ""} ${align === "center" ? "mx-auto" : ""}`}
       >
@@ -132,36 +180,44 @@ export function NavLink({ href, children }: { href: string; children: ReactNode 
 }
 
 export function SocialProofStrip({ className = "" }: { className?: string }) {
-  const teams = ["PMO", "Digital", "Transformation", "Platform", "Programme"];
+  const outcomes = [
+    { n: "1", l: "Workspace", d: "Brief → closure" },
+    { n: "0", l: "Silent AI changes", d: "Human approval gate" },
+    { n: "15m", l: "To first project", d: "Guided setup" },
+  ];
   return (
     <div className={className}>
-      <p className="mb-4 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.16em] text-[#A8A89E]">
-        Built for delivery teams
+      <p className="mb-3 text-sm font-medium text-[#2C2C28]">
+        For PMO, digital, and transformation teams
       </p>
-      <div className="flex flex-wrap items-center gap-5">
-        <div className="flex -space-x-2.5" aria-hidden>
-          {["SK", "JM", "AL", "RP", "TC"].map((initials, i) => (
-            <span
-              key={initials}
-              className="flex size-9 items-center justify-center border-2 border-[#FAFAF5] bg-[#EEF5F1] font-[family-name:var(--font-dx-mono)] text-[10px] font-medium text-[#1C4A2E] shadow-sm"
-              style={{ zIndex: 5 - i }}
-            >
-              {initials}
-            </span>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.12em] text-[#A8A89E]">
-          {teams.map((t) => (
-            <span key={t} className="text-[#6B6B64]/80">
-              {t}
-            </span>
-          ))}
-        </div>
+      <div className="grid grid-cols-3 gap-2 border border-[#E4E4DC] bg-white/80 sm:gap-3">
+        {outcomes.map((o) => (
+          <div key={o.l} className="px-3 py-3 sm:px-4 sm:py-3.5">
+            <p className="landing-stat-value font-[family-name:var(--font-dx-display)] text-2xl leading-none text-[#1C4A2E] tabular-nums sm:text-3xl">
+              {o.n}
+            </p>
+            <p className="mt-1 text-[11px] font-semibold leading-tight text-[#0D0D0B] sm:text-xs">
+              {o.l}
+            </p>
+            <p className="mt-0.5 hidden text-[10px] font-light text-[#6B6B64] sm:block">
+              {o.d}
+            </p>
+          </div>
+        ))}
       </div>
-      <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        <li>No credit card</li>
-        <li>15 min setup</li>
-        <li>GDPR ready</li>
+      <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-[#6B6B64]">
+        <li className="flex items-center gap-1.5">
+          <span className="size-1 bg-[#3D9660]" aria-hidden />
+          No credit card
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="size-1 bg-[#3D9660]" aria-hidden />
+          GDPR ready
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="size-1 bg-[#3D9660]" aria-hidden />
+          Free trial
+        </li>
       </ul>
     </div>
   );
@@ -234,9 +290,13 @@ function LandingLiveMockup({ preview }: { preview: LandingPreviewStats }) {
           { v: String(preview.atRisk), l: "At risk", c: "text-[#B7620A]" },
           { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
         ].map((s) => (
-          <div key={s.l} className="bg-white px-4 py-4 text-center">
-            <div className={`${dxClass.display} text-xl leading-none ${s.c}`}>{s.v}</div>
-            <DxCaps className="mt-1 text-[6px]">{s.l}</DxCaps>
+          <div key={s.l} className="bg-white px-4 py-5 text-center sm:py-6">
+            <div
+              className={`landing-stat-value ${dxClass.display} text-3xl leading-none tabular-nums sm:text-4xl ${s.c}`}
+            >
+              {s.v}
+            </div>
+            <DxCaps className="mt-2 text-[8px]">{s.l}</DxCaps>
           </div>
         ))}
       </div>
@@ -320,9 +380,13 @@ export function LandingDashboardMockup({
             { v: "4", l: "Blocked", c: "text-[#C0392B]" },
             { v: "↑12%", l: "Velocity", c: "text-[#1C4A2E]" },
           ].map((k) => (
-            <div key={k.l} className="bg-white px-4 py-5 text-center">
-              <div className={`${dxClass.display} text-2xl leading-none ${k.c}`}>{k.v}</div>
-              <DxCaps className="mt-1.5 text-[7px]">{k.l}</DxCaps>
+            <div key={k.l} className="bg-white px-3 py-5 text-center sm:px-4 sm:py-6">
+              <div
+                className={`landing-stat-value ${dxClass.display} text-3xl leading-none tabular-nums sm:text-4xl ${k.c}`}
+              >
+                {k.v}
+              </div>
+              <DxCaps className="mt-2 text-[8px] sm:text-[9px]">{k.l}</DxCaps>
             </div>
           ))}
         </div>
@@ -345,7 +409,7 @@ export function LandingDashboardMockup({
                   />
                 </div>
                 <span className="w-[7.5rem] truncate text-xs text-[#2C2C28]">{p.name}</span>
-                <span className="w-8 text-right font-[family-name:var(--font-dx-mono)] text-[9px] tabular-nums text-[#A8A89E]">
+                <span className="w-10 text-right font-[family-name:var(--font-dx-mono)] text-[11px] font-medium tabular-nums text-[#0D0D0B]">
                   {p.health}%
                 </span>
               </div>

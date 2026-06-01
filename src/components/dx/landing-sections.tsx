@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   AlertTriangle,
+  Check,
   Clock,
   FileBarChart2,
   Layers,
@@ -20,6 +21,7 @@ import {
   NavLink,
   SectionIntro,
 } from "@/components/dx/landing-layout";
+import { LandingStatCard } from "@/components/dx/landing-stat";
 import { dxClass } from "@/lib/dx-theme";
 
 export function LandingNav() {
@@ -73,7 +75,12 @@ export function LandingProblem() {
   ];
 
   return (
-    <LandingSection id="problem" tone="ink" className="relative overflow-hidden">
+    <LandingSection
+      id="problem"
+      tone="ink"
+      density="compact"
+      className="landing-problem-section relative -mt-px overflow-hidden"
+    >
       <div
         className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#1C4A2E]/20 to-transparent"
         aria-hidden
@@ -83,43 +90,33 @@ export function LandingProblem() {
           <SectionIntro
             eyebrow="The problem"
             light
-          title={
-            <>
-              Twelve tools.
-              <br />
-              <em className="text-[#3D9660] not-italic">Zero shared context.</em>
-            </>
-          }
-            description="PMs chase status. Risks surface late. Lessons never compound."
+            lead="Fragmented tools create blind spots — not lazy teams."
+            title={
+              <>
+                Twelve tools.
+                <br />
+                <em className="text-[#3D9660] not-italic">Zero shared context.</em>
+              </>
+            }
+            description="PMs chase status in slides. Risks surface weeks late. Lessons die in closure folders."
           />
         </LandingReveal>
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3 md:gap-5">
           {stats.map((s, i) => (
             <LandingReveal key={s.n} delay={i * 0.06}>
-              <article className="relative h-full overflow-hidden border border-white/[0.08] bg-white/[0.03] p-8 transition duration-300 hover:border-white/[0.14] hover:bg-white/[0.06] md:p-9">
-                <span
-                  className={`${dxClass.display} pointer-events-none absolute -right-2 -top-4 text-[5.5rem] leading-none text-white/[0.04]`}
-                  aria-hidden
-                >
-                  {s.n}
-                </span>
-                <span className="relative mb-4 flex size-10 items-center justify-center border border-[#3D9660]/30 bg-[#3D9660]/10">
-                  <s.icon size={18} className="text-[#3D9660]" strokeWidth={1.5} />
-                </span>
-                <p className="relative font-[family-name:var(--font-dx-mono)] text-2xl font-medium tracking-tight text-[#3D9660]">
-                  {s.n}
-                </p>
-                <h3 className="relative mt-3 text-lg font-semibold text-white">{s.t}</h3>
-                <p className="relative mt-2 text-sm font-light leading-relaxed text-white/45">
-                  {s.d}
-                </p>
-              </article>
+              <LandingStatCard
+                value={s.n}
+                title={s.t}
+                description={s.d}
+                icon={s.icon}
+                light
+              />
             </LandingReveal>
           ))}
         </div>
 
         <LandingReveal delay={0.15}>
-          <div className="mt-14 flex flex-col items-start justify-between gap-6 border border-[#3D9660]/30 bg-[#1C4A2E]/40 p-8 md:flex-row md:items-center md:p-10">
+          <div className="mt-10 flex flex-col items-start justify-between gap-6 border border-[#3D9660]/30 bg-[#1C4A2E]/40 p-8 md:flex-row md:items-center md:p-10">
             <div className="max-w-xl">
               <DxCaps className="text-[#3D9660]">The answer</DxCaps>
               <p className={`${dxClass.display} mt-3 text-2xl leading-snug text-white md:text-3xl`}>
@@ -142,18 +139,19 @@ export function LandingProblem() {
 
 export function LandingFeatures() {
   return (
-    <LandingSection id="features" tone="muted">
+    <LandingSection id="features" tone="muted" density="compact">
       <LandingContainer>
         <LandingReveal>
           <SectionIntro
             eyebrow="Features"
+            lead="Modules share one signal graph — enter data once."
             title={
               <>
                 Built for delivery, not{" "}
                 <em className="text-[#1C4A2E] not-italic">task management.</em>
               </>
             }
-            description="Every module reads from the same project signals — no duplicate entry, no drift between tools."
+            description="Reporting, RAID, meetings, and memory stay linked to the same project health score."
           />
         </LandingReveal>
         <div className="grid auto-rows-[minmax(200px,auto)] gap-4 md:grid-cols-12 md:gap-5">
@@ -268,10 +266,12 @@ function FeatureBlock({
         {bullets.map((b) => (
           <li
             key={b}
-            className={`flex gap-3 text-sm leading-snug ${dark ? "text-white/80" : "text-[#6B6B64]"}`}
+            className={`flex items-start gap-2.5 text-sm leading-snug ${dark ? "text-white/85" : "text-[#2C2C28]"}`}
           >
-            <span
-              className={`mt-2 h-px w-3 shrink-0 ${dark ? "bg-[#3D9660]" : "bg-[#1C4A2E]"}`}
+            <Check
+              size={14}
+              className={`mt-0.5 shrink-0 ${dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}`}
+              strokeWidth={2.5}
             />
             {b}
           </li>
@@ -434,7 +434,7 @@ function CheckIcon({ featured }: { featured: boolean }) {
 
 export function LandingCta() {
   return (
-    <LandingSection tone="ink" className="relative !py-28 overflow-hidden md:!py-36">
+    <LandingSection tone="ink" density="compact" className="relative overflow-hidden">
       <div className="landing-mesh-dark pointer-events-none absolute inset-0 opacity-50" aria-hidden />
       <LandingContainer className="relative text-center">
         <LandingReveal>

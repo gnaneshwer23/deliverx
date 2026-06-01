@@ -16,6 +16,7 @@ import {
   LandingSection,
   SectionIntro,
 } from "@/components/dx/landing-layout";
+import { LandingMetricTile } from "@/components/dx/landing-stat";
 import { dxClass } from "@/lib/dx-theme";
 import type { LandingPreviewStats } from "@/services/landing";
 
@@ -62,21 +63,22 @@ const PILLARS = [
 
 export function LandingJourney() {
   return (
-    <LandingSection id="how" tone="base">
+    <LandingSection id="how" tone="base" density="compact">
       <LandingContainer>
         <LandingReveal>
           <SectionIntro
             eyebrow="How it works"
+            lead="Same workspace at every stage — no exports or duplicate RAID logs."
             title={
               <>
                 Four moves. <em className="text-[#1C4A2E] not-italic">One workspace.</em>
               </>
             }
-            description="No tool-hopping — the same system carries you from business case to closure."
+            description="Follow the pipeline below, then see what each phase looks like in practice."
           />
         </LandingReveal>
 
-        <div className="mb-12">
+        <div className="mb-8">
           <LandingWorkflowStrip />
         </div>
 
@@ -161,23 +163,49 @@ export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
   const metrics = platformMetrics(preview);
 
   return (
-    <LandingSection id="platform" tone="white" className="border-y border-[#E4E4DC]">
+    <LandingSection
+      id="platform"
+      tone="white"
+      density="compact"
+      className="border-y border-[#E4E4DC]"
+    >
       <LandingContainer wide>
         <LandingReveal>
           <SectionIntro
             eyebrow="Inside DeliverX"
             align="center"
+            lead="Live portfolio signals — not a static screenshot."
             title={
               <>
                 Command centre + modules —{" "}
                 <em className="text-[#1C4A2E] not-italic">one surface.</em>
               </>
             }
-            description="Portfolio health, alerts, and coaching on the left; delivery, governance, and intelligence on the right."
+            description="Read confidence, risk, and blockers at a glance; drill into delivery, governance, or intelligence without switching tools."
           />
         </LandingReveal>
 
-        <div className="mt-4 grid gap-5 lg:grid-cols-12 lg:gap-6">
+        <LandingReveal delay={0.04}>
+          <div className="mb-6 grid gap-3 sm:grid-cols-3">
+            {metrics.map((stat, i) => (
+              <LandingMetricTile
+                key={stat.l}
+                value={stat.k}
+                label={stat.l}
+                sub={stat.sub}
+                valueClassName={
+                  i === 1
+                    ? "text-[#B7620A]"
+                    : i === 2 && stat.k !== "1-click" && stat.k !== "< 2min"
+                      ? "text-[#C0392B]"
+                      : "text-[#1C4A2E]"
+                }
+              />
+            ))}
+          </div>
+        </LandingReveal>
+
+        <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
           <LandingReveal className="lg:col-span-8" delay={0.05}>
             <div className="landing-mock-3d relative h-full min-h-[320px]">
               <LandingDashboardMockup className="h-full" />
@@ -187,7 +215,13 @@ export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
           <div className="flex flex-col gap-4 lg:col-span-4">
             {PILLARS.map((p, i) => (
               <LandingReveal key={p.title} delay={0.08 + i * 0.06}>
-                <div className="border border-[#E4E4DC] bg-[#FAFAF5] p-5 transition duration-300 hover:border-[#C6DDD0] hover:bg-white hover:shadow-[0_16px_40px_-20px_rgba(13,13,11,0.1)] md:p-6">
+                <div
+                  className={`border p-5 transition duration-300 md:p-6 ${
+                    i === 0
+                      ? "border-[#1C4A2E]/25 bg-[#EEF5F1] shadow-[0_16px_40px_-20px_rgba(28,74,46,0.15)]"
+                      : "border-[#E4E4DC] bg-[#FAFAF5] hover:border-[#C6DDD0] hover:bg-white hover:shadow-[0_16px_40px_-20px_rgba(13,13,11,0.1)]"
+                  }`}
+                >
                   <div className="mb-3 flex items-start gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center border border-[#C6DDD0] bg-white">
                       <p.icon size={18} className="text-[#1C4A2E]" strokeWidth={1.5} />
@@ -216,21 +250,6 @@ export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
               </LandingReveal>
             ))}
           </div>
-
-          <LandingReveal className="lg:col-span-12" delay={0.15}>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {metrics.map((stat) => (
-                <div
-                  key={stat.l}
-                  className="border border-[#E4E4DC] bg-gradient-to-b from-white to-[#FAFAF5] px-6 py-5"
-                >
-                  <p className={`${dxClass.display} text-2xl text-[#1C4A2E]`}>{stat.k}</p>
-                  <p className="mt-1 text-sm font-medium text-[#0D0D0B]">{stat.l}</p>
-                  <p className="mt-0.5 text-xs font-light text-[#A8A89E]">{stat.sub}</p>
-                </div>
-              ))}
-            </div>
-          </LandingReveal>
         </div>
       </LandingContainer>
     </LandingSection>

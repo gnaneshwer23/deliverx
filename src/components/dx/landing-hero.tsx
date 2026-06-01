@@ -42,9 +42,12 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
           </HeroCopyItem>
 
           <HeroCopyItem>
-            <p className="mb-8 max-w-md text-lg font-light leading-relaxed text-[#6B6B64] md:text-xl">
-              One workspace from business case to closure. AI surfaces risks and drafts reports —
-              your team approves every change.
+            <p className="mb-4 max-w-md text-lg font-light leading-relaxed text-[#6B6B64] md:text-xl">
+              Replace the tool patchwork with one command centre: portfolio health, RAID,
+              reports, and AI coaching — with human approval on every change.
+            </p>
+            <p className="mb-8 max-w-md text-sm font-medium text-[#1C4A2E]">
+              From business case → delivery → governance → closure, without losing context.
             </p>
           </HeroCopyItem>
 
@@ -58,7 +61,7 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
           </HeroCopyItem>
 
           <HeroCopyItem>
-            <SocialProofStrip className="mt-10" />
+            <SocialProofStrip className="mt-8" />
           </HeroCopyItem>
         </>
       }
