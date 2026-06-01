@@ -1,3 +1,4 @@
+import { LandingMarketStats } from "@/components/dx/landing-market-stats";
 import { LandingPageShell } from "@/components/dx/landing-layout";
 import {
   LandingCta,
@@ -6,25 +7,26 @@ import {
   LandingHero,
   LandingNav,
   LandingPricing,
-  LandingProblem,
 } from "@/components/dx/landing-sections";
+import { LandingShift } from "@/components/dx/landing-shift";
 import {
+  LandingAgents,
   LandingCapabilities,
-  LandingJourney,
   LandingPlatform,
 } from "@/components/dx/landing-platform-sections";
-import { getLandingPreviewStats } from "@/services/landing";
+import { getLandingPageContent } from "@/services/landing";
 
 export default async function LandingPage() {
-  const preview = await getLandingPreviewStats();
+  const content = await getLandingPageContent();
 
   return (
     <LandingPageShell>
       <LandingNav />
       <main>
-        <LandingHero preview={preview} />
-        <LandingProblem />
-        <LandingJourney />
+        <LandingHero preview={content.preview} />
+        <LandingShift shift={content.shift} />
+        <LandingAgents agents={content.agents} />
+        <LandingMarketStats stats={content.marketStats} />
         <LandingPlatform />
         <LandingFeatures />
         <LandingCapabilities />
