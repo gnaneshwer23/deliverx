@@ -274,7 +274,26 @@
   animation: landing-badge-float-b 6.5s ease-in-out infinite;
 }
 
+@keyframes landing-scroll-hint {
+  0%,
+  100% {
+    transform: scaleY(0.6);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.landing-scroll-hint {
+  animation: landing-scroll-hint 2.5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .landing-scroll-hint {
+    animation: none;
+  }
   .landing-mock-float,
   .landing-badge-float-a,
   .landing-badge-float-b {

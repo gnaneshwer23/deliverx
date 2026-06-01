@@ -22,6 +22,13 @@ export function LandingHeroMotion({
         <HeroMotion className="z-10 max-w-xl">{left}</HeroMotion>
         <MockFloat className="relative z-10 lg:pt-6">{right}</MockFloat>
       </div>
+      <a
+        href="#problem"
+        className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.2em] text-[#A8A89E] transition hover:text-[#1C4A2E] md:flex"
+      >
+        <span className="landing-scroll-hint block h-8 w-px bg-gradient-to-b from-[#1C4A2E]/40 to-transparent" />
+        Explore
+      </a>
     </section>
   );
 }

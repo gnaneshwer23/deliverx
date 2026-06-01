@@ -14,9 +14,25 @@ const TONE: Record<SectionTone, string> = {
   accent: "bg-[#EEF5F1]",
 };
 
+/** Shared surface styles for landing cards */
+export const landingCard =
+  "border border-[#E4E4DC] bg-white transition duration-300 hover:border-[#C6DDD0] hover:shadow-[0_20px_50px_-24px_rgba(13,13,11,0.12)]";
+
+export function LandingSkipLink() {
+  return (
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:border focus:border-[#1C4A2E] focus:bg-white focus:px-4 focus:py-2 focus:font-[family-name:var(--font-dx-mono)] focus:text-[10px] focus:uppercase focus:tracking-wider focus:text-[#1C4A2E]"
+    >
+      Skip to content
+    </a>
+  );
+}
+
 export function LandingPageShell({ children }: { children: ReactNode }) {
   return (
     <div className="landing-page min-h-screen bg-[#FAFAF5] text-[#0D0D0B] antialiased">
+      <LandingSkipLink />
       {children}
     </div>
   );

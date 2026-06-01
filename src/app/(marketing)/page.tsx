@@ -1,3 +1,4 @@
+import { LandingFaq } from "@/components/dx/landing-faq";
 import { LandingPageShell } from "@/components/dx/landing-layout";
 import {
   LandingCta,
@@ -21,14 +22,15 @@ export default async function LandingPage() {
   return (
     <LandingPageShell>
       <LandingNav />
-      <main>
+      <main id="main-content">
         <LandingHero preview={preview} />
         <LandingProblem />
         <LandingJourney />
-        <LandingPlatform />
+        <LandingPlatform preview={preview} />
         <LandingFeatures />
         <LandingCapabilities />
         <LandingPricing />
+        <LandingFaq />
         <LandingCta />
       </main>
       <LandingFooter />

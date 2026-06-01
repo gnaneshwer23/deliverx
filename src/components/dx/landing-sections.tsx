@@ -1,8 +1,21 @@
 import Link from "next/link";
+import {
+  AlertTriangle,
+  Clock,
+  FileBarChart2,
+  Layers,
+  MessageSquare,
+  Radar,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxCaps, DxLogo } from "@/components/dx/dx-logo";
+import { LandingReveal } from "@/components/dx/landing-motion";
+import { LandingMobileNav } from "@/components/dx/landing-nav-menu";
 import {
   LandingContainer,
+  landingCard,
   LandingSection,
   NavLink,
   SectionIntro,
@@ -12,21 +25,23 @@ import { dxClass } from "@/lib/dx-theme";
 export function LandingNav() {
   return (
     <header className="landing-nav fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6">
-      <LandingContainer className="landing-nav-bar flex h-[calc(var(--dx-navh)-12px)] items-center justify-between gap-6 border border-[#E4E4DC]/70 bg-[#FAFAF5]/75 px-5 shadow-[0_8px_40px_-16px_rgba(13,13,11,0.12)] backdrop-blur-xl md:px-8">
+      <LandingContainer className="landing-nav-bar relative flex h-[calc(var(--dx-navh)-12px)] items-center justify-between gap-4 border border-[#E4E4DC]/70 bg-[#FAFAF5]/75 px-5 shadow-[0_8px_40px_-16px_rgba(13,13,11,0.12)] backdrop-blur-xl md:px-8">
         <DxLogo showTag />
         <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
           <NavLink href="#how">How it works</NavLink>
           <NavLink href="#platform">Product</NavLink>
           <NavLink href="#features">Features</NavLink>
+          <NavLink href="#faq">FAQ</NavLink>
           <NavLink href="#price">Pricing</NavLink>
         </nav>
         <div className="flex items-center gap-3 md:gap-4">
           <DxButtonLink href="/login" variant="ghostSm" className="hidden sm:inline-flex">
             Sign In
           </DxButtonLink>
-          <DxButtonLink href="/signup" variant="primarySm">
+          <DxButtonLink href="/signup" variant="primarySm" className="hidden md:inline-flex">
             Start trial
           </DxButtonLink>
+          <LandingMobileNav />
         </div>
       </LandingContainer>
     </header>
@@ -41,29 +56,33 @@ export function LandingProblem() {
       n: "40%",
       t: "PM time on admin",
       d: "Status chasing and report writing consume nearly half the week.",
+      icon: Clock,
     },
     {
       n: "3wk",
       t: "Risk escalation lag",
       d: "Issues spotted in standups often go unlogged until it's too late.",
+      icon: AlertTriangle,
     },
     {
       n: "97%",
       t: "Lessons lost",
       d: "Closure reports sit in folders instead of shaping the next programme.",
+      icon: Layers,
     },
   ];
 
   return (
-    <LandingSection tone="ink" className="relative overflow-hidden">
+    <LandingSection id="problem" tone="ink" className="relative overflow-hidden">
       <div
         className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#1C4A2E]/20 to-transparent"
         aria-hidden
       />
       <LandingContainer className="relative">
-        <SectionIntro
-          eyebrow="The problem"
-          light
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="The problem"
+            light
           title={
             <>
               Twelve tools.
@@ -71,30 +90,51 @@ export function LandingProblem() {
               <em className="text-[#3D9660] not-italic">Zero shared context.</em>
             </>
           }
-          description="PMs chase status. Risks surface late. Lessons never compound."
-        />
+            description="PMs chase status. Risks surface late. Lessons never compound."
+          />
+        </LandingReveal>
         <div className="grid gap-5 md:grid-cols-3">
-          {stats.map((s) => (
-            <article
-              key={s.n}
-              className="relative overflow-hidden border border-white/[0.08] bg-white/[0.03] p-8 transition duration-300 hover:border-white/[0.14] hover:bg-white/[0.06] md:p-9"
-            >
-              <span
-                className={`${dxClass.display} pointer-events-none absolute -right-2 -top-4 text-[5.5rem] leading-none text-white/[0.04]`}
-                aria-hidden
-              >
-                {s.n}
-              </span>
-              <p className="relative font-[family-name:var(--font-dx-mono)] text-2xl font-medium tracking-tight text-[#3D9660]">
-                {s.n}
-              </p>
-              <h3 className="relative mt-3 text-lg font-semibold text-white">{s.t}</h3>
-              <p className="relative mt-2 text-sm font-light leading-relaxed text-white/45">
-                {s.d}
-              </p>
-            </article>
+          {stats.map((s, i) => (
+            <LandingReveal key={s.n} delay={i * 0.06}>
+              <article className="relative h-full overflow-hidden border border-white/[0.08] bg-white/[0.03] p-8 transition duration-300 hover:border-white/[0.14] hover:bg-white/[0.06] md:p-9">
+                <span
+                  className={`${dxClass.display} pointer-events-none absolute -right-2 -top-4 text-[5.5rem] leading-none text-white/[0.04]`}
+                  aria-hidden
+                >
+                  {s.n}
+                </span>
+                <span className="relative mb-4 flex size-10 items-center justify-center border border-[#3D9660]/30 bg-[#3D9660]/10">
+                  <s.icon size={18} className="text-[#3D9660]" strokeWidth={1.5} />
+                </span>
+                <p className="relative font-[family-name:var(--font-dx-mono)] text-2xl font-medium tracking-tight text-[#3D9660]">
+                  {s.n}
+                </p>
+                <h3 className="relative mt-3 text-lg font-semibold text-white">{s.t}</h3>
+                <p className="relative mt-2 text-sm font-light leading-relaxed text-white/45">
+                  {s.d}
+                </p>
+              </article>
+            </LandingReveal>
           ))}
         </div>
+
+        <LandingReveal delay={0.15}>
+          <div className="mt-14 flex flex-col items-start justify-between gap-6 border border-[#3D9660]/30 bg-[#1C4A2E]/40 p-8 md:flex-row md:items-center md:p-10">
+            <div className="max-w-xl">
+              <DxCaps className="text-[#3D9660]">The answer</DxCaps>
+              <p className={`${dxClass.display} mt-3 text-2xl leading-snug text-white md:text-3xl`}>
+                One workspace. One signal graph. Human-approved AI.
+              </p>
+              <p className="mt-3 text-sm font-light leading-relaxed text-white/50">
+                DeliverX replaces the patchwork with a command centre that stays in sync from
+                charter to closure.
+              </p>
+            </div>
+            <DxButtonLink href="/signup" className="shrink-0">
+              Start free trial
+            </DxButtonLink>
+          </div>
+        </LandingReveal>
       </LandingContainer>
     </LandingSection>
   );
@@ -104,18 +144,22 @@ export function LandingFeatures() {
   return (
     <LandingSection id="features" tone="muted">
       <LandingContainer>
-        <SectionIntro
-          eyebrow="Features"
-          title={
-            <>
-              Built for delivery, not{" "}
-              <em className="text-[#1C4A2E] not-italic">task management.</em>
-            </>
-          }
-        />
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="Features"
+            title={
+              <>
+                Built for delivery, not{" "}
+                <em className="text-[#1C4A2E] not-italic">task management.</em>
+              </>
+            }
+            description="Every module reads from the same project signals — no duplicate entry, no drift between tools."
+          />
+        </LandingReveal>
         <div className="grid auto-rows-[minmax(200px,auto)] gap-4 md:grid-cols-12 md:gap-5">
           <FeatureBlock
             className="md:col-span-7 md:row-span-2"
+            icon={FileBarChart2}
             eyebrow="Reporting"
             title="Status reports that write themselves"
             dark
@@ -127,6 +171,7 @@ export function LandingFeatures() {
           />
           <FeatureBlock
             className="md:col-span-5"
+            icon={Radar}
             eyebrow="Signals"
             title="Risks surface before they escalate"
             bullets={[
@@ -137,6 +182,7 @@ export function LandingFeatures() {
           />
           <FeatureBlock
             className="md:col-span-5"
+            icon={MessageSquare}
             eyebrow="Meetings"
             title="Meetings become operational records"
             bullets={[
@@ -147,6 +193,7 @@ export function LandingFeatures() {
           />
           <FeatureBlock
             className="md:col-span-7"
+            icon={Sparkles}
             eyebrow="Memory"
             title="Every project makes the next one smarter"
             accent
@@ -168,6 +215,7 @@ function FeatureBlock({
   dark,
   accent,
   bullets,
+  icon: Icon,
   className = "",
 }: {
   eyebrow: string;
@@ -175,21 +223,36 @@ function FeatureBlock({
   dark?: boolean;
   accent?: boolean;
   bullets: string[];
+  icon: LucideIcon;
   className?: string;
 }) {
   return (
-    <div
-      className={`flex min-h-[200px] flex-col p-8 transition hover:shadow-[0_20px_50px_-24px_rgba(13,13,11,0.15)] md:p-10 ${className} ${
-        dark
-          ? "bg-[#1C4A2E] text-white"
-          : accent
-            ? "border border-[#C6DDD0] bg-gradient-to-br from-[#EEF5F1] to-white"
-            : "border border-[#E4E4DC] bg-white"
-      }`}
-    >
-      <DxCaps className={`mb-3 ${dark ? "text-[#3D9660]" : ""}`} accent={!dark}>
-        {eyebrow}
-      </DxCaps>
+    <LandingReveal className={`h-full ${className}`}>
+      <div
+        className={`flex h-full min-h-[200px] flex-col p-8 md:p-10 ${
+          dark
+            ? "bg-[#1C4A2E] text-white"
+            : accent
+              ? "border border-[#C6DDD0] bg-gradient-to-br from-[#EEF5F1] to-white"
+              : landingCard
+        }`}
+      >
+        <span
+          className={`mb-4 flex size-11 items-center justify-center border ${
+            dark
+              ? "border-[#3D9660]/40 bg-[#3D9660]/15"
+              : "border-[#C6DDD0] bg-white"
+          }`}
+        >
+          <Icon
+            size={20}
+            className={dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}
+            strokeWidth={1.5}
+          />
+        </span>
+        <DxCaps className={`mb-3 ${dark ? "text-[#3D9660]" : ""}`} accent={!dark}>
+          {eyebrow}
+        </DxCaps>
       <h3 className={`${dxClass.display} mb-6 text-2xl leading-snug md:text-[1.65rem]`}>
         {title}
       </h3>
@@ -206,7 +269,8 @@ function FeatureBlock({
           </li>
         ))}
       </ul>
-    </div>
+      </div>
+    </LandingReveal>
   );
 }
 
@@ -265,18 +329,21 @@ export function LandingPricing() {
   return (
     <LandingSection id="price" tone="white">
       <LandingContainer>
-        <SectionIntro
-          eyebrow="Pricing"
-          align="center"
-          title={
-            <>
-              Simple plans. <em className="text-[#1C4A2E] not-italic">Serious delivery.</em>
-            </>
-          }
-          description="30-day free trial on all plans. No credit card required."
-        />
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="Pricing"
+            align="center"
+            title={
+              <>
+                Simple plans. <em className="text-[#1C4A2E] not-italic">Serious delivery.</em>
+              </>
+            }
+            description="30-day free trial on all plans. No credit card required."
+          />
+        </LandingReveal>
         <div className="grid items-stretch gap-6 lg:grid-cols-3">
-          {tiers.map((t) => (
+          {tiers.map((t, i) => (
+            <LandingReveal key={t.name} delay={i * 0.06} className="h-full">
             <article
               key={t.name}
               className={`relative flex flex-col border p-8 md:p-9 ${
@@ -330,6 +397,7 @@ export function LandingPricing() {
                 </DxButtonLink>
               )}
             </article>
+            </LandingReveal>
           ))}
         </div>
       </LandingContainer>
@@ -361,18 +429,21 @@ export function LandingCta() {
     <LandingSection tone="ink" className="relative !py-28 overflow-hidden md:!py-36">
       <div className="landing-mesh-dark pointer-events-none absolute inset-0 opacity-50" aria-hidden />
       <LandingContainer className="relative text-center">
-        <SectionIntro
-          eyebrow="Get started"
-          light
-          align="center"
-          title={
-            <>
-              Ready to deliver like an{" "}
-              <em className="text-[#3D9660] not-italic">intelligent</em> organisation?
-            </>
-          }
-          description="30-day free trial · No credit card · ~15 minutes to first project"
-        />
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="Get started"
+            light
+            align="center"
+            title={
+              <>
+                Ready to deliver like an{" "}
+                <em className="text-[#3D9660] not-italic">intelligent</em> organisation?
+              </>
+            }
+            description="30-day free trial · No credit card · ~15 minutes to first project"
+          />
+        </LandingReveal>
+        <LandingReveal delay={0.08}>
         <div className="flex flex-wrap justify-center gap-4">
           <Link
             href="/signup"
@@ -387,29 +458,68 @@ export function LandingCta() {
             Sign in
           </Link>
         </div>
+        </LandingReveal>
       </LandingContainer>
     </LandingSection>
   );
 }
 
 export function LandingFooter() {
+  const columns = [
+    {
+      title: "Product",
+      links: [
+        { href: "#how", label: "How it works" },
+        { href: "#platform", label: "Command centre" },
+        { href: "#features", label: "Features" },
+        { href: "#capabilities", label: "Capabilities" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { href: "#faq", label: "FAQ" },
+        { href: "#price", label: "Pricing" },
+        { href: "/login", label: "Sign in" },
+        { href: "/signup", label: "Start trial" },
+      ],
+    },
+  ];
+
   return (
     <footer className="border-t border-white/[0.06] bg-[#1A1A17]">
-      <LandingContainer className="flex flex-col items-center justify-between gap-6 py-10 sm:flex-row">
-        <DxLogo dark />
-        <DxCaps className="text-[8px] text-white/25">
-          © 2026 DeliverX Ltd.
-        </DxCaps>
-        <div className="flex gap-8">
-          {["Privacy", "Terms", "Security"].map((l) => (
-            <Link
-              key={l}
-              href="#"
-              className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.16em] text-white/30 transition hover:text-white/60"
-            >
-              {l}
-            </Link>
+      <LandingContainer className="py-12 md:py-14">
+        <div className="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
+          <div>
+            <DxLogo dark />
+            <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-white/40">
+              AI-native delivery OS — from business case to lessons learned, with human approval
+              on every change.
+            </p>
+          </div>
+          {columns.map((col) => (
+            <div key={col.title}>
+              <DxCaps className="text-[8px] text-white/30">{col.title}</DxCaps>
+              <ul className="mt-4 space-y-2">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <a
+                      href={l.href}
+                      className="text-sm text-white/50 transition hover:text-white/80"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
+        </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
+          <DxCaps className="text-[8px] text-white/25">© 2026 DeliverX Ltd.</DxCaps>
+          <p className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-white/25">
+            GDPR-ready · EU data practices
+          </p>
         </div>
       </LandingContainer>
     </footer>

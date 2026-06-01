@@ -16,6 +16,7 @@ import {
   SectionIntro,
 } from "@/components/dx/landing-layout";
 import { dxClass } from "@/lib/dx-theme";
+import type { LandingPreviewStats } from "@/services/landing";
 
 const JOURNEY = [
   {
@@ -124,7 +125,36 @@ export function LandingJourney() {
   );
 }
 
-export function LandingPlatform() {
+function platformMetrics(preview: LandingPreviewStats) {
+  if (preview.live) {
+    return [
+      {
+        k: `${preview.confidence}%`,
+        l: "Portfolio confidence",
+        sub: "Live from your workspace",
+      },
+      {
+        k: String(preview.atRisk),
+        l: "Programmes at risk",
+        sub: "Tracked in command centre",
+      },
+      {
+        k: String(preview.blocked),
+        l: "Blocked tasks",
+        sub: "Surfaced with alerts",
+      },
+    ];
+  }
+  return [
+    { k: "84%", l: "Avg confidence", sub: "Across active programmes" },
+    { k: "< 2min", l: "Alert triage", sub: "From signal to review queue" },
+    { k: "1-click", l: "Report publish", sub: "Draft → approve → stakeholders" },
+  ];
+}
+
+export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
+  const metrics = platformMetrics(preview);
+
   return (
     <LandingSection id="platform" tone="white" className="border-y border-[#E4E4DC]">
       <LandingContainer wide>
@@ -184,11 +214,7 @@ export function LandingPlatform() {
 
           <LandingReveal className="lg:col-span-12" delay={0.15}>
             <div className="grid gap-4 sm:grid-cols-3">
-              {[
-                { k: "84%", l: "Avg confidence", sub: "Across active programmes" },
-                { k: "< 2min", l: "Alert triage", sub: "From signal to review queue" },
-                { k: "1-click", l: "Report publish", sub: "Draft → approve → stakeholders" },
-              ].map((stat) => (
+              {metrics.map((stat) => (
                 <div
                   key={stat.l}
                   className="border border-[#E4E4DC] bg-gradient-to-b from-white to-[#FAFAF5] px-6 py-5"
@@ -208,12 +234,36 @@ export function LandingPlatform() {
 
 export function LandingCapabilities() {
   const items = [
-    { label: "AI structure from brief", icon: Sparkles },
-    { label: "RAID & steering", icon: ShieldCheck },
-    { label: "Auto-drafted reports", icon: FileBarChart2 },
-    { label: "Org memory", icon: BrainCircuit },
-    { label: "Twin scenarios", icon: Telescope },
-    { label: "Cross-org patterns", icon: Globe2 },
+    {
+      label: "AI structure from brief",
+      desc: "Workstreams, RAID, milestones from your business case",
+      icon: Sparkles,
+    },
+    {
+      label: "RAID & steering",
+      desc: "Linked risks, decisions, and change control",
+      icon: ShieldCheck,
+    },
+    {
+      label: "Auto-drafted reports",
+      desc: "Executive-ready status with review gates",
+      icon: FileBarChart2,
+    },
+    {
+      label: "Org memory",
+      desc: "Searchable lessons and playbooks",
+      icon: BrainCircuit,
+    },
+    {
+      label: "Twin scenarios",
+      desc: "Simulate delivery paths before you commit",
+      icon: Telescope,
+    },
+    {
+      label: "Cross-org patterns",
+      desc: "Benchmarks and coordination loops at scale",
+      icon: Globe2,
+    },
   ];
 
   return (
@@ -237,11 +287,18 @@ export function LandingCapabilities() {
           {items.map((item, i) => (
             <li key={item.label}>
               <LandingReveal delay={i * 0.04} className="h-full">
-                <div className="flex h-full items-center gap-4 border border-white/[0.08] bg-white/[0.04] px-5 py-4 backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-[#3D9660]/50 hover:bg-white/[0.08]">
+                <div className="flex h-full flex-col gap-3 border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-[#3D9660]/50 hover:bg-white/[0.08] sm:flex-row sm:items-center">
                   <span className="flex size-10 shrink-0 items-center justify-center border border-[#3D9660]/30 bg-[#3D9660]/10">
                     <item.icon size={18} className="text-[#3D9660]" strokeWidth={1.5} />
                   </span>
-                  <span className="text-[15px] text-white/90">{item.label}</span>
+                  <div>
+                    <span className="block text-[15px] font-medium text-white/90">
+                      {item.label}
+                    </span>
+                    <span className="mt-0.5 block text-xs font-light text-white/45">
+                      {item.desc}
+                    </span>
+                  </div>
                 </div>
               </LandingReveal>
             </li>
