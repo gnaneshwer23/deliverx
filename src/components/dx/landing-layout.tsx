@@ -2,21 +2,24 @@ import type { ReactNode } from "react";
 import { DxBadge } from "@/components/dx/dx-badge";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
-import { ppClass } from "@/lib/policy-pilot-theme";
 import type { LandingPreviewStats } from "@/services/landing";
 
 type SectionTone = "base" | "white" | "muted" | "ink" | "accent";
 
 const TONE: Record<SectionTone, string> = {
-  base: "bg-[#0a0e14] text-[#f8f6f2]",
-  white: "bg-[#111820] text-[#f8f6f2]",
-  muted: ppClass.creamSection,
-  ink: "bg-[#060910] text-[#f8f6f2]",
-  accent: "bg-[#111820] text-[#f8f6f2]",
+  base: "bg-[#FAFAF5]",
+  white: "bg-white",
+  muted: "bg-[#F7F7F2]",
+  ink: "bg-[#0D0D0B] text-white",
+  accent: "bg-[#EEF5F1]",
 };
 
 export function LandingPageShell({ children }: { children: ReactNode }) {
-  return <div className={ppClass.shell}>{children}</div>;
+  return (
+    <div className="landing-page min-h-screen bg-[#FAFAF5] text-[#0D0D0B] antialiased">
+      {children}
+    </div>
+  );
 }
 
 export function LandingContainer({
@@ -66,33 +69,30 @@ export function SectionIntro({
   description,
   align = "left",
   light,
-  onCream,
 }: {
   eyebrow: string;
   title: ReactNode;
   description?: string;
   align?: "left" | "center";
   light?: boolean;
-  onCream?: boolean;
 }) {
   const alignClass = align === "center" ? "mx-auto text-center" : "max-w-2xl";
-  const onDark = light || !onCream;
   return (
     <header className={`mb-14 md:mb-20 ${alignClass}`}>
       <DxCaps
-        accent={onCream}
-        className={`mb-4 block ${onDark ? "text-[#6ee7c7]" : "text-[#1C4A2E]"}`}
+        accent={!light}
+        className={`mb-4 block ${light ? "text-[#3D9660]" : ""}`}
       >
         {eyebrow}
       </DxCaps>
       <h2
-        className={`${dxClass.sectionTitle} ${onDark ? "text-[#f8f6f2]" : "text-[#0a0e14]"} ${align === "center" ? "mx-auto" : ""}`}
+        className={`${dxClass.sectionTitle} ${light ? "text-white" : ""} ${align === "center" ? "mx-auto" : ""}`}
       >
         {title}
       </h2>
       {description ? (
         <p
-          className={`mt-5 text-lg font-light leading-relaxed ${onDark ? "text-white/50" : "text-[#6B6B64]"} ${align === "center" ? "mx-auto max-w-xl" : "max-w-lg"}`}
+          className={`mt-5 text-lg font-light leading-relaxed ${light ? "text-white/50" : "text-[#6B6B64]"} ${align === "center" ? "mx-auto max-w-xl" : "max-w-lg"}`}
         >
           {description}
         </p>
@@ -105,7 +105,7 @@ export function NavLink({ href, children }: { href: string; children: ReactNode 
   return (
     <a
       href={href}
-      className="landing-nav-link font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.18em] text-white/50 transition hover:text-[#f8f6f2]"
+      className="landing-nav-link font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.18em] text-[#6B6B64] transition hover:text-[#0D0D0B]"
     >
       {children}
     </a>
@@ -157,7 +157,7 @@ function MockFloatingBadge({
 }) {
   return (
     <div
-      className={`absolute z-20 hidden rounded-xl border border-[#6ee7c7]/20 bg-[#111820]/95 px-3 py-2 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.45)] backdrop-blur-md md:block ${className}`}
+      className={`absolute z-20 hidden border border-[#E4E4DC]/90 bg-white/95 px-3 py-2 shadow-[0_16px_40px_-12px_rgba(13,13,11,0.2)] backdrop-blur-md md:block ${className}`}
     >
       {children}
     </div>
@@ -171,15 +171,15 @@ export function LandingMockupScene({ preview }: { preview: LandingPreviewStats }
         <p className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#3D9660]">
           AI Coach
         </p>
-        <p className="mt-1 text-[11px] leading-snug text-white/70">
+        <p className="mt-1 text-[11px] leading-snug text-[#2C2C28]">
           Rebalance QA before sprint 14
         </p>
       </MockFloatingBadge>
       <MockFloatingBadge className="-right-4 bottom-16 landing-badge-float-b">
-        <p className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#6ee7c7]">
+        <p className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#B7620A]">
           Alert queue
         </p>
-        <p className="mt-1 text-[11px] leading-snug text-white/70">2 items awaiting approval</p>
+        <p className="mt-1 text-[11px] leading-snug text-[#2C2C28]">2 items awaiting approval</p>
       </MockFloatingBadge>
 
       <div className="landing-mock-float relative">
@@ -278,7 +278,7 @@ export function LandingDashboardMockup({
         className="pointer-events-none absolute -inset-4 -z-10 bg-gradient-to-br from-[#C6DDD0]/40 via-transparent to-[#E4E4DC]/30 blur-2xl"
         aria-hidden
       />
-      <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111820] shadow-[0_40px_120px_-24px_rgba(0,0,0,0.55)] ring-1 ring-[#6ee7c7]/10">
+      <div className="overflow-hidden border border-[#E4E4DC] bg-white shadow-[0_32px_100px_-20px_rgba(13,13,11,0.18)] ring-1 ring-[#0D0D0B]/[0.04]">
         <div className="flex items-center border-b border-white/10 bg-[#0a0e14] px-5 py-3.5">
           <div className="flex gap-1.5" aria-hidden>
             <span className="size-2 rounded-full bg-[#C0392B]/80" />

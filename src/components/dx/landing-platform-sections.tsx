@@ -2,6 +2,7 @@ import {
   BrainCircuit,
   Check,
   FileBarChart2,
+  FolderKanban,
   Globe2,
   ShieldCheck,
   Sparkles,
@@ -14,11 +15,37 @@ import {
   LandingSection,
   SectionIntro,
 } from "@/components/dx/landing-layout";
-import { ppClass } from "@/lib/policy-pilot-theme";
 import { dxClass } from "@/lib/dx-theme";
-import type { LandingPageContent } from "@/services/landing";
+
+const JOURNEY = [
+  {
+    step: "01",
+    title: "Start from the brief",
+    body: "Paste or upload your business case. AI reviews scope and generates structure — workstreams, RAID, milestones.",
+  },
+  {
+    step: "02",
+    title: "Run delivery",
+    body: "Tasks, standups, and velocity feed one command centre. See health, blockers, and what needs attention today.",
+  },
+  {
+    step: "03",
+    title: "Govern with confidence",
+    body: "RAID, decisions, and reports stay linked. AI proposes changes; your team approves before anything is applied.",
+  },
+  {
+    step: "04",
+    title: "Close and compound",
+    body: "Publish to stakeholders, capture lessons, and carry intelligence into the next programme.",
+  },
+] as const;
 
 const PILLARS = [
+  {
+    icon: FolderKanban,
+    title: "Delivery",
+    points: ["Project command centre", "Tasks & standups", "Capacity & benefits"],
+  },
   {
     icon: ShieldCheck,
     title: "Governance",
@@ -31,40 +58,67 @@ const PILLARS = [
   },
 ] as const;
 
-export function LandingAgents({ agents }: { agents: LandingPageContent["agents"] }) {
+export function LandingJourney() {
   return (
-    <LandingSection id="agents" tone="base">
+    <LandingSection id="how" tone="base">
       <LandingContainer>
         <LandingReveal>
           <SectionIntro
-            light
-            eyebrow="Four agents"
+            eyebrow="How it works"
             title={
               <>
-                One operations team. <em className="text-[#6ee7c7] not-italic">Zero silos.</em>
+                Four moves. <em className="text-[#1C4A2E] not-italic">One workspace.</em>
               </>
             }
-            description="Each agent handles a layer that traditionally requires dozens of tools — wired to the same signals."
+            description="No tool-hopping — the same system carries you from business case to closure."
           />
         </LandingReveal>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          {agents.map((agent, i) => (
-            <LandingReveal key={agent.step} delay={i * 0.05} className="h-full">
-              <article className={`${ppClass.cardDark} flex h-full flex-col p-7 md:p-8`}>
-                <span className="font-[family-name:var(--font-dx-mono)] text-sm text-[#6ee7c7]">
-                  {agent.step}
-                </span>
-                <h3 className={`${dxClass.display} mt-4 text-xl text-white md:text-2xl`}>
-                  {agent.title}
-                </h3>
-                <p className="mt-3 flex-1 text-sm font-light leading-relaxed text-white/50">
-                  {agent.body}
-                </p>
-              </article>
-            </LandingReveal>
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+          {JOURNEY.map((item, i) => (
+            <li key={item.step}>
+              <LandingReveal delay={i * 0.06} className="h-full">
+                <div className="group relative flex h-full flex-col border border-[#E4E4DC] bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-[#C6DDD0] hover:shadow-[0_20px_50px_-20px_rgba(13,13,11,0.14)] md:p-7">
+                  <span
+                    className={`mb-6 inline-flex size-10 items-center justify-center font-[family-name:var(--font-dx-mono)] text-xs ${
+                      i === 0
+                        ? "bg-[#1C4A2E] text-white"
+                        : "border border-[#E4E4DC] bg-[#FAFAF5] text-[#1C4A2E]"
+                    }`}
+                  >
+                    {item.step}
+                  </span>
+                  <h3 className="mb-2 text-[17px] font-semibold leading-snug text-[#0D0D0B]">
+                    {item.title}
+                  </h3>
+                  <p className="flex-1 text-sm font-light leading-relaxed text-[#6B6B64]">
+                    {item.body}
+                  </p>
+                  {i < JOURNEY.length - 1 ? (
+                    <span
+                      className="absolute -right-3 top-1/2 hidden size-6 -translate-y-1/2 items-center justify-center bg-[#FAFAF5] font-mono text-[#A8A89E] lg:flex"
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  ) : null}
+                </div>
+              </LandingReveal>
+            </li>
           ))}
-        </div>
+        </ol>
+
+        <LandingReveal delay={0.2}>
+          <div className="mt-10 grid gap-6 border border-[#C6DDD0] bg-gradient-to-r from-[#EEF5F1] via-white to-[#FAFAF5] p-6 md:grid-cols-[auto_1fr] md:items-center md:p-8">
+            <span className="inline-flex w-fit border border-[#1C4A2E]/20 bg-white px-3 py-1 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.2em] text-[#1C4A2E]">
+              Guardrail
+            </span>
+            <p className="text-[15px] leading-relaxed text-[#2C2C28]">
+              <span className="font-medium text-[#1C4A2E]">AI proposes</span> · humans approve ·
+              the system applies. Nothing silently changes your RAID or timelines.
+            </p>
+          </div>
+        </LandingReveal>
       </LandingContainer>
     </LandingSection>
   );
@@ -72,46 +126,53 @@ export function LandingAgents({ agents }: { agents: LandingPageContent["agents"]
 
 export function LandingPlatform() {
   return (
-    <LandingSection id="platform" tone="white" className="border-y border-white/[0.06]">
+    <LandingSection id="platform" tone="white" className="border-y border-[#E4E4DC]">
       <LandingContainer wide>
         <LandingReveal>
           <SectionIntro
-            light
-            align="center"
             eyebrow="Inside DeliverX"
+            align="center"
             title={
               <>
-                Your morning view — <em className="text-[#6ee7c7] not-italic">live.</em>
+                Command centre + modules —{" "}
+                <em className="text-[#1C4A2E] not-italic">one surface.</em>
               </>
             }
-            description="Portfolio health, alerts, and coaching on one command centre."
+            description="Portfolio health, alerts, and coaching on the left; delivery, governance, and intelligence on the right."
           />
         </LandingReveal>
 
-        <div className="mt-4 grid gap-6 lg:grid-cols-12 lg:gap-8">
+        <div className="mt-4 grid gap-5 lg:grid-cols-12 lg:gap-6">
           <LandingReveal className="lg:col-span-8" delay={0.05}>
-            <div className="landing-mock-3d relative">
-              <LandingDashboardMockup float />
+            <div className="landing-mock-3d relative h-full min-h-[320px]">
+              <LandingDashboardMockup className="h-full" />
             </div>
           </LandingReveal>
 
           <div className="flex flex-col gap-4 lg:col-span-4">
             {PILLARS.map((p, i) => (
               <LandingReveal key={p.title} delay={0.08 + i * 0.06}>
-                <div className={`${ppClass.cardDark} p-6`}>
+                <div className="border border-[#E4E4DC] bg-[#FAFAF5] p-5 transition duration-300 hover:border-[#C6DDD0] hover:bg-white hover:shadow-[0_16px_40px_-20px_rgba(13,13,11,0.1)] md:p-6">
                   <div className="mb-3 flex items-start gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#6ee7c7]/25 bg-[#6ee7c7]/10">
-                      <p.icon size={18} className="text-[#6ee7c7]" strokeWidth={1.5} />
+                    <span className="flex size-10 shrink-0 items-center justify-center border border-[#C6DDD0] bg-white">
+                      <p.icon size={18} className="text-[#1C4A2E]" strokeWidth={1.5} />
                     </span>
-                    <h3 className={`${dxClass.display} text-lg text-white`}>{p.title}</h3>
+                    <div>
+                      <span className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-wider text-[#A8A89E]">
+                        Pillar {i + 1}
+                      </span>
+                      <h3 className={`${dxClass.display} mt-0.5 text-lg text-[#0D0D0B]`}>
+                        {p.title}
+                      </h3>
+                    </div>
                   </div>
-                  <ul className="space-y-1.5 border-t border-white/[0.08] pt-3">
+                  <ul className="space-y-1.5 border-t border-[#E4E4DC] pt-3">
                     {p.points.map((point) => (
                       <li
                         key={point}
-                        className="flex items-center gap-2 text-[13px] font-light text-white/55"
+                        className="flex items-center gap-2 text-[13px] font-light text-[#6B6B64]"
                       >
-                        <Check size={13} className="shrink-0 text-[#6ee7c7]" strokeWidth={2.5} />
+                        <Check size={13} className="shrink-0 text-[#3D9660]" strokeWidth={2.5} />
                         {point}
                       </li>
                     ))}
@@ -120,6 +181,25 @@ export function LandingPlatform() {
               </LandingReveal>
             ))}
           </div>
+
+          <LandingReveal className="lg:col-span-12" delay={0.15}>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {[
+                { k: "84%", l: "Avg confidence", sub: "Across active programmes" },
+                { k: "< 2min", l: "Alert triage", sub: "From signal to review queue" },
+                { k: "1-click", l: "Report publish", sub: "Draft → approve → stakeholders" },
+              ].map((stat) => (
+                <div
+                  key={stat.l}
+                  className="border border-[#E4E4DC] bg-gradient-to-b from-white to-[#FAFAF5] px-6 py-5"
+                >
+                  <p className={`${dxClass.display} text-2xl text-[#1C4A2E]`}>{stat.k}</p>
+                  <p className="mt-1 text-sm font-medium text-[#0D0D0B]">{stat.l}</p>
+                  <p className="mt-0.5 text-xs font-light text-[#A8A89E]">{stat.sub}</p>
+                </div>
+              ))}
+            </div>
+          </LandingReveal>
         </div>
       </LandingContainer>
     </LandingSection>
@@ -138,7 +218,7 @@ export function LandingCapabilities() {
 
   return (
     <LandingSection id="capabilities" tone="ink" className="relative overflow-hidden">
-      <div className="landing-pp-glow pointer-events-none absolute inset-0 opacity-70" aria-hidden />
+      <div className="landing-mesh-dark pointer-events-none absolute inset-0 opacity-60" aria-hidden />
       <LandingContainer className="relative">
         <LandingReveal>
           <SectionIntro
@@ -148,7 +228,7 @@ export function LandingCapabilities() {
             title={
               <>
                 Everything connects to the{" "}
-                <em className="text-[#6ee7c7] not-italic">same signals.</em>
+                <em className="text-[#3D9660] not-italic">same signals.</em>
               </>
             }
           />
@@ -157,9 +237,9 @@ export function LandingCapabilities() {
           {items.map((item, i) => (
             <li key={item.label}>
               <LandingReveal delay={i * 0.04} className="h-full">
-                <div className={`${ppClass.cardDark} flex h-full items-center gap-4 px-5 py-4 transition hover:border-[#6ee7c7]/40`}>
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#6ee7c7]/30 bg-[#6ee7c7]/10">
-                    <item.icon size={18} className="text-[#6ee7c7]" strokeWidth={1.5} />
+                <div className="flex h-full items-center gap-4 border border-white/[0.08] bg-white/[0.04] px-5 py-4 backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:border-[#3D9660]/50 hover:bg-white/[0.08]">
+                  <span className="flex size-10 shrink-0 items-center justify-center border border-[#3D9660]/30 bg-[#3D9660]/10">
+                    <item.icon size={18} className="text-[#3D9660]" strokeWidth={1.5} />
                   </span>
                   <span className="text-[15px] text-white/90">{item.label}</span>
                 </div>

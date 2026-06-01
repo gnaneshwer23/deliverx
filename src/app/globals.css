@@ -211,19 +211,7 @@
   width: 100%;
 }
 
-/* PolicyPilot landing — dark ops + teal glow */
-.landing-pp-glow {
-  background:
-    radial-gradient(ellipse 70% 55% at 15% 0%, rgba(110, 231, 199, 0.18), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(28, 74, 46, 0.35), transparent 50%),
-    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(17, 24, 32, 0.9), transparent 60%);
-}
-
-.landing-page--pp .landing-nav-link::after {
-  background: #6ee7c7;
-}
-
-/* Landing — mesh, grain, 3D mock */
+/* Landing — mesh, grain, 3D mock (Dribbble-inspired) */
 .landing-mesh {
   background:
     radial-gradient(ellipse 80% 60% at 10% 20%, rgba(198, 221, 208, 0.55), transparent 55%),
