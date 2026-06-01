@@ -338,9 +338,12 @@ function LandingLiveMockup({ preview }: { preview: LandingPreviewStats }) {
 export function LandingDashboardMockup({
   className = "",
   float,
+  compact,
 }: {
   className?: string;
   float?: boolean;
+  /** Denser layout for platform section (less vertical space) */
+  compact?: boolean;
 }) {
   const projects = [
     { name: "Platform migration", health: 78, tier: "watch" as const },
@@ -353,12 +356,22 @@ export function LandingDashboardMockup({
       className={`relative ${float ? "landing-mock-float" : ""} ${className}`}
       aria-label="DeliverX dashboard preview"
     >
+      {!compact ? (
+        <div
+          className="pointer-events-none absolute -inset-4 -z-10 bg-gradient-to-br from-[#C6DDD0]/40 via-transparent to-[#E4E4DC]/30 blur-2xl"
+          aria-hidden
+        />
+      ) : null}
       <div
-        className="pointer-events-none absolute -inset-4 -z-10 bg-gradient-to-br from-[#C6DDD0]/40 via-transparent to-[#E4E4DC]/30 blur-2xl"
-        aria-hidden
-      />
-      <div className="landing-mock-frame relative overflow-hidden border border-[#E4E4DC] bg-white shadow-[0_32px_100px_-20px_rgba(13,13,11,0.18)] ring-1 ring-[#0D0D0B]/[0.04]">
-        <div className="flex items-center border-b border-white/10 bg-[#0a0e14] px-5 py-3.5">
+        className={`landing-mock-frame relative overflow-hidden border border-[#E4E4DC] bg-white ring-1 ring-[#0D0D0B]/[0.04] ${
+          compact
+            ? "shadow-[0_12px_40px_-16px_rgba(13,13,11,0.14)]"
+            : "shadow-[0_32px_100px_-20px_rgba(13,13,11,0.18)]"
+        }`}
+      >
+        <div
+          className={`flex items-center border-b border-white/10 bg-[#0a0e14] ${compact ? "px-3 py-2" : "px-5 py-3.5"}`}
+        >
           <div className="flex gap-1.5" aria-hidden>
             <span className="size-2 rounded-full bg-[#C0392B]/80" />
             <span className="size-2 rounded-full bg-[#B7620A]/80" />
@@ -380,19 +393,28 @@ export function LandingDashboardMockup({
             { v: "4", l: "Blocked", c: "text-[#C0392B]" },
             { v: "↑12%", l: "Velocity", c: "text-[#1C4A2E]" },
           ].map((k) => (
-            <div key={k.l} className="bg-white px-3 py-5 text-center sm:px-4 sm:py-6">
+            <div
+              key={k.l}
+              className={`bg-white text-center ${compact ? "px-2 py-3" : "px-3 py-5 sm:px-4 sm:py-6"}`}
+            >
               <div
-                className={`landing-stat-value ${dxClass.display} text-3xl leading-none tabular-nums sm:text-4xl ${k.c}`}
+                className={`landing-stat-value ${dxClass.display} leading-none tabular-nums ${k.c} ${
+                  compact ? "text-xl sm:text-2xl" : "text-3xl sm:text-4xl"
+                }`}
               >
                 {k.v}
               </div>
-              <DxCaps className="mt-2 text-[8px] sm:text-[9px]">{k.l}</DxCaps>
+              <DxCaps className={`mt-1 ${compact ? "text-[7px]" : "mt-2 text-[8px] sm:text-[9px]"}`}>
+                {k.l}
+              </DxCaps>
             </div>
           ))}
         </div>
 
         <div className="grid gap-px bg-[#F0F0E8] lg:grid-cols-5">
-          <div className="space-y-3 bg-white p-5 lg:col-span-3">
+          <div
+            className={`space-y-2 bg-white lg:col-span-3 ${compact ? "p-3" : "space-y-3 p-5"}`}
+          >
             <DxCaps className="text-[7px]">Portfolio health</DxCaps>
             {projects.map((p) => (
               <div key={p.name} className="flex items-center gap-3">
@@ -415,15 +437,25 @@ export function LandingDashboardMockup({
               </div>
             ))}
           </div>
-          <div className="flex flex-col justify-between bg-gradient-to-b from-[#EEF5F1] to-[#E8F2EC] p-5 lg:col-span-2">
+          <div
+            className={`flex flex-col justify-between bg-gradient-to-b from-[#EEF5F1] to-[#E8F2EC] lg:col-span-2 ${
+              compact ? "gap-2 p-3" : "p-5"
+            }`}
+          >
             <div>
               <DxCaps className="text-[7px] text-[#1C4A2E]">Needs attention</DxCaps>
-              <p className="mt-2 text-[13px] leading-snug text-[#2C2C28]">
+              <p className={`leading-snug text-[#2C2C28] ${compact ? "mt-1 text-xs" : "mt-2 text-[13px]"}`}>
                 Vendor scope risk
               </p>
-              <p className="text-[12px] text-[#6B6B64]">2 alerts in review queue</p>
+              <p className={compact ? "text-[11px] text-[#6B6B64]" : "text-[12px] text-[#6B6B64]"}>
+                2 alerts in review queue
+              </p>
             </div>
-            <div className="mt-4 flex items-center gap-2 border border-[#C6DDD0]/80 bg-white/90 px-3 py-2 backdrop-blur-sm">
+            <div
+              className={`flex items-center gap-2 border border-[#C6DDD0]/80 bg-white/90 backdrop-blur-sm ${
+                compact ? "px-2 py-1.5" : "mt-4 px-3 py-2"
+              }`}
+            >
               <span className="flex size-6 items-center justify-center bg-[#1C4A2E] text-[10px] text-white">
                 ✦
               </span>

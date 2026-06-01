@@ -16,7 +16,8 @@ import {
   LandingSection,
   SectionIntro,
 } from "@/components/dx/landing-layout";
-import { LandingMetricTile } from "@/components/dx/landing-stat";
+import { LandingMetricChip } from "@/components/dx/landing-stat";
+import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
 import type { LandingPreviewStats } from "@/services/landing";
 
@@ -159,6 +160,12 @@ function platformMetrics(preview: LandingPreviewStats) {
   ];
 }
 
+function metricValueClass(k: string, index: number) {
+  if (index === 1) return "text-[#B7620A]";
+  if (index === 2 && k !== "1-click" && k !== "< 2min") return "text-[#C0392B]";
+  return "text-[#1C4A2E]";
+}
+
 export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
   const metrics = platformMetrics(preview);
 
@@ -166,91 +173,81 @@ export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
     <LandingSection
       id="platform"
       tone="white"
-      density="compact"
+      density="tight"
       className="border-y border-[#E4E4DC]"
     >
       <LandingContainer wide>
         <LandingReveal>
-          <SectionIntro
-            eyebrow="Inside DeliverX"
-            align="center"
-            lead="Live portfolio signals — not a static screenshot."
-            title={
-              <>
+          <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6">
+            <div className="max-w-lg">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="h-px w-6 bg-[#1C4A2E]" aria-hidden />
+                <DxCaps accent>Inside DeliverX</DxCaps>
+              </div>
+              <h2 className={`${dxClass.display} text-2xl leading-snug text-[#0D0D0B] md:text-[1.75rem]`}>
                 Command centre + modules —{" "}
-                <em className="text-[#1C4A2E] not-italic">one surface.</em>
-              </>
-            }
-            description="Read confidence, risk, and blockers at a glance; drill into delivery, governance, or intelligence without switching tools."
-          />
-        </LandingReveal>
-
-        <LandingReveal delay={0.04}>
-          <div className="mb-6 grid gap-3 sm:grid-cols-3">
-            {metrics.map((stat, i) => (
-              <LandingMetricTile
-                key={stat.l}
-                value={stat.k}
-                label={stat.l}
-                sub={stat.sub}
-                valueClassName={
-                  i === 1
-                    ? "text-[#B7620A]"
-                    : i === 2 && stat.k !== "1-click" && stat.k !== "< 2min"
-                      ? "text-[#C0392B]"
-                      : "text-[#1C4A2E]"
-                }
-              />
-            ))}
+                <em className="text-[#1C4A2E] not-italic">one surface</em>
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-[#6B6B64]">
+                Live portfolio signals in the command centre; delivery, governance, and
+                intelligence plug into the same graph.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 md:justify-end">
+              {metrics.map((stat, i) => (
+                <LandingMetricChip
+                  key={stat.l}
+                  value={stat.k}
+                  label={stat.l}
+                  valueClassName={metricValueClass(stat.k, i)}
+                />
+              ))}
+            </div>
           </div>
         </LandingReveal>
 
-        <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
-          <LandingReveal className="lg:col-span-8" delay={0.05}>
-            <div className="landing-mock-3d relative h-full min-h-[320px]">
-              <LandingDashboardMockup className="h-full" />
-            </div>
-          </LandingReveal>
+        <LandingReveal delay={0.05}>
+          <div className="overflow-hidden border border-[#E4E4DC] bg-[#FAFAF5] shadow-[0_20px_50px_-24px_rgba(13,13,11,0.1)]">
+            <div className="grid lg:grid-cols-[1.15fr_1fr]">
+              <div className="border-b border-[#E4E4DC] p-3 md:p-4 lg:border-b-0 lg:border-r">
+                <LandingDashboardMockup compact />
+              </div>
 
-          <div className="flex flex-col gap-4 lg:col-span-4">
-            {PILLARS.map((p, i) => (
-              <LandingReveal key={p.title} delay={0.08 + i * 0.06}>
-                <div
-                  className={`border p-5 transition duration-300 md:p-6 ${
-                    i === 0
-                      ? "border-[#1C4A2E]/25 bg-[#EEF5F1] shadow-[0_16px_40px_-20px_rgba(28,74,46,0.15)]"
-                      : "border-[#E4E4DC] bg-[#FAFAF5] hover:border-[#C6DDD0] hover:bg-white hover:shadow-[0_16px_40px_-20px_rgba(13,13,11,0.1)]"
-                  }`}
-                >
-                  <div className="mb-3 flex items-start gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center border border-[#C6DDD0] bg-white">
-                      <p.icon size={18} className="text-[#1C4A2E]" strokeWidth={1.5} />
+              <div className="divide-y divide-[#E4E4DC]">
+                {PILLARS.map((p, i) => (
+                  <div
+                    key={p.title}
+                    className={`flex gap-3 p-4 md:p-5 ${
+                      i === 0 ? "bg-[#EEF5F1]/80" : "bg-white"
+                    }`}
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center border border-[#C6DDD0] bg-white">
+                      <p.icon size={16} className="text-[#1C4A2E]" strokeWidth={1.5} />
                     </span>
-                    <div>
-                      <span className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-wider text-[#A8A89E]">
-                        Pillar {i + 1}
-                      </span>
-                      <h3 className={`${dxClass.display} mt-0.5 text-lg text-[#0D0D0B]`}>
-                        {p.title}
-                      </h3>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-semibold text-[#0D0D0B]">{p.title}</h3>
+                      <ul className="mt-1.5 space-y-1">
+                        {p.points.map((point) => (
+                          <li
+                            key={point}
+                            className="flex items-center gap-1.5 text-[12px] leading-snug text-[#6B6B64]"
+                          >
+                            <Check
+                              size={12}
+                              className="shrink-0 text-[#3D9660]"
+                              strokeWidth={2.5}
+                            />
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                  <ul className="space-y-1.5 border-t border-[#E4E4DC] pt-3">
-                    {p.points.map((point) => (
-                      <li
-                        key={point}
-                        className="flex items-center gap-2 text-[13px] font-light text-[#6B6B64]"
-                      >
-                        <Check size={13} className="shrink-0 text-[#3D9660]" strokeWidth={2.5} />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </LandingReveal>
-            ))}
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        </LandingReveal>
       </LandingContainer>
     </LandingSection>
   );

@@ -81,6 +81,30 @@ export function LandingStatCard({
   );
 }
 
+/** Compact stat for section headers (e.g. platform row) */
+export function LandingMetricChip({
+  value,
+  label,
+  valueClassName = "text-[#1C4A2E]",
+}: {
+  value: string;
+  label: string;
+  valueClassName?: string;
+}) {
+  return (
+    <div className="flex min-w-[7.5rem] flex-col border border-[#E4E4DC] bg-white px-3 py-2.5">
+      <span
+        className={`${dxClass.display} text-xl leading-none tabular-nums ${valueClassName}`}
+      >
+        {value}
+      </span>
+      <span className="mt-1 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#6B6B64]">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export function LandingMetricTile({
   value,
   label,
