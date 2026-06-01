@@ -11,7 +11,10 @@ import {
   ShieldAlert,
   Users,
 } from "lucide-react";
-import { getWorkspaceDashboard } from "@/services/dashboard";
+import {
+  EMPTY_WORKSPACE_DASHBOARD,
+  getWorkspaceDashboard,
+} from "@/services/dashboard";
 import { getOrgAlertQueue } from "@/services/alerts";
 import { getDeliveryCoachSuggestions } from "@/services/deliveryCoach";
 import { getProjectIntelligence } from "@/services/intelligence";
@@ -63,9 +66,14 @@ function roleSubtitle(role: string, orgName: string | null) {
 
 export default async function DashboardPage() {
   const [data, alerts, coach] = await Promise.all([
-    getWorkspaceDashboard(),
-    getOrgAlertQueue(6),
-    getDeliveryCoachSuggestions(4),
+    getWorkspaceDashboard().catch((err) => {
+      console.error("[dashboard] getWorkspaceDashboard", err);
+      return EMPTY_WORKSPACE_DASHBOARD;
+    }),
+    getOrgAlertQueue(6).catch(() => [] as Awaited<ReturnType<typeof getOrgAlertQueue>>),
+    getDeliveryCoachSuggestions(4).catch(
+      () => [] as Awaited<ReturnType<typeof getDeliveryCoachSuggestions>>,
+    ),
   ]);
   const activeTaskRows = data.recentTasks.filter((t) => t.status !== "done");
 
@@ -78,14 +86,18 @@ export default async function DashboardPage() {
   let topAlignment: Awaited<ReturnType<typeof getProjectAlignment>> | null = null;
 
   if (topProject) {
-    const [intel, alignment] = await Promise.all([
-      getProjectIntelligence(topProject.id),
-      getProjectAlignment(topProject.id),
-    ]);
-    topAlignment = alignment;
-    recommendation = intel.recommendations[0]?.text ?? recommendation;
-    healthTier = intel.health.tier;
-    confidenceScore = intel.confidence.score;
+    try {
+      const [intel, alignment] = await Promise.all([
+        getProjectIntelligence(topProject.id),
+        getProjectAlignment(topProject.id),
+      ]);
+      topAlignment = alignment;
+      recommendation = intel.recommendations[0]?.text ?? recommendation;
+      healthTier = intel.health.tier;
+      confidenceScore = intel.confidence.score;
+    } catch (err) {
+      console.error("[dashboard] project intelligence", err);
+    }
   }
 
   const kpis = [

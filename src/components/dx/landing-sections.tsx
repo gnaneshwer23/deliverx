@@ -229,14 +229,22 @@ function FeatureBlock({
   return (
     <LandingReveal className={`h-full ${className}`}>
       <div
-        className={`flex h-full min-h-[200px] flex-col p-8 md:p-10 ${
+        className={`relative flex h-full min-h-[200px] flex-col overflow-hidden p-8 md:p-10 ${
           dark
-            ? "bg-[#1C4A2E] text-white"
+            ? "bg-[#1C4A2E] text-white shadow-[0_28px_70px_-28px_rgba(28,74,46,0.45)]"
             : accent
-              ? "border border-[#C6DDD0] bg-gradient-to-br from-[#EEF5F1] to-white"
-              : landingCard
+              ? "border border-[#C6DDD0] bg-gradient-to-br from-[#EEF5F1] to-white shadow-[0_20px_50px_-24px_rgba(28,74,46,0.12)]"
+              : `${landingCard} shadow-[0_16px_40px_-28px_rgba(13,13,11,0.1)]`
         }`}
       >
+        {dark ? (
+          <span
+            className="pointer-events-none absolute -right-6 -top-8 font-[family-name:var(--font-dx-mono)] text-[7rem] leading-none text-white/[0.06]"
+            aria-hidden
+          >
+            AI
+          </span>
+        ) : null}
         <span
           className={`mb-4 flex size-11 items-center justify-center border ${
             dark

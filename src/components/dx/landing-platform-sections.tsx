@@ -9,6 +9,7 @@ import {
   Telescope,
 } from "lucide-react";
 import { LandingReveal } from "@/components/dx/landing-motion";
+import { LandingWorkflowStrip } from "@/components/dx/landing-workflow";
 import {
   LandingContainer,
   LandingDashboardMockup,
@@ -74,6 +75,10 @@ export function LandingJourney() {
             description="No tool-hopping — the same system carries you from business case to closure."
           />
         </LandingReveal>
+
+        <div className="mb-12">
+          <LandingWorkflowStrip />
+        </div>
 
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           {JOURNEY.map((item, i) => (

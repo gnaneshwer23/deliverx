@@ -40,6 +40,19 @@ export type WeeklyVelocity = {
   completed: number;
 };
 
+async function safeDashboardLoad<T>(
+  label: string,
+  fn: () => Promise<T>,
+  fallback: T,
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    console.error(`[dashboard] ${label}`, err);
+    return fallback;
+  }
+}
+
 export type WorkspaceDashboardData = {
   userName: string | null;
   userRole: UserRole;
@@ -70,6 +83,39 @@ export type WorkspaceDashboardData = {
     delivery_type: string | null;
     created_at: string;
   }>;
+};
+
+const EMPTY_GOVERNANCE: WorkspaceDashboardData["governance"] = {
+  openRisks: 0,
+  openIssues: 0,
+  pendingDecisions: 0,
+  openChanges: 0,
+};
+
+export const EMPTY_WORKSPACE_DASHBOARD: WorkspaceDashboardData = {
+  userName: null,
+  userRole: "pm",
+  orgName: null,
+  delivery: {
+    tasksInProgress: 0,
+    teamMembers: 0,
+    overdueTasks: 0,
+    blockedTasks: 0,
+    standupsThisWeek: 0,
+  },
+  governance: EMPTY_GOVERNANCE,
+  portfolioHealth: null,
+  activeProjectCount: 0,
+  projectHealth: [],
+  weeklyVelocity: [],
+  recentTasks: [],
+  openRisks: [],
+  pendingDecisions: [],
+  recentMeetings: [],
+  recentStandups: [],
+  recentReports: [],
+  governanceRollup: [],
+  recentProjects: [],
 };
 
 function weekLabels(count: number): string[] {
@@ -163,15 +209,17 @@ export async function getWorkspaceDashboard(): Promise<WorkspaceDashboardData> {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("users")
-    .select("name, role, organisation_id, organisations(name)")
+    .select("name, role, organisation_id")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
+
+  if (profileError) throw profileError;
 
   const [
-    { count: activeProjectCount },
-    { data: recentProjects },
+    activeProjectCount,
+    recentProjects,
     deliveryStats,
     taskCounts,
     governance,
@@ -186,28 +234,42 @@ export async function getWorkspaceDashboard(): Promise<WorkspaceDashboardData> {
     projectHealth,
     portfolio,
   ] = await Promise.all([
-    supabase
-      .from("projects")
-      .select("id", { count: "exact", head: true })
-      .in("status", ["draft", "active"]),
-    supabase
-      .from("projects")
-      .select("id, name, status, delivery_type, created_at")
-      .order("created_at", { ascending: false })
-      .limit(6),
-    getOrgDeliveryStats(),
-    getTaskCounts(supabase),
-    getOrgGovernanceStats(),
-    listOrgTasks({ limit: 10 }),
-    listOpenRaidOrg(8),
-    listOrgDecisionsPending(6),
-    listOrgMeetingsRecent(6),
-    listOrgStandupsRecent(7, 8),
-    listOrgReports(4),
-    getGovernanceRollup(),
-    getWeeklyVelocity(supabase),
-    buildProjectHealthSummaries(),
-    getDefaultPortfolio(),
+    safeDashboardLoad("activeProjectCount", async () => {
+      const { count, error } = await supabase
+        .from("projects")
+        .select("id", { count: "exact", head: true })
+        .in("status", ["draft", "active"]);
+      if (error) throw error;
+      return count ?? 0;
+    }, 0),
+    safeDashboardLoad("recentProjects", async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("id, name, status, delivery_type, created_at")
+        .order("created_at", { ascending: false })
+        .limit(6);
+      if (error) throw error;
+      return data ?? [];
+    }, []),
+    safeDashboardLoad("deliveryStats", getOrgDeliveryStats, {
+      tasksInProgress: 0,
+      teamMembers: 0,
+    }),
+    safeDashboardLoad("taskCounts", () => getTaskCounts(supabase), {
+      overdueTasks: 0,
+      blockedTasks: 0,
+    }),
+    safeDashboardLoad("governance", getOrgGovernanceStats, EMPTY_GOVERNANCE),
+    safeDashboardLoad("recentTasks", () => listOrgTasks({ limit: 10 }), []),
+    safeDashboardLoad("openRisks", () => listOpenRaidOrg(8), []),
+    safeDashboardLoad("pendingDecisions", () => listOrgDecisionsPending(6), []),
+    safeDashboardLoad("recentMeetings", () => listOrgMeetingsRecent(6), []),
+    safeDashboardLoad("recentStandups", () => listOrgStandupsRecent(7, 8), []),
+    safeDashboardLoad("recentReports", () => listOrgReports(4), []),
+    safeDashboardLoad("governanceRollup", getGovernanceRollup, []),
+    safeDashboardLoad("weeklyVelocity", () => getWeeklyVelocity(supabase), []),
+    safeDashboardLoad("projectHealth", buildProjectHealthSummaries, []),
+    safeDashboardLoad("portfolio", getDefaultPortfolio, null),
   ]);
 
   let portfolioHealth: number | null = null;
@@ -220,12 +282,20 @@ export async function getWorkspaceDashboard(): Promise<WorkspaceDashboardData> {
     }
   }
 
-  const org = profile?.organisations as { name?: string } | null;
+  let orgName: string | null = null;
+  if (profile?.organisation_id) {
+    const { data: org } = await supabase
+      .from("organisations")
+      .select("name")
+      .eq("id", profile.organisation_id)
+      .maybeSingle();
+    orgName = org?.name ?? null;
+  }
 
   return {
     userName: profile?.name ?? user.email?.split("@")[0] ?? null,
     userRole: (profile?.role as UserRole) ?? "pm",
-    orgName: org?.name ?? null,
+    orgName,
     delivery: {
       tasksInProgress: deliveryStats.tasksInProgress,
       teamMembers: deliveryStats.teamMembers,
@@ -235,7 +305,7 @@ export async function getWorkspaceDashboard(): Promise<WorkspaceDashboardData> {
     },
     governance,
     portfolioHealth,
-    activeProjectCount: activeProjectCount ?? 0,
+    activeProjectCount,
     projectHealth,
     weeklyVelocity,
     recentTasks,
@@ -245,6 +315,6 @@ export async function getWorkspaceDashboard(): Promise<WorkspaceDashboardData> {
     recentStandups,
     recentReports,
     governanceRollup,
-    recentProjects: recentProjects ?? [],
+    recentProjects,
   };
 }

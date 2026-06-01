@@ -192,6 +192,45 @@
   animation: landing-mock-float 7s ease-in-out infinite;
 }
 
+/* Landing — section atmosphere */
+.landing-section-base {
+  background-image: radial-gradient(ellipse 90% 50% at 50% 0%, rgba(238, 245, 241, 0.9), transparent 70%);
+}
+
+.landing-section-white {
+  background-image: linear-gradient(180deg, #fff 0%, #fafaf5 100%);
+}
+
+.landing-section-muted {
+  background-image:
+    linear-gradient(#e4e4dc 1px, transparent 1px),
+    linear-gradient(90deg, #e4e4dc 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+}
+
+.landing-section-ink {
+  background-image: radial-gradient(ellipse 80% 60% at 100% 0%, rgba(61, 150, 96, 0.14), transparent 55%);
+}
+
+.landing-section-accent {
+  background-image: linear-gradient(135deg, #eef5f1 0%, #fafaf5 50%, #fff 100%);
+}
+
+.landing-mock-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(28, 74, 46, 0.08);
+  z-index: 1;
+}
+
+.landing-workflow-strip {
+  box-shadow: 0 24px 60px -32px rgba(28, 74, 46, 0.15);
+}
+
 .landing-page .landing-nav-link {
   position: relative;
 }

@@ -7,11 +7,11 @@ import type { LandingPreviewStats } from "@/services/landing";
 type SectionTone = "base" | "white" | "muted" | "ink" | "accent";
 
 const TONE: Record<SectionTone, string> = {
-  base: "bg-[#FAFAF5]",
-  white: "bg-white",
-  muted: "bg-[#F7F7F2]",
-  ink: "bg-[#0D0D0B] text-white",
-  accent: "bg-[#EEF5F1]",
+  base: "bg-[#FAFAF5] landing-section-base",
+  white: "bg-white landing-section-white",
+  muted: "bg-[#F7F7F2] landing-section-muted",
+  ink: "bg-[#0D0D0B] text-white landing-section-ink",
+  accent: "bg-[#EEF5F1] landing-section-accent",
 };
 
 /** Shared surface styles for landing cards */
@@ -95,12 +95,15 @@ export function SectionIntro({
   const alignClass = align === "center" ? "mx-auto text-center" : "max-w-2xl";
   return (
     <header className={`mb-14 md:mb-20 ${alignClass}`}>
-      <DxCaps
-        accent={!light}
-        className={`mb-4 block ${light ? "text-[#3D9660]" : ""}`}
-      >
-        {eyebrow}
-      </DxCaps>
+      <div className={`mb-4 flex items-center gap-3 ${align === "center" ? "justify-center" : ""}`}>
+        <span
+          className={`h-px w-8 ${light ? "bg-[#3D9660]" : "bg-[#1C4A2E]"}`}
+          aria-hidden
+        />
+        <DxCaps accent={!light} className={light ? "text-[#3D9660]" : ""}>
+          {eyebrow}
+        </DxCaps>
+      </div>
       <h2
         className={`${dxClass.sectionTitle} ${light ? "text-white" : ""} ${align === "center" ? "mx-auto" : ""}`}
       >
@@ -294,7 +297,7 @@ export function LandingDashboardMockup({
         className="pointer-events-none absolute -inset-4 -z-10 bg-gradient-to-br from-[#C6DDD0]/40 via-transparent to-[#E4E4DC]/30 blur-2xl"
         aria-hidden
       />
-      <div className="overflow-hidden border border-[#E4E4DC] bg-white shadow-[0_32px_100px_-20px_rgba(13,13,11,0.18)] ring-1 ring-[#0D0D0B]/[0.04]">
+      <div className="landing-mock-frame relative overflow-hidden border border-[#E4E4DC] bg-white shadow-[0_32px_100px_-20px_rgba(13,13,11,0.18)] ring-1 ring-[#0D0D0B]/[0.04]">
         <div className="flex items-center border-b border-white/10 bg-[#0a0e14] px-5 py-3.5">
           <div className="flex gap-1.5" aria-hidden>
             <span className="size-2 rounded-full bg-[#C0392B]/80" />

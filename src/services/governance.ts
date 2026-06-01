@@ -136,12 +136,13 @@ async function getOrgContext() {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("users")
     .select("organisation_id")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
+  if (profileError) throw profileError;
   if (!profile?.organisation_id) throw new Error("No organisation");
 
   return {

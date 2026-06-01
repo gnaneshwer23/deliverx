@@ -45,10 +45,12 @@ async function getContext() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("users")
     .select("organisation_id")
-    .single();
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profileError) throw profileError;
   if (!profile?.organisation_id) throw new Error("No organisation");
   return {
     supabase,
@@ -211,10 +213,16 @@ async function loadOrgWideInputsForOrg(
 
 async function loadOrgWideInputs() {
   const supabase = await createClient();
-  const { data: profile } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+  const { data: profile, error: profileError } = await supabase
     .from("users")
     .select("organisation_id")
-    .single();
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profileError) throw profileError;
   if (!profile?.organisation_id) throw new Error("No organisation");
   return loadOrgWideInputsForOrg(profile.organisation_id as string, supabase);
 }
