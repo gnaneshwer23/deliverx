@@ -17,7 +17,7 @@ import {
   type ChangeStatus,
 } from "@/services/governance";
 
-export type ActionState = { ok: boolean; error?: string };
+export type ActionState = { ok: boolean; error?: string; warning?: string };
 
 function revalidateGovernance(projectId: string) {
   revalidatePath(`/project/${projectId}`);
@@ -228,9 +228,15 @@ export async function publishReportAction(
     .filter(Boolean);
 
   try {
-    await publishReport(reportId, stakeholderEmails);
+    const report = await publishReport(reportId, stakeholderEmails);
     revalidateGovernance(projectId);
     revalidatePath(`/project/${projectId}/reports/${reportId}`);
+    if (stakeholderEmails.length > 0 && report.emailSent === false) {
+      return {
+        ok: true,
+        warning: `Report published but email not sent: ${report.emailError ?? "email not configured"}`,
+      };
+    }
     return { ok: true };
   } catch (err) {
     return {

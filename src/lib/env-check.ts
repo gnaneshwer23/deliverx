@@ -35,6 +35,7 @@ export type EnvDiagnostics = {
   };
   optional: {
     cron: boolean;
+    email: boolean;
   };
   checks: EnvCheckItem[];
   hints: string[];
@@ -88,6 +89,18 @@ export function getEnvDiagnostics(): EnvDiagnostics {
       required: false,
       hint: "Vercel production — twin (06:00 UTC) + coordination/global loops (07:00 UTC)",
     },
+    {
+      key: "RESEND_API_KEY",
+      ok: isEnvSet("RESEND_API_KEY"),
+      required: false,
+      hint: "https://resend.com — report publish emails to stakeholders",
+    },
+    {
+      key: "EMAIL_FROM",
+      ok: isEnvSet("EMAIL_FROM"),
+      required: false,
+      hint: "Verified sender in Resend, e.g. DeliverX <reports@yourdomain.com>",
+    },
   ];
 
   const supabaseMissing = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
@@ -117,6 +130,11 @@ export function getEnvDiagnostics(): EnvDiagnostics {
   if (supabaseMissing.length) {
     hints.push("Fix Supabase variables or login and database calls will fail.");
   }
+  if (!isEnvSet("RESEND_API_KEY")) {
+    hints.push(
+      "Optional: add RESEND_API_KEY and EMAIL_FROM to email published reports to stakeholders.",
+    );
+  }
 
   return {
     ai: {
@@ -135,6 +153,7 @@ export function getEnvDiagnostics(): EnvDiagnostics {
     },
     optional: {
       cron: isEnvSet("CRON_SECRET"),
+      email: isEnvSet("RESEND_API_KEY"),
     },
     checks,
     hints,
