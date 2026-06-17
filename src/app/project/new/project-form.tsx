@@ -8,6 +8,7 @@ import { DxBadge } from "@/components/dx/dx-badge";
 import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import { dxClass } from "@/lib/dx-theme";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
+import { businessCaseRecommendationLabel } from "@/lib/business-case/constants";
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
 import { ProjectCreationStepper } from "@/components/project/project-creation-stepper";
 import { ProjectDiscoveryChat } from "@/components/project/project-discovery-chat";
@@ -346,25 +347,49 @@ export function ProjectForm({
   if (step === "review" && review) {
     const scoreTone =
       review.score >= 75 ? "green" : review.score >= 50 ? "amber" : "red";
+    const recTone =
+      review.recommendation === "go"
+        ? "green"
+        : review.recommendation === "no_go"
+          ? "red"
+          : "amber";
 
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="review" />
         <StepHeader n={2} label="AI review" />
-        <div className={`${dxClass.cardPad} flex items-center justify-between gap-4`}>
+        <div className={`${dxClass.cardPad} flex flex-wrap items-center justify-between gap-4`}>
           <div>
-            <p className={dxClass.label}>Readiness score</p>
+            <p className={dxClass.label}>Business case health</p>
             <p className={`${dxClass.display} text-3xl`}>{review.score}%</p>
           </div>
-          <DxBadge tone={scoreTone}>{review.score >= 75 ? "Ready" : review.score >= 50 ? "Gaps" : "Needs work"}</DxBadge>
+          <div className="flex flex-wrap gap-2">
+            <DxBadge tone={recTone}>{businessCaseRecommendationLabel(review.recommendation)}</DxBadge>
+            <DxBadge tone={scoreTone}>
+              {review.score >= 75 ? "Ready" : review.score >= 50 ? "Gaps" : "Needs work"}
+            </DxBadge>
+          </div>
         </div>
-        <p className="text-sm text-[#2C2C28]">{review.summary}</p>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <ScoreTile label="Feasibility" value={review.feasibilityScore} />
+          <ScoreTile label="Risk" value={review.riskScore} invert />
+          <ScoreTile label="Innovation" value={review.innovationScore} />
+          <ScoreTile label="Financial confidence" value={review.financialConfidence} />
+          <ScoreTile label="Delivery confidence" value={review.deliveryConfidence} />
+        </div>
+
+        <p className="text-sm font-medium text-[#2C2C28]">{review.executiveSummary}</p>
+        <p className="text-sm text-[#6B6B64]">{review.summary}</p>
 
         {review.strengths.length > 0 ? (
           <ReviewList title="Strengths" items={review.strengths} tone="green" />
         ) : null}
         {review.gaps.length > 0 ? (
           <ReviewList title="Gaps to address" items={review.gaps} tone="amber" />
+        ) : null}
+        {review.missingInformation.length > 0 ? (
+          <ReviewList title="Missing information" items={review.missingInformation} tone="amber" />
         ) : null}
         {review.initialRisks.length > 0 ? (
           <ReviewList title="Initial risks detected" items={review.initialRisks} tone="red" />
@@ -595,6 +620,27 @@ function PreviewSection({
         ))}
         {more ? <li className="text-[#A8A89E]">+{more} more</li> : null}
       </ul>
+    </div>
+  );
+}
+
+function ScoreTile({
+  label,
+  value,
+  invert = false,
+}: {
+  label: string;
+  value: number;
+  invert?: boolean;
+}) {
+  const effective = invert ? 100 - value : value;
+  const tone =
+    effective >= 75 ? "text-[#1C4A2E]" : effective >= 50 ? "text-[#8B6914]" : "text-[#8B2E2E]";
+
+  return (
+    <div className="border border-[#E4E4DC] bg-white p-3">
+      <p className={dxClass.label}>{label}</p>
+      <p className={`${dxClass.display} text-xl ${tone}`}>{value}%</p>
     </div>
   );
 }
