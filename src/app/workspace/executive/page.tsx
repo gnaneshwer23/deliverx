@@ -5,6 +5,8 @@ import { getDefaultPortfolio, getPortfolioSnapshot } from "@/services/portfolio"
 import { getPmoSnapshot } from "@/services/portfolio";
 import { getOrgGovernanceStats } from "@/services/governance";
 import { getOrgAlertQueue } from "@/services/alerts";
+import { getDeliveryEvalMetrics } from "@/services/intelligenceMetrics";
+import { IntelligenceMetricsPanel } from "@/components/intelligence/intelligence-metrics-panel";
 import { DxPageHeader, DxStatCard } from "@/components/dx/dx-page-chrome";
 import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { ExecutiveSummary } from "@/components/portfolio/executive-summary";
@@ -24,10 +26,11 @@ export default async function ExecutiveDashboardPage() {
   }
 
   const portfolioMeta = await getDefaultPortfolio();
-  const [pmo, governance, alerts] = await Promise.all([
+  const [pmo, governance, alerts, evalMetrics] = await Promise.all([
     getPmoSnapshot(),
     getOrgGovernanceStats(),
     getOrgAlertQueue(8),
+    getDeliveryEvalMetrics().catch(() => null),
   ]);
 
   let healthScore = 0;
@@ -61,6 +64,18 @@ export default async function ExecutiveDashboardPage() {
         </div>
 
         <ExecutiveSummary summary={pmo.executiveSummary} />
+
+        {evalMetrics ? (
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className={`${dxClass.display} text-lg`}>Delivery learning</h2>
+              <Link href="/workspace/intelligence" className="text-xs text-[#1C4A2E] underline">
+                Full intelligence →
+              </Link>
+            </div>
+            <IntelligenceMetricsPanel metrics={evalMetrics} />
+          </section>
+        ) : null}
 
         <section>
           <h2 className={`${dxClass.display} mb-3 text-lg`}>Strategic alerts</h2>

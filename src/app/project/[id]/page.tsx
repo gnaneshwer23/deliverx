@@ -13,6 +13,8 @@ import { ConfidenceCard } from "@/components/intelligence/confidence-card";
 import { DeliveryForecastCard } from "@/components/intelligence/delivery-forecast-card";
 import { DeliverySuccessScoreCard } from "@/components/intelligence/delivery-success-score-card";
 import { EstimationPacksPanel } from "@/components/intelligence/estimation-packs-panel";
+import { DeliveryNarratorPanel } from "@/components/intelligence/delivery-narrator-panel";
+import { DeliveryBriefingPanel } from "@/components/intelligence/delivery-briefing-panel";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
 import { DriftPanel } from "@/components/intelligence/drift-panel";
 import { BlockerInsights } from "@/components/intelligence/blocker-insights";
@@ -199,6 +201,11 @@ export default async function ProjectOverviewPage({
             </div>
 
             <EstimationPacksPanel projectId={id} packs={estimationPacks} />
+
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+              <DeliveryNarratorPanel projectId={id} projectName={projectName} />
+              <DeliveryBriefingPanel projectId={id} />
+            </div>
 
             <TraceabilityPanel projectId={id} trace={trace} compact />
 

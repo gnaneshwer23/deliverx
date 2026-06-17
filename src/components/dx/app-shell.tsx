@@ -49,6 +49,7 @@ const intelligence = [
   { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
   { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
   { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },
+  { href: "/workspace/intelligence", label: "Learning", icon: BrainCircuit, id: "learn" },
   { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, id: "twin" },
   { href: "/workspace/global", label: "Global Intel", icon: Globe2, id: "global" },
   { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit, id: "coord" },

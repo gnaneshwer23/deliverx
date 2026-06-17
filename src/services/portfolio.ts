@@ -360,7 +360,7 @@ export async function getPortfolioSnapshot(
   return { snapshot, programmes: programmeSummaries };
 }
 
-async function persistForecast(projectId: string, forecast: Forecast) {
+async function persistForecast(projectId: string, forecast: DeliveryForecast) {
   try {
     const { supabase, orgId } = await getContext();
     const { data: latest } = await supabase
@@ -382,6 +382,9 @@ async function persistForecast(projectId: string, forecast: Forecast) {
       project_id: projectId,
       prediction: forecast.prediction,
       confidence: forecast.confidence,
+      expected_date:
+        "expectedDate" in forecast ? forecast.expectedDate : null,
+      delay_days: "delayDays" in forecast ? forecast.delayDays : null,
     });
   } catch {
     /* table may not exist yet */
