@@ -2,20 +2,36 @@
 
 import { useActionState } from "react";
 import { createMeetingAction, type ActionState } from "../governance/actions";
+import { MeetingCeremonySelect } from "@/components/meetings/meeting-ceremony";
+import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
+import { getCeremonyTemplate } from "@/lib/ai/prompts/meeting-ceremonies";
 
 const initial: ActionState = { ok: false };
 const inputClass =
   "mt-1 w-full rounded-md border border-slate-300 bg-white px-3 text-sm outline-none ring-[#0F766E]/40 focus:border-[#0F766E] focus:ring-2";
 
-export function MeetingForm({ projectId }: { projectId: string }) {
+export function MeetingForm({
+  projectId,
+  defaultCeremony = "general",
+}: {
+  projectId: string;
+  defaultCeremony?: MeetingCeremonyType;
+}) {
   const [state, action, pending] = useActionState(createMeetingAction, initial);
+  const template = getCeremonyTemplate(defaultCeremony);
 
   return (
     <form action={action} className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
       <input type="hidden" name="projectId" value={projectId} />
+      <MeetingCeremonySelect defaultValue={defaultCeremony} />
       <label className="block">
         <span className="text-sm font-medium text-slate-700">Title</span>
-        <input name="title" required className={`${inputClass} h-10`} />
+        <input
+          name="title"
+          required
+          defaultValue={defaultCeremony !== "general" ? template.defaultTitle : undefined}
+          className={`${inputClass} h-10`}
+        />
       </label>
       <label className="block">
         <span className="text-sm font-medium text-slate-700">Scheduled at</span>

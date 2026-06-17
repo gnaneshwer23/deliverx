@@ -113,7 +113,10 @@ export default async function ScrumMissionControlPage({
         <ScrumImpedimentsPanel impediments={data.impediments} insight={data.impedimentInsight} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumCeremoniesPanel ceremonies={data.ceremonies} />
+          <ScrumCeremoniesPanel
+            projectId={data.primaryProject?.id}
+            ceremonies={data.ceremonies}
+          />
           <ScrumStandupPanel summary={data.standupSummary} />
         </div>
 

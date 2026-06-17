@@ -9,11 +9,29 @@ import {
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { MeetingCeremonyBadge } from "@/components/meetings/meeting-ceremony";
+import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
+import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
+import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 import { MeetingForm } from "./meeting-form";
 import { MeetingAiPanel } from "./meeting-ai-panel";
 
 type Params = Promise<{ id: string }>;
-type Search = Promise<{ page?: string }>;
+type Search = Promise<{ page?: string; ceremony?: string }>;
+
+const VALID_CEREMONIES = new Set([
+  "general",
+  "standup",
+  "planning",
+  "retro",
+  "steering",
+  "workshop",
+]);
+
+function parseCeremony(raw?: string): MeetingCeremonyType {
+  if (raw && VALID_CEREMONIES.has(raw)) return raw as MeetingCeremonyType;
+  return "general";
+}
 
 export default async function ProjectMeetingsPage({
   params,
@@ -23,12 +41,28 @@ export default async function ProjectMeetingsPage({
   searchParams: Search;
 }) {
   const { id } = await params;
-  const { page: pageRaw } = await searchParams;
+  const { page: pageRaw, ceremony: ceremonyRaw } = await searchParams;
   const page = parsePageParam(pageRaw);
+  const defaultCeremony = parseCeremony(ceremonyRaw);
 
-  const [meetings, total] = await Promise.all([
+  const [meetings, total, intelligenceStats] = await Promise.all([
     listMeetings(id, { page, pageSize: DEFAULT_PAGE_SIZE }),
     countMeetings(id),
+    getProjectMeetingIntelligenceStats(id).catch(() => ({
+      totalMeetings: 0,
+      withExtraction: 0,
+      withTranscript: 0,
+      pendingProposals: 0,
+      byCeremony: {
+        general: 0,
+        standup: 0,
+        planning: 0,
+        retro: 0,
+        steering: 0,
+        workshop: 0,
+      },
+      recent: [],
+    })),
   ]);
   const pages = totalPages(total, DEFAULT_PAGE_SIZE);
 
@@ -40,11 +74,13 @@ export default async function ProjectMeetingsPage({
     <main className="p-6">
       <PageHeader
         title="Meetings"
-        description="Upload recordings for transcription, capture notes, and generate AI summaries."
+        description="Pick a ceremony template, upload recordings for transcription, and extract structured actions into the approval queue."
         icon={CalendarDays}
       />
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+      <MeetingIntelligencePanel projectId={id} stats={intelligenceStats} />
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>
           {meetings.length === 0 ? (
             <EmptyState title="No meetings yet" description="Schedule your first meeting." />
@@ -56,6 +92,7 @@ export default async function ProjectMeetingsPage({
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <h2 className="font-semibold">{m.title}</h2>
                       <div className="flex items-center gap-2">
+                        <MeetingCeremonyBadge type={m.ceremony_type ?? "general"} />
                         {m.recording_path ? (
                           <span className="rounded bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-700">
                             Recording
@@ -92,6 +129,7 @@ export default async function ProjectMeetingsPage({
                       title={m.title}
                       notes={m.notes}
                       hasSummary={Boolean(m.summary)}
+                      ceremonyType={m.ceremony_type ?? "general"}
                     />
                   </article>
                 ))}
@@ -107,7 +145,7 @@ export default async function ProjectMeetingsPage({
         </div>
         <div>
           <h2 className="mb-3 text-sm font-semibold text-slate-700">New meeting</h2>
-          <MeetingForm projectId={id} />
+          <MeetingForm projectId={id} defaultCeremony={defaultCeremony} />
         </div>
       </div>
     </main>

@@ -14,6 +14,7 @@ import {
   type RaidSeverity,
   type DecisionStatus,
   type MeetingStatus,
+  type MeetingCeremonyType,
   type ChangeStatus,
 } from "@/services/governance";
 
@@ -104,6 +105,7 @@ export async function createMeetingAction(
   const notes = String(formData.get("notes") ?? "");
   const summary = String(formData.get("summary") ?? "");
   const status = String(formData.get("status") ?? "scheduled") as MeetingStatus;
+  const ceremonyType = String(formData.get("ceremonyType") ?? "general") as MeetingCeremonyType;
 
   try {
     await createMeeting({
@@ -113,6 +115,7 @@ export async function createMeetingAction(
       notes,
       summary,
       status,
+      ceremonyType,
     });
     revalidateGovernance(projectId);
     return { ok: true };

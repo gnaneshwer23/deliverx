@@ -10,6 +10,13 @@ export type RaidStatus = "open" | "mitigated" | "closed" | "accepted";
 export type RaidSeverity = "low" | "medium" | "high" | "critical";
 export type DecisionStatus = "proposed" | "approved" | "rejected" | "superseded";
 export type MeetingStatus = "scheduled" | "completed" | "cancelled";
+export type MeetingCeremonyType =
+  | "general"
+  | "standup"
+  | "planning"
+  | "retro"
+  | "steering"
+  | "workshop";
 export type ChangeStatus =
   | "draft"
   | "submitted"
@@ -62,6 +69,9 @@ export type MeetingRow = {
   transcript: string | null;
   recording_path: string | null;
   ai_summary: string | null;
+  ceremony_type: MeetingCeremonyType;
+  extraction_json: Record<string, unknown> | null;
+  proposals_queued_at: string | null;
   status: MeetingStatus;
   created_by: string | null;
   created_at: string;
@@ -550,6 +560,7 @@ export async function createMeeting(input: {
   notes?: string;
   summary?: string;
   status?: MeetingStatus;
+  ceremonyType?: MeetingCeremonyType;
 }): Promise<MeetingRow> {
   const { supabase, orgId, userId } = await getOrgContext();
   await assertProjectInOrg(supabase, orgId, input.projectId);
@@ -563,6 +574,7 @@ export async function createMeeting(input: {
       scheduled_at: input.scheduledAt ?? null,
       notes: input.notes?.trim() || null,
       summary: input.summary?.trim() || null,
+      ceremony_type: input.ceremonyType ?? "general",
       status: input.status ?? "scheduled",
       created_by: userId,
     })
@@ -578,7 +590,17 @@ export async function updateMeeting(
   patch: Partial<
     Pick<
       MeetingRow,
-      "title" | "scheduled_at" | "notes" | "summary" | "status" | "transcript" | "recording_path"
+      | "title"
+      | "scheduled_at"
+      | "notes"
+      | "summary"
+      | "status"
+      | "transcript"
+      | "recording_path"
+      | "ceremony_type"
+      | "extraction_json"
+      | "ai_summary"
+      | "proposals_queued_at"
     >
   >,
 ): Promise<MeetingRow> {

@@ -9,6 +9,8 @@ import type { MeetingSummaryResult } from "@/services/aiGovernance";
 import { saveMeetingSummaryAction, type ActionState } from "../ai/actions";
 import { MeetingAlignmentPreview } from "@/components/alignment/meeting-alignment-preview";
 import { MeetingAudioUpload } from "@/components/meetings/meeting-audio-upload";
+import { MeetingCeremonyBadge } from "@/components/meetings/meeting-ceremony";
+import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 
 const initial: ActionState = { ok: false };
 
@@ -23,12 +25,14 @@ export function MeetingAiPanel({
   title,
   notes,
   hasSummary,
+  ceremonyType = "general",
 }: {
   projectId: string;
   meetingId: string;
   title: string;
   notes: string | null;
   hasSummary: boolean;
+  ceremonyType?: MeetingCeremonyType;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -99,6 +103,10 @@ export function MeetingAiPanel({
 
   return (
     <div className="mt-3 border-t border-slate-100 pt-3">
+      <div className="mb-2 flex items-center gap-2">
+        <MeetingCeremonyBadge type={ceremonyType} />
+        <span className="text-[10px] text-slate-400">Ceremony-aware extraction</span>
+      </div>
       <MeetingAudioUpload projectId={projectId} meetingId={meetingId} />
       {!draft ? (
         <>
@@ -141,6 +149,25 @@ export function MeetingAiPanel({
             <div className="text-xs text-slate-600">
               <span className="font-medium">Actions:</span> {draft.actions.join("; ")}
             </div>
+          ) : null}
+          {draft.blockers?.length ? (
+            <div className="text-xs text-slate-600">
+              <span className="font-medium">Blockers:</span>{" "}
+              {draft.blockers.map((b) => b.title).join("; ")}
+            </div>
+          ) : null}
+          {draft.dependencies?.length ? (
+            <div className="text-xs text-slate-600">
+              <span className="font-medium">Dependencies:</span>{" "}
+              {draft.dependencies.map((d) => d.title).join("; ")}
+            </div>
+          ) : null}
+          {draft.ceremonyInsights?.length ? (
+            <ul className="list-inside list-disc text-xs text-slate-600">
+              {draft.ceremonyInsights.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
           ) : null}
           <MeetingAlignmentPreview
             projectId={projectId}

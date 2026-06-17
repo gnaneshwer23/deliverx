@@ -22,7 +22,9 @@ import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-st
 import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { ProjectMemoryPanel } from "@/components/memory/project-memory-panel";
+import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
+import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +51,9 @@ export default async function PmMissionControlPage({
         totalChunks: 0,
         bySource: {},
       }))
+    : undefined;
+  const meetingStats = data.primaryProject
+    ? await getProjectMeetingIntelligenceStats(data.primaryProject.id).catch(() => undefined)
     : undefined;
 
   return (
@@ -118,6 +123,10 @@ export default async function PmMissionControlPage({
         <ProjectMemoryPanel
           projectId={data.primaryProject?.id}
           initialStats={memoryStats}
+        />
+        <MeetingIntelligencePanel
+          projectId={data.primaryProject?.id}
+          stats={meetingStats}
         />
         <DeliveryRaidPanel raid={data.raid} />
 

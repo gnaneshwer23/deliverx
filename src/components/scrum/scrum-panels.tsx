@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ScrumMissionControl } from "@/services/scrumDashboard";
 import type {
   CrossRoleScrumImpact,
@@ -127,17 +128,46 @@ export function ScrumImpedimentsPanel({
   );
 }
 
-export function ScrumCeremoniesPanel({ ceremonies }: { ceremonies: string[] }) {
+export function ScrumCeremoniesPanel({
+  projectId,
+  ceremonies,
+}: {
+  projectId?: string;
+  ceremonies: string[];
+}) {
+  const links = [
+    { id: "standup", label: "Daily standup", href: projectId ? `/project/${projectId}/meetings?ceremony=standup` : null },
+    { id: "planning", label: "Sprint planning", href: projectId ? `/project/${projectId}/meetings?ceremony=planning` : null },
+    { id: "retro", label: "Retrospective", href: projectId ? `/project/${projectId}/meetings?ceremony=retro` : null },
+    { id: "steering", label: "Steering committee", href: projectId ? `/project/${projectId}/meetings?ceremony=steering` : null },
+  ];
+
   return (
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Ceremony manager</h3>
       <ul className="space-y-2">
-        {ceremonies.map((c) => (
-          <li key={c} className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-4 py-2 text-sm">
-            {c}
+        {links.map((c) => (
+          <li key={c.id}>
+            {c.href ? (
+              <Link
+                href={c.href}
+                className="block rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-4 py-2 text-sm text-[#1C4A2E] hover:underline"
+              >
+                {c.label}
+              </Link>
+            ) : (
+              <span className="block rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-4 py-2 text-sm">
+                {c.label}
+              </span>
+            )}
           </li>
         ))}
       </ul>
+      {ceremonies.length > 0 ? (
+        <p className="mt-4 text-xs text-[#6B6B64]">
+          AI cadence: {ceremonies.join(" · ")}
+        </p>
+      ) : null}
     </div>
   );
 }

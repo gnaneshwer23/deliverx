@@ -5,12 +5,17 @@ import {
   applyMeetingAiResult,
   createReport,
   createRaidItem,
+  getMeeting,
   type RaidItemType,
   type RaidSeverity,
 } from "@/services/governance";
 import type { MeetingSummaryResult, RaidSuggestion } from "@/services/aiGovernance";
 import { computeProjectAlignment } from "@/services/alignment";
-import { meetingResultToProposals } from "@/services/meetingProposals";
+import {
+  intelligenceResultToProposals,
+  persistMeetingExtraction,
+} from "@/services/meetingIntelligence";
+import { syncProjectMemory } from "@/services/projectMemoryRag";
 import { queueProposals } from "@/services/proposedActions";
 
 export type ActionState = {
@@ -58,6 +63,9 @@ export async function saveMeetingSummaryAction(
   }
 
   try {
+    const meeting = await getMeeting(meetingId);
+    const ceremonyType = meeting?.ceremony_type ?? "general";
+
     await applyMeetingAiResult({
       projectId,
       meetingId,
@@ -70,7 +78,7 @@ export async function saveMeetingSummaryAction(
 
     let queuedProposals = 0;
     if (queueToApproval) {
-      const proposals = meetingResultToProposals(payload, meetingTitle);
+      const proposals = intelligenceResultToProposals(payload, meetingTitle, ceremonyType);
       const queued = await queueProposals({
         projectId,
         source: "meeting",
@@ -79,6 +87,16 @@ export async function saveMeetingSummaryAction(
       });
       queuedProposals = queued.length;
     }
+
+    await persistMeetingExtraction({
+      meetingId,
+      projectId,
+      summary,
+      extraction: payload,
+      proposalsQueued: queuedProposals > 0,
+    });
+
+    void syncProjectMemory(projectId).catch(() => undefined);
 
     const alignment = await computeProjectAlignment(projectId, {
       meetingId,
