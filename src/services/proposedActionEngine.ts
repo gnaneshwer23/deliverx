@@ -6,9 +6,19 @@ export type ProposalActionType =
   | "create_task"
   | "create_raid"
   | "create_decision"
-  | "calendar_event";
+  | "calendar_event"
+  | "create_requirement"
+  | "create_feature"
+  | "apply_structure";
 
-export type ProposalSource = "meeting" | "assistant";
+export type ProposalSource =
+  | "meeting"
+  | "assistant"
+  | "bootstrap"
+  | "ba"
+  | "product"
+  | "report"
+  | "structure";
 
 export type ProposalStatus = "pending" | "approved" | "rejected" | "applied";
 
@@ -72,4 +82,7 @@ export const ACTION_TYPE_LABELS: Record<ProposalActionType, string> = {
   create_raid: "Create RAID item",
   create_decision: "Log decision",
   calendar_event: "Schedule calendar event",
+  create_requirement: "Create requirement",
+  create_feature: "Create feature",
+  apply_structure: "Apply delivery structure",
 };

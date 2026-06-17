@@ -15,7 +15,7 @@ import {
   structureProjectFromBrief,
   type ProjectStructureDraft,
 } from "./aiProjectStructuring";
-import { applyProjectStructure } from "./applyProjectStructure";
+import { queueArtifactReview } from "./artifactReviews";
 import { upsertCharter } from "./charter";
 import { getFounderContext } from "./founderContext";
 
@@ -33,8 +33,10 @@ export type ProjectBootstrapSummary = {
     raidItems: number;
     milestones: number;
     stakeholders: number;
+    pendingApproval?: boolean;
   };
   personas: Record<string, PersonaBootstrapResult>;
+  pendingArtifactReviews?: number;
 };
 
 export type BootstrapProjectInput = {
@@ -146,13 +148,22 @@ export async function bootstrapProjectWorkspaces(
     }
     draft = mergeRaidFromReport(draft, input.bcReport);
 
-    const applied = await applyProjectStructure(input.projectId, draft);
+    await queueArtifactReview({
+      projectId: input.projectId,
+      entityType: "structure_bundle",
+      title: "Delivery structure from business case",
+      summary: `${draft.workstreams.length} workstreams, ${draft.tasks.length} tasks, ${draft.raidItems.length} RAID items — approve to apply.`,
+      source: "bootstrap",
+      payload: { draft },
+    });
+
     summary.structure = {
-      workstreams: applied.workstreams,
-      tasks: applied.tasks,
-      raidItems: applied.raidItems,
-      milestones: applied.milestones,
-      stakeholders: applied.stakeholders,
+      workstreams: draft.workstreams.length,
+      tasks: draft.tasks.length,
+      raidItems: draft.raidItems.length,
+      milestones: draft.milestones.length,
+      stakeholders: draft.stakeholders.length,
+      pendingApproval: true,
     };
 
     const founderCtx = await getFounderContext().catch(() => null);
@@ -166,6 +177,7 @@ export async function bootstrapProjectWorkspaces(
             projectName: input.projectName,
             projectType: input.deliveryType,
             content,
+            requireApproval: true,
           }),
       },
       {
@@ -176,6 +188,7 @@ export async function bootstrapProjectWorkspaces(
             projectName: input.projectName,
             productType: input.deliveryType,
             content,
+            requireApproval: true,
           }),
       },
       {
@@ -240,6 +253,8 @@ export async function bootstrapProjectWorkspaces(
         };
       }
     });
+
+    summary.pendingArtifactReviews = 3;
 
     const failed = Object.values(summary.personas).filter((p) => !p.ok).length;
     const status: BootstrapStatus = failed === 0 ? "complete" : "partial";

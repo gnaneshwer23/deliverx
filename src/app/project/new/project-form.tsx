@@ -520,9 +520,9 @@ export function ProjectForm({
             <span className="text-sm font-medium text-[#1C4A2E]">GO-triggered workspace generation</span>
           </div>
           <p className="text-xs text-[#6B6B64]">
-            On create, DeliverX will automatically apply delivery structure and seed all seven persona
-            workspaces — Founder, Product, PM, BA, Engineer, QA, and Scrum Master — from your
-            accepted business case.
+            On create, DeliverX will generate delivery structure, requirements, and product roadmap
+            drafts for all seven persona workspaces. AI outputs land in the{" "}
+            <strong>Approval centre</strong> — approve before they apply to production data.
           </p>
         </div>
       ) : brief.trim() ? (

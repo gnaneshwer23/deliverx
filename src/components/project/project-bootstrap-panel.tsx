@@ -84,8 +84,12 @@ export function ProjectBootstrapPanel({
         </ul>
       ) : isRunning ? (
         <p className="mt-1 text-xs text-[#6B6B64]">
-          Applying structure, requirements, product roadmap, and persona contexts from your business
-          case.
+          Seeding persona contexts. AI-generated structure, requirements, and features will appear
+          in the{" "}
+          <a href="/workspace/proposals" className="font-medium text-[#1C4A2E] underline">
+            Approval centre
+          </a>{" "}
+          for sign-off.
         </p>
       ) : null}
       {status === "partial" && failed.length > 0 ? (

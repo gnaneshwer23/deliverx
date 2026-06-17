@@ -209,7 +209,8 @@ export async function bulkInsertRequirements(
     flags?: string[];
     status?: string;
   }>,
-): Promise<number> {
+  options?: { requireApproval?: boolean },
+): Promise<{ count: number; ids: string[] }> {
   const { supabase, orgId } = await getOrgContext();
   const { count } = await supabase
     .from("requirements")
@@ -217,6 +218,7 @@ export async function bulkInsertRequirements(
     .eq("project_id", projectId);
 
   let seq = (count ?? 0) + 1;
+  const requireApproval = options?.requireApproval ?? false;
   const rows = items.map((item) => {
     const code = `REQ-${String(seq++).padStart(3, "0")}`;
     return {
@@ -231,13 +233,15 @@ export async function bulkInsertRequirements(
       flags: item.flags ?? [],
       status: item.status ?? "draft",
       source: "ai_extraction",
+      ai_generated: requireApproval,
+      review_status: requireApproval ? "needs_review" : "draft",
     };
   });
 
-  if (rows.length === 0) return 0;
-  const { error } = await supabase.from("requirements").insert(rows);
+  if (rows.length === 0) return { count: 0, ids: [] };
+  const { data, error } = await supabase.from("requirements").insert(rows).select("id");
   if (error) throw error;
-  return rows.length;
+  return { count: rows.length, ids: (data ?? []).map((r) => r.id as string) };
 }
 
 export async function bulkInsertClarifications(

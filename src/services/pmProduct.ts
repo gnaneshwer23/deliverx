@@ -179,7 +179,8 @@ export async function bulkInsertFeatures(
     linkedStakeholders?: string[];
     status?: string;
   }>,
-): Promise<number> {
+  options?: { requireApproval?: boolean },
+): Promise<{ count: number; ids: string[] }> {
   const { supabase, orgId } = await getOrgContext();
   const { count } = await supabase
     .from("product_features")
@@ -187,6 +188,7 @@ export async function bulkInsertFeatures(
     .eq("project_id", projectId);
 
   let seq = (count ?? 0) + 1;
+  const requireApproval = options?.requireApproval ?? false;
   const sorted = [...items].sort((a, b) => b.rice.score - a.rice.score);
 
   const rows = sorted.map((item, index) => ({
@@ -200,12 +202,14 @@ export async function bulkInsertFeatures(
     horizon: item.horizon,
     priority_rank: index + 1,
     linked_stakeholders: item.linkedStakeholders ?? [],
+    ai_generated: requireApproval,
+    review_status: requireApproval ? "needs_review" : "draft",
   }));
 
-  if (rows.length === 0) return 0;
-  const { error } = await supabase.from("product_features").insert(rows);
+  if (rows.length === 0) return { count: 0, ids: [] };
+  const { data, error } = await supabase.from("product_features").insert(rows).select("id");
   if (error) throw error;
-  return rows.length;
+  return { count: rows.length, ids: (data ?? []).map((r) => r.id as string) };
 }
 
 export async function bulkInsertInsights(

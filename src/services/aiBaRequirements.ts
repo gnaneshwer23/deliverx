@@ -17,6 +17,7 @@ import {
   insertUserStory,
   upsertBaProjectContext,
 } from "./baRequirements";
+import { queueArtifactReview } from "./artifactReviews";
 
 export type BaExtractionResult = {
   businessContext: Record<string, unknown>;
@@ -44,6 +45,7 @@ export async function extractRequirementsFromContent(input: {
   projectName: string;
   projectType?: string | null;
   content: string;
+  requireApproval?: boolean;
 }): Promise<BaExtractionResult> {
   const result = await generateJSON<BaExtractionResult>({
     system: BA_EXTRACTION_SYSTEM,
@@ -66,7 +68,7 @@ export async function extractRequirementsFromContent(input: {
     extractionStatus: "complete",
   });
 
-  const reqCount = await bulkInsertRequirements(
+  const { count: reqCount, ids: reqIds } = await bulkInsertRequirements(
     input.projectId,
     (result.requirements ?? []).map((r) => ({
       type: normalizeReqType(r.type),
@@ -84,7 +86,20 @@ export async function extractRequirementsFromContent(input: {
           ? "pending_clarification"
           : "draft",
     })),
+    { requireApproval: input.requireApproval },
   );
+
+  if (input.requireApproval && reqIds.length > 0) {
+    await queueArtifactReview({
+      projectId: input.projectId,
+      entityType: "requirement",
+      entityIds: reqIds,
+      title: `${reqCount} requirements from business case`,
+      summary: result.aiSummary || "AI-extracted requirements pending sponsor approval.",
+      source: "bootstrap",
+      payload: { count: reqCount },
+    });
+  }
 
   await bulkInsertClarifications(
     input.projectId,

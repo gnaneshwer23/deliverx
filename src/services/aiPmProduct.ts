@@ -16,6 +16,7 @@ import {
   bulkInsertSegments,
   upsertPmProductContext,
 } from "./pmProduct";
+import { queueArtifactReview } from "./artifactReviews";
 
 export type PmExtractionResult = {
   productContext: Record<string, unknown>;
@@ -50,6 +51,7 @@ export async function extractProductFromContent(input: {
   projectName: string;
   productType?: string | null;
   content: string;
+  requireApproval?: boolean;
 }): Promise<PmExtractionResult> {
   const result = await generateJSON<PmExtractionResult>({
     system: PM_EXTRACTION_SYSTEM,
@@ -76,7 +78,7 @@ export async function extractProductFromContent(input: {
     extractionStatus: "complete",
   });
 
-  await bulkInsertFeatures(
+  const { count: featureCount, ids: featureIds } = await bulkInsertFeatures(
     input.projectId,
     (result.features ?? []).map((f) => {
       const rice = {
@@ -102,7 +104,20 @@ export async function extractProductFromContent(input: {
         status: f.horizon === "now" ? "planned" : "idea",
       };
     }),
+    { requireApproval: input.requireApproval },
   );
+
+  if (input.requireApproval && featureIds.length > 0) {
+    await queueArtifactReview({
+      projectId: input.projectId,
+      entityType: "product_feature",
+      entityIds: featureIds,
+      title: `${featureCount} roadmap features from business case`,
+      summary: result.aiSummary || "AI-generated Now/Next/Later backlog pending approval.",
+      source: "bootstrap",
+      payload: { count: featureCount },
+    });
+  }
 
   await bulkInsertInsights(
     input.projectId,

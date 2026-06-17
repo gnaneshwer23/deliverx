@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { throwIfMissingTable } from "@/lib/db-errors";
+import { logAuditEvent } from "./auditEvents";
 import { createTask } from "./delivery";
 import {
   createDecision,
@@ -193,7 +194,18 @@ export async function resolveProposal(
     .single();
 
   if (error) throw error;
-  return mapRow(data as Record<string, unknown>);
+  const mapped = mapRow(data as Record<string, unknown>);
+
+  await logAuditEvent({
+    projectId: mapped.project_id,
+    eventType: status === "approved" ? "human_approved" : "human_rejected",
+    entityType: "proposal",
+    entityId: mapped.id,
+    proposalId: mapped.id,
+    metadata: { reviewerNotes },
+  });
+
+  return mapped;
 }
 
 export async function applyProposal(id: string): Promise<ProposedActionRow> {
@@ -228,7 +240,18 @@ export async function applyProposal(id: string): Promise<ProposedActionRow> {
     .single();
 
   if (error) throw error;
-  return mapRow(data as Record<string, unknown>);
+  const mapped = mapRow(data as Record<string, unknown>);
+
+  await logAuditEvent({
+    projectId: mapped.project_id,
+    eventType: "applied",
+    entityType: "proposal",
+    entityId: mapped.id,
+    proposalId: mapped.id,
+    metadata: applyResult,
+  });
+
+  return mapped;
 }
 
 async function executeProposal(
