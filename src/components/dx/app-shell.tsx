@@ -26,6 +26,7 @@ import {
   Telescope,
   TrendingUp,
   Users,
+  Code2,
   Crown,
 } from "lucide-react";
 import { DxLogo } from "@/components/dx/dx-logo";
@@ -40,6 +41,7 @@ const core = [
   { href: "/workspace/product", label: "Product Mission Control", icon: TrendingUp, id: "product" },
   { href: "/workspace/pm-mission", label: "PM Mission Control", icon: CalendarClock, id: "pm-mission" },
   { href: "/workspace/founder", label: "Founder Mission Control", icon: Crown, id: "founder" },
+  { href: "/workspace/engineer", label: "Engineer Mission Control", icon: Code2, id: "engineer" },
 ];
 
 const workspace = [

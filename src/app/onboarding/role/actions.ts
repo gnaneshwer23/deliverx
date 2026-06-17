@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type RoleState = { ok: boolean; error?: string };
 
-const ALLOWED = new Set(["pm", "team_member", "executive", "ba", "product_manager"]);
+const ALLOWED = new Set(["pm", "team_member", "executive", "ba", "product_manager", "engineer"]);
 
 export async function setRoleAction(
   _prev: RoleState,
@@ -24,7 +24,7 @@ export async function setRoleAction(
 
   const { error } = await supabase
     .from("users")
-    .update({ role: role as "pm" | "team_member" | "executive" | "ba" | "product_manager" })
+    .update({ role: role as "pm" | "team_member" | "executive" | "ba" | "product_manager" | "engineer" })
     .eq("id", user.id);
 
   if (error) return { ok: false, error: error.message };

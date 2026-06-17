@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 const ROLE_LABEL: Record<string, string> = {
   pm: "Project Manager",
+  engineer: "Engineer",
   team_member: "Team member",
   executive: "Executive",
 };

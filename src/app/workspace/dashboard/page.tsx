@@ -54,6 +54,7 @@ export const dynamic = "force-dynamic";
 function roleHeading(role: string, name: string | null) {
   const greeting = name ? `, ${name}` : "";
   if (role === "executive") return `Founder overview${greeting}`;
+  if (role === "engineer") return `Engineering workspace${greeting}`;
   if (role === "team_member") return `My workspace${greeting}`;
   if (role === "ba") return `BA workspace${greeting}`;
   if (role === "product_manager") return `Product workspace${greeting}`;
@@ -65,6 +66,9 @@ function roleSubtitle(role: string, orgName: string | null) {
   const org = orgName ? `${orgName} · ` : "";
   if (role === "executive") {
     return `${org}Runway, portfolio health, decisions, and investor readiness — open Founder Mission Control.`;
+  }
+  if (role === "engineer") {
+    return `${org}Stories, traceability, and guided build tasks — open Engineer Mission Control.`;
   }
   if (role === "team_member") {
     return `${org}Your tasks, standups, and project updates in one place.`;

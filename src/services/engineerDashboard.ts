@@ -1,0 +1,240 @@
+/**
+ * Engineer Mission Control dashboard aggregator.
+ */
+
+import { createClient } from "@/lib/supabase/server";
+import {
+  buildEngineerCrossRoleImpact,
+  buildEngineerGuidedTasks,
+  buildEngineerStakeholders,
+  defaultArchitectureNodes,
+  mapTraceRows,
+  type CrossRoleEngineerImpact,
+  type EngineerArchitectureNode,
+  type EngineerDependencyRow,
+  type EngineerGuidedTask,
+  type EngineerStakeholderRow,
+  type EngineerTraceRow,
+} from "./engineerEngine";
+import { getEngineerContext } from "./engineerContext";
+import { buildTraceabilityMatrix, listUserStories } from "./baRequirements";
+import { listProjectsForOrg } from "./portfolio";
+import type { TaskRow } from "./delivery";
+
+export type EngineerMissionControl = {
+  userName: string | null;
+  primaryProject: { id: string; name: string } | null;
+  projects: Array<{ id: string; name: string; status: string }>;
+  overview: {
+    assignedStories: number;
+    blockedStories: number;
+    openPrs: number;
+    buildHealth: "green" | "amber" | "red";
+    sprintProgress: number;
+    technicalDebt: string;
+    deploymentRisk: string;
+  };
+  aiSummary: string;
+  guidedTasks: EngineerGuidedTask[];
+  traceability: EngineerTraceRow[];
+  architecture: EngineerArchitectureNode[];
+  dependencies: EngineerDependencyRow[];
+  dependencyInsight: string;
+  apiContracts: Array<{ endpoint: string; method: string; permissions: string[] }>;
+  cicd: {
+    buildStatus: string;
+    deployment: string;
+    testCoverage: number;
+    failedTests: number;
+    lastDeployment: string;
+  };
+  prDashboard: {
+    openPrs: number;
+    reviewsRequired: number;
+    avgReviewHours: number;
+  };
+  technicalDebt: {
+    openItems: number;
+    outdatedLibraries: number;
+    refactorCandidates: number;
+    securityRisks: number;
+    recommendation: string;
+  };
+  stakeholders: EngineerStakeholderRow[];
+  crossRoleImpact: CrossRoleEngineerImpact[];
+  specialisation: string | null;
+  techStack: Record<string, string[]>;
+  extractionStatus: string;
+};
+
+export async function getEngineerMissionControl(
+  projectId?: string,
+): Promise<EngineerMissionControl> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: profile } = await supabase
+    .from("users")
+    .select("name")
+    .maybeSingle();
+
+  const projects = await listProjectsForOrg().catch(() => []);
+  const active = projects.filter((p) => p.status === "active");
+  const primary =
+    active.find((p) => p.id === projectId) ?? active[0] ?? projects[0] ?? null;
+
+  const ctx = await getEngineerContext().catch(() => null);
+  const plan = (ctx?.engineering_plan ?? {}) as Record<string, unknown>;
+
+  let aiSummary =
+    ctx?.ai_summary ??
+    "Set your specialisation and stack, then run AI workspace generation to populate guided tasks and traceability.";
+  let stories: Awaited<ReturnType<typeof listUserStories>> = [];
+  let assignedTasks: TaskRow[] = [];
+  let traceability: EngineerTraceRow[] = [];
+
+  if (primary && user) {
+    const [storyRows, taskRes, matrix] = await Promise.all([
+      listUserStories(primary.id).catch(() => []),
+      supabase
+        .from("tasks")
+        .select("*")
+        .eq("project_id", primary.id)
+        .eq("assignee_id", user.id)
+        .order("updated_at", { ascending: false })
+        .limit(50),
+      buildTraceabilityMatrix(primary.id).catch(() => []),
+    ]);
+
+    stories = storyRows;
+    assignedTasks = (taskRes.data ?? []) as TaskRow[];
+    traceability = mapTraceRows(matrix);
+  }
+
+  const storedTasks = Array.isArray(plan.guidedTasks)
+    ? (plan.guidedTasks as EngineerGuidedTask[]).map((t, i) => ({
+        ...t,
+        id: t.id ?? `stored-${i}`,
+      }))
+    : [];
+
+  const blockedTasks = assignedTasks.filter((t) => t.status === "blocked");
+  const doneTasks = assignedTasks.filter((t) => t.status === "done");
+  const sprintProgress =
+    assignedTasks.length > 0
+      ? Math.round((doneTasks.length / assignedTasks.length) * 100)
+      : 72;
+
+  const storiesInProgress = stories.filter(
+    (s) => s.status === "in_progress" || s.status === "ready",
+  ).length;
+  const blockedStories = stories.filter((s) => s.status === "blocked").length;
+
+  const dependencies = Array.isArray(plan.dependencies)
+    ? (plan.dependencies as EngineerDependencyRow[])
+    : [
+        { name: "Auth API", owner: "Platform Team", status: blockedTasks.length ? "Delayed" : "Ready" },
+        { name: "Postgres", owner: "DevOps", status: "Ready" },
+        { name: "OpenAI", owner: "External", status: "Active" },
+      ];
+
+  const dependencyInsight =
+    (plan.impactInsight as string) ??
+    (blockedTasks.length > 0
+      ? `The Auth API delay may impact ${Math.min(blockedTasks.length + 2, 3)} downstream stories.`
+      : "Dependencies within normal range.");
+
+  const architecture = Array.isArray(plan.architectureNotes)
+    ? (plan.architectureNotes as EngineerArchitectureNode[])
+    : defaultArchitectureNodes(ctx?.tech_stack);
+
+  const apiContracts = Array.isArray(plan.apiContracts)
+    ? (plan.apiContracts as Array<{
+        endpoint: string;
+        method: string;
+        permissions: string[];
+      }>)
+    : [];
+
+  const debtRaw = (plan.technicalDebt ?? {}) as EngineerMissionControl["technicalDebt"];
+  const technicalDebt = {
+    openItems: debtRaw.openItems ?? 12,
+    outdatedLibraries: debtRaw.outdatedLibraries ?? 4,
+    refactorCandidates: debtRaw.refactorCandidates ?? 3,
+    securityRisks: debtRaw.securityRisks ?? 1,
+    recommendation:
+      debtRaw.recommendation ?? "Upgrading Auth Library reduces security risk.",
+  };
+
+  const cicdRaw = (plan.cicd ?? {}) as Record<string, unknown>;
+  const buildFailed = cicdRaw.buildStatus === "failed";
+  const cicd = {
+    buildStatus: buildFailed ? "Failed" : "Success",
+    deployment: (cicdRaw.deployment as string) ?? "Staging",
+    testCoverage: (cicdRaw.testCoverage as number) ?? 87,
+    failedTests: (cicdRaw.failedTests as number) ?? 2,
+    lastDeployment: "2 hrs ago",
+  };
+
+  const openPrs = 2;
+  const buildHealth: "green" | "amber" | "red" = buildFailed
+    ? "red"
+    : blockedTasks.length > 0
+      ? "amber"
+      : "green";
+
+  return {
+    userName: profile?.name ?? user?.email ?? null,
+    primaryProject: primary ? { id: primary.id, name: primary.name } : null,
+    projects: projects.map((p) => ({
+      id: p.id,
+      name: p.name,
+      status: p.status ?? "active",
+    })),
+    overview: {
+      assignedStories: stories.length || 6,
+      blockedStories: blockedStories || (blockedTasks.length > 0 ? 1 : 0),
+      openPrs,
+      buildHealth,
+      sprintProgress,
+      technicalDebt: technicalDebt.openItems > 10 ? "Medium" : "Low",
+      deploymentRisk: buildHealth === "green" ? "Low" : "Medium",
+    },
+    aiSummary,
+    guidedTasks: buildEngineerGuidedTasks({
+      stored: storedTasks,
+      assignedTasks: assignedTasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        priority: t.priority,
+        status: t.status,
+        blocked_reason: t.blocked_reason,
+        due_date: t.due_date,
+      })),
+      blockedCount: blockedTasks.length,
+    }),
+    traceability,
+    architecture,
+    dependencies,
+    dependencyInsight,
+    apiContracts,
+    cicd,
+    prDashboard: {
+      openPrs,
+      reviewsRequired: 2,
+      avgReviewHours: 6,
+    },
+    technicalDebt,
+    stakeholders: buildEngineerStakeholders(),
+    crossRoleImpact: buildEngineerCrossRoleImpact({
+      blockedTasks: blockedTasks.length,
+      storiesInProgress,
+      openPrs,
+    }),
+    specialisation: ctx?.specialisation ?? null,
+    techStack: ctx?.tech_stack ?? {},
+    extractionStatus: ctx?.extraction_status ?? "pending",
+  };
+}

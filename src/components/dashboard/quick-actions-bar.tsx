@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Command,
   Cpu,
+  Code2,
   Crown,
   FileBarChart2,
   GitBranch,
@@ -44,6 +45,12 @@ const ACTIONS: Action[] = [
     label: "PM Mission Control",
     icon: CalendarClock,
     roles: ["pm", "executive"],
+  },
+  {
+    href: "/workspace/engineer",
+    label: "Engineer Mission Control",
+    icon: Code2,
+    roles: ["engineer", "team_member"],
   },
   {
     href: "/workspace/founder",

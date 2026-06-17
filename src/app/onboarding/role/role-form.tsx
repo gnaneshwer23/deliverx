@@ -23,6 +23,11 @@ const roles = [
     desc: "Plan delivery, run governance, ship outcomes.",
   },
   {
+    value: "engineer",
+    title: "Engineer",
+    desc: "Build features, trace requirements to code, ship with AI copilot.",
+  },
+  {
     value: "team_member",
     title: "Team member",
     desc: "Execute work, track tasks, collaborate.",
