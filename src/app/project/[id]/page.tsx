@@ -43,6 +43,7 @@ import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-c
 import { TraceabilityPanel } from "@/components/traceability/traceability-panel";
 import { ProjectOverviewTabs } from "@/components/project/project-overview-tabs";
 import { ProjectQuickNav } from "@/components/project/project-quick-nav";
+import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { ProjectGovernanceOverview } from "@/components/project/project-governance-overview";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
@@ -64,7 +65,7 @@ export default async function ProjectOverviewPage({
   const supabase = await createClient();
   const { data: project } = await supabase
     .from("projects")
-    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at")
+    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at, bootstrap_status, bootstrap_summary")
     .eq("id", id)
     .single();
 
@@ -177,6 +178,12 @@ export default async function ProjectOverviewPage({
       <div className="mb-6">
         <ProjectQuickNav projectId={id} />
       </div>
+
+      <ProjectBootstrapPanel
+        projectId={id}
+        initialStatus={(project?.bootstrap_status as string) ?? "skipped"}
+        summary={(project?.bootstrap_summary as Record<string, unknown>) ?? {}}
+      />
 
       <ProjectOverviewTabs
         overview={

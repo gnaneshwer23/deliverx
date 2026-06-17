@@ -498,6 +498,9 @@ export function ProjectForm({
           <input type="hidden" name="bc_go_accepted" value="true" />
         </>
       ) : null}
+      {Object.keys(discoveryAnswers).length > 0 ? (
+        <input type="hidden" name="discovery_answers" value={JSON.stringify(discoveryAnswers)} />
+      ) : null}
 
       <Field label="Project name" name="project_name" required value={projectName} onChange={setProjectName} />
       <TextareaField label="Goal" name="goal" value={goal} onChange={setGoal} />
@@ -510,7 +513,19 @@ export function ProjectForm({
       />
       <SelectField label="Timeline" name="timeline" options={timelines} value={timeline} onChange={setTimeline} />
 
-      {brief.trim() ? (
+      {brief.trim() && review && goAccepted ? (
+        <div className="border border-[#C6DDD0] bg-[#EEF5F1] p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <Sparkles size={14} className="text-[#1C4A2E]" />
+            <span className="text-sm font-medium text-[#1C4A2E]">GO-triggered workspace generation</span>
+          </div>
+          <p className="text-xs text-[#6B6B64]">
+            On create, DeliverX will automatically apply delivery structure and seed all seven persona
+            workspaces — Founder, Product, PM, BA, Engineer, QA, and Scrum Master — from your
+            accepted business case.
+          </p>
+        </div>
+      ) : brief.trim() ? (
         <div className="border border-dashed border-[#C6DDD0] bg-[#EEF5F1] p-4">
           <div className="mb-2 flex items-center gap-2">
             <Sparkles size={14} className="text-[#1C4A2E]" />
@@ -574,7 +589,15 @@ export function ProjectForm({
           ← Back
         </button>
         <button type="submit" disabled={pending || generating || (Boolean(review) && !goAccepted)} className={`${dxClass.btnPrimary} flex-1`}>
-          {pending ? "Creating…" : draft ? "Create project with AI structure →" : "Create project →"}
+          {pending
+            ? review && goAccepted
+              ? "Creating workspaces…"
+              : "Creating…"
+            : draft
+              ? "Create project with AI structure →"
+              : review && goAccepted
+                ? "Accept GO & create workspaces →"
+                : "Create project →"}
         </button>
       </div>
     </form>
