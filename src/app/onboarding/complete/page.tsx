@@ -27,6 +27,7 @@ export default async function CompletePage() {
   const isPm = profile.role === "pm";
   const isExecutive = profile.role === "executive";
   const isEngineer = profile.role === "engineer";
+  const isScrumMaster = profile.role === "scrum_master";
 
   return (
     <ObCard step="Step 4 of 4" title="Your workspace is ready" className="text-center">
@@ -49,7 +50,9 @@ export default async function CompletePage() {
                     ? "Open Founder Mission Control"
                     : isEngineer
                       ? "Open Engineer Mission Control"
-                      : "Create your first project"
+                      : isScrumMaster
+                        ? "Open Scrum Mission Control"
+                        : "Create your first project"
           }
         />
       </dl>
@@ -65,7 +68,9 @@ export default async function CompletePage() {
                   ? "/workspace/founder"
                   : isEngineer
                     ? "/workspace/engineer"
-                    : "/project/new"
+                    : isScrumMaster
+                      ? "/workspace/scrum-mission"
+                      : "/project/new"
         }
         className="mt-8 w-full"
       >
@@ -79,7 +84,9 @@ export default async function CompletePage() {
                 ? "Open Founder Mission Control →"
                 : isEngineer
                   ? "Open Engineer Mission Control →"
-                  : "Create your first project →"}
+                  : isScrumMaster
+                    ? "Open Scrum Mission Control →"
+                    : "Create your first project →"}
       </DxButtonLink>
     </ObCard>
   );

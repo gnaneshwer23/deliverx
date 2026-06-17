@@ -23,6 +23,11 @@ const roles = [
     desc: "Plan delivery, run governance, ship outcomes.",
   },
   {
+    value: "scrum_master",
+    title: "Scrum Master",
+    desc: "Facilitate sprints, remove impediments, and coach team delivery.",
+  },
+  {
     value: "engineer",
     title: "Engineer",
     desc: "Build features, trace requirements to code, ship with AI copilot.",

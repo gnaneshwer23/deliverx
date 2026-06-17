@@ -11,6 +11,7 @@ import {
   Crown,
   FileBarChart2,
   GitBranch,
+  Kanban,
   NotebookPen,
   ShieldCheck,
   Sparkles,
@@ -51,6 +52,12 @@ const ACTIONS: Action[] = [
     label: "Engineer Mission Control",
     icon: Code2,
     roles: ["engineer", "team_member"],
+  },
+  {
+    href: "/workspace/scrum-mission",
+    label: "Scrum Mission Control",
+    icon: Kanban,
+    roles: ["scrum_master", "pm", "team_member"],
   },
   {
     href: "/workspace/founder",

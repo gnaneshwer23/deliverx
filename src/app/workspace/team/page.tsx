@@ -11,8 +11,11 @@ export const dynamic = "force-dynamic";
 const ROLE_LABEL: Record<string, string> = {
   pm: "Project Manager",
   engineer: "Engineer",
+  scrum_master: "Scrum Master",
   team_member: "Team member",
   executive: "Executive",
+  ba: "Business Analyst",
+  product_manager: "Product Manager",
 };
 
 export default async function WorkspaceTeamPage() {
