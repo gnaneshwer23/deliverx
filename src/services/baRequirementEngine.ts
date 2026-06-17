@@ -68,6 +68,17 @@ export type GuidedTask = {
   kind: "clarification" | "review" | "validation";
 };
 
+export function passesQualityGate(quality: RequirementQuality): {
+  ok: boolean;
+  reasons: string[];
+} {
+  const reasons: string[] = [];
+  if ((quality.clarity ?? 0) < 70) reasons.push("clarity below 70%");
+  if ((quality.completeness ?? 0) < 70) reasons.push("completeness below 70%");
+  if ((quality.testability ?? 0) < 60) reasons.push("testability below 60%");
+  return { ok: reasons.length === 0, reasons };
+}
+
 export function computeTraceabilityScore(input: {
   requirements: number;
   approvedRequirements: number;

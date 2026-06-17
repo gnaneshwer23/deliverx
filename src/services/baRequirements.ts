@@ -5,10 +5,12 @@
 import { createClient } from "@/lib/supabase/server";
 import type {
   ClarificationRow,
+  RequirementQuality,
   RequirementRow,
   StoryRow,
   TraceMatrixRow,
 } from "./baRequirementEngine";
+import { passesQualityGate } from "./baRequirementEngine";
 
 export type BaProjectContext = {
   id: string;
@@ -126,6 +128,30 @@ export async function upsertBaProjectContext(input: {
     .single();
   if (error) throw error;
   return data as BaProjectContext;
+}
+
+export async function listApprovedUserStories(projectId: string): Promise<StoryRow[]> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("user_stories")
+    .select("*")
+    .eq("project_id", projectId)
+    .or("review_status.eq.approved,and(ai_generated.eq.false,status.in.(ready,in_progress,done))")
+    .order("story_code", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapStory);
+}
+
+export async function listApprovedRequirements(projectId: string): Promise<RequirementRow[]> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("requirements")
+    .select("*")
+    .eq("project_id", projectId)
+    .or("review_status.eq.approved,status.eq.approved")
+    .order("req_code", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapRequirement);
 }
 
 export async function listRequirements(projectId: string): Promise<RequirementRow[]> {
@@ -307,13 +333,40 @@ export async function insertUserStory(input: {
 export async function updateRequirementStatus(
   requirementId: string,
   status: string,
-): Promise<void> {
+): Promise<{ ok: true } | { ok: false; error: string }> {
   const { supabase } = await getOrgContext();
+
+  if (status === "approved") {
+    const { data: req, error: fetchError } = await supabase
+      .from("requirements")
+      .select("quality, review_status, ai_generated")
+      .eq("id", requirementId)
+      .maybeSingle();
+    if (fetchError) throw fetchError;
+    if (!req) return { ok: false, error: "Requirement not found" };
+
+    if (req.ai_generated && req.review_status === "needs_review") {
+      return {
+        ok: false,
+        error: "AI-generated requirement must pass artifact review before approval.",
+      };
+    }
+
+    const gate = passesQualityGate((req.quality ?? {}) as RequirementQuality);
+    if (!gate.ok) {
+      return {
+        ok: false,
+        error: `Quality gate failed: ${gate.reasons.join(", ")}`,
+      };
+    }
+  }
+
   const { error } = await supabase
     .from("requirements")
     .update({ status })
     .eq("id", requirementId);
   if (error) throw error;
+  return { ok: true };
 }
 
 export async function answerClarification(
@@ -333,7 +386,7 @@ export async function buildTraceabilityMatrix(
 ): Promise<TraceMatrixRow[]> {
   const { supabase } = await getOrgContext();
   const [requirements, stories, links, objectives] = await Promise.all([
-    listRequirements(projectId),
+    listApprovedRequirements(projectId),
     listUserStories(projectId),
     supabase
       .from("requirement_trace_links")

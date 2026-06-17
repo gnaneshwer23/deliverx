@@ -181,3 +181,28 @@ export function mapTraceRows(
     test: row.test,
   }));
 }
+
+export function mapRaidToDependencies(
+  raidItems: Array<{
+    type: string;
+    title: string;
+    status: string;
+    severity: string;
+  }>,
+): EngineerDependencyRow[] {
+  return raidItems
+    .filter(
+      (r) =>
+        (r.type === "dependency" || r.type === "risk") && r.status !== "closed",
+    )
+    .map((r) => ({
+      name: r.title,
+      owner: r.type === "dependency" ? "External" : "Delivery",
+      status:
+        r.status === "mitigated"
+          ? "Ready"
+          : r.severity === "high" || r.severity === "critical"
+            ? "Delayed"
+            : "Active",
+    }));
+}

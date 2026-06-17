@@ -9,11 +9,15 @@ import { listProjectsForOrg } from "./portfolio";
 import { getDeliveryForecast } from "./deliveryForecast";
 import { getQaContext } from "./qaContext";
 import {
+  computeReleaseReadinessFromDb,
+  listDefects,
+  listTestCases,
+  listUatSignoffs,
+} from "./qaQualityData";
+import {
   buildQaCrossRoleImpact,
   buildQaGuidedTasks,
   buildQaStakeholders,
-  defaultQaDefects,
-  defaultQaUatRows,
   type CrossRoleQaImpact,
   type QaDefect,
   type QaGuidedTask,
@@ -139,15 +143,26 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
   let traceability: QaTraceRow[] = Array.isArray(plan.traceability)
     ? (plan.traceability as QaTraceRow[])
     : [];
+  let dbTestCases: QaTestCase[] = [];
+  let dbDefects: QaDefect[] = [];
+  let dbUat: QaUatRow[] = [];
 
   if (primary) {
-    const [stories, requirements, raid, forecast, matrix] = await Promise.all([
+    const [stories, requirements, raid, forecast, matrix, testCasesDb, defectsDb, uatDb] =
+      await Promise.all([
       listUserStories(primary.id).catch(() => []),
       listRequirements(primary.id).catch(() => []),
       listRaidItems(primary.id).catch(() => []),
       getDeliveryForecast(primary.id).catch(() => null),
       buildTraceabilityMatrix(primary.id).catch(() => []),
+      listTestCases(primary.id).catch(() => []),
+      listDefects(primary.id).catch(() => []),
+      listUatSignoffs(primary.id).catch(() => []),
     ]);
+
+    dbTestCases = testCasesDb;
+    dbDefects = defectsDb;
+    dbUat = uatDb;
 
     storyCount = stories.length;
     reqCount = requirements.length;
@@ -166,10 +181,10 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
 
   const storedDefects = Array.isArray(plan.defects) ? (plan.defects as QaDefect[]) : [];
   const defects =
-    storedDefects.length > 0
-      ? storedDefects
-      : openIssues > 0
-        ? defaultQaDefects()
+    dbDefects.length > 0
+      ? dbDefects
+      : storedDefects.length > 0
+        ? storedDefects
         : [];
 
   const criticalDefects = defects.filter(
@@ -183,54 +198,63 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
       }))
     : [];
 
-  const testCases = Array.isArray(plan.testCases)
+  const storedTestCases = Array.isArray(plan.testCases)
     ? (plan.testCases as QaTestCase[])
-    : storyCount > 0
-      ? [
-          {
-            code: "TC-19",
-            title: "Verify report generation",
-            priority: "high",
-            linkedStory: "US-45",
-            automationCandidate: true,
-            type: "functional",
-          },
-          {
-            code: "TC-20",
-            title: "Verify role permissions",
-            priority: "high",
-            linkedStory: "US-45",
-            automationCandidate: true,
-            type: "functional",
-          },
-        ]
-      : [];
+    : [];
+  const testCases =
+    dbTestCases.length > 0 ? dbTestCases : storedTestCases;
 
   const automationRaw = (plan.automation ?? {}) as Record<string, number>;
   const impactRaw = (plan.impactAnalysis ?? {}) as Record<string, unknown>;
   const releaseRaw = (plan.releaseReadinessBreakdown ?? {}) as Record<string, unknown>;
   const perfRaw = (plan.performance ?? {}) as Record<string, unknown>;
   const secRaw = (plan.security ?? {}) as Record<string, unknown>;
-  const uatRows = Array.isArray(plan.uat) ? (plan.uat as QaUatRow[]) : defaultQaUatRows();
+  const storedUat = Array.isArray(plan.uat) ? (plan.uat as QaUatRow[]) : [];
+  const uatRows =
+    dbUat.length > 0 ? dbUat : storedUat.length > 0 ? storedUat : [];
+
+  const dbMetrics =
+    dbTestCases.length > 0 || dbDefects.length > 0 || dbUat.length > 0
+      ? computeReleaseReadinessFromDb({
+          testCases,
+          defects,
+          uat: uatRows,
+          storyCount,
+        })
+      : null;
 
   const testCoverage =
-    typeof plan.testCoverage === "number"
+    dbMetrics?.testCoverage ??
+    (typeof plan.testCoverage === "number"
       ? plan.testCoverage
       : reqCount > 0
         ? Math.min(95, 70 + Math.round((storyCount / Math.max(reqCount, 1)) * 20))
-        : 91;
+        : 0);
 
   const automationCoverage =
-    typeof plan.automationCoverage === "number" ? plan.automationCoverage : 68;
+    typeof plan.automationCoverage === "number"
+      ? plan.automationCoverage
+      : testCases.length > 0
+        ? Math.round(
+            (testCases.filter((t) => t.automationCandidate).length /
+              Math.max(testCases.length, 1)) *
+              100,
+          )
+        : 0;
 
   const releaseReadiness =
-    typeof plan.releaseReadiness === "number"
+    dbMetrics?.releaseReadiness ??
+    (typeof plan.releaseReadiness === "number"
       ? plan.releaseReadiness
-      : Math.max(0, 100 - criticalDefects * 8 - openIssues * 2);
+      : Math.max(0, 100 - criticalDefects * 8 - openIssues * 2));
 
-  const uatCompletion = Math.round(
-    uatRows.reduce((s, r) => s + r.completionPct, 0) / Math.max(uatRows.length, 1),
-  );
+  const uatCompletion =
+    dbMetrics?.uatCompletion ??
+    (uatRows.length > 0
+      ? Math.round(
+          uatRows.reduce((s, r) => s + r.completionPct, 0) / uatRows.length,
+        )
+      : 0);
 
   return {
     userName: profile?.name ?? user?.email ?? null,
@@ -244,8 +268,10 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
       releaseReadiness,
       testCoverage,
       automationCoverage,
-      openDefects: defects.filter((d) => d.status !== "closed").length || openIssues || 23,
-      criticalDefects: criticalDefects || (defects.length ? 2 : 0),
+      openDefects:
+        dbMetrics?.openDefects ??
+        (defects.filter((d) => d.status !== "closed").length || openIssues),
+      criticalDefects: dbMetrics?.criticalDefects ?? criticalDefects,
       uatCompletion,
       productionRisk: (plan.productionRisk as string) ?? (criticalDefects > 0 ? "Medium" : "Low"),
     },

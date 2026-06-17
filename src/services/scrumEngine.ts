@@ -140,3 +140,108 @@ export function defaultVelocityHistory(): Array<{ sprint: string; points: number
     { sprint: "Sprint 24", points: 71 },
   ];
 }
+
+type DeliveryBlockerTask = {
+  title: string;
+  blocked_reason?: string | null;
+  updated_at: string;
+};
+
+type DeliveryRaidItem = {
+  type: string;
+  title: string;
+  severity: string;
+  status: string;
+  created_at: string;
+};
+
+export function buildImpedimentsFromSignals(input: {
+  stored: ScrumImpediment[];
+  blockedTasks: DeliveryBlockerTask[];
+  raidItems: DeliveryRaidItem[];
+}): ScrumImpediment[] {
+  if (input.stored.length > 0) return input.stored;
+
+  const now = Date.now();
+  const impediments: ScrumImpediment[] = [];
+
+  for (const task of input.blockedTasks) {
+    impediments.push({
+      title: task.blocked_reason
+        ? `${task.title} — ${task.blocked_reason}`
+        : task.title,
+      owner: "Delivery team",
+      ageDays: Math.max(
+        1,
+        Math.floor((now - new Date(task.updated_at).getTime()) / 86_400_000),
+      ),
+      severity: "high",
+    });
+  }
+
+  for (const raid of input.raidItems) {
+    if (raid.status === "closed") continue;
+    if (!["issue", "dependency", "risk"].includes(raid.type)) continue;
+
+    impediments.push({
+      title: raid.title,
+      owner: raid.type === "dependency" ? "External" : "Delivery",
+      ageDays: Math.max(
+        1,
+        Math.floor((now - new Date(raid.created_at).getTime()) / 86_400_000),
+      ),
+      severity:
+        raid.severity === "critical" || raid.severity === "high" ? "high" : "medium",
+    });
+  }
+
+  return impediments.slice(0, 8);
+}
+
+export function mapRaidToCrossTeamDeps(
+  raidItems: DeliveryRaidItem[],
+): Array<{ team: string; dependency: string; status: string }> {
+  return raidItems
+    .filter((r) => r.type === "dependency" && r.status !== "closed")
+    .map((r) => ({
+      team: "External",
+      dependency: r.title,
+      status:
+        r.severity === "high" || r.severity === "critical" ? "Delayed" : "Active",
+    }));
+}
+
+export function aggregateStandupBlockers(
+  standups: Array<{ blockers: string | null; today: string; yesterday: string }>,
+): { yesterday: string[]; today: string[]; blockers: string[] } {
+  const yesterday = standups
+    .map((s) => s.yesterday.trim())
+    .filter(Boolean)
+    .slice(0, 4);
+  const today = standups.map((s) => s.today.trim()).filter(Boolean).slice(0, 4);
+  const blockers = standups
+    .map((s) => s.blockers?.trim())
+    .filter((b): b is string => Boolean(b))
+    .slice(0, 5);
+
+  return {
+    yesterday: yesterday.length ? yesterday : ["No standups logged yet"],
+    today: today.length ? today : ["Capture today's focus in standups"],
+    blockers,
+  };
+}
+
+export function computeSprintCompletionFromTasks(tasks: Array<{ status: string }>): number {
+  if (tasks.length === 0) return 0;
+  const done = tasks.filter((t) => t.status === "done").length;
+  return Math.round((done / tasks.length) * 100);
+}
+
+export function currentSprintLabel(): string {
+  const start = new Date(new Date().getFullYear(), 0, 1);
+  const dayOfYear = Math.floor(
+    (Date.now() - start.getTime()) / 86_400_000,
+  );
+  const sprintNumber = Math.max(1, Math.ceil((dayOfYear + 1) / 14));
+  return `Sprint ${sprintNumber}`;
+}

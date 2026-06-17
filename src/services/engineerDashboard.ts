@@ -8,6 +8,7 @@ import {
   buildEngineerGuidedTasks,
   buildEngineerStakeholders,
   defaultArchitectureNodes,
+  mapRaidToDependencies,
   mapTraceRows,
   type CrossRoleEngineerImpact,
   type EngineerArchitectureNode,
@@ -17,7 +18,8 @@ import {
   type EngineerTraceRow,
 } from "./engineerEngine";
 import { getEngineerContext } from "./engineerContext";
-import { buildTraceabilityMatrix, listUserStories } from "./baRequirements";
+import { buildTraceabilityMatrix, listApprovedUserStories } from "./baRequirements";
+import { listRaidItems } from "./governance";
 import { listProjectsForOrg } from "./portfolio";
 import type { TaskRow } from "./delivery";
 
@@ -91,13 +93,16 @@ export async function getEngineerMissionControl(
   let aiSummary =
     ctx?.ai_summary ??
     "Set your specialisation and stack, then run AI workspace generation to populate guided tasks and traceability.";
-  let stories: Awaited<ReturnType<typeof listUserStories>> = [];
+  let stories: Awaited<ReturnType<typeof listApprovedUserStories>> = [];
   let assignedTasks: TaskRow[] = [];
   let traceability: EngineerTraceRow[] = [];
+  let dependencies: EngineerDependencyRow[] = Array.isArray(plan.dependencies)
+    ? (plan.dependencies as EngineerDependencyRow[])
+    : [];
 
   if (primary && user) {
-    const [storyRows, taskRes, matrix] = await Promise.all([
-      listUserStories(primary.id).catch(() => []),
+    const [storyRows, taskRes, matrix, raid] = await Promise.all([
+      listApprovedUserStories(primary.id).catch(() => []),
       supabase
         .from("tasks")
         .select("*")
@@ -106,11 +111,17 @@ export async function getEngineerMissionControl(
         .order("updated_at", { ascending: false })
         .limit(50),
       buildTraceabilityMatrix(primary.id).catch(() => []),
+      listRaidItems(primary.id).catch(() => []),
     ]);
 
     stories = storyRows;
     assignedTasks = (taskRes.data ?? []) as TaskRow[];
     traceability = mapTraceRows(matrix);
+
+    const raidDependencies = mapRaidToDependencies(raid);
+    if (raidDependencies.length > 0) {
+      dependencies = raidDependencies;
+    }
   }
 
   const storedTasks = Array.isArray(plan.guidedTasks)
@@ -125,26 +136,22 @@ export async function getEngineerMissionControl(
   const sprintProgress =
     assignedTasks.length > 0
       ? Math.round((doneTasks.length / assignedTasks.length) * 100)
-      : 72;
+      : 0;
 
   const storiesInProgress = stories.filter(
     (s) => s.status === "in_progress" || s.status === "ready",
   ).length;
   const blockedStories = stories.filter((s) => s.status === "blocked").length;
 
-  const dependencies = Array.isArray(plan.dependencies)
-    ? (plan.dependencies as EngineerDependencyRow[])
-    : [
-        { name: "Auth API", owner: "Platform Team", status: blockedTasks.length ? "Delayed" : "Ready" },
-        { name: "Postgres", owner: "DevOps", status: "Ready" },
-        { name: "OpenAI", owner: "External", status: "Active" },
-      ];
-
   const dependencyInsight =
     (plan.impactInsight as string) ??
-    (blockedTasks.length > 0
-      ? `The Auth API delay may impact ${Math.min(blockedTasks.length + 2, 3)} downstream stories.`
-      : "Dependencies within normal range.");
+    (dependencies.some((d) => d.status === "Delayed")
+      ? `${dependencies.filter((d) => d.status === "Delayed").length} dependencies delayed — may impact downstream stories.`
+      : blockedTasks.length > 0
+        ? `${blockedTasks.length} blocked task${blockedTasks.length === 1 ? "" : "s"} in your queue.`
+        : dependencies.length > 0
+          ? `${dependencies.length} active dependencies tracked from RAID.`
+          : "No blocking dependencies from delivery signals.");
 
   const architecture = Array.isArray(plan.architectureNotes)
     ? (plan.architectureNotes as EngineerArchitectureNode[])
@@ -194,8 +201,8 @@ export async function getEngineerMissionControl(
       status: p.status ?? "active",
     })),
     overview: {
-      assignedStories: stories.length || 6,
-      blockedStories: blockedStories || (blockedTasks.length > 0 ? 1 : 0),
+      assignedStories: stories.length,
+      blockedStories: blockedStories || blockedTasks.length,
       openPrs,
       buildHealth,
       sprintProgress,

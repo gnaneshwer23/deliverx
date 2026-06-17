@@ -9,6 +9,7 @@ import {
   qaAnalysisPrompt,
 } from "@/lib/ai/prompts/qa";
 import { upsertQaContext } from "./qaContext";
+import { syncQaQualityFromAnalysis } from "./qaQualityData";
 
 export type QaAnalysis = {
   aiSummary: string;
@@ -110,6 +111,12 @@ export async function analyseQaWorkspace(input: {
       content: input.extraContent,
     }),
     maxTokens: 4096,
+  });
+
+  await syncQaQualityFromAnalysis(input.projectId, {
+    testCases: result.testCases,
+    defects: result.defects,
+    uat: result.uat,
   });
 
   await upsertQaContext({

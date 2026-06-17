@@ -13,8 +13,13 @@ import {
   buildScrumCrossRoleImpact,
   buildScrumGuidedTasks,
   buildScrumStakeholders,
+  buildImpedimentsFromSignals,
+  aggregateStandupBlockers,
+  computeSprintCompletionFromTasks,
+  currentSprintLabel,
   computeAgileMaturityOverall,
   defaultVelocityHistory,
+  mapRaidToCrossTeamDeps,
   type AgileMaturityScores,
   type CrossRoleScrumImpact,
   type ScrumGuidedTask,
@@ -22,6 +27,7 @@ import {
   type ScrumStakeholderRow,
 } from "./scrumEngine";
 import { listUserStories } from "./baRequirements";
+import { listStandups } from "./traceability";
 
 export type ScrumMissionControl = {
   userName: string | null;
@@ -105,21 +111,32 @@ export async function getScrumMissionControl(
   let blockedCount = 0;
   let storiesCount = 0;
   let deliveryConfidence = 84;
+  let projectTasks: Awaited<ReturnType<typeof listOrgTasks>> = [];
+  let projectRaid: Awaited<ReturnType<typeof listRaidItems>> = [];
+  let standups: Awaited<ReturnType<typeof listStandups>> = [];
 
   if (primary) {
-    const [tasks, stories, raid, forecast] = await Promise.all([
+    const [tasks, stories, raid, forecast, recentStandups] = await Promise.all([
       listOrgTasks({ projectId: primary.id, limit: 200 }).catch(() => []),
       listUserStories(primary.id).catch(() => []),
       listRaidItems(primary.id).catch(() => []),
       getDeliveryForecast(primary.id).catch(() => null),
+      listStandups(primary.id, { days: 7, limit: 20 }).catch(() => []),
     ]);
 
+    projectTasks = tasks;
+    projectRaid = raid;
+    standups = recentStandups;
     blockedCount = tasks.filter((t) => t.status === "blocked").length;
     storiesCount = stories.length;
     deliveryConfidence = Math.round((forecast?.confidence ?? 0.84) * 100);
 
-    if (!ctx?.ai_summary && blockedCount > 0) {
-      aiSummary = `Sprint needs attention — ${blockedCount} blocked task${blockedCount === 1 ? "" : "s"} and ${raid.filter((r) => r.type === "issue" || r.type === "risk").length} open RAID items.`;
+    const openRaid = raid.filter(
+      (r) => (r.type === "issue" || r.type === "risk") && r.status !== "closed",
+    ).length;
+
+    if (!ctx?.ai_summary && (blockedCount > 0 || openRaid > 0)) {
+      aiSummary = `Sprint needs attention — ${blockedCount} blocked task${blockedCount === 1 ? "" : "s"} and ${openRaid} open RAID item${openRaid === 1 ? "" : "s"}.`;
     }
   }
 
@@ -133,24 +150,26 @@ export async function getScrumMissionControl(
       }))
     : [];
 
-  const impediments: ScrumImpediment[] = Array.isArray(plan.impediments)
+  const storedImpediments = Array.isArray(plan.impediments)
     ? (plan.impediments as ScrumImpediment[])
-    : blockedCount > 0
-      ? [
-          {
-            title: "Authentication API",
-            owner: "Platform",
-            ageDays: 5,
-            severity: "high",
-          },
-          {
-            title: "Test Environment",
-            owner: "DevOps",
-            ageDays: 2,
-            severity: "medium",
-          },
-        ].slice(0, blockedCount + 1)
-      : [];
+    : [];
+
+  const blockedTasks = projectTasks.filter((t) => t.status === "blocked");
+  const impediments = buildImpedimentsFromSignals({
+    stored: storedImpediments,
+    blockedTasks: blockedTasks.map((t) => ({
+      title: t.title,
+      blocked_reason: t.blocked_reason,
+      updated_at: t.updated_at,
+    })),
+    raidItems: projectRaid.map((r) => ({
+      type: r.type,
+      title: r.title,
+      severity: r.severity,
+      status: r.status,
+      created_at: r.created_at,
+    })),
+  });
 
   const teamHealthRaw = (plan.teamHealth ?? {}) as Record<string, unknown>;
   const burnoutRaw = (plan.burnout ?? {}) as Record<string, unknown>;
@@ -158,11 +177,13 @@ export async function getScrumMissionControl(
   const maturityRaw = (plan.agileMaturity ?? {}) as AgileMaturityScores;
 
   const completionPct =
-    storiesCount > 0
-      ? Math.round(
-          ((storiesCount - blockedCount) / Math.max(storiesCount, 1)) * 100 * 0.72,
-        )
-      : 72;
+    projectTasks.length > 0
+      ? computeSprintCompletionFromTasks(projectTasks)
+      : storiesCount > 0
+        ? Math.round(
+            ((storiesCount - blockedCount) / Math.max(storiesCount, 1)) * 100,
+          )
+        : 0;
 
   const sprintSuccessProbability =
     typeof plan.sprintSuccessProbability === "number"
@@ -175,16 +196,24 @@ export async function getScrumMissionControl(
 
   const retroThemes = Array.isArray(plan.retroThemes)
     ? (plan.retroThemes as string[])
-    : ["Environment issues", "Testing delays", "Requirement ambiguity"];
+    : projectRaid
+        .filter((r) => r.type === "issue" && r.status !== "closed")
+        .map((r) => r.title)
+        .slice(0, 4);
 
-  const standupRaw = (plan.standupSummary ?? {}) as {
-    yesterday?: string[];
-    today?: string[];
-    blockers?: string[];
-  };
+  const standupSummary = aggregateStandupBlockers(standups);
+  const crossTeamFromRaid = mapRaidToCrossTeamDeps(
+    projectRaid.map((r) => ({
+      type: r.type,
+      title: r.title,
+      severity: r.severity,
+      status: r.status,
+      created_at: r.created_at,
+    })),
+  );
 
-  const plannedPoints = 80;
-  const completedPoints = Math.round((completionPct / 100) * plannedPoints);
+  const plannedPoints = projectTasks.length || storiesCount || 0;
+  const completedPoints = projectTasks.filter((t) => t.status === "done").length;
 
   return {
     userName: profile?.name ?? user?.email ?? null,
@@ -195,9 +224,14 @@ export async function getScrumMissionControl(
       status: p.status ?? "active",
     })),
     overview: {
-      sprintLabel: "Sprint 24",
+      sprintLabel:
+        (plan.sprintLabel as string) ??
+        (velocity.length ? velocity[velocity.length - 1].sprint : currentSprintLabel()),
       completionPct,
-      daysRemaining: 4,
+      daysRemaining: Math.max(
+        0,
+        14 - (Math.floor(Date.now() / 86_400_000) % 14),
+      ),
       blockedStories: blockedCount || impediments.length,
       velocityTrend: "Stable",
       teamHealth: strain === "high" ? "Amber" : "Green",
@@ -209,7 +243,7 @@ export async function getScrumMissionControl(
       stored: storedTasks,
       impediments,
       blockedTaskCount: blockedCount,
-      overdueRetroActions: 2,
+      overdueRetroActions: retroThemes.length,
     }),
     sprintHealth: {
       plannedPoints,
@@ -238,7 +272,9 @@ export async function getScrumMissionControl(
     },
     impediments,
     impedimentInsight:
-      "Cross-team dependencies contribute to 38% of delays.",
+      impediments.length > 0
+        ? `${impediments.length} active impediment${impediments.length === 1 ? "" : "s"} from blocked tasks and RAID.`
+        : "No active impediments from delivery signals.",
     ceremonies: [
       "Sprint Planning",
       "Daily Standup",
@@ -246,11 +282,7 @@ export async function getScrumMissionControl(
       "Review",
       "Retrospective",
     ],
-    standupSummary: {
-      yesterday: standupRaw.yesterday ?? ["6 stories progressed", "2 completed"],
-      today: standupRaw.today ?? ["API integration continues", "Regression testing begins"],
-      blockers: standupRaw.blockers ?? (blockedCount ? ["Authentication API"] : []),
-    },
+    standupSummary,
     velocity,
     velocityInsight: "Velocity has stabilised over five sprints.",
     capacity: {
@@ -262,16 +294,17 @@ export async function getScrumMissionControl(
         (capacityRaw.recommendation as string) ??
         "QA capacity may constrain the next sprint.",
     },
-    crossTeamDeps: Array.isArray(plan.crossTeamDeps)
-      ? (plan.crossTeamDeps as Array<{ team: string; dependency: string; status: string }>)
-      : [
-          { team: "Platform", dependency: "Auth API", status: blockedCount ? "Delayed" : "Ready" },
-          { team: "Security", dependency: "Review", status: "Pending" },
-          { team: "DevOps", dependency: "Environment", status: "Ready" },
-        ],
+    crossTeamDeps:
+      crossTeamFromRaid.length > 0
+        ? crossTeamFromRaid
+        : Array.isArray(plan.crossTeamDeps)
+          ? (plan.crossTeamDeps as Array<{ team: string; dependency: string; status: string }>)
+          : [],
     retroThemes,
     retroRecommendation:
-      "Requirement clarity has been raised in three consecutive retrospectives.",
+      retroThemes.length > 0
+        ? `Address recurring themes: ${retroThemes.slice(0, 2).join(", ")}.`
+        : "No open issue themes flagged from RAID.",
     agileMaturity: {
       collaboration: maturityRaw.collaboration ?? 85,
       delivery: maturityRaw.delivery ?? 80,
