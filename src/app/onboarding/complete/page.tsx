@@ -24,6 +24,7 @@ export default async function CompletePage() {
   const orgName = (orgRow?.organisations as { name?: string } | null)?.name;
   const isBa = profile.role === "ba";
   const isProductManager = profile.role === "product_manager";
+  const isPm = profile.role === "pm";
 
   return (
     <ObCard step="Step 4 of 4" title="Your workspace is ready" className="text-center">
@@ -40,13 +41,21 @@ export default async function CompletePage() {
               ? "Open Product Mission Control"
               : isBa
                 ? "Open BA Mission Control"
-                : "Create your first project"
+                : isPm
+                  ? "Open PM Mission Control"
+                  : "Create your first project"
           }
         />
       </dl>
       <DxButtonLink
         href={
-          isProductManager ? "/workspace/product" : isBa ? "/workspace/ba" : "/project/new"
+          isProductManager
+            ? "/workspace/product"
+            : isBa
+              ? "/workspace/ba"
+              : isPm
+                ? "/workspace/pm-mission"
+                : "/project/new"
         }
         className="mt-8 w-full"
       >
@@ -54,7 +63,9 @@ export default async function CompletePage() {
           ? "Open Product Mission Control →"
           : isBa
             ? "Open BA Mission Control →"
-            : "Create your first project →"}
+            : isPm
+              ? "Open PM Mission Control →"
+              : "Create your first project →"}
       </DxButtonLink>
     </ObCard>
   );

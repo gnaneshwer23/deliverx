@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
   Calendar,
+  CalendarClock,
   CheckSquare,
   ClipboardList,
   Command,
@@ -36,6 +37,12 @@ const ACTIONS: Action[] = [
     label: "Product Mission Control",
     icon: TrendingUp,
     roles: ["product_manager", "pm", "executive"],
+  },
+  {
+    href: "/workspace/pm-mission",
+    label: "PM Mission Control",
+    icon: CalendarClock,
+    roles: ["pm", "executive"],
   },
   { href: "/workspace/pmo", label: "PMO view", icon: Command, roles: ["pm", "executive"] },
   { href: "/workspace/twin", label: "Digital twin", icon: Cpu, roles: ["pm", "executive"] },

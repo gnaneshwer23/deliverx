@@ -17,6 +17,7 @@ function isActive(pathname: string, href: string) {
   if (href.endsWith("/reports") && pathname.startsWith(`${href}/`)) return true;
   if (href.includes("/requirements") && pathname.startsWith(href)) return true;
   if (href.includes("/product") && pathname.startsWith(href)) return true;
+  if (href.includes("/delivery") && pathname.startsWith(href)) return true;
   if (href.includes("/charter") && pathname.startsWith(href)) return true;
   if (href.includes("/standups") && pathname.startsWith(href)) return true;
   if (href.includes("/stakeholders") && pathname.startsWith(href)) return true;
@@ -46,6 +47,10 @@ export function ProjectSidebar({
     {
       label: "Product",
       items: [{ label: "Product workspace", href: `/project/${projectId}/product` }],
+    },
+    {
+      label: "Delivery PM",
+      items: [{ label: "Delivery workspace", href: `/project/${projectId}/delivery` }],
     },
     {
       label: "Project",

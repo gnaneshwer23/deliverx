@@ -57,6 +57,7 @@ function roleHeading(role: string, name: string | null) {
   if (role === "team_member") return `My workspace${greeting}`;
   if (role === "ba") return `BA workspace${greeting}`;
   if (role === "product_manager") return `Product workspace${greeting}`;
+  if (role === "pm") return `PM workspace${greeting}`;
   return `Delivery command centre${greeting}`;
 }
 
@@ -73,6 +74,9 @@ function roleSubtitle(role: string, orgName: string | null) {
   }
   if (role === "product_manager") {
     return `${org}Roadmap, customer discovery, and RICE prioritisation — open Product Mission Control.`;
+  }
+  if (role === "pm") {
+    return `${org}Governance, RAID, milestones, and guided delivery — open PM Mission Control.`;
   }
   return `${org}Tasks, RAID, meetings, decisions, standups, and intelligence — unified.`;
 }
