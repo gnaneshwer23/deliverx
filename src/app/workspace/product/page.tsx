@@ -18,6 +18,7 @@ import {
   ProductSegmentsPanel,
 } from "@/components/product/product-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -92,6 +93,9 @@ export default async function ProductMissionControlPage({
         ) : null}
 
         <ProductMissionOverview data={data} />
+        {data.primaryProject ? (
+          <MissionPredictionKpis projectId={data.primaryProject.id} />
+        ) : null}
         <ProductAiSummary
           summary={data.aiSummary}
           differentiation={data.differentiationInsight}

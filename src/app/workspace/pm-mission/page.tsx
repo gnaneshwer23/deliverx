@@ -26,6 +26,7 @@ import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intellig
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
 import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
 import { dxClass } from "@/lib/dx-theme";
+import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,9 @@ export default async function PmMissionControlPage({
         ) : null}
 
         <DeliveryPmMissionOverview data={data} />
+        {data.primaryProject ? (
+          <MissionPredictionKpis projectId={data.primaryProject.id} />
+        ) : null}
         <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

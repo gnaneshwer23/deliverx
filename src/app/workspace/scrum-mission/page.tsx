@@ -24,6 +24,7 @@ import {
   ScrumVelocityPanel,
 } from "@/components/scrum/scrum-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -98,6 +99,9 @@ export default async function ScrumMissionControlPage({
         ) : null}
 
         <ScrumMissionOverview data={data} />
+        {data.primaryProject ? (
+          <MissionPredictionKpis projectId={data.primaryProject.id} />
+        ) : null}
         <ScrumAiSummary summary={data.aiSummary} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getDeliveryForecast } from "@/services/deliveryForecast";
+import { getDeliveryPrediction } from "@/services/deliveryPrediction";
 import { listEstimationPacks } from "@/services/estimationPacks";
 import { getProjectSuccessScore } from "@/services/successScore";
 import { loadProjectSignals } from "@/services/projectSignals";
@@ -13,6 +14,7 @@ import { ConfidenceCard } from "@/components/intelligence/confidence-card";
 import { DeliveryForecastCard } from "@/components/intelligence/delivery-forecast-card";
 import { DeliverySuccessScoreCard } from "@/components/intelligence/delivery-success-score-card";
 import { EstimationPacksPanel } from "@/components/intelligence/estimation-packs-panel";
+import { DeliveryPredictionPanel } from "@/components/prediction/delivery-prediction-panel";
 import { DeliveryNarratorPanel } from "@/components/intelligence/delivery-narrator-panel";
 import { DeliveryBriefingPanel } from "@/components/intelligence/delivery-briefing-panel";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
@@ -77,7 +79,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, estimationPacks, successScore] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, deliveryPrediction, estimationPacks, successScore] =
     await Promise.all([
       getProjectIntelligence(id),
       loadProjectSignals(id),
@@ -96,6 +98,7 @@ export default async function ProjectOverviewPage({
       listReports(id, { pageSize: 4 }),
       hasStandupToday(id),
       getDeliveryForecast(id).catch(() => null),
+      getDeliveryPrediction(id).catch(() => null),
       listEstimationPacks(id).catch(() => []),
       getProjectSuccessScore(id).catch(() => null),
     ]);
@@ -208,6 +211,10 @@ export default async function ProjectOverviewPage({
             </div>
 
             <EstimationPacksPanel projectId={id} packs={estimationPacks} />
+
+            {deliveryPrediction ? (
+              <DeliveryPredictionPanel prediction={deliveryPrediction} projectId={id} />
+            ) : null}
 
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
               <DeliveryNarratorPanel projectId={id} projectName={projectName} />

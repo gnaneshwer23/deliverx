@@ -11,6 +11,7 @@ import {
 } from "@/components/ba/ba-stakeholder-panels";
 import { BaTraceabilityPreview } from "@/components/ba/ba-traceability-preview";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +68,9 @@ export default async function BaMissionControlPage({
         ) : null}
 
         <BaMissionOverview data={data} />
+        {data.primaryProject ? (
+          <MissionPredictionKpis projectId={data.primaryProject.id} />
+        ) : null}
 
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <DxStatCard

@@ -22,6 +22,7 @@ import {
   FounderTeamHealthPanel,
 } from "@/components/founder/founder-panels";
 import { FounderContextWorkspace } from "@/components/founder/founder-workspace";
+import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +62,9 @@ export default async function FounderMissionControlPage() {
         </p>
 
         <FounderMissionOverview data={data} />
+        {data.portfolio[0] ? (
+          <MissionPredictionKpis projectId={data.portfolio[0].id} />
+        ) : null}
         <FounderAiSummary summary={data.aiSummary} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

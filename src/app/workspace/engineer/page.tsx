@@ -20,6 +20,7 @@ import {
   EngineerTraceabilityPanel,
 } from "@/components/engineer/engineer-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -94,6 +95,9 @@ export default async function EngineerMissionControlPage({
         ) : null}
 
         <EngineerMissionOverview data={data} />
+        {data.primaryProject ? (
+          <MissionPredictionKpis projectId={data.primaryProject.id} />
+        ) : null}
         <EngineerAiSummary summary={data.aiSummary} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
