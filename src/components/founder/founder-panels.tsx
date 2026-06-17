@@ -1,5 +1,6 @@
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import type { CrossRoleFounderImpact } from "@/services/founderEngine";
+import { FounderDecisionActions } from "@/components/founder/founder-decision-actions";
 import { dxClass } from "@/lib/dx-theme";
 
 const toneDot: Record<string, string> = {
@@ -156,21 +157,25 @@ export function FounderDecisionPanel({
           <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
             <th className="px-6 py-2">Decision</th>
             <th className="px-4 py-2">Impact</th>
-            <th className="px-6 py-2">Project</th>
+            <th className="px-4 py-2">Project</th>
+            <th className="px-6 py-2 text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
           {decisions.length ? (
             decisions.map((d) => (
-              <tr key={d.id} className="border-t border-[#F0F0E8]">
+              <tr key={`${d.kind}-${d.id}`} className="border-t border-[#F0F0E8]">
                 <td className="px-6 py-3 font-medium">{d.title}</td>
                 <td className="px-4 py-3">{d.impact}</td>
-                <td className="px-6 py-3 text-[#6B6B64]">{d.projectName ?? "—"}</td>
+                <td className="px-4 py-3 text-[#6B6B64]">{d.projectName ?? "—"}</td>
+                <td className="px-6 py-3 text-right">
+                  <FounderDecisionActions row={d} />
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={3} className="px-6 py-4 text-[#6B6B64]">
+              <td colSpan={4} className="px-6 py-4 text-[#6B6B64]">
                 No pending decisions — governance is clear.
               </td>
             </tr>

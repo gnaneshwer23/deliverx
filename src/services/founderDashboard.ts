@@ -16,6 +16,7 @@ import {
   type FounderStrategicObjective,
 } from "./founderEngine";
 import { getFounderContext } from "./founderContext";
+import { listPendingApprovals } from "./approvals";
 import { getOrgGovernanceStats, listOrgDecisionsPending } from "./governance";
 import { getDeliveryForecast } from "./deliveryForecast";
 import { getPmDeliveryContext } from "./deliveryPmContext";
@@ -85,7 +86,7 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   const orgName =
     (profile?.organisations as { name?: string } | null)?.name ?? null;
 
-  const [ctx, pmo, governance, pendingDecisions, capacity, projects] =
+  const [ctx, pmo, governance, pendingDecisions, pendingApprovals, capacity, projects] =
     await Promise.all([
       getFounderContext().catch(() => null),
       getPmoSnapshot().catch(() => null),
@@ -94,6 +95,7 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
         pendingDecisions: 0,
       })),
       listOrgDecisionsPending(8).catch(() => []),
+      listPendingApprovals(8).catch(() => []),
       getOrgCapacitySnapshot().catch(() => null),
       listProjectsForOrg().catch(() => []),
     ]);
@@ -193,13 +195,35 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
     );
   }
 
-  const decisionsNeeded: FounderDecisionRow[] = pendingDecisions.map((d) => ({
+  const decisionRows: FounderDecisionRow[] = pendingDecisions.map((d) => ({
     id: d.id,
     title: d.title,
     impact: "Medium",
     status: d.status,
     projectName: d.project_name,
+    projectId: d.project_id,
+    kind: "decision" as const,
   }));
+
+  const approvalRows: FounderDecisionRow[] = pendingApprovals.map((a) => ({
+    id: a.id,
+    title: `${a.entity_type} approval (${a.approval_level})`,
+    impact: a.approval_level === "steering" ? "High" : "Medium",
+    status: a.status,
+    projectName: a.project_name,
+    projectId: a.project_id,
+    kind: "approval" as const,
+  }));
+
+  const seen = new Set<string>();
+  const decisionsNeeded: FounderDecisionRow[] = [...decisionRows, ...approvalRows].filter(
+    (row) => {
+      const key = `${row.kind}:${row.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    },
+  ).slice(0, 10);
 
   let productNps: number | null = null;
   let productRetention: number | null = null;

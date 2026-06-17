@@ -24,6 +24,8 @@ export type FounderDecisionRow = {
   impact: string;
   status: string;
   projectName?: string;
+  projectId?: string;
+  kind: "decision" | "approval";
 };
 
 export type CrossRoleFounderImpact = {

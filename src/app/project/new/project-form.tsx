@@ -4,7 +4,6 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { Loader2, Sparkles, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { AiStatusBanner } from "@/components/ai/ai-status-banner";
-import { DxBadge } from "@/components/dx/dx-badge";
 import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import { dxClass } from "@/lib/dx-theme";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
@@ -12,6 +11,7 @@ import { businessCaseRecommendationLabel } from "@/lib/business-case/constants";
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
 import { ProjectCreationStepper } from "@/components/project/project-creation-stepper";
 import { ProjectDiscoveryChat } from "@/components/project/project-discovery-chat";
+import { BusinessCaseReport } from "@/components/project/business-case-report";
 import { createProjectDraftAction, type ProjectState } from "./actions";
 
 const initial: ProjectState = { ok: false };
@@ -75,6 +75,8 @@ export function ProjectForm({
   const [generating, setGenerating] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
+  const [goAccepted, setGoAccepted] = useState(false);
+  const [conditionalWaiver, setConditionalWaiver] = useState(false);
 
   async function runReview() {
     const trimmed = brief.trim();
@@ -99,6 +101,8 @@ export function ProjectForm({
 
     const r = res.data.review;
     setReview(r);
+    setGoAccepted(false);
+    setConditionalWaiver(false);
     setProjectName(r.suggestedProjectName);
     setGoal(r.suggestedGoal);
     if (deliveryTypes.includes(r.suggestedDeliveryType)) {
@@ -133,6 +137,20 @@ export function ProjectForm({
   }
 
   async function continueFromReview() {
+    if (!review) return;
+    if (review.recommendation === "no_go") {
+      setAiError("No-Go recommendation — revise the business case before continuing.");
+      return;
+    }
+    if (!goAccepted) {
+      setAiError("Accept the GO recommendation to proceed through the sponsor gateway.");
+      return;
+    }
+    if (review.recommendation === "conditional_go" && !conditionalWaiver) {
+      setAiError("Confirm you accept conditional GO and will address identified gaps.");
+      return;
+    }
+
     const trimmed = brief.trim();
     if (!trimmed) return;
     setDiscovering(true);
@@ -224,10 +242,10 @@ export function ProjectForm({
   function onChatDiscoveryComplete(payload: { brief: string; answers: Record<string, string> }) {
     setBrief(payload.brief);
     setDiscoveryAnswers(payload.answers);
-    void runReviewFromBrief(payload.brief, true);
+    void runReviewFromBrief(payload.brief);
   }
 
-  async function runReviewFromBrief(text: string, skipToCreate = false) {
+  async function runReviewFromBrief(text: string) {
     setReviewing(true);
     setAiError(null);
     const res = await postAi<ReviewResponse>("/api/ai/review-business-case", { content: text });
@@ -239,12 +257,14 @@ export function ProjectForm({
     }
     const r = res.data.review;
     setReview(r);
+    setGoAccepted(false);
+    setConditionalWaiver(false);
     setProjectName(r.suggestedProjectName);
     setGoal(r.suggestedGoal);
     if (deliveryTypes.includes(r.suggestedDeliveryType)) {
       setDeliveryType(r.suggestedDeliveryType);
     }
-    setStep(skipToCreate ? "create" : "review");
+    setStep("review");
   }
 
   if (step === "brief") {
@@ -345,69 +365,86 @@ export function ProjectForm({
   }
 
   if (step === "review" && review) {
-    const scoreTone =
-      review.score >= 75 ? "green" : review.score >= 50 ? "amber" : "red";
-    const recTone =
-      review.recommendation === "go"
-        ? "green"
-        : review.recommendation === "no_go"
-          ? "red"
-          : "amber";
+    const isNoGo = review.recommendation === "no_go";
+    const canProceed =
+      !isNoGo &&
+      goAccepted &&
+      (review.recommendation !== "conditional_go" || conditionalWaiver);
 
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="review" />
-        <StepHeader n={2} label="AI review" />
-        <div className={`${dxClass.cardPad} flex flex-wrap items-center justify-between gap-4`}>
-          <div>
-            <p className={dxClass.label}>Business case health</p>
-            <p className={`${dxClass.display} text-3xl`}>{review.score}%</p>
+        <StepHeader n={2} label="Business case intelligence report" />
+
+        <BusinessCaseReport review={review} />
+
+        {isNoGo ? (
+          <div className="border border-[#C0392B]/30 bg-[#FDF1F0] px-4 py-3 text-sm text-[#8B2E2E]">
+            <p className="font-medium">Sponsor gateway: No-Go</p>
+            <p className="mt-1">
+              This business case does not meet the GO threshold. Revise your brief and re-run the
+              review — project creation is blocked until recommendation improves.
+            </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <DxBadge tone={recTone}>{businessCaseRecommendationLabel(review.recommendation)}</DxBadge>
-            <DxBadge tone={scoreTone}>
-              {review.score >= 75 ? "Ready" : review.score >= 50 ? "Gaps" : "Needs work"}
-            </DxBadge>
+        ) : (
+          <div className="border border-[#C6DDD0] bg-[#EEF5F1] p-4 space-y-3">
+            <p className="text-sm font-medium text-[#1C4A2E]">Sponsor GO gate</p>
+            <p className="text-sm text-[#6B6B64]">
+              AI recommends{" "}
+              <strong>{businessCaseRecommendationLabel(review.recommendation)}</strong>. Accept to
+              proceed through the sponsor gateway.
+            </p>
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={goAccepted}
+                onChange={(e) => setGoAccepted(e.target.checked)}
+                className="mt-0.5 size-4"
+              />
+              <span>
+                I accept the {businessCaseRecommendationLabel(review.recommendation)} recommendation
+                and authorise proceeding to project setup.
+              </span>
+            </label>
+            {review.recommendation === "conditional_go" ? (
+              <label className="flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={conditionalWaiver}
+                  onChange={(e) => setConditionalWaiver(e.target.checked)}
+                  className="mt-0.5 size-4"
+                />
+                <span>
+                  I acknowledge conditional GO — gaps will be addressed during discovery and delivery
+                  setup.
+                </span>
+              </label>
+            ) : null}
           </div>
-        </div>
+        )}
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <ScoreTile label="Feasibility" value={review.feasibilityScore} />
-          <ScoreTile label="Risk" value={review.riskScore} invert />
-          <ScoreTile label="Innovation" value={review.innovationScore} />
-          <ScoreTile label="Financial confidence" value={review.financialConfidence} />
-          <ScoreTile label="Delivery confidence" value={review.deliveryConfidence} />
-        </div>
-
-        <p className="text-sm font-medium text-[#2C2C28]">{review.executiveSummary}</p>
-        <p className="text-sm text-[#6B6B64]">{review.summary}</p>
-
-        {review.strengths.length > 0 ? (
-          <ReviewList title="Strengths" items={review.strengths} tone="green" />
-        ) : null}
-        {review.gaps.length > 0 ? (
-          <ReviewList title="Gaps to address" items={review.gaps} tone="amber" />
-        ) : null}
-        {review.missingInformation.length > 0 ? (
-          <ReviewList title="Missing information" items={review.missingInformation} tone="amber" />
-        ) : null}
-        {review.initialRisks.length > 0 ? (
-          <ReviewList title="Initial risks detected" items={review.initialRisks} tone="red" />
-        ) : null}
+        {aiError ? <AiStatusBanner message={aiError} /> : null}
 
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => setStep("brief")} className={dxClass.btnGhost}>
             ← Edit brief
           </button>
-          <button type="button" disabled={discovering} onClick={continueFromReview} className={`${dxClass.btnPrimary} flex-1`}>
-            {discovering ? (
-              <>
-                <Loader2 size={14} className="animate-spin" /> Checking…
-              </>
-            ) : (
-              "Continue to project setup →"
-            )}
-          </button>
+          {!isNoGo ? (
+            <button
+              type="button"
+              disabled={discovering || !canProceed}
+              onClick={continueFromReview}
+              className={`${dxClass.btnPrimary} flex-1`}
+            >
+              {discovering ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Checking…
+                </>
+              ) : (
+                "Continue to project setup →"
+              )}
+            </button>
+          ) : null}
         </div>
       </div>
     );
@@ -455,6 +492,12 @@ export function ProjectForm({
       {playbookId ? <input type="hidden" name="playbook_id" value={playbookId} /> : null}
       {draft ? <input type="hidden" name="ai_draft" value={JSON.stringify(draft)} /> : null}
       {brief.trim() ? <input type="hidden" name="brief" value={brief.trim()} /> : null}
+      {review && goAccepted ? (
+        <>
+          <input type="hidden" name="bc_report" value={JSON.stringify(review)} />
+          <input type="hidden" name="bc_go_accepted" value="true" />
+        </>
+      ) : null}
 
       <Field label="Project name" name="project_name" required value={projectName} onChange={setProjectName} />
       <TextareaField label="Goal" name="goal" value={goal} onChange={setGoal} />
@@ -530,7 +573,7 @@ export function ProjectForm({
         <button type="button" onClick={() => setStep(discoveryQuestions.length ? "discovery" : review ? "review" : "brief")} className={dxClass.btnGhost}>
           ← Back
         </button>
-        <button type="submit" disabled={pending || generating} className={`${dxClass.btnPrimary} flex-1`}>
+        <button type="submit" disabled={pending || generating || (Boolean(review) && !goAccepted)} className={`${dxClass.btnPrimary} flex-1`}>
           {pending ? "Creating…" : draft ? "Create project with AI structure →" : "Create project →"}
         </button>
       </div>
@@ -545,29 +588,6 @@ function StepHeader({ n, label }: { n: number; label: string }) {
         {n}
       </span>
       <span className={dxClass.label}>{label}</span>
-    </div>
-  );
-}
-
-function ReviewList({
-  title,
-  items,
-  tone,
-}: {
-  title: string;
-  items: string[];
-  tone: "green" | "amber" | "red";
-}) {
-  const bg =
-    tone === "green" ? "bg-[#EDF7F1]" : tone === "amber" ? "bg-[#FEF6EC]" : "bg-[#FDF1F0]";
-  return (
-    <div className={`${dxClass.cardPad} ${bg}`}>
-      <p className={`${dxClass.label} mb-2`}>{title}</p>
-      <ul className="list-inside list-disc space-y-1 text-sm text-[#2C2C28]">
-        {items.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
     </div>
   );
 }
@@ -620,27 +640,6 @@ function PreviewSection({
         ))}
         {more ? <li className="text-[#A8A89E]">+{more} more</li> : null}
       </ul>
-    </div>
-  );
-}
-
-function ScoreTile({
-  label,
-  value,
-  invert = false,
-}: {
-  label: string;
-  value: number;
-  invert?: boolean;
-}) {
-  const effective = invert ? 100 - value : value;
-  const tone =
-    effective >= 75 ? "text-[#1C4A2E]" : effective >= 50 ? "text-[#8B6914]" : "text-[#8B2E2E]";
-
-  return (
-    <div className="border border-[#E4E4DC] bg-white p-3">
-      <p className={dxClass.label}>{label}</p>
-      <p className={`${dxClass.display} text-xl ${tone}`}>{value}%</p>
     </div>
   );
 }

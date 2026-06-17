@@ -4,7 +4,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
+import {
+  parseBusinessCaseReviewJson,
+  type BusinessCaseReview,
+} from "@/services/aiBusinessCaseReview";
 import { applyProjectStructure } from "@/services/applyProjectStructure";
+import { saveBusinessCaseReview } from "@/services/businessCaseReview";
 
 export type ProjectState = { ok: boolean; error?: string };
 
@@ -18,9 +23,35 @@ export async function createProjectDraftAction(
   const timeline = String(formData.get("timeline") ?? "").trim() || null;
   const playbookId = String(formData.get("playbook_id") ?? "").trim() || null;
   const aiDraftRaw = String(formData.get("ai_draft") ?? "").trim();
+  const brief = String(formData.get("brief") ?? "").trim();
+  const bcReportRaw = String(formData.get("bc_report") ?? "").trim();
+  const bcGoAccepted = formData.get("bc_go_accepted") === "true";
   const publish = formData.get("publish") === "on";
 
   if (!name) return { ok: false, error: "Project name is required." };
+
+  let bcReport: BusinessCaseReview | null = null;
+  if (bcReportRaw) {
+    try {
+      bcReport = parseBusinessCaseReviewJson(bcReportRaw);
+    } catch {
+      return { ok: false, error: "Invalid business case report." };
+    }
+
+    if (!bcGoAccepted) {
+      return {
+        ok: false,
+        error: "Accept the GO recommendation before creating a project from a reviewed business case.",
+      };
+    }
+
+    if (bcReport.recommendation === "no_go") {
+      return {
+        ok: false,
+        error: "No-Go business cases cannot proceed through the sponsor gateway.",
+      };
+    }
+  }
 
   let aiDraft: ProjectStructureDraft | null = null;
   if (aiDraftRaw) {
@@ -66,6 +97,25 @@ export async function createProjectDraftAction(
 
   if (error || !project) {
     return { ok: false, error: error?.message ?? "Failed to create project." };
+  }
+
+  if (bcReport) {
+    try {
+      await saveBusinessCaseReview({
+        briefExcerpt: brief || name,
+        report: bcReport,
+        projectId: project.id,
+        goDecision: "accepted",
+      });
+    } catch (err) {
+      return {
+        ok: false,
+        error:
+          err instanceof Error
+            ? err.message
+            : "Project created but business case audit failed to save.",
+      };
+    }
   }
 
   if (aiDraft) {
