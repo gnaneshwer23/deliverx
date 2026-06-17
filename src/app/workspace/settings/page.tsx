@@ -7,8 +7,14 @@ import { SetupDiagnostics } from "@/components/settings/setup-diagnostics";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
 import { NotificationSettingsForm } from "@/components/settings/notification-settings-form";
 import { PhaseBHealthPanel } from "@/components/settings/phase-b-health-panel";
+import { GitHubIntegrationForm } from "@/components/settings/github-integration-form";
 import { isEmailConfigured } from "@/lib/email/resend";
 import { getOrgNotificationSettings } from "@/services/notificationService";
+import {
+  getOrgIntegrationSettings,
+  getProjectIntegrationSettings,
+} from "@/services/githubIntegration";
+import { listProjectsForOrg } from "@/services/portfolio";
 import { dxClass } from "@/lib/dx-theme";
 
 export default async function SettingsPage() {
@@ -30,6 +36,13 @@ export default async function SettingsPage() {
   } | null;
 
   const notificationSettings = await getOrgNotificationSettings().catch(() => null);
+  const githubOrgSettings = await getOrgIntegrationSettings().catch(() => null);
+  const projects = await listProjectsForOrg().catch(() => []);
+  const projectSettings: Record<string, Awaited<ReturnType<typeof getProjectIntegrationSettings>>> =
+    {};
+  for (const p of projects.slice(0, 20)) {
+    projectSettings[p.id] = await getProjectIntegrationSettings(p.id).catch(() => null);
+  }
 
   return (
     <>
@@ -73,6 +86,15 @@ export default async function SettingsPage() {
           <NotificationSettingsForm
             settings={notificationSettings}
             emailConfigured={isEmailConfigured()}
+          />
+        </section>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">GitHub integration</h2>
+          <GitHubIntegrationForm
+            orgSettings={githubOrgSettings}
+            projects={projects.map((p) => ({ id: p.id, name: p.name }))}
+            projectSettings={projectSettings}
           />
         </section>
 

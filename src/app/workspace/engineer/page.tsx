@@ -19,6 +19,7 @@ import {
   EngineerStakeholdersPanel,
   EngineerTraceabilityPanel,
 } from "@/components/engineer/engineer-panels";
+import { GitHubActivityPanel } from "@/components/engineer/github-activity-panel";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { dxClass } from "@/lib/dx-theme";
@@ -114,6 +115,15 @@ export default async function EngineerMissionControlPage({
           <EngineerArchitecturePanel nodes={data.architecture} />
           <EngineerCicdPanel cicd={data.cicd} />
         </div>
+
+        {data.primaryProject ? (
+          <GitHubActivityPanel
+            projectId={data.primaryProject.id}
+            configured={data.github.configured}
+            lastSyncAt={data.github.lastSyncAt}
+            openPullRequests={data.github.openPullRequests}
+          />
+        ) : null}
 
         <EngineerApiContractsPanel contracts={data.apiContracts} />
 

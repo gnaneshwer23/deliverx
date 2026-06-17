@@ -22,6 +22,14 @@ import { buildTraceabilityMatrix, listApprovedUserStories } from "./baRequiremen
 import { listRaidItems } from "./governance";
 import { listProjectsForOrg } from "./portfolio";
 import type { TaskRow } from "./delivery";
+import {
+  buildHealthFromCi,
+  computePrDashboardStats,
+  getGitHubProjectSnapshot,
+  type ExternalTaskLinkRow,
+  type GitHubProjectSnapshot,
+} from "./githubIntegration";
+import { summarizeCiFromWorkflows } from "./githubIntegrationEngine";
 
 export type EngineerMissionControl = {
   userName: string | null;
@@ -67,6 +75,11 @@ export type EngineerMissionControl = {
   specialisation: string | null;
   techStack: Record<string, string[]>;
   extractionStatus: string;
+  github: {
+    configured: boolean;
+    lastSyncAt: string | null;
+    openPullRequests: ExternalTaskLinkRow[];
+  };
 };
 
 export async function getEngineerMissionControl(
@@ -177,20 +190,48 @@ export async function getEngineerMissionControl(
 
   const cicdRaw = (plan.cicd ?? {}) as Record<string, unknown>;
   const buildFailed = cicdRaw.buildStatus === "failed";
-  const cicd = {
-    buildStatus: buildFailed ? "Failed" : "Success",
-    deployment: (cicdRaw.deployment as string) ?? "Staging",
-    testCoverage: (cicdRaw.testCoverage as number) ?? 87,
-    failedTests: (cicdRaw.failedTests as number) ?? 2,
-    lastDeployment: "2 hrs ago",
+
+  let githubSnapshot: GitHubProjectSnapshot = {
+    configured: false,
+    openPullRequests: [],
+    ci: summarizeCiFromWorkflows([]),
+    openPrCount: 0,
+    lastSyncAt: null,
   };
 
-  const openPrs = 2;
-  const buildHealth: "green" | "amber" | "red" = buildFailed
-    ? "red"
-    : blockedTasks.length > 0
-      ? "amber"
-      : "green";
+  if (primary) {
+    githubSnapshot = await getGitHubProjectSnapshot(primary.id).catch(() => githubSnapshot);
+  }
+
+  const useGitHub = githubSnapshot.configured;
+  const cicd = useGitHub
+    ? {
+        buildStatus: githubSnapshot.ci.buildStatus,
+        deployment: githubSnapshot.ci.deployment,
+        testCoverage: githubSnapshot.ci.testCoverage ?? ((cicdRaw.testCoverage as number) ?? 87),
+        failedTests: githubSnapshot.ci.failedTests,
+        lastDeployment: githubSnapshot.ci.lastDeployment,
+      }
+    : {
+        buildStatus: buildFailed ? "Failed" : "Success",
+        deployment: (cicdRaw.deployment as string) ?? "Staging",
+        testCoverage: (cicdRaw.testCoverage as number) ?? 87,
+        failedTests: (cicdRaw.failedTests as number) ?? 2,
+        lastDeployment: "2 hrs ago",
+      };
+
+  const prStats = useGitHub
+    ? computePrDashboardStats(githubSnapshot.openPullRequests)
+    : { openPrs: 2, reviewsRequired: 2, avgReviewHours: 6 };
+
+  const openPrs = prStats.openPrs;
+  const buildHealth: "green" | "amber" | "red" = useGitHub
+    ? buildHealthFromCi(githubSnapshot.ci, openPrs, blockedTasks.length)
+    : buildFailed
+      ? "red"
+      : blockedTasks.length > 0
+        ? "amber"
+        : "green";
 
   return {
     userName: profile?.name ?? user?.email ?? null,
@@ -230,8 +271,8 @@ export async function getEngineerMissionControl(
     cicd,
     prDashboard: {
       openPrs,
-      reviewsRequired: 2,
-      avgReviewHours: 6,
+      reviewsRequired: prStats.reviewsRequired,
+      avgReviewHours: prStats.avgReviewHours,
     },
     technicalDebt,
     stakeholders: buildEngineerStakeholders(),
@@ -243,5 +284,10 @@ export async function getEngineerMissionControl(
     specialisation: ctx?.specialisation ?? null,
     techStack: ctx?.tech_stack ?? {},
     extractionStatus: ctx?.extraction_status ?? "pending",
+    github: {
+      configured: githubSnapshot.configured,
+      lastSyncAt: githubSnapshot.lastSyncAt,
+      openPullRequests: githubSnapshot.openPullRequests,
+    },
   };
 }
