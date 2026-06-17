@@ -5,6 +5,9 @@ import { EnvKeysGuide } from "@/components/settings/env-keys-guide";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SetupDiagnostics } from "@/components/settings/setup-diagnostics";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
+import { NotificationSettingsForm } from "@/components/settings/notification-settings-form";
+import { isEmailConfigured } from "@/lib/email/resend";
+import { getOrgNotificationSettings } from "@/services/notificationService";
 import { dxClass } from "@/lib/dx-theme";
 
 export default async function SettingsPage() {
@@ -24,6 +27,8 @@ export default async function SettingsPage() {
     team_size?: string | null;
     delivery_type?: string | null;
   } | null;
+
+  const notificationSettings = await getOrgNotificationSettings().catch(() => null);
 
   return (
     <>
@@ -61,6 +66,14 @@ export default async function SettingsPage() {
             )}
           </section>
         </div>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Notifications</h2>
+          <NotificationSettingsForm
+            settings={notificationSettings}
+            emailConfigured={isEmailConfigured()}
+          />
+        </section>
 
         <AiIntegrationStatus />
         <EnvKeysGuide />

@@ -15,6 +15,7 @@ import {
 } from "./governance";
 import {
   buildGoogleCalendarUrl,
+  buildOutlookCalendarUrl,
   type CalendarEventPayload,
   type ProposalActionType,
   type ProposalSource,
@@ -303,7 +304,8 @@ async function executeProposal(
         location: p.location ? String(p.location) : undefined,
       };
       const calendarUrl = buildGoogleCalendarUrl(event);
-      return { entityType: "calendar_event", calendarUrl };
+      const outlookCalendarUrl = buildOutlookCalendarUrl(event);
+      return { entityType: "calendar_event", calendarUrl, outlookCalendarUrl };
     }
     default:
       throw new Error("Unsupported action type");

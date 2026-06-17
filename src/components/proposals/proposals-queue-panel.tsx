@@ -79,6 +79,10 @@ function ProposalRow({
     result?.calendarUrl && typeof result.calendarUrl === "string"
       ? result.calendarUrl
       : null;
+  const outlookCalendarUrl =
+    result?.outlookCalendarUrl && typeof result.outlookCalendarUrl === "string"
+      ? result.outlookCalendarUrl
+      : null;
 
   return (
     <li className="rounded-lg border border-slate-100 bg-slate-50/60 p-4">
@@ -133,16 +137,31 @@ function ProposalRow({
           </span>
         )}
       </div>
-      {calendarUrl ? (
-        <a
-          href={calendarUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-900"
-        >
-          Open in Google Calendar
-          <ExternalLink size={12} />
-        </a>
+      {calendarUrl || outlookCalendarUrl ? (
+        <div className="mt-3 flex flex-wrap gap-3">
+          {calendarUrl ? (
+            <a
+              href={calendarUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-900"
+            >
+              Google Calendar
+              <ExternalLink size={12} />
+            </a>
+          ) : null}
+          {outlookCalendarUrl ? (
+            <a
+              href={outlookCalendarUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-medium text-teal-700 hover:text-teal-900"
+            >
+              Outlook Calendar
+              <ExternalLink size={12} />
+            </a>
+          ) : null}
+        </div>
       ) : null}
       {error ? <p className="mt-2 text-xs text-rose-600">{error}</p> : null}
     </li>

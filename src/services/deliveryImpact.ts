@@ -7,6 +7,7 @@ import { throwIfMissingTable } from "@/lib/db-errors";
 import type { ProposedActionRow } from "./proposedActions";
 import { syncRequirementTraceLinks } from "./deliveryTraceability";
 import { syncProjectMemory } from "./projectMemoryRag";
+import { notifyProposalApplied } from "./notificationService";
 import {
   proposalApplyToImpactEvents,
   type DeliveryImpactEventDraft,
@@ -135,6 +136,10 @@ export async function processProposalAppliedSideEffects(
   }
 
   await Promise.all(sideEffects);
+
+  await notifyProposalApplied(proposal, applyResult, proposal.organisation_id).catch(
+    () => ({ sent: 0, skipped: 1 }),
+  );
 
   return { impactEvents };
 }

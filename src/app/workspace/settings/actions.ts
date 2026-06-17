@@ -2,6 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import {
+  saveOrgNotificationSettings,
+  sendTestNotification,
+} from "@/services/notificationService";
 
 export type SettingsState = { ok: boolean; error?: string };
 
@@ -73,4 +77,49 @@ export async function updateProfileAction(
   revalidatePath("/workspace/settings");
   revalidatePath("/workspace/dashboard");
   return { ok: true };
+}
+
+export async function saveNotificationSettingsAction(
+  _prev: SettingsState,
+  formData: FormData,
+): Promise<SettingsState> {
+  try {
+    const recipientsRaw = String(formData.get("digest_recipients") ?? "");
+    const digestRecipients = recipientsRaw
+      .split(/[,;\n]/)
+      .map((e) => e.trim())
+      .filter(Boolean);
+
+    const threshold = Number(formData.get("reminder_threshold_hours") ?? 48);
+
+    await saveOrgNotificationSettings({
+      slackWebhookUrl: String(formData.get("slack_webhook_url") ?? "").trim() || null,
+      teamsWebhookUrl: String(formData.get("teams_webhook_url") ?? "").trim() || null,
+      digestEnabled: formData.get("digest_enabled") === "on",
+      digestRecipients,
+      notifyOnProposalApply: formData.get("notify_on_proposal_apply") === "on",
+      notifyOnPendingReminder: formData.get("notify_on_pending_reminder") === "on",
+      reminderThresholdHours: Number.isFinite(threshold) ? threshold : 48,
+    });
+
+    revalidatePath("/workspace/settings");
+    return { ok: true };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Could not save notification settings",
+    };
+  }
+}
+
+export async function sendTestNotificationAction(): Promise<SettingsState> {
+  try {
+    const result = await sendTestNotification();
+    return result.ok ? { ok: true } : { ok: false, error: result.message };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Test notification failed",
+    };
+  }
 }

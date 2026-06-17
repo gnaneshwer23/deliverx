@@ -61,20 +61,39 @@ export type StructuredProposal = {
   payload: Record<string, unknown>;
 };
 
+function formatCalendarUtc(d: Date): string {
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "").slice(0, 15) + "Z";
+}
+
 export function buildGoogleCalendarUrl(input: CalendarEventPayload): string {
   const start = new Date(input.scheduledAt);
   const end = new Date(start.getTime() + input.durationMinutes * 60_000);
-  const fmt = (d: Date) =>
-    d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "").slice(0, 15) + "Z";
 
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: input.title,
-    dates: `${fmt(start)}/${fmt(end)}`,
+    dates: `${formatCalendarUtc(start)}/${formatCalendarUtc(end)}`,
   });
   if (input.description) params.set("details", input.description);
   if (input.location) params.set("location", input.location);
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/** Outlook web calendar deeplink (no OAuth required). */
+export function buildOutlookCalendarUrl(input: CalendarEventPayload): string {
+  const start = new Date(input.scheduledAt);
+  const end = new Date(start.getTime() + input.durationMinutes * 60_000);
+
+  const params = new URLSearchParams({
+    path: "/calendar/action/compose",
+    rru: "addevent",
+    subject: input.title,
+    startdt: start.toISOString(),
+    enddt: end.toISOString(),
+  });
+  if (input.description) params.set("body", input.description);
+  if (input.location) params.set("location", input.location);
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
 }
 
 export const ACTION_TYPE_LABELS: Record<ProposalActionType, string> = {
