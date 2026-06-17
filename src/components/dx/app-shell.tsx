@@ -17,6 +17,7 @@ import {
   Globe2,
   LayoutDashboard,
   MessageSquare,
+  NotebookPen,
   Plus,
   RefreshCw,
   Settings,
@@ -33,6 +34,7 @@ import { dxClass } from "@/lib/dx-theme";
 const core = [
   { href: "/workspace/assistant", label: "AI Workspace", icon: Cpu, id: "ws" },
   { href: "/workspace/dashboard", label: "Command Centre", icon: LayoutDashboard, id: "dash" },
+  { href: "/workspace/ba", label: "BA Mission Control", icon: NotebookPen, id: "ba" },
 ];
 
 const workspace = [

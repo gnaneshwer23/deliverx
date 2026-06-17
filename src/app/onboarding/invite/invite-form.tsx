@@ -13,6 +13,7 @@ const ROLE_LABEL: Record<string, string> = {
   pm: "Project Manager",
   team_member: "Team member",
   executive: "Executive",
+  ba: "Business Analyst",
 };
 
 export function InviteForm({
@@ -53,6 +54,7 @@ export function InviteForm({
             <span className={dxClass.label}>Role</span>
             <select name="role" defaultValue="team_member" className={dxClass.input}>
               <option value="team_member">Team member</option>
+              <option value="ba">Business Analyst</option>
               <option value="pm">Project Manager</option>
               <option value="executive">Executive</option>
             </select>

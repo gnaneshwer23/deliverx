@@ -9,12 +9,17 @@ export async function resolveAuthenticatedPath(
 
   const { data: profile } = await supabase
     .from("users")
-    .select("organisation_id")
+    .select("organisation_id, role")
     .maybeSingle();
 
   if (!profile?.organisation_id) {
     return safeNext?.startsWith("/onboarding") ? safeNext : "/onboarding/organisation";
   }
 
-  return safeNext ?? "/workspace/dashboard";
+  if (safeNext) return safeNext;
+
+  if (profile.role === "ba") return "/workspace/ba";
+  if (profile.role === "executive") return "/workspace/executive";
+
+  return "/workspace/dashboard";
 }

@@ -15,6 +15,7 @@ function isActive(pathname: string, href: string) {
   if (pathname === href) return true;
   if (href.endsWith("/tasks") && pathname.startsWith(`${href}/`)) return true;
   if (href.endsWith("/reports") && pathname.startsWith(`${href}/`)) return true;
+  if (href.includes("/requirements") && pathname.startsWith(href)) return true;
   if (href.includes("/charter") && pathname.startsWith(href)) return true;
   if (href.includes("/standups") && pathname.startsWith(href)) return true;
   if (href.includes("/stakeholders") && pathname.startsWith(href)) return true;
@@ -35,11 +36,15 @@ export function ProjectSidebar({
 
   const sections: NavSection[] = [
     {
-      label: "Project",
+      label: "Business analysis",
       items: [
-        { label: "Overview", href: `/project/${projectId}` },
+        { label: "Requirements", href: `/project/${projectId}/requirements` },
         { label: "Charter", href: `/project/${projectId}/charter` },
       ],
+    },
+    {
+      label: "Project",
+      items: [{ label: "Overview", href: `/project/${projectId}` }],
     },
     {
       label: "Delivery",

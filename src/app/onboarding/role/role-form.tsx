@@ -8,6 +8,11 @@ const initial: RoleState = { ok: false };
 
 const roles = [
   {
+    value: "ba",
+    title: "Business Analyst",
+    desc: "Requirements, stakeholder alignment, traceability.",
+  },
+  {
     value: "pm",
     title: "Project / Programme Manager",
     desc: "Plan delivery, run governance, ship outcomes.",

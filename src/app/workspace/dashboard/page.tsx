@@ -55,6 +55,7 @@ function roleHeading(role: string, name: string | null) {
   const greeting = name ? `, ${name}` : "";
   if (role === "executive") return `Executive overview${greeting}`;
   if (role === "team_member") return `My workspace${greeting}`;
+  if (role === "ba") return `BA workspace${greeting}`;
   return `Delivery command centre${greeting}`;
 }
 
@@ -65,6 +66,9 @@ function roleSubtitle(role: string, orgName: string | null) {
   }
   if (role === "team_member") {
     return `${org}Your tasks, standups, and project updates in one place.`;
+  }
+  if (role === "ba") {
+    return `${org}Requirements, clarifications, and traceability — open BA Mission Control for guided tasks.`;
   }
   return `${org}Tasks, RAID, meetings, decisions, standups, and intelligence — unified.`;
 }
