@@ -6,6 +6,7 @@ import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SetupDiagnostics } from "@/components/settings/setup-diagnostics";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
 import { NotificationSettingsForm } from "@/components/settings/notification-settings-form";
+import { PhaseBHealthPanel } from "@/components/settings/phase-b-health-panel";
 import { isEmailConfigured } from "@/lib/email/resend";
 import { getOrgNotificationSettings } from "@/services/notificationService";
 import { dxClass } from "@/lib/dx-theme";
@@ -74,6 +75,8 @@ export default async function SettingsPage() {
             emailConfigured={isEmailConfigured()}
           />
         </section>
+
+        <PhaseBHealthPanel />
 
         <AiIntegrationStatus />
         <EnvKeysGuide />
