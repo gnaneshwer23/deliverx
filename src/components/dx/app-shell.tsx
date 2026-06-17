@@ -26,6 +26,7 @@ import {
   Telescope,
   TrendingUp,
   Users,
+  Crown,
 } from "lucide-react";
 import { DxLogo } from "@/components/dx/dx-logo";
 import { SignOutButton } from "@/components/auth/sign-out-button";
@@ -38,6 +39,7 @@ const core = [
   { href: "/workspace/ba", label: "BA Mission Control", icon: NotebookPen, id: "ba" },
   { href: "/workspace/product", label: "Product Mission Control", icon: TrendingUp, id: "product" },
   { href: "/workspace/pm-mission", label: "PM Mission Control", icon: CalendarClock, id: "pm-mission" },
+  { href: "/workspace/founder", label: "Founder Mission Control", icon: Crown, id: "founder" },
 ];
 
 const workspace = [
@@ -60,7 +62,7 @@ const intelligence = [
   { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit, id: "coord" },
   { href: "/workspace/documents", label: "Documents", icon: FileText, id: "docs" },
   { href: "/workspace/reports", label: "Reports", icon: BarChart3, id: "rep" },
-  { href: "/workspace/executive", label: "Executive", icon: LayoutDashboard, id: "exec" },
+  { href: "/workspace/founder", label: "Founder", icon: LayoutDashboard, id: "exec" },
   { href: "/workspace/portfolio", label: "Portfolio", icon: FolderKanban, id: "port" },
 ];
 

@@ -12,7 +12,7 @@ const initial: InviteState = { ok: false };
 const ROLE_LABEL: Record<string, string> = {
   pm: "Project Manager",
   team_member: "Team member",
-  executive: "Executive",
+  executive: "Founder / Sponsor",
   ba: "Business Analyst",
   product_manager: "Product Manager",
 };
@@ -58,7 +58,7 @@ export function InviteForm({
               <option value="ba">Business Analyst</option>
               <option value="product_manager">Product Manager</option>
               <option value="pm">Project Manager</option>
-              <option value="executive">Executive</option>
+              <option value="executive">Founder / Sponsor</option>
             </select>
           </label>
         </div>

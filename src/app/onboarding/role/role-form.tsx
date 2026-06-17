@@ -29,8 +29,8 @@ const roles = [
   },
   {
     value: "executive",
-    title: "Executive",
-    desc: "Oversight, reporting, decisions.",
+    title: "Founder / Sponsor",
+    desc: "Vision, funding, decisions, investor updates, and outcomes.",
   },
 ] as const;
 
