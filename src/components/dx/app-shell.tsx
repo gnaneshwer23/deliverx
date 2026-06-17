@@ -29,6 +29,7 @@ import {
   Code2,
   Crown,
   Kanban,
+  ShieldCheck,
 } from "lucide-react";
 import { DxLogo } from "@/components/dx/dx-logo";
 import { SignOutButton } from "@/components/auth/sign-out-button";
@@ -44,6 +45,7 @@ const core = [
   { href: "/workspace/founder", label: "Founder Mission Control", icon: Crown, id: "founder" },
   { href: "/workspace/engineer", label: "Engineer Mission Control", icon: Code2, id: "engineer" },
   { href: "/workspace/scrum-mission", label: "Scrum Mission Control", icon: Kanban, id: "scrum" },
+  { href: "/workspace/qa", label: "QA Mission Control", icon: ShieldCheck, id: "qa" },
 ];
 
 const workspace = [

@@ -21,7 +21,7 @@ import {
   computeDeliveryConfidence,
 } from "./intelligenceEngine";
 
-export type UserRole = "pm" | "team_member" | "executive" | "ba" | "product_manager" | "engineer" | "scrum_master";
+export type UserRole = "pm" | "team_member" | "executive" | "ba" | "product_manager" | "engineer" | "scrum_master" | "qa";
 
 export type ProjectHealthSummary = {
   id: string;

@@ -24,6 +24,7 @@ export async function resolveAuthenticatedPath(
   if (profile.role === "executive") return "/workspace/founder";
   if (profile.role === "engineer") return "/workspace/engineer";
   if (profile.role === "scrum_master") return "/workspace/scrum-mission";
+  if (profile.role === "qa") return "/workspace/qa";
 
   return "/workspace/dashboard";
 }

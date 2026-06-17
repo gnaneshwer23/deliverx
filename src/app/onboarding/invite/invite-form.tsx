@@ -11,6 +11,7 @@ const initial: InviteState = { ok: false };
 
 const ROLE_LABEL: Record<string, string> = {
   pm: "Project Manager",
+  qa: "QA / Test Manager",
   scrum_master: "Scrum Master",
   engineer: "Engineer",
   team_member: "Team member",
@@ -56,6 +57,7 @@ export function InviteForm({
           <label className="block sm:col-span-1">
             <span className={dxClass.label}>Role</span>
             <select name="role" defaultValue="team_member" className={dxClass.input}>
+              <option value="qa">QA / Test Manager</option>
               <option value="scrum_master">Scrum Master</option>
               <option value="engineer">Engineer</option>
               <option value="team_member">Team member</option>

@@ -60,6 +60,12 @@ const ACTIONS: Action[] = [
     roles: ["scrum_master", "pm", "team_member"],
   },
   {
+    href: "/workspace/qa",
+    label: "QA Mission Control",
+    icon: ShieldCheck,
+    roles: ["qa", "pm", "team_member"],
+  },
+  {
     href: "/workspace/founder",
     label: "Founder Mission Control",
     icon: Crown,

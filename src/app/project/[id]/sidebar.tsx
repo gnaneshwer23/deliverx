@@ -19,6 +19,7 @@ function isActive(pathname: string, href: string) {
   if (href.includes("/product") && pathname.startsWith(href)) return true;
   if (href.includes("/engineering") && pathname.startsWith(href)) return true;
   if (href.includes("/scrum") && pathname.startsWith(href)) return true;
+  if (href.includes("/qa") && pathname.startsWith(href)) return true;
   if (href.includes("/delivery") && pathname.startsWith(href)) return true;
   if (href.includes("/charter") && pathname.startsWith(href)) return true;
   if (href.includes("/standups") && pathname.startsWith(href)) return true;
@@ -57,6 +58,10 @@ export function ProjectSidebar({
     {
       label: "Scrum",
       items: [{ label: "Scrum workspace", href: `/project/${projectId}/scrum` }],
+    },
+    {
+      label: "QA",
+      items: [{ label: "QA workspace", href: `/project/${projectId}/qa` }],
     },
     {
       label: "Delivery PM",

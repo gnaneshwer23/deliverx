@@ -56,6 +56,7 @@ function roleHeading(role: string, name: string | null) {
   if (role === "executive") return `Founder overview${greeting}`;
   if (role === "engineer") return `Engineering workspace${greeting}`;
   if (role === "scrum_master") return `Scrum workspace${greeting}`;
+  if (role === "qa") return `QA workspace${greeting}`;
   if (role === "team_member") return `My workspace${greeting}`;
   if (role === "ba") return `BA workspace${greeting}`;
   if (role === "product_manager") return `Product workspace${greeting}`;
@@ -73,6 +74,9 @@ function roleSubtitle(role: string, orgName: string | null) {
   }
   if (role === "scrum_master") {
     return `${org}Sprint health, impediments, and ceremonies — open Scrum Mission Control.`;
+  }
+  if (role === "qa") {
+    return `${org}Test coverage, defects, and release readiness — open QA Mission Control.`;
   }
   if (role === "team_member") {
     return `${org}Your tasks, standups, and project updates in one place.`;

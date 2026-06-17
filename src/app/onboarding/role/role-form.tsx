@@ -23,6 +23,11 @@ const roles = [
     desc: "Plan delivery, run governance, ship outcomes.",
   },
   {
+    value: "qa",
+    title: "QA / Test Manager",
+    desc: "Test design, defects, release readiness, and quality traceability.",
+  },
+  {
     value: "scrum_master",
     title: "Scrum Master",
     desc: "Facilitate sprints, remove impediments, and coach team delivery.",
