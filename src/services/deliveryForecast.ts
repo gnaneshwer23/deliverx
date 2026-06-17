@@ -7,6 +7,10 @@ import { createClient } from "@/lib/supabase/server";
 import { loadProjectSignals } from "./projectSignals";
 import { listMilestones } from "./milestones";
 import {
+  approvedEstimationSummary,
+  listEstimationPacks,
+} from "./estimationPacks";
+import {
   computeDeliveryForecast,
   parseTimelineToDate,
   type DeliveryForecast,
@@ -20,10 +24,13 @@ export async function loadForecastContext(
 ): Promise<ForecastContext> {
   const supabase = await createClient();
 
-  const [{ data: project }, milestones] = await Promise.all([
+  const [{ data: project }, milestones, packs] = await Promise.all([
     supabase.from("projects").select("timeline").eq("id", projectId).maybeSingle(),
     listMilestones(projectId).catch(() => []),
+    listEstimationPacks(projectId).catch(() => []),
   ]);
+
+  const { totalDays, avgConfidence } = approvedEstimationSummary(packs);
 
   const open = milestones.filter((m) => m.status !== "completed");
   const dated = open
@@ -36,16 +43,39 @@ export async function loadForecastContext(
       baselineDate: anchor.target_date,
       anchorLabel: anchor.title,
       openMilestoneCount: open.length,
+      approvedTotalDays: totalDays || undefined,
+      approvedEstimationConfidence: avgConfidence,
     };
   }
 
   const parsed = parseTimelineToDate(project?.timeline);
   const timeline = project?.timeline?.trim();
 
+  if (parsed) {
+    return {
+      baselineDate: parsed,
+      anchorLabel: timeline ? `Timeline (${timeline})` : "Estimated completion",
+      openMilestoneCount: open.length,
+      approvedTotalDays: totalDays || undefined,
+      approvedEstimationConfidence: avgConfidence,
+    };
+  }
+
+  if (totalDays > 0) {
+    return {
+      baselineDate: null,
+      anchorLabel: `Approved estimates (${totalDays}d total)`,
+      openMilestoneCount: open.length,
+      approvedTotalDays: totalDays,
+      approvedEstimationConfidence: avgConfidence,
+    };
+  }
+
   return {
-    baselineDate: parsed,
-    anchorLabel: timeline ? `Timeline (${timeline})` : "Estimated completion",
+    baselineDate: null,
+    anchorLabel: "Estimated completion",
     openMilestoneCount: open.length,
+    approvedEstimationConfidence: avgConfidence,
   };
 }
 

@@ -31,6 +31,9 @@ export type ForecastContext = {
   /** Human label for the anchor (milestone title or timeline text) */
   anchorLabel: string;
   openMilestoneCount: number;
+  /** Sum of approved role estimation days (feeds baseline when no milestone) */
+  approvedTotalDays?: number;
+  approvedEstimationConfidence?: number | null;
 };
 
 export type DeliveryForecast = Forecast & {
@@ -116,7 +119,7 @@ export function computeDeliveryForecast(
     (p50.getTime() - baselineMs) / MS_PER_DAY,
   );
 
-  const drivers = extractDrivers(signals);
+  const drivers = extractDrivers(signals, context);
   const prediction = buildPrediction(base, delayVsBaseline, context.anchorLabel);
 
   return {
@@ -179,12 +182,20 @@ function resolveBaselineDate(context: ForecastContext): Date {
   if (context.baselineDate) {
     return startOfDay(new Date(context.baselineDate));
   }
+  if (context.approvedTotalDays && context.approvedTotalDays > 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + Math.round(context.approvedTotalDays));
+    return startOfDay(d);
+  }
   const fallback = new Date();
   fallback.setDate(fallback.getDate() + 90);
   return startOfDay(fallback);
 }
 
-function extractDrivers(signals: ProjectSignals): ForecastDriver[] {
+function extractDrivers(
+  signals: ProjectSignals,
+  context: ForecastContext,
+): ForecastDriver[] {
   const drivers: ForecastDriver[] = [];
 
   if (signals.milestoneDelay) {
@@ -239,6 +250,17 @@ function extractDrivers(signals: ProjectSignals): ForecastDriver[] {
     drivers.push({
       id: "risks",
       label: `${signals.risks} open high-severity risks`,
+      impact: "medium",
+      direction: "delay",
+    });
+  }
+  if (
+    context.approvedEstimationConfidence != null &&
+    context.approvedEstimationConfidence < 60
+  ) {
+    drivers.push({
+      id: "estimation-confidence",
+      label: "Low confidence on approved role estimates",
       impact: "medium",
       direction: "delay",
     });

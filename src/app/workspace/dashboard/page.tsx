@@ -18,6 +18,7 @@ import {
 import { getOrgAlertQueue } from "@/services/alerts";
 import { getDeliveryCoachSuggestions } from "@/services/deliveryCoach";
 import { listProjectForecasts } from "@/services/deliveryForecast";
+import { getProjectSuccessScore } from "@/services/successScore";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getProjectAlignment } from "@/services/alignment";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
@@ -83,20 +84,23 @@ export default async function DashboardPage() {
   const insightProjectName: string | null = topProject?.name ?? null;
   let healthTier: "healthy" | "watch" | "at-risk" = topProject?.healthTier ?? "healthy";
   let confidenceScore = topProject?.confidenceScore ?? 100;
+  let successScoreValue: number | null = null;
   let recommendation =
     "Add tasks and governance items to projects to generate delivery signals.";
   let topAlignment: Awaited<ReturnType<typeof getProjectAlignment>> | null = null;
 
   if (topProject) {
     try {
-      const [intel, alignment] = await Promise.all([
+      const [intel, alignment, successScore] = await Promise.all([
         getProjectIntelligence(topProject.id),
         getProjectAlignment(topProject.id),
+        getProjectSuccessScore(topProject.id).catch(() => null),
       ]);
       topAlignment = alignment;
       recommendation = intel.recommendations[0]?.text ?? recommendation;
       healthTier = intel.health.tier;
       confidenceScore = intel.confidence.score;
+      successScoreValue = successScore?.score ?? null;
     } catch (err) {
       console.error("[dashboard] project intelligence", err);
     }
@@ -122,6 +126,23 @@ export default async function DashboardPage() {
               data.portfolioHealth >= 80
                 ? ("teal" as const)
                 : data.portfolioHealth >= 60
+                  ? ("amber" as const)
+                  : ("rose" as const),
+          },
+        ]
+      : []),
+    ...(successScoreValue != null
+      ? [
+          {
+            label: "Success score",
+            value: successScoreValue,
+            hint: "/ 100",
+            href: topProject ? `/project/${topProject.id}` : "/workspace/projects",
+            icon: CalendarClock,
+            accent:
+              successScoreValue >= 75
+                ? ("teal" as const)
+                : successScoreValue >= 55
                   ? ("amber" as const)
                   : ("rose" as const),
           },

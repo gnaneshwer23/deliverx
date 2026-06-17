@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getDeliveryForecast } from "@/services/deliveryForecast";
+import { listEstimationPacks } from "@/services/estimationPacks";
+import { getProjectSuccessScore } from "@/services/successScore";
 import { loadProjectSignals } from "@/services/projectSignals";
 import { listMemory } from "@/services/memory";
 import { listTasks, listOrgMembers } from "@/services/delivery";
@@ -9,6 +11,8 @@ import { runAdaptiveLoop, latestReviewByKey } from "@/services/adaptive";
 import { ProjectHealthCard } from "@/components/intelligence/project-health-card";
 import { ConfidenceCard } from "@/components/intelligence/confidence-card";
 import { DeliveryForecastCard } from "@/components/intelligence/delivery-forecast-card";
+import { DeliverySuccessScoreCard } from "@/components/intelligence/delivery-success-score-card";
+import { EstimationPacksPanel } from "@/components/intelligence/estimation-packs-panel";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
 import { DriftPanel } from "@/components/intelligence/drift-panel";
 import { BlockerInsights } from "@/components/intelligence/blocker-insights";
@@ -70,7 +74,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, estimationPacks, successScore] =
     await Promise.all([
       getProjectIntelligence(id),
       loadProjectSignals(id),
@@ -89,6 +93,8 @@ export default async function ProjectOverviewPage({
       listReports(id, { pageSize: 4 }),
       hasStandupToday(id),
       getDeliveryForecast(id).catch(() => null),
+      listEstimationPacks(id).catch(() => []),
+      getProjectSuccessScore(id).catch(() => null),
     ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -183,13 +189,16 @@ export default async function ProjectOverviewPage({
               hasCharter={Boolean(alignment.charter?.content?.trim())}
             />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
               <ProjectHealthCard health={intelligence.health} />
               <ConfidenceCard confidence={intelligence.confidence} />
               {deliveryForecast ? (
                 <DeliveryForecastCard forecast={deliveryForecast} projectId={id} />
               ) : null}
+              {successScore ? <DeliverySuccessScoreCard score={successScore} /> : null}
             </div>
+
+            <EstimationPacksPanel projectId={id} packs={estimationPacks} />
 
             <TraceabilityPanel projectId={id} trace={trace} compact />
 
