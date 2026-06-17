@@ -2,9 +2,11 @@ import Link from "next/link";
 import { GitBranch } from "lucide-react";
 import { getProjectTraceability } from "@/services/traceability";
 import { getDeliveryTraceability } from "@/services/deliveryTraceability";
+import { getProjectKnowledgeGraph } from "@/services/projectKnowledgeGraph";
 import { PageHeader } from "@/components/shared/page-header";
 import { TraceabilityPanel } from "@/components/traceability/traceability-panel";
 import { DeliveryTraceabilityPanel } from "@/components/traceability/delivery-traceability-panel";
+import { DeliveryKnowledgeGraphPanel } from "@/components/traceability/delivery-knowledge-graph-panel";
 
 type Params = Promise<{ id: string }>;
 
@@ -14,7 +16,7 @@ export default async function ProjectTraceabilityPage({
   params: Params;
 }) {
   const { id } = await params;
-  const [trace, delivery] = await Promise.all([
+  const [trace, delivery, knowledgeGraph] = await Promise.all([
     getProjectTraceability(id),
     getDeliveryTraceability(id).catch(() => ({
       rows: [],
@@ -30,6 +32,13 @@ export default async function ProjectTraceabilityPage({
       },
       gaps: [],
     })),
+    getProjectKnowledgeGraph(id).catch(() => ({
+      projectId: id,
+      projectName: "",
+      nodes: [],
+      edges: [],
+      stats: { nodeCount: 0, edgeCount: 0, chainCompletenessPct: 0, governanceLinks: 0 },
+    })),
   ]);
 
   return (
@@ -41,6 +50,8 @@ export default async function ProjectTraceabilityPage({
       />
 
       <DeliveryTraceabilityPanel projectId={id} graph={delivery} />
+
+      <DeliveryKnowledgeGraphPanel projectId={id} graph={knowledgeGraph} />
 
       <section className="space-y-4 border-t border-slate-200 pt-8">
         <div>

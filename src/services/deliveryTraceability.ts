@@ -38,19 +38,34 @@ export async function syncRequirementTraceLinks(projectId: string): Promise<{
 }> {
   const { supabase, orgId } = await getOrgContext();
 
-  const [requirements, stories, tasksRes, existingRes] = await Promise.all([
+  const [requirements, stories, tasksRes, existingRes, testCasesRes, benefitsRes] = await Promise.all([
     listApprovedRequirements(projectId),
     listUserStories(projectId),
     supabase.from("tasks").select("id, title, description").eq("project_id", projectId),
     supabase
       .from("requirement_trace_links")
-      .select("id, requirement_id, user_story_id, task_id")
+      .select("id, requirement_id, user_story_id, task_id, test_case_id, benefit_id")
       .eq("project_id", projectId),
+    supabase
+      .from("test_cases")
+      .select("id, test_code, user_story_id, linked_story_code")
+      .eq("project_id", projectId),
+    supabase.from("benefit_hypotheses").select("id, title").eq("project_id", projectId),
   ]);
 
   const tasks = tasksRes.data ?? [];
   const existing = existingRes.data ?? [];
+  const benefits = benefitsRes.data ?? [];
   let created = 0;
+
+  const testsByStoryId = new Map<string, string>();
+  const testsByStoryCode = new Map<string, string>();
+  for (const tc of testCasesRes.data ?? []) {
+    if (tc.user_story_id) testsByStoryId.set(tc.user_story_id as string, tc.id as string);
+    if (tc.linked_story_code) {
+      testsByStoryCode.set(tc.linked_story_code as string, tc.id as string);
+    }
+  }
 
   const storyByReq = new Map<string, (typeof stories)[0]>();
   for (const story of stories) {
@@ -84,6 +99,12 @@ export async function syncRequirementTraceLinks(projectId: string): Promise<{
       }
     }
 
+    const testCaseId =
+      testsByStoryId.get(story.id) ?? testsByStoryCode.get(story.story_code) ?? null;
+    const benefitIndex = requirements.indexOf(req) % Math.max(benefits.length, 1);
+    const benefitId =
+      benefits.length > 0 ? (benefits[benefitIndex]?.id as string | undefined) ?? null : null;
+
     const current = existingByReq.get(req.id);
     if (!current) {
       const { error } = await supabase.from("requirement_trace_links").insert({
@@ -92,17 +113,22 @@ export async function syncRequirementTraceLinks(projectId: string): Promise<{
         requirement_id: req.id,
         user_story_id: story.id,
         task_id: taskId,
+        test_case_id: testCaseId,
+        benefit_id: benefitId,
         link_type: "implements",
       });
       if (!error) created++;
       continue;
     }
 
-    if (!current.task_id && taskId) {
-      await supabase
-        .from("requirement_trace_links")
-        .update({ task_id: taskId, user_story_id: story.id })
-        .eq("id", current.id as string);
+    const updates: Record<string, string | null> = {};
+    if (!current.user_story_id) updates.user_story_id = story.id;
+    if (!current.task_id && taskId) updates.task_id = taskId;
+    if (!current.test_case_id && testCaseId) updates.test_case_id = testCaseId;
+    if (!current.benefit_id && benefitId) updates.benefit_id = benefitId;
+
+    if (Object.keys(updates).length > 0) {
+      await supabase.from("requirement_trace_links").update(updates).eq("id", current.id as string);
       created++;
     }
   }
