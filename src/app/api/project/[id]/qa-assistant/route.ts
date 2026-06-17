@@ -3,6 +3,7 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { askQaAssistant } from "@/services/aiQa";
 import { getQaContext } from "@/services/qaContext";
+import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
 type Body = { question?: string };
 
@@ -20,11 +21,16 @@ export async function POST(
 
     const qaCtx = await getQaContext().catch(() => null);
     const plan = qaCtx?.quality_plan ?? {};
+    const context = await enrichAssistantContext(
+      id,
+      body.question.trim(),
+      JSON.stringify(plan).slice(0, 4000),
+    );
 
     const answer = await askQaAssistant({
       projectName: project.name,
       question: body.question.trim(),
-      context: JSON.stringify(plan).slice(0, 4000),
+      context,
     });
 
     return NextResponse.json({ ok: true, answer });

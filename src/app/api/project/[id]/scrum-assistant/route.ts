@@ -3,6 +3,7 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { askScrumAssistant } from "@/services/aiScrum";
 import { getScrumContext } from "@/services/scrumContext";
+import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
 type Body = { question?: string };
 
@@ -20,13 +21,18 @@ export async function POST(
     }
 
     const scrumCtx = await getScrumContext().catch(() => null);
-    const answer = await askScrumAssistant({
-      projectName: project.name,
+    const context = await enrichAssistantContext(
+      id,
       question,
-      context: JSON.stringify({
+      JSON.stringify({
         summary: scrumCtx?.ai_summary,
         plan: scrumCtx?.sprint_plan ?? {},
       }),
+    );
+    const answer = await askScrumAssistant({
+      projectName: project.name,
+      question,
+      context,
     });
 
     return NextResponse.json({ ok: true, answer });

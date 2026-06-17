@@ -3,6 +3,7 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { askBaAssistant } from "@/services/aiBaRequirements";
 import { getActiveCharter } from "@/services/charter";
+import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
 type Body = { question?: string };
 
@@ -21,10 +22,11 @@ export async function POST(
     }
 
     const charter = await getActiveCharter(id).catch(() => null);
+    const context = await enrichAssistantContext(id, question, charter?.content);
     const answer = await askBaAssistant({
       projectName: project.name,
       question,
-      context: charter?.content,
+      context,
     });
 
     return NextResponse.json({ ok: true, answer });

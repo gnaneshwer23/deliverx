@@ -3,6 +3,7 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { askProductAssistant } from "@/services/aiPmProduct";
 import { getPmProductContext } from "@/services/pmProduct";
+import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
 type Body = { question?: string };
 
@@ -20,10 +21,15 @@ export async function POST(
     }
 
     const ctxRow = await getPmProductContext(id).catch(() => null);
+    const context = await enrichAssistantContext(
+      id,
+      question,
+      JSON.stringify(ctxRow?.product_context ?? {}),
+    );
     const answer = await askProductAssistant({
       projectName: project.name,
       question,
-      context: JSON.stringify(ctxRow?.product_context ?? {}),
+      context,
     });
 
     return NextResponse.json({ ok: true, answer });

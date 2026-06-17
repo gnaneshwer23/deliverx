@@ -3,6 +3,7 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { askEngineerAssistant } from "@/services/aiEngineer";
 import { getEngineerContext } from "@/services/engineerContext";
+import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
 type Body = { question?: string };
 
@@ -20,14 +21,19 @@ export async function POST(
     }
 
     const engCtx = await getEngineerContext().catch(() => null);
+    const context = await enrichAssistantContext(
+      id,
+      question,
+      JSON.stringify({
+        summary: engCtx?.ai_summary,
+        plan: engCtx?.engineering_plan ?? {},
+      }),
+    );
     const answer = await askEngineerAssistant({
       projectName: project.name,
       question,
       stack: engCtx?.tech_stack,
-      context: JSON.stringify({
-        summary: engCtx?.ai_summary,
-        plan: engCtx?.engineering_plan ?? {},
-      }),
+      context,
     });
 
     return NextResponse.json({ ok: true, answer });
