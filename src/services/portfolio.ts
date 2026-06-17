@@ -29,7 +29,8 @@ import {
   blastRadius,
   type DependencyEdge,
 } from "./dependencyEngine";
-import { generateForecast, type Forecast } from "./forecastEngine";
+import type { DeliveryForecast, Forecast } from "./forecastEngine";
+import { getDeliveryForecast } from "./deliveryForecast";
 
 // ---------------------------------------------------------------------------
 // DB row types
@@ -387,9 +388,10 @@ async function persistForecast(projectId: string, forecast: Forecast) {
   }
 }
 
-export async function forecastProject(projectId: string): Promise<Forecast> {
-  const signals = await loadProjectSignals(projectId);
-  const forecast = generateForecast(signals);
+export async function forecastProject(
+  projectId: string,
+): Promise<DeliveryForecast> {
+  const forecast = await getDeliveryForecast(projectId);
   await persistForecast(projectId, forecast);
   return forecast;
 }
@@ -420,7 +422,7 @@ export type PmoSnapshot = {
   topRisks: string[];
   bottlenecks: string[];
   blastRadius: ImpactedSummary[];
-  forecasts: { projectId: string; projectName: string; forecast: Forecast }[];
+  forecasts: { projectId: string; projectName: string; forecast: DeliveryForecast }[];
   executiveSummary: string;
 };
 

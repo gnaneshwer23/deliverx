@@ -8,16 +8,18 @@ export default async function WorkspaceLayout({
 }: {
   children: ReactNode;
 }) {
-  const { user } = await requireCompleteOnboarding();
+  const { user, profile } = await requireCompleteOnboarding();
 
-  const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("users")
-    .select("organisations(name)")
-    .eq("id", user.id)
-    .single();
-
-  const orgName = (profile?.organisations as { name?: string } | null)?.name ?? null;
+  let orgName: string | null = null;
+  if (profile.organisation_id) {
+    const supabase = await createClient();
+    const { data: org } = await supabase
+      .from("organisations")
+      .select("name")
+      .eq("id", profile.organisation_id)
+      .maybeSingle();
+    orgName = org?.name ?? null;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF5]">

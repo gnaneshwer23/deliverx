@@ -1,372 +1,310 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
+import {
+  AlertTriangle,
+  Check,
+  Clock,
+  FileBarChart2,
+  Layers,
+  MessageSquare,
+  Radar,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxCaps, DxLogo } from "@/components/dx/dx-logo";
-import { DxBadge } from "@/components/dx/dx-badge";
+import { LandingReveal } from "@/components/dx/landing-motion";
+import { LandingMobileNav } from "@/components/dx/landing-nav-menu";
+import {
+  LandingContainer,
+  landingCard,
+  LandingSection,
+  NavLink,
+  SectionIntro,
+} from "@/components/dx/landing-layout";
+import {
+  MeetingsFeatureVisual,
+  MemoryFeatureVisual,
+  ReportingFeatureVisual,
+  SignalsFeatureVisual,
+} from "@/components/dx/landing-feature-visual";
+import { LandingStatCard } from "@/components/dx/landing-stat";
 import { dxClass } from "@/lib/dx-theme";
 
 export function LandingNav() {
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-9 border-b border-[#E4E4DC] bg-[#FAFAF5]/95 px-6 backdrop-blur-md md:px-11">
-      <DxLogo showTag />
-      <div className="ml-auto flex items-center gap-7">
-        <a href="#platform" className={`${dxClass.caps} hidden sm:inline`}>
-          Platform
-        </a>
-        <a href="#how" className={dxClass.caps}>
-          How It Works
-        </a>
-        <a href="#loops" className={`${dxClass.caps} hidden md:inline`}>
-          Loops
-        </a>
-        <a href="#feat" className={dxClass.caps}>
-          Features
-        </a>
-        <a href="#price" className={dxClass.caps}>
-          Pricing
-        </a>
-        <DxButtonLink href="/login" variant="ghostSm">
-          Sign In
-        </DxButtonLink>
-        <DxButtonLink href="/signup" variant="primarySm">
-          Start Free Trial
-        </DxButtonLink>
-      </div>
-    </nav>
-  );
-}
-
-import type { LandingPreviewStats } from "@/services/landing";
-
-export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
-  return (
-    <section className="relative flex min-h-screen items-center overflow-hidden px-6 pb-20 pt-[calc(var(--dx-navh)+4rem)] md:px-11">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-35"
-        style={{
-          backgroundImage:
-            "linear-gradient(#E4E4DC 1px, transparent 1px), linear-gradient(90deg, #E4E4DC 1px, transparent 1px)",
-          backgroundSize: "68px 68px",
-        }}
-        aria-hidden
-      />
-      <div className="relative mx-auto grid w-full max-w-7xl items-center gap-16 lg:grid-cols-2 lg:gap-[4.5rem]">
-        <div>
-          <div className="mb-5 flex items-center gap-3">
-            <div className="h-px w-6 bg-[#1C4A2E]" />
-            <DxCaps accent>AI-Native Delivery Operating System</DxCaps>
-          </div>
-          <h1 className={`${dxClass.sectionTitle} mb-5`}>
-            Deliver Projects
-            <br />
-            Like an <em className="text-[#1C4A2E] not-italic">Intelligent</em>
-            <br />
-            Organisation.
-          </h1>
-          <p className="mb-9 max-w-md text-[17px] font-light leading-relaxed text-[#6B6B64]">
-            One workspace for projects, governance, portfolio intelligence, and AI-assisted
-            delivery — from business case to closure, with human approval on every AI action.
-          </p>
-          <div className="mb-10 flex flex-wrap items-center gap-3">
-            <DxButtonLink href="/signup">Start Free Trial</DxButtonLink>
-            <DxButtonLink href="/workspace/dashboard" variant="ghost">
-              Explore Dashboard
-            </DxButtonLink>
-          </div>
-          <div className="flex flex-wrap items-center gap-5 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.1em] text-[#A8A89E]">
-            <span>No credit card</span>
-            <span className="h-2.5 w-px bg-[#E4E4DC]" />
-            <span>15 min setup</span>
-            <span className="h-2.5 w-px bg-[#E4E4DC]" />
-            <span>GDPR compliant</span>
-          </div>
+    <header className="landing-nav fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6">
+      <LandingContainer className="landing-nav-bar relative flex h-[calc(var(--dx-navh)-12px)] items-center justify-between gap-4 border border-[#E4E4DC]/70 bg-[#FAFAF5]/75 px-5 shadow-[0_8px_40px_-16px_rgba(13,13,11,0.12)] backdrop-blur-xl md:px-8">
+        <DxLogo showTag />
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
+          <NavLink href="#how">How it works</NavLink>
+          <NavLink href="#platform">Product</NavLink>
+          <NavLink href="#features">Features</NavLink>
+          <NavLink href="#faq">FAQ</NavLink>
+          <NavLink href="#price">Pricing</NavLink>
+        </nav>
+        <div className="flex items-center gap-3 md:gap-4">
+          <DxButtonLink href="/login" variant="ghostSm" className="hidden sm:inline-flex">
+            Sign In
+          </DxButtonLink>
+          <DxButtonLink href="/signup" variant="primarySm" className="hidden md:inline-flex">
+            Start trial
+          </DxButtonLink>
+          <LandingMobileNav />
         </div>
-
-        <div className={`${dxClass.card} shadow-[0_8px_40px_rgba(13,13,11,0.12)]`}>
-          <div className="flex items-center justify-between border-b border-[#F0F0E8] px-4 py-3">
-            <DxCaps>Delivery command centre</DxCaps>
-            <span className="flex items-center gap-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#1A6B3A]">
-              <span
-                className="size-1 rounded-full bg-[#1A6B3A]"
-                style={{ animation: preview.live ? "dx-pulse 2s ease-in-out infinite" : undefined }}
-              />
-              {preview.live ? "Live" : "Sample"}
-            </span>
-          </div>
-          <div className="p-4">
-            <div className="mb-3.5 grid grid-cols-3 gap-2.5">
-              {[
-                { v: `${preview.confidence}%`, l: "Confidence", c: "text-[#1A6B3A]" },
-                { v: String(preview.atRisk), l: "At Risk", c: "text-[#B7620A]" },
-                { v: String(preview.blocked), l: "Blocked", c: "text-[#C0392B]" },
-              ].map((s) => (
-                <div key={s.l} className="border border-[#F0F0E8] bg-[#F7F7F2] p-3">
-                  <div className={`${dxClass.display} text-[1.75rem] leading-none ${s.c}`}>
-                    {s.v}
-                  </div>
-                  <DxCaps className="mt-0.5 text-[7px]">{s.l}</DxCaps>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {preview.signals.map((signal) => (
-                <SignalPreview
-                  key={signal.text}
-                  tone={signal.tone}
-                  text={signal.text}
-                  badge={signal.badge}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </LandingContainer>
+    </header>
   );
 }
 
-function SignalPreview({
-  tone,
-  text,
-  badge,
-}: {
-  tone: "red" | "amber" | "green";
-  text: string;
-  badge: string;
-}) {
-  const border =
-    tone === "red" ? "#C0392B" : tone === "amber" ? "#B7620A" : "#1A6B3A";
-  const bg =
-    tone === "red"
-      ? "rgba(192,57,43,0.03)"
-      : tone === "amber"
-        ? "rgba(183,98,10,0.03)"
-        : "rgba(26,107,58,0.03)";
-  return (
-    <div
-      className="flex items-center justify-between gap-2 border-l-[2.5px] px-2.5 py-2"
-      style={{ borderLeftColor: border, backgroundColor: bg }}
-    >
-      <span className="text-[13px] text-[#2C2C28]">{text}</span>
-      <DxBadge tone={tone === "green" ? "green" : tone === "amber" ? "amber" : "red"}>
-        {badge}
-      </DxBadge>
-    </div>
-  );
-}
+export { LandingHero } from "@/components/dx/landing-hero";
 
 export function LandingProblem() {
   const stats = [
     {
       n: "40%",
-      t: "PM time wasted on admin",
-      d: "Status chasing, report writing, and meeting scheduling take up nearly half a PM's week.",
+      t: "PM time on admin",
+      d: "Status chasing and report writing consume nearly half the week.",
+      icon: Clock,
     },
     {
       n: "3wk",
-      t: "Average risk escalation lag",
-      d: "Risks visible in early standup notes go unlogged for weeks. AI extraction reduces the lag to the same day.",
+      t: "Risk escalation lag",
+      d: "Issues spotted in standups often go unlogged until it's too late.",
+      icon: AlertTriangle,
     },
     {
       n: "97%",
-      t: "Lessons never reused",
-      d: "Most lessons learned reports are filed and never read. DeliverX makes every closed project searchable.",
+      t: "Lessons lost",
+      d: "Closure reports sit in folders instead of shaping the next programme.",
+      icon: Layers,
     },
   ];
-  return (
-    <section className="bg-[#0D0D0B] px-6 py-24 md:px-11">
-      <div className="mx-auto max-w-7xl">
-        <DxCaps className="mb-3.5 text-[#3D9660]">The Problem</DxCaps>
-        <h2 className={`${dxClass.display} mb-3.5 text-4xl leading-tight text-white md:text-5xl`}>
-          Project teams use 12 tools.
-          <br />
-          None of them <em className="text-[#3D9660] not-italic">talk to each other.</em>
-        </h2>
-        <p className="mb-14 max-w-lg text-base font-light leading-relaxed text-white/40">
-          PMs spend 40% of their week chasing status. Risks are spotted 3 weeks late. Lessons are
-          never captured.
-        </p>
-        <div className="grid gap-px bg-white/[0.06] md:grid-cols-3">
-          {stats.map((s) => (
-            <div key={s.n} className="bg-[#0D0D0B] p-8 md:p-9">
-              <div className={`${dxClass.display} mb-2.5 text-[3.5rem] leading-none text-white/5`}>
-                {s.n}
-              </div>
-              <div className="mb-1.5 text-[15px] font-semibold text-white">{s.t}</div>
-              <p className="text-sm font-light leading-relaxed text-white/40">{s.d}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-export function LandingHow() {
-  const steps = [
-    {
-      n: "01",
-      t: "Upload your business case",
-      d: "Upload a PDF or describe your project. DeliverX generates your full project structure in under 60 seconds.",
-    },
-    {
-      n: "02",
-      t: "Invite your team",
-      d: "Generate invite links per role. Team members join in under 3 minutes and see tasks sorted by priority.",
-    },
-    {
-      n: "03",
-      t: "Execute with AI monitoring",
-      d: "Dashboard command centre, standups, RAID, and alert queue. Assistant proposes actions — you approve before they apply.",
-    },
-    {
-      n: "04",
-      t: "Close and learn",
-      d: "AI generates closure reports and lessons learned. Every insight stored in Organisational Memory.",
-    },
-  ];
   return (
-    <section id="how" className="bg-[#FAFAF5] px-6 py-24 md:px-11">
-      <div className="mx-auto max-w-7xl">
-        <DxCaps accent className="mb-3">
-          How It Works
-        </DxCaps>
-        <h2 className={`${dxClass.sectionTitle} mb-12`}>
-          From business case to <em className="text-[#1C4A2E] not-italic">closed project</em> — one
-          workspace.
-        </h2>
-        <div className="grid border border-[#E4E4DC] md:grid-cols-4">
-          {steps.map((s, i) => (
-            <div
-              key={s.n}
-              className={`relative p-7 md:p-8 ${i < 3 ? "md:border-r md:border-[#E4E4DC]" : ""}`}
-            >
-              <div className={`${dxClass.display} mb-4 text-5xl leading-none text-[#F0F0E8]`}>
-                {s.n}
-              </div>
-              <div className="mb-2 text-[15px] font-semibold leading-snug text-[#0D0D0B]">
-                {s.t}
-              </div>
-              <p className="text-[13px] font-light leading-relaxed text-[#6B6B64]">{s.d}</p>
-            </div>
+    <LandingSection
+      id="problem"
+      tone="ink"
+      density="compact"
+      className="landing-problem-section relative -mt-px overflow-hidden"
+    >
+      <div
+        className="pointer-events-none absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#1C4A2E]/20 to-transparent"
+        aria-hidden
+      />
+      <LandingContainer className="relative">
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="The problem"
+            light
+            lead="Fragmented tools create blind spots — not lazy teams."
+            title={
+              <>
+                Twelve tools.
+                <br />
+                <em className="text-[#3D9660] not-italic">Zero shared context.</em>
+              </>
+            }
+            description="PMs chase status in slides. Risks surface weeks late. Lessons die in closure folders."
+          />
+        </LandingReveal>
+        <div className="grid gap-4 md:grid-cols-3 md:gap-5">
+          {stats.map((s, i) => (
+            <LandingReveal key={s.n} delay={i * 0.06}>
+              <LandingStatCard
+                value={s.n}
+                title={s.t}
+                description={s.d}
+                icon={s.icon}
+                light
+              />
+            </LandingReveal>
           ))}
         </div>
-      </div>
-    </section>
+
+        <LandingReveal delay={0.15}>
+          <div className="mt-10 flex flex-col items-start justify-between gap-6 border border-[#3D9660]/30 bg-[#1C4A2E]/40 p-8 md:flex-row md:items-center md:p-10">
+            <div className="max-w-xl">
+              <DxCaps className="text-[#3D9660]">The answer</DxCaps>
+              <p className={`${dxClass.display} mt-3 text-2xl leading-snug text-white md:text-3xl`}>
+                One workspace. One signal graph. Human-approved AI.
+              </p>
+              <p className="mt-3 text-sm font-light leading-relaxed text-white/50">
+                DeliverX replaces the patchwork with a command centre that stays in sync from
+                charter to closure.
+              </p>
+            </div>
+            <DxButtonLink href="/signup" className="shrink-0">
+              Start free trial
+            </DxButtonLink>
+          </div>
+        </LandingReveal>
+      </LandingContainer>
+    </LandingSection>
   );
 }
 
 export function LandingFeatures() {
   return (
-    <section id="feat" className="bg-[#F7F7F2] px-6 py-24 md:px-11">
-      <div className="mx-auto max-w-7xl">
-        <DxCaps accent className="mb-3">
-          Features
-        </DxCaps>
-        <h2 className={`${dxClass.sectionTitle} mb-12`}>
-          Built for delivery, not <em className="text-[#1C4A2E] not-italic">task management.</em>
-        </h2>
-        <div className="grid gap-px bg-[#E4E4DC] md:grid-cols-2 lg:grid-cols-3">
-          <FeatureBlock
-            eyebrow="AI Intelligence Layer"
-            title="Risks surface before they escalate"
-            dark={false}
-            bullets={[
-              "RAID log auto-populated from standups",
-              "Milestone confidence updated daily",
-              "5 alert types with PM review queue",
-            ]}
+    <LandingSection id="features" tone="muted" density="compact">
+      <LandingContainer>
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="Features"
+            lead="Modules share one signal graph — enter data once."
+            title={
+              <>
+                Built for delivery, not{" "}
+                <em className="text-[#1C4A2E] not-italic">task management.</em>
+              </>
+            }
+            description="Reporting, RAID, meetings, and memory stay linked to the same project health score."
           />
+        </LandingReveal>
+        <div className="grid gap-4 sm:grid-cols-2 lg:gap-5">
           <FeatureBlock
-            eyebrow="Reporting Engine"
+            icon={FileBarChart2}
+            eyebrow="Reporting"
             title="Status reports that write themselves"
+            summary="AI drafts from live RAID and tasks — you review before anything goes to sponsors."
             dark
+            visual={<ReportingFeatureVisual />}
             bullets={[
-              "Weekly report — every Monday at 07:00",
-              "Executive summary to sponsor",
-              "AI citations on every generated output",
+              "Draft → review → publish pipeline",
+              "Executive summaries for sponsors",
+              "Optional email on publish",
             ]}
           />
           <FeatureBlock
-            eyebrow="Meeting Intelligence"
+            icon={Radar}
+            eyebrow="Signals"
+            title="Risks surface before they escalate"
+            summary="Standups and tasks feed RAID; the alert queue flags what needs a PM decision."
+            visual={<SignalsFeatureVisual />}
+            bullets={[
+              "RAID fed from standups and tasks",
+              "Alert queue with PM review",
+              "Milestone confidence on the dashboard",
+            ]}
+          />
+          <FeatureBlock
+            icon={MessageSquare}
+            eyebrow="Meetings"
             title="Meetings become operational records"
-            dark={false}
+            summary="Decisions, actions, and change requests stay linked — not buried in notes."
+            visual={<MeetingsFeatureVisual />}
             bullets={[
-              "Decision Register auto-population",
-              "Action items with suggested owners",
-              "Change requests from meeting output",
+              "Summaries and decision capture",
+              "Actions with suggested owners",
+              "Change requests from outcomes",
             ]}
           />
           <FeatureBlock
-            eyebrow="Organisational Memory"
+            icon={Sparkles}
+            eyebrow="Memory"
             title="Every project makes the next one smarter"
-            dark={false}
+            summary="Search lessons and playbooks across programmes when you start the next delivery."
+            accent
+            visual={<MemoryFeatureVisual />}
             bullets={[
-              "Searchable lessons learned library",
-              "Risk patterns across projects",
-              "Delivery playbooks enriched automatically",
-            ]}
-          />
-          <FeatureBlock
-            eyebrow="Portfolio & Twin"
-            title="See the whole programme, not just tasks"
-            dark
-            bullets={[
-              "Portfolio & programme dependencies",
-              "Digital twin scenarios & snapshots",
-              "Coordination + global intelligence loops",
-            ]}
-          />
-          <FeatureBlock
-            eyebrow="Workspace search"
-            title="Find anything across your org"
-            dark={false}
-            bullets={[
-              "Projects, tasks, RAID, documents",
-              "Nav search + dedicated search page",
-              "Tied to your organisation boundary",
+              "Lessons learned you can search",
+              "Playbooks across programmes",
+              "Patterns from closed work",
             ]}
           />
         </div>
-      </div>
-    </section>
+      </LandingContainer>
+    </LandingSection>
   );
 }
 
 function FeatureBlock({
   eyebrow,
   title,
+  summary,
   dark,
+  accent,
   bullets,
+  visual,
+  icon: Icon,
+  className = "",
 }: {
   eyebrow: string;
   title: string;
+  summary: string;
   dark?: boolean;
+  accent?: boolean;
   bullets: string[];
+  visual: ReactNode;
+  icon: LucideIcon;
+  className?: string;
 }) {
+  const titleClass = dark
+    ? "text-white"
+    : accent
+      ? "text-[#0D0D0B]"
+      : "text-[#0D0D0B]";
+  const summaryClass = dark ? "text-white/75" : "text-[#6B6B64]";
+
   return (
-    <div className={`p-10 ${dark ? "bg-[#1C4A2E]" : "bg-[#FAFAF5]"}`}>
-      <DxCaps className={`mb-2.5 ${dark ? "text-[#3D9660]" : ""}`} accent={!dark}>
-        {eyebrow}
-      </DxCaps>
-      <h3
-        className={`${dxClass.display} mb-2.5 text-2xl leading-snug ${dark ? "text-white" : "text-[#0D0D0B]"}`}
+    <LandingReveal className={`h-full ${className}`}>
+      <div
+        className={`relative flex h-full min-h-[360px] flex-col overflow-hidden p-6 md:p-8 ${
+          dark
+            ? "bg-[#1C4A2E] shadow-[0_28px_70px_-28px_rgba(28,74,46,0.45)]"
+            : accent
+              ? "border border-[#C6DDD0] bg-[#EEF5F1] shadow-[0_20px_50px_-24px_rgba(28,74,46,0.12)]"
+              : `${landingCard} bg-white shadow-[0_16px_40px_-28px_rgba(13,13,11,0.1)]`
+        }`}
       >
-        {title}
-      </h3>
-      <ul className="flex flex-col gap-1.5">
-        {bullets.map((b) => (
-          <li
-            key={b}
-            className={`relative pl-4 text-sm leading-snug ${dark ? "text-white/75" : "text-[#2C2C28]"}`}
+        <div className="flex items-start gap-3">
+          <span
+            className={`flex size-11 shrink-0 items-center justify-center border ${
+              dark
+                ? "border-[#3D9660]/40 bg-[#3D9660]/15"
+                : "border-[#C6DDD0] bg-white"
+            }`}
           >
-            <span
-              className={`absolute left-0 top-2 h-px w-1.5 ${dark ? "bg-[#3D9660]" : "bg-[#1C4A2E]"}`}
+            <Icon
+              size={20}
+              className={dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}
+              strokeWidth={1.5}
             />
-            {b}
-          </li>
-        ))}
-      </ul>
-    </div>
+          </span>
+          <div className="min-w-0">
+            <DxCaps className={dark ? "text-[#3D9660]" : "text-[#6B6B64]"} accent={!dark && !accent}>
+              {eyebrow}
+            </DxCaps>
+            <h3
+              className={`${dxClass.display} mt-2 text-xl leading-snug md:text-2xl ${titleClass}`}
+            >
+              {title}
+            </h3>
+            <p className={`mt-2 text-sm leading-relaxed ${summaryClass}`}>{summary}</p>
+          </div>
+        </div>
+
+        <div className="my-5 min-h-[140px] flex-1">{visual}</div>
+
+        <ul className="space-y-2 border-t border-[#E4E4DC]/80 pt-4 dark:border-white/15">
+          {bullets.map((b) => (
+            <li
+              key={b}
+              className={`flex items-start gap-2.5 text-sm leading-snug ${
+                dark ? "text-white/90" : "text-[#2C2C28]"
+              }`}
+            >
+              <Check
+                size={14}
+                className={`mt-0.5 shrink-0 ${dark ? "text-[#3D9660]" : "text-[#1C4A2E]"}`}
+                strokeWidth={2.5}
+              />
+              {b}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </LandingReveal>
   );
 }
 
@@ -384,82 +322,98 @@ export function LandingPricing() {
         "Standup intelligence",
         "Weekly status reports",
       ],
-      cta: "Start Free Trial",
+      cta: "Start free trial",
       href: "/signup",
       featured: false,
     },
     {
       name: "Professional",
-      sub: "Delivery Teams",
+      sub: "Delivery teams",
       price: "£149",
       note: "per month",
       features: [
         "Unlimited projects",
         "Unlimited team members",
         "Meeting intelligence",
-        "Decision Register",
-        "Organisational Memory",
+        "Decision register",
+        "Organisational memory",
       ],
-      cta: "Start Free Trial",
+      cta: "Start free trial",
       href: "/signup",
       featured: true,
     },
     {
       name: "Enterprise",
-      sub: "PMO & Programmes",
+      sub: "PMO & programmes",
       price: "Custom",
-      note: "contact for pricing",
+      note: "talk to us",
       features: [
         "All Professional features",
         "Programme layer",
         "Portfolio dashboard",
         "SSO / SAML",
-        "Dedicated success manager",
+        "Dedicated success",
       ],
-      cta: "Contact Sales",
+      cta: "Contact sales",
       href: "/signup",
       featured: false,
     },
   ];
 
   return (
-    <section id="price" className="border-t border-[#E4E4DC] bg-white px-6 py-24 md:px-11">
-      <div className="mx-auto max-w-7xl">
-        <DxCaps accent className="mb-3">
-          Pricing
-        </DxCaps>
-        <h2 className={`${dxClass.sectionTitle} mb-12`}>
-          One price. <em className="text-[#1C4A2E] not-italic">No hidden complexity.</em>
-        </h2>
-        <div className="grid gap-px bg-[#E4E4DC] md:grid-cols-3">
-          {tiers.map((t) => (
-            <div
+    <LandingSection id="price" tone="white">
+      <LandingContainer>
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="Pricing"
+            align="center"
+            title={
+              <>
+                Simple plans. <em className="text-[#1C4A2E] not-italic">Serious delivery.</em>
+              </>
+            }
+            description="30-day free trial on all plans. No credit card required."
+          />
+        </LandingReveal>
+        <div className="grid items-stretch gap-6 lg:grid-cols-3">
+          {tiers.map((t, i) => (
+            <LandingReveal key={t.name} delay={i * 0.06} className="h-full">
+            <article
               key={t.name}
-              className={`p-9 ${t.featured ? "bg-[#1C4A2E]" : "bg-white"}`}
+              className={`relative flex flex-col border p-8 md:p-9 ${
+                t.featured
+                  ? "border-[#1C4A2E] bg-[#1C4A2E] text-white shadow-[0_24px_60px_-20px_rgba(28,74,46,0.45)] lg:-mt-4 lg:mb-4 lg:py-12"
+                  : "border-[#E4E4DC] bg-[#FAFAF5]"
+              }`}
             >
+              {t.featured ? (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap border border-[#3D9660] bg-[#3D9660] px-3 py-0.5 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-white">
+                  Most popular
+                </span>
+              ) : null}
               <DxCaps className={t.featured ? "text-[#3D9660]" : ""}>{t.name}</DxCaps>
-              <div
-                className={`${dxClass.display} mt-2 text-2xl ${t.featured ? "text-white" : "text-[#0D0D0B]"}`}
+              <p
+                className={`${dxClass.display} mt-2 text-xl ${t.featured ? "text-white/90" : "text-[#6B6B64]"}`}
               >
                 {t.sub}
-              </div>
-              <div
-                className={`font-[family-name:var(--font-dx-mono)] text-[2rem] font-medium tracking-tight ${t.featured ? "text-white" : "text-[#0D0D0B]"}`}
+              </p>
+              <p
+                className={`mt-4 font-[family-name:var(--font-dx-mono)] text-4xl tracking-tight ${t.featured ? "text-white" : "text-[#0D0D0B]"}`}
               >
                 {t.price}
-              </div>
-              <DxCaps className={`mb-6 text-[7px] ${t.featured ? "text-white/40" : ""}`}>
+              </p>
+              <p
+                className={`mt-1 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-wider ${t.featured ? "text-white/40" : "text-[#A8A89E]"}`}
+              >
                 {t.note}
-              </DxCaps>
-              <ul className="mb-7 flex flex-col gap-2">
+              </p>
+              <ul className="my-8 flex-1 space-y-3">
                 {t.features.map((f) => (
                   <li
                     key={f}
-                    className={`flex gap-2 text-sm ${t.featured ? "text-white/75" : "text-[#2C2C28]"}`}
+                    className={`flex gap-3 text-sm ${t.featured ? "text-white/85" : "text-[#2C2C28]"}`}
                   >
-                    <span
-                      className={`mt-2 h-px w-2.5 shrink-0 ${t.featured ? "bg-[#3D9660]" : "bg-[#1C4A2E]"}`}
-                    />
+                    <CheckIcon featured={t.featured} />
                     {f}
                   </li>
                 ))}
@@ -467,64 +421,141 @@ export function LandingPricing() {
               {t.featured ? (
                 <Link
                   href={t.href}
-                  className="flex w-full items-center justify-center border-[1.5px] border-white bg-white px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-[#1C4A2E]"
+                  className="flex w-full items-center justify-center bg-white px-5 py-3 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-[#1C4A2E] transition hover:bg-[#EEF5F1]"
                 >
                   {t.cta}
                 </Link>
               ) : (
-                <DxButtonLink href={t.href} variant="ghost" className="w-full">
+                <DxButtonLink href={t.href} variant="ghost" className="w-full justify-center">
                   {t.cta}
                 </DxButtonLink>
               )}
-            </div>
+            </article>
+            </LandingReveal>
           ))}
         </div>
-      </div>
-    </section>
+      </LandingContainer>
+    </LandingSection>
+  );
+}
+
+function CheckIcon({ featured }: { featured: boolean }) {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      className={`mt-0.5 shrink-0 ${featured ? "text-[#3D9660]" : "text-[#1C4A2E]"}`}
+      aria-hidden
+    >
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        d="M2 7l3.5 3.5L12 4"
+      />
+    </svg>
   );
 }
 
 export function LandingCta() {
   return (
-    <section className="bg-[#0D0D0B] px-6 py-24 text-center md:px-11">
-      <DxCaps className="mb-3.5 text-[#3D9660]">Get Started Today</DxCaps>
-      <h2 className={`${dxClass.display} mb-3 text-4xl leading-none text-white md:text-6xl`}>
-        Ready to deliver like an
-        <br />
-        <em className="text-[#3D9660] not-italic">intelligent</em> organisation?
-      </h2>
-      <p className="mb-10 text-base font-light text-white/40">
-        30-day free trial. No credit card. Setup in 15 minutes.
-      </p>
-      <div className="flex flex-wrap justify-center gap-3">
-        <Link
-          href="/signup"
-          className="border-none bg-white px-8 py-3 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.12em] text-[#1C4A2E]"
-        >
-          Start Free Trial
-        </Link>
-        <Link
-          href="/login"
-          className="border-[1.5px] border-white/25 bg-transparent px-6 py-3 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.12em] text-white"
-        >
-          Sign In
-        </Link>
-      </div>
-    </section>
+    <LandingSection tone="ink" density="compact" className="relative overflow-hidden">
+      <div className="landing-mesh-dark pointer-events-none absolute inset-0 opacity-50" aria-hidden />
+      <LandingContainer className="relative text-center">
+        <LandingReveal>
+          <SectionIntro
+            eyebrow="Get started"
+            light
+            align="center"
+            title={
+              <>
+                Ready to deliver like an{" "}
+                <em className="text-[#3D9660] not-italic">intelligent</em> organisation?
+              </>
+            }
+            description="30-day free trial · No credit card · ~15 minutes to first project"
+          />
+        </LandingReveal>
+        <LandingReveal delay={0.08}>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link
+            href="/signup"
+            className="inline-flex items-center justify-center bg-white px-10 py-3.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.14em] text-[#1C4A2E] transition hover:bg-[#EEF5F1]"
+          >
+            Start free trial
+          </Link>
+          <Link
+            href="/login"
+            className="inline-flex items-center justify-center border border-white/20 px-8 py-3.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.14em] text-white transition hover:border-white/40"
+          >
+            Sign in
+          </Link>
+        </div>
+        </LandingReveal>
+      </LandingContainer>
+    </LandingSection>
   );
 }
 
 export function LandingFooter() {
+  const columns = [
+    {
+      title: "Product",
+      links: [
+        { href: "#how", label: "How it works" },
+        { href: "#platform", label: "Command centre" },
+        { href: "#features", label: "Features" },
+        { href: "#capabilities", label: "Capabilities" },
+      ],
+    },
+    {
+      title: "Company",
+      links: [
+        { href: "#faq", label: "FAQ" },
+        { href: "#price", label: "Pricing" },
+        { href: "/login", label: "Sign in" },
+        { href: "/signup", label: "Start trial" },
+      ],
+    },
+  ];
+
   return (
-    <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-white/[0.06] bg-[#1A1A17] px-6 py-7 md:px-11">
-      <DxCaps className="text-[7px] text-white/20">© 2026 DeliverX Ltd. All rights reserved.</DxCaps>
-      <div className="flex gap-5">
-        {["Privacy", "Terms", "Security"].map((l) => (
-          <Link key={l} href="#" className={`${dxClass.caps} text-[7px] text-white/25`}>
-            {l}
-          </Link>
-        ))}
-      </div>
+    <footer className="border-t border-white/[0.06] bg-[#1A1A17]">
+      <LandingContainer className="py-12 md:py-14">
+        <div className="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
+          <div>
+            <DxLogo dark />
+            <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-white/40">
+              AI-native delivery OS — from business case to lessons learned, with human approval
+              on every change.
+            </p>
+          </div>
+          {columns.map((col) => (
+            <div key={col.title}>
+              <DxCaps className="text-[8px] text-white/30">{col.title}</DxCaps>
+              <ul className="mt-4 space-y-2">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <a
+                      href={l.href}
+                      className="text-sm text-white/50 transition hover:text-white/80"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
+          <DxCaps className="text-[8px] text-white/25">© 2026 DeliverX Ltd.</DxCaps>
+          <p className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-white/25">
+            GDPR-ready · EU data practices
+          </p>
+        </div>
+      </LandingContainer>
     </footer>
   );
 }

@@ -14,7 +14,7 @@ export default function WorkspaceError({
       error={error}
       reset={reset}
       title="Workspace error"
-      description="This workspace page failed to load. Try again or pick another section from the sidebar."
+      description="This workspace page failed to load. Try again, open the command centre, or check that database migrations are applied."
     />
   );
 }

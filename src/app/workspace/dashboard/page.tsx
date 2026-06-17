@@ -11,9 +11,14 @@ import {
   ShieldAlert,
   Users,
 } from "lucide-react";
-import { getWorkspaceDashboard } from "@/services/dashboard";
+import {
+  EMPTY_WORKSPACE_DASHBOARD,
+  getWorkspaceDashboard,
+} from "@/services/dashboard";
 import { getOrgAlertQueue } from "@/services/alerts";
 import { getDeliveryCoachSuggestions } from "@/services/deliveryCoach";
+import { listProjectForecasts } from "@/services/deliveryForecast";
+import { getProjectSuccessScore } from "@/services/successScore";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getProjectAlignment } from "@/services/alignment";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
@@ -36,6 +41,7 @@ import {
 import { AiInsights } from "./ai-insights";
 import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
+import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -63,9 +69,14 @@ function roleSubtitle(role: string, orgName: string | null) {
 
 export default async function DashboardPage() {
   const [data, alerts, coach] = await Promise.all([
-    getWorkspaceDashboard(),
-    getOrgAlertQueue(6),
-    getDeliveryCoachSuggestions(4),
+    getWorkspaceDashboard().catch((err) => {
+      console.error("[dashboard] getWorkspaceDashboard", err);
+      return EMPTY_WORKSPACE_DASHBOARD;
+    }),
+    getOrgAlertQueue(6).catch(() => [] as Awaited<ReturnType<typeof getOrgAlertQueue>>),
+    getDeliveryCoachSuggestions(4).catch(
+      () => [] as Awaited<ReturnType<typeof getDeliveryCoachSuggestions>>,
+    ),
   ]);
   const activeTaskRows = data.recentTasks.filter((t) => t.status !== "done");
 
@@ -73,19 +84,26 @@ export default async function DashboardPage() {
   const insightProjectName: string | null = topProject?.name ?? null;
   let healthTier: "healthy" | "watch" | "at-risk" = topProject?.healthTier ?? "healthy";
   let confidenceScore = topProject?.confidenceScore ?? 100;
+  let successScoreValue: number | null = null;
   let recommendation =
     "Add tasks and governance items to projects to generate delivery signals.";
   let topAlignment: Awaited<ReturnType<typeof getProjectAlignment>> | null = null;
 
   if (topProject) {
-    const [intel, alignment] = await Promise.all([
-      getProjectIntelligence(topProject.id),
-      getProjectAlignment(topProject.id),
-    ]);
-    topAlignment = alignment;
-    recommendation = intel.recommendations[0]?.text ?? recommendation;
-    healthTier = intel.health.tier;
-    confidenceScore = intel.confidence.score;
+    try {
+      const [intel, alignment, successScore] = await Promise.all([
+        getProjectIntelligence(topProject.id),
+        getProjectAlignment(topProject.id),
+        getProjectSuccessScore(topProject.id).catch(() => null),
+      ]);
+      topAlignment = alignment;
+      recommendation = intel.recommendations[0]?.text ?? recommendation;
+      healthTier = intel.health.tier;
+      confidenceScore = intel.confidence.score;
+      successScoreValue = successScore?.score ?? null;
+    } catch (err) {
+      console.error("[dashboard] project intelligence", err);
+    }
   }
 
   const kpis = [
@@ -108,6 +126,23 @@ export default async function DashboardPage() {
               data.portfolioHealth >= 80
                 ? ("teal" as const)
                 : data.portfolioHealth >= 60
+                  ? ("amber" as const)
+                  : ("rose" as const),
+          },
+        ]
+      : []),
+    ...(successScoreValue != null
+      ? [
+          {
+            label: "Success score",
+            value: successScoreValue,
+            hint: "/ 100",
+            href: topProject ? `/project/${topProject.id}` : "/workspace/projects",
+            icon: CalendarClock,
+            accent:
+              successScoreValue >= 75
+                ? ("teal" as const)
+                : successScoreValue >= 55
                   ? ("amber" as const)
                   : ("rose" as const),
           },
@@ -161,6 +196,15 @@ export default async function DashboardPage() {
     (r) => r.open_risks > 0 || r.open_issues > 0 || r.pending_decisions > 0,
   );
 
+  const forecastRollup = await listProjectForecasts(
+    data.projectHealth.map((p) => ({
+      id: p.id,
+      name: p.name,
+      healthTier: p.healthTier,
+    })),
+    3,
+  ).catch(() => []);
+
   return (
     <>
       <DxPageHeader
@@ -198,6 +242,12 @@ export default async function DashboardPage() {
         </DashboardSection>
         <DashboardSection title="Delivery coach" href="/workspace/alerts">
           <DeliveryCoachPanel suggestions={coach} />
+        </DashboardSection>
+      </div>
+
+      <div className="mb-8">
+        <DashboardSection title="Delivery forecasts" href="/workspace/pmo">
+          <DeliveryForecastStrip entries={forecastRollup} />
         </DashboardSection>
       </div>
 

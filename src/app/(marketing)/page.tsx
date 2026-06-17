@@ -1,20 +1,18 @@
+import { LandingFaq } from "@/components/dx/landing-faq";
+import { LandingPageShell, LandingSectionBridge } from "@/components/dx/landing-layout";
 import {
   LandingCta,
   LandingFeatures,
   LandingFooter,
   LandingHero,
-  LandingHow,
   LandingNav,
   LandingPricing,
   LandingProblem,
 } from "@/components/dx/landing-sections";
 import {
-  LandingDashboardPreview,
-  LandingDeliveryLoops,
-  LandingIntelligence,
-  LandingOnboardingPath,
-  LandingOsStack,
-  LandingWorkspaceMap,
+  LandingCapabilities,
+  LandingJourney,
+  LandingPlatform,
 } from "@/components/dx/landing-platform-sections";
 import { getLandingPreviewStats } from "@/services/landing";
 
@@ -22,21 +20,29 @@ export default async function LandingPage() {
   const preview = await getLandingPreviewStats();
 
   return (
-    <div className="min-h-screen bg-[#FAFAF5]">
+    <LandingPageShell>
       <LandingNav />
-      <LandingHero preview={preview} />
-      <LandingProblem />
-      <LandingOsStack />
-      <LandingDeliveryLoops />
-      <LandingHow />
-      <LandingDashboardPreview />
-      <LandingIntelligence />
-      <LandingWorkspaceMap />
-      <LandingOnboardingPath />
-      <LandingFeatures />
-      <LandingPricing />
-      <LandingCta />
+      <main id="main-content">
+        <LandingHero preview={preview} />
+        <LandingSectionBridge
+          headline={
+            <>
+              Stop reconciling twelve tools.{" "}
+              <span className="text-[#1C4A2E]">Run delivery on one signal graph.</span>
+            </>
+          }
+          sub="Every risk, task, report, and decision links to the same project — so status is always current and AI never acts without approval."
+        />
+        <LandingProblem />
+        <LandingJourney />
+        <LandingPlatform preview={preview} />
+        <LandingFeatures />
+        <LandingCapabilities />
+        <LandingPricing />
+        <LandingFaq />
+        <LandingCta />
+      </main>
       <LandingFooter />
-    </div>
+    </LandingPageShell>
   );
 }
