@@ -47,15 +47,26 @@ export function BaTraceabilityPreview({
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.reqCode} className="border-b border-[#F0F0E8] last:border-0">
+              <tr key={row.requirementId ?? row.reqCode} className="border-b border-[#F0F0E8] last:border-0">
                 <td className="px-4 py-2 text-[#6B6B64]">{row.objective}</td>
                 <td className="px-4 py-2">
                   <span className="font-mono text-[10px] text-[#A8A89E]">{row.reqCode}</span>
                   <div className="font-medium text-[#0D0D0B]">{row.requirement}</div>
                 </td>
-                <td className="px-4 py-2">{row.story ?? "—"}</td>
+                <td className="px-4 py-2">
+                  {row.story ? (
+                    <>
+                      {row.storyCode ? (
+                        <span className="font-mono text-[10px] text-[#A8A89E]">{row.storyCode} · </span>
+                      ) : null}
+                      {row.story}
+                    </>
+                  ) : (
+                    "—"
+                  )}
+                </td>
                 <td className="px-4 py-2">{row.task ?? "—"}</td>
-                <td className="px-4 py-2">{row.test ?? "—"}</td>
+                <td className="px-4 py-2">{row.testCode ?? row.test ?? "—"}</td>
                 <td className="px-4 py-2">{row.status}</td>
               </tr>
             ))}

@@ -384,60 +384,12 @@ export async function answerClarification(
 export async function buildTraceabilityMatrix(
   projectId: string,
 ): Promise<TraceMatrixRow[]> {
-  const { supabase } = await getOrgContext();
-  const [requirements, stories, links, objectives] = await Promise.all([
-    listApprovedRequirements(projectId),
-    listUserStories(projectId),
-    supabase
-      .from("requirement_trace_links")
-      .select("requirement_id, user_story_id, task_id")
-      .eq("project_id", projectId),
-    getBaProjectContext(projectId),
-  ]);
-
-  const storyByReq = new Map<string, StoryRow>();
-  for (const s of stories) {
-    if (s.requirement_id) storyByReq.set(s.requirement_id, s);
-  }
-
-  const taskIds = (links.data ?? [])
-    .map((l) => l.task_id)
-    .filter((id): id is string => Boolean(id));
-
-  let tasks: Array<{ id: string; title: string }> = [];
-  if (taskIds.length) {
-    const { data } = await supabase
-      .from("tasks")
-      .select("id, title")
-      .in("id", taskIds);
-    tasks = data ?? [];
-  }
-  const taskById = new Map(tasks.map((t) => [t.id, t.title]));
-
-  const objectiveList =
-    (objectives?.business_context?.objectives as string[] | undefined) ?? [];
-
-  return requirements.slice(0, 20).map((req, index) => {
-    const story = storyByReq.get(req.id);
-    const link = (links.data ?? []).find((l) => l.requirement_id === req.id);
-    const taskTitle = link?.task_id ? taskById.get(link.task_id) : null;
-
-    return {
-      objective: objectiveList[index % Math.max(objectiveList.length, 1)] ?? "Delivery objective",
-      requirement: req.title,
-      reqCode: req.req_code,
-      story: story?.title ?? null,
-      storyCode: story?.story_code ?? null,
-      task: taskTitle ?? null,
-      test: story ? `TC-${story.story_code.replace("US-", "")}` : null,
-      status:
-        req.status === "approved"
-          ? story?.status === "ready"
-            ? "Ready"
-            : "In Progress"
-          : "Needs review",
-    };
-  });
+  const { buildFullTraceabilityMatrix, syncRequirementTraceLinks } = await import(
+    "./deliveryTraceability"
+  );
+  await syncRequirementTraceLinks(projectId).catch(() => ({ created: 0, updated: 0 }));
+  const rows = await buildFullTraceabilityMatrix(projectId);
+  return rows.slice(0, 20);
 }
 
 export async function linkRequirementToTask(

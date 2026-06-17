@@ -42,13 +42,17 @@ export type StoryRow = {
 };
 
 export type TraceMatrixRow = {
+  requirementId: string;
   objective: string;
   requirement: string;
   reqCode: string;
   story: string | null;
   storyCode: string | null;
+  storyId: string | null;
   task: string | null;
+  taskId: string | null;
   test: string | null;
+  testCode: string | null;
   status: string;
 };
 

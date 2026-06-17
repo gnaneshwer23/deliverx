@@ -107,8 +107,8 @@ function mapMatrixToTrace(
     objective: row.objective || "Delivery objective",
     requirement: row.requirement,
     storyCode: row.storyCode ?? `US-${i + 1}`,
-    testCode: row.test ?? `TC-${i + 19}`,
-    defectCode: i === 0 ? "BUG-122" : "—",
+    testCode: row.testCode ?? row.test ?? `TC-${i + 19}`,
+    defectCode: i === 0 && row.testCode ? "—" : "—",
     release: "v1.4",
   }));
 }
