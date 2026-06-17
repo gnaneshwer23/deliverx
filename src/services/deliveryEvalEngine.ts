@@ -21,6 +21,18 @@ export type DeliveryEvalMetrics = {
   proposalApprovalRate: number | null;
   estimationPacksApproved: number;
   recentForecastAccuracy: ForecastAccuracyRow[];
+  /** ML v1 model trained on closed projects */
+  slipModel: SlipModelEval | null;
+  errorHistogram: Array<{ label: string; count: number }>;
+  weeklyMaeTrend: Array<{ label: string; mae: number | null; samples: number }>;
+};
+
+export type SlipModelEval = {
+  sampleCount: number;
+  trainingMae: number | null;
+  mlWeightCap: number;
+  trainedAt: string;
+  topFeatures: Array<{ feature: string; weight: number }>;
 };
 
 export function computeMeanAbsoluteError(rows: ForecastAccuracyRow[]): number | null {

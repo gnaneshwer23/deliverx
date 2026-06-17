@@ -46,6 +46,14 @@ export type DeliveryForecast = Forecast & {
   /** Median forecast minus baseline (positive = slip) */
   delayDays: number;
   anchorLabel: string;
+  /** Rules-only delay before ML blend (when model active) */
+  rulesDelayDays?: number;
+  /** ML v1 slip estimate in days */
+  mlDelayDays?: number;
+  /** Closed-project samples used for org model */
+  modelSampleCount?: number;
+  /** Weight given to ML vs rules (0–1) */
+  mlWeight?: number;
 };
 
 const MS_PER_DAY = 86_400_000;
@@ -100,13 +108,24 @@ export function generateForecast(signals: ProjectSignals): Forecast {
   };
 }
 
+export type ForecastComputeOptions = {
+  /** Override rules delay (e.g. after ML blend) */
+  delayDaysOverride?: number;
+  rulesDelayDays?: number;
+  mlDelayDays?: number;
+  modelSampleCount?: number;
+  mlWeight?: number;
+};
+
 export function computeDeliveryForecast(
   signals: ProjectSignals,
   context: ForecastContext,
+  options?: ForecastComputeOptions,
 ): DeliveryForecast {
   const base = generateForecast(signals);
   const redFlags = countRedFlags(signals);
-  const delayDays = estimateDelayDays(signals, redFlags);
+  const rulesDelay = estimateDelayDays(signals, redFlags);
+  const delayDays = options?.delayDaysOverride ?? rulesDelay;
   const spread = uncertaintySpread(base.confidence, redFlags);
 
   const baseline = resolveBaselineDate(context);
@@ -133,6 +152,10 @@ export function computeDeliveryForecast(
     baselineDate: context.baselineDate,
     delayDays: delayVsBaseline,
     anchorLabel: context.anchorLabel,
+    rulesDelayDays: options?.rulesDelayDays ?? rulesDelay,
+    mlDelayDays: options?.mlDelayDays,
+    modelSampleCount: options?.modelSampleCount,
+    mlWeight: options?.mlWeight,
   };
 }
 

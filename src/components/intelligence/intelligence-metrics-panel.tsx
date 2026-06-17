@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { DeliveryEvalMetrics } from "@/services/intelligenceMetrics";
+import { EvalChartsPanel } from "@/components/intelligence/eval-charts-panel";
 
 export function IntelligenceMetricsPanel({
   metrics,
@@ -30,6 +31,8 @@ export function IntelligenceMetricsPanel({
           hint={`${metrics.forecastSamples} closed samples`}
         />
       </div>
+
+      <EvalChartsPanel metrics={metrics} />
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
