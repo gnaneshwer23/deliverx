@@ -19,6 +19,7 @@ import {
   QaTraceabilityPanel,
   QaUatPanel,
 } from "@/components/qa/qa-panels";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -71,6 +72,8 @@ export default async function QaMissionControlPage({
           AI Quality Engineer — test coverage, defects, release readiness, UAT, automation, and
           requirement-to-test traceability from live delivery signals.
         </p>
+
+        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

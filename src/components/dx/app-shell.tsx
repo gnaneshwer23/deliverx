@@ -58,7 +58,7 @@ const workspace = [
 
 const intelligence = [
   { href: "/workspace/alerts", label: "Alert Queue", icon: Brain, id: "alert" },
-  { href: "/workspace/proposals", label: "Proposal Queue", icon: CalendarClock, id: "prop" },
+  { href: "/workspace/proposals", label: "Approval centre", icon: ShieldCheck, id: "prop" },
   { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
   { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
   { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },
@@ -79,13 +79,21 @@ const governance = [
   { href: "/workspace/governance/approvals", label: "Approvals", icon: Shield, id: "appr" },
 ];
 
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof Cpu;
+  id: string;
+  badge?: number;
+};
+
 function NavSection({
   label,
   items,
   pathname,
 }: {
   label: string;
-  items: { href: string; label: string; icon: typeof Cpu; id: string }[];
+  items: NavItem[];
   pathname: string;
 }) {
   return (
@@ -109,7 +117,12 @@ function NavSection({
             }`}
           >
             <Icon size={14} className={active ? "opacity-100" : "opacity-65"} />
-            {item.label}
+            <span className="flex-1">{item.label}</span>
+            {item.badge && item.badge > 0 ? (
+              <span className="min-w-[18px] rounded-full bg-[#B7620A] px-1.5 py-0.5 text-center font-[family-name:var(--font-dx-mono)] text-[9px] font-medium text-white">
+                {item.badge > 99 ? "99+" : item.badge}
+              </span>
+            ) : null}
           </Link>
         );
       })}
@@ -117,15 +130,21 @@ function NavSection({
   );
 }
 
-export function AppSidebar() {
+export function AppSidebar({ pendingApprovals = 0 }: { pendingApprovals?: number }) {
   const pathname = usePathname();
+
+  const intelligenceItems = intelligence.map((item) =>
+    item.id === "prop" && pendingApprovals > 0
+      ? { ...item, badge: pendingApprovals }
+      : item,
+  );
 
   return (
     <aside className="fixed bottom-0 left-0 top-[var(--dx-navh)] z-40 flex w-[var(--dx-sbw)] flex-col overflow-y-auto border-r border-[#E4E4DC] bg-white">
       <div className="flex-1">
         <NavSection label="Core" items={core} pathname={pathname} />
         <NavSection label="Workspace" items={workspace} pathname={pathname} />
-        <NavSection label="Intelligence" items={intelligence} pathname={pathname} />
+        <NavSection label="Intelligence" items={intelligenceItems} pathname={pathname} />
         <NavSection label="Governance" items={governance} pathname={pathname} />
       </div>
       <div className="border-t border-[#E4E4DC] py-2.5">
@@ -181,9 +200,11 @@ function NavSearch() {
 export function AppNav({
   userEmail,
   orgName,
+  pendingApprovals = 0,
 }: {
   userEmail?: string | null;
   orgName?: string | null;
+  pendingApprovals?: number;
 }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-3 border-b border-[#E4E4DC] bg-white px-4 md:px-5">
@@ -196,9 +217,20 @@ export function AppNav({
       <div className="ml-auto flex items-center gap-2">
         <Link
           href="/workspace/alerts"
-          className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
+          className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
         >
           Alerts
+        </Link>
+        <Link
+          href="/workspace/proposals"
+          className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
+        >
+          Approvals
+          {pendingApprovals > 0 ? (
+            <span className="absolute -right-1 -top-1 min-w-[16px] rounded-full bg-[#B7620A] px-1 text-center font-[family-name:var(--font-dx-mono)] text-[8px] font-medium leading-4 text-white">
+              {pendingApprovals > 99 ? "99+" : pendingApprovals}
+            </span>
+          ) : null}
         </Link>
         <Link href="/project/new" className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] md:inline-flex`}>
           <Plus size={12} /> New project

@@ -42,8 +42,10 @@ import { AiInsights } from "./ai-insights";
 import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
-import { ProposalsQueuePanel } from "@/components/proposals/proposals-queue-panel";
-import { countPendingProposals, listPendingProposals } from "@/services/proposedActions";
+import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
+import { getPendingApprovalCounts } from "@/services/approvalCentre";
+import { listPendingArtifactReviews } from "@/services/artifactReviews";
+import { listPendingProposals } from "@/services/proposedActions";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -132,9 +134,10 @@ export default async function DashboardPage() {
     }
   }
 
-  const [pendingProposals, pendingProposalCount] = await Promise.all([
+  const [pendingProposals, pendingArtifactReviews, approvalCounts] = await Promise.all([
     listPendingProposals(3).catch(() => []),
-    countPendingProposals().catch(() => 0),
+    listPendingArtifactReviews(3).catch(() => []),
+    getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
   ]);
 
   const kpis = [
@@ -215,11 +218,15 @@ export default async function DashboardPage() {
       accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
     },
     {
-      label: "Pending proposals",
-      value: pendingProposalCount,
+      label: "Pending approvals",
+      value: approvalCounts.total,
+      hint:
+        approvalCounts.total > 0
+          ? `${approvalCounts.artifacts} artifacts · ${approvalCounts.proposals} proposals`
+          : undefined,
       href: "/workspace/proposals",
       icon: CalendarClock,
-      accent: pendingProposalCount > 0 ? ("amber" as const) : ("slate" as const),
+      accent: approvalCounts.total > 0 ? ("amber" as const) : ("slate" as const),
     },
     {
       label: "Standups (7d)",
@@ -289,10 +296,13 @@ export default async function DashboardPage() {
         </DashboardSection>
       </div>
 
-      {pendingProposals.length > 0 ? (
+      {approvalCounts.total > 0 ? (
         <div className="mb-8">
-          <DashboardSection title="Proposal queue" href="/workspace/proposals">
-            <ProposalsQueuePanel proposals={pendingProposals} />
+          <DashboardSection title="Approval centre" href="/workspace/proposals">
+            <ApprovalCentrePanel
+              artifactReviews={pendingArtifactReviews}
+              proposals={pendingProposals}
+            />
           </DashboardSection>
         </div>
       ) : null}

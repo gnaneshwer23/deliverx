@@ -23,6 +23,7 @@ import {
   ScrumTeamHealthPanel,
   ScrumVelocityPanel,
 } from "@/components/scrum/scrum-panels";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -75,6 +76,8 @@ export default async function ScrumMissionControlPage({
           AI Agile Coach — sprint health, impediments, ceremonies, velocity, capacity, retrospectives,
           and team wellbeing from live delivery signals.
         </p>
+
+        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

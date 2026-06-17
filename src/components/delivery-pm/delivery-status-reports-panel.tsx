@@ -55,7 +55,9 @@ export function DeliveryStatusReportsPanel({
             {generating ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
             {generating ? "Generating…" : "Generate this week"}
           </button>
-        ) : null}
+        ) : (
+          <span className="text-xs text-[#A8A89E]">Select a project to generate reports</span>
+        )}
       </div>
       <ul className="divide-y divide-[#F0F0E8]">
         {reports.length ? (

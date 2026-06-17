@@ -19,6 +19,7 @@ import {
   EngineerStakeholdersPanel,
   EngineerTraceabilityPanel,
 } from "@/components/engineer/engineer-panels";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -71,6 +72,8 @@ export default async function EngineerMissionControlPage({
           AI Engineering Copilot — assigned stories, traceability, dependencies, architecture, CI/CD,
           and guided tasks from requirements to deployment.
         </p>
+
+        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

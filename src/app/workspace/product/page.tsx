@@ -17,6 +17,7 @@ import {
   ProductRoadmapPanel,
   ProductSegmentsPanel,
 } from "@/components/product/product-panels";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -69,6 +70,8 @@ export default async function ProductMissionControlPage({
           AI Chief Product Officer — vision, customer discovery, RICE prioritisation, roadmap, and
           cross-role impact from business problem to adoption.
         </p>
+
+        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

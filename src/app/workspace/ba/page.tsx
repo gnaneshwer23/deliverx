@@ -10,6 +10,7 @@ import {
   BaStakeholderPanel,
 } from "@/components/ba/ba-stakeholder-panels";
 import { BaTraceabilityPreview } from "@/components/ba/ba-traceability-preview";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +59,8 @@ export default async function BaMissionControlPage({
           Bridge business and delivery — guided tasks, requirement quality, stakeholder
           validation, and traceability from business case to benefits.
         </p>
+
+        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <ProjectPicker projects={data.projects} currentId={data.primaryProject.id} />

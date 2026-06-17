@@ -20,6 +20,7 @@ import {
 } from "@/components/delivery-pm/delivery-pm-panels";
 import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-status-reports-panel";
 import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +69,8 @@ export default async function PmMissionControlPage({
           AI Chief Project Officer — scope, timeline, budget, risks, stakeholders, governance, and
           guided delivery execution from business case to benefits realisation.
         </p>
+
+        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
