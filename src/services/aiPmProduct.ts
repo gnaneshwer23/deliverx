@@ -8,12 +8,17 @@ import {
   PM_EXTRACTION_SYSTEM,
   pmExtractionPrompt,
 } from "@/lib/ai/prompts/product-manager";
+import {
+  PRODUCT_DISCOVERY_SYSTEM,
+  productDiscoveryPrompt,
+} from "@/lib/ai/prompts/product-discovery";
 import { getActiveCharter } from "./charter";
 import { computeRiceScore } from "./pmProductEngine";
 import {
   bulkInsertFeatures,
   bulkInsertInsights,
   bulkInsertSegments,
+  getPmProductContext,
   upsertPmProductContext,
 } from "./pmProduct";
 import { queueArtifactReview } from "./artifactReviews";
@@ -165,6 +170,62 @@ export async function extractProductForProject(input: {
     productType: input.productType,
     content: parts.join("\n\n---\n\n"),
   });
+}
+
+export async function extractCustomerDiscovery(input: {
+  projectId: string;
+  projectName: string;
+  content: string;
+  source?: string;
+}): Promise<{ insightCount: number; summary: string }> {
+  const trimmed = input.content.trim();
+  if (trimmed.length < 40) {
+    throw new Error("Discovery content is too short — upload or paste more customer material.");
+  }
+
+  const result = await generateJSON<{
+    painPoints: Array<{
+      theme: string;
+      content: string;
+      sentiment: string;
+      priority: string;
+    }>;
+    summary: string;
+  }>({
+    system: PRODUCT_DISCOVERY_SYSTEM,
+    prompt: productDiscoveryPrompt({
+      projectName: input.projectName,
+      content: trimmed,
+      source: input.source,
+    }),
+    maxTokens: 2048,
+  });
+
+  const count = await bulkInsertInsights(
+    input.projectId,
+    (result.painPoints ?? []).map((p) => ({
+      theme: p.theme,
+      type: "pain_point",
+      content: p.content,
+      sentiment: p.sentiment,
+      priority: p.priority,
+      source: input.source ?? "discovery_upload",
+    })),
+  );
+
+  const existing = await getPmProductContext(input.projectId).catch(() => null);
+  const ctx = (existing?.product_context ?? {}) as Record<string, unknown>;
+  await upsertPmProductContext({
+    projectId: input.projectId,
+    productContext: {
+      ...ctx,
+      lastDiscoverySummary: result.summary,
+      lastDiscoveryAt: new Date().toISOString(),
+    },
+    extractionStatus: existing?.extraction_status ?? "partial",
+  });
+
+  return { insightCount: count, summary: result.summary };
 }
 
 export async function askProductAssistant(input: {

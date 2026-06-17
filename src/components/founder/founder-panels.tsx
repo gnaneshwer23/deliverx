@@ -24,6 +24,7 @@ export function FounderPortfolioPanel({
           <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
             <th className="px-6 py-2">Project</th>
             <th className="px-4 py-2">Health</th>
+            <th className="px-4 py-2">RAG</th>
             <th className="px-4 py-2">Budget</th>
             <th className="px-6 py-2 text-right">Delivery</th>
           </tr>
@@ -39,13 +40,22 @@ export function FounderPortfolioPanel({
                     {p.healthTone}
                   </span>
                 </td>
+                <td className="px-4 py-3">
+                  <span className="inline-flex items-center gap-1.5 capitalize">
+                    <span className={`size-2 rounded-full ${toneDot[p.ragStatus]}`} />
+                    {p.ragStatus}
+                    {p.openRisks > 0 ? (
+                      <span className="text-[10px] text-[#A8A89E]">({p.openRisks} risks)</span>
+                    ) : null}
+                  </span>
+                </td>
                 <td className="px-4 py-3 text-[#6B6B64]">{p.budgetLabel}</td>
                 <td className="px-6 py-3 text-right font-semibold">{p.deliveryPct}%</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={4} className="px-6 py-4 text-[#6B6B64]">
+              <td colSpan={5} className="px-6 py-4 text-[#6B6B64]">
                 Create projects to populate portfolio health.
               </td>
             </tr>
@@ -251,6 +261,90 @@ function MiniStat({ label, value }: { label: string; value: string | number }) {
     <div className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2">
       <p className="text-[10px] uppercase text-[#A8A89E]">{label}</p>
       <p className="font-semibold">{value}</p>
+    </div>
+  );
+}
+
+export function FounderInvestmentArchivePanel({
+  reports,
+}: {
+  reports: FounderMissionControl["investmentReports"];
+}) {
+  return (
+    <div className={`${dxClass.card} overflow-hidden p-0`}>
+      <div className="border-b border-[#E4E4DC] px-6 py-4">
+        <h3 className={`${dxClass.display} text-lg`}>Investment report archive</h3>
+      </div>
+      <ul className="divide-y divide-[#F0F0E8]">
+        {reports.length ? (
+          reports.map((r) => (
+            <li key={r.id} className="px-6 py-4 text-sm">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="font-medium capitalize">{r.recommendation.replace(/_/g, " ")}</p>
+                  <p className="text-[#6B6B64]">
+                    {r.projectName ?? "Pre-project review"}
+                    {r.goDecision ? ` · GO ${r.goDecision}` : ""}
+                  </p>
+                </div>
+                <span className="text-xs text-[#A8A89E]">
+                  {new Date(r.createdAt).toLocaleDateString()}
+                  {r.confidence != null ? ` · ${r.confidence}% confidence` : ""}
+                </span>
+              </div>
+            </li>
+          ))
+        ) : (
+          <li className="px-6 py-4 text-[#6B6B64]">
+            Business case reviews from the sponsor gateway will appear here.
+          </li>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+export function FounderBenefitsTrackerPanel({
+  benefits,
+}: {
+  benefits: FounderMissionControl["benefitsTracker"];
+}) {
+  return (
+    <div className={`${dxClass.card} overflow-hidden p-0`}>
+      <div className="border-b border-[#E4E4DC] px-6 py-4">
+        <h3 className={`${dxClass.display} text-lg`}>Benefits tracker</h3>
+      </div>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
+            <th className="px-6 py-2">Benefit</th>
+            <th className="px-4 py-2">Project</th>
+            <th className="px-6 py-2 text-right">Progress</th>
+          </tr>
+        </thead>
+        <tbody>
+          {benefits.length ? (
+            benefits.map((b) => (
+              <tr key={b.id} className="border-t border-[#F0F0E8]">
+                <td className="px-6 py-3 font-medium">{b.title}</td>
+                <td className="px-4 py-3 text-[#6B6B64]">{b.projectName}</td>
+                <td className="px-6 py-3 text-right font-semibold">
+                  {b.progressPct != null ? `${b.progressPct}%` : "—"}
+                  {b.unit ? (
+                    <span className="ml-1 text-xs font-normal text-[#A8A89E]">{b.unit}</span>
+                  ) : null}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={3} className="px-6 py-4 text-[#6B6B64]">
+                Define benefit hypotheses on projects to track realisation across the portfolio.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

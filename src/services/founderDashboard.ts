@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getOrgCapacitySnapshot } from "./capacity";
 import {
   buildFounderCrossRoleImpact,
+  computePortfolioRag,
   computeStartupHealthTier,
   defaultStrategicObjectives,
   formatInvestorBullets,
@@ -17,7 +18,10 @@ import {
 } from "./founderEngine";
 import { getFounderContext } from "./founderContext";
 import { listPendingApprovals } from "./approvals";
-import { getOrgGovernanceStats, listOrgDecisionsPending } from "./governance";
+import { listBusinessCaseReviews } from "./businessCaseReview";
+import { listOrgBenefits, benefitProgress } from "./benefits";
+import { listOrgTasks } from "./delivery";
+import { getOrgGovernanceStats, listOrgDecisionsPending, listRaidItems } from "./governance";
 import { getDeliveryForecast } from "./deliveryForecast";
 import { getPmDeliveryContext } from "./deliveryPmContext";
 import { getPmProductContext } from "./pmProduct";
@@ -70,6 +74,21 @@ export type FounderMissionControl = {
   };
   crossRoleImpact: CrossRoleFounderImpact[];
   extractionStatus: string;
+  investmentReports: Array<{
+    id: string;
+    projectName: string | null;
+    recommendation: string;
+    goDecision: string | null;
+    confidence: number | null;
+    createdAt: string;
+  }>;
+  benefitsTracker: Array<{
+    id: string;
+    title: string;
+    projectName: string;
+    progressPct: number | null;
+    unit: string | null;
+  }>;
 };
 
 export async function getFounderMissionControl(): Promise<FounderMissionControl> {
@@ -86,7 +105,7 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   const orgName =
     (profile?.organisations as { name?: string } | null)?.name ?? null;
 
-  const [ctx, pmo, governance, pendingDecisions, pendingApprovals, capacity, projects] =
+  const [ctx, pmo, governance, pendingDecisions, pendingApprovals, capacity, projects, bcReviews, orgBenefits] =
     await Promise.all([
       getFounderContext().catch(() => null),
       getPmoSnapshot().catch(() => null),
@@ -98,6 +117,8 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
       listPendingApprovals(8).catch(() => []),
       getOrgCapacitySnapshot().catch(() => null),
       listProjectsForOrg().catch(() => []),
+      listBusinessCaseReviews(12).catch(() => []),
+      listOrgBenefits(24).catch(() => []),
     ]);
 
   const financials = ctx?.financials ?? {};
@@ -127,10 +148,12 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   const activeProjects = projects.filter((p) => p.status === "active");
   const projectScores = await Promise.all(
     activeProjects.slice(0, 8).map(async (p) => {
-      const [score, forecast, deliveryCtx] = await Promise.all([
+      const [score, forecast, deliveryCtx, raid, tasks] = await Promise.all([
         getProjectSuccessScore(p.id).catch(() => null),
         getDeliveryForecast(p.id).catch(() => null),
         getPmDeliveryContext(p.id).catch(() => null),
+        listRaidItems(p.id).catch(() => []),
+        listOrgTasks({ projectId: p.id, limit: 100 }).catch(() => []),
       ]);
       const healthScore = score?.score ?? 70;
       const deliveryPct = Math.round((forecast?.confidence ?? 0.7) * 100);
@@ -141,14 +164,29 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
       const budgetLabel =
         budgetPct > 90 ? "Over budget" : budgetPct > 75 ? "At risk" : "On track";
 
+      const openHighRisks = raid.filter(
+        (r) =>
+          r.type === "risk" &&
+          r.status !== "closed" &&
+          (r.severity === "high" || r.severity === "critical"),
+      ).length;
+      const blockedTasks = tasks.filter((t) => t.status === "blocked").length;
+      const ragStatus = computePortfolioRag({
+        openHighRisks,
+        blockedTasks,
+        healthScore,
+      });
+
       return {
         id: p.id,
         name: p.name,
         healthTone: toneFromScore(healthScore),
+        ragStatus,
         budgetLabel,
         deliveryPct,
-        onTrack: healthScore >= 60,
+        onTrack: healthScore >= 60 && ragStatus !== "red",
         confidence: forecast?.confidence ?? 0.7,
+        openRisks: openHighRisks,
       };
     }),
   );
@@ -157,8 +195,10 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
     id: p.id,
     name: p.name,
     healthTone: p.healthTone,
+    ragStatus: p.ragStatus,
     budgetLabel: p.budgetLabel,
     deliveryPct: p.deliveryPct,
+    openRisks: p.openRisks,
   }));
 
   const onTrackCount = projectScores.filter((p) => p.onTrack).length;
@@ -313,5 +353,20 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
       capacityStrain: capacity?.deliveryStrain ?? "low",
     }),
     extractionStatus: ctx?.extraction_status ?? "pending",
+    investmentReports: bcReviews.map((r) => ({
+      id: r.id,
+      projectName: r.project_name,
+      recommendation: r.recommendation,
+      goDecision: r.go_decision,
+      confidence: r.recommendation_confidence,
+      createdAt: r.created_at,
+    })),
+    benefitsTracker: orgBenefits.map((b) => ({
+      id: b.id,
+      title: b.title,
+      projectName: b.project_name,
+      progressPct: benefitProgress(b),
+      unit: b.unit,
+    })),
   };
 }

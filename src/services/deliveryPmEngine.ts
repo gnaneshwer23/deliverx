@@ -34,6 +34,17 @@ export type StakeholderDeliveryRow = {
   tone: HealthTone;
 };
 
+export type StakeholderActionRow = {
+  id: string;
+  stakeholder: string;
+  action: string;
+  priority: string;
+  dueLabel: string;
+  projectId?: string;
+  href?: string;
+  tone: HealthTone;
+};
+
 export function toneFromScore(score: number): HealthTone {
   if (score >= 75) return "green";
   if (score >= 55) return "amber";
@@ -204,6 +215,76 @@ export function buildDeliveryStakeholders(input: {
       tone: "green",
     },
   ];
+}
+
+export function buildStakeholderActionQueue(input: {
+  pendingDecisions: Array<{ id: string; title: string; projectId: string }>;
+  openClarifications: Array<{ id: string; question: string; stakeholderRole: string | null }>;
+  pendingProposals: number;
+  blockedTasks: number;
+  criticalRisks: Array<{ id: string; title: string }>;
+}): StakeholderActionRow[] {
+  const queue: StakeholderActionRow[] = [];
+
+  for (const d of input.pendingDecisions.slice(0, 3)) {
+    queue.push({
+      id: `decision-${d.id}`,
+      stakeholder: "Sponsor",
+      action: `Decide: ${d.title}`,
+      priority: "high",
+      dueLabel: "This week",
+      projectId: d.projectId,
+      href: `/project/${d.projectId}/decisions`,
+      tone: "amber",
+    });
+  }
+
+  for (const c of input.openClarifications.slice(0, 2)) {
+    queue.push({
+      id: `clarification-${c.id}`,
+      stakeholder: c.stakeholderRole ?? "Stakeholder",
+      action: c.question.length > 72 ? `${c.question.slice(0, 69)}…` : c.question,
+      priority: "medium",
+      dueLabel: "Before sprint planning",
+      tone: "amber",
+    });
+  }
+
+  for (const r of input.criticalRisks.slice(0, 2)) {
+    queue.push({
+      id: `risk-${r.id}`,
+      stakeholder: "PM",
+      action: `Mitigate risk: ${r.title}`,
+      priority: "high",
+      dueLabel: "Today",
+      tone: "red",
+    });
+  }
+
+  if (input.blockedTasks > 0) {
+    queue.push({
+      id: "blocked-tasks",
+      stakeholder: "Engineering",
+      action: `Unblock ${input.blockedTasks} delivery task${input.blockedTasks === 1 ? "" : "s"}`,
+      priority: "high",
+      dueLabel: "Today",
+      tone: "red",
+    });
+  }
+
+  if (input.pendingProposals > 0) {
+    queue.push({
+      id: "proposals",
+      stakeholder: "PM",
+      action: `Review ${input.pendingProposals} pending proposal${input.pendingProposals === 1 ? "" : "s"}`,
+      priority: "medium",
+      dueLabel: "This week",
+      href: "/workspace/proposals",
+      tone: "amber",
+    });
+  }
+
+  return queue.slice(0, 8);
 }
 
 export function buildDeliveryCrossRoleImpact(input: {

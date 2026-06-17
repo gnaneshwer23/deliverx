@@ -14,6 +14,8 @@ import {
   FounderDeliveryHealthPanel,
   FounderFundingPanel,
   FounderInvestorPanel,
+  FounderInvestmentArchivePanel,
+  FounderBenefitsTrackerPanel,
   FounderObjectivesPanel,
   FounderPortfolioPanel,
   FounderProductHealthPanel,
@@ -70,6 +72,10 @@ export default async function FounderMissionControlPage() {
         </div>
 
         <FounderPortfolioPanel portfolio={data.portfolio} />
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <FounderInvestmentArchivePanel reports={data.investmentReports} />
+          <FounderBenefitsTrackerPanel benefits={data.benefitsTracker} />
+        </div>
         <FounderInvestorPanel bullets={data.investorUpdate} />
         <FounderDecisionPanel decisions={data.decisionsNeeded} />
 

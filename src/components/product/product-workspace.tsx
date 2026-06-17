@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, Sparkles, MessageSquare } from "lucide-react";
+import { useState, useRef } from "react";
+import { Loader2, Sparkles, MessageSquare, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { PRODUCT_TYPES } from "@/lib/product/constants";
 import type { ProductFeatureRow, CustomerInsightRow, CustomerSegmentRow } from "@/services/pmProductEngine";
@@ -34,6 +34,9 @@ export function ProductWorkspace({
   const [assistantQ, setAssistantQ] = useState("");
   const [assistantA, setAssistantA] = useState<string | null>(null);
   const [asking, setAsking] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [discoverySummary, setDiscoverySummary] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function runAnalysis() {
     setExtracting(true);
@@ -61,6 +64,40 @@ export function ProductWorkspace({
       setFeatures(data.features ?? []);
       setInsights(data.insights ?? []);
       setSegments(data.segments ?? []);
+    }
+  }
+
+  async function uploadDiscovery(file: File) {
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const extractRes = await fetch("/api/documents/extract-text", {
+        method: "POST",
+        body: form,
+      });
+      const extracted = await extractRes.json();
+      if (!extractRes.ok) throw new Error(extracted.error ?? "Could not read file");
+
+      const res = await fetch(`/api/project/${projectId}/product/discovery`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: extracted.text,
+          source: extracted.filename,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Discovery extraction failed");
+
+      setDiscoverySummary(data.summary ?? null);
+      toast.success(`${data.insightCount} pain point${data.insightCount === 1 ? "" : "s"} extracted`);
+      await refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -158,19 +195,49 @@ export function ProductWorkspace({
       </div>
 
       {tab === "discovery" ? (
-        <ul className="space-y-2">
-          {insights.length ? (
-            insights.map((i) => (
-              <li key={i.id} className={`${dxClass.card} p-4 text-sm`}>
-                <span className="text-xs uppercase text-[#A8A89E]">{i.insight_type}</span>
-                <p className="font-medium">{i.theme || i.content}</p>
-                <p className="text-[#6B6B64]">{i.content}</p>
-              </li>
-            ))
-          ) : (
-            <p className="text-sm text-[#6B6B64]">No insights yet.</p>
-          )}
-        </ul>
+        <div className="space-y-4">
+          <div className={`${dxClass.card} p-4`}>
+            <h4 className="text-sm font-semibold">Upload customer discovery</h4>
+            <p className="mt-1 text-xs text-[#6B6B64]">
+              PDF, DOCX, TXT, or MD — interviews, support exports, research notes.
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.docx,.txt,.md,.csv"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void uploadDiscovery(file);
+              }}
+            />
+            <button
+              type="button"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              className={`${dxClass.btnGhost} mt-3 inline-flex items-center gap-2 text-xs`}
+            >
+              {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+              {uploading ? "Extracting pain points…" : "Upload & extract pain points"}
+            </button>
+            {discoverySummary ? (
+              <p className="mt-3 text-sm text-[#6B6B64]">{discoverySummary}</p>
+            ) : null}
+          </div>
+          <ul className="space-y-2">
+            {insights.length ? (
+              insights.map((i) => (
+                <li key={i.id} className={`${dxClass.card} p-4 text-sm`}>
+                  <span className="text-xs uppercase text-[#A8A89E]">{i.insight_type}</span>
+                  <p className="font-medium">{i.theme || i.content}</p>
+                  <p className="text-[#6B6B64]">{i.content}</p>
+                </li>
+              ))
+            ) : (
+              <p className="text-sm text-[#6B6B64]">No insights yet — upload discovery material above.</p>
+            )}
+          </ul>
+        </div>
       ) : null}
 
       {tab === "features" ? (

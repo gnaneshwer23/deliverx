@@ -14,8 +14,10 @@ export type FounderPortfolioRow = {
   id: string;
   name: string;
   healthTone: HealthTone;
+  ragStatus: HealthTone;
   budgetLabel: string;
   deliveryPct: number;
+  openRisks: number;
 };
 
 export type FounderDecisionRow = {
@@ -38,6 +40,20 @@ export function toneFromScore(score: number): HealthTone {
   if (score >= 75) return "green";
   if (score >= 55) return "amber";
   return "red";
+}
+
+export function computePortfolioRag(input: {
+  openHighRisks: number;
+  blockedTasks: number;
+  healthScore: number;
+}): HealthTone {
+  if (input.openHighRisks >= 2 || input.healthScore < 55 || input.blockedTasks >= 3) {
+    return "red";
+  }
+  if (input.openHighRisks >= 1 || input.healthScore < 75 || input.blockedTasks >= 1) {
+    return "amber";
+  }
+  return "green";
 }
 
 export function computeStartupHealthTier(input: {

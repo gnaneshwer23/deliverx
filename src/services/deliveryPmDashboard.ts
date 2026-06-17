@@ -12,14 +12,17 @@ import {
   buildDeliveryHealth,
   buildDeliveryStakeholders,
   buildPmGuidedTasks,
+  buildStakeholderActionQueue,
   mapMilestonesToPhases,
   type CrossRoleDeliveryImpact,
   type DeliveryHealthDimension,
   type PmGuidedTask,
+  type StakeholderActionRow,
   type StakeholderDeliveryRow,
 } from "./deliveryPmEngine";
 import { listOrgTasks } from "./delivery";
 import { getOrgGovernanceStats, listDecisions, listRaidItems } from "./governance";
+import { listRecentStatusReports, type WeeklyStatusReportSummary } from "./deliveryPmReports";
 import { computeProjectHealth } from "./intelligenceEngine";
 import { listMilestones } from "./milestones";
 import { listProjectsForOrg } from "./portfolio";
@@ -63,6 +66,8 @@ export type PmMissionControl = {
   benefits: Array<{ title: string; target: number | null; current: number | null; unit: string | null; pct: number | null }>;
   decisions: Array<{ title: string; status: string; impact: string }>;
   pendingProposals: number;
+  statusReports: WeeklyStatusReportSummary[];
+  stakeholderActionQueue: StakeholderActionRow[];
 };
 
 export async function getPmMissionControl(projectId?: string): Promise<PmMissionControl> {
@@ -98,6 +103,9 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
   let storedTasks: PmGuidedTask[] = [];
   let dependencies: string[] = [];
   let openClarifications = 0;
+  let clarificationRows: Array<{ id: string; question: string; stakeholderRole: string | null }> =
+    [];
+  let statusReports: WeeklyStatusReportSummary[] = [];
 
   if (primary) {
     const [
@@ -111,6 +119,7 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
       forecast,
       signals,
       tasks,
+      reports,
     ] = await Promise.all([
       getPmDeliveryContext(primary.id).catch(() => null),
       listMilestones(primary.id).catch(() => []),
@@ -122,7 +131,10 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
       getDeliveryForecast(primary.id).catch(() => null),
       loadProjectSignals(primary.id).catch(() => null),
       listOrgTasks({ projectId: primary.id, limit: 200 }).catch(() => []),
+      listRecentStatusReports(primary.id, 5).catch(() => []),
     ]);
+
+    statusReports = reports;
 
     ctx = context;
     milestones = ms;
@@ -161,14 +173,22 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
     blockedTasks = tasks.filter((t) => t.status === "blocked").length;
 
     try {
-      const { count } = await supabase
+      const { data: clarifications } = await supabase
         .from("requirement_clarifications")
-        .select("id", { count: "exact", head: true })
+        .select("id, question, stakeholder_role")
         .eq("project_id", primary.id)
-        .eq("status", "open");
-      openClarifications = count ?? 0;
+        .eq("status", "open")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      clarificationRows = (clarifications ?? []).map((c) => ({
+        id: c.id as string,
+        question: c.question as string,
+        stakeholderRole: (c.stakeholder_role as string | null) ?? null,
+      }));
+      openClarifications = clarificationRows.length;
     } catch {
       openClarifications = 0;
+      clarificationRows = [];
     }
 
     if (!context?.ai_summary && forecast) {
@@ -245,6 +265,18 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
 
   const issues = allIssues.length ? allIssues : raidItems.filter((r) => r.type === "issue");
 
+  const stakeholderActionQueue = primary
+    ? buildStakeholderActionQueue({
+        pendingDecisions: decisions
+          .filter((d) => d.status === "proposed")
+          .map((d) => ({ id: d.id, title: d.title, projectId: primary.id })),
+        openClarifications: clarificationRows,
+        pendingProposals,
+        blockedTasks,
+        criticalRisks: criticalRisks.map((r) => ({ id: r.id, title: r.title })),
+      })
+    : [];
+
   return {
     userName: profile?.name ?? user?.email ?? null,
     primaryProject: primary ? { id: primary.id, name: primary.name } : null,
@@ -316,6 +348,8 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
       impact: d.outcome?.trim() ? d.outcome.slice(0, 40) : "Medium",
     })),
     pendingProposals,
+    statusReports,
+    stakeholderActionQueue,
   };
 }
 

@@ -18,6 +18,8 @@ import {
   DeliveryRaidPanel,
   DeliveryStakeholdersPanel,
 } from "@/components/delivery-pm/delivery-pm-panels";
+import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-status-reports-panel";
+import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -97,6 +99,11 @@ export default async function PmMissionControlPage({
         </div>
 
         <DeliveryStakeholdersPanel rows={data.stakeholders} />
+        <DeliveryStakeholderActionQueue actions={data.stakeholderActionQueue} />
+        <DeliveryStatusReportsPanel
+          projectId={data.primaryProject?.id}
+          reports={data.statusReports}
+        />
         <DeliveryRaidPanel raid={data.raid} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
