@@ -11,6 +11,7 @@ import {
   NotebookPen,
   ShieldCheck,
   Sparkles,
+  TrendingUp,
   Users,
 } from "lucide-react";
 import type { UserRole } from "@/services/dashboard";
@@ -30,6 +31,12 @@ const ACTIONS: Action[] = [
   { href: "/workspace/standups", label: "Standups", icon: Users },
   { href: "/workspace/reports", label: "Reports", icon: FileBarChart2 },
   { href: "/workspace/ba", label: "BA Mission Control", icon: NotebookPen, roles: ["ba", "pm"] },
+  {
+    href: "/workspace/product",
+    label: "Product Mission Control",
+    icon: TrendingUp,
+    roles: ["product_manager", "pm", "executive"],
+  },
   { href: "/workspace/pmo", label: "PMO view", icon: Command, roles: ["pm", "executive"] },
   { href: "/workspace/twin", label: "Digital twin", icon: Cpu, roles: ["pm", "executive"] },
   { href: "/workspace/portfolio", label: "Portfolio", icon: ClipboardList, roles: ["pm", "executive"] },
