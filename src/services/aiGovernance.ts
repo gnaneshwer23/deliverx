@@ -32,6 +32,23 @@ export type RaidSuggestion = {
   mitigation: string;
 };
 
+export type MeetingProposal = {
+  actionType: "create_task" | "create_raid" | "create_decision" | "calendar_event";
+  title: string;
+  summary: string;
+  payload: {
+    title?: string;
+    description?: string;
+    context?: string;
+    raidType?: "risk" | "issue" | "dependency";
+    severity?: string;
+    priority?: string;
+    scheduledAt?: string;
+    durationMinutes?: number;
+    location?: string;
+  };
+};
+
 export type MeetingSummaryResult = {
   summary: string;
   actions: string[];
@@ -41,6 +58,7 @@ export type MeetingSummaryResult = {
     title: string;
     description: string;
   }>;
+  proposals?: MeetingProposal[];
 };
 
 export type ReportDraft = {
@@ -82,6 +100,7 @@ export async function summarizeMeetingNotes(input: {
     actions: raw.actions ?? [],
     decisions: raw.decisions ?? [],
     risks: raw.risks ?? [],
+    proposals: raw.proposals ?? [],
   };
 }
 

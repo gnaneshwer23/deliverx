@@ -7,6 +7,7 @@ import {
   BarChart3,
   Brain,
   BrainCircuit,
+  CalendarClock,
   CheckSquare,
   Cpu,
   FileText,
@@ -44,6 +45,7 @@ const workspace = [
 
 const intelligence = [
   { href: "/workspace/alerts", label: "Alert Queue", icon: Brain, id: "alert" },
+  { href: "/workspace/proposals", label: "Proposal Queue", icon: CalendarClock, id: "prop" },
   { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
   { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
   { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },

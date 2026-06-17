@@ -35,6 +35,7 @@ export function MeetingAiPanel({
   const [draft, setDraft] = useState<MeetingSummaryResult | null>(null);
   const [createDecisions, setCreateDecisions] = useState(true);
   const [createRisks, setCreateRisks] = useState(true);
+  const [queueToApproval, setQueueToApproval] = useState(true);
   const [state, formAction, pending] = useActionState(saveMeetingSummaryAction, initial);
   const router = useRouter();
 
@@ -75,6 +76,16 @@ export function MeetingAiPanel({
     return (
       <p className="mt-2 text-xs font-medium text-[#0F766E]">
         Summary saved{hasSummary ? " (updated)" : ""}.
+        {state.queuedProposals ? (
+          <>
+            {" "}
+            {state.queuedProposals} proposal(s) queued for approval —{" "}
+            <a href="/workspace/proposals" className="underline">
+              review queue
+            </a>
+            .
+          </>
+        ) : null}
         {state.alignmentScore != null ? (
           <>
             {" "}
@@ -117,6 +128,7 @@ export function MeetingAiPanel({
         <form action={formAction} className="space-y-3 rounded-lg bg-slate-50 p-3">
           <input type="hidden" name="projectId" value={projectId} />
           <input type="hidden" name="meetingId" value={meetingId} />
+          <input type="hidden" name="meetingTitle" value={title} />
           <input type="hidden" name="payload" value={JSON.stringify(draft)} />
           <p className="text-xs font-semibold uppercase text-slate-400">AI preview</p>
           <textarea
@@ -135,24 +147,52 @@ export function MeetingAiPanel({
             meetingId={meetingId}
             meetingContext={draft.summary}
           />
+          {draft.proposals && draft.proposals.length > 0 ? (
+            <ul className="space-y-1 text-xs text-slate-600">
+              {draft.proposals.map((p, i) => (
+                <li key={i}>
+                  <span className="font-medium capitalize">{p.actionType.replace("_", " ")}:</span>{" "}
+                  {p.title}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <label className="flex items-center gap-2 text-xs text-slate-600">
             <input
               type="checkbox"
-              name="createDecisions"
-              checked={createDecisions}
-              onChange={(e) => setCreateDecisions(e.target.checked)}
+              name="queueToApproval"
+              checked={queueToApproval}
+              onChange={(e) => setQueueToApproval(e.target.checked)}
             />
-            Create {draft.decisions.length} proposed decision(s)
+            Queue follow-ups to approval (recommended — nothing auto-applies)
           </label>
-          <label className="flex items-center gap-2 text-xs text-slate-600">
-            <input
-              type="checkbox"
-              name="createRisks"
-              checked={createRisks}
-              onChange={(e) => setCreateRisks(e.target.checked)}
-            />
-            Create {draft.risks.length} RAID item(s)
-          </label>
+          {queueToApproval ? (
+            <input type="hidden" name="queueToApproval" value="on" />
+          ) : (
+            <input type="hidden" name="queueToApproval" value="off" />
+          )}
+          {!queueToApproval ? (
+            <>
+              <label className="flex items-center gap-2 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  name="createDecisions"
+                  checked={createDecisions}
+                  onChange={(e) => setCreateDecisions(e.target.checked)}
+                />
+                Create {draft.decisions.length} proposed decision(s) immediately
+              </label>
+              <label className="flex items-center gap-2 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  name="createRisks"
+                  checked={createRisks}
+                  onChange={(e) => setCreateRisks(e.target.checked)}
+                />
+                Create {draft.risks.length} RAID item(s) immediately
+              </label>
+            </>
+          ) : null}
           {state.error ? (
             <p className="text-xs text-red-600">{state.error}</p>
           ) : null}

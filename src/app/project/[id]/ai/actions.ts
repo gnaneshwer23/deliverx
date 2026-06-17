@@ -10,12 +10,15 @@ import {
 } from "@/services/governance";
 import type { MeetingSummaryResult, RaidSuggestion } from "@/services/aiGovernance";
 import { computeProjectAlignment } from "@/services/alignment";
+import { meetingResultToProposals } from "@/services/meetingProposals";
+import { queueProposals } from "@/services/proposedActions";
 
 export type ActionState = {
   ok: boolean;
   error?: string;
   alignmentScore?: number;
   alignmentDelta?: number | null;
+  queuedProposals?: number;
 };
 
 function revalidateProject(projectId: string) {
@@ -27,6 +30,7 @@ function revalidateProject(projectId: string) {
   revalidatePath(`/project/${projectId}/traceability`);
   revalidatePath(`/project/${projectId}`);
   revalidatePath("/workspace/dashboard");
+  revalidatePath("/workspace/proposals");
 }
 
 export async function saveMeetingSummaryAction(
@@ -38,7 +42,9 @@ export async function saveMeetingSummaryAction(
   const summary = String(formData.get("summary") ?? "");
   const createDecisions = formData.get("createDecisions") === "on";
   const createRisks = formData.get("createRisks") === "on";
+  const queueToApproval = formData.get("queueToApproval") !== "off";
   const payloadRaw = String(formData.get("payload") ?? "");
+  const meetingTitle = String(formData.get("meetingTitle") ?? "Meeting");
 
   if (!projectId || !meetingId || !summary.trim()) {
     return { ok: false, error: "Missing meeting summary data." };
@@ -56,11 +62,23 @@ export async function saveMeetingSummaryAction(
       projectId,
       meetingId,
       summary,
-      createDecisions,
-      createRisks,
+      createDecisions: queueToApproval ? false : createDecisions,
+      createRisks: queueToApproval ? false : createRisks,
       decisions: payload.decisions ?? [],
       risks: payload.risks ?? [],
     });
+
+    let queuedProposals = 0;
+    if (queueToApproval) {
+      const proposals = meetingResultToProposals(payload, meetingTitle);
+      const queued = await queueProposals({
+        projectId,
+        source: "meeting",
+        sourceId: meetingId,
+        proposals,
+      });
+      queuedProposals = queued.length;
+    }
 
     const alignment = await computeProjectAlignment(projectId, {
       meetingId,
@@ -73,6 +91,7 @@ export async function saveMeetingSummaryAction(
       ok: true,
       alignmentScore: alignment.score,
       alignmentDelta: alignment.delta,
+      queuedProposals,
     };
   } catch (err) {
     return {

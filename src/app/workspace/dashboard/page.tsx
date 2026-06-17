@@ -42,6 +42,8 @@ import { AiInsights } from "./ai-insights";
 import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
+import { ProposalsQueuePanel } from "@/components/proposals/proposals-queue-panel";
+import { countPendingProposals, listPendingProposals } from "@/services/proposedActions";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -105,6 +107,11 @@ export default async function DashboardPage() {
       console.error("[dashboard] project intelligence", err);
     }
   }
+
+  const [pendingProposals, pendingProposalCount] = await Promise.all([
+    listPendingProposals(3).catch(() => []),
+    countPendingProposals().catch(() => 0),
+  ]);
 
   const kpis = [
     {
@@ -184,6 +191,13 @@ export default async function DashboardPage() {
       accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
     },
     {
+      label: "Pending proposals",
+      value: pendingProposalCount,
+      href: "/workspace/proposals",
+      icon: CalendarClock,
+      accent: pendingProposalCount > 0 ? ("amber" as const) : ("slate" as const),
+    },
+    {
       label: "Standups (7d)",
       value: data.delivery.standupsThisWeek,
       href: "/workspace/meetings",
@@ -250,6 +264,14 @@ export default async function DashboardPage() {
           <DeliveryForecastStrip entries={forecastRollup} />
         </DashboardSection>
       </div>
+
+      {pendingProposals.length > 0 ? (
+        <div className="mb-8">
+          <DashboardSection title="Proposal queue" href="/workspace/proposals">
+            <ProposalsQueuePanel proposals={pendingProposals} />
+          </DashboardSection>
+        </div>
+      ) : null}
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <DashboardSection title="Delivery velocity" className="xl:col-span-2">
