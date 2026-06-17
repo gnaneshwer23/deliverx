@@ -53,4 +53,10 @@ export async function saveClosurePackage(
     .update({ closure_package: pkg })
     .eq("id", projectId);
   if (error) throw error;
+
+  const { persistStructuredLessonsFromClosure, syncProjectLearningSignals } = await import(
+    "./continuousLearning"
+  );
+  await persistStructuredLessonsFromClosure(projectId, pkg).catch(() => 0);
+  await syncProjectLearningSignals(projectId).catch(() => ({ estimateRows: 0, defectRows: 0 }));
 }

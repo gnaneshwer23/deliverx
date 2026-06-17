@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDeliveryEvalMetrics } from "@/services/intelligenceMetrics";
+import { getContinuousLearningSnapshot } from "@/services/continuousLearning";
 import { IntelligenceMetricsPanel } from "@/components/intelligence/intelligence-metrics-panel";
+import { ContinuousLearningPanel } from "@/components/intelligence/continuous-learning-panel";
 import { DeliveryNarratorPanel } from "@/components/intelligence/delivery-narrator-panel";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { dxClass } from "@/lib/dx-theme";
@@ -9,8 +11,9 @@ import { dxClass } from "@/lib/dx-theme";
 export const dynamic = "force-dynamic";
 
 export default async function IntelligencePage() {
-  const [metrics, topProject] = await Promise.all([
+  const [metrics, learning, topProject] = await Promise.all([
     getDeliveryEvalMetrics().catch(() => null),
+    getContinuousLearningSnapshot().catch(() => null),
     loadTopProject(),
   ]);
 
@@ -33,6 +36,8 @@ export default async function IntelligencePage() {
         </p>
 
         {metrics ? <IntelligenceMetricsPanel metrics={metrics} /> : null}
+
+        {learning ? <ContinuousLearningPanel snapshot={learning} /> : null}
 
         {topProject ? (
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
