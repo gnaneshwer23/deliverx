@@ -5,6 +5,26 @@ import Link from "next/link";
 import { Check, Loader2 } from "lucide-react";
 import type { ProposedAction } from "@/services/assistantActions";
 
+function actionLabel(action: ProposedAction): string {
+  switch (action.type) {
+    case "create_raid":
+      return "Create RAID item";
+    case "create_task":
+      return "Create task";
+    case "create_milestone":
+      return "Create milestone";
+    case "create_stakeholder":
+      return "Add stakeholder";
+    default:
+      return "Apply action";
+  }
+}
+
+function actionDetail(action: ProposedAction): string {
+  if (action.type === "create_stakeholder") return action.name;
+  return action.title;
+}
+
 export function AssistantActionCards({
   actions,
   onApplied,
@@ -61,8 +81,7 @@ export function AssistantActionCards({
           >
             <p className="font-medium text-[#1C4A2E]">{action.summary}</p>
             <p className="mt-0.5 text-xs text-[#6B6B64]">
-              {action.type === "create_raid" ? "Create RAID item" : "Create task"} ·{" "}
-              {action.title}
+              {actionLabel(action)} · {actionDetail(action)}
             </p>
             {errors[action.id] ? (
               <p className="mt-1 text-xs text-[#C0392B]">{errors[action.id]}</p>

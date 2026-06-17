@@ -30,6 +30,11 @@ export type ProjectMemoryHit = {
   similarity: number | null;
 };
 
+export type OrgMemoryHit = ProjectMemoryHit & {
+  projectId: string;
+  projectName: string;
+};
+
 type MemoryChunkDraft = {
   sourceType: ProjectMemorySourceType;
   sourceId: string | null;
@@ -303,6 +308,81 @@ async function searchProjectMemoryText(
     content: String(row.content),
     similarity: null,
   }));
+}
+
+export async function searchOrgMemory(
+  query: string,
+  limit = 8,
+): Promise<OrgMemoryHit[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  const { supabase } = await getOrgContext();
+
+  try {
+    const [queryVector] = await embedTexts([trimmed.slice(0, 6000)]);
+    const { data, error } = await supabase.rpc("match_org_memory_chunks", {
+      p_query_embedding: queryVector,
+      p_match_count: limit,
+      p_source_types: null,
+    });
+
+    if (error) {
+      if (error.code === "42883") {
+        return searchOrgMemoryText(trimmed, limit);
+      }
+      throwIfMissingTable(error, "project_memory_chunks");
+      throw error;
+    }
+
+    return (data ?? []).map((row: Record<string, unknown>) => ({
+      id: String(row.id),
+      projectId: String(row.project_id),
+      projectName: String(row.project_name ?? "Project"),
+      sourceType: row.source_type as ProjectMemorySourceType,
+      sourceId: row.source_id ? String(row.source_id) : null,
+      title: row.title ? String(row.title) : null,
+      content: String(row.content),
+      similarity: row.similarity != null ? Number(row.similarity) : null,
+    }));
+  } catch (err) {
+    if (err instanceof OpenAiConfigError) {
+      return searchOrgMemoryText(trimmed, limit);
+    }
+    throw err;
+  }
+}
+
+async function searchOrgMemoryText(query: string, limit: number): Promise<OrgMemoryHit[]> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("project_memory_chunks")
+    .select("id, project_id, source_type, source_id, title, content, projects!inner(name)")
+    .ilike("content", `%${query.slice(0, 200)}%`)
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throwIfMissingTable(error, "project_memory_chunks");
+    throw error;
+  }
+
+  return (data ?? []).map((row) => {
+    const projects = row.projects as { name?: string } | { name?: string }[] | null;
+    const projectName = Array.isArray(projects)
+      ? (projects[0]?.name ?? "Project")
+      : (projects?.name ?? "Project");
+    return {
+      id: String(row.id),
+      projectId: String(row.project_id),
+      projectName,
+      sourceType: row.source_type as ProjectMemorySourceType,
+      sourceId: row.source_id ? String(row.source_id) : null,
+      title: row.title ? String(row.title) : null,
+      content: String(row.content),
+      similarity: null,
+    };
+  });
 }
 
 export async function listRecentProjectMemory(

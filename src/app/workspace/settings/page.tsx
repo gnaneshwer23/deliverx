@@ -7,6 +7,7 @@ import { SetupDiagnostics } from "@/components/settings/setup-diagnostics";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
 import { NotificationSettingsForm } from "@/components/settings/notification-settings-form";
 import { PhaseBHealthPanel } from "@/components/settings/phase-b-health-panel";
+import { PhaseCHealthPanel } from "@/components/settings/phase-c-health-panel";
 import { GitHubIntegrationForm } from "@/components/settings/github-integration-form";
 import { isEmailConfigured } from "@/lib/email/resend";
 import { getOrgNotificationSettings } from "@/services/notificationService";
@@ -99,6 +100,7 @@ export default async function SettingsPage() {
         </section>
 
         <PhaseBHealthPanel />
+        <PhaseCHealthPanel />
 
         <AiIntegrationStatus />
         <EnvKeysGuide />
