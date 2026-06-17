@@ -43,6 +43,8 @@ import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
+import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
+import { listOrgImpactEvents } from "@/services/deliveryImpact";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { listPendingProposals } from "@/services/proposedActions";
@@ -134,10 +136,12 @@ export default async function DashboardPage() {
     }
   }
 
-  const [pendingProposals, pendingArtifactReviews, approvalCounts] = await Promise.all([
+  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents] =
+    await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
     getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
+    listOrgImpactEvents(8).catch(() => []),
   ]);
 
   const kpis = [
@@ -303,6 +307,14 @@ export default async function DashboardPage() {
               artifactReviews={pendingArtifactReviews}
               proposals={pendingProposals}
             />
+          </DashboardSection>
+        </div>
+      ) : null}
+
+      {impactEvents.length > 0 ? (
+        <div className="mb-8">
+          <DashboardSection title="Delivery updates" href="/workspace/proposals">
+            <DeliveryImpactFeed events={impactEvents} showProject />
           </DashboardSection>
         </div>
       ) : null}

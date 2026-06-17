@@ -27,6 +27,8 @@ import { computeProjectHealth } from "./intelligenceEngine";
 import { listMilestones } from "./milestones";
 import { listProjectsForOrg } from "./portfolio";
 import { loadProjectSignals } from "./projectSignals";
+import { listRecentImpactEventsByRole } from "./deliveryImpact";
+import { mergeImpactIntoCrossRole } from "./deliveryImpactEngine";
 import { getProjectSuccessScore } from "./successScore";
 
 export type PmMissionControl = {
@@ -265,6 +267,25 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
 
   const issues = allIssues.length ? allIssues : raidItems.filter((r) => r.type === "issue");
 
+  let crossRoleImpact = buildDeliveryCrossRoleImpact({
+    criticalRisks: criticalRisks.length,
+    milestoneProgress: timelineComplete,
+    pendingDecisions: governance.pendingDecisions,
+    blockedTasks,
+  });
+
+  if (primary) {
+    const recentImpact = await listRecentImpactEventsByRole(primary.id).catch(() => []);
+    crossRoleImpact = mergeImpactIntoCrossRole(
+      crossRoleImpact,
+      recentImpact.map((e) => ({
+        targetRole: e.target_role,
+        message: e.message,
+        tone: e.tone,
+      })),
+    );
+  }
+
   const stakeholderActionQueue = primary
     ? buildStakeholderActionQueue({
         pendingDecisions: decisions
@@ -321,12 +342,7 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
       blockedTasks,
       openClarifications,
     }),
-    crossRoleImpact: buildDeliveryCrossRoleImpact({
-      criticalRisks: criticalRisks.length,
-      milestoneProgress: timelineComplete,
-      pendingDecisions: governance.pendingDecisions,
-      blockedTasks,
-    }),
+    crossRoleImpact,
     raid: {
       risks: criticalRisks.slice(0, 5).map((r) => ({
         title: r.title,

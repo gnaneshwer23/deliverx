@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiErrorResponse } from "@/lib/api/auth";
+import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import {
   approveAndApplyProposal,
   resolveProposal,
@@ -20,10 +21,12 @@ export async function POST(req: Request) {
 
     if (body.action === "reject") {
       const proposal = await resolveProposal(body.id, "rejected", body.reviewerNotes);
+      refreshProjectDashboards(proposal.project_id);
       return NextResponse.json({ ok: true, proposal });
     }
 
     const proposal = await approveAndApplyProposal(body.id, body.reviewerNotes);
+    refreshProjectDashboards(proposal.project_id);
     return NextResponse.json({ ok: true, proposal });
   } catch (err) {
     return apiErrorResponse(err);

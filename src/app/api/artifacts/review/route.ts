@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { apiErrorResponse } from "@/lib/api/auth";
+import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import {
   approveArtifactReview,
   listPendingArtifactReviews,
@@ -34,8 +34,7 @@ export async function POST(req: Request) {
         ? await approveArtifactReview(body.id, body.reviewerNotes)
         : await rejectArtifactReview(body.id, body.reviewerNotes);
 
-    revalidatePath("/workspace/proposals");
-    revalidatePath(`/project/${review.project_id}`);
+    refreshProjectDashboards(review.project_id);
 
     return NextResponse.json({ ok: true, review });
   } catch (err) {

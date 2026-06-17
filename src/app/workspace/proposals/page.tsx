@@ -3,15 +3,18 @@ import { listPendingProposals } from "@/services/proposedActions";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { ProposalsQueuePanel } from "@/components/proposals/proposals-queue-panel";
 import { ArtifactReviewsPanel } from "@/components/approvals/artifact-reviews-panel";
+import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
+import { listOrgImpactEvents } from "@/services/deliveryImpact";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProposalsPage() {
-  const [proposals, artifactReviews] = await Promise.all([
+  const [proposals, artifactReviews, impactEvents] = await Promise.all([
     listPendingProposals(50),
     listPendingArtifactReviews(50),
+    listOrgImpactEvents(10).catch(() => []),
   ]);
 
   const totalPending = proposals.length + artifactReviews.length;
@@ -55,6 +58,20 @@ export default async function ProposalsPage() {
             Meeting follow-ups, calendar events, tasks, and RAID items from assistant flows.
           </p>
           <ProposalsQueuePanel proposals={proposals} />
+        </section>
+
+        <section>
+          <h2 className={`${dxClass.display} mb-3 text-lg`}>Applied updates</h2>
+          <p className="mb-4 text-sm text-[#6B6B64]">
+            When you approve proposals, DeliverX propagates changes to persona dashboards and logs
+            cross-role impact here.
+          </p>
+          <DeliveryImpactFeed
+            events={impactEvents}
+            showProject
+            title="Cross-role impact feed"
+            emptyMessage="No applied updates yet — approve a meeting proposal to see dashboards refresh."
+          />
         </section>
       </div>
     </>
