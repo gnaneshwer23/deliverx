@@ -17,6 +17,7 @@ import {
 } from "@/services/dashboard";
 import { getOrgAlertQueue } from "@/services/alerts";
 import { getDeliveryCoachSuggestions } from "@/services/deliveryCoach";
+import { listProjectForecasts } from "@/services/deliveryForecast";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getProjectAlignment } from "@/services/alignment";
 import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-card";
@@ -39,6 +40,7 @@ import {
 import { AiInsights } from "./ai-insights";
 import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
+import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -173,6 +175,15 @@ export default async function DashboardPage() {
     (r) => r.open_risks > 0 || r.open_issues > 0 || r.pending_decisions > 0,
   );
 
+  const forecastRollup = await listProjectForecasts(
+    data.projectHealth.map((p) => ({
+      id: p.id,
+      name: p.name,
+      healthTier: p.healthTier,
+    })),
+    3,
+  ).catch(() => []);
+
   return (
     <>
       <DxPageHeader
@@ -210,6 +221,12 @@ export default async function DashboardPage() {
         </DashboardSection>
         <DashboardSection title="Delivery coach" href="/workspace/alerts">
           <DeliveryCoachPanel suggestions={coach} />
+        </DashboardSection>
+      </div>
+
+      <div className="mb-8">
+        <DashboardSection title="Delivery forecasts" href="/workspace/pmo">
+          <DeliveryForecastStrip entries={forecastRollup} />
         </DashboardSection>
       </div>
 
