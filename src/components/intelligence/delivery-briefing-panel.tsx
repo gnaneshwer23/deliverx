@@ -41,10 +41,10 @@ export function DeliveryBriefingPanel({ projectId }: { projectId: string }) {
         <MessageCircleQuestion size={16} className="text-teal-700" />
         <h3 className="font-semibold">Sponsor Q&amp;A</h3>
       </div>
-      <p className="mb-3 text-sm text-slate-500">
-        Read-only answers from project forecast, RAID, and intelligence — no actions
-        are taken.
-      </p>
+          <p className="mb-3 text-sm text-slate-500">
+            Read-only answers from project forecast, RAID, intelligence, and RAG memory — no
+            actions are taken.
+          </p>
 
       <div className="mb-3 flex flex-wrap gap-2">
         {STARTERS.map((s) => (

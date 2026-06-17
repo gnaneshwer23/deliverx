@@ -17,6 +17,7 @@ import { EstimationPacksPanel } from "@/components/intelligence/estimation-packs
 import { DeliveryPredictionPanel } from "@/components/prediction/delivery-prediction-panel";
 import { DeliveryNarratorPanel } from "@/components/intelligence/delivery-narrator-panel";
 import { DeliveryBriefingPanel } from "@/components/intelligence/delivery-briefing-panel";
+import { VoiceProjectCopilot } from "@/components/voice/voice-project-copilot";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
 import { DriftPanel } from "@/components/intelligence/drift-panel";
 import { BlockerInsights } from "@/components/intelligence/blocker-insights";
@@ -48,6 +49,7 @@ import { ProjectQuickNav } from "@/components/project/project-quick-nav";
 import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { ProjectGovernanceOverview } from "@/components/project/project-governance-overview";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { listVoiceProjectLogs } from "@/services/voiceProjectUpdate";
 import {
   Table,
   TableBody,
@@ -79,7 +81,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, deliveryPrediction, estimationPacks, successScore] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, deliveryPrediction, estimationPacks, successScore, voiceLogs] =
     await Promise.all([
       getProjectIntelligence(id),
       loadProjectSignals(id),
@@ -101,6 +103,7 @@ export default async function ProjectOverviewPage({
       getDeliveryPrediction(id).catch(() => null),
       listEstimationPacks(id).catch(() => []),
       getProjectSuccessScore(id).catch(() => null),
+      listVoiceProjectLogs(id).catch(() => []),
     ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -220,6 +223,12 @@ export default async function ProjectOverviewPage({
               <DeliveryNarratorPanel projectId={id} projectName={projectName} />
               <DeliveryBriefingPanel projectId={id} />
             </div>
+
+            <VoiceProjectCopilot
+              projectId={id}
+              projectName={projectName}
+              recentLogs={voiceLogs}
+            />
 
             <TraceabilityPanel projectId={id} trace={trace} compact />
 

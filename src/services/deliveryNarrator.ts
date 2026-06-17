@@ -4,8 +4,6 @@
 
 import { generateText } from "@/lib/ai/anthropic";
 import {
-  deliveryBriefingPrompt,
-  deliveryBriefingSystem,
   deliveryNarratorPrompt,
   deliveryNarratorSystem,
 } from "@/lib/ai/prompts/delivery-narrator";
@@ -125,20 +123,7 @@ export async function answerDeliveryBriefingQuestion(
   projectId: string,
   question: string,
 ): Promise<{ answer: string; projectName: string }> {
-  const trimmed = question.trim();
-  if (!trimmed) throw new Error("Question is required");
-
-  const { projectName, contextBlock } = await buildNarratorContextBlock(projectId);
-
-  const answer = await generateText({
-    system: deliveryBriefingSystem,
-    prompt: deliveryBriefingPrompt({
-      projectName,
-      question: trimmed,
-      contextBlock,
-    }),
-    maxTokens: 400,
-  });
-
-  return { answer: answer.trim(), projectName };
+  const { askProjectVoiceQuestion } = await import("./voiceProjectUpdate");
+  const result = await askProjectVoiceQuestion(projectId, question, { persist: false });
+  return { answer: result.answer, projectName: result.projectName };
 }
