@@ -30,7 +30,7 @@ export function MarketingOnboardingSection() {
               Your role. Your <em>workspace.</em>
             </>
           }
-          subtitle="Select your role and DeliverX generates a personalised workspace in under 60 seconds — tailored KPIs, guided tasks, and AI agents calibrated to how you work."
+          subtitle="Select your role and DeliverX generates a tailored workspace in under 60 seconds — guided onboarding, role-specific KPIs, and AI agents calibrated to how you work."
         />
 
         <div className="mt-8 flex flex-wrap gap-2">
@@ -45,7 +45,7 @@ export function MarketingOnboardingSection() {
                 className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition ${
                   isActive
                     ? "border-[var(--tab-accent)] bg-[var(--tab-accent-bg)] text-[var(--tab-accent)]"
-                    : "border-[#2E2E30] bg-[#18181A] text-[#7A7874] hover:text-[#B8B5AF]"
+                    : "border-[var(--mkt-border)] bg-[var(--mkt-s2)] text-[var(--mkt-text3)] hover:text-[var(--mkt-text2)]"
                 }`}
                 style={
                   isActive
@@ -56,40 +56,42 @@ export function MarketingOnboardingSection() {
                     : undefined
                 }
               >
-                <span>{d.sym}</span>
+                <span className="font-[family-name:var(--font-mkt-mono)] text-[0.65rem] font-semibold">
+                  {d.code}
+                </span>
                 {ROLE_PILL_LABELS[id]}
               </button>
             );
           })}
         </div>
 
-        <div className="mt-6 grid gap-6 rounded-2xl border border-[#2E2E30] bg-[#111110] p-5 md:grid-cols-2 md:gap-8 md:p-6">
+        <div className="mt-6 grid gap-6 rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-5 md:grid-cols-2 md:gap-8 md:p-6">
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.08em] text-[#7A7874]">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
               Onboarding steps — {role.name}
             </p>
             <ol className="space-y-0">
               {ob.steps.map((step) => (
                 <li
                   key={step.n}
-                  className={`flex gap-4 border-b border-[#2E2E30] py-4 last:border-b-0 ${
-                    step.active ? "opacity-100" : step.done ? "opacity-80" : "opacity-60"
+                  className={`flex gap-4 border-b border-[var(--mkt-border)] py-4 last:border-b-0 ${
+                    step.active ? "opacity-100" : step.done ? "opacity-90" : "opacity-70"
                   }`}
                 >
                   <span
                     className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                       step.active
-                        ? "bg-[#3D9660] text-white"
+                        ? "bg-[var(--mkt-green-l)] text-white"
                         : step.done
-                          ? "bg-[rgba(61,150,96,.15)] text-[#3D9660]"
-                          : "bg-[#222224] text-[#7A7874]"
+                          ? "bg-[rgba(61,150,96,.15)] text-[var(--mkt-green-l)]"
+                          : "bg-[var(--mkt-s3)] text-[var(--mkt-text3)]"
                     }`}
                   >
                     {step.n}
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-[#F0EDE8]">{step.title}</p>
-                    <p className="mt-1 text-[0.8125rem] leading-relaxed text-[#7A7874]">
+                    <p className="text-sm font-semibold text-[var(--mkt-text1)]">{step.title}</p>
+                    <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
                       {step.desc}
                     </p>
                   </div>
@@ -98,25 +100,25 @@ export function MarketingOnboardingSection() {
             </ol>
           </div>
 
-          <div className="rounded-xl border border-[#2E2E30] bg-[#18181A] p-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#7A7874]">
+          <div className="rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
               AI outputs preview
             </p>
             <div className="space-y-2">
               {ob.outputs.map((output) => (
                 <div
                   key={output.title}
-                  className="flex items-start gap-3 rounded-lg border border-[#2E2E30] bg-[#111110] p-3"
+                  className="flex items-start gap-3 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-3"
                 >
                   <span
-                    className="flex size-8 shrink-0 items-center justify-center rounded-lg text-sm"
+                    className="flex size-8 shrink-0 items-center justify-center rounded-lg font-[family-name:var(--font-mkt-mono)] text-[0.6rem] font-semibold"
                     style={{ background: output.iconBg, color: output.iconColor }}
                   >
-                    {output.icon}
+                    {output.code}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#F0EDE8]">{output.title}</p>
-                    <p className="mt-0.5 text-[0.75rem] leading-snug text-[#7A7874]">
+                    <p className="text-sm font-medium text-[var(--mkt-text1)]">{output.title}</p>
+                    <p className="mt-0.5 text-[0.75rem] leading-snug text-[var(--mkt-text2)]">
                       {output.sub}
                     </p>
                   </div>
