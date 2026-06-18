@@ -19,6 +19,8 @@ import {
 } from "@/components/product/product-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -43,7 +45,10 @@ export default async function ProductMissionControlPage({
   }
 
   const params = await searchParams;
-  const data = await getProductMissionControl(params.project);
+  const [data, collaborativeLoop] = await Promise.all([
+    getProductMissionControl(params.project),
+    getCollaborativeLoopSnapshot("product", params.project),
+  ]);
 
   return (
     <>
@@ -124,6 +129,7 @@ export default async function ProductMissionControlPage({
 
         <ProductSegmentsPanel segments={data.customerSegments} />
         <ProductAdoptionPanel adoption={data.featureAdoption} voc={data.voiceOfCustomer} />
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         <ProductCrossRolePanel impacts={data.crossRoleImpact} />
 
         <div className={`${dxClass.card} p-6`}>

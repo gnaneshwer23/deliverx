@@ -9,6 +9,7 @@ import { syncRequirementTraceLinks } from "./deliveryTraceability";
 import { syncProjectMemory } from "./projectMemoryRag";
 import { notifyProposalApplied } from "./notificationService";
 import {
+  mergeImpactIntoCrossRole,
   proposalApplyToImpactEvents,
   tonesForImpactSeverity,
   type DeliveryImpactEventDraft,
@@ -196,6 +197,23 @@ export async function listRecentImpactEventsByRole(
   }
 
   return deduped;
+}
+
+/** Merge persisted delivery_impact_events into cross-role dashboard rows. */
+export async function mergeProjectImpactIntoCrossRole<
+  T extends { role: string; message: string; tone: string },
+>(base: T[], projectId: string | null | undefined): Promise<T[]> {
+  if (!projectId) return base;
+  const recentImpact = await listRecentImpactEventsByRole(projectId).catch(() => []);
+  if (recentImpact.length === 0) return base;
+  return mergeImpactIntoCrossRole(
+    base,
+    recentImpact.map((e) => ({
+      targetRole: e.target_role,
+      message: e.message,
+      tone: e.tone,
+    })),
+  );
 }
 
 export async function listOrgImpactEvents(

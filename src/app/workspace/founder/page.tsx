@@ -23,6 +23,8 @@ import {
 } from "@/components/founder/founder-panels";
 import { FounderContextWorkspace } from "@/components/founder/founder-workspace";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -38,9 +40,10 @@ export default async function FounderMissionControlPage() {
     redirect("/workspace/dashboard");
   }
 
-  const [data, ctx] = await Promise.all([
+  const [data, ctx, collaborativeLoop] = await Promise.all([
     getFounderMissionControl(),
     getFounderContext().catch(() => null),
+    getCollaborativeLoopSnapshot("founder"),
   ]);
 
   return (
@@ -89,6 +92,7 @@ export default async function FounderMissionControlPage() {
         </div>
 
         <FounderTeamHealthPanel health={data.teamHealth} />
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         <FounderCrossRolePanel impacts={data.crossRoleImpact} />
 
         <FounderContextWorkspace

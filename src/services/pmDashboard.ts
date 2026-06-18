@@ -14,6 +14,7 @@ import {
   type ProductGuidedTask,
 } from "./pmProductEngine";
 import { getPmProductContext, getProductStats, listCustomerSegments } from "./pmProduct";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 
 export type ProductMissionControl = {
   userName: string | null;
@@ -128,6 +129,16 @@ export async function getProductMissionControl(
   const featureAdoption =
     (analytics.featureAdoption as number | undefined) ?? adoptionAvg;
 
+  let crossRoleImpact = buildProductCrossRoleImpact({
+    roadmapNowCount: stats.now.length,
+    featuresShipped: stats.shipped.length,
+    highPriorityInsights: stats.insights.filter((i) => i.priority === "high").length,
+  });
+
+  if (primary) {
+    crossRoleImpact = await mergeProjectImpactIntoCrossRole(crossRoleImpact, primary.id);
+  }
+
   return {
     userName: profile?.name ?? user?.email ?? null,
     primaryProject: primary ? { id: primary.id, name: primary.name } : null,
@@ -154,11 +165,7 @@ export async function getProductMissionControl(
       stats.insights,
       stats.features,
     ),
-    crossRoleImpact: buildProductCrossRoleImpact({
-      roadmapNowCount: stats.now.length,
-      featuresShipped: stats.shipped.length,
-      highPriorityInsights: stats.insights.filter((i) => i.priority === "high").length,
-    }),
+    crossRoleImpact,
     stakeholderConnections: buildStakeholderProductConnections(),
     roadmap: {
       now: stats.now.map((f) => f.title),

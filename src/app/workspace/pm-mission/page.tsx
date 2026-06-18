@@ -27,6 +27,8 @@ import { getProjectMemoryStats } from "@/services/projectMemoryRag";
 import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
 import { dxClass } from "@/lib/dx-theme";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +48,10 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const data = await getPmMissionControl(params.project);
+  const [data, collaborativeLoop] = await Promise.all([
+    getPmMissionControl(params.project),
+    getCollaborativeLoopSnapshot("pm", params.project),
+  ]);
   const memoryStats = data.primaryProject
     ? await getProjectMemoryStats(data.primaryProject.id).catch(() => ({
         totalChunks: 0,
@@ -144,6 +149,7 @@ export default async function PmMissionControlPage({
 
         <DeliveryBenefitsPanel benefits={data.benefits} />
         <DeliveryDecisionsPanel decisions={data.decisions} />
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         <DeliveryCrossRolePanel impacts={data.crossRoleImpact} />
       </div>
     </>

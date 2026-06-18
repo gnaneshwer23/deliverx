@@ -27,6 +27,7 @@ import { getPmDeliveryContext } from "./deliveryPmContext";
 import { getPmProductContext } from "./pmProduct";
 import { getPmoSnapshot, listProjectsForOrg } from "./portfolio";
 import { getProjectSuccessScore } from "./successScore";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 
 export type FounderMissionControl = {
   userName: string | null;
@@ -299,6 +300,16 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
       ? "Hiring one senior engineer may accelerate roadmap delivery by 18%."
       : "Team capacity is stable — monitor delivery strain as portfolio grows.");
 
+  const impactProjectId = activeProjects[0]?.id ?? null;
+  let crossRoleImpact = buildFounderCrossRoleImpact({
+    pendingDecisions: governance.pendingDecisions,
+    criticalRisks: governance.openRisks,
+    productHealth: featureAdoption,
+    deliveryConfidence: avgConfidence,
+    capacityStrain: capacity?.deliveryStrain ?? "low",
+  });
+  crossRoleImpact = await mergeProjectImpactIntoCrossRole(crossRoleImpact, impactProjectId);
+
   return {
     userName: profile?.name ?? user?.email ?? null,
     orgName,
@@ -345,13 +356,7 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
       hiringNeed: capacity?.overloadedCount ? "Backend Engineer" : "None urgent",
       recommendation: teamRecommendation,
     },
-    crossRoleImpact: buildFounderCrossRoleImpact({
-      pendingDecisions: governance.pendingDecisions,
-      criticalRisks: governance.openRisks,
-      productHealth: featureAdoption,
-      deliveryConfidence: avgConfidence,
-      capacityStrain: capacity?.deliveryStrain ?? "low",
-    }),
+    crossRoleImpact,
     extractionStatus: ctx?.extraction_status ?? "pending",
     investmentReports: bcReviews.map((r) => ({
       id: r.id,

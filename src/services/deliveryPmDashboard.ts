@@ -27,8 +27,7 @@ import { computeProjectHealth } from "./intelligenceEngine";
 import { listMilestones } from "./milestones";
 import { listProjectsForOrg } from "./portfolio";
 import { loadProjectSignals } from "./projectSignals";
-import { listRecentImpactEventsByRole } from "./deliveryImpact";
-import { mergeImpactIntoCrossRole } from "./deliveryImpactEngine";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 import { getProjectSuccessScore } from "./successScore";
 
 export type PmMissionControl = {
@@ -275,15 +274,7 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
   });
 
   if (primary) {
-    const recentImpact = await listRecentImpactEventsByRole(primary.id).catch(() => []);
-    crossRoleImpact = mergeImpactIntoCrossRole(
-      crossRoleImpact,
-      recentImpact.map((e) => ({
-        targetRole: e.target_role,
-        message: e.message,
-        tone: e.tone,
-      })),
-    );
+    crossRoleImpact = await mergeProjectImpactIntoCrossRole(crossRoleImpact, primary.id);
   }
 
   const stakeholderActionQueue = primary

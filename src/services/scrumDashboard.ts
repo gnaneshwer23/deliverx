@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getOrgCapacitySnapshot } from "./capacity";
 import { getDeliveryForecast } from "./deliveryForecast";
 import { listOrgTasks } from "./delivery";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 import { listRaidItems } from "./governance";
 import { listProjectsForOrg } from "./portfolio";
 import { getScrumContext } from "./scrumContext";
@@ -320,11 +321,14 @@ export async function getScrumMissionControl(
       }),
     },
     stakeholders: buildScrumStakeholders(),
-    crossRoleImpact: buildScrumCrossRoleImpact({
-      blockedCount,
-      sprintCompletion: completionPct,
-      retroThemes: retroThemes.length,
-    }),
+    crossRoleImpact: await mergeProjectImpactIntoCrossRole(
+      buildScrumCrossRoleImpact({
+        blockedCount,
+        sprintCompletion: completionPct,
+        retroThemes: retroThemes.length,
+      }),
+      primary?.id,
+    ),
     extractionStatus: ctx?.extraction_status ?? "pending",
   };
 }

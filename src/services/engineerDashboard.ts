@@ -30,6 +30,7 @@ import {
   type GitHubProjectSnapshot,
 } from "./githubIntegration";
 import { summarizeCiFromWorkflows } from "./githubIntegrationEngine";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 
 export type EngineerMissionControl = {
   userName: string | null;
@@ -233,6 +234,16 @@ export async function getEngineerMissionControl(
         ? "amber"
         : "green";
 
+  let crossRoleImpact = buildEngineerCrossRoleImpact({
+    blockedTasks: blockedTasks.length,
+    storiesInProgress,
+    openPrs,
+  });
+
+  if (primary) {
+    crossRoleImpact = await mergeProjectImpactIntoCrossRole(crossRoleImpact, primary.id);
+  }
+
   return {
     userName: profile?.name ?? user?.email ?? null,
     primaryProject: primary ? { id: primary.id, name: primary.name } : null,
@@ -276,11 +287,7 @@ export async function getEngineerMissionControl(
     },
     technicalDebt,
     stakeholders: buildEngineerStakeholders(),
-    crossRoleImpact: buildEngineerCrossRoleImpact({
-      blockedTasks: blockedTasks.length,
-      storiesInProgress,
-      openPrs,
-    }),
+    crossRoleImpact,
     specialisation: ctx?.specialisation ?? null,
     techStack: ctx?.tech_stack ?? {},
     extractionStatus: ctx?.extraction_status ?? "pending",
