@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -40,10 +39,12 @@ export function DashboardCustomizeProvider({
 }) {
   const [editMode, setEditMode] = useState(false);
   const [prefs, setPrefs] = useState<DashboardPrefs>(() => readDashboardPrefs(personaId));
+  const [loadedPersonaId, setLoadedPersonaId] = useState(personaId);
 
-  useEffect(() => {
+  if (loadedPersonaId !== personaId) {
+    setLoadedPersonaId(personaId);
     setPrefs(readDashboardPrefs(personaId));
-  }, [personaId]);
+  }
 
   const persist = useCallback(
     (next: DashboardPrefs) => {
