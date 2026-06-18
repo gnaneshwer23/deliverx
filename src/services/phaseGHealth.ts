@@ -87,6 +87,29 @@ export function runPhaseGSmokeTests(): PhaseGSmokeCheck[] {
     detail: "No-Go blocked; conditional GO requires waiver",
   });
 
+  checks.push({
+    feature: "Kanban five-column board",
+    sprint: "G2",
+    ok: existsSync(join(process.cwd(), "src/components/tasks/task-kanban.tsx")),
+    detail: "Not started / In progress / In review / Done / Blocked",
+  });
+
+  checks.push({
+    feature: "Global AI drawer",
+    sprint: "G2",
+    ok:
+      existsSync(join(process.cwd(), "src/components/dx/ai-drawer.tsx")) &&
+      existsSync(join(process.cwd(), "src/components/dx/ai-chat-core.tsx")),
+    detail: "Slide-over drawer with quick-action chips",
+  });
+
+  checks.push({
+    feature: "Command Centre feed filters",
+    sprint: "G2",
+    ok: existsSync(join(process.cwd(), "src/components/dashboard/command-centre-impact-feed.tsx")),
+    detail: "Severity, role, and project filters on intelligence feed",
+  });
+
   return checks;
 }
 

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -43,11 +44,13 @@ import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
-import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
+import { CommandCentreImpactFeed } from "@/components/dashboard/command-centre-impact-feed";
 import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
 import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
+import type { DeliveryImpactRole, ImpactFeedSeverity } from "@/services/deliveryImpactEngine";
+import { listOrgProjects } from "@/services/delivery";
 import { listAgentActivityFeed } from "@/services/agentOrchestration";
 import { getIntelligenceLoopSnapshot } from "@/services/intelligenceLoop";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
@@ -102,7 +105,23 @@ function roleSubtitle(role: string, orgName: string | null) {
   return `${org}Tasks, RAID, meetings, decisions, standups, and intelligence — unified.`;
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    feedSeverity?: string;
+    feedRole?: string;
+    feedProject?: string;
+  }>;
+}) {
+  const feedParams = await searchParams;
+  const feedSeverity: ImpactFeedSeverity =
+    feedParams.feedSeverity === "high" || feedParams.feedSeverity === "medium"
+      ? feedParams.feedSeverity
+      : "all";
+  const feedRole = feedParams.feedRole as DeliveryImpactRole | undefined;
+  const feedProject = feedParams.feedProject;
+
   const [data, alerts, coach] = await Promise.all([
     getWorkspaceDashboard().catch((err) => {
       console.error("[dashboard] getWorkspaceDashboard", err);
@@ -141,14 +160,20 @@ export default async function DashboardPage() {
     }
   }
 
-  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop] =
+  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop, feedProjects] =
     await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
     getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
-    listOrgImpactEvents(8).catch(() => []),
+    listOrgImpactEvents({
+      limit: 12,
+      severity: feedSeverity,
+      targetRole: feedRole,
+      projectId: feedProject,
+    }).catch(() => []),
     listAgentActivityFeed(12).catch(() => []),
     getIntelligenceLoopSnapshot().catch(() => null),
+    listOrgProjects().catch(() => []),
   ]);
 
   const kpis = [
@@ -324,13 +349,19 @@ export default async function DashboardPage() {
         </div>
       ) : null}
 
-      {impactEvents.length > 0 ? (
-        <div className="mb-8">
-          <DashboardSection title="Delivery updates" href="/workspace/proposals">
-            <DeliveryImpactFeed events={impactEvents} showProject />
-          </DashboardSection>
-        </div>
-      ) : null}
+      <div className="mb-8">
+        <DashboardSection title="Command Centre intelligence" href="/workspace/proposals">
+          <Suspense fallback={<p className="text-sm text-[#6B6B64]">Loading feed…</p>}>
+            <CommandCentreImpactFeed
+              events={impactEvents}
+              severity={feedSeverity}
+              role={feedRole}
+              projectId={feedProject}
+              projects={feedProjects}
+            />
+          </Suspense>
+        </DashboardSection>
+      </div>
 
       <div className="mb-8">
         <DashboardSection title="Agent orchestration" href="/workspace/coordination">
