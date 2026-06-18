@@ -25,41 +25,39 @@ export function MarketingHero() {
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.06] [background-image:linear-gradient(#2E2E30_1px,transparent_1px),linear-gradient(90deg,#2E2E30_1px,transparent_1px)] [background-size:48px_48px]"
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.06] [background-image:linear-gradient(var(--mkt-border)_1px,transparent_1px),linear-gradient(90deg,var(--mkt-border)_1px,transparent_1px)] [background-size:48px_48px]"
         aria-hidden
       />
 
       <MarketingContainer className="relative z-[1]">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           <div>
-            <div
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-[rgba(61,150,96,.3)] bg-[rgba(61,150,96,.1)] px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.06em] text-[#3D9660]"
-            >
-              <span className="size-1.5 animate-pulse rounded-full bg-[#3D9660]" aria-hidden />
-              AI Delivery Intelligence
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[rgba(61,150,96,.3)] bg-[rgba(61,150,96,.1)] px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.06em] text-[var(--mkt-green-l)]">
+              <span className="size-1.5 animate-pulse rounded-full bg-[var(--mkt-green-l)]" aria-hidden />
+              AI delivery intelligence
             </div>
-            <h1 className="mb-5 font-[family-name:var(--font-dx-display)] text-[clamp(2.5rem,5vw,4rem)] leading-[1.06] tracking-[-0.03em] text-[#F0EDE8]">
-              Every role.
+            <h1 className="mb-5 font-[family-name:var(--font-dx-display)] text-[clamp(2.5rem,5vw,4rem)] leading-[1.06] tracking-[-0.03em] text-[var(--mkt-text1)]">
+              Delivery clarity
               <br />
-              One <em className="not-italic text-[#3D9660]">connected</em>
+              for every <em className="not-italic text-[var(--mkt-green-l)]">role</em>
               <br />
-              workspace.
+              on your team.
             </h1>
-            <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.7] text-[#B8B5AF]">
-              From business case to closure — AI surfaces risks, drafts reports, and keeps
-              Sponsors, PMs, BAs, Engineers, QA, and Scrum Masters in sync. Human approval on
-              every change.
+            <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.7] text-[var(--mkt-text2)]">
+              DeliverX is the workspace where Sponsors, PMs, BAs, Engineers, QA, and Scrum
+              Masters share one live picture of delivery — with AI that surfaces risks, drafts
+              reports, and waits for human approval before anything changes.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg">
                 Start free trial
               </MarketingButtonLink>
-              <MarketingButtonLink href="#loop" variant="ghostLg">
-                See how it works
+              <MarketingButtonLink href="#platform" variant="ghostLg">
+                See the platform
               </MarketingButtonLink>
             </div>
             <TrustChecklist
-              items={["No credit card", "15-min setup", "GDPR ready"]}
+              items={["No credit card", "15-minute setup", "GDPR ready"]}
             />
           </div>
 
@@ -76,7 +74,7 @@ export function MarketingHero() {
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition duration-200 ${
                       isActive
                         ? "border-[var(--pill-accent)] bg-[var(--pill-accent-bg)] text-[var(--pill-accent)]"
-                        : "border-[#2E2E30] bg-[#18181A] text-[#7A7874] hover:border-[#3A3A3C] hover:text-[#B8B5AF]"
+                        : "border-[var(--mkt-border)] bg-[var(--mkt-s2)] text-[var(--mkt-text3)] hover:border-[var(--mkt-border-l)] hover:text-[var(--mkt-text2)]"
                     }`}
                     style={
                       isActive
@@ -87,13 +85,15 @@ export function MarketingHero() {
                         : undefined
                     }
                   >
-                    <span className="text-[0.9rem] leading-none">{d.code}</span>
+                    <span className="flex size-4 items-center justify-center rounded font-[family-name:var(--font-mkt-mono)] text-[0.55rem] font-semibold leading-none">
+                      {d.code}
+                    </span>
                     {ROLE_PILL_LABELS[id]}
                   </button>
                 );
               })}
             </div>
-            <DashboardPreview role={role} accentBorder={`${role.accent}44`} />
+            <DashboardPreview role={role} accentBorder={`${role.accent}55`} />
           </div>
         </div>
       </MarketingContainer>

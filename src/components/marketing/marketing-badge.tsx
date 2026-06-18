@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import type { BadgeTone } from "@/lib/marketing/landing-data";
 
 const BADGE_STYLES: Record<BadgeTone, string> = {
-  "badge-g": "bg-[rgba(61,150,96,.15)] text-[#3D9660]",
-  "badge-a": "bg-[rgba(217,119,6,.15)] text-[#D97706]",
-  "badge-n": "bg-[rgba(120,120,120,.15)] text-[#B8B5AF]",
+  "badge-g": "bg-[rgba(61,150,96,.15)] text-[var(--mkt-green-l)]",
+  "badge-a": "bg-[rgba(251,191,36,.15)] text-[var(--mkt-stat-warn)]",
+  "badge-n": "bg-[rgba(120,120,120,.15)] text-[var(--mkt-text2)]",
 };
 
 export function MarketingBadge({
