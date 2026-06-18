@@ -18,6 +18,7 @@ import {
 import { queueArtifactReview } from "./artifactReviews";
 import { upsertCharter } from "./charter";
 import { getFounderContext } from "./founderContext";
+import { emitPlatformEvent } from "./platformWebhooks";
 
 export type BootstrapStatus = "pending" | "running" | "complete" | "partial" | "skipped";
 
@@ -259,6 +260,24 @@ export async function bootstrapProjectWorkspaces(
     const failed = Object.values(summary.personas).filter((p) => !p.ok).length;
     const status: BootstrapStatus = failed === 0 ? "complete" : "partial";
     await updateBootstrapStatus(input.projectId, status, summary);
+
+    const supabase = await createClient();
+    const { data: projectRow } = await supabase
+      .from("projects")
+      .select("organisation_id, name")
+      .eq("id", input.projectId)
+      .maybeSingle();
+
+    if (projectRow?.organisation_id) {
+      void emitPlatformEvent(String(projectRow.organisation_id), "project.bootstrap_complete", {
+        projectId: input.projectId,
+        projectName: input.projectName,
+        status,
+        personaCount: Object.keys(summary.personas).length,
+        failedPersonas: failed,
+        source: "sponsor_gateway",
+      }).catch(() => undefined);
+    }
 
     return summary;
   } catch (err) {

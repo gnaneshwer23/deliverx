@@ -91,7 +91,7 @@ export function runPhaseFSmokeTests(): PhaseFSmokeCheck[] {
     feature: "Lifecycle webhook emissions",
     sprint: "F2",
     ok: true,
-    detail: "task.created, proposal.applied, report.published, project.go_accepted",
+    detail: "task.created, proposal.applied, report.published, project.go_accepted, project.bootstrap_complete",
   });
 
   checks.push({
