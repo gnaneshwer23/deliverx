@@ -3,6 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { emitTaskCreatedEvent } from "@/services/platformWebhooks";
 
 export type WorkstreamStatus = "planned" | "active" | "completed";
 export type TaskStatus = "todo" | "in_progress" | "blocked" | "done";
@@ -260,7 +261,24 @@ export async function createTask(input: {
     .single();
 
   if (error) throw error;
-  return data as TaskRow;
+  const task = data as TaskRow;
+
+  const { data: project } = await supabase
+    .from("projects")
+    .select("name")
+    .eq("id", input.projectId)
+    .maybeSingle();
+
+  void emitTaskCreatedEvent(orgId, {
+    taskId: task.id,
+    projectId: task.project_id,
+    projectName: String(project?.name ?? "Project"),
+    title: task.title,
+    priority: task.priority,
+    source: "workspace",
+  }).catch(() => undefined);
+
+  return task;
 }
 
 export async function updateTask(

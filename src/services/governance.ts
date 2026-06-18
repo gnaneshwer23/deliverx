@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { requestApproval } from "@/services/approvals";
+import { emitReportPublishedEvent } from "@/services/platformWebhooks";
 
 export type RaidItemType = "risk" | "assumption" | "issue" | "dependency";
 export type RaidStatus = "open" | "mitigated" | "closed" | "accepted";
@@ -866,7 +867,17 @@ export async function updateReportReviewStatus(
   reportId: string,
   reviewStatus: ReportReviewStatus,
 ): Promise<ReportRow> {
-  const { supabase } = await getOrgContext();
+  const { supabase, orgId } = await getOrgContext();
+
+  const { data: existing, error: existingError } = await supabase
+    .from("reports")
+    .select("review_status, project_id, title")
+    .eq("id", reportId)
+    .maybeSingle();
+
+  if (existingError) throw existingError;
+  if (!existing) throw new Error("Report not found");
+
   const patch: Record<string, unknown> = { review_status: reviewStatus };
   if (reviewStatus === "published") {
     patch.published_at = new Date().toISOString();
@@ -880,14 +891,26 @@ export async function updateReportReviewStatus(
     .single();
 
   if (error) throw error;
-  return data as ReportRow;
+  const report = data as ReportRow;
+
+  if (reviewStatus === "published" && existing.review_status !== "published") {
+    void emitReportPublishedEvent(orgId, {
+      reportId: report.id,
+      projectId: report.project_id,
+      title: report.title,
+      reviewStatus: report.review_status ?? "published",
+      source: "workflow",
+    }).catch(() => undefined);
+  }
+
+  return report;
 }
 
 export async function publishReport(
   reportId: string,
   stakeholderEmails: string[],
 ): Promise<ReportRow & { emailSent?: boolean; emailError?: string }> {
-  const { supabase } = await getOrgContext();
+  const { supabase, orgId } = await getOrgContext();
   const emails = stakeholderEmails.map((e) => e.trim()).filter(Boolean);
 
   const { data, error } = await supabase
@@ -927,6 +950,16 @@ export async function publishReport(
     emailSent = result.sent;
     if (!result.sent) emailError = result.reason;
   }
+
+  void emitReportPublishedEvent(orgId, {
+    reportId: report.id,
+    projectId: report.project_id,
+    title: report.title,
+    reviewStatus: report.review_status ?? "published",
+    stakeholderCount: emails.length,
+    emailSent: emailSent ?? false,
+    source: "workflow",
+  }).catch(() => undefined);
 
   return { ...report, emailSent, emailError };
 }

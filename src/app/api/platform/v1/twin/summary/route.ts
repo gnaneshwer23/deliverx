@@ -1,21 +1,19 @@
 import {
-  authenticatePlatformRequest,
-  getPlatformTwinSummary,
-  hasPlatformScope,
-} from "@/services/platformApi";
+  authorizePlatformV1Request,
+  platformV1Json,
+} from "@/lib/platform-v1";
+import { getPlatformTwinSummary } from "@/services/platformApi";
 
 export async function GET(req: Request) {
-  const auth = await authenticatePlatformRequest(req);
-  if (!auth) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (!hasPlatformScope(auth.scopes, "read:twin")) {
-    return Response.json({ error: "Missing scope read:twin" }, { status: 403 });
-  }
+  const authResult = await authorizePlatformV1Request(req, "read:twin");
+  if (authResult instanceof Response) return authResult;
 
-  const summary = await getPlatformTwinSummary(auth.orgId);
-  return Response.json({
-    organisationId: auth.orgId,
-    twin: summary,
-  });
+  const summary = await getPlatformTwinSummary(authResult.auth.orgId);
+  return platformV1Json(
+    {
+      organisationId: authResult.auth.orgId,
+      twin: summary,
+    },
+    authResult.rateHeaders,
+  );
 }

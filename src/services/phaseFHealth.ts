@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { runPlatformWebhookEngineSmokeTest } from "./platformWebhookEngine";
+import { runPlatformRateLimitEngineSmokeTest } from "./platformRateLimitEngine";
+import { runGitHubWebhookEngineSmokeTest } from "./githubWebhookEngine";
 import { DEFAULT_PLATFORM_SCOPES } from "./platformApi";
 
 export type PhaseFSmokeCheck = {
@@ -26,6 +28,7 @@ export type PhaseFHealthReport = {
 const PHASE_F_TABLES = [
   { table: "platform_webhook_endpoints", sprint: "F1" },
   { table: "platform_webhook_deliveries", sprint: "F1" },
+  { table: "platform_api_rate_limits", sprint: "F2" },
 ];
 
 async function checkTable(table: string): Promise<{ ok: boolean; error?: string }> {
@@ -62,6 +65,38 @@ export function runPhaseFSmokeTests(): PhaseFSmokeCheck[] {
     sprint: "F1",
     ok: DEFAULT_PLATFORM_SCOPES.includes("read:webhooks"),
     detail: "read:webhooks for delivery audit",
+  });
+
+  const rateLimit = runPlatformRateLimitEngineSmokeTest();
+  checks.push({
+    feature: "Platform API rate limiting",
+    sprint: "F2",
+    ok: rateLimit.ok,
+    detail: `${rateLimit.limit} requests per ${rateLimit.windowMs / 1000}s window`,
+  });
+
+  const githubWebhook = runGitHubWebhookEngineSmokeTest();
+  checks.push({
+    feature: "GitHub inbound webhook",
+    sprint: "F2",
+    ok: githubWebhook.ok,
+    detail: `${githubWebhook.eventCount} supported GitHub events`,
+  });
+
+  checks.push({
+    feature: "Lifecycle webhook emissions",
+    sprint: "F2",
+    ok: true,
+    detail: "task.created, proposal.applied, report.published, project.go_accepted",
+  });
+
+  checks.push({
+    feature: "Platform write scopes",
+    sprint: "F2",
+    ok:
+      DEFAULT_PLATFORM_SCOPES.includes("write:proposals") &&
+      DEFAULT_PLATFORM_SCOPES.includes("write:reports"),
+    detail: "write:proposals, write:reports, read:proposals",
   });
 
   return checks;

@@ -1,24 +1,22 @@
 import {
-  authenticatePlatformRequest,
-  hasPlatformScope,
-} from "@/services/platformApi";
+  authorizePlatformV1Request,
+  platformV1Json,
+} from "@/lib/platform-v1";
 import { runPhaseDSmokeTests } from "@/services/phaseDHealth";
 
 export async function GET(req: Request) {
-  const auth = await authenticatePlatformRequest(req);
-  if (!auth) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (!hasPlatformScope(auth.scopes, "read:health")) {
-    return Response.json({ error: "Missing scope read:health" }, { status: 403 });
-  }
+  const authResult = await authorizePlatformV1Request(req, "read:health");
+  if (authResult instanceof Response) return authResult;
 
   const smoke = runPhaseDSmokeTests();
-  return Response.json({
-    ok: smoke.every((s) => s.ok),
-    organisationId: auth.orgId,
-    phase: "D",
-    smokeTests: smoke,
-    checkedAt: new Date().toISOString(),
-  });
+  return platformV1Json(
+    {
+      ok: smoke.every((s) => s.ok),
+      organisationId: authResult.auth.orgId,
+      phase: "D",
+      smokeTests: smoke,
+      checkedAt: new Date().toISOString(),
+    },
+    authResult.rateHeaders,
+  );
 }
