@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatAuthError } from "@/lib/auth-errors";
+import { findSsoForEmail } from "@/services/orgSso";
 
 export type LoginState = { ok: boolean; error?: string };
 
@@ -14,7 +15,19 @@ export async function loginAction(
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "").trim();
 
-  if (!email || !password) {
+  if (!email) {
+    return { ok: false, error: "Email is required." };
+  }
+
+  const ssoMatch = await findSsoForEmail(email).catch(() => null);
+  if (ssoMatch?.ssoRequired) {
+    return {
+      ok: false,
+      error: "Password sign-in is disabled for your domain. Use SSO instead.",
+    };
+  }
+
+  if (!password) {
     return { ok: false, error: "Email and password are required." };
   }
 

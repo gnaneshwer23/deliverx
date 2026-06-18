@@ -13,6 +13,7 @@ import { PhaseFHealthPanel } from "@/components/settings/phase-f-health-panel";
 import { PlatformApiKeysForm } from "@/components/settings/platform-api-keys-form";
 import { PlatformWebhooksForm } from "@/components/settings/platform-webhooks-form";
 import { GitHubIntegrationForm } from "@/components/settings/github-integration-form";
+import { SsoSettingsForm } from "@/components/settings/sso-settings-form";
 import { isEmailConfigured } from "@/lib/email/resend";
 import { getOrgNotificationSettings } from "@/services/notificationService";
 import {
@@ -21,6 +22,7 @@ import {
 } from "@/services/githubIntegration";
 import { listOrgApiKeys } from "@/services/platformApi";
 import { listPlatformWebhookEndpoints } from "@/services/platformWebhooks";
+import { getOrgSsoSettings } from "@/services/orgSso";
 import { listProjectsForOrg } from "@/services/portfolio";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -48,6 +50,7 @@ export default async function SettingsPage() {
   const apiKeys = await listOrgApiKeys().catch(() => []);
   const webhookEndpoints = await listPlatformWebhookEndpoints().catch(() => []);
   const githubOrgSettings = await getOrgIntegrationSettings().catch(() => null);
+  const ssoSettings = await getOrgSsoSettings().catch(() => null);
   const projects = await listProjectsForOrg().catch(() => []);
   const projectSettings: Record<string, Awaited<ReturnType<typeof getProjectIntegrationSettings>>> =
     {};
@@ -114,6 +117,11 @@ export default async function SettingsPage() {
             projects={projects.map((p) => ({ id: p.id, name: p.name }))}
             projectSettings={projectSettings}
           />
+        </section>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Enterprise SSO</h2>
+          <SsoSettingsForm settings={ssoSettings} />
         </section>
 
         <PhaseBHealthPanel />
