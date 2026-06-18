@@ -44,9 +44,10 @@ export function MarketingHero() {
               on your team.
             </h1>
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.7] text-[var(--mkt-text2)]">
-              DeliverX is the workspace where Sponsors, PMs, BAs, Engineers, QA, and Scrum
-              Masters share one live picture of delivery — with AI that surfaces risks, drafts
-              reports, and waits for human approval before anything changes.
+              DeliverX is the workspace where Sponsors, Project Managers, Product Managers,
+              Business Analysts, Engineers, QA, and Scrum Masters share one live picture of
+              delivery — with AI that surfaces risks, drafts reports, and waits for human
+              approval before anything changes.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg">
