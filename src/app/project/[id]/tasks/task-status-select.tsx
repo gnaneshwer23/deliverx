@@ -30,8 +30,9 @@ export function TaskStatusSelect({
       }}
       className="h-8 rounded-md border border-slate-200 bg-white px-2 text-xs capitalize disabled:opacity-60"
     >
-      <option value="todo">To do</option>
+      <option value="todo">Not started</option>
       <option value="in_progress">In progress</option>
+      <option value="in_review">In review</option>
       <option value="blocked">Blocked</option>
       <option value="done">Done</option>
     </select>

@@ -76,8 +76,9 @@ export function TaskDetailForm({
               defaultValue={task.status}
               className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
             >
-              <option value="todo">To do</option>
+              <option value="todo">Not started</option>
               <option value="in_progress">In progress</option>
+              <option value="in_review">In review</option>
               <option value="blocked">Blocked</option>
               <option value="done">Done</option>
             </select>

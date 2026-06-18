@@ -31,8 +31,9 @@ type Search = Promise<{ project?: string; status?: string; page?: string; view?:
 
 const STATUSES: Array<{ value: TaskStatus | "all"; label: string }> = [
   { value: "all", label: "All" },
-  { value: "todo", label: "To do" },
+  { value: "todo", label: "Not started" },
   { value: "in_progress", label: "In progress" },
+  { value: "in_review", label: "In review" },
   { value: "blocked", label: "Blocked" },
   { value: "done", label: "Done" },
 ];
