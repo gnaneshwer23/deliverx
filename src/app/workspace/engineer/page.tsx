@@ -65,7 +65,7 @@ export default async function EngineerMissionControlPage({
         primaryProject: data.primaryProject,
       }}
     >
-      <div className="space-y-6 p-6 md:p-8">
+      <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
@@ -98,7 +98,7 @@ export default async function EngineerMissionControlPage({
         ) : null}
         <EngineerAiSummary summary={data.aiSummary} />
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
             <EngineerGuidedTasks tasks={data.guidedTasks} />
           </DashboardPanelShell>
@@ -114,7 +114,7 @@ export default async function EngineerMissionControlPage({
           <EngineerTraceabilityPanel rows={data.traceability} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="architecture" title="Architecture">
             <EngineerArchitecturePanel
               nodes={data.architecture}
@@ -141,7 +141,7 @@ export default async function EngineerMissionControlPage({
           <EngineerApiContractsPanel contracts={data.apiContracts} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="pull-requests" title="Pull requests">
             <EngineerPrPanel pr={data.prDashboard} />
           </DashboardPanelShell>

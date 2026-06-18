@@ -75,7 +75,7 @@ export default async function PmMissionControlPage({
         primaryProject: data.primaryProject,
       }}
     >
-      <div className="space-y-6 p-6 md:p-8">
+      <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
         {data.dataSources.deliveryPlan === "fallback" ? (
           <MockDataBanner message="Milestones, budget, and timeline are illustrative until you upload a project charter." />
@@ -111,7 +111,7 @@ export default async function PmMissionControlPage({
         ) : null}
         <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="guided-tasks" title="Today's guided tasks">
             <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
           </DashboardPanelShell>
@@ -151,7 +151,7 @@ export default async function PmMissionControlPage({
           <DeliveryRaidPanel raid={data.raid} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="milestones" title="Milestones & timeline">
             <DeliveryMilestonesPanel
               milestones={data.milestones}

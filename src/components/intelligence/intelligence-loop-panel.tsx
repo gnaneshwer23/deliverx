@@ -20,9 +20,11 @@ const STATUS_DOT: Record<LoopStageStatus, string> = {
 export function IntelligenceLoopPanel({
   snapshot,
   compact = false,
+  embedded = false,
 }: {
   snapshot: IntelligenceLoopSnapshot;
   compact?: boolean;
+  embedded?: boolean;
 }) {
   const scoreBorder =
     snapshot.loopScore >= 80
@@ -35,8 +37,8 @@ export function IntelligenceLoopPanel({
     <section className={`${dxClass.cardPad} space-y-5`}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h3 className="font-semibold">Closed-loop intelligence</h3>
-          <p className="mt-1 max-w-2xl text-sm text-[#6B6B64]">
+          {!embedded ? <h3 className="font-semibold">Closed-loop intelligence</h3> : null}
+          <p className={`max-w-2xl text-sm text-[#6B6B64] ${embedded ? "" : "mt-1"}`}>
             Observe → Understand → Predict → Recommend → Approve → Learn. AI suggests;
             humans approve; dashboards update; outcomes compound.
           </p>

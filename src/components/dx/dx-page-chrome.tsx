@@ -9,6 +9,7 @@ export function DxPageHeader({
   subtitle,
   action,
   children,
+  sticky = false,
 }: {
   breadcrumb: string;
   title: string;
@@ -16,9 +17,20 @@ export function DxPageHeader({
   subtitle?: string;
   action?: ReactNode;
   children?: ReactNode;
+  sticky?: boolean;
 }) {
   return (
-    <header className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-[#E4E4DC] bg-white px-6 py-5 md:px-8">
+    <header
+      className={`relative flex shrink-0 flex-wrap items-start justify-between gap-4 ${
+        sticky ? dxClass.stickyHeader : "border-b border-[#E4E4DC] bg-white px-6 py-5 md:px-8"
+      }`}
+    >
+      {sticky ? (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[#1C4A2E] via-[#3D9660] to-[#1C4A2E]"
+          aria-hidden
+        />
+      ) : null}
       <div className="min-w-0 flex-1">
         <DxCaps className="mb-1 text-[8px]">{breadcrumb}</DxCaps>
         <h1 className={dxClass.pageTitle}>

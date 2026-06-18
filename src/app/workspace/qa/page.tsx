@@ -65,7 +65,7 @@ export default async function QaMissionControlPage({
         primaryProject: data.primaryProject,
       }}
     >
-      <div className="space-y-6 p-6 md:p-8">
+      <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
@@ -101,7 +101,7 @@ export default async function QaMissionControlPage({
         ) : null}
         <QaAiSummary summary={data.aiSummary} />
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
             <QaGuidedTasks tasks={data.guidedTasks} />
           </DashboardPanelShell>
@@ -114,7 +114,7 @@ export default async function QaMissionControlPage({
           <QaTraceabilityPanel rows={data.traceability} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="test-cases" title="Test cases">
             <QaTestCasesPanel cases={data.testCases} />
           </DashboardPanelShell>
@@ -123,7 +123,7 @@ export default async function QaMissionControlPage({
           </DashboardPanelShell>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="automation" title="Automation">
             <QaAutomationPanel automation={data.automation} />
           </DashboardPanelShell>
@@ -132,7 +132,7 @@ export default async function QaMissionControlPage({
           </DashboardPanelShell>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="uat" title="UAT">
             <QaUatPanel rows={data.uat} insight={data.uatInsight} />
           </DashboardPanelShell>
@@ -141,7 +141,7 @@ export default async function QaMissionControlPage({
           </DashboardPanelShell>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="performance" title="Performance">
             <QaPerformancePanel performance={data.performance} />
           </DashboardPanelShell>

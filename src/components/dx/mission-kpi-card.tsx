@@ -111,29 +111,29 @@ export function MissionKpiCard({
 
   return (
     <div
-      className={`${dxClass.card} border-t-2 ${BORDER_TOP[tone]} p-4 transition hover:shadow-[0_4px_20px_rgba(13,13,11,0.09)] ${className}`}
+      className={`${dxClass.card} border-t-2 ${BORDER_TOP[tone]} px-3.5 py-3 transition hover:shadow-[0_4px_20px_rgba(13,13,11,0.09)] ${className}`}
     >
-      <p className="mb-1.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
+      <p className="mb-1 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.16em] text-[#A8A89E]">
         {label}
       </p>
-      <div className="flex items-end justify-between gap-2">
+      <div className="flex items-end justify-between gap-1.5">
         <p className={`${dxClass.display} ${valueClass} leading-none tabular-nums ${VALUE_COLOR[tone]}`}>
           {value}
         </p>
         {delta && DeltaIcon ? (
           <span
-            className={`mb-0.5 inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[8px] ${DELTA_STYLE[delta.direction]}`}
+            className={`mb-0.5 inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] leading-tight ${DELTA_STYLE[delta.direction]}`}
           >
-            <DeltaIcon size={10} strokeWidth={2} aria-hidden />
+            <DeltaIcon size={9} strokeWidth={2} aria-hidden />
             {delta.value}
           </span>
         ) : null}
       </div>
       {hint ? (
-        <p className="mt-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#6B6B64]">{hint}</p>
+        <p className="mt-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] leading-snug text-[#6B6B64]">{hint}</p>
       ) : null}
       {barWidth ? (
-        <div className="mt-2 h-[3px] overflow-hidden bg-[#F0F0E8]" role="progressbar" aria-valuenow={clampPct(progressPct!)} aria-valuemin={0} aria-valuemax={100}>
+        <div className="mt-1.5 h-[2px] overflow-hidden bg-[#F0F0E8]" role="progressbar" aria-valuenow={clampPct(progressPct!)} aria-valuemin={0} aria-valuemax={100}>
           <div className={`h-full ${BAR_COLOR[tone]}`} style={{ width: barWidth }} />
         </div>
       ) : null}
@@ -152,10 +152,10 @@ export function MissionKpiGrid({
 }) {
   const gridClass =
     layout === "wide"
-      ? "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-8"
+      ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-8"
       : layout === "mission"
-        ? "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7"
-        : "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-4";
+        ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-7"
+        : "grid grid-cols-2 gap-2 lg:grid-cols-4 xl:grid-cols-4";
 
   return <div className={`${gridClass} ${className}`}>{children}</div>;
 }

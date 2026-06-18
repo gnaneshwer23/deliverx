@@ -68,7 +68,7 @@ export default async function ScrumMissionControlPage({
         primaryProject: data.primaryProject,
       }}
     >
-      <div className="space-y-6 p-6 md:p-8">
+      <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
@@ -101,7 +101,7 @@ export default async function ScrumMissionControlPage({
         ) : null}
         <ScrumAiSummary summary={data.aiSummary} />
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
             <ScrumGuidedTasks tasks={data.guidedTasks} />
           </DashboardPanelShell>
@@ -110,7 +110,7 @@ export default async function ScrumMissionControlPage({
           </DashboardPanelShell>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="team-health" title="Team health">
             <ScrumTeamHealthPanel health={data.teamHealth} />
           </DashboardPanelShell>
@@ -123,7 +123,7 @@ export default async function ScrumMissionControlPage({
           <ScrumImpedimentsPanel impediments={data.impediments} insight={data.impedimentInsight} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="ceremonies" title="Ceremonies">
             <ScrumCeremoniesPanel
               projectId={data.primaryProject?.id}
@@ -135,7 +135,7 @@ export default async function ScrumMissionControlPage({
           </DashboardPanelShell>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="velocity" title="Velocity">
             <ScrumVelocityPanel
               velocity={data.velocity}
@@ -152,7 +152,7 @@ export default async function ScrumMissionControlPage({
           <ScrumCrossTeamPanel deps={data.crossTeamDeps} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="retro" title="Retrospective themes">
             <ScrumRetroPanel themes={data.retroThemes} recommendation={data.retroRecommendation} />
           </DashboardPanelShell>

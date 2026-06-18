@@ -46,6 +46,12 @@ export const dxClass = {
     "w-full border-[1.5px] border-[#E4E4DC] bg-white px-3 py-2.5 text-[15px] text-[#0D0D0B] outline-none transition placeholder:text-[#A8A89E] focus:border-[#1C4A2E]",
   label:
     "font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.18em] text-[#6B6B64]",
+  panelTitle:
+    "font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[#6B6B64]",
+  stickyHeader:
+    "sticky top-0 z-20 border-b border-[#E4E4DC] bg-white/85 px-6 py-5 shadow-[0_1px_0_rgba(28,74,46,0.06)] backdrop-blur-md md:px-8",
+  panelShellBody:
+    "[&>div>h3.text-lg:first-child]:hidden [&>div>section>h3:first-child]:hidden",
   card: "border border-[#E4E4DC] bg-white",
   cardPad: "border border-[#E4E4DC] bg-white p-5 md:p-6",
 } as const;
