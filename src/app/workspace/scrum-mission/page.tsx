@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getScrumMissionControl } from "@/services/scrumDashboard";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import {
   ScrumAiSummary,
   ScrumMissionOverview,
@@ -62,31 +62,12 @@ export default async function ScrumMissionControlPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Scrum"
-        title="Scrum Mission"
-        titleEm="control"
-        action={
-          data.primaryProject ? (
-            <Link
-              href={`/project/${data.primaryProject.id}/scrum`}
-              className={`${dxClass.btnPrimary} text-[10px]`}
-            >
-              Scrum workspace →
-            </Link>
-          ) : (
-            <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
-              New project →
-            </Link>
-          )
-        }
+      <MissionPersonaHeader
+        personaId="scrum"
+        userName={data.userName}
+        primaryProject={data.primaryProject}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          AI Agile Coach — sprint health, impediments, ceremonies, velocity, capacity, retrospectives,
-          and team wellbeing from live delivery signals.
-        </p>
-
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}

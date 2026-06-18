@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getEngineerMissionControl } from "@/services/engineerDashboard";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import {
   EngineerAiSummary,
   EngineerMissionOverview,
@@ -59,31 +59,12 @@ export default async function EngineerMissionControlPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Engineering"
-        title="Engineer Mission"
-        titleEm="control"
-        action={
-          data.primaryProject ? (
-            <Link
-              href={`/project/${data.primaryProject.id}/engineering`}
-              className={`${dxClass.btnPrimary} text-[10px]`}
-            >
-              Engineering workspace →
-            </Link>
-          ) : (
-            <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
-              New project →
-            </Link>
-          )
-        }
+      <MissionPersonaHeader
+        personaId="engineer"
+        userName={data.userName}
+        primaryProject={data.primaryProject}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          AI Engineering Copilot — assigned stories, traceability, dependencies, architecture, CI/CD,
-          and guided tasks from requirements to deployment.
-        </p>
-
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}

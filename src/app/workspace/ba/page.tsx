@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBaMissionControl } from "@/services/baDashboard";
-import { DxPageHeader, DxStatCard } from "@/components/dx/dx-page-chrome";
+import { DxStatCard } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import { BaMissionOverview, BaAiSummary } from "@/components/ba/ba-mission-overview";
 import { BaGuidedTasks } from "@/components/ba/ba-guided-tasks";
 import {
@@ -45,31 +46,12 @@ export default async function BaMissionControlPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Business Analysis"
-        title="BA Mission"
-        titleEm="control"
-        action={
-          data.primaryProject ? (
-            <Link
-              href={`/project/${data.primaryProject.id}/requirements`}
-              className={`${dxClass.btnPrimary} text-[10px]`}
-            >
-              Requirements workspace →
-            </Link>
-          ) : (
-            <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
-              New project →
-            </Link>
-          )
-        }
+      <MissionPersonaHeader
+        personaId="ba"
+        userName={data.userName}
+        primaryProject={data.primaryProject}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          Bridge business and delivery — guided tasks, requirement quality, stakeholder
-          validation, and traceability from business case to benefits.
-        </p>
-
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}

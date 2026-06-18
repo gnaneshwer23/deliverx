@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getFounderMissionControl } from "@/services/founderDashboard";
 import { getFounderContext } from "@/services/founderContext";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import {
   FounderAiSummary,
   FounderMissionOverview,
@@ -29,7 +28,6 @@ import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
 import { MockDataBanner } from "@/components/dx/mock-data-banner";
-import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -53,22 +51,13 @@ export default async function FounderMissionControlPage() {
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Founder"
-        title="Founder Mission"
-        titleEm="control"
-        action={
-          <Link href="/workspace/portfolio" className={`${dxClass.btnGhost} text-[10px]`}>
-            Full portfolio →
-          </Link>
-        }
+      <MissionPersonaHeader
+        personaId="founder"
+        userName={data.userName}
+        orgName={data.orgName}
+        primaryProject={data.portfolio[0] ? { id: data.portfolio[0].id, name: data.portfolio[0].name } : null}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          AI Chief of Staff — vision, runway, portfolio health, decisions, investor updates, and
-          cross-role signals from product through delivery to revenue.
-        </p>
-
         <PendingReviewsStrip
           reviews={pendingReviews}
           personaLabel={PERSONA_REVIEW_LABELS.founder}

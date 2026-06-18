@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getQaMissionControl } from "@/services/qaDashboard";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import { QaAiSummary, QaMissionOverview } from "@/components/qa/qa-mission-overview";
 import {
   QaAutomationPanel,
@@ -59,31 +59,12 @@ export default async function QaMissionControlPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · QA"
-        title="QA Mission"
-        titleEm="control"
-        action={
-          data.primaryProject ? (
-            <Link
-              href={`/project/${data.primaryProject.id}/qa`}
-              className={`${dxClass.btnPrimary} text-[10px]`}
-            >
-              QA workspace →
-            </Link>
-          ) : (
-            <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
-              New project →
-            </Link>
-          )
-        }
+      <MissionPersonaHeader
+        personaId="qa"
+        userName={data.userName}
+        primaryProject={data.primaryProject}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          AI Quality Engineer — test coverage, defects, release readiness, UAT, automation, and
-          requirement-to-test traceability from live delivery signals.
-        </p>
-
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}

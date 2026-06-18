@@ -6,16 +6,20 @@ export function DxPageHeader({
   breadcrumb,
   title,
   titleEm,
+  subtitle,
   action,
+  children,
 }: {
   breadcrumb: string;
   title: string;
   titleEm?: string;
+  subtitle?: string;
   action?: ReactNode;
+  children?: ReactNode;
 }) {
   return (
-    <header className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-[#E4E4DC] bg-white px-6 py-5 md:px-8">
-      <div>
+    <header className="flex shrink-0 flex-wrap items-start justify-between gap-4 border-b border-[#E4E4DC] bg-white px-6 py-5 md:px-8">
+      <div className="min-w-0 flex-1">
         <DxCaps className="mb-1 text-[8px]">{breadcrumb}</DxCaps>
         <h1 className={dxClass.pageTitle}>
           {title}
@@ -26,8 +30,12 @@ export function DxPageHeader({
             </>
           ) : null}
         </h1>
+        {subtitle ? (
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[#6B6B64]">{subtitle}</p>
+        ) : null}
+        {children}
       </div>
-      {action}
+      {action ? <div className="shrink-0 self-start">{action}</div> : null}
     </header>
   );
 }
