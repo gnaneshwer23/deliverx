@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getPmMissionControl } from "@/services/deliveryPmDashboard";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import {
   DeliveryPmAiSummary,
   DeliveryPmMissionOverview,
@@ -69,31 +69,12 @@ export default async function PmMissionControlPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Delivery PM"
-        title="PM Mission"
-        titleEm="control"
-        action={
-          data.primaryProject ? (
-            <Link
-              href={`/project/${data.primaryProject.id}/delivery`}
-              className={`${dxClass.btnPrimary} text-[10px]`}
-            >
-              Delivery workspace →
-            </Link>
-          ) : (
-            <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
-              New project →
-            </Link>
-          )
-        }
+      <MissionPersonaHeader
+        personaId="pm-mission"
+        userName={data.userName}
+        primaryProject={data.primaryProject}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          AI Chief Project Officer — scope, timeline, budget, risks, stakeholders, governance, and
-          guided delivery execution from business case to benefits realisation.
-        </p>
-
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
         {data.dataSources.deliveryPlan === "fallback" ? (
           <MockDataBanner message="Milestones, budget, and timeline panels use illustrative defaults until you connect a project charter or run AI delivery analysis." />

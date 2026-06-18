@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProductMissionControl } from "@/services/pmDashboard";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
 import {
   ProductAiSummary,
   ProductMissionOverview,
@@ -57,31 +57,12 @@ export default async function ProductMissionControlPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Product"
-        title="Product Mission"
-        titleEm="control"
-        action={
-          data.primaryProject ? (
-            <Link
-              href={`/project/${data.primaryProject.id}/product`}
-              className={`${dxClass.btnPrimary} text-[10px]`}
-            >
-              Product workspace →
-            </Link>
-          ) : (
-            <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
-              New product →
-            </Link>
-          )
-        }
+      <MissionPersonaHeader
+        personaId="product"
+        userName={data.userName}
+        primaryProject={data.primaryProject}
       />
       <div className="space-y-6 p-6 md:p-8">
-        <p className="max-w-3xl text-sm text-[#6B6B64]">
-          AI Chief Product Officer — vision, customer discovery, RICE prioritisation, roadmap, and
-          cross-role impact from business problem to adoption.
-        </p>
-
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
         {data.dataSources.roadmapRice === "fallback" ? (
           <MockDataBanner message="Roadmap and RICE prioritisation use illustrative defaults until you run AI product analysis or add features." />

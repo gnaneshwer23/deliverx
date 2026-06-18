@@ -61,54 +61,12 @@ import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-stri
 import { roleToMissionPersona } from "@/lib/mission-nav";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { listPendingProposals } from "@/services/proposedActions";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { CommandCentrePersonaHeader } from "@/components/dx/mission-persona-header";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
-
-function roleHeading(role: string, name: string | null) {
-  const greeting = name ? `, ${name}` : "";
-  if (role === "executive") return `Founder overview${greeting}`;
-  if (role === "engineer") return `Engineering workspace${greeting}`;
-  if (role === "scrum_master") return `Scrum workspace${greeting}`;
-  if (role === "qa") return `QA workspace${greeting}`;
-  if (role === "team_member") return `My workspace${greeting}`;
-  if (role === "ba") return `BA workspace${greeting}`;
-  if (role === "product_manager") return `Product workspace${greeting}`;
-  if (role === "pm") return `PM workspace${greeting}`;
-  return `Delivery command centre${greeting}`;
-}
-
-function roleSubtitle(role: string, orgName: string | null) {
-  const org = orgName ? `${orgName} · ` : "";
-  if (role === "executive") {
-    return `${org}Runway, portfolio health, decisions, and investor readiness — open Founder Mission Control.`;
-  }
-  if (role === "engineer") {
-    return `${org}Stories, traceability, and guided build tasks — open Engineer Mission Control.`;
-  }
-  if (role === "scrum_master") {
-    return `${org}Sprint health, impediments, and ceremonies — open Scrum Mission Control.`;
-  }
-  if (role === "qa") {
-    return `${org}Test coverage, defects, and release readiness — open QA Mission Control.`;
-  }
-  if (role === "team_member") {
-    return `${org}Your tasks, standups, and project updates in one place.`;
-  }
-  if (role === "ba") {
-    return `${org}Requirements, clarifications, and traceability — open BA Mission Control for guided tasks.`;
-  }
-  if (role === "product_manager") {
-    return `${org}Roadmap, customer discovery, and RICE prioritisation — open Product Mission Control.`;
-  }
-  if (role === "pm") {
-    return `${org}Governance, RAID, milestones, and guided delivery — open PM Mission Control.`;
-  }
-  return `${org}Tasks, RAID, meetings, decisions, standups, and intelligence — unified.`;
-}
 
 export default async function DashboardPage({
   searchParams,
@@ -347,9 +305,10 @@ export default async function DashboardPage({
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX OS · Command Centre"
-        title={roleHeading(data.userRole, data.userName)}
+      <CommandCentrePersonaHeader
+        userRole={data.userRole}
+        userName={data.userName}
+        orgName={data.orgName}
         titleEm={
           data.governance.openRisks + data.delivery.blockedTasks > 0
             ? `${data.governance.openRisks + data.delivery.blockedTasks} signals need attention.`
