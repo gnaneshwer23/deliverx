@@ -1,21 +1,27 @@
 import { redirect } from "next/navigation";
 import { OrganisationForm } from "./organisation-form";
 import { ObCard } from "@/components/dx/ob-card";
-import { getOnboardingProfile, isOnboardingComplete } from "@/lib/auth/onboarding";
+import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
+import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
 
 export default async function OrganisationPage() {
-  const { profile } = await getOnboardingProfile();
+  const { profile, gatewayStep } = await getOnboardingProfile();
 
-  if (isOnboardingComplete(profile)) {
+  if (isSponsorGatewayComplete(profile, gatewayStep)) {
     redirect("/workspace/dashboard");
   }
   if (profile?.organisation_id) {
-    redirect("/onboarding/role");
+    const next = resolveGatewayRedirect({
+      hasOrg: true,
+      hasRole: Boolean(profile.role),
+      gatewayStep,
+    });
+    redirect(next ?? "/onboarding/role");
   }
 
   return (
     <ObCard
-      step="Step 1 of 4"
+      step="Step 1 of 5 · Account"
       title="Tell us about your organisation"
       description="We'll use this to set up your workspace and tailor delivery intelligence to your context."
     >

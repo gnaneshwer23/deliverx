@@ -9,6 +9,7 @@ import {
   type BusinessCaseReview,
 } from "@/services/aiBusinessCaseReview";
 import { saveBusinessCaseReview } from "@/services/businessCaseReview";
+import { advanceGatewayToTeam, getGatewaySession } from "@/services/gatewayOnboarding";
 import { bootstrapProjectWorkspaces } from "@/services/projectBootstrap";
 import { emitPlatformEvent } from "@/services/platformWebhooks";
 
@@ -126,9 +127,10 @@ export async function createProjectDraftAction(
     }).catch(() => undefined);
   }
 
+  let reviewId: string | null = null;
   if (bcReport) {
     try {
-      await saveBusinessCaseReview({
+      reviewId = await saveBusinessCaseReview({
         briefExcerpt: brief || name,
         report: bcReport,
         projectId: project.id,
@@ -145,38 +147,41 @@ export async function createProjectDraftAction(
     }
   }
 
-  if (shouldBootstrap) {
+  let inGateway = false;
+  try {
+    const session = await getGatewaySession();
+    inGateway = Boolean(session && session.step !== "complete");
+  } catch {
+    inGateway = false;
+  }
+
+  if (inGateway) {
     try {
-      await bootstrapProjectWorkspaces({
-        projectId: project.id,
-        projectName: name,
-        brief,
-        goal,
-        deliveryType,
-        timeline,
-        discoveryAnswers,
-        bcReport,
-        structureDraft: aiDraft,
-        orgName,
+      await advanceGatewayToTeam({
+        draftProjectId: project.id,
+        businessCaseReviewId: reviewId,
       });
-      revalidatePath("/workspace/dashboard");
-      revalidatePath("/workspace/tasks");
-      revalidatePath("/workspace/founder");
-      revalidatePath("/workspace/product");
-      revalidatePath("/workspace/ba");
-      revalidatePath("/workspace/pm-mission");
-      revalidatePath("/workspace/engineer");
-      revalidatePath("/workspace/scrum-mission");
-      revalidatePath("/workspace/qa");
-    } catch (err) {
-      return {
-        ok: false,
-        error:
-          err instanceof Error
-            ? err.message
-            : "Project created but workspace bootstrap failed. Retry from the project overview.",
-      };
+    } catch {
+      /* optional until migration applied */
     }
+  }
+
+  if (shouldBootstrap) {
+    void bootstrapProjectWorkspaces({
+      projectId: project.id,
+      projectName: name,
+      brief,
+      goal,
+      deliveryType,
+      timeline,
+      discoveryAnswers,
+      bcReport,
+      structureDraft: aiDraft,
+      orgName,
+    }).catch(() => undefined);
+
+    revalidatePath("/workspace/dashboard");
+    revalidatePath("/workspace/founder");
   } else if (aiDraft) {
     const { applyProjectStructure } = await import("@/services/applyProjectStructure");
     try {
@@ -192,6 +197,10 @@ export async function createProjectDraftAction(
             : "Project created but AI structure failed to apply.",
       };
     }
+  }
+
+  if (inGateway) {
+    redirect(`/onboarding/team?project=${project.id}`);
   }
 
   redirect(`/project/${project.id}`);

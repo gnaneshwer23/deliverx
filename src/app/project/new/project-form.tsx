@@ -12,6 +12,10 @@ import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
 import { ProjectCreationStepper } from "@/components/project/project-creation-stepper";
 import { ProjectDiscoveryChat } from "@/components/project/project-discovery-chat";
 import { BusinessCaseReport } from "@/components/project/business-case-report";
+import {
+  canProceedFromGoReview,
+  projectFormStepToGatewayStep,
+} from "@/services/gatewayOnboardingEngine";
 import { createProjectDraftAction, type ProjectState } from "./actions";
 
 const initial: ProjectState = { ok: false };
@@ -30,7 +34,7 @@ const timelines = ["< 3 months", "3-6 months", "6-12 months", "12+ months"];
 type StructureResponse = { ok: true; draft: ProjectStructureDraft };
 type ReviewResponse = { ok: true; review: BusinessCaseReview };
 
-type Step = "brief" | "review" | "discovery" | "create";
+type Step = "project" | "brief" | "review" | "discovery" | "create";
 type InputMode = "form" | "chat";
 
 type DiscoveryResponse = {
@@ -59,7 +63,7 @@ export function ProjectForm({
     }
   }, [state.error]);
 
-  const [step, setStep] = useState<Step>("brief");
+  const [step, setStep] = useState<Step>("project");
   const [inputMode, setInputMode] = useState<InputMode>(initialMode);
   const [brief, setBrief] = useState("");
   const [review, setReview] = useState<BusinessCaseReview | null>(null);
@@ -77,6 +81,32 @@ export function ProjectForm({
   const [extracting, setExtracting] = useState(false);
   const [goAccepted, setGoAccepted] = useState(false);
   const [conditionalWaiver, setConditionalWaiver] = useState(false);
+
+  function syncGateway(formStep: Step) {
+    const gatewayStep = projectFormStepToGatewayStep(formStep);
+    void fetch("/api/gateway/session", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        step: gatewayStep,
+        draftPayload: {
+          brief,
+          projectName,
+          goal,
+          deliveryType,
+          timeline,
+          discoveryAnswers,
+          goAccepted,
+          conditionalWaiver,
+        },
+      }),
+    }).catch(() => undefined);
+  }
+
+  function goToStep(next: Step) {
+    setStep(next);
+    syncGateway(next);
+  }
 
   async function runReview() {
     const trimmed = brief.trim();
@@ -109,6 +139,7 @@ export function ProjectForm({
       setDeliveryType(r.suggestedDeliveryType);
     }
     setStep("review");
+    syncGateway("review");
   }
 
   async function generateStructure() {
@@ -138,16 +169,13 @@ export function ProjectForm({
 
   async function continueFromReview() {
     if (!review) return;
-    if (review.recommendation === "no_go") {
-      setAiError("No-Go recommendation — revise the business case before continuing.");
-      return;
-    }
-    if (!goAccepted) {
-      setAiError("Accept the GO recommendation to proceed through the sponsor gateway.");
-      return;
-    }
-    if (review.recommendation === "conditional_go" && !conditionalWaiver) {
-      setAiError("Confirm you accept conditional GO and will address identified gaps.");
+    const gate = canProceedFromGoReview({
+      recommendation: review.recommendation,
+      goAccepted,
+      conditionalWaiver,
+    });
+    if (!gate.ok) {
+      setAiError(gate.reason ?? "Cannot proceed through sponsor gateway.");
       return;
     }
 
@@ -165,11 +193,11 @@ export function ProjectForm({
       return;
     }
     if (res.data.complete || res.data.questions.length === 0) {
-      setStep("create");
+      goToStep("create");
       return;
     }
     setDiscoveryQuestions(res.data.questions);
-    setStep("discovery");
+    goToStep("discovery");
   }
 
   async function submitDiscovery() {
@@ -190,6 +218,7 @@ export function ProjectForm({
       return;
     }
     setStep("create");
+    syncGateway("create");
   }
 
   async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
@@ -253,6 +282,7 @@ export function ProjectForm({
     if (!res.ok) {
       setAiError(aiErrorMessage(res));
       setStep("brief");
+      syncGateway("brief");
       return;
     }
     const r = res.data.review;
@@ -265,13 +295,64 @@ export function ProjectForm({
       setDeliveryType(r.suggestedDeliveryType);
     }
     setStep("review");
+    syncGateway("review");
+  }
+
+  if (step === "project") {
+    return (
+      <div className="space-y-5">
+        <ProjectCreationStepper current="project" />
+        <StepHeader n={2} label="Project shell" />
+        <p className="text-sm text-[#6B6B64]">
+          Name your programme and delivery context before the business case review.
+        </p>
+        <Field
+          label="Project name"
+          name="project_name_preview"
+          required
+          value={projectName}
+          onChange={setProjectName}
+        />
+        <TextareaField label="Goal (optional)" name="goal_preview" value={goal} onChange={setGoal} />
+        <SelectField
+          label="Delivery type"
+          name="delivery_type_preview"
+          options={deliveryTypes}
+          value={deliveryType}
+          onChange={setDeliveryType}
+        />
+        <SelectField
+          label="Timeline"
+          name="timeline_preview"
+          options={timelines}
+          value={timeline}
+          onChange={setTimeline}
+        />
+        {aiError ? <AiStatusBanner message={aiError} /> : null}
+        <button
+          type="button"
+          disabled={!projectName.trim()}
+          onClick={() => {
+            if (!projectName.trim()) {
+              setAiError("Project name is required.");
+              return;
+            }
+            setAiError(null);
+            goToStep("brief");
+          }}
+          className={`${dxClass.btnPrimary} w-full`}
+        >
+          Continue to business case →
+        </button>
+      </div>
+    );
   }
 
   if (step === "brief") {
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="brief" />
-        <StepHeader n={1} label="Business case" />
+        <StepHeader n={3} label="Business case" />
 
         <div className="flex gap-1 border border-[#E4E4DC] p-0.5">
           <button
@@ -348,10 +429,10 @@ export function ProjectForm({
 
         <button
           type="button"
-          onClick={() => setStep("create")}
+          onClick={() => goToStep("project")}
           className="w-full text-center text-sm text-[#6B6B64] hover:text-[#1C4A2E]"
         >
-          Skip — enter project details manually
+          ← Back to project shell
         </button>
           </>
         )}
@@ -374,7 +455,7 @@ export function ProjectForm({
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="review" />
-        <StepHeader n={2} label="Business case intelligence report" />
+        <StepHeader n={4} label="Business case intelligence report" />
 
         <BusinessCaseReport review={review} />
 
@@ -426,7 +507,7 @@ export function ProjectForm({
         {aiError ? <AiStatusBanner message={aiError} /> : null}
 
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => setStep("brief")} className={dxClass.btnGhost}>
+          <button type="button" onClick={() => goToStep("brief")} className={dxClass.btnGhost}>
             ← Edit brief
           </button>
           {!isNoGo ? (
@@ -454,7 +535,7 @@ export function ProjectForm({
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="discovery" />
-        <StepHeader n={3} label="AI discovery questionnaire" />
+        <StepHeader n={5} label="AI discovery questionnaire" />
         <p className="text-sm text-[#6B6B64]">
           Answer follow-up questions so DeliverX can generate a complete delivery structure.
         </p>
@@ -473,7 +554,7 @@ export function ProjectForm({
         ))}
         {aiError ? <AiStatusBanner message={aiError} /> : null}
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => setStep("review")} className={dxClass.btnGhost}>
+          <button type="button" onClick={() => goToStep("review")} className={dxClass.btnGhost}>
             ← Back
           </button>
           <button type="button" disabled={discovering} onClick={submitDiscovery} className={`${dxClass.btnPrimary} flex-1`}>
@@ -487,7 +568,7 @@ export function ProjectForm({
   return (
     <form action={formAction} className="space-y-4">
       <ProjectCreationStepper current="create" />
-      <StepHeader n={review ? 4 : 3} label="Project setup" />
+      <StepHeader n={6} label="Project setup" />
 
       {playbookId ? <input type="hidden" name="playbook_id" value={playbookId} /> : null}
       {draft ? <input type="hidden" name="ai_draft" value={JSON.stringify(draft)} /> : null}
@@ -585,7 +666,7 @@ export function ProjectForm({
       </label>
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={() => setStep(discoveryQuestions.length ? "discovery" : review ? "review" : "brief")} className={dxClass.btnGhost}>
+        <button type="button" onClick={() => goToStep(discoveryQuestions.length ? "discovery" : review ? "review" : "brief")} className={dxClass.btnGhost}>
           ← Back
         </button>
         <button type="submit" disabled={pending || generating || (Boolean(review) && !goAccepted)} className={`${dxClass.btnPrimary} flex-1`}>

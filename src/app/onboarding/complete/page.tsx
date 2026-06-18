@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
-import { getOnboardingProfile } from "@/lib/auth/onboarding";
+import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
 
 export default async function CompletePage() {
-  const { user, profile } = await getOnboardingProfile();
+  const { user, profile, gatewayStep } = await getOnboardingProfile();
 
   if (!profile?.organisation_id) {
     redirect("/onboarding/organisation");
@@ -29,15 +29,17 @@ export default async function CompletePage() {
   const isEngineer = profile.role === "engineer";
   const isScrumMaster = profile.role === "scrum_master";
   const isQa = profile.role === "qa";
+  const gatewayDone = isSponsorGatewayComplete(profile, gatewayStep);
 
   return (
-    <ObCard step="Step 4 of 4" title="Your workspace is ready" className="text-center">
+    <ObCard step="Sponsor gateway complete" title="Your workspace is ready" className="text-center">
       <div className="mx-auto mb-6 flex size-12 items-center justify-center border border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]">
         ✓
       </div>
       <dl className="space-y-3 text-left text-sm">
         <Row label="Organisation" value={orgName ?? "—"} />
         <Row label="Signed in as" value={user?.email ?? "—"} />
+        <Row label="Gateway" value={gatewayDone ? "Complete" : "In progress"} />
         <Row
           label="Next step"
           value={
@@ -55,7 +57,7 @@ export default async function CompletePage() {
                         ? "Open Scrum Mission Control"
                         : isQa
                           ? "Open QA Mission Control"
-                          : "Create your first project"
+                          : "Open your project workspace"
           }
         />
       </dl>
@@ -75,25 +77,11 @@ export default async function CompletePage() {
                       ? "/workspace/scrum-mission"
                       : isQa
                         ? "/workspace/qa"
-                        : "/project/new"
+                        : "/workspace/dashboard"
         }
         className="mt-8 w-full"
       >
-        {isProductManager
-          ? "Open Product Mission Control →"
-          : isBa
-            ? "Open BA Mission Control →"
-            : isPm
-              ? "Open PM Mission Control →"
-              : isExecutive
-                ? "Open Founder Mission Control →"
-                : isEngineer
-                  ? "Open Engineer Mission Control →"
-                  : isScrumMaster
-                    ? "Open Scrum Mission Control →"
-                    : isQa
-                      ? "Open QA Mission Control →"
-                      : "Create your first project →"}
+        {isExecutive ? "Open Founder Mission Control →" : "Enter workspace →"}
       </DxButtonLink>
     </ObCard>
   );
