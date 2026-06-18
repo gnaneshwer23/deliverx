@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProductMissionControl } from "@/services/pmDashboard";
-import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
+import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import {
   ProductAiSummary,
   ProductMissionOverview,
@@ -56,12 +57,13 @@ export default async function ProductMissionControlPage({
   ]);
 
   return (
-    <>
-      <MissionPersonaHeader
-        personaId="product"
-        userName={data.userName}
-        primaryProject={data.primaryProject}
-      />
+    <MissionDashboardChrome
+      personaId="product"
+      header={{
+        userName: data.userName,
+        primaryProject: data.primaryProject,
+      }}
+    >
       <div className="space-y-6 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
         {data.dataSources.roadmapRice === "fallback" ? (
@@ -103,48 +105,68 @@ export default async function ProductMissionControlPage({
         />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ProductGuidedTasks tasks={data.guidedTasks} />
-          <ProductVisionPanel vision={data.vision} />
+          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
+            <ProductGuidedTasks tasks={data.guidedTasks} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="vision" title="Product vision">
+            <ProductVisionPanel vision={data.vision} />
+          </DashboardPanelShell>
         </div>
 
-        <ProductRoadmapPanel
-          roadmap={data.roadmap}
-          usesFallback={data.dataSources.roadmapRice === "fallback"}
-        />
-        <ProductRicePanel
-          features={data.topFeatures}
-          usesFallback={data.dataSources.roadmapRice === "fallback"}
-        />
-        <OpportunityTreePanel tree={data.opportunityTree} />
+        <DashboardPanelShell panelId="roadmap" title="Roadmap">
+          <ProductRoadmapPanel
+            roadmap={data.roadmap}
+            usesFallback={data.dataSources.roadmapRice === "fallback"}
+          />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="rice" title="RICE prioritisation">
+          <ProductRicePanel
+            features={data.topFeatures}
+            usesFallback={data.dataSources.roadmapRice === "fallback"}
+          />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="opportunity-tree" title="Opportunity tree">
+          <OpportunityTreePanel tree={data.opportunityTree} />
+        </DashboardPanelShell>
 
         {data.topPainPoints.length > 0 ? (
-          <div className={`${dxClass.card} p-6`}>
-            <h3 className={`${dxClass.display} mb-3 text-lg`}>Top customer pain points</h3>
-            <ol className="list-inside list-decimal text-sm text-[#6B6B64]">
-              {data.topPainPoints.map((p) => (
-                <li key={p}>{p}</li>
-              ))}
-            </ol>
-          </div>
+          <DashboardPanelShell panelId="pain-points" title="Top customer pain points">
+            <div className={`${dxClass.card} p-6`}>
+              <ol className="list-inside list-decimal text-sm text-[#6B6B64]">
+                {data.topPainPoints.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ol>
+            </div>
+          </DashboardPanelShell>
         ) : null}
 
-        <ProductSegmentsPanel segments={data.customerSegments} />
-        <ProductAdoptionPanel adoption={data.featureAdoption} voc={data.voiceOfCustomer} />
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        <ProductCrossRolePanel impacts={data.crossRoleImpact} />
+        <DashboardPanelShell panelId="segments" title="Customer segments">
+          <ProductSegmentsPanel segments={data.customerSegments} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="adoption" title="Feature adoption">
+          <ProductAdoptionPanel adoption={data.featureAdoption} voc={data.voiceOfCustomer} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
+          <ProductCrossRolePanel impacts={data.crossRoleImpact} />
+        </DashboardPanelShell>
 
-        <div className={`${dxClass.card} p-6`}>
-          <h3 className={`${dxClass.display} mb-2 text-lg`}>Stakeholder connections</h3>
-          <ul className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-            {data.stakeholderConnections.map((s) => (
-              <li key={s.stakeholder} className="flex justify-between border-b border-[#F0F0E8] py-2">
-                <span className="font-medium">{s.stakeholder}</span>
-                <span className="text-[#6B6B64]">{s.dependency}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <DashboardPanelShell panelId="stakeholders" title="Stakeholder connections">
+          <div className={`${dxClass.card} p-6`}>
+            <ul className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+              {data.stakeholderConnections.map((s) => (
+                <li key={s.stakeholder} className="flex justify-between border-b border-[#F0F0E8] py-2">
+                  <span className="font-medium">{s.stakeholder}</span>
+                  <span className="text-[#6B6B64]">{s.dependency}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </DashboardPanelShell>
       </div>
-    </>
+    </MissionDashboardChrome>
   );
 }

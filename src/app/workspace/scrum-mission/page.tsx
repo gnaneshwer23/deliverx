@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getScrumMissionControl } from "@/services/scrumDashboard";
-import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
+import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import {
   ScrumAiSummary,
   ScrumMissionOverview,
@@ -30,7 +31,6 @@ import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
-import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -61,12 +61,13 @@ export default async function ScrumMissionControlPage({
   ]);
 
   return (
-    <>
-      <MissionPersonaHeader
-        personaId="scrum"
-        userName={data.userName}
-        primaryProject={data.primaryProject}
-      />
+    <MissionDashboardChrome
+      personaId="scrum"
+      header={{
+        userName: data.userName,
+        primaryProject: data.primaryProject,
+      }}
+    >
       <div className="space-y-6 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
         <PendingReviewsStrip
@@ -101,41 +102,75 @@ export default async function ScrumMissionControlPage({
         <ScrumAiSummary summary={data.aiSummary} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumGuidedTasks tasks={data.guidedTasks} />
-          <ScrumSprintHealthPanel health={data.sprintHealth} />
+          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
+            <ScrumGuidedTasks tasks={data.guidedTasks} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="sprint-health" title="Sprint health">
+            <ScrumSprintHealthPanel health={data.sprintHealth} />
+          </DashboardPanelShell>
         </div>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumTeamHealthPanel health={data.teamHealth} />
-          <ScrumBurnoutPanel burnout={data.burnout} />
+          <DashboardPanelShell panelId="team-health" title="Team health">
+            <ScrumTeamHealthPanel health={data.teamHealth} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="burnout" title="Burnout signals">
+            <ScrumBurnoutPanel burnout={data.burnout} />
+          </DashboardPanelShell>
         </div>
 
-        <ScrumImpedimentsPanel impediments={data.impediments} insight={data.impedimentInsight} />
+        <DashboardPanelShell panelId="impediments" title="Impediments">
+          <ScrumImpedimentsPanel impediments={data.impediments} insight={data.impedimentInsight} />
+        </DashboardPanelShell>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumCeremoniesPanel
-            projectId={data.primaryProject?.id}
-            ceremonies={data.ceremonies}
-          />
-          <ScrumStandupPanel summary={data.standupSummary} />
+          <DashboardPanelShell panelId="ceremonies" title="Ceremonies">
+            <ScrumCeremoniesPanel
+              projectId={data.primaryProject?.id}
+              ceremonies={data.ceremonies}
+            />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="standup" title="Standup summary">
+            <ScrumStandupPanel summary={data.standupSummary} />
+          </DashboardPanelShell>
         </div>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumVelocityPanel velocity={data.velocity} insight={data.velocityInsight} usesFallback={data.dataSources.velocity === "fallback"} />
-          <ScrumCapacityPanel capacity={data.capacity} />
+          <DashboardPanelShell panelId="velocity" title="Velocity">
+            <ScrumVelocityPanel
+              velocity={data.velocity}
+              insight={data.velocityInsight}
+              usesFallback={data.dataSources.velocity === "fallback"}
+            />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="capacity" title="Capacity">
+            <ScrumCapacityPanel capacity={data.capacity} />
+          </DashboardPanelShell>
         </div>
 
-        <ScrumCrossTeamPanel deps={data.crossTeamDeps} />
+        <DashboardPanelShell panelId="cross-team" title="Cross-team dependencies">
+          <ScrumCrossTeamPanel deps={data.crossTeamDeps} />
+        </DashboardPanelShell>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumRetroPanel themes={data.retroThemes} recommendation={data.retroRecommendation} />
-          <ScrumMaturityPanel maturity={data.agileMaturity} />
+          <DashboardPanelShell panelId="retro" title="Retrospective themes">
+            <ScrumRetroPanel themes={data.retroThemes} recommendation={data.retroRecommendation} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="maturity" title="Agile maturity">
+            <ScrumMaturityPanel maturity={data.agileMaturity} />
+          </DashboardPanelShell>
         </div>
 
-        <ScrumStakeholdersPanel rows={data.stakeholders} />
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        <ScrumCrossRolePanel impacts={data.crossRoleImpact} />
+        <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
+          <ScrumStakeholdersPanel rows={data.stakeholders} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
+          <ScrumCrossRolePanel impacts={data.crossRoleImpact} />
+        </DashboardPanelShell>
       </div>
-    </>
+    </MissionDashboardChrome>
   );
 }

@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBaMissionControl } from "@/services/baDashboard";
 import { DxStatCard } from "@/components/dx/dx-page-chrome";
-import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
+import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import { BaMissionOverview, BaAiSummary } from "@/components/ba/ba-mission-overview";
 import { BaGuidedTasks } from "@/components/ba/ba-guided-tasks";
 import {
@@ -18,6 +19,7 @@ import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -44,12 +46,13 @@ export default async function BaMissionControlPage({
   ]);
 
   return (
-    <>
-      <MissionPersonaHeader
-        personaId="ba"
-        userName={data.userName}
-        primaryProject={data.primaryProject}
-      />
+    <MissionDashboardChrome
+      personaId="ba"
+      header={{
+        userName: data.userName,
+        primaryProject: data.primaryProject,
+      }}
+    >
       <div className="space-y-6 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
         <PendingReviewsStrip
@@ -83,29 +86,45 @@ export default async function BaMissionControlPage({
 
         <BaAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
 
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+        </DashboardPanelShell>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <BaGuidedTasks tasks={data.guidedTasks} />
-          <BaCrossRoleImpact impacts={data.crossRoleImpact} />
+          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
+            <BaGuidedTasks tasks={data.guidedTasks} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
+            <BaCrossRoleImpact impacts={data.crossRoleImpact} />
+          </DashboardPanelShell>
         </div>
 
-        <BaStakeholderPanel connections={data.stakeholderConnections} />
+        <DashboardPanelShell panelId="stakeholders" title="Stakeholder connections">
+          <BaStakeholderPanel connections={data.stakeholderConnections} />
+        </DashboardPanelShell>
 
-        <BaTraceabilityPreview
-          rows={data.traceabilityPreview}
-          projectId={data.primaryProject?.id}
-        />
+        <DashboardPanelShell panelId="traceability" title="Traceability preview">
+          <BaTraceabilityPreview
+            rows={data.traceabilityPreview}
+            projectId={data.primaryProject?.id}
+          />
+        </DashboardPanelShell>
 
-        <p className="text-xs text-[#6B6B64]">
-          Success metrics on the{" "}
-          <Link href="/workspace/intelligence" className="text-[#1C4A2E] underline">
-            learning dashboard
-          </Link>
-          .
-        </p>
+        <DashboardPanelShell panelId="success-metrics" title="Success metrics (goal)">
+          <section className={`${dxClass.card} p-6`}>
+            <p className="text-sm text-[#6B6B64]">
+              Reduce requirement ambiguity by 80% and improve delivery success by 30% — track
+              approval rate, clarification time, story quality, traceability coverage, and
+              delivery readiness on the{" "}
+              <Link href="/workspace/intelligence" className="text-[#1C4A2E] underline">
+                learning dashboard
+              </Link>
+              .
+            </p>
+          </section>
+        </DashboardPanelShell>
       </div>
-    </>
+    </MissionDashboardChrome>
   );
 }
 

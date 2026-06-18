@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getFounderMissionControl } from "@/services/founderDashboard";
 import { getFounderContext } from "@/services/founderContext";
-import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
+import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import {
   FounderAiSummary,
   FounderMissionOverview,
@@ -50,13 +51,16 @@ export default async function FounderMissionControlPage() {
   ]);
 
   return (
-    <>
-      <MissionPersonaHeader
-        personaId="founder"
-        userName={data.userName}
-        orgName={data.orgName}
-        primaryProject={data.portfolio[0] ? { id: data.portfolio[0].id, name: data.portfolio[0].name } : null}
-      />
+    <MissionDashboardChrome
+      personaId="founder"
+      header={{
+        userName: data.userName,
+        orgName: data.orgName,
+        primaryProject: data.portfolio[0]
+          ? { id: data.portfolio[0].id, name: data.portfolio[0].name }
+          : null,
+      }}
+    >
       <div className="space-y-6 p-6 md:p-8">
         <PendingReviewsStrip
           reviews={pendingReviews}
@@ -75,36 +79,62 @@ export default async function FounderMissionControlPage() {
         <FounderAiSummary summary={data.aiSummary} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <FounderFundingPanel funding={data.funding} />
-          <FounderObjectivesPanel
-            objectives={data.strategicObjectives}
-            insight={data.strategicInsight}
+          <DashboardPanelShell panelId="funding" title="Funding & runway">
+            <FounderFundingPanel funding={data.funding} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="objectives" title="Strategic objectives">
+            <FounderObjectivesPanel
+              objectives={data.strategicObjectives}
+              insight={data.strategicInsight}
+            />
+          </DashboardPanelShell>
+        </div>
+
+        <DashboardPanelShell panelId="portfolio" title="Project portfolio">
+          <FounderPortfolioPanel portfolio={data.portfolio} />
+        </DashboardPanelShell>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <DashboardPanelShell panelId="investment-archive" title="Investment report archive">
+            <FounderInvestmentArchivePanel reports={data.investmentReports} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="benefits-tracker" title="Benefits tracker">
+            <FounderBenefitsTrackerPanel benefits={data.benefitsTracker} />
+          </DashboardPanelShell>
+        </div>
+        <DashboardPanelShell panelId="investor" title="Investor dashboard">
+          <FounderInvestorPanel bullets={data.investorUpdate} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="decisions" title="Decision centre">
+          <FounderDecisionPanel decisions={data.decisionsNeeded} />
+        </DashboardPanelShell>
+
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <DashboardPanelShell panelId="delivery-health" title="Delivery health">
+            <FounderDeliveryHealthPanel health={data.deliveryHealth} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="product-health" title="Product health">
+            <FounderProductHealthPanel health={data.productHealth} />
+          </DashboardPanelShell>
+        </div>
+
+        <DashboardPanelShell panelId="team-health" title="Team health">
+          <FounderTeamHealthPanel health={data.teamHealth} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
+          <FounderCrossRolePanel impacts={data.crossRoleImpact} />
+        </DashboardPanelShell>
+
+        <DashboardPanelShell panelId="founder-context" title="Founder context">
+          <FounderContextWorkspace
+            companyType={ctx?.company_type}
+            businessGoals={ctx?.business_goals}
+            extractionStatus={data.extractionStatus}
           />
-        </div>
-
-        <FounderPortfolioPanel portfolio={data.portfolio} />
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <FounderInvestmentArchivePanel reports={data.investmentReports} />
-          <FounderBenefitsTrackerPanel benefits={data.benefitsTracker} />
-        </div>
-        <FounderInvestorPanel bullets={data.investorUpdate} />
-        <FounderDecisionPanel decisions={data.decisionsNeeded} />
-
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <FounderDeliveryHealthPanel health={data.deliveryHealth} />
-          <FounderProductHealthPanel health={data.productHealth} />
-        </div>
-
-        <FounderTeamHealthPanel health={data.teamHealth} />
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        <FounderCrossRolePanel impacts={data.crossRoleImpact} />
-
-        <FounderContextWorkspace
-          companyType={ctx?.company_type}
-          businessGoals={ctx?.business_goals}
-          extractionStatus={data.extractionStatus}
-        />
+        </DashboardPanelShell>
       </div>
-    </>
+    </MissionDashboardChrome>
   );
 }
