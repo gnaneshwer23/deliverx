@@ -49,6 +49,7 @@ export type ProductMissionControl = {
   topPainPoints: string[];
   featureAdoption: Array<{ feature: string; adoption: number }>;
   voiceOfCustomer: { positive: number; neutral: number; negative: number; themes: string[] };
+  dataSources: { roadmapRice: "live" | "fallback" };
 };
 
 export async function getProductMissionControl(
@@ -187,6 +188,9 @@ export async function getProductMissionControl(
       neutral: voc.neutral ?? 18,
       negative: voc.negative ?? Math.max(0, 100 - positivePct - 18),
       themes: voc.themes ?? stats.insights.slice(0, 3).map((i) => i.theme).filter(Boolean),
+    },
+    dataSources: {
+      roadmapRice: stats.features.length > 0 ? "live" : "fallback",
     },
   };
 }

@@ -18,6 +18,7 @@ import {
   ProductSegmentsPanel,
 } from "@/components/product/product-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MockDataBanner } from "@/components/dx/mock-data-banner";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
@@ -82,6 +83,9 @@ export default async function ProductMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
+        {data.dataSources.roadmapRice === "fallback" ? (
+          <MockDataBanner message="Roadmap and RICE prioritisation use illustrative defaults until you run AI product analysis or add features." />
+        ) : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
           personaLabel={PERSONA_REVIEW_LABELS["product"]}
@@ -122,8 +126,14 @@ export default async function ProductMissionControlPage({
           <ProductVisionPanel vision={data.vision} />
         </div>
 
-        <ProductRoadmapPanel roadmap={data.roadmap} />
-        <ProductRicePanel features={data.topFeatures} />
+        <ProductRoadmapPanel
+          roadmap={data.roadmap}
+          usesFallback={data.dataSources.roadmapRice === "fallback"}
+        />
+        <ProductRicePanel
+          features={data.topFeatures}
+          usesFallback={data.dataSources.roadmapRice === "fallback"}
+        />
         <OpportunityTreePanel tree={data.opportunityTree} />
 
         {data.topPainPoints.length > 0 ? (

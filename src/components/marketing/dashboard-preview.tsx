@@ -25,6 +25,8 @@ export function DashboardPreview({
     <div
       className="overflow-hidden rounded-2xl border bg-[var(--mkt-s1)] shadow-[0_12px_40px_rgba(0,0,0,.6)] transition duration-400"
       style={{ borderColor: accentBorder ?? `${role.accent}55` }}
+      role="img"
+      aria-label={`${role.title} dashboard preview`}
     >
       <div className="flex h-[38px] items-center gap-2 border-b border-[var(--mkt-border)] bg-[var(--mkt-s2)] px-3.5">
         <span className="size-[9px] rounded-full bg-[#FF5F57]" aria-hidden />

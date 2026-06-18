@@ -1,9 +1,12 @@
 import type { ProductMissionControl } from "@/services/pmDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
+import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ProductMissionOverview({ data }: { data: ProductMissionControl }) {
   const { kpis } = data;
+  const roadmapHint =
+    data.dataSources.roadmapRice === "fallback" ? FALLBACK_KPI_HINT : undefined;
 
   return (
     <MissionKpiGrid layout="mission">
@@ -37,7 +40,7 @@ export function ProductMissionOverview({ data }: { data: ProductMissionControl }
       <MissionKpiCard
         label="Now horizon"
         value={kpis.featuresNow}
-        hint={`${kpis.featuresTotal} total`}
+        hint={roadmapHint ?? `${kpis.featuresTotal} total`}
         tone="default"
         valueSize="xl"
       />
