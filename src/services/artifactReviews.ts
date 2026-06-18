@@ -8,6 +8,8 @@ import type {
   ArtifactEntityType,
   ArtifactReviewStatus,
 } from "@/lib/approval/constants";
+import type { MissionPersonaId } from "@/lib/mission-nav";
+import { filterPendingReviewsForPersona } from "@/lib/approval/persona-reviews";
 import { logAuditEvent } from "./auditEvents";
 import { applyProjectStructure } from "./applyProjectStructure";
 import type { ProjectStructureDraft } from "./aiProjectStructuring";
@@ -149,6 +151,14 @@ export async function listPendingArtifactReviews(limit = 50): Promise<
     const r = row as ArtifactReviewRow & { projects: { name: string } };
     return { ...mapRow(r as unknown as Record<string, unknown>), project_name: r.projects.name };
   });
+}
+
+export async function listPendingArtifactReviewsForPersona(
+  persona: MissionPersonaId,
+  limit = 5,
+): Promise<(ArtifactReviewRow & { project_name: string })[]> {
+  const all = await listPendingArtifactReviews(50);
+  return filterPendingReviewsForPersona(all, persona).slice(0, limit);
 }
 
 export async function countPendingArtifactReviews(): Promise<number> {

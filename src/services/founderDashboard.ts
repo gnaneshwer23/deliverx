@@ -33,6 +33,7 @@ export type FounderMissionControl = {
   userName: string | null;
   orgName: string | null;
   companyHealth: { tier: "green" | "amber" | "red"; label: string };
+  dataSources: { financials: "live" | "fallback"; strategicObjectives: "live" | "fallback" };
   kpis: {
     runwayMonths: number;
     monthlyBurn: number;
@@ -314,6 +315,7 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
     userName: profile?.name ?? user?.email ?? null,
     orgName,
     companyHealth,
+    dataSources: { financials: ctx?.financials ? "live" : "fallback", strategicObjectives: storedObjectives.length > 0 ? "live" : "fallback" },
     kpis: {
       runwayMonths,
       monthlyBurn,

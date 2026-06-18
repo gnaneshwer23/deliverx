@@ -25,6 +25,9 @@ import { ProjectMemoryPanel } from "@/components/memory/project-memory-panel";
 import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
 import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
 import { dxClass } from "@/lib/dx-theme";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
@@ -48,9 +51,10 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
     getPmMissionControl(params.project),
     getCollaborativeLoopSnapshot("pm", params.project),
+    listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
   ]);
   const memoryStats = data.primaryProject
     ? await getProjectMemoryStats(data.primaryProject.id).catch(() => ({
@@ -90,6 +94,7 @@ export default async function PmMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
+        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

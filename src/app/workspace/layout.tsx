@@ -41,6 +41,7 @@ export default async function WorkspaceLayout({
       <AppShell
         userEmail={user.email}
         orgName={orgName}
+        userRole={profile.role}
         pendingApprovals={approvalCounts.total}
         assistantProjects={assistantProjects}
         alerts={alerts}

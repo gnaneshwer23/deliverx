@@ -27,6 +27,9 @@ import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-e
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -51,9 +54,10 @@ export default async function ScrumMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
     getScrumMissionControl(params.project),
     getCollaborativeLoopSnapshot("scrum", params.project),
+    listPendingArtifactReviewsForPersona("scrum").catch(() => []),
   ]);
 
   return (
@@ -84,6 +88,7 @@ export default async function ScrumMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
+        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["scrum"]} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
@@ -130,7 +135,7 @@ export default async function ScrumMissionControlPage({
         </div>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <ScrumVelocityPanel velocity={data.velocity} insight={data.velocityInsight} />
+          <ScrumVelocityPanel velocity={data.velocity} insight={data.velocityInsight} usesFallback={data.dataSources.velocity === "fallback"} />
           <ScrumCapacityPanel capacity={data.capacity} />
         </div>
 

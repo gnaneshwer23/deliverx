@@ -36,6 +36,7 @@ export type EngineerMissionControl = {
   userName: string | null;
   primaryProject: { id: string; name: string } | null;
   projects: Array<{ id: string; name: string; status: string }>;
+  dataSources: { architecture: "live" | "fallback" };
   overview: {
     assignedStories: number;
     blockedStories: number;
@@ -185,6 +186,7 @@ export async function getEngineerMissionControl(
   const architecture = Array.isArray(plan.architectureNotes)
     ? (plan.architectureNotes as EngineerArchitectureNode[])
     : defaultArchitectureNodes(ctx?.tech_stack);
+  const architectureSource: "live" | "fallback" = Array.isArray(plan.architectureNotes) ? "live" : "fallback";
 
   const apiContracts = Array.isArray(plan.apiContracts)
     ? (plan.apiContracts as Array<{
@@ -267,6 +269,7 @@ export async function getEngineerMissionControl(
       name: p.name,
       status: p.status ?? "active",
     })),
+    dataSources: { architecture: architectureSource },
     overview: {
       assignedStories: stories.length,
       blockedStories: blockedStories || blockedTasks.length,

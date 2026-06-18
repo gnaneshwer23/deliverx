@@ -56,7 +56,10 @@ import { listAgentActivityFeed } from "@/services/agentOrchestration";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { getIntelligenceLoopSnapshot } from "@/services/intelligenceLoop";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
-import { listPendingArtifactReviews } from "@/services/artifactReviews";
+import { listPendingArtifactReviews, listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { roleToMissionPersona } from "@/lib/mission-nav";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { listPendingProposals } from "@/services/proposedActions";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
@@ -162,10 +165,13 @@ export default async function DashboardPage({
     }
   }
 
-  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop, feedProjects, collaborativeLoop] =
+  const persona = roleToMissionPersona(data.userRole);
+
+  const [pendingProposals, pendingArtifactReviews, personaPendingReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop, feedProjects, collaborativeLoop] =
     await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
+    persona ? listPendingArtifactReviewsForPersona(persona).catch(() => []) : Promise.resolve([]),
     getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
     listOrgImpactEvents({
       limit: 12,
@@ -365,6 +371,12 @@ export default async function DashboardPage({
       <div className="mb-6">
         <QuickActionsBar role={data.userRole} />
       </div>
+
+      {persona && personaPendingReviews.length > 0 ? (
+        <div className="mb-6">
+          <PendingReviewsStrip reviews={personaPendingReviews} personaLabel={PERSONA_REVIEW_LABELS[persona]} />
+        </div>
+      ) : null}
 
       <div className="mb-8">
         <KpiStrip items={kpis} />

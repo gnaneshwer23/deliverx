@@ -32,6 +32,7 @@ export type QaMissionControl = {
   userName: string | null;
   primaryProject: { id: string; name: string } | null;
   projects: Array<{ id: string; name: string; status: string }>;
+  dataSources: { qaMetrics: "live" | "fallback" };
   overview: {
     releaseReadiness: number;
     testCoverage: number;
@@ -265,6 +266,7 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
       name: p.name,
       status: p.status ?? "active",
     })),
+    dataSources: { qaMetrics: dbMetrics ? "live" : "fallback" },
     overview: {
       releaseReadiness,
       testCoverage,

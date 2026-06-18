@@ -14,6 +14,9 @@ import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-e
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -34,9 +37,10 @@ export default async function BaMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
     getBaMissionControl(params.project),
     getCollaborativeLoopSnapshot("ba", params.project),
+    listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 
   return (
@@ -67,6 +71,7 @@ export default async function BaMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
+        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["ba"]} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <ProjectPicker projects={data.projects} currentId={data.primaryProject.id} />

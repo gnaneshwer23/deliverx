@@ -24,6 +24,9 @@ import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-e
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -48,9 +51,10 @@ export default async function EngineerMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
     getEngineerMissionControl(params.project),
     getCollaborativeLoopSnapshot("engineer", params.project),
+    listPendingArtifactReviewsForPersona("engineer").catch(() => []),
   ]);
 
   return (
@@ -81,6 +85,7 @@ export default async function EngineerMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
+        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["engineer"]} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
@@ -117,7 +122,7 @@ export default async function EngineerMissionControlPage({
         <EngineerTraceabilityPanel rows={data.traceability} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <EngineerArchitecturePanel nodes={data.architecture} />
+          <EngineerArchitecturePanel nodes={data.architecture} usesFallback={data.dataSources.architecture === "fallback"} />
           <EngineerCicdPanel cicd={data.cicd} />
         </div>
 
