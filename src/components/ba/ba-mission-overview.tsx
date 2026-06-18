@@ -3,51 +3,61 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import type { BaMissionControl } from "@/services/baDashboard";
-import { dxClass } from "@/lib/dx-theme";
+import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
+
+const impactTone = {
+  green: "healthy" as const,
+  amber: "watch" as const,
+  red: "at-risk" as const,
+};
 
 export function BaMissionOverview({ data }: { data: BaMissionControl }) {
+  const { kpis } = data;
+  const approvalPct =
+    kpis.extracted > 0 ? Math.round((kpis.approved / kpis.extracted) * 100) : undefined;
+
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7">
-      <Kpi label="Requirements extracted" value={data.kpis.extracted} />
-      <Kpi label="Approved" value={data.kpis.approved} tone="green" />
-      <Kpi label="Pending clarification" value={data.kpis.pendingClarification} tone="amber" />
-      <Kpi label="Stakeholder reviews" value={data.kpis.stakeholderReviewsPending} />
-      <Kpi label="Stories ready" value={data.kpis.storiesReady} tone="green" />
-      <Kpi label="Traceability" value={`${data.kpis.traceabilityScore}%`} />
-      <Kpi
-        label="Delivery impact"
-        value={data.kpis.deliveryImpact}
-        tone={data.kpis.deliveryImpactTone}
+    <MissionKpiGrid layout="mission">
+      <MissionKpiCard label="Requirements extracted" value={kpis.extracted} valueSize="xl" />
+      <MissionKpiCard
+        label="Approved"
+        value={kpis.approved}
+        tone="healthy"
+        progressPct={approvalPct}
+        valueSize="xl"
       />
-    </div>
-  );
-}
-
-function Kpi({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  tone?: "green" | "amber" | "red";
-}) {
-  const color =
-    tone === "green"
-      ? "text-[#1A6B3A]"
-      : tone === "amber"
-        ? "text-[#B7620A]"
-        : tone === "red"
-          ? "text-[#C0392B]"
-          : "text-[#0D0D0B]";
-
-  return (
-    <div className={`${dxClass.card} p-4`}>
-      <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        {label}
-      </p>
-      <p className={`${dxClass.display} mt-1 text-2xl leading-none ${color}`}>{value}</p>
-    </div>
+      <MissionKpiCard
+        label="Pending clarification"
+        value={kpis.pendingClarification}
+        tone={kpis.pendingClarification > 0 ? "watch" : "default"}
+        delta={
+          kpis.pendingClarification > 0
+            ? { value: `${kpis.pendingClarification} open`, direction: "warn" }
+            : undefined
+        }
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Stakeholder reviews"
+        value={kpis.stakeholderReviewsPending}
+        tone={kpis.stakeholderReviewsPending > 0 ? "watch" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard label="Stories ready" value={kpis.storiesReady} tone="healthy" valueSize="xl" />
+      <MissionKpiCard
+        label="Traceability"
+        value={`${kpis.traceabilityScore}%`}
+        progressPct={kpis.traceabilityScore}
+        tone={kpis.traceabilityScore >= 80 ? "healthy" : kpis.traceabilityScore >= 50 ? "watch" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Delivery impact"
+        value={kpis.deliveryImpact}
+        tone={impactTone[kpis.deliveryImpactTone]}
+        valueSize="xl"
+      />
+    </MissionKpiGrid>
   );
 }
 

@@ -1,44 +1,53 @@
 import type { ProductMissionControl } from "@/services/pmDashboard";
+import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ProductMissionOverview({ data }: { data: ProductMissionControl }) {
-  return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-6">
-      <Kpi label="Product health" value={`${data.kpis.productHealth}/100`} tone="green" />
-      <Kpi label="Feature adoption" value={`${data.kpis.featureAdoption}%`} />
-      <Kpi label="NPS" value={data.kpis.nps ?? "—"} />
-      <Kpi label="Retention" value={data.kpis.retention != null ? `${data.kpis.retention}%` : "—"} />
-      <Kpi label="Now horizon" value={data.kpis.featuresNow} hint={`${data.kpis.featuresTotal} total`} />
-      <Kpi label="Customer insights" value={data.kpis.insightsCount} />
-    </div>
-  );
-}
+  const { kpis } = data;
 
-function Kpi({
-  label,
-  value,
-  hint,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  hint?: string;
-  tone?: "green";
-}) {
   return (
-    <div className={`${dxClass.card} p-4`}>
-      <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        {label}
-      </p>
-      <p
-        className={`${dxClass.display} mt-1 text-2xl leading-none ${
-          tone === "green" ? "text-[#1A6B3A]" : "text-[#0D0D0B]"
-        }`}
-      >
-        {value}
-      </p>
-      {hint ? <p className="mt-1 text-[10px] text-[#A8A89E]">{hint}</p> : null}
-    </div>
+    <MissionKpiGrid layout="mission">
+      <MissionKpiCard
+        label="Product health"
+        value={`${kpis.productHealth}/100`}
+        tone={kpis.productHealth >= 75 ? "healthy" : kpis.productHealth >= 50 ? "watch" : "default"}
+        progressPct={kpis.productHealth}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Feature adoption"
+        value={`${kpis.featureAdoption}%`}
+        progressPct={kpis.featureAdoption}
+        tone={kpis.featureAdoption >= 60 ? "healthy" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="NPS"
+        value={kpis.nps ?? "—"}
+        tone={kpis.nps != null && kpis.nps >= 40 ? "healthy" : kpis.nps != null && kpis.nps < 20 ? "watch" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Retention"
+        value={kpis.retention != null ? `${kpis.retention}%` : "—"}
+        progressPct={kpis.retention ?? undefined}
+        tone={kpis.retention != null && kpis.retention >= 70 ? "healthy" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Now horizon"
+        value={kpis.featuresNow}
+        hint={`${kpis.featuresTotal} total`}
+        tone="default"
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Customer insights"
+        value={kpis.insightsCount}
+        delta={kpis.insightsCount > 0 ? { value: "Active", direction: "up" } : undefined}
+        valueSize="xl"
+      />
+    </MissionKpiGrid>
   );
 }
 

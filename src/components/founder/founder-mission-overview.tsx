@@ -1,49 +1,48 @@
 import type { FounderMissionControl } from "@/services/founderDashboard";
-import { dxClass } from "@/lib/dx-theme";
+import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 
-const tierColor = {
-  green: "text-[#1A6B3A]",
-  amber: "text-[#B8860B]",
-  red: "text-[#C0392B]",
+const tierTone = {
+  green: "healthy" as const,
+  amber: "watch" as const,
+  red: "at-risk" as const,
 };
 
 export function FounderMissionOverview({ data }: { data: FounderMissionControl }) {
   const sym = data.funding.currency === "GBP" ? "£" : "$";
+  const runwayPct = Math.min(100, Math.round((data.kpis.runwayMonths / 18) * 100));
+
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7">
-      <Kpi
+    <MissionKpiGrid layout="mission">
+      <MissionKpiCard
         label="Startup health"
         value={data.companyHealth.label}
-        tone={data.companyHealth.tier}
+        tone={tierTone[data.companyHealth.tier]}
+        valueSize="xl"
       />
-      <Kpi label="Runway" value={`${data.kpis.runwayMonths} mo`} />
-      <Kpi label="Burn rate" value={`${sym}${Math.round(data.kpis.monthlyBurn / 1000)}k/mo`} />
-      <Kpi label="MRR" value={`${sym}${Math.round(data.kpis.mrr / 1000)}k`} />
-      <Kpi label="ARR" value={`${sym}${Math.round(data.kpis.arr / 1000)}k`} />
-      <Kpi label="Growth" value={`+${data.kpis.growthPct}%`} tone="green" />
-      <Kpi label="Team velocity" value={data.kpis.teamVelocity} />
-    </div>
-  );
-}
-
-function Kpi({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  tone?: "green" | "amber" | "red";
-}) {
-  return (
-    <div className={`${dxClass.card} p-4`}>
-      <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        {label}
-      </p>
-      <p className={`${dxClass.display} mt-1 text-xl leading-none ${tone ? tierColor[tone] : "text-[#0D0D0B]"}`}>
-        {value}
-      </p>
-    </div>
+      <MissionKpiCard
+        label="Runway"
+        value={`${data.kpis.runwayMonths} mo`}
+        progressPct={runwayPct}
+        tone={data.kpis.runwayMonths >= 12 ? "healthy" : data.kpis.runwayMonths >= 6 ? "watch" : "at-risk"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Burn rate"
+        value={`${sym}${Math.round(data.kpis.monthlyBurn / 1000)}k/mo`}
+        valueSize="xl"
+      />
+      <MissionKpiCard label="MRR" value={`${sym}${Math.round(data.kpis.mrr / 1000)}k`} valueSize="xl" />
+      <MissionKpiCard label="ARR" value={`${sym}${Math.round(data.kpis.arr / 1000)}k`} valueSize="xl" />
+      <MissionKpiCard
+        label="Growth"
+        value={`+${data.kpis.growthPct}%`}
+        tone="healthy"
+        progressPct={Math.min(100, data.kpis.growthPct)}
+        delta={{ value: "MoM", direction: "up" }}
+        valueSize="xl"
+      />
+      <MissionKpiCard label="Team velocity" value={data.kpis.teamVelocity} valueSize="xl" />
+    </MissionKpiGrid>
   );
 }
 
