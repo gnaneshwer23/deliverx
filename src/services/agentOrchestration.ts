@@ -7,6 +7,7 @@ import { throwIfMissingTable } from "@/lib/db-errors";
 import { loadProjectSignals } from "./projectSignals";
 import { computeProjectHealth } from "./intelligenceEngine";
 import { searchProjectMemory } from "./projectMemoryRag";
+import { emitDeliveryImpactEvents } from "./deliveryImpact";
 import {
   runAgentOrchestration,
   type AgentOrchestrationEvent,
@@ -14,6 +15,8 @@ import {
   type ProjectOrchestrationContext,
   type SpecialistAgentRole,
 } from "./agentOrchestrationEngine";
+import { orchestrationEventsToImpactDrafts } from "./agentOrchestrationImpact";
+import { captureCollaborativeLoopSnapshot } from "./collaborativeLoopSnapshot";
 
 export type AgentActivityEventRow = {
   id: string;
@@ -190,6 +193,26 @@ export async function orchestrateProjectAgents(input: {
     result,
     input.triggerSource ?? "manual",
   );
+
+  const impactDrafts = orchestrationEventsToImpactDrafts(result.events);
+  if (impactDrafts.length > 0) {
+    await emitDeliveryImpactEvents({
+      projectId: input.projectId,
+      source: "agent",
+      sourceId: workflowRunId,
+      actionType: "agent_orchestration",
+      entityType: "agent_workflow_run",
+      entityId: workflowRunId,
+      drafts: impactDrafts,
+    }).catch(() => 0);
+  }
+
+  await captureCollaborativeLoopSnapshot({
+    persona: "pm",
+    projectId: input.projectId,
+    triggerSource: input.triggerSource ?? "agent_orchestration",
+  }).catch(() => undefined);
+
   return { ...result, workflowRunId };
 }
 
