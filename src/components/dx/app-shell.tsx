@@ -1,9 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Settings } from "lucide-react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { AiDrawer } from "@/components/dx/ai-drawer";
+import { AiDrawerProvider } from "@/components/dx/ai-drawer-context";
+import { AppNav } from "@/components/dx/app-nav";
 import {
   workspaceCoreNav,
   workspaceDeliveryNav,
@@ -100,6 +104,35 @@ export function AppSidebar({ pendingApprovals = 0 }: { pendingApprovals?: number
         </div>
       </div>
     </aside>
+  );
+}
+
+export function AppShell({
+  children,
+  assistantProjects = [],
+  userEmail,
+  orgName,
+  pendingApprovals = 0,
+  showSidebar = true,
+}: {
+  children: ReactNode;
+  assistantProjects?: Array<{ id: string; name: string }>;
+  userEmail?: string | null;
+  orgName?: string | null;
+  pendingApprovals?: number;
+  showSidebar?: boolean;
+}) {
+  return (
+    <AiDrawerProvider>
+      <AppNav
+        userEmail={userEmail}
+        orgName={orgName}
+        pendingApprovals={pendingApprovals}
+      />
+      {showSidebar ? <AppSidebar pendingApprovals={pendingApprovals} /> : null}
+      <AiDrawer projects={assistantProjects} />
+      {children}
+    </AiDrawerProvider>
   );
 }
 
