@@ -83,7 +83,7 @@ const COACH_MAP: Record<
     id: `coach-${a.id}`,
     priority: "medium",
     behaviour: "Assistant proposals need a decision before they can apply.",
-    action: `Approve or reject "${a.title}" in the approval centre`,
+    action: `Approve or reject "${a.title}" in AI output review`,
     href: a.href ?? "/workspace/proposals",
   }),
   standup: (a) => ({

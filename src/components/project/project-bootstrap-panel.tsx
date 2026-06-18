@@ -87,7 +87,7 @@ export function ProjectBootstrapPanel({
           Seeding persona contexts. AI-generated structure, requirements, and features will appear
           in the{" "}
           <a href="/workspace/proposals" className="font-medium text-[#1C4A2E] underline">
-            Approval centre
+            AI output review
           </a>{" "}
           for sign-off.
         </p>

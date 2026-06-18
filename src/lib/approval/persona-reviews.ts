@@ -10,7 +10,7 @@ export const PERSONA_ARTIFACT_ENTITY_TYPES: Record<MissionPersonaId, ArtifactEnt
     "structure_bundle",
     "change_request",
   ],
-  ba: ["requirement", "customer_insight", "decision"],
+  ba: ["requirement", "user_story", "customer_insight", "decision"],
   product: ["product_feature", "customer_insight", "decision"],
   "pm-mission": [
     "structure_bundle",
@@ -42,4 +42,35 @@ export function filterPendingReviewsForPersona<T extends Pick<ArtifactReviewRow,
 ): T[] {
   const allowed = new Set(PERSONA_ARTIFACT_ENTITY_TYPES[persona]);
   return reviews.filter((review) => allowed.has(review.entity_type));
+}
+
+export const PROPOSALS_PERSONA_TABS = [
+  "all",
+  "ba",
+  "product",
+  "pm-mission",
+  "engineer",
+  "qa",
+  "scrum",
+  "founder",
+] as const;
+
+export type ProposalsPersonaTab = (typeof PROPOSALS_PERSONA_TABS)[number];
+
+export const PROPOSALS_PERSONA_LABELS: Record<ProposalsPersonaTab, string> = {
+  all: "All personas",
+  ba: "Business analysis",
+  product: "Product",
+  "pm-mission": "Delivery PM",
+  engineer: "Engineering",
+  qa: "Quality assurance",
+  scrum: "Scrum",
+  founder: "Founder / executive",
+};
+
+export function countPendingReviewsByPersona<T extends Pick<ArtifactReviewRow, "entity_type">>(
+  reviews: T[],
+  persona: MissionPersonaId,
+): number {
+  return filterPendingReviewsForPersona(reviews, persona).length;
 }

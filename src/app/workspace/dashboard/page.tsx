@@ -374,7 +374,12 @@ export default async function DashboardPage({
 
       {persona && personaPendingReviews.length > 0 ? (
         <div className="mb-6">
-          <PendingReviewsStrip reviews={personaPendingReviews} personaLabel={PERSONA_REVIEW_LABELS[persona]} />
+          <PendingReviewsStrip
+            reviews={personaPendingReviews}
+            personaLabel={PERSONA_REVIEW_LABELS[persona]}
+            persona={persona}
+            inlineActions
+          />
         </div>
       ) : null}
 
@@ -413,7 +418,7 @@ export default async function DashboardPage({
 
       {approvalCounts.total > 0 ? (
         <div className="mb-8">
-          <DashboardSection title="Approval centre" href="/workspace/proposals">
+          <DashboardSection title="AI output review" href="/workspace/proposals">
             <ApprovalCentrePanel
               artifactReviews={pendingArtifactReviews}
               proposals={pendingProposals}

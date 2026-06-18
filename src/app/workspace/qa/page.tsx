@@ -85,7 +85,12 @@ export default async function QaMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
-        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["qa"]} />
+        <PendingReviewsStrip
+          reviews={pendingReviews}
+          personaLabel={PERSONA_REVIEW_LABELS["qa"]}
+          persona="qa"
+          inlineActions
+        />
         {data.dataSources.qaMetrics === "fallback" ? (
           <MockDataBanner message="QA KPIs and quality panels use illustrative defaults until test cases, defects, or UAT data is recorded." />
         ) : null}

@@ -69,7 +69,12 @@ export default async function FounderMissionControlPage() {
           cross-role signals from product through delivery to revenue.
         </p>
 
-        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS.founder} />
+        <PendingReviewsStrip
+          reviews={pendingReviews}
+          personaLabel={PERSONA_REVIEW_LABELS.founder}
+          persona="founder"
+          inlineActions
+        />
         {data.dataSources.financials === "fallback" ? (
           <MockDataBanner message="Financial KPIs (runway, burn, MRR, ARR) are illustrative until you upload pitch deck or business case context." />
         ) : null}

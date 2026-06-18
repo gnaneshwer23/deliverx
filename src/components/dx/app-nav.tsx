@@ -72,7 +72,7 @@ export function AppNav({
           href="/workspace/proposals"
           className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
         >
-          Approvals
+          AI review
           {pendingApprovals > 0 ? (
             <span className="absolute -right-1 -top-1 min-w-[16px] rounded-full bg-[#B7620A] px-1 text-center font-[family-name:var(--font-dx-mono)] text-[8px] font-medium leading-4 text-white">
               {pendingApprovals > 99 ? "99+" : pendingApprovals}
