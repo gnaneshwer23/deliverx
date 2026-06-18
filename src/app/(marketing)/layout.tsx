@@ -3,13 +3,13 @@ import type { ReactNode } from "react";
 import { marketingFontClassName, mktSans } from "@/lib/marketing/marketing-fonts";
 
 export const metadata: Metadata = {
-  title: "DeliverX — AI Delivery Intelligence",
+  title: "DeliverX — AI Delivery Intelligence Platform",
   description:
-    "DeliverX — AI delivery intelligence for every role. Every project, every stakeholder, one connected workspace.",
+    "DeliverX is the delivery intelligence platform for every role. One connected workspace from business case to closure — with human approval on every AI change.",
   openGraph: {
-    title: "DeliverX — AI Delivery Intelligence",
+    title: "DeliverX — AI Delivery Intelligence Platform",
     description:
-      "From business case to closure. AI that surfaces risks, drafts reports, and keeps 7 roles in sync — with human approval on every change.",
+      "Role-specific dashboards, live stakeholder loops, and AI that surfaces risks and drafts reports — with human approval on every change.",
     type: "website",
     siteName: "DeliverX",
   },

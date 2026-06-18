@@ -78,7 +78,7 @@ export function DashboardPreview({
                   className="flex size-6 shrink-0 items-center justify-center rounded-md text-sm"
                   style={{ background: item.bg, color: item.color }}
                 >
-                  {item.sym}
+                  {item.code}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[0.75rem] font-medium text-[#F0EDE8]">{item.name}</p>
