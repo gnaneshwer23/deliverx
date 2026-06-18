@@ -103,7 +103,7 @@ export async function getEngineerMissionControl(
   const ctx = await getEngineerContext().catch(() => null);
   const plan = (ctx?.engineering_plan ?? {}) as Record<string, unknown>;
 
-  let aiSummary =
+  const aiSummary =
     ctx?.ai_summary ??
     "Set your specialisation and stack, then run AI workspace generation to populate guided tasks and traceability.";
   let stories: Awaited<ReturnType<typeof listApprovedUserStories>> = [];

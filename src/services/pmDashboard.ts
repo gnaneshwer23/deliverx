@@ -97,7 +97,7 @@ export async function getProductMissionControl(
   const opportunityRaw = ctx.opportunityTree as ProductMissionControl["opportunityTree"];
   const storedTasks = (ctx.guidedTasks ?? []) as ProductGuidedTask[];
 
-  let aiSummary =
+  const aiSummary =
     (typeof ctx.aiSummary === "string" && ctx.aiSummary) ||
     "Run AI product analysis on your charter or PRD to populate vision, roadmap, and customer insights.";
   const differentiationInsight =
