@@ -12,7 +12,7 @@ export type RoleKpi = {
 export type RoleFeed = { dot: string; text: string; from: string };
 
 export type RoleLoopItem = {
-  sym: string;
+  code: string;
   bg: string;
   color: string;
   name: string;
@@ -23,7 +23,7 @@ export type RoleLoopItem = {
 
 export type RoleDashboard = {
   name: string;
-  sym: string;
+  code: string;
   accent: string;
   accentBg: string;
   title: string;
@@ -39,7 +39,7 @@ export type RoleDashboard = {
 export type OnboardingStep = { n: string; title: string; desc: string; done?: boolean; active?: boolean };
 
 export type OnboardingOutput = {
-  icon: string;
+  code: string;
   iconColor: string;
   iconBg: string;
   title: string;
@@ -57,7 +57,7 @@ export const ROLE_ORDER: RoleId[] = ["sponsor","pm","ba","po","eng","qa","sm"];
 export const ROLES: Record<RoleId, RoleDashboard> = {
   "sponsor": {
     "name": "Founder / Sponsor",
-    "sym": "◆",
+    "code": "SP",
     "accent": "#3D9660",
     "accentBg": "rgba(61,150,96,.12)",
     "title": "Founder / Sponsor · Command Centre",
@@ -67,7 +67,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       {
         "label": "Monthly Revenue",
         "val": "£25k",
-        "delta": "↑ +12%",
+        "delta": "+12%",
         "dir": "up"
       },
       {
@@ -79,7 +79,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       {
         "label": "Delivery Conf.",
         "val": "84%",
-        "delta": "↑ +3%",
+        "delta": "+3%",
         "dir": "up"
       }
     ],
@@ -104,7 +104,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "⬡",
+        "code": "PM",
         "bg": "rgba(96,165,250,.15)",
         "color": "#60A5FA",
         "name": "Project Manager",
@@ -113,7 +113,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◈",
+        "code": "PO",
         "bg": "rgba(167,139,250,.15)",
         "color": "#A78BFA",
         "name": "Product Manager",
@@ -122,7 +122,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "⬢",
+        "code": "BA",
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "Business Analyst",
@@ -131,7 +131,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "◉",
+        "code": "QA",
         "bg": "rgba(252,211,77,.15)",
         "color": "#FCD34D",
         "name": "QA / Test Manager",
@@ -143,7 +143,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
   },
   "pm": {
     "name": "Project Manager",
-    "sym": "⬡",
+    "code": "PM",
     "accent": "#60A5FA",
     "accentBg": "rgba(96,165,250,.1)",
     "title": "Project Manager · NHS EHR",
@@ -153,7 +153,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       {
         "label": "Project Health",
         "val": "87%",
-        "delta": "↑ +2%",
+        "delta": "+2%",
         "dir": "up"
       },
       {
@@ -190,7 +190,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "⬢",
+        "code": "BA",
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "Business Analyst",
@@ -199,7 +199,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "⬟",
+        "code": "EN",
         "bg": "rgba(147,197,253,.15)",
         "color": "#93C5FD",
         "name": "Engineer",
@@ -208,7 +208,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-n"
       },
       {
-        "sym": "◉",
+        "code": "QA",
         "bg": "rgba(252,211,77,.15)",
         "color": "#FCD34D",
         "name": "QA",
@@ -217,7 +217,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◆",
+        "code": "SP",
         "bg": "rgba(61,150,96,.15)",
         "color": "#3D9660",
         "name": "Sponsor",
@@ -229,7 +229,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
   },
   "ba": {
     "name": "Business Analyst",
-    "sym": "⬢",
+    "code": "BA",
     "accent": "#2DD4BF",
     "accentBg": "rgba(45,212,191,.1)",
     "title": "Business Analyst · Requirements",
@@ -276,7 +276,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "⬡",
+        "code": "PM",
         "bg": "rgba(96,165,250,.15)",
         "color": "#60A5FA",
         "name": "Project Manager",
@@ -285,7 +285,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "⬟",
+        "code": "EN",
         "bg": "rgba(147,197,253,.15)",
         "color": "#93C5FD",
         "name": "Engineer",
@@ -294,7 +294,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "◉",
+        "code": "QA",
         "bg": "rgba(252,211,77,.15)",
         "color": "#FCD34D",
         "name": "QA",
@@ -303,7 +303,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◆",
+        "code": "SP",
         "bg": "rgba(61,150,96,.15)",
         "color": "#3D9660",
         "name": "Sponsor",
@@ -315,7 +315,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
   },
   "po": {
     "name": "Product Manager",
-    "sym": "◈",
+    "code": "PO",
     "accent": "#A78BFA",
     "accentBg": "rgba(167,139,250,.1)",
     "title": "Product Manager · Roadmap",
@@ -362,7 +362,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "◆",
+        "code": "SP",
         "bg": "rgba(61,150,96,.15)",
         "color": "#3D9660",
         "name": "Sponsor",
@@ -371,7 +371,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "⬢",
+        "code": "BA",
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "Business Analyst",
@@ -380,7 +380,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "⬟",
+        "code": "EN",
         "bg": "rgba(147,197,253,.15)",
         "color": "#93C5FD",
         "name": "Engineer",
@@ -389,7 +389,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◉",
+        "code": "QA",
         "bg": "rgba(252,211,77,.15)",
         "color": "#FCD34D",
         "name": "QA",
@@ -401,7 +401,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
   },
   "eng": {
     "name": "Engineer",
-    "sym": "⬟",
+    "code": "EN",
     "accent": "#93C5FD",
     "accentBg": "rgba(147,197,253,.1)",
     "title": "Engineer · Sprint 24",
@@ -448,7 +448,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "⬡",
+        "code": "PM",
         "bg": "rgba(96,165,250,.15)",
         "color": "#60A5FA",
         "name": "Project Manager",
@@ -457,7 +457,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◉",
+        "code": "QA",
         "bg": "rgba(252,211,77,.15)",
         "color": "#FCD34D",
         "name": "QA",
@@ -466,7 +466,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "⬢",
+        "code": "BA",
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "BA",
@@ -475,7 +475,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-n"
       },
       {
-        "sym": "◎",
+        "code": "SM",
         "bg": "rgba(110,231,183,.15)",
         "color": "#6EE7B7",
         "name": "Scrum Master",
@@ -487,7 +487,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
   },
   "qa": {
     "name": "QA / Test Manager",
-    "sym": "◉",
+    "code": "QA",
     "accent": "#FCD34D",
     "accentBg": "rgba(252,211,77,.1)",
     "title": "QA / Test Manager · Release",
@@ -534,7 +534,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "⬡",
+        "code": "PM",
         "bg": "rgba(96,165,250,.15)",
         "color": "#60A5FA",
         "name": "Project Manager",
@@ -543,7 +543,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "⬟",
+        "code": "EN",
         "bg": "rgba(147,197,253,.15)",
         "color": "#93C5FD",
         "name": "Engineer",
@@ -552,7 +552,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "⬢",
+        "code": "BA",
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "BA",
@@ -561,7 +561,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◆",
+        "code": "SP",
         "bg": "rgba(61,150,96,.15)",
         "color": "#3D9660",
         "name": "Sponsor",
@@ -573,7 +573,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
   },
   "sm": {
     "name": "Scrum Master",
-    "sym": "◎",
+    "code": "SM",
     "accent": "#6EE7B7",
     "accentBg": "rgba(110,231,183,.1)",
     "title": "Scrum Master · Sprint 24",
@@ -620,7 +620,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     ],
     "loopItems": [
       {
-        "sym": "⬡",
+        "code": "PM",
         "bg": "rgba(96,165,250,.15)",
         "color": "#60A5FA",
         "name": "Project Manager",
@@ -629,7 +629,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "⬟",
+        "code": "EN",
         "bg": "rgba(147,197,253,.15)",
         "color": "#93C5FD",
         "name": "Engineer",
@@ -638,7 +638,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-a"
       },
       {
-        "sym": "◉",
+        "code": "QA",
         "bg": "rgba(252,211,77,.15)",
         "color": "#FCD34D",
         "name": "QA",
@@ -647,7 +647,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "badgeCls": "badge-g"
       },
       {
-        "sym": "◈",
+        "code": "PO",
         "bg": "rgba(167,139,250,.15)",
         "color": "#A78BFA",
         "name": "Product Manager",
@@ -693,7 +693,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "◆",
+        "code": "PV",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "Portfolio Overview",
@@ -702,7 +702,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "★",
+        "code": "DC",
         "iconColor": "#FCD34D",
         "iconBg": "rgba(252,211,77,.15)",
         "title": "Decision Centre",
@@ -711,7 +711,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-a"
       },
       {
-        "icon": "◈",
+        "code": "II",
         "iconColor": "#A78BFA",
         "iconBg": "rgba(167,139,250,.15)",
         "title": "Investment Intelligence",
@@ -720,7 +720,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "↗",
+        "code": "RF",
         "iconColor": "#60A5FA",
         "iconBg": "rgba(96,165,250,.15)",
         "title": "Runway Forecast",
@@ -763,7 +763,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "⬡",
+        "code": "WS",
         "iconColor": "#60A5FA",
         "iconBg": "rgba(96,165,250,.15)",
         "title": "4 Workstreams Identified",
@@ -772,7 +772,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "⬡",
+        "code": "WS",
         "iconColor": "#60A5FA",
         "iconBg": "rgba(96,165,250,.15)",
         "title": "12 Milestones Planned",
@@ -781,7 +781,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "⬡",
+        "code": "WS",
         "iconColor": "#D97706",
         "iconBg": "rgba(217,119,6,.15)",
         "title": "RAID Log Generated",
@@ -790,7 +790,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-a"
       },
       {
-        "icon": "⬡",
+        "code": "WS",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "Go/No-Go: 83% Confidence",
@@ -833,7 +833,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "⬢",
+        "code": "RQ",
         "iconColor": "#2DD4BF",
         "iconBg": "rgba(45,212,191,.15)",
         "title": "46 Requirements Extracted",
@@ -842,7 +842,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "⬢",
+        "code": "RQ",
         "iconColor": "#2DD4BF",
         "iconBg": "rgba(45,212,191,.15)",
         "title": "Traceability Matrix",
@@ -851,7 +851,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "⬢",
+        "code": "RQ",
         "iconColor": "#D97706",
         "iconBg": "rgba(217,119,6,.15)",
         "title": "9 Clarification Gaps",
@@ -860,7 +860,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-a"
       },
       {
-        "icon": "⬢",
+        "code": "RQ",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "18 User Stories",
@@ -903,7 +903,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "◈",
+        "code": "PD",
         "iconColor": "#A78BFA",
         "iconBg": "rgba(167,139,250,.15)",
         "title": "3 Customer Segments",
@@ -912,7 +912,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "◈",
+        "code": "PD",
         "iconColor": "#A78BFA",
         "iconBg": "rgba(167,139,250,.15)",
         "title": "Opportunity Solution Tree",
@@ -921,7 +921,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "◈",
+        "code": "PD",
         "iconColor": "#D97706",
         "iconBg": "rgba(217,119,6,.15)",
         "title": "Prioritised Backlog",
@@ -930,7 +930,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-a"
       },
       {
-        "icon": "◈",
+        "code": "PD",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "90-Day Roadmap Draft",
@@ -973,7 +973,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "⬟",
+        "code": "EG",
         "iconColor": "#93C5FD",
         "iconBg": "rgba(147,197,253,.15)",
         "title": "6 Stories Assigned",
@@ -982,7 +982,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-a"
       },
       {
-        "icon": "⬟",
+        "code": "EG",
         "iconColor": "#93C5FD",
         "iconBg": "rgba(147,197,253,.15)",
         "title": "Dependency Map",
@@ -991,7 +991,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "⬟",
+        "code": "EG",
         "iconColor": "#60A5FA",
         "iconBg": "rgba(96,165,250,.15)",
         "title": "Architecture Overview",
@@ -1000,7 +1000,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "⬟",
+        "code": "EG",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "AI Code Assistant",
@@ -1043,7 +1043,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "◉",
+        "code": "QT",
         "iconColor": "#FCD34D",
         "iconBg": "rgba(252,211,77,.15)",
         "title": "124 Test Cases Generated",
@@ -1052,7 +1052,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "◉",
+        "code": "QT",
         "iconColor": "#FCD34D",
         "iconBg": "rgba(252,211,77,.15)",
         "title": "Release Readiness Baseline",
@@ -1061,7 +1061,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-n"
       },
       {
-        "icon": "◉",
+        "code": "QT",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "Regression Suite",
@@ -1070,7 +1070,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "◉",
+        "code": "QT",
         "iconColor": "#D97706",
         "iconBg": "rgba(217,119,6,.15)",
         "title": "UAT Plan Drafted",
@@ -1113,7 +1113,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
     ],
     "outputs": [
       {
-        "icon": "◎",
+        "code": "AG",
         "iconColor": "#6EE7B7",
         "iconBg": "rgba(110,231,183,.15)",
         "title": "Sprint Baseline Set",
@@ -1122,7 +1122,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "◎",
+        "code": "AG",
         "iconColor": "#DC2626",
         "iconBg": "rgba(220,38,38,.15)",
         "title": "3 Blockers Identified",
@@ -1131,7 +1131,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-a"
       },
       {
-        "icon": "◎",
+        "code": "AG",
         "iconColor": "#3D9660",
         "iconBg": "rgba(61,150,96,.15)",
         "title": "Team Health Score",
@@ -1140,7 +1140,7 @@ export const OB_DATA: Record<RoleId, OnboardingRoleData> = {
         "badgeCls": "badge-g"
       },
       {
-        "icon": "◎",
+        "code": "AG",
         "iconColor": "#D97706",
         "iconBg": "rgba(217,119,6,.15)",
         "title": "Retro Pattern Detected",
