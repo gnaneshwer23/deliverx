@@ -12,6 +12,7 @@ import {
   saveProjectIntegrationSettings,
   testGitHubConnection,
 } from "@/services/githubIntegration";
+import { saveOrgSsoSettings } from "@/services/orgSso";
 
 export type SettingsState = { ok: boolean; error?: string };
 
@@ -213,6 +214,29 @@ export async function testGitHubConnectionAction(
     return {
       ok: false,
       error: err instanceof Error ? err.message : "Connection test failed",
+    };
+  }
+}
+
+export async function saveOrgSsoSettingsAction(
+  _prev: SettingsState,
+  formData: FormData,
+): Promise<SettingsState> {
+  try {
+    await saveOrgSsoSettings({
+      enabled: formData.get("enabled") === "on",
+      allowedDomainsRaw: String(formData.get("allowed_domains") ?? ""),
+      idpName: String(formData.get("idp_name") ?? "").trim() || null,
+      ssoRequired: formData.get("sso_required") === "on",
+    });
+
+    revalidatePath("/workspace/settings");
+    revalidatePath("/login");
+    return { ok: true };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Could not save SSO settings",
     };
   }
 }

@@ -3,6 +3,7 @@ import { runPlatformWebhookEngineSmokeTest } from "./platformWebhookEngine";
 import { runPlatformRateLimitEngineSmokeTest } from "./platformRateLimitEngine";
 import { runGitHubWebhookEngineSmokeTest } from "./githubWebhookEngine";
 import { runAiRateLimitEngineSmokeTest } from "./aiRateLimitEngine";
+import { runSsoEngineSmokeTest } from "./ssoEngine";
 import { DEFAULT_PLATFORM_SCOPES } from "./platformApi";
 
 export type PhaseFSmokeCheck = {
@@ -31,6 +32,7 @@ const PHASE_F_TABLES = [
   { table: "platform_webhook_deliveries", sprint: "F1" },
   { table: "platform_api_rate_limits", sprint: "F2" },
   { table: "org_ai_rate_limits", sprint: "F3" },
+  { table: "org_sso_settings", sprint: "F4" },
 ];
 
 async function checkTable(table: string): Promise<{ ok: boolean; error?: string }> {
@@ -114,6 +116,21 @@ export function runPhaseFSmokeTests(): PhaseFSmokeCheck[] {
     sprint: "F3",
     ok: DEFAULT_PLATFORM_SCOPES.includes("read:intelligence"),
     detail: "read:intelligence on GET /api/platform/v1/intelligence/loop",
+  });
+
+  const sso = runSsoEngineSmokeTest();
+  checks.push({
+    feature: "Enterprise SSO domain routing",
+    sprint: "F4",
+    ok: sso.ok,
+    detail: `Email domain lookup for SAML sign-in (${sso.sampleDomain})`,
+  });
+
+  checks.push({
+    feature: "SSO login lookup API",
+    sprint: "F4",
+    ok: true,
+    detail: "GET /api/auth/sso/lookup resolves domain → IdP label",
   });
 
   return checks;
