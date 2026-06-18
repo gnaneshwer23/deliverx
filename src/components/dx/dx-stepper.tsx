@@ -24,7 +24,7 @@ function currentStepIndex(pathname: string): number {
   return -1;
 }
 
-export function DxStepper() {
+export function DxStepper({ role: _role }: { role?: string | null } = {}) {
   const pathname = usePathname();
   const currentIndex = currentStepIndex(pathname);
 
