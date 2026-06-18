@@ -109,10 +109,26 @@ export function resolveGatewayRedirect(input: {
   hasOrg: boolean;
   hasRole: boolean;
   gatewayStep: GatewayStep | null;
+  role?: string | null;
 }): string | null {
   if (!input.hasOrg) return "/onboarding/organisation";
   if (!input.hasRole) return "/onboarding/role";
   if (!input.gatewayStep || input.gatewayStep === "complete") return null;
+
+  const role = input.role ?? null;
+
+  if (role && role !== "executive") {
+    if (role === "team_member") return null;
+    if (
+      input.gatewayStep === "project" ||
+      input.gatewayStep === "business_case" ||
+      input.gatewayStep === "ai_review"
+    ) {
+      return "/onboarding/persona";
+    }
+    if (input.gatewayStep === "team") return "/onboarding/complete";
+    return null;
+  }
 
   if (input.gatewayStep === "team") return "/onboarding/team";
   if (
@@ -124,6 +140,17 @@ export function resolveGatewayRedirect(input: {
   }
 
   return null;
+}
+
+export function getPostRoleSelectRedirect(role: string): string {
+  if (role === "executive") return "/project/new";
+  if (role === "team_member") return "/onboarding/complete";
+  return "/onboarding/persona";
+}
+
+export function getInitialGatewayStepForRole(role: string): GatewayStep {
+  if (role === "team_member") return "complete";
+  return "project";
 }
 
 export function canProceedFromGoReview(input: {

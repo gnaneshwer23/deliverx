@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { RoleForm } from "./role-form";
 import { ObCard } from "@/components/dx/ob-card";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
-import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
+import { resolveGatewayRedirect, getPostRoleSelectRedirect } from "@/services/gatewayOnboardingEngine";
 
 export default async function RolePage() {
   const { profile, gatewayStep } = await getOnboardingProfile();
@@ -18,8 +18,9 @@ export default async function RolePage() {
       hasOrg: true,
       hasRole: true,
       gatewayStep,
+      role: profile.role,
     });
-    redirect(next ?? "/project/new");
+    redirect(next ?? getPostRoleSelectRedirect(profile.role));
   }
 
   return (

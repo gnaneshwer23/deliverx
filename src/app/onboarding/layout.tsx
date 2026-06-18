@@ -9,7 +9,7 @@ export default async function OnboardingLayout({
 }: {
   children: ReactNode;
 }) {
-  const { user } = await getOnboardingProfile();
+  const { user, profile } = await getOnboardingProfile();
 
   if (!user) redirect("/login");
 
@@ -17,7 +17,7 @@ export default async function OnboardingLayout({
     <div className="flex min-h-screen flex-col bg-[#FAFAF5]">
       <header className="flex h-[var(--dx-navh)] shrink-0 items-center justify-between border-b border-[#E4E4DC] bg-white px-6 md:px-11">
         <DxLogo />
-        <DxStepper />
+        <DxStepper role={profile?.role} />
         <span className="w-24" aria-hidden />
       </header>
       <main className="flex flex-1 items-start justify-center px-4 py-12">{children}</main>

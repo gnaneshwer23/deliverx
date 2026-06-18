@@ -15,6 +15,7 @@ export default async function OrganisationPage() {
       hasOrg: true,
       hasRole: Boolean(profile.role),
       gatewayStep,
+      role: profile.role,
     });
     redirect(next ?? "/onboarding/role");
   }
