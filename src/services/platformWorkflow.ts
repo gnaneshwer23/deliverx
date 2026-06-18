@@ -10,6 +10,7 @@ import {
 } from "./proposedActionEngine";
 import type { ProposedActionRow } from "./proposedActions";
 import { processProposalAppliedSideEffects } from "./deliveryImpact";
+import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import { emitProposalAppliedEvent, emitTaskCreatedEvent } from "./platformWebhooks";
 
 function mapProposalRow(row: Record<string, unknown>): ProposedActionRow {
@@ -192,6 +193,8 @@ export async function applyProposalForOrg(
     applyResult,
     source: "platform_api",
   }).catch(() => undefined);
+
+  refreshProjectDashboards(mapped.project_id);
 
   return mapped;
 }

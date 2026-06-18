@@ -3,7 +3,9 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 import type { BusinessCaseReview } from "./aiBusinessCaseReview";
+import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import { emitPlatformEvent } from "./platformWebhooks";
 
 export async function saveBusinessCaseReview(input: {
@@ -43,6 +45,20 @@ export async function saveBusinessCaseReview(input: {
 
   if (error) throw error;
 
+  if (input.projectId) {
+    refreshProjectDashboards(input.projectId);
+  } else {
+    revalidatePath("/workspace/dashboard");
+    revalidatePath("/workspace/proposals");
+    revalidatePath("/workspace/founder");
+    revalidatePath("/workspace/product");
+    revalidatePath("/workspace/pm-mission");
+    revalidatePath("/workspace/ba");
+    revalidatePath("/workspace/engineer");
+    revalidatePath("/workspace/qa");
+    revalidatePath("/workspace/scrum-mission");
+  }
+
   if (input.goDecision === "accepted") {
     void emitPlatformEvent(String(profile.organisation_id), "project.go_decision", {
       reviewId: data.id,
@@ -72,6 +88,8 @@ export async function linkBusinessCaseReviewToProject(
     .eq("id", reviewId);
 
   if (error) throw error;
+
+  refreshProjectDashboards(projectId);
 }
 
 export type BusinessCaseReviewRow = {
