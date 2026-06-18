@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { AppNav, AppSidebar } from "@/components/dx/app-shell";
+import { AppShell } from "@/components/dx/app-shell";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
+import { listOrgProjects } from "@/services/delivery";
 
 export default async function WorkspaceLayout({
   children,
@@ -22,23 +23,27 @@ export default async function WorkspaceLayout({
     orgName = org?.name ?? null;
   }
 
-  const approvalCounts = await getPendingApprovalCounts().catch(() => ({
-    proposals: 0,
-    artifacts: 0,
-    total: 0,
-  }));
+  const [approvalCounts, assistantProjects] = await Promise.all([
+    getPendingApprovalCounts().catch(() => ({
+      proposals: 0,
+      artifacts: 0,
+      total: 0,
+    })),
+    listOrgProjects().catch(() => []),
+  ]);
 
   return (
     <div className="min-h-screen bg-[#FAFAF5]">
-      <AppNav
+      <AppShell
         userEmail={user.email}
         orgName={orgName}
         pendingApprovals={approvalCounts.total}
-      />
-      <AppSidebar pendingApprovals={approvalCounts.total} />
-      <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
-        {children}
-      </main>
+        assistantProjects={assistantProjects}
+      >
+        <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
+          {children}
+        </main>
+      </AppShell>
     </div>
   );
 }

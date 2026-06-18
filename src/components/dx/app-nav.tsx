@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Brain, Cpu, Plus } from "lucide-react";
+import { useAiDrawer } from "@/components/dx/ai-drawer-context";
 import { DxLogo } from "@/components/dx/dx-logo";
 import { UserMenu } from "@/components/dx/user-menu";
 import { dxClass } from "@/lib/dx-theme";
@@ -43,6 +44,8 @@ export function AppNav({
   orgName?: string | null;
   pendingApprovals?: number;
 }) {
+  const { toggleDrawer } = useAiDrawer();
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-3 border-b border-[#E4E4DC] bg-white px-4 md:px-5">
       <div className="mr-1 border-r border-[#E4E4DC] pr-3">
@@ -72,8 +75,19 @@ export function AppNav({
         <Link href="/project/new" className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] md:inline-flex`}>
           <Plus size={12} /> New project
         </Link>
-        <Link href="/workspace/assistant" className={`${dxClass.btnSm} hidden sm:inline-flex`}>
+        <button
+          type="button"
+          onClick={toggleDrawer}
+          className={`${dxClass.btnSm} hidden sm:inline-flex`}
+        >
           <Cpu size={12} /> AI Assistant
+        </button>
+        <Link
+          href="/workspace/assistant"
+          className={`${dxClass.btnGhost} hidden px-2 py-1.5 text-[8px] lg:inline-flex`}
+          title="Open full AI workspace"
+        >
+          Full view
         </Link>
         <div className="hidden h-5 w-px bg-[#E4E4DC] sm:block" />
         <UserMenu userEmail={userEmail} orgName={orgName} />
