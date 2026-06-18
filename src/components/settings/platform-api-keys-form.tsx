@@ -72,6 +72,13 @@ export function PlatformApiKeysForm({ keys }: { keys: OrgApiKeyRow[] }) {
         <code className="text-xs">Authorization: Bearer dx_live_…</code> on{" "}
         <code className="text-xs">/api/platform/v1/*</code>.
       </p>
+      <ul className="list-inside list-disc text-xs text-[#6B6B64]">
+        <li><code>GET /api/platform/v1/projects</code> — read:projects</li>
+        <li><code>GET /api/platform/v1/health</code> — read:health</li>
+        <li><code>GET /api/platform/v1/twin/summary</code> — read:twin</li>
+        <li><code>GET /api/platform/v1/agents/activity</code> — read:agents</li>
+        <li><code>GET /api/platform/v1/learning</code> — read:learning</li>
+      </ul>
 
       <div className="flex flex-wrap gap-2">
         <input
