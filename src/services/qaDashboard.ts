@@ -7,6 +7,7 @@ import { buildTraceabilityMatrix, listRequirements, listUserStories } from "./ba
 import { listRaidItems } from "./governance";
 import { listProjectsForOrg } from "./portfolio";
 import { getDeliveryForecast } from "./deliveryForecast";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 import { getQaContext } from "./qaContext";
 import {
   computeReleaseReadinessFromDb,
@@ -346,11 +347,14 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
         (secRaw.alert as string) ?? "Dependency audit recommended before release.",
     },
     stakeholders: buildQaStakeholders(),
-    crossRoleImpact: buildQaCrossRoleImpact({
-      criticalDefects,
-      releaseReadiness,
-      releaseApproved: false,
-    }),
+    crossRoleImpact: await mergeProjectImpactIntoCrossRole(
+      buildQaCrossRoleImpact({
+        criticalDefects,
+        releaseReadiness,
+        releaseApproved: false,
+      }),
+      primary?.id,
+    ),
     specialisation: ctx?.specialisation ?? null,
     testingTools: ctx?.testing_tools ?? [],
     extractionStatus: ctx?.extraction_status ?? "pending",

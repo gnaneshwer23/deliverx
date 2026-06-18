@@ -12,6 +12,7 @@ import { PhaseDHealthPanel } from "@/components/settings/phase-d-health-panel";
 import { PhaseEHealthPanel } from "@/components/settings/phase-e-health-panel";
 import { PhaseFHealthPanel } from "@/components/settings/phase-f-health-panel";
 import { PhaseGHealthPanel } from "@/components/settings/phase-g-health-panel";
+import { PhaseHHealthPanel } from "@/components/settings/phase-h-health-panel";
 import { PlatformApiKeysForm } from "@/components/settings/platform-api-keys-form";
 import { PlatformWebhooksForm } from "@/components/settings/platform-webhooks-form";
 import { GitHubIntegrationForm } from "@/components/settings/github-integration-form";
@@ -132,6 +133,7 @@ export default async function SettingsPage() {
         <PhaseEHealthPanel />
         <PhaseFHealthPanel />
         <PhaseGHealthPanel />
+        <PhaseHHealthPanel />
 
         <section className={`${dxClass.cardPad}`}>
           <h2 className="mb-4 font-semibold">Platform API keys</h2>

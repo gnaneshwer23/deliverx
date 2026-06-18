@@ -12,6 +12,8 @@ import {
 import { BaTraceabilityPreview } from "@/components/ba/ba-traceability-preview";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +34,10 @@ export default async function BaMissionControlPage({
   }
 
   const params = await searchParams;
-  const data = await getBaMissionControl(params.project);
+  const [data, collaborativeLoop] = await Promise.all([
+    getBaMissionControl(params.project),
+    getCollaborativeLoopSnapshot("ba", params.project),
+  ]);
 
   return (
     <>
@@ -86,6 +91,8 @@ export default async function BaMissionControlPage({
         </div>
 
         <BaAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
+
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           <BaGuidedTasks tasks={data.guidedTasks} />

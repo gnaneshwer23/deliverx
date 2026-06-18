@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { throwIfMissingTable } from "@/lib/db-errors";
+import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import { logAuditEvent } from "./auditEvents";
 import { processProposalAppliedSideEffects } from "./deliveryImpact";
 import { createTask } from "./delivery";
@@ -257,6 +258,8 @@ export async function applyProposal(id: string): Promise<ProposedActionRow> {
   await processProposalAppliedSideEffects(mapped, applyResult).catch(() => ({
     impactEvents: 0,
   }));
+
+  refreshProjectDashboards(mapped.project_id);
 
   void emitProposalAppliedEvent(mapped.organisation_id, {
     proposalId: mapped.id,

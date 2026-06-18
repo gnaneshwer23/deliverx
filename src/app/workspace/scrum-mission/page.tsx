@@ -25,6 +25,8 @@ import {
 } from "@/components/scrum/scrum-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +51,10 @@ export default async function ScrumMissionControlPage({
   }
 
   const params = await searchParams;
-  const data = await getScrumMissionControl(params.project);
+  const [data, collaborativeLoop] = await Promise.all([
+    getScrumMissionControl(params.project),
+    getCollaborativeLoopSnapshot("scrum", params.project),
+  ]);
 
   return (
     <>
@@ -137,6 +142,7 @@ export default async function ScrumMissionControlPage({
         </div>
 
         <ScrumStakeholdersPanel rows={data.stakeholders} />
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         <ScrumCrossRolePanel impacts={data.crossRoleImpact} />
       </div>
     </>

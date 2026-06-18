@@ -20,6 +20,7 @@ import {
   getRequirementStats,
   type BaProjectContext,
 } from "./baRequirements";
+import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 
 export type BaMissionControl = {
   userName: string | null;
@@ -147,6 +148,17 @@ export async function getBaMissionControl(
     }
   }
 
+  let crossRoleImpact = buildCrossRoleImpact({
+    storiesReady: stats.storiesReady,
+    requirementsReadiness,
+    openClarifications: stats.openClarifications,
+    pendingDecisions: governance.pendingDecisions,
+  });
+
+  if (primary) {
+    crossRoleImpact = await mergeProjectImpactIntoCrossRole(crossRoleImpact, primary.id);
+  }
+
   return {
     userName: profile?.name ?? user?.email ?? null,
     primaryProject: primary ? { id: primary.id, name: primary.name } : null,
@@ -173,12 +185,7 @@ export async function getBaMissionControl(
       requirementsApproved: stats.approved,
       requirementsTotal: stats.extracted,
     }),
-    crossRoleImpact: buildCrossRoleImpact({
-      storiesReady: stats.storiesReady,
-      requirementsReadiness,
-      openClarifications: stats.openClarifications,
-      pendingDecisions: governance.pendingDecisions,
-    }),
+    crossRoleImpact,
     context,
     traceabilityPreview,
     orgTotals: {

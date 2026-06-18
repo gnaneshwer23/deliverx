@@ -21,6 +21,8 @@ import {
 } from "@/components/qa/qa-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +47,10 @@ export default async function QaMissionControlPage({
   }
 
   const params = await searchParams;
-  const data = await getQaMissionControl(params.project);
+  const [data, collaborativeLoop] = await Promise.all([
+    getQaMissionControl(params.project),
+    getCollaborativeLoopSnapshot("qa", params.project),
+  ]);
 
   return (
     <>
@@ -128,6 +133,7 @@ export default async function QaMissionControlPage({
         </div>
 
         <QaStakeholdersPanel rows={data.stakeholders} />
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         <QaCrossRolePanel impacts={data.crossRoleImpact} />
       </div>
     </>

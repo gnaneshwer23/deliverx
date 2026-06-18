@@ -22,6 +22,8 @@ import {
 import { GitHubActivityPanel } from "@/components/engineer/github-activity-panel";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +48,10 @@ export default async function EngineerMissionControlPage({
   }
 
   const params = await searchParams;
-  const data = await getEngineerMissionControl(params.project);
+  const [data, collaborativeLoop] = await Promise.all([
+    getEngineerMissionControl(params.project),
+    getCollaborativeLoopSnapshot("engineer", params.project),
+  ]);
 
   return (
     <>
@@ -133,6 +138,7 @@ export default async function EngineerMissionControlPage({
         </div>
 
         <EngineerStakeholdersPanel rows={data.stakeholders} />
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         <EngineerCrossRolePanel impacts={data.crossRoleImpact} />
       </div>
     </>
