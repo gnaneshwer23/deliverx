@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { categorizeLesson, scoreProposalQuality } from "./continuousLearningEngine";
 import { runAgentOrchestration } from "./agentOrchestrationEngine";
 import { runIntelligenceLoopSmokeTest } from "./intelligenceLoopEngine";
+import { DEFAULT_PLATFORM_SCOPES } from "./platformApi";
 import type { ProjectOrchestrationContext } from "./agentOrchestrationEngine";
 import type { ProjectSignals } from "./intelligenceEngine";
 
@@ -126,6 +127,13 @@ export function runPhaseDSmokeTests(): PhaseDSmokeCheck[] {
     sprint: "E1",
     ok: loop.ok,
     detail: `loop score ${loop.loopScore}, ${loop.stageCount} stages`,
+  });
+
+  checks.push({
+    feature: "Platform API intelligence loop",
+    sprint: "E4",
+    ok: DEFAULT_PLATFORM_SCOPES.includes("read:intelligence") && loop.ok,
+    detail: `read:intelligence scope + ${loop.stageCount} stages`,
   });
 
   return checks;

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { throwIfMissingTable } from "@/lib/db-errors";
 import { getTwinStateForOrg } from "./twin";
+import { getIntelligenceLoopSnapshotForOrg } from "./intelligenceLoop";
 
 export const DEFAULT_PLATFORM_SCOPES = [
   "read:projects",
@@ -10,6 +11,7 @@ export const DEFAULT_PLATFORM_SCOPES = [
   "read:twin",
   "read:agents",
   "read:learning",
+  "read:intelligence",
 ] as const;
 
 export type OrgApiKeyRow = {
@@ -261,4 +263,8 @@ export async function getPlatformLearningSummary(orgId: string) {
     proposalQualityAverage: averageScore,
     proposalSampleCount: scores.length,
   };
+}
+
+export async function getPlatformIntelligenceLoop(orgId: string) {
+  return getIntelligenceLoopSnapshotForOrg(orgId);
 }

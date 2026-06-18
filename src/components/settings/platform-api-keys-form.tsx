@@ -78,6 +78,7 @@ export function PlatformApiKeysForm({ keys }: { keys: OrgApiKeyRow[] }) {
         <li><code>GET /api/platform/v1/twin/summary</code> — read:twin</li>
         <li><code>GET /api/platform/v1/agents/activity</code> — read:agents</li>
         <li><code>GET /api/platform/v1/learning</code> — read:learning</li>
+        <li><code>GET /api/platform/v1/intelligence/loop</code> — read:intelligence</li>
       </ul>
 
       <div className="flex flex-wrap gap-2">
