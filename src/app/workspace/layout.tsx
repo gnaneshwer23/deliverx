@@ -3,6 +3,7 @@ import { AppShell } from "@/components/dx/app-shell";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
+import { getOrgAlertCount, getOrgAlertQueue } from "@/services/alerts";
 import { listOrgProjects } from "@/services/delivery";
 
 export default async function WorkspaceLayout({
@@ -23,13 +24,15 @@ export default async function WorkspaceLayout({
     orgName = org?.name ?? null;
   }
 
-  const [approvalCounts, assistantProjects] = await Promise.all([
+  const [approvalCounts, assistantProjects, alerts, alertCount] = await Promise.all([
     getPendingApprovalCounts().catch(() => ({
       proposals: 0,
       artifacts: 0,
       total: 0,
     })),
     listOrgProjects().catch(() => []),
+    getOrgAlertQueue(8).catch(() => []),
+    getOrgAlertCount().catch(() => 0),
   ]);
 
   return (
@@ -39,6 +42,8 @@ export default async function WorkspaceLayout({
         orgName={orgName}
         pendingApprovals={approvalCounts.total}
         assistantProjects={assistantProjects}
+        alerts={alerts}
+        alertCount={alertCount}
       >
         <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
           {children}
