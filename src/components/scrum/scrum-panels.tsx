@@ -198,17 +198,12 @@ function Section({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-export function ScrumVelocityPanel({
-  velocity,
-  insight,
-}: {
-  velocity: ScrumMissionControl["velocity"];
-  insight: string;
-}) {
+export function ScrumVelocityPanel({ velocity, insight, usesFallback = false }: { velocity: ScrumMissionControl["velocity"]; insight: string; usesFallback?: boolean; }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`}>
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Velocity</h3>
+        {usesFallback ? <p className="mt-1 text-xs text-[#B7620A]">Illustrative sprint history — upload delivery context to populate live velocity.</p> : null}
       </div>
       <table className="w-full text-sm">
         <tbody>

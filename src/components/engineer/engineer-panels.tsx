@@ -82,10 +82,11 @@ export function EngineerTraceabilityPanel({ rows }: { rows: EngineerTraceRow[] }
   );
 }
 
-export function EngineerArchitecturePanel({ nodes }: { nodes: EngineerArchitectureNode[] }) {
+export function EngineerArchitecturePanel({ nodes, usesFallback = false }: { nodes: EngineerArchitectureNode[]; usesFallback?: boolean; }) {
   return (
     <div className={`${dxClass.card} p-6`}>
-      <h3 className={`${dxClass.display} mb-4 text-lg`}>Architecture explorer</h3>
+      <h3 className={`${dxClass.display} mb-1 text-lg`}>Architecture explorer</h3>
+      {usesFallback ? <p className="mb-4 text-xs text-[#B7620A]">Illustrative stack layers — upload tech context to populate live architecture.</p> : <div className="mb-4" />}
       <div className="flex flex-col items-center gap-1">
         {nodes.map((node, i) => (
           <div key={node.layer} className="flex w-full max-w-md flex-col items-center">

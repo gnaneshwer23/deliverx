@@ -25,6 +25,10 @@ import { FounderContextWorkspace } from "@/components/founder/founder-workspace"
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { MockDataBanner } from "@/components/dx/mock-data-banner";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -40,10 +44,11 @@ export default async function FounderMissionControlPage() {
     redirect("/workspace/dashboard");
   }
 
-  const [data, ctx, collaborativeLoop] = await Promise.all([
+  const [data, ctx, collaborativeLoop, pendingReviews] = await Promise.all([
     getFounderMissionControl(),
     getFounderContext().catch(() => null),
     getCollaborativeLoopSnapshot("founder"),
+    listPendingArtifactReviewsForPersona("founder").catch(() => []),
   ]);
 
   return (
@@ -63,6 +68,11 @@ export default async function FounderMissionControlPage() {
           AI Chief of Staff — vision, runway, portfolio health, decisions, investor updates, and
           cross-role signals from product through delivery to revenue.
         </p>
+
+        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS.founder} />
+        {data.dataSources.financials === "fallback" ? (
+          <MockDataBanner message="Financial KPIs (runway, burn, MRR, ARR) are illustrative until you upload pitch deck or business case context." />
+        ) : null}
 
         <FounderMissionOverview data={data} />
         {data.portfolio[0] ? (

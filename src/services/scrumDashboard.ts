@@ -34,6 +34,7 @@ export type ScrumMissionControl = {
   userName: string | null;
   primaryProject: { id: string; name: string } | null;
   projects: Array<{ id: string; name: string; status: string }>;
+  dataSources: { velocity: "live" | "fallback" };
   overview: {
     sprintLabel: string;
     completionPct: number;
@@ -194,6 +195,7 @@ export async function getScrumMissionControl(
   const velocity = Array.isArray(plan.velocityHistory)
     ? (plan.velocityHistory as Array<{ sprint: string; points: number }>)
     : defaultVelocityHistory();
+  const velocitySource: "live" | "fallback" = Array.isArray(plan.velocityHistory) ? "live" : "fallback";
 
   const retroThemes = Array.isArray(plan.retroThemes)
     ? (plan.retroThemes as string[])
@@ -224,6 +226,7 @@ export async function getScrumMissionControl(
       name: p.name,
       status: p.status ?? "active",
     })),
+    dataSources: { velocity: velocitySource },
     overview: {
       sprintLabel:
         (plan.sprintLabel as string) ??

@@ -23,6 +23,10 @@ import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-e
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { MockDataBanner } from "@/components/dx/mock-data-banner";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -47,9 +51,10 @@ export default async function QaMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
     getQaMissionControl(params.project),
     getCollaborativeLoopSnapshot("qa", params.project),
+    listPendingArtifactReviewsForPersona("qa").catch(() => []),
   ]);
 
   return (
@@ -80,6 +85,10 @@ export default async function QaMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
+        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["qa"]} />
+        {data.dataSources.qaMetrics === "fallback" ? (
+          <MockDataBanner message="QA KPIs and quality panels use illustrative defaults until test cases, defects, or UAT data is recorded." />
+        ) : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
