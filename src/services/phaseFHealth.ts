@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { runPlatformWebhookEngineSmokeTest } from "./platformWebhookEngine";
 import { runPlatformRateLimitEngineSmokeTest } from "./platformRateLimitEngine";
 import { runGitHubWebhookEngineSmokeTest } from "./githubWebhookEngine";
+import { runAiRateLimitEngineSmokeTest } from "./aiRateLimitEngine";
 import { DEFAULT_PLATFORM_SCOPES } from "./platformApi";
 
 export type PhaseFSmokeCheck = {
@@ -29,6 +30,7 @@ const PHASE_F_TABLES = [
   { table: "platform_webhook_endpoints", sprint: "F1" },
   { table: "platform_webhook_deliveries", sprint: "F1" },
   { table: "platform_api_rate_limits", sprint: "F2" },
+  { table: "org_ai_rate_limits", sprint: "F3" },
 ];
 
 async function checkTable(table: string): Promise<{ ok: boolean; error?: string }> {
@@ -97,6 +99,21 @@ export function runPhaseFSmokeTests(): PhaseFSmokeCheck[] {
       DEFAULT_PLATFORM_SCOPES.includes("write:proposals") &&
       DEFAULT_PLATFORM_SCOPES.includes("write:reports"),
     detail: "write:proposals, write:reports, read:proposals",
+  });
+
+  const aiRate = runAiRateLimitEngineSmokeTest();
+  checks.push({
+    feature: "AI generation rate limiting",
+    sprint: "F3",
+    ok: aiRate.ok,
+    detail: `${aiRate.limit} AI calls per ${aiRate.windowMs / 1000}s per org`,
+  });
+
+  checks.push({
+    feature: "Platform intelligence loop API",
+    sprint: "F3",
+    ok: DEFAULT_PLATFORM_SCOPES.includes("read:intelligence"),
+    detail: "read:intelligence on GET /api/platform/v1/intelligence/loop",
   });
 
   return checks;
