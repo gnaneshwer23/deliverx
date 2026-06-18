@@ -68,7 +68,7 @@ export function PlatformApiKeysForm({ keys }: { keys: OrgApiKeyRow[] }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-[#6B6B64]">
-        Read-only Platform API for integrations. Use{" "}
+        Platform API for integrations. Use{" "}
         <code className="text-xs">Authorization: Bearer dx_live_…</code> on{" "}
         <code className="text-xs">/api/platform/v1/*</code>.
       </p>
@@ -78,6 +78,8 @@ export function PlatformApiKeysForm({ keys }: { keys: OrgApiKeyRow[] }) {
         <li><code>GET /api/platform/v1/twin/summary</code> — read:twin</li>
         <li><code>GET /api/platform/v1/agents/activity</code> — read:agents</li>
         <li><code>GET /api/platform/v1/learning</code> — read:learning</li>
+        <li><code>POST /api/platform/v1/tasks</code> — write:tasks</li>
+        <li><code>GET /api/platform/v1/webhooks/deliveries</code> — read:webhooks</li>
       </ul>
 
       <div className="flex flex-wrap gap-2">
