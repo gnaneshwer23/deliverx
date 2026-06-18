@@ -1,6 +1,7 @@
 import { existsSync } from "fs";
 import { join } from "path";
 import { runCollaborativeLoopEngineSmokeTest } from "./collaborativeLoopEngine";
+import { runCollaborativeLoopPropagationSmokeTest } from "./collaborativeLoopPropagation";
 
 export type PhaseHSmokeCheck = {
   feature: string;
@@ -32,6 +33,13 @@ const H1_COMPONENT_PATHS = [
   "src/components/collaborative/collaborative-panels-grid.tsx",
   "src/services/collaborativeLoopEngine.ts",
   "src/services/collaborativeLoop.ts",
+];
+
+const H2_PATHS = [
+  "supabase/migrations/0056_delivery_impact_realtime.sql",
+  "src/components/intelligence/delivery-impact-live-refresh.tsx",
+  "src/services/collaborativeLoopPropagation.ts",
+  "src/services/collaborativeLoopPropagation.test.ts",
 ];
 
 export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
@@ -75,6 +83,42 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     sprint: "H1",
     ok: refreshOk,
     detail: "refreshProjectDashboards after proposal apply",
+  });
+
+  const propagation = runCollaborativeLoopPropagationSmokeTest();
+  checks.push({
+    feature: "Narrative thread propagation",
+    sprint: "H2",
+    ok: propagation.ok,
+    detail: `${propagation.threadCount} threads → ${propagation.rolesReached} roles`,
+  });
+
+  const liveRefreshOk = existsSync(
+    join(process.cwd(), "src/components/intelligence/delivery-impact-live-refresh.tsx"),
+  );
+  checks.push({
+    feature: "Delivery impact live refresh",
+    sprint: "H2",
+    ok: liveRefreshOk,
+    detail: "delivery_impact_events realtime subscription",
+  });
+
+  const migrationOk = existsSync(
+    join(process.cwd(), "supabase/migrations/0056_delivery_impact_realtime.sql"),
+  );
+  checks.push({
+    feature: "Realtime migration",
+    sprint: "H2",
+    ok: migrationOk,
+    detail: "0056_delivery_impact_realtime.sql",
+  });
+
+  const h2FilesOk = H2_PATHS.every((p) => existsSync(join(process.cwd(), p)));
+  checks.push({
+    feature: "H2 propagation module",
+    sprint: "H2",
+    ok: h2FilesOk,
+    detail: `${H2_PATHS.length} H2 artifacts`,
   });
 
   return checks;

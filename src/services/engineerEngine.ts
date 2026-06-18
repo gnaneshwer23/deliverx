@@ -58,12 +58,35 @@ export function buildEngineerGuidedTasks(input: {
     due_date?: string | null;
   }>;
   blockedCount: number;
+  authApiBlockedTask?: { id: string; title: string } | null;
 }): EngineerGuidedTask[] {
   if (input.stored.length > 0) return input.stored.slice(0, 5);
 
   const tasks: EngineerGuidedTask[] = [];
 
+  const authBlocker =
+    input.authApiBlockedTask ??
+    input.assignedTasks.find(
+      (t) =>
+        t.status === "blocked" &&
+        (t.blocked_reason?.toLowerCase().includes("auth api") ||
+          t.title.toLowerCase().includes("auth api")),
+    );
+
+  if (authBlocker) {
+    tasks.push({
+      id: authBlocker.id,
+      title: `Unblock: ${authBlocker.title}`,
+      priority: "high",
+      impact: "Sprint delivery blocked on Auth API",
+      dependsOn: "Auth API",
+      dueLabel: "Today",
+      storyCode: undefined,
+    });
+  }
+
   for (const t of input.assignedTasks.filter((x) => x.status === "blocked").slice(0, 1)) {
+    if (authBlocker && t.id === authBlocker.id) continue;
     tasks.push({
       id: t.id,
       title: `Unblock: ${t.title}`,
@@ -86,7 +109,7 @@ export function buildEngineerGuidedTasks(input: {
     });
   }
 
-  if (input.blockedCount > 0 && tasks.length < 3) {
+  if (input.blockedCount > 0 && tasks.length < 3 && !authBlocker) {
     tasks.push({
       id: "review-deps",
       title: "Review blocked dependencies",

@@ -13,6 +13,11 @@ import { listOrgTasks } from "./delivery";
 import { getOrgGovernanceStats, listDecisions, listRaidItems } from "./governance";
 import { listProjectsForOrg } from "./portfolio";
 import { countPendingProposals } from "./proposedActions";
+import {
+  getNarrativeThreadsForProject,
+  narrativeThreadsToTeamNeeds,
+} from "./collaborativeLoopPropagation";
+import { listDefects } from "./qaQualityData";
 
 async function resolveProjectId(projectId?: string | null): Promise<string | null> {
   if (projectId) return projectId;
@@ -46,6 +51,7 @@ export async function getCollaborativeLoopSnapshot(
   let pendingDecisions: Array<{ id: string; title: string; projectId: string }> = [];
   let criticalRisks: Array<{ id: string; title: string }> = [];
   let criticalDefects = 0;
+  let narrativeThreads: Awaited<ReturnType<typeof narrativeThreadsToTeamNeeds>> = [];
 
   const blockedTasks = orgTasks.filter(
     (t) => t.status === "blocked" && (!resolvedProjectId || t.project_id === resolvedProjectId),
@@ -78,12 +84,25 @@ export async function getCollaborativeLoopSnapshot(
       .filter((r) => r.type === "risk" && (r.severity === "critical" || r.severity === "high"))
       .map((r) => ({ id: r.id, title: r.title }));
 
-    criticalDefects = raid.filter(
-      (r) =>
-        r.type === "issue" &&
-        r.status === "open" &&
-        (r.severity === "critical" || r.severity === "high"),
+    const [defects, narrative] = await Promise.all([
+      listDefects(resolvedProjectId).catch(() => []),
+      getNarrativeThreadsForProject(resolvedProjectId).catch(() => []),
+    ]);
+
+    criticalDefects = defects.filter(
+      (d) => d.severity === "critical" && d.status !== "closed",
     ).length;
+
+    if (criticalDefects === 0) {
+      criticalDefects = raid.filter(
+        (r) =>
+          r.type === "issue" &&
+          r.status === "open" &&
+          (r.severity === "critical" || r.severity === "high"),
+      ).length;
+    }
+
+    narrativeThreads = narrativeThreadsToTeamNeeds(narrative);
   }
 
   if (pendingDecisions.length === 0 && governance.pendingDecisions > 0) {
@@ -115,5 +134,6 @@ export async function getCollaborativeLoopSnapshot(
     requirementsApproved,
     requirementsTotal,
     storiesReady,
+    narrativeThreads,
   });
 }

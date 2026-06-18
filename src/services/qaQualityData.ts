@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { QaDefect, QaTestCase, QaUatRow } from "./qaEngine";
+import { emitDeliveryImpactEvents } from "./deliveryImpact";
 
 async function getOrgContext() {
   const supabase = await createClient();
@@ -166,6 +167,25 @@ export async function syncQaQualityFromAnalysis(
       onConflict: "project_id,defect_code",
     });
     if (error) throw error;
+
+    const critical = input.defects.filter(
+      (d) => d.severity === "critical" && d.status !== "closed",
+    );
+    if (critical.length > 0) {
+      const codes = critical.map((d) => d.code).join(", ");
+      void emitDeliveryImpactEvents({
+        projectId,
+        source: "artifact",
+        actionType: "defect_sync",
+        entityType: "defect",
+        drafts: [
+          { targetRole: "qa", message: `${critical.length} critical defect(s): ${codes}`, tone: "blocked" },
+          { targetRole: "engineer", message: `Fix critical defects: ${codes}`, tone: "waiting" },
+          { targetRole: "pm", message: `Release risk — critical defects ${codes}`, tone: "waiting" },
+          { targetRole: "scrum", message: `Sprint test blocked by ${codes}`, tone: "updated" },
+        ],
+      }).catch(() => 0);
+    }
   }
 
   if (uatRows.length) {

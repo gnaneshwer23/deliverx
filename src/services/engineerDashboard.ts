@@ -109,13 +109,14 @@ export async function getEngineerMissionControl(
     "Set your specialisation and stack, then run AI workspace generation to populate guided tasks and traceability.";
   let stories: Awaited<ReturnType<typeof listApprovedUserStories>> = [];
   let assignedTasks: TaskRow[] = [];
+  let authApiBlockedTask: { id: string; title: string } | null = null;
   let traceability: EngineerTraceRow[] = [];
   let dependencies: EngineerDependencyRow[] = Array.isArray(plan.dependencies)
     ? (plan.dependencies as EngineerDependencyRow[])
     : [];
 
   if (primary && user) {
-    const [storyRows, taskRes, matrix, raid] = await Promise.all([
+    const [storyRows, taskRes, projectBlockedRes, matrix, raid] = await Promise.all([
       listApprovedUserStories(primary.id).catch(() => []),
       supabase
         .from("tasks")
@@ -124,12 +125,26 @@ export async function getEngineerMissionControl(
         .eq("assignee_id", user.id)
         .order("updated_at", { ascending: false })
         .limit(50),
+      supabase
+        .from("tasks")
+        .select("id, title, status, blocked_reason")
+        .eq("project_id", primary.id)
+        .eq("status", "blocked")
+        .or("blocked_reason.ilike.%Auth API%,title.ilike.%Auth API%")
+        .limit(1)
+        .maybeSingle(),
       buildTraceabilityMatrix(primary.id).catch(() => []),
       listRaidItems(primary.id).catch(() => []),
     ]);
 
     stories = storyRows;
     assignedTasks = (taskRes.data ?? []) as TaskRow[];
+    if (projectBlockedRes.data) {
+      authApiBlockedTask = {
+        id: String(projectBlockedRes.data.id),
+        title: String(projectBlockedRes.data.title),
+      };
+    }
     traceability = mapTraceRows(matrix);
 
     const raidDependencies = mapRaidToDependencies(raid);
@@ -273,6 +288,7 @@ export async function getEngineerMissionControl(
         due_date: t.due_date,
       })),
       blockedCount: blockedTasks.length,
+      authApiBlockedTask,
     }),
     traceability,
     architecture,

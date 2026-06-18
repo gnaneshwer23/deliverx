@@ -19,6 +19,8 @@ import { queueArtifactReview } from "./artifactReviews";
 import { upsertCharter } from "./charter";
 import { getFounderContext } from "./founderContext";
 import { emitPlatformEvent } from "./platformWebhooks";
+import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
+import { seedNarrativeThreadDemoData } from "./collaborativeLoopPropagation";
 
 export type BootstrapStatus = "pending" | "running" | "complete" | "partial" | "skipped";
 
@@ -277,7 +279,14 @@ export async function bootstrapProjectWorkspaces(
         failedPersonas: failed,
         source: "sponsor_gateway",
       }).catch(() => undefined);
+
+      void seedNarrativeThreadDemoData(
+        input.projectId,
+        String(projectRow.organisation_id),
+      ).catch(() => undefined);
     }
+
+    refreshProjectDashboards(input.projectId);
 
     return summary;
   } catch (err) {

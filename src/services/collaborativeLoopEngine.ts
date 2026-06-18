@@ -61,6 +61,8 @@ export type CollaborativeLoopInput = {
   requirementsApproved?: number;
   requirementsTotal?: number;
   storiesReady?: number;
+  /** H2 traceable narrative threads (Auth API, defects, FR-003). */
+  narrativeThreads?: TeamNeedRow[];
 };
 
 const PERSONA_LABEL: Record<CollaborativePersona, string> = {
@@ -222,6 +224,12 @@ function buildPersonaConnections(input: CollaborativeLoopInput): StakeholderLoop
 export function buildTeamNeeds(input: CollaborativeLoopInput): TeamNeedRow[] {
   const needs: TeamNeedRow[] = [];
 
+  if (input.narrativeThreads?.length) {
+    for (const thread of input.narrativeThreads) {
+      needs.push(thread);
+    }
+  }
+
   for (const c of input.clarifications.slice(0, 4)) {
     needs.push({
       id: `clarification-${c.id}`,
@@ -299,7 +307,7 @@ export function buildTeamNeeds(input: CollaborativeLoopInput): TeamNeedRow[] {
   });
 
   for (const action of queue) {
-    if (needs.some((n) => n.id === action.id)) continue;
+    if (needs.some((n) => n.id === action.id || n.title === action.action)) continue;
     needs.push({
       id: action.id,
       kind: action.tone === "red" ? "blocker" : action.id.startsWith("decision") ? "decision" : "clarification",
