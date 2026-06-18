@@ -110,6 +110,33 @@ export function runPhaseGSmokeTests(): PhaseGSmokeCheck[] {
     detail: "Severity, role, and project filters on intelligence feed",
   });
 
+  const recallOk =
+    existsSync(join(process.cwd(), "src/lib/integrations/recall.ts")) &&
+    existsSync(join(process.cwd(), "supabase/migrations/0055_meeting_recall_links.sql"));
+  checks.push({
+    feature: "Recall.ai meeting sync",
+    sprint: "G3",
+    ok: recallOk,
+    detail: "Bot join, transcript sync, extraction → proposals",
+  });
+
+  const alertBellOk = existsSync(join(process.cwd(), "src/components/dx/alert-bell-dropdown.tsx"));
+  checks.push({
+    feature: "Alert bell in nav",
+    sprint: "G3",
+    ok: alertBellOk,
+    detail: "Unread badge + dropdown → /workspace/alerts",
+  });
+
+  const e2eOk = existsSync(join(process.cwd(), "e2e/gateway-bc-go-bootstrap.test.ts"));
+  checks.push({
+    feature: "BC → GO → bootstrap E2E",
+    sprint: "G3",
+    ok: e2eOk,
+    detail: "Vitest flow spec in e2e/",
+  });
+
+
   return checks;
 }
 
