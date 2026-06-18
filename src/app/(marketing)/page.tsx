@@ -1,48 +1,28 @@
-import { LandingFaq } from "@/components/dx/landing-faq";
-import { LandingPageShell, LandingSectionBridge } from "@/components/dx/landing-layout";
-import {
-  LandingCta,
-  LandingFeatures,
-  LandingFooter,
-  LandingHero,
-  LandingNav,
-  LandingPricing,
-  LandingProblem,
-} from "@/components/dx/landing-sections";
-import {
-  LandingCapabilities,
-  LandingJourney,
-  LandingPlatform,
-} from "@/components/dx/landing-platform-sections";
-import { getLandingPreviewStats } from "@/services/landing";
+import { MarketingCtaSection } from "@/components/marketing/marketing-cta";
+import { MarketingHero } from "@/components/marketing/marketing-hero";
+import { MarketingDivider, MarketingPageShell } from "@/components/marketing/marketing-layout";
+import { MarketingLoopSection } from "@/components/marketing/marketing-loop";
+import { MarketingNav, MarketingFooter } from "@/components/marketing/marketing-nav";
+import { MarketingOnboardingSection } from "@/components/marketing/marketing-onboarding";
+import { MarketingPricingSection } from "@/components/marketing/marketing-pricing";
+import { MarketingProofSection } from "@/components/marketing/marketing-proof";
 
-export default async function LandingPage() {
-  const preview = await getLandingPreviewStats();
-
+export default function LandingPage() {
   return (
-    <LandingPageShell>
-      <LandingNav />
+    <MarketingPageShell>
+      <MarketingNav />
       <main id="main-content">
-        <LandingHero preview={preview} />
-        <LandingSectionBridge
-          headline={
-            <>
-              Stop reconciling twelve tools.{" "}
-              <span className="text-[#1C4A2E]">Run delivery on one signal graph.</span>
-            </>
-          }
-          sub="Every risk, task, report, and decision links to the same project — so status is always current and AI never acts without approval."
-        />
-        <LandingProblem />
-        <LandingJourney />
-        <LandingPlatform preview={preview} />
-        <LandingFeatures />
-        <LandingCapabilities />
-        <LandingPricing />
-        <LandingFaq />
-        <LandingCta />
+        <MarketingHero />
+        <MarketingLoopSection />
+        <MarketingDivider />
+        <MarketingOnboardingSection />
+        <MarketingDivider />
+        <MarketingProofSection />
+        <MarketingDivider />
+        <MarketingPricingSection />
+        <MarketingCtaSection />
       </main>
-      <LandingFooter />
-    </LandingPageShell>
+      <MarketingFooter />
+    </MarketingPageShell>
   );
 }
