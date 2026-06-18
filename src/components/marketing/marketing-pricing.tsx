@@ -10,7 +10,7 @@ function CheckIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
-      className="mt-0.5 size-[13px] shrink-0 fill-none stroke-[#3D9660] stroke-2 [stroke-linecap:round]"
+      className="mt-0.5 size-[13px] shrink-0 fill-none stroke-[var(--mkt-green-l)] stroke-2 [stroke-linecap:round]"
       aria-hidden
     >
       <polyline points="20 6 9 17 4 12" />
@@ -36,43 +36,43 @@ export function MarketingPricingSection() {
           {(PRICING_TIERS as readonly PricingTier[]).map((tier) => (
             <div
               key={tier.tier}
-              className={`relative rounded-2xl border bg-[#111110] p-8 transition hover:border-[#3A3A3C] hover:shadow-[0_4px_16px_rgba(0,0,0,.5)] ${
+              className={`relative rounded-2xl border bg-[var(--mkt-s1)] p-8 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_4px_16px_rgba(0,0,0,.5)] ${
                 tier.featured
-                  ? "border-[#3D9660] shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)]"
-                  : "border-[#2E2E30]"
+                  ? "border-[var(--mkt-green-l)] shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)]"
+                  : "border-[var(--mkt-border)]"
               }`}
             >
               {tier.badge ? (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#3D9660] px-3.5 py-0.5 text-[0.6875rem] font-semibold text-white whitespace-nowrap">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--mkt-green-l)] px-3.5 py-0.5 text-[0.6875rem] font-semibold text-white whitespace-nowrap">
                   {tier.badge}
                 </span>
               ) : null}
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-[#7A7874]">
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-[var(--mkt-text3)]">
                 {tier.tier}
               </p>
-              <p className="mt-1.5 text-lg font-semibold text-[#F0EDE8]">{tier.name}</p>
+              <p className="mt-1.5 text-lg font-semibold text-[var(--mkt-text1)]">{tier.name}</p>
               <div className="mt-4 flex items-baseline gap-1">
                 {!tier.customPrice ? (
-                  <span className="text-base font-light text-[#B8B5AF]">£</span>
+                  <span className="text-base font-light text-[var(--mkt-text2)]">£</span>
                 ) : null}
                 <span
-                  className={`font-[family-name:var(--font-dx-display)] tracking-[-0.03em] text-[#F0EDE8] leading-none ${
+                  className={`font-[family-name:var(--font-dx-display)] tracking-[-0.03em] text-[var(--mkt-text1)] leading-none ${
                     tier.customPrice ? "text-[2rem]" : "text-[2.75rem]"
                   }`}
                 >
                   {tier.price}
                 </span>
                 {tier.period ? (
-                  <span className="text-[0.8125rem] text-[#7A7874]">{tier.period}</span>
+                  <span className="text-[0.8125rem] text-[var(--mkt-text3)]">{tier.period}</span>
                 ) : null}
               </div>
-              <p className="mt-2 text-[0.8125rem] leading-snug text-[#7A7874]">{tier.desc}</p>
-              <div className="my-5 h-px bg-[#2E2E30]" />
+              <p className="mt-2 text-[0.8125rem] leading-snug text-[var(--mkt-text2)]">{tier.desc}</p>
+              <div className="my-5 h-px bg-[var(--mkt-border)]" />
               <ul className="space-y-1">
                 {tier.features.map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-start gap-2 text-[0.8125rem] leading-snug text-[#B8B5AF]"
+                    className="flex items-start gap-2 text-[0.8125rem] leading-snug text-[var(--mkt-text2)]"
                   >
                     <CheckIcon />
                     {feature}
