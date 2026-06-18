@@ -2,28 +2,45 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { GATEWAY_STEP_LABELS } from "@/services/gatewayOnboardingEngine";
 
 const steps = [
-  { href: "/onboarding/organisation", label: "Organisation" },
-  { href: "/onboarding/role", label: "Role" },
-  { href: "/onboarding/invite", label: "Team" },
-  { href: "/onboarding/complete", label: "Ready" },
+  { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account },
+  { href: "/project/new", label: GATEWAY_STEP_LABELS.project },
+  { href: "/project/new", label: GATEWAY_STEP_LABELS.business_case },
+  { href: "/project/new", label: GATEWAY_STEP_LABELS.ai_review },
+  { href: "/onboarding/team", label: GATEWAY_STEP_LABELS.team },
 ];
+
+function currentStepIndex(pathname: string): number {
+  if (pathname.startsWith("/onboarding/organisation") || pathname.startsWith("/onboarding/role")) {
+    return 0;
+  }
+  if (pathname.startsWith("/project/new")) return 2;
+  if (pathname.startsWith("/onboarding/team") || pathname.startsWith("/onboarding/invite")) {
+    return 4;
+  }
+  if (pathname.startsWith("/onboarding/complete")) return 5;
+  return -1;
+}
 
 export function DxStepper() {
   const pathname = usePathname();
-  const currentIndex = steps.findIndex((s) => pathname.startsWith(s.href));
+  const currentIndex = currentStepIndex(pathname);
 
   return (
-    <nav aria-label="Onboarding progress" className="hidden items-center md:flex">
+    <nav aria-label="Sponsor gateway progress" className="hidden items-center md:flex">
       {steps.map((step, i) => {
-        const active = i === currentIndex;
-        const done = currentIndex > i;
+        const done = currentIndex > i || currentIndex === 5;
+        const active =
+          i === currentIndex ||
+          (currentIndex >= 1 && currentIndex <= 3 && i >= 1 && i <= 3 && i === 1);
+
         return (
-          <span key={step.href} className="flex items-center">
+          <span key={step.label} className="flex items-center">
             <Link
               href={step.href}
-              className={`flex items-center gap-1.5 px-4 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.1em] ${
+              className={`flex items-center gap-1.5 px-3 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.1em] ${
                 active ? "text-[#1C4A2E]" : done ? "text-[#6B6B64]" : "text-[#A8A89E]"
               }`}
             >

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { upsertGatewaySession } from "@/services/gatewayOnboarding";
 
 export type RoleState = { ok: boolean; error?: string };
 
@@ -29,5 +30,11 @@ export async function setRoleAction(
 
   if (error) return { ok: false, error: error.message };
 
-  redirect("/onboarding/invite");
+  try {
+    await upsertGatewaySession({ step: "project" });
+  } catch {
+    /* optional until migration applied */
+  }
+
+  redirect("/project/new");
 }
