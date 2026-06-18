@@ -3,30 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
+import { projectHref, projectNavSections, type ProjectNavSection } from "@/config/project-nav";
 
-type NavItem = { label: string; href: string };
-
-type NavSection = {
-  label: string;
-  items: NavItem[];
-};
-
-function isActive(pathname: string, href: string) {
+function isActive(pathname: string, projectId: string, segment: string) {
+  const href = projectHref(projectId, segment);
   if (pathname === href) return true;
-  if (href.endsWith("/tasks") && pathname.startsWith(`${href}/`)) return true;
-  if (href.endsWith("/reports") && pathname.startsWith(`${href}/`)) return true;
-  if (href.includes("/requirements") && pathname.startsWith(href)) return true;
-  if (href.includes("/product") && pathname.startsWith(href)) return true;
-  if (href.includes("/engineering") && pathname.startsWith(href)) return true;
-  if (href.includes("/scrum") && pathname.startsWith(href)) return true;
-  if (href.includes("/qa") && pathname.startsWith(href)) return true;
-  if (href.includes("/delivery") && pathname.startsWith(href)) return true;
-  if (href.includes("/charter") && pathname.startsWith(href)) return true;
-  if (href.includes("/standups") && pathname.startsWith(href)) return true;
-  if (href.includes("/stakeholders") && pathname.startsWith(href)) return true;
-  if (href.includes("/traceability") && pathname.startsWith(href)) return true;
-  if (href.includes("/meetings") && pathname.startsWith(href)) return true;
-  if (href.includes("/workstreams") && pathname.startsWith(href)) return true;
+  if (segment === "tasks" && pathname.startsWith(`${href}/`)) return true;
+  if (segment === "reports" && pathname.startsWith(`${href}/`)) return true;
+  if (segment && pathname.startsWith(`${href}/`)) return true;
   return false;
 }
 
@@ -38,66 +22,7 @@ export function ProjectSidebar({
   projectName: string;
 }) {
   const pathname = usePathname();
-
-  const sections: NavSection[] = [
-    {
-      label: "Business analysis",
-      items: [
-        { label: "Requirements", href: `/project/${projectId}/requirements` },
-        { label: "Charter", href: `/project/${projectId}/charter` },
-      ],
-    },
-    {
-      label: "Product",
-      items: [{ label: "Product workspace", href: `/project/${projectId}/product` }],
-    },
-    {
-      label: "Engineering",
-      items: [{ label: "Engineering workspace", href: `/project/${projectId}/engineering` }],
-    },
-    {
-      label: "Scrum",
-      items: [{ label: "Scrum workspace", href: `/project/${projectId}/scrum` }],
-    },
-    {
-      label: "QA",
-      items: [{ label: "QA workspace", href: `/project/${projectId}/qa` }],
-    },
-    {
-      label: "Delivery PM",
-      items: [{ label: "Delivery workspace", href: `/project/${projectId}/delivery` }],
-    },
-    {
-      label: "Project",
-      items: [{ label: "Overview", href: `/project/${projectId}` }],
-    },
-    {
-      label: "Delivery",
-      items: [
-        { label: "Workstreams", href: `/project/${projectId}/workstreams` },
-        { label: "Tasks", href: `/project/${projectId}/tasks` },
-        { label: "Meetings", href: `/project/${projectId}/meetings` },
-        { label: "Standups", href: `/project/${projectId}/standups` },
-      ],
-    },
-    {
-      label: "Governance",
-      items: [
-        { label: "RAID", href: `/project/${projectId}/raid` },
-        { label: "Decisions", href: `/project/${projectId}/decisions` },
-        { label: "Documents", href: `/project/${projectId}/documents` },
-        { label: "Changes", href: `/project/${projectId}/changes` },
-        { label: "Reports", href: `/project/${projectId}/reports` },
-      ],
-    },
-    {
-      label: "People & trace",
-      items: [
-        { label: "Stakeholders", href: `/project/${projectId}/stakeholders` },
-        { label: "Traceability", href: `/project/${projectId}/traceability` },
-      ],
-    },
-  ];
+  const sections: ProjectNavSection[] = projectNavSections;
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-[#E4E4DC] bg-white p-5 md:flex">
@@ -112,11 +37,12 @@ export function ProjectSidebar({
               {section.label}
             </div>
             {section.items.map((item) => {
-              const active = isActive(pathname, item.href);
+              const href = projectHref(projectId, item.segment);
+              const active = isActive(pathname, projectId, item.segment);
               return (
                 <Link
                   key={item.label}
-                  href={item.href}
+                  href={href}
                   className={`flex items-center rounded-md px-2 py-1.5 transition ${
                     active
                       ? "bg-[#EEF5F1] font-semibold text-[#1C4A2E]"

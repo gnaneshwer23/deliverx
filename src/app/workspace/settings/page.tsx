@@ -9,6 +9,7 @@ import { NotificationSettingsForm } from "@/components/settings/notification-set
 import { PhaseBHealthPanel } from "@/components/settings/phase-b-health-panel";
 import { PhaseCHealthPanel } from "@/components/settings/phase-c-health-panel";
 import { PhaseDHealthPanel } from "@/components/settings/phase-d-health-panel";
+import { PhaseEHealthPanel } from "@/components/settings/phase-e-health-panel";
 import { PhaseFHealthPanel } from "@/components/settings/phase-f-health-panel";
 import { PlatformApiKeysForm } from "@/components/settings/platform-api-keys-form";
 import { PlatformWebhooksForm } from "@/components/settings/platform-webhooks-form";
@@ -127,6 +128,7 @@ export default async function SettingsPage() {
         <PhaseBHealthPanel />
         <PhaseCHealthPanel />
         <PhaseDHealthPanel />
+        <PhaseEHealthPanel />
         <PhaseFHealthPanel />
 
         <section className={`${dxClass.cardPad}`}>
