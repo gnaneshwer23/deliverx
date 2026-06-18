@@ -1,5 +1,6 @@
 import type { EngineerMissionControl } from "@/services/engineerDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
+import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
 
 const buildHealthTone = {
   green: "healthy" as const,
@@ -56,12 +57,5 @@ export function EngineerMissionOverview({ data }: { data: EngineerMissionControl
 }
 
 export function EngineerAiSummary({ summary }: { summary: string }) {
-  return (
-    <div className="rounded-xl border border-[#C6DDD0] bg-[#EEF5F1]/60 p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-[#1C4A2E]">
-        AI engineering copilot
-      </p>
-      <p className="mt-2 text-sm leading-relaxed">&ldquo;{summary}&rdquo;</p>
-    </div>
-  );
+  return <MissionAiSummaryBlock title="AI engineering copilot" summary={summary} />;
 }

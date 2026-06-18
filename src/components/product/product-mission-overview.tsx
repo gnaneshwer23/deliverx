@@ -1,6 +1,8 @@
 import type { ProductMissionControl } from "@/services/pmDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
+import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
+import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ProductMissionOverview({ data }: { data: ProductMissionControl }) {
@@ -57,7 +59,6 @@ export function ProductMissionOverview({ data }: { data: ProductMissionControl }
 export function ProductAiSummary({
   summary,
   differentiation,
-  projectId,
 }: {
   summary: string;
   differentiation: string | null;
@@ -65,15 +66,9 @@ export function ProductAiSummary({
 }) {
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-[#C6DDD0] bg-[#EEF5F1]/60 p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#1C4A2E]">AI CPO summary</p>
-        <p className="mt-2 text-sm leading-relaxed">&ldquo;{summary}&rdquo;</p>
-      </div>
+      <MissionAiSummaryBlock title="AI CPO summary" summary={summary} />
       {differentiation ? (
-        <p className="text-sm text-[#6B6B64]">
-          <span className="font-medium text-[#0D0D0B]">Differentiation: </span>
-          {differentiation}
-        </p>
+        <PanelAiInsight text={differentiation} label="Differentiation" className="mt-0" />
       ) : null}
     </div>
   );
