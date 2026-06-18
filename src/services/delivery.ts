@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { emitTaskCreatedEvent } from "@/services/platformWebhooks";
 
 export type WorkstreamStatus = "planned" | "active" | "completed";
-export type TaskStatus = "todo" | "in_progress" | "blocked" | "done";
+export type TaskStatus = "todo" | "in_progress" | "in_review" | "blocked" | "done";
 export type TaskPriority = "low" | "medium" | "high" | "critical";
 
 export type WorkstreamRow = {
