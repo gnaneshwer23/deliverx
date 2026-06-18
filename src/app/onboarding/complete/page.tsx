@@ -2,7 +2,50 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
+import { getCompletionCopyForDbRole } from "@/config/persona-onboarding";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
+
+function workspaceHref(role: string | null): string {
+  switch (role) {
+    case "product_manager":
+      return "/workspace/product";
+    case "ba":
+      return "/workspace/ba";
+    case "pm":
+      return "/workspace/pm-mission";
+    case "executive":
+      return "/workspace/founder";
+    case "engineer":
+      return "/workspace/engineer";
+    case "scrum_master":
+      return "/workspace/scrum-mission";
+    case "qa":
+      return "/workspace/qa";
+    default:
+      return "/workspace/dashboard";
+  }
+}
+
+function workspaceCta(role: string | null): string {
+  switch (role) {
+    case "product_manager":
+      return "Open Product Mission Control →";
+    case "ba":
+      return "Open BA Mission Control →";
+    case "pm":
+      return "Open PM Mission Control →";
+    case "executive":
+      return "Open Founder Mission Control →";
+    case "engineer":
+      return "Open Engineer Mission Control →";
+    case "scrum_master":
+      return "Open Scrum Mission Control →";
+    case "qa":
+      return "Open QA Mission Control →";
+    default:
+      return "Enter workspace →";
+  }
+}
 
 export default async function CompletePage() {
   const { user, profile, gatewayStep } = await getOnboardingProfile();
@@ -22,66 +65,23 @@ export default async function CompletePage() {
     .single();
 
   const orgName = (orgRow?.organisations as { name?: string } | null)?.name;
-  const isBa = profile.role === "ba";
-  const isProductManager = profile.role === "product_manager";
-  const isPm = profile.role === "pm";
-  const isExecutive = profile.role === "executive";
-  const isEngineer = profile.role === "engineer";
-  const isScrumMaster = profile.role === "scrum_master";
-  const isQa = profile.role === "qa";
+  const completion = getCompletionCopyForDbRole(profile.role);
   const gatewayDone = isSponsorGatewayComplete(profile, gatewayStep);
 
   return (
-    <ObCard step="Sponsor gateway complete" title="Your workspace is ready" className="text-center">
+    <ObCard step={completion.stepLabel} title={completion.title} className="text-center">
       <div className="mx-auto mb-6 flex size-12 items-center justify-center border border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]">
         ✓
       </div>
+      <p className="mb-6 text-sm text-[#6B6B64]">{completion.description}</p>
       <dl className="space-y-3 text-left text-sm">
         <Row label="Organisation" value={orgName ?? "—"} />
         <Row label="Signed in as" value={user?.email ?? "—"} />
-        <Row label="Gateway" value={gatewayDone ? "Complete" : "In progress"} />
-        <Row
-          label="Next step"
-          value={
-            isProductManager
-              ? "Open Product Mission Control"
-              : isBa
-                ? "Open BA Mission Control"
-                : isPm
-                  ? "Open PM Mission Control"
-                  : isExecutive
-                    ? "Open Founder Mission Control"
-                    : isEngineer
-                      ? "Open Engineer Mission Control"
-                      : isScrumMaster
-                        ? "Open Scrum Mission Control"
-                        : isQa
-                          ? "Open QA Mission Control"
-                          : "Open your project workspace"
-          }
-        />
+        <Row label="Onboarding" value={gatewayDone ? completion.gatewayLabel : "In progress"} />
+        <Row label="Next step" value={workspaceCta(profile.role).replace(" →", "")} />
       </dl>
-      <DxButtonLink
-        href={
-          isProductManager
-            ? "/workspace/product"
-            : isBa
-              ? "/workspace/ba"
-              : isPm
-                ? "/workspace/pm-mission"
-                : isExecutive
-                  ? "/workspace/founder"
-                  : isEngineer
-                    ? "/workspace/engineer"
-                    : isScrumMaster
-                      ? "/workspace/scrum-mission"
-                      : isQa
-                        ? "/workspace/qa"
-                        : "/workspace/dashboard"
-        }
-        className="mt-8 w-full"
-      >
-        {isExecutive ? "Open Founder Mission Control →" : "Enter workspace →"}
+      <DxButtonLink href={workspaceHref(profile.role)} className="mt-8 w-full">
+        {workspaceCta(profile.role)}
       </DxButtonLink>
     </ObCard>
   );
