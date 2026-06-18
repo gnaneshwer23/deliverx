@@ -1,5 +1,5 @@
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
-import { dxClass } from "@/lib/dx-theme";
+import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 
 const tierLabel: Record<PmMissionControl["overview"]["healthTier"], string> = {
   healthy: "Green",
@@ -7,53 +7,107 @@ const tierLabel: Record<PmMissionControl["overview"]["healthTier"], string> = {
   "at-risk": "Red",
 };
 
-export function DeliveryPmMissionOverview({ data }: { data: PmMissionControl }) {
-  const { overview } = data;
-  return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-8">
-      <Kpi label="Project health" value={tierLabel[overview.healthTier]} tone={overview.healthTier} />
-      <Kpi label="Timeline" value={`${overview.timelineComplete}%`} hint="complete" />
-      <Kpi label="Budget" value={overview.budgetLabel} />
-      <Kpi label="Critical risks" value={overview.criticalRisks} tone={overview.criticalRisks > 0 ? "watch" : "healthy"} />
-      <Kpi label="Open decisions" value={overview.openDecisions} />
-      <Kpi label="Blocked deps" value={overview.blockedDependencies} />
-      <Kpi label="Benefits" value={`${overview.benefitsDeliveredPct}%`} />
-      <Kpi
-        label="Go-live probability"
-        value={overview.goLiveProbability != null ? `${Math.round(overview.goLiveProbability * 100)}%` : "—"}
-      />
-    </div>
-  );
+function budgetProgressPct(budgetLabel: string): number | undefined {
+  const match = budgetLabel.match(/([\d,.]+)\s*\/\s*([\d,.]+)/);
+  if (!match) return undefined;
+  const spent = Number.parseFloat(match[1].replace(/,/g, ""));
+  const approved = Number.parseFloat(match[2].replace(/,/g, ""));
+  if (!Number.isFinite(spent) || !Number.isFinite(approved) || approved <= 0) return undefined;
+  return Math.round((spent / approved) * 100);
 }
 
-function Kpi({
-  label,
-  value,
-  hint,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  hint?: string;
-  tone?: PmMissionControl["overview"]["healthTier"];
-}) {
-  const color =
-    tone === "healthy"
-      ? "text-[#1A6B3A]"
-      : tone === "at-risk"
-        ? "text-[#C0392B]"
-        : tone === "watch"
-          ? "text-[#B8860B]"
-          : "text-[#0D0D0B]";
+export function DeliveryPmMissionOverview({ data }: { data: PmMissionControl }) {
+  const { overview } = data;
+  const budgetPct = budgetProgressPct(overview.budgetLabel);
+  const goLivePct =
+    overview.goLiveProbability != null ? Math.round(overview.goLiveProbability * 100) : undefined;
 
   return (
-    <div className={`${dxClass.card} p-4`}>
-      <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        {label}
-      </p>
-      <p className={`${dxClass.display} mt-1 text-xl leading-none ${color}`}>{value}</p>
-      {hint ? <p className="mt-1 text-[10px] text-[#A8A89E]">{hint}</p> : null}
-    </div>
+    <MissionKpiGrid layout="wide">
+      <MissionKpiCard
+        label="Project health"
+        value={tierLabel[overview.healthTier]}
+        tone={overview.healthTier}
+        progressPct={overview.healthScore}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Timeline"
+        value={`${overview.timelineComplete}%`}
+        hint="complete"
+        tone={overview.timelineComplete >= 75 ? "healthy" : overview.timelineComplete >= 50 ? "watch" : "at-risk"}
+        progressPct={overview.timelineComplete}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Budget"
+        value={overview.budgetLabel}
+        tone={
+          budgetPct != null && budgetPct > 90
+            ? "watch"
+            : budgetPct != null && budgetPct > 100
+              ? "at-risk"
+              : "default"
+        }
+        progressPct={budgetPct}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Critical risks"
+        value={overview.criticalRisks}
+        tone={overview.criticalRisks > 0 ? "watch" : "healthy"}
+        delta={
+          overview.criticalRisks > 0
+            ? { value: `${overview.criticalRisks} open`, direction: "warn" }
+            : { value: "None", direction: "neutral" }
+        }
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Open decisions"
+        value={overview.openDecisions}
+        tone={overview.openDecisions > 0 ? "watch" : "default"}
+        delta={
+          overview.openDecisions > 0
+            ? { value: `${overview.openDecisions} pending`, direction: "warn" }
+            : undefined
+        }
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Blocked deps"
+        value={overview.blockedDependencies}
+        tone={overview.blockedDependencies > 0 ? "at-risk" : "healthy"}
+        delta={
+          overview.blockedDependencies > 0
+            ? { value: `${overview.blockedDependencies} blocked`, direction: "down" }
+            : undefined
+        }
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Benefits"
+        value={`${overview.benefitsDeliveredPct}%`}
+        tone={overview.benefitsDeliveredPct >= 75 ? "healthy" : overview.benefitsDeliveredPct >= 40 ? "watch" : "default"}
+        progressPct={overview.benefitsDeliveredPct}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Go-live probability"
+        value={goLivePct != null ? `${goLivePct}%` : "—"}
+        tone={
+          goLivePct == null
+            ? "default"
+            : goLivePct >= 75
+              ? "healthy"
+              : goLivePct >= 50
+                ? "watch"
+                : "at-risk"
+        }
+        progressPct={goLivePct}
+        valueSize="xl"
+      />
+    </MissionKpiGrid>
   );
 }
 
