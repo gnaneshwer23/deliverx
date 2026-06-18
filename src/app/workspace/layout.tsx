@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
 import { getOrgAlertCount, getOrgAlertQueue } from "@/services/alerts";
 import { listOrgProjects } from "@/services/delivery";
+import { listPendingArtifactReviews } from "@/services/artifactReviews";
+import { countPendingReviewsByPersonaMap } from "@/lib/approval/persona-reviews";
 
 export default async function WorkspaceLayout({
   children,
@@ -25,7 +27,8 @@ export default async function WorkspaceLayout({
     orgName = org?.name ?? null;
   }
 
-  const [approvalCounts, assistantProjects, alerts, alertCount] = await Promise.all([
+  const [approvalCounts, assistantProjects, alerts, alertCount, pendingArtifactReviews] =
+    await Promise.all([
     getPendingApprovalCounts().catch(() => ({
       proposals: 0,
       artifacts: 0,
@@ -34,7 +37,10 @@ export default async function WorkspaceLayout({
     listOrgProjects().catch(() => []),
     getOrgAlertQueue(8).catch(() => []),
     getOrgAlertCount().catch(() => 0),
+    listPendingArtifactReviews(50).catch(() => []),
   ]);
+
+  const missionBadgeCounts = countPendingReviewsByPersonaMap(pendingArtifactReviews);
 
   return (
     <div className="min-h-screen bg-[#FAFAF5]">
@@ -43,6 +49,7 @@ export default async function WorkspaceLayout({
         orgName={orgName}
         userRole={profile.role}
         pendingApprovals={approvalCounts.total}
+        missionBadgeCounts={missionBadgeCounts}
         assistantProjects={assistantProjects}
         alerts={alerts}
         alertCount={alertCount}

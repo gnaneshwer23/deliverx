@@ -4,6 +4,8 @@ import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { getCompletionCopyForDbRole } from "@/config/persona-onboarding";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
+import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
+import { getOrgActiveBootstrapProject } from "@/services/orgBootstrap";
 
 function workspaceHref(role: string | null): string {
   switch (role) {
@@ -67,9 +69,19 @@ export default async function CompletePage() {
   const orgName = (orgRow?.organisations as { name?: string } | null)?.name;
   const completion = getCompletionCopyForDbRole(profile.role);
   const gatewayDone = isSponsorGatewayComplete(profile, gatewayStep);
+  const bootstrapProject = await getOrgActiveBootstrapProject().catch(() => null);
 
   return (
     <ObCard step={completion.stepLabel} title={completion.title} className="text-center">
+      {bootstrapProject ? (
+        <div className="mb-6 text-left">
+          <ProjectBootstrapPanel
+            projectId={bootstrapProject.id}
+            initialStatus={bootstrapProject.bootstrap_status}
+            summary={bootstrapProject.bootstrap_summary}
+          />
+        </div>
+      ) : null}
       <div className="mx-auto mb-6 flex size-12 items-center justify-center border border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]">
         ✓
       </div>

@@ -8,6 +8,7 @@ import {
   projectFormStepToGatewayStep,
   resolveGatewayRedirect,
   runGatewayOnboardingEngineSmokeTest,
+  simulatePersonaOnboardingPath,
 } from "./gatewayOnboardingEngine";
 
 describe("gatewayOnboardingEngine", () => {
@@ -142,5 +143,11 @@ describe("gatewayOnboardingEngine", () => {
       "qa",
       "founder",
     ]);
+  });
+
+  it("simulates BA persona onboarding without GO gate", () => {
+    const result = simulatePersonaOnboardingPath({ role: "ba" });
+    expect(result.ok).toBe(true);
+    expect(result.missionHref).toBe("/workspace/ba");
   });
 });
