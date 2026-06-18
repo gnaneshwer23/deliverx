@@ -34,7 +34,7 @@ export type CommandCentreHeaderProps = {
   action?: ReactNode;
 };
 
-function DefaultMissionAction({
+export function DefaultMissionAction({
   meta,
   primaryProject,
 }: {

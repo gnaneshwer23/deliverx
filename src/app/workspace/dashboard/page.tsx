@@ -27,7 +27,8 @@ import { QuickActionsBar } from "@/components/dashboard/quick-actions-bar";
 import { DeliveryVelocityChart } from "@/components/dashboard/delivery-velocity-chart";
 import { ProjectHealthGrid } from "@/components/dashboard/project-health-grid";
 import { GovernancePulse } from "@/components/dashboard/governance-pulse";
-import { DashboardSection } from "@/components/dashboard/dashboard-section";
+import { CommandCentreDashboardChrome } from "@/components/dashboard/command-centre-dashboard-chrome";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import { StandupsFeed } from "@/components/dashboard/standups-feed";
 import {
   Table,
@@ -59,10 +60,8 @@ import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-stri
 import { roleToMissionPersona } from "@/lib/mission-nav";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { listPendingProposals } from "@/services/proposedActions";
-import { CommandCentrePersonaHeader } from "@/components/dx/mission-persona-header";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
-import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -280,17 +279,16 @@ export default async function DashboardPage({
   ).catch(() => []);
 
   return (
-    <>
-      <CommandCentrePersonaHeader
-        userRole={data.userRole}
-        userName={data.userName}
-        orgName={data.orgName}
-        titleEm={
+    <CommandCentreDashboardChrome
+      header={{
+        userRole: data.userRole,
+        userName: data.userName,
+        orgName: data.orgName,
+        titleEm:
           data.governance.openRisks + data.delivery.blockedTasks > 0
             ? `${data.governance.openRisks + data.delivery.blockedTasks} signals need attention.`
-            : undefined
-        }
-        action={
+            : undefined,
+        action: (
           <div className="flex items-center gap-2">
             <DxBadge tone="green" dot>
               Operational
@@ -299,8 +297,9 @@ export default async function DashboardPage({
               New project
             </DxButtonLink>
           </div>
-        }
-      />
+        ),
+      }}
+    >
       <div className="p-6 md:p-8">
 
       <div className="mb-6">
@@ -324,46 +323,58 @@ export default async function DashboardPage({
 
       {intelligenceLoop ? (
         <div className="mb-8">
-          <IntelligenceLoopPanel snapshot={intelligenceLoop} />
+          <DashboardPanelShell panelId="intelligence-loop" title="Intelligence loop" card>
+            <IntelligenceLoopPanel snapshot={intelligenceLoop} />
+          </DashboardPanelShell>
         </div>
       ) : null}
 
       {collaborativeLoop ? (
         <div className="mb-8">
-          <DashboardSection title="Stakeholder loop" href="/workspace/pm-mission">
+          <DashboardPanelShell
+            panelId="stakeholder-loop"
+            title="Stakeholder loop"
+            href="/workspace/pm-mission"
+            card
+          >
             <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-          </DashboardSection>
+          </DashboardPanelShell>
         </div>
       ) : null}
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <DashboardSection title="AI alert queue" href="/workspace/alerts">
+        <DashboardPanelShell panelId="alert-queue" title="AI alert queue" href="/workspace/alerts" card>
           <AlertQueuePanel alerts={alerts} />
-        </DashboardSection>
-        <DashboardSection title="Delivery coach" href="/workspace/alerts">
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="delivery-coach" title="Delivery coach" href="/workspace/alerts" card>
           <DeliveryCoachPanel suggestions={coach} />
-        </DashboardSection>
+        </DashboardPanelShell>
       </div>
 
       <div className="mb-8">
-        <DashboardSection title="Delivery forecasts" href="/workspace/pmo">
+        <DashboardPanelShell panelId="delivery-forecasts" title="Delivery forecasts" href="/workspace/pmo" card>
           <DeliveryForecastStrip entries={forecastRollup} />
-        </DashboardSection>
+        </DashboardPanelShell>
       </div>
 
       {approvalCounts.total > 0 ? (
         <div className="mb-8">
-          <DashboardSection title="AI output review" href="/workspace/proposals">
+          <DashboardPanelShell panelId="ai-output-review" title="AI output review" href="/workspace/proposals" card>
             <ApprovalCentrePanel
               artifactReviews={pendingArtifactReviews}
               proposals={pendingProposals}
             />
-          </DashboardSection>
+          </DashboardPanelShell>
         </div>
       ) : null}
 
       <div className="mb-8">
-        <DashboardSection title="Command Centre intelligence" href="/workspace/proposals">
+        <DashboardPanelShell
+          panelId="command-centre-intelligence"
+          title="Command Centre intelligence"
+          href="/workspace/proposals"
+          card
+        >
           <Suspense fallback={<p className="text-sm text-[#6B6B64]">Loading feed…</p>}>
             <CommandCentreImpactFeed
               events={impactEvents}
@@ -373,11 +384,16 @@ export default async function DashboardPage({
               projects={feedProjects}
             />
           </Suspense>
-        </DashboardSection>
+        </DashboardPanelShell>
       </div>
 
       <div className="mb-8">
-        <DashboardSection title="Agent orchestration" href="/workspace/coordination">
+        <DashboardPanelShell
+          panelId="agent-orchestration"
+          title="Agent orchestration"
+          href="/workspace/coordination"
+          card
+        >
           <div className="mb-4">
             <RunLoopButton
               postUrl="/api/agents/sweep"
@@ -386,24 +402,30 @@ export default async function DashboardPage({
             />
           </div>
           <CommandCentreAgentFeed events={agentEvents} />
-        </DashboardSection>
+        </DashboardPanelShell>
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <DashboardSection title="Delivery velocity" className="xl:col-span-2">
+        <DashboardPanelShell panelId="delivery-velocity" title="Delivery velocity" className="xl:col-span-2" card>
           <DeliveryVelocityChart weeks={data.weeklyVelocity} />
-        </DashboardSection>
-        <DashboardSection title="Governance pulse" href="/workspace/governance">
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="governance-pulse" title="Governance pulse" href="/workspace/governance" card>
           <GovernancePulse stats={data.governance} />
-        </DashboardSection>
+        </DashboardPanelShell>
       </div>
 
-      <DashboardSection title="Project health" href="/workspace/projects" className="mb-8">
+      <DashboardPanelShell
+        panelId="project-health"
+        title="Project health"
+        href="/workspace/projects"
+        className="mb-8"
+        card
+      >
         <ProjectHealthGrid projects={data.projectHealth} />
-      </DashboardSection>
+      </DashboardPanelShell>
 
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <DashboardSection title="Active tasks" href="/workspace/tasks" className="xl:col-span-2">
+        <DashboardPanelShell panelId="active-tasks" title="Active tasks" href="/workspace/tasks" className="xl:col-span-2" card>
           {activeTaskRows.length === 0 ? (
             <p className="text-sm text-[#6b7280]">
               No open tasks.{" "}
@@ -446,9 +468,9 @@ export default async function DashboardPage({
               </Table>
             </div>
           )}
-        </DashboardSection>
+        </DashboardPanelShell>
 
-        <DashboardSection title="Risk register" href="/workspace/raid">
+        <DashboardPanelShell panelId="risk-register" title="Risk register" href="/workspace/raid" card>
           {data.openRisks.length === 0 ? (
             <p className="text-sm text-slate-500">No open risks logged.</p>
           ) : (
@@ -469,9 +491,9 @@ export default async function DashboardPage({
               ))}
             </div>
           )}
-        </DashboardSection>
+        </DashboardPanelShell>
 
-        <DashboardSection title="Recent meetings" href="/workspace/meetings">
+        <DashboardPanelShell panelId="recent-meetings" title="Recent meetings" href="/workspace/meetings" card>
           {data.recentMeetings.length === 0 ? (
             <p className="text-sm text-slate-500">
               No meetings yet. Log one from a project&apos;s Meetings page.
@@ -497,9 +519,9 @@ export default async function DashboardPage({
               ))}
             </ul>
           )}
-        </DashboardSection>
+        </DashboardPanelShell>
 
-        <DashboardSection title="Pending decisions" href="/workspace/decisions">
+        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" href="/workspace/decisions" card>
           {data.pendingDecisions.length === 0 ? (
             <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
           ) : (
@@ -517,13 +539,13 @@ export default async function DashboardPage({
               ))}
             </ul>
           )}
-        </DashboardSection>
+        </DashboardPanelShell>
 
-        <DashboardSection title="Standups this week" href="/workspace/meetings">
+        <DashboardPanelShell panelId="standups" title="Standups this week" href="/workspace/meetings" card>
           <StandupsFeed standups={data.recentStandups} />
-        </DashboardSection>
+        </DashboardPanelShell>
 
-        <DashboardSection title="Latest reports" href="/workspace/reports">
+        <DashboardPanelShell panelId="latest-reports" title="Latest reports" href="/workspace/reports" card>
           {data.recentReports.length === 0 ? (
             <p className="text-sm text-slate-500">No status reports generated yet.</p>
           ) : (
@@ -543,11 +565,17 @@ export default async function DashboardPage({
               ))}
             </ul>
           )}
-        </DashboardSection>
+        </DashboardPanelShell>
       </div>
 
       {atRiskProjects.length > 0 ? (
-        <DashboardSection title="Governance by project" href="/workspace/governance" className="mb-8">
+        <DashboardPanelShell
+          panelId="governance-by-project"
+          title="Governance by project"
+          href="/workspace/governance"
+          className="mb-8"
+          card
+        >
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -577,7 +605,7 @@ export default async function DashboardPage({
               </TableBody>
             </Table>
           </div>
-        </DashboardSection>
+        </DashboardPanelShell>
       ) : null}
 
       {topProject && topAlignment ? (
@@ -602,9 +630,8 @@ export default async function DashboardPage({
         recommendation={recommendation}
       />
 
-      <section className={`${dxClass.cardPad} mt-8`}>
+      <DashboardPanelShell panelId="recent-projects" title="Recent projects" className="mt-8" card>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className={`${dxClass.display} text-xl`}>Recent projects</h2>
           <Link
             href="/workspace/projects"
             className="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#4b5563] hover:text-[#0a0e14]"
@@ -661,8 +688,8 @@ export default async function DashboardPage({
             </Link>
           </div>
         )}
-      </section>
+      </DashboardPanelShell>
       </div>
-    </>
+    </CommandCentreDashboardChrome>
   );
 }

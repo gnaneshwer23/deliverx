@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getEngineerMissionControl } from "@/services/engineerDashboard";
-import { MissionPersonaHeader } from "@/components/dx/mission-persona-header";
+import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import {
   EngineerAiSummary,
   EngineerMissionOverview,
@@ -27,7 +28,6 @@ import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
-import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -58,12 +58,13 @@ export default async function EngineerMissionControlPage({
   ]);
 
   return (
-    <>
-      <MissionPersonaHeader
-        personaId="engineer"
-        userName={data.userName}
-        primaryProject={data.primaryProject}
-      />
+    <MissionDashboardChrome
+      personaId="engineer"
+      header={{
+        userName: data.userName,
+        primaryProject: data.primaryProject,
+      }}
+    >
       <div className="space-y-6 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
         <PendingReviewsStrip
@@ -98,40 +99,67 @@ export default async function EngineerMissionControlPage({
         <EngineerAiSummary summary={data.aiSummary} />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <EngineerGuidedTasks tasks={data.guidedTasks} />
-          <EngineerDependenciesPanel
-            dependencies={data.dependencies}
-            insight={data.dependencyInsight}
-          />
+          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
+            <EngineerGuidedTasks tasks={data.guidedTasks} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="dependencies" title="Dependencies">
+            <EngineerDependenciesPanel
+              dependencies={data.dependencies}
+              insight={data.dependencyInsight}
+            />
+          </DashboardPanelShell>
         </div>
 
-        <EngineerTraceabilityPanel rows={data.traceability} />
+        <DashboardPanelShell panelId="traceability" title="Traceability">
+          <EngineerTraceabilityPanel rows={data.traceability} />
+        </DashboardPanelShell>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <EngineerArchitecturePanel nodes={data.architecture} usesFallback={data.dataSources.architecture === "fallback"} />
-          <EngineerCicdPanel cicd={data.cicd} />
+          <DashboardPanelShell panelId="architecture" title="Architecture">
+            <EngineerArchitecturePanel
+              nodes={data.architecture}
+              usesFallback={data.dataSources.architecture === "fallback"}
+            />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="cicd" title="CI/CD">
+            <EngineerCicdPanel cicd={data.cicd} />
+          </DashboardPanelShell>
         </div>
 
         {data.primaryProject ? (
-          <GitHubActivityPanel
-            projectId={data.primaryProject.id}
-            configured={data.github.configured}
-            lastSyncAt={data.github.lastSyncAt}
-            openPullRequests={data.github.openPullRequests}
-          />
+          <DashboardPanelShell panelId="github-activity" title="GitHub activity">
+            <GitHubActivityPanel
+              projectId={data.primaryProject.id}
+              configured={data.github.configured}
+              lastSyncAt={data.github.lastSyncAt}
+              openPullRequests={data.github.openPullRequests}
+            />
+          </DashboardPanelShell>
         ) : null}
 
-        <EngineerApiContractsPanel contracts={data.apiContracts} />
+        <DashboardPanelShell panelId="api-contracts" title="API contracts">
+          <EngineerApiContractsPanel contracts={data.apiContracts} />
+        </DashboardPanelShell>
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <EngineerPrPanel pr={data.prDashboard} />
-          <EngineerDebtPanel debt={data.technicalDebt} />
+          <DashboardPanelShell panelId="pull-requests" title="Pull requests">
+            <EngineerPrPanel pr={data.prDashboard} />
+          </DashboardPanelShell>
+          <DashboardPanelShell panelId="technical-debt" title="Technical debt">
+            <EngineerDebtPanel debt={data.technicalDebt} />
+          </DashboardPanelShell>
         </div>
 
-        <EngineerStakeholdersPanel rows={data.stakeholders} />
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        <EngineerCrossRolePanel impacts={data.crossRoleImpact} />
+        <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
+          <EngineerStakeholdersPanel rows={data.stakeholders} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
+          <EngineerCrossRolePanel impacts={data.crossRoleImpact} />
+        </DashboardPanelShell>
       </div>
-    </>
+    </MissionDashboardChrome>
   );
 }
