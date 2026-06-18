@@ -44,7 +44,10 @@ import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel"
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
 import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
+import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
+import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
+import { listAgentActivityFeed } from "@/services/agentOrchestration";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { listPendingProposals } from "@/services/proposedActions";
@@ -136,12 +139,13 @@ export default async function DashboardPage() {
     }
   }
 
-  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents] =
+  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents] =
     await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
     getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
     listOrgImpactEvents(8).catch(() => []),
+    listAgentActivityFeed(12).catch(() => []),
   ]);
 
   const kpis = [
@@ -318,6 +322,19 @@ export default async function DashboardPage() {
           </DashboardSection>
         </div>
       ) : null}
+
+      <div className="mb-8">
+        <DashboardSection title="Agent orchestration" href="/workspace/coordination">
+          <div className="mb-4">
+            <RunLoopButton
+              postUrl="/api/agents/sweep"
+              label="Run agent sweep"
+              successMessage="Agent sweep complete — refreshing…"
+            />
+          </div>
+          <CommandCentreAgentFeed events={agentEvents} />
+        </DashboardSection>
+      </div>
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <DashboardSection title="Delivery velocity" className="xl:col-span-2">
