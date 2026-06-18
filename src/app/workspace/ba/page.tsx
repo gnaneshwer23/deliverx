@@ -71,7 +71,12 @@ export default async function BaMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
-        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["ba"]} />
+        <PendingReviewsStrip
+          reviews={pendingReviews}
+          personaLabel={PERSONA_REVIEW_LABELS["ba"]}
+          persona="ba"
+          inlineActions
+        />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <ProjectPicker projects={data.projects} currentId={data.primaryProject.id} />

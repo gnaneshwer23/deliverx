@@ -88,7 +88,12 @@ export default async function ScrumMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
-        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["scrum"]} />
+        <PendingReviewsStrip
+          reviews={pendingReviews}
+          personaLabel={PERSONA_REVIEW_LABELS["scrum"]}
+          persona="scrum"
+          inlineActions
+        />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

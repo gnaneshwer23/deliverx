@@ -94,7 +94,12 @@ export default async function PmMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
-        <PendingReviewsStrip reviews={pendingReviews} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
+        <PendingReviewsStrip
+          reviews={pendingReviews}
+          personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]}
+          persona="pm-mission"
+          inlineActions
+        />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

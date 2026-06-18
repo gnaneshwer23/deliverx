@@ -62,7 +62,8 @@ export const workspaceDeliveryNav: WorkspaceNavItem[] = [
 
 export const workspaceIntelligenceNav: WorkspaceNavItem[] = [
   { href: "/workspace/alerts", label: "Alert Queue", icon: Brain, id: "alert" },
-  { href: "/workspace/proposals", label: "Approval centre", icon: ShieldCheck, id: "prop" },
+  { href: "/workspace/proposals", label: "AI output review", icon: ShieldCheck, id: "prop" },
+  { href: "/workspace/audit", label: "Responses audit", icon: Shield, id: "audit" },
   { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
   { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
   { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  countPendingReviewsByPersona,
   filterPendingReviewsForPersona,
   PERSONA_ARTIFACT_ENTITY_TYPES,
 } from "./persona-reviews";
@@ -64,5 +65,15 @@ describe("filterPendingReviewsForPersona", () => {
     ] as const) {
       expect(PERSONA_ARTIFACT_ENTITY_TYPES[persona].length).toBeGreaterThan(0);
     }
+  });
+
+  it("counts pending reviews per persona", () => {
+    const reviews = [
+      mockReview("requirement", "r1"),
+      mockReview("task", "r2"),
+      mockReview("estimation", "r3"),
+    ];
+    expect(countPendingReviewsByPersona(reviews, "engineer")).toBe(2);
+    expect(countPendingReviewsByPersona(reviews, "ba")).toBe(1);
   });
 });
