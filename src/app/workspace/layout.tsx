@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/dx/app-shell";
+import { DeliveryImpactLiveRefresh } from "@/components/intelligence/delivery-impact-live-refresh";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
@@ -45,9 +46,11 @@ export default async function WorkspaceLayout({
         alerts={alerts}
         alertCount={alertCount}
       >
-        <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
-          {children}
-        </main>
+        <DeliveryImpactLiveRefresh>
+          <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
+            {children}
+          </main>
+        </DeliveryImpactLiveRefresh>
       </AppShell>
     </div>
   );
