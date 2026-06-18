@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { throwIfMissingTable } from "@/lib/db-errors";
 import { getTwinStateForOrg } from "./twin";
+import { emitPlatformEvent, listPlatformWebhookDeliveries } from "./platformWebhooks";
 
 export const DEFAULT_PLATFORM_SCOPES = [
   "read:projects",
@@ -10,6 +11,8 @@ export const DEFAULT_PLATFORM_SCOPES = [
   "read:twin",
   "read:agents",
   "read:learning",
+  "read:webhooks",
+  "write:tasks",
 ] as const;
 
 export type OrgApiKeyRow = {
@@ -261,4 +264,69 @@ export async function getPlatformLearningSummary(orgId: string) {
     proposalQualityAverage: averageScore,
     proposalSampleCount: scores.length,
   };
+}
+
+export async function createPlatformTask(
+  orgId: string,
+  input: {
+    projectId: string;
+    title: string;
+    description?: string;
+    priority?: "low" | "medium" | "high" | "critical";
+  },
+) {
+  const admin = createAdminClient();
+  const title = input.title.trim();
+  if (!title) throw new Error("title is required");
+
+  const { data: project, error: projectError } = await admin
+    .from("projects")
+    .select("id, name")
+    .eq("id", input.projectId)
+    .eq("organisation_id", orgId)
+    .maybeSingle();
+
+  if (projectError) throw projectError;
+  if (!project) throw new Error("Project not found");
+
+  const { data, error } = await admin
+    .from("tasks")
+    .insert({
+      organisation_id: orgId,
+      project_id: input.projectId,
+      title,
+      description: input.description?.trim() || null,
+      status: "todo",
+      priority: input.priority ?? "medium",
+    })
+    .select("id, project_id, title, description, status, priority, created_at")
+    .single();
+
+  if (error) throw error;
+
+  const task = {
+    id: String(data.id),
+    projectId: String(data.project_id),
+    projectName: String(project.name),
+    title: String(data.title),
+    description: data.description ? String(data.description) : null,
+    status: String(data.status),
+    priority: String(data.priority),
+    createdAt: String(data.created_at),
+  };
+
+  void emitPlatformEvent(orgId, "task.created", {
+    taskId: task.id,
+    projectId: task.projectId,
+    projectName: task.projectName,
+    title: task.title,
+    priority: task.priority,
+    source: "platform_api",
+  }).catch(() => undefined);
+
+  return task;
+}
+
+export async function getPlatformWebhookDeliveries(orgId: string, limit = 20) {
+  return listPlatformWebhookDeliveries(orgId, limit);
 }
