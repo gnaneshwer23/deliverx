@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   mergeImpactIntoCrossRole,
   proposalApplyToImpactEvents,
+  tonesForImpactSeverity,
 } from "@/services/deliveryImpactEngine";
 
 describe("deliveryImpactEngine", () => {
@@ -50,5 +51,11 @@ describe("deliveryImpactEngine", () => {
     expect(pm?.message).toContain("Deploy hotfix");
     expect(eng?.message).toContain("Deploy hotfix");
     expect(pm?.tone).toBe("updated");
+  });
+
+  it("maps impact tones to feed severity filters", () => {
+    expect(tonesForImpactSeverity("high")).toEqual(["blocked"]);
+    expect(tonesForImpactSeverity("medium")).toEqual(["waiting", "pending"]);
+    expect(tonesForImpactSeverity("all")).toBeNull();
   });
 });

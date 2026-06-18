@@ -14,7 +14,7 @@ export default async function ProposalsPage() {
   const [proposals, artifactReviews, impactEvents] = await Promise.all([
     listPendingProposals(50),
     listPendingArtifactReviews(50),
-    listOrgImpactEvents(10).catch(() => []),
+    listOrgImpactEvents({ limit: 10 }).catch(() => []),
   ]);
 
   const totalPending = proposals.length + artifactReviews.length;

@@ -10,9 +10,11 @@ import { syncProjectMemory } from "./projectMemoryRag";
 import { notifyProposalApplied } from "./notificationService";
 import {
   proposalApplyToImpactEvents,
+  tonesForImpactSeverity,
   type DeliveryImpactEventDraft,
   type DeliveryImpactRole,
   type DeliveryImpactTone,
+  type ImpactFeedSeverity,
 } from "./deliveryImpactEngine";
 
 export type DeliveryImpactEventRow = {
@@ -196,13 +198,34 @@ export async function listRecentImpactEventsByRole(
   return deduped;
 }
 
-export async function listOrgImpactEvents(limit = 12): Promise<DeliveryImpactEventRow[]> {
+export async function listOrgImpactEvents(
+  opts: {
+    limit?: number;
+    severity?: ImpactFeedSeverity;
+    targetRole?: DeliveryImpactRole;
+    projectId?: string;
+  } = {},
+): Promise<DeliveryImpactEventRow[]> {
+  const limit = opts.limit ?? 12;
   const { supabase } = await getOrgContext();
-  const { data, error } = await supabase
+  let q = supabase
     .from("delivery_impact_events")
     .select("*, projects!inner(name)")
     .order("created_at", { ascending: false })
     .limit(limit);
+
+  if (opts.projectId) {
+    q = q.eq("project_id", opts.projectId);
+  }
+  if (opts.targetRole) {
+    q = q.eq("target_role", opts.targetRole);
+  }
+  const toneFilter = opts.severity ? tonesForImpactSeverity(opts.severity) : null;
+  if (toneFilter?.length) {
+    q = q.in("tone", toneFilter);
+  }
+
+  const { data, error } = await q;
 
   if (error) {
     if (error.code === "42P01") return [];

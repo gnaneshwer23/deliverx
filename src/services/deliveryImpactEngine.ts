@@ -23,6 +23,21 @@ export type DeliveryImpactTone =
   | "updated"
   | "pending";
 
+/** Command Centre feed severity filter (prototype parity). */
+export type ImpactFeedSeverity = "all" | "high" | "medium";
+
+export function tonesForImpactSeverity(severity: ImpactFeedSeverity): DeliveryImpactTone[] | null {
+  if (severity === "all") return null;
+  if (severity === "high") return ["blocked"];
+  return ["waiting", "pending"];
+}
+
+export function impactToneToSeverity(tone: DeliveryImpactTone): ImpactFeedSeverity {
+  if (tone === "blocked") return "high";
+  if (tone === "waiting" || tone === "pending") return "medium";
+  return "all";
+}
+
 export type DeliveryImpactEventDraft = {
   targetRole: DeliveryImpactRole;
   message: string;
