@@ -179,6 +179,13 @@ export default async function DashboardPage({
     getCollaborativeLoopSnapshot("pm", feedProject ?? topProject?.id).catch(() => null),
   ]);
 
+  const velocityTrend =
+    data.weeklyVelocity.length >= 2
+      ? data.weeklyVelocity[data.weeklyVelocity.length - 1].completed -
+        data.weeklyVelocity[data.weeklyVelocity.length - 2].completed
+      : null;
+  const alignmentDelta = topAlignment?.latest?.delta ?? null;
+
   const kpis = [
     {
       label: "Active projects",
@@ -201,6 +208,19 @@ export default async function DashboardPage({
                 : data.portfolioHealth >= 60
                   ? ("amber" as const)
                   : ("rose" as const),
+            progressPct: data.portfolioHealth,
+            delta:
+              alignmentDelta != null
+                ? {
+                    value: `${alignmentDelta > 0 ? "+" : ""}${alignmentDelta}%`,
+                    direction:
+                      alignmentDelta > 0
+                        ? ("up" as const)
+                        : alignmentDelta < 0
+                          ? ("down" as const)
+                          : ("neutral" as const),
+                  }
+                : undefined,
           },
         ]
       : []),
@@ -218,6 +238,7 @@ export default async function DashboardPage({
                 : successScoreValue >= 55
                   ? ("amber" as const)
                   : ("rose" as const),
+            progressPct: successScoreValue,
           },
         ]
       : []),
@@ -227,6 +248,14 @@ export default async function DashboardPage({
       href: "/workspace/tasks",
       icon: CheckSquare,
       accent: "teal" as const,
+      delta:
+        velocityTrend != null
+          ? {
+              value: `${velocityTrend > 0 ? "+" : ""}${velocityTrend} vs last wk`,
+              direction:
+                velocityTrend > 0 ? ("up" as const) : velocityTrend < 0 ? ("down" as const) : ("neutral" as const),
+            }
+          : undefined,
     },
     {
       label: "Overdue",
@@ -234,6 +263,10 @@ export default async function DashboardPage({
       href: "/workspace/tasks",
       icon: Clock,
       accent: data.delivery.overdueTasks > 0 ? ("amber" as const) : ("slate" as const),
+      delta:
+        data.delivery.overdueTasks > 0
+          ? { value: "Needs attention", direction: "warn" as const }
+          : { value: "On track", direction: "neutral" as const },
     },
     {
       label: "Blocked",
@@ -241,6 +274,10 @@ export default async function DashboardPage({
       href: "/workspace/tasks",
       icon: Ban,
       accent: data.delivery.blockedTasks > 0 ? ("rose" as const) : ("slate" as const),
+      delta:
+        data.delivery.blockedTasks > 0
+          ? { value: `${data.delivery.blockedTasks} blocked`, direction: "down" as const }
+          : undefined,
     },
     {
       label: "Open risks",
@@ -248,6 +285,10 @@ export default async function DashboardPage({
       href: "/workspace/raid",
       icon: AlertTriangle,
       accent: data.governance.openRisks > 0 ? ("rose" as const) : ("slate" as const),
+      delta:
+        data.governance.openRisks > 0
+          ? { value: `${data.governance.openRisks} open`, direction: "warn" as const }
+          : undefined,
     },
     {
       label: "Pending decisions",
@@ -255,6 +296,10 @@ export default async function DashboardPage({
       href: "/workspace/decisions",
       icon: ShieldAlert,
       accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
+      delta:
+        data.governance.pendingDecisions > 0
+          ? { value: `${data.governance.pendingDecisions} pending`, direction: "warn" as const }
+          : undefined,
     },
     {
       label: "Pending approvals",
@@ -266,6 +311,10 @@ export default async function DashboardPage({
       href: "/workspace/proposals",
       icon: CalendarClock,
       accent: approvalCounts.total > 0 ? ("amber" as const) : ("slate" as const),
+      delta:
+        approvalCounts.total > 0
+          ? { value: `${approvalCounts.total} awaiting`, direction: "warn" as const }
+          : undefined,
     },
     {
       label: "Standups (7d)",
@@ -273,6 +322,7 @@ export default async function DashboardPage({
       href: "/workspace/meetings",
       icon: Users,
       accent: "teal" as const,
+      progressPct: Math.min(100, Math.round((data.delivery.standupsThisWeek / 5) * 100)),
     },
   ];
 

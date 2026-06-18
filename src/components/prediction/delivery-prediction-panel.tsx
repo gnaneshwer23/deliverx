@@ -44,6 +44,7 @@ export function predictionToKpiItems(prediction: DeliveryPrediction): KpiItem[] 
           : "Generate estimation packs",
       accent: "teal",
       icon: Gauge,
+      progressPct: prediction.effortConfidence ?? undefined,
     },
   ];
 }
