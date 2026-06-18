@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDeliveryEvalMetrics } from "@/services/intelligenceMetrics";
 import { getContinuousLearningSnapshot } from "@/services/continuousLearning";
+import { getIntelligenceLoopSnapshot } from "@/services/intelligenceLoop";
+import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
 import { IntelligenceMetricsPanel } from "@/components/intelligence/intelligence-metrics-panel";
 import { ContinuousLearningPanel } from "@/components/intelligence/continuous-learning-panel";
 import { DeliveryNarratorPanel } from "@/components/intelligence/delivery-narrator-panel";
@@ -11,9 +13,10 @@ import { dxClass } from "@/lib/dx-theme";
 export const dynamic = "force-dynamic";
 
 export default async function IntelligencePage() {
-  const [metrics, learning, topProject] = await Promise.all([
+  const [metrics, learning, loop, topProject] = await Promise.all([
     getDeliveryEvalMetrics().catch(() => null),
     getContinuousLearningSnapshot().catch(() => null),
+    getIntelligenceLoopSnapshot().catch(() => null),
     loadTopProject(),
   ]);
 
@@ -34,6 +37,8 @@ export default async function IntelligencePage() {
           Narrator briefings, sponsor Q&amp;A, forecast evaluation, and training data
           export — the learning loop for autonomous delivery intelligence.
         </p>
+
+        {loop ? <IntelligenceLoopPanel snapshot={loop} /> : null}
 
         {metrics ? <IntelligenceMetricsPanel metrics={metrics} /> : null}
 

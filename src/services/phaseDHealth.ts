@@ -5,6 +5,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { categorizeLesson, scoreProposalQuality } from "./continuousLearningEngine";
 import { runAgentOrchestration } from "./agentOrchestrationEngine";
+import { runIntelligenceLoopSmokeTest } from "./intelligenceLoopEngine";
 import type { ProjectOrchestrationContext } from "./agentOrchestrationEngine";
 import type { ProjectSignals } from "./intelligenceEngine";
 
@@ -117,6 +118,14 @@ export function runPhaseDSmokeTests(): PhaseDSmokeCheck[] {
     sprint: "D2",
     ok: orchestration.humanReviewRequired === true,
     detail: "humanReviewRequired enforced",
+  });
+
+  const loop = runIntelligenceLoopSmokeTest();
+  checks.push({
+    feature: "Closed-loop intelligence",
+    sprint: "E1",
+    ok: loop.ok,
+    detail: `loop score ${loop.loopScore}, ${loop.stageCount} stages`,
   });
 
   return checks;

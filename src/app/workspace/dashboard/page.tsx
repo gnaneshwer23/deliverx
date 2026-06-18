@@ -45,9 +45,11 @@ import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
 import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
 import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
+import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
 import { listAgentActivityFeed } from "@/services/agentOrchestration";
+import { getIntelligenceLoopSnapshot } from "@/services/intelligenceLoop";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { listPendingProposals } from "@/services/proposedActions";
@@ -139,13 +141,14 @@ export default async function DashboardPage() {
     }
   }
 
-  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents] =
+  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop] =
     await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
     getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
     listOrgImpactEvents(8).catch(() => []),
     listAgentActivityFeed(12).catch(() => []),
+    getIntelligenceLoopSnapshot().catch(() => null),
   ]);
 
   const kpis = [
@@ -288,6 +291,12 @@ export default async function DashboardPage() {
       <div className="mb-8">
         <KpiStrip items={kpis} />
       </div>
+
+      {intelligenceLoop ? (
+        <div className="mb-8">
+          <IntelligenceLoopPanel snapshot={intelligenceLoop} />
+        </div>
+      ) : null}
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-2">
         <DashboardSection title="AI alert queue" href="/workspace/alerts">
