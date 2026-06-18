@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import {
-  AlertTriangle,
   ArrowUpRight,
   Ban,
   CalendarClock,
@@ -9,7 +8,6 @@ import {
   Clock,
   Layers,
   Scale,
-  ShieldAlert,
   Users,
 } from "lucide-react";
 import {
@@ -241,28 +239,6 @@ export default async function DashboardPage({
       delta:
         data.delivery.blockedTasks > 0
           ? { value: `${data.delivery.blockedTasks} blocked`, direction: "down" as const }
-          : undefined,
-    },
-    {
-      label: "Open risks",
-      value: data.governance.openRisks,
-      href: "/workspace/raid",
-      icon: AlertTriangle,
-      accent: data.governance.openRisks > 0 ? ("rose" as const) : ("slate" as const),
-      delta:
-        data.governance.openRisks > 0
-          ? { value: `${data.governance.openRisks} open`, direction: "warn" as const }
-          : undefined,
-    },
-    {
-      label: "Pending decisions",
-      value: data.governance.pendingDecisions,
-      href: "/workspace/decisions",
-      icon: ShieldAlert,
-      accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
-      delta:
-        data.governance.pendingDecisions > 0
-          ? { value: `${data.governance.pendingDecisions} pending`, direction: "warn" as const }
           : undefined,
     },
     {

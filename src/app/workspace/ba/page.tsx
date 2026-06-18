@@ -18,7 +18,6 @@ import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
-import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -98,18 +97,13 @@ export default async function BaMissionControlPage({
           projectId={data.primaryProject?.id}
         />
 
-        <section className={`${dxClass.card} p-6`}>
-          <h3 className={`${dxClass.display} mb-2 text-lg`}>Success metrics (goal)</h3>
-          <p className="text-sm text-[#6B6B64]">
-            Reduce requirement ambiguity by 80% and improve delivery success by 30% — track
-            approval rate, clarification time, story quality, traceability coverage, and
-            delivery readiness on the{" "}
-            <Link href="/workspace/intelligence" className="text-[#1C4A2E] underline">
-              learning dashboard
-            </Link>
-            .
-          </p>
-        </section>
+        <p className="text-xs text-[#6B6B64]">
+          Success metrics on the{" "}
+          <Link href="/workspace/intelligence" className="text-[#1C4A2E] underline">
+            learning dashboard
+          </Link>
+          .
+        </p>
       </div>
     </>
   );

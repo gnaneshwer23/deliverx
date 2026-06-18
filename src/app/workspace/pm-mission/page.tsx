@@ -77,7 +77,7 @@ export default async function PmMissionControlPage({
       <div className="space-y-6 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
         {data.dataSources.deliveryPlan === "fallback" ? (
-          <MockDataBanner message="Milestones, budget, and timeline panels use illustrative defaults until you connect a project charter or run AI delivery analysis." />
+          <MockDataBanner message="Milestones, budget, and timeline are illustrative until you upload a project charter." />
         ) : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
