@@ -1,6 +1,16 @@
 import { createHash, randomBytes } from "crypto";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { throwIfMissingTable } from "@/lib/db-errors";
+import { getTwinStateForOrg } from "./twin";
+
+export const DEFAULT_PLATFORM_SCOPES = [
+  "read:projects",
+  "read:health",
+  "read:twin",
+  "read:agents",
+  "read:learning",
+] as const;
 
 export type OrgApiKeyRow = {
   id: string;
@@ -77,6 +87,7 @@ export async function createOrgApiKey(name: string): Promise<{ key: OrgApiKeyRow
       key_prefix: prefix,
       key_hash: hashApiKey(raw),
       created_by: userId,
+      scopes: [...DEFAULT_PLATFORM_SCOPES],
     })
     .select("id, name, key_prefix, scopes, last_used_at, revoked_at, created_at")
     .single();
@@ -167,4 +178,87 @@ export async function listPlatformProjects(orgId: string) {
 
   if (error) throw error;
   return data ?? [];
+}
+
+export async function getPlatformTwinSummary(orgId: string) {
+  const admin = createAdminClient();
+  const state = await getTwinStateForOrg(orgId, admin);
+  return {
+    capturedAt: state.capturedAt,
+    portfolioHealth: state.portfolio.health,
+    portfolioStability: state.portfolio.stability,
+    failureProbability: state.portfolio.failureProbability,
+    projectCount: state.projects.length,
+    programmeCount: state.programmes.length,
+    systemMetrics: state.systemMetrics,
+    predictions: state.predictions,
+  };
+}
+
+export async function getPlatformAgentActivity(orgId: string, limit = 20) {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("agent_activity_events")
+    .select(
+      "id, project_id, agent_role, event_type, message, human_review_required, created_at, projects!inner(name)",
+    )
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    if (error.code === "42P01") return [];
+    throw error;
+  }
+
+  return (data ?? []).map((row) => {
+    const projects = row.projects as { name?: string } | { name?: string }[] | null;
+    const projectName = Array.isArray(projects)
+      ? (projects[0]?.name ?? "Project")
+      : (projects?.name ?? "Project");
+    return {
+      id: String(row.id),
+      projectId: String(row.project_id),
+      projectName,
+      agentRole: String(row.agent_role),
+      eventType: String(row.event_type),
+      message: String(row.message),
+      humanReviewRequired: Boolean(row.human_review_required),
+      createdAt: String(row.created_at),
+    };
+  });
+}
+
+export async function getPlatformLearningSummary(orgId: string) {
+  const admin = createAdminClient();
+
+  const [lessonsRes, varianceRes, qualityRes] = await Promise.all([
+    admin
+      .from("structured_lessons")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", orgId),
+    admin
+      .from("estimate_variance_records")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", orgId),
+    admin
+      .from("proposal_quality_scores")
+      .select("quality_score")
+      .eq("organisation_id", orgId)
+      .limit(100),
+  ]);
+
+  const qualityRows = qualityRes.data ?? [];
+  const scores = qualityRows.map((row) => Number(row.quality_score));
+  const averageScore =
+    scores.length > 0
+      ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+      : null;
+
+  return {
+    lessonsCount: lessonsRes.count ?? 0,
+    estimateVarianceCount: varianceRes.count ?? 0,
+    proposalQualityAverage: averageScore,
+    proposalSampleCount: scores.length,
+  };
 }
