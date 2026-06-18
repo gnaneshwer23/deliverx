@@ -15,6 +15,7 @@ import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligen
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 import { MeetingForm } from "./meeting-form";
 import { MeetingAiPanel } from "./meeting-ai-panel";
+import { MeetingRecallPanel } from "@/components/meetings/meeting-recall-panel";
 
 type Params = Promise<{ id: string }>;
 type Search = Promise<{ page?: string; ceremony?: string }>;
@@ -93,9 +94,14 @@ export default async function ProjectMeetingsPage({
                       <h2 className="font-semibold">{m.title}</h2>
                       <div className="flex items-center gap-2">
                         <MeetingCeremonyBadge type={m.ceremony_type ?? "general"} />
-                        {m.recording_path ? (
+                        {m.recording_path || m.recording_url ? (
                           <span className="rounded bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-700">
                             Recording
+                          </span>
+                        ) : null}
+                        {m.recall_bot_id ? (
+                          <span className="rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                            Recall
                           </span>
                         ) : null}
                         <StatusBadge status={m.status} />
@@ -123,6 +129,13 @@ export default async function ProjectMeetingsPage({
                         {m.summary}
                       </div>
                     ) : null}
+                    <MeetingRecallPanel
+                      projectId={id}
+                      meetingId={m.id}
+                      recallBotId={m.recall_bot_id}
+                      syncStatus={m.sync_status}
+                      recordingUrl={m.recording_url}
+                    />
                     <MeetingAiPanel
                       projectId={id}
                       meetingId={m.id}

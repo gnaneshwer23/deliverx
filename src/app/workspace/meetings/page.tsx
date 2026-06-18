@@ -61,6 +61,11 @@ export default async function WorkspaceMeetingsPage() {
                       {new Date(m.scheduled_at).toLocaleString()}
                     </p>
                   ) : null}
+                  {m.recall_bot_id ? (
+                    <p className="mt-1 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#1C4A2E]">
+                      Recall · {m.sync_status ?? "idle"}
+                    </p>
+                  ) : null}
                 </li>
               ))}
             </ul>

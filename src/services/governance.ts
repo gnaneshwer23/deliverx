@@ -73,6 +73,9 @@ export type MeetingRow = {
   ceremony_type: MeetingCeremonyType;
   extraction_json: Record<string, unknown> | null;
   proposals_queued_at: string | null;
+  recall_bot_id: string | null;
+  recording_url: string | null;
+  sync_status: "idle" | "pending" | "syncing" | "synced" | "failed";
   status: MeetingStatus;
   created_by: string | null;
   created_at: string;
@@ -602,6 +605,9 @@ export async function updateMeeting(
       | "extraction_json"
       | "ai_summary"
       | "proposals_queued_at"
+      | "recall_bot_id"
+      | "recording_url"
+      | "sync_status"
     >
   >,
 ): Promise<MeetingRow> {
@@ -1014,14 +1020,21 @@ export async function listOpenRaidOrg(limit = 8) {
 }
 
 export async function listOrgMeetingsRecent(limit = 6): Promise<
-  Array<Pick<MeetingRow, "id" | "title" | "status" | "scheduled_at" | "project_id" | "created_at"> & {
-    project_name: string;
-  }>
+  Array<
+    Pick<
+      MeetingRow,
+      "id" | "title" | "status" | "scheduled_at" | "project_id" | "created_at" | "recall_bot_id" | "sync_status"
+    > & {
+      project_name: string;
+    }
+  >
 > {
   const { supabase } = await getOrgContext();
   const { data, error } = await supabase
     .from("meetings")
-    .select("id, title, status, scheduled_at, project_id, created_at, projects!inner(name)")
+    .select(
+      "id, title, status, scheduled_at, project_id, created_at, recall_bot_id, sync_status, projects!inner(name)",
+    )
     .order("scheduled_at", { ascending: false, nullsFirst: false })
     .limit(limit);
 
@@ -1035,6 +1048,8 @@ export async function listOrgMeetingsRecent(limit = 6): Promise<
       scheduled_at: string | null;
       project_id: string;
       created_at: string;
+      recall_bot_id: string | null;
+      sync_status: MeetingRow["sync_status"];
       projects: { name: string };
     };
     return {
@@ -1044,6 +1059,8 @@ export async function listOrgMeetingsRecent(limit = 6): Promise<
       scheduled_at: r.scheduled_at,
       project_id: r.project_id,
       created_at: r.created_at,
+      recall_bot_id: r.recall_bot_id,
+      sync_status: r.sync_status ?? "idle",
       project_name: r.projects.name,
     };
   });
