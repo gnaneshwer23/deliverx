@@ -6,6 +6,7 @@ import type {
   ScrumImpediment,
   ScrumStakeholderRow,
 } from "@/services/scrumEngine";
+import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ScrumGuidedTasks({ tasks }: { tasks: ScrumGuidedTask[] }) {
@@ -42,10 +43,7 @@ export function ScrumSprintHealthPanel({ health }: { health: ScrumMissionControl
         <MiniStat label="Spillover risk" value={health.spilloverRisk} />
         <MiniStat label="Confidence" value={`${health.deliveryConfidence}%`} />
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI prediction: </span>
-        {health.prediction}
-      </p>
+      <PanelAiInsight label="AI prediction" text={health.prediction} />
     </div>
   );
 }
@@ -61,10 +59,7 @@ export function ScrumTeamHealthPanel({ health }: { health: ScrumMissionControl["
         <MiniStat label="Burnout risk" value={health.burnoutRisk} />
         <MiniStat label="Workload" value={health.workloadBalance} />
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {health.insight}
-      </p>
+      <PanelAiInsight text={health.insight} />
     </div>
   );
 }
@@ -120,10 +115,7 @@ export function ScrumImpedimentsPanel({
           )}
         </tbody>
       </table>
-      <p className="border-t border-[#F0F0E8] px-6 py-3 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {insight}
-      </p>
+      <PanelAiInsight text={insight} className="border-t border-[#F0F0E8] px-6 py-3" />
     </div>
   );
 }
@@ -215,7 +207,7 @@ export function ScrumVelocityPanel({ velocity, insight, usesFallback = false }: 
           ))}
         </tbody>
       </table>
-      <p className="border-t border-[#F0F0E8] px-6 py-3 text-sm text-[#6B6B64]">{insight}</p>
+      <PanelAiInsight text={insight} className="border-t border-[#F0F0E8] px-6 py-3" />
     </div>
   );
 }
@@ -230,10 +222,7 @@ export function ScrumCapacityPanel({ capacity }: { capacity: ScrumMissionControl
         <MiniStat label="Leave impact" value={`${capacity.leaveImpactPct}%`} />
         <MiniStat label="Buffer" value={`${capacity.bufferHours} hrs`} />
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI recommendation: </span>
-        {capacity.recommendation}
-      </p>
+      <PanelAiInsight label="AI recommendation" text={capacity.recommendation} />
     </div>
   );
 }
@@ -285,10 +274,7 @@ export function ScrumRetroPanel({
           <li key={t}>{t}</li>
         ))}
       </ul>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI recommendation: </span>
-        {recommendation}
-      </p>
+      <PanelAiInsight label="AI recommendation" text={recommendation} />
     </div>
   );
 }
