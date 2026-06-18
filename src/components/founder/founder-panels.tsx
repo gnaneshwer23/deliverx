@@ -4,10 +4,25 @@ import { FounderDecisionActions } from "@/components/founder/founder-decision-ac
 import { dxClass } from "@/lib/dx-theme";
 
 const toneDot: Record<string, string> = {
-  green: "bg-emerald-500",
-  amber: "bg-amber-500",
-  red: "bg-rose-500",
+  green: "bg-[#1A6B3A]",
+  amber: "bg-[#B7620A]",
+  red: "bg-[#C0392B]",
 };
+
+const barColor: Record<string, string> = {
+  green: "bg-[#1A6B3A]",
+  amber: "bg-[#B7620A]",
+  red: "bg-[#C0392B]",
+};
+
+function budgetProgressPct(budgetLabel: string): number | undefined {
+  const match = budgetLabel.match(/([\d,.]+)\s*\/\s*([\d,.]+)/);
+  if (!match) return undefined;
+  const spent = Number.parseFloat(match[1].replace(/,/g, ""));
+  const approved = Number.parseFloat(match[2].replace(/,/g, ""));
+  if (!Number.isFinite(spent) || !Number.isFinite(approved) || approved <= 0) return undefined;
+  return Math.round((spent / approved) * 100);
+}
 
 export function FounderPortfolioPanel({
   portfolio,
@@ -19,49 +34,74 @@ export function FounderPortfolioPanel({
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Project portfolio</h3>
       </div>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
-            <th className="px-6 py-2">Project</th>
-            <th className="px-4 py-2">Health</th>
-            <th className="px-4 py-2">RAG</th>
-            <th className="px-4 py-2">Budget</th>
-            <th className="px-6 py-2 text-right">Delivery</th>
-          </tr>
-        </thead>
-        <tbody>
-          {portfolio.length ? (
-            portfolio.map((p) => (
-              <tr key={p.id} className="border-t border-[#F0F0E8]">
-                <td className="px-6 py-3 font-medium">{p.name}</td>
-                <td className="px-4 py-3">
-                  <span className="inline-flex items-center gap-1.5 capitalize">
+      {portfolio.length ? (
+        <div className="grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-3">
+          {portfolio.map((p) => {
+            const budgetPct = budgetProgressPct(p.budgetLabel);
+            return (
+              <div
+                key={p.id}
+                className={`${dxClass.card} border-t-2 p-4 ${
+                  p.ragStatus === "red"
+                    ? "border-t-[#C0392B]"
+                    : p.ragStatus === "amber"
+                      ? "border-t-[#B7620A]"
+                      : "border-t-[#1A6B3A]"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-medium text-[#0D0D0B]">{p.name}</p>
+                  <span className="inline-flex items-center gap-1 capitalize text-xs text-[#6B6B64]">
                     <span className={`size-2 rounded-full ${toneDot[p.healthTone]}`} />
                     {p.healthTone}
                   </span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className="inline-flex items-center gap-1.5 capitalize">
-                    <span className={`size-2 rounded-full ${toneDot[p.ragStatus]}`} />
-                    {p.ragStatus}
-                    {p.openRisks > 0 ? (
-                      <span className="text-[10px] text-[#A8A89E]">({p.openRisks} risks)</span>
-                    ) : null}
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#6B6B64]">
+                  <span className="inline-flex items-center gap-1 capitalize">
+                    RAG: {p.ragStatus}
                   </span>
-                </td>
-                <td className="px-4 py-3 text-[#6B6B64]">{p.budgetLabel}</td>
-                <td className="px-6 py-3 text-right font-semibold">{p.deliveryPct}%</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={5} className="px-6 py-4 text-[#6B6B64]">
-                Create projects to populate portfolio health.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                  {p.openRisks > 0 ? (
+                    <span className="text-[#B7620A]">{p.openRisks} risks</span>
+                  ) : null}
+                </div>
+                <p className="mt-2 text-xs text-[#6B6B64]">{p.budgetLabel}</p>
+                <div className="mt-3 space-y-2">
+                  <div>
+                    <div className="mb-1 flex justify-between text-[10px] uppercase text-[#A8A89E]">
+                      <span>Delivery</span>
+                      <span className="font-semibold text-[#0D0D0B]">{p.deliveryPct}%</span>
+                    </div>
+                    <div className="h-[3px] overflow-hidden bg-[#F0F0E8]">
+                      <div
+                        className={`h-full ${barColor[p.ragStatus] ?? barColor.green}`}
+                        style={{ width: `${Math.min(100, p.deliveryPct)}%` }}
+                      />
+                    </div>
+                  </div>
+                  {budgetPct != null ? (
+                    <div>
+                      <div className="mb-1 flex justify-between text-[10px] uppercase text-[#A8A89E]">
+                        <span>Budget</span>
+                        <span className="font-semibold text-[#0D0D0B]">{budgetPct}%</span>
+                      </div>
+                      <div className="h-[3px] overflow-hidden bg-[#F0F0E8]">
+                        <div
+                          className={`h-full ${budgetPct > 100 ? barColor.red : budgetPct > 90 ? barColor.amber : barColor.green}`}
+                          style={{ width: `${Math.min(100, budgetPct)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="px-6 py-4 text-sm text-[#6B6B64]">
+          Create projects to populate portfolio health.
+        </p>
+      )}
     </div>
   );
 }

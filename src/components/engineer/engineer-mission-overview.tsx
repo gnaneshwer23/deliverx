@@ -1,57 +1,57 @@
 import type { EngineerMissionControl } from "@/services/engineerDashboard";
-import { dxClass } from "@/lib/dx-theme";
+import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 
-const healthColor = {
-  green: "text-[#1A6B3A]",
-  amber: "text-[#B8860B]",
-  red: "text-[#C0392B]",
+const buildHealthTone = {
+  green: "healthy" as const,
+  amber: "watch" as const,
+  red: "at-risk" as const,
 };
 
 export function EngineerMissionOverview({ data }: { data: EngineerMissionControl }) {
   const { overview } = data;
+
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7">
-      <Kpi label="Assigned stories" value={overview.assignedStories} />
-      <Kpi
+    <MissionKpiGrid layout="mission">
+      <MissionKpiCard label="Assigned stories" value={overview.assignedStories} valueSize="xl" />
+      <MissionKpiCard
         label="Blocked stories"
         value={overview.blockedStories}
-        tone={overview.blockedStories > 0 ? "amber" : undefined}
+        tone={overview.blockedStories > 0 ? "watch" : "healthy"}
+        delta={
+          overview.blockedStories > 0
+            ? { value: `${overview.blockedStories} blocked`, direction: "down" }
+            : undefined
+        }
+        valueSize="xl"
       />
-      <Kpi label="Open PRs" value={overview.openPrs} />
-      <Kpi
+      <MissionKpiCard label="Open PRs" value={overview.openPrs} valueSize="xl" />
+      <MissionKpiCard
         label="Build health"
         value={overview.buildHealth}
-        tone={overview.buildHealth}
+        tone={buildHealthTone[overview.buildHealth]}
+        valueSize="xl"
       />
-      <Kpi label="Sprint progress" value={`${overview.sprintProgress}%`} />
-      <Kpi label="Technical debt" value={overview.technicalDebt} />
-      <Kpi label="Deployment risk" value={overview.deploymentRisk} />
-    </div>
-  );
-}
-
-function Kpi({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  tone?: "green" | "amber" | "red";
-}) {
-  return (
-    <div className={`${dxClass.card} p-4`}>
-      <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        {label}
-      </p>
-      <p
-        className={`${dxClass.display} mt-1 text-xl capitalize leading-none ${
-          tone ? healthColor[tone] : "text-[#0D0D0B]"
-        }`}
-      >
-        {value}
-      </p>
-    </div>
+      <MissionKpiCard
+        label="Sprint progress"
+        value={`${overview.sprintProgress}%`}
+        progressPct={overview.sprintProgress}
+        tone={overview.sprintProgress >= 75 ? "healthy" : overview.sprintProgress >= 40 ? "watch" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard label="Technical debt" value={overview.technicalDebt} valueSize="xl" />
+      <MissionKpiCard
+        label="Deployment risk"
+        value={overview.deploymentRisk}
+        tone={
+          overview.deploymentRisk.toLowerCase() === "low"
+            ? "healthy"
+            : overview.deploymentRisk.toLowerCase() === "high"
+              ? "at-risk"
+              : "watch"
+        }
+        valueSize="xl"
+      />
+    </MissionKpiGrid>
   );
 }
 

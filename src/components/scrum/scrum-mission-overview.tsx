@@ -1,44 +1,63 @@
 import type { ScrumMissionControl } from "@/services/scrumDashboard";
-import { dxClass } from "@/lib/dx-theme";
+import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 
 export function ScrumMissionOverview({ data }: { data: ScrumMissionControl }) {
   const { overview } = data;
-  return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-8">
-      <Kpi label="Sprint" value={overview.sprintLabel} />
-      <Kpi label="Completion" value={`${overview.completionPct}%`} />
-      <Kpi label="Days left" value={overview.daysRemaining} />
-      <Kpi label="Blocked" value={overview.blockedStories} tone={overview.blockedStories > 0 ? "amber" : undefined} />
-      <Kpi label="Velocity" value={overview.velocityTrend} />
-      <Kpi label="Team health" value={overview.teamHealth} tone={overview.teamHealth === "Green" ? "green" : "amber"} />
-      <Kpi label="Burnout risk" value={overview.burnoutRisk} />
-      <Kpi label="Success prob." value={`${overview.sprintSuccessProbability}%`} />
-    </div>
-  );
-}
 
-function Kpi({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  tone?: "green" | "amber";
-}) {
   return (
-    <div className={`${dxClass.card} p-4`}>
-      <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
-        {label}
-      </p>
-      <p
-        className={`${dxClass.display} mt-1 text-xl leading-none ${
-          tone === "green" ? "text-[#1A6B3A]" : tone === "amber" ? "text-[#B8860B]" : "text-[#0D0D0B]"
-        }`}
-      >
-        {value}
-      </p>
-    </div>
+    <MissionKpiGrid layout="wide">
+      <MissionKpiCard label="Sprint" value={overview.sprintLabel} valueSize="xl" />
+      <MissionKpiCard
+        label="Completion"
+        value={`${overview.completionPct}%`}
+        progressPct={overview.completionPct}
+        tone={overview.completionPct >= 75 ? "healthy" : overview.completionPct >= 50 ? "watch" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Days left"
+        value={overview.daysRemaining}
+        tone={overview.daysRemaining <= 2 ? "watch" : "default"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Blocked"
+        value={overview.blockedStories}
+        tone={overview.blockedStories > 0 ? "watch" : "healthy"}
+        delta={
+          overview.blockedStories > 0
+            ? { value: `${overview.blockedStories} blocked`, direction: "down" }
+            : undefined
+        }
+        valueSize="xl"
+      />
+      <MissionKpiCard label="Velocity" value={overview.velocityTrend} valueSize="xl" />
+      <MissionKpiCard
+        label="Team health"
+        value={overview.teamHealth}
+        tone={overview.teamHealth === "Green" ? "healthy" : "watch"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Burnout risk"
+        value={overview.burnoutRisk}
+        tone={overview.burnoutRisk === "Low" ? "healthy" : "watch"}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Success prob."
+        value={`${overview.sprintSuccessProbability}%`}
+        progressPct={overview.sprintSuccessProbability}
+        tone={
+          overview.sprintSuccessProbability >= 75
+            ? "healthy"
+            : overview.sprintSuccessProbability >= 50
+              ? "watch"
+              : "at-risk"
+        }
+        valueSize="xl"
+      />
+    </MissionKpiGrid>
   );
 }
 
