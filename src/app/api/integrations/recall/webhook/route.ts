@@ -9,17 +9,17 @@ export async function POST(req: Request) {
   }
 
   const rawBody = await req.text();
-  const secretConfigured = Boolean(process.env.RECALL_WEBHOOK_SECRET?.trim());
+  if (!process.env.RECALL_WEBHOOK_SECRET?.trim()) {
+    return Response.json({ error: "Webhook secret not configured" }, { status: 503 });
+  }
 
-  if (secretConfigured) {
-    const valid = verifyRecallWebhook(rawBody, {
-      "webhook-id": req.headers.get("webhook-id") ?? undefined,
-      "webhook-timestamp": req.headers.get("webhook-timestamp") ?? undefined,
-      "webhook-signature": req.headers.get("webhook-signature") ?? undefined,
-    });
-    if (!valid) {
-      return Response.json({ error: "Invalid webhook signature" }, { status: 401 });
-    }
+  const valid = verifyRecallWebhook(rawBody, {
+    "webhook-id": req.headers.get("webhook-id") ?? undefined,
+    "webhook-timestamp": req.headers.get("webhook-timestamp") ?? undefined,
+    "webhook-signature": req.headers.get("webhook-signature") ?? undefined,
+  });
+  if (!valid) {
+    return Response.json({ error: "Invalid webhook signature" }, { status: 401 });
   }
 
   let payload: Record<string, unknown>;

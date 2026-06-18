@@ -43,6 +43,30 @@ describe("recall integration", () => {
       }),
     ).toBe(true);
 
+    expect(
+      verifyRecallWebhook(payload, {
+        "webhook-id": msgId,
+        "webhook-timestamp": timestamp,
+        "webhook-signature": "v1,invalid-signature",
+      }),
+    ).toBe(false);
+
+    if (prev) process.env.RECALL_WEBHOOK_SECRET = prev;
+    else delete process.env.RECALL_WEBHOOK_SECRET;
+  });
+
+  it("rejects verification when webhook secret is absent", () => {
+    const prev = process.env.RECALL_WEBHOOK_SECRET;
+    delete process.env.RECALL_WEBHOOK_SECRET;
+
+    expect(
+      verifyRecallWebhook("{}", {
+        "webhook-id": "msg_1",
+        "webhook-timestamp": "1700000000",
+        "webhook-signature": "v1,abc",
+      }),
+    ).toBe(false);
+
     if (prev) process.env.RECALL_WEBHOOK_SECRET = prev;
     else delete process.env.RECALL_WEBHOOK_SECRET;
   });

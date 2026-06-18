@@ -2,7 +2,7 @@
  * Recall.ai meeting bot client — create bots, fetch transcripts, verify webhooks.
  */
 
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 export type RecallBotStatus =
   | "ready"
@@ -171,7 +171,13 @@ export function verifyRecallWebhook(
 
   for (const part of signature.split(" ")) {
     const [version, sig] = part.split(",", 2);
-    if (version === "v1" && sig === expected) return true;
+    if (version !== "v1" || !sig) continue;
+
+    const received = Buffer.from(sig, "base64");
+    const expectedBuf = Buffer.from(expected, "base64");
+    if (received.length === expectedBuf.length && timingSafeEqual(received, expectedBuf)) {
+      return true;
+    }
   }
 
   return false;
