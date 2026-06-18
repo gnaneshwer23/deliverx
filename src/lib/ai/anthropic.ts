@@ -5,6 +5,7 @@ import {
   resolveAiProvider,
   type AiProvider,
 } from "@/lib/ai/config";
+import { assertOrgAiRateLimit } from "@/services/aiRateLimit";
 
 export class AiConfigError extends Error {
   constructor(message = "AI API is not configured") {
@@ -169,6 +170,7 @@ export async function generateText(opts: {
   maxTokens?: number;
   timeoutMs?: number;
 }): Promise<string> {
+  await assertOrgAiRateLimit();
   const provider = requireProvider();
   if (provider === "openai") {
     return generateTextOpenAI(opts, false);
@@ -182,6 +184,7 @@ export async function generateJSON<T>(opts: {
   maxTokens?: number;
   timeoutMs?: number;
 }): Promise<T> {
+  await assertOrgAiRateLimit();
   const provider = requireProvider();
   if (provider === "openai") {
     const text = await generateTextOpenAI(

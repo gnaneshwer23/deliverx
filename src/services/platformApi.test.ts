@@ -8,6 +8,7 @@ describe("platformApi", () => {
     expect(DEFAULT_PLATFORM_SCOPES).toContain("read:proposals");
     expect(DEFAULT_PLATFORM_SCOPES).toContain("write:proposals");
     expect(DEFAULT_PLATFORM_SCOPES).toContain("write:reports");
-    expect(DEFAULT_PLATFORM_SCOPES.length).toBeGreaterThanOrEqual(10);
+    expect(DEFAULT_PLATFORM_SCOPES).toContain("read:intelligence");
+    expect(DEFAULT_PLATFORM_SCOPES.length).toBeGreaterThanOrEqual(11);
   });
 });
