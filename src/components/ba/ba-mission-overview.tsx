@@ -1,9 +1,7 @@
-"use client";
-
-import Link from "next/link";
-import { Sparkles } from "lucide-react";
 import type { BaMissionControl } from "@/services/baDashboard";
+import Link from "next/link";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
+import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
 
 const impactTone = {
   green: "healthy" as const,
@@ -63,12 +61,7 @@ export function BaMissionOverview({ data }: { data: BaMissionControl }) {
 
 export function BaAiSummary({ summary, projectId }: { summary: string; projectId?: string }) {
   return (
-    <div className="rounded-xl border border-[#C6DDD0] bg-[#EEF5F1]/60 p-5">
-      <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1C4A2E]">
-        <Sparkles size={14} />
-        AI summary
-      </div>
-      <p className="text-sm leading-relaxed text-[#0D0D0B]">&ldquo;{summary}&rdquo;</p>
+    <MissionAiSummaryBlock title="AI summary" summary={summary} icon>
       {projectId ? (
         <Link
           href={`/project/${projectId}/requirements`}
@@ -77,6 +70,6 @@ export function BaAiSummary({ summary, projectId }: { summary: string; projectId
           Open requirements workspace →
         </Link>
       ) : null}
-    </div>
+    </MissionAiSummaryBlock>
   );
 }

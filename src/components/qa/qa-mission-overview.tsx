@@ -1,6 +1,7 @@
 import type { QaMissionControl } from "@/services/qaDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
+import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
 
 export function QaMissionOverview({ data }: { data: QaMissionControl }) {
   const { overview } = data;
@@ -20,10 +21,5 @@ export function QaMissionOverview({ data }: { data: QaMissionControl }) {
 }
 
 export function QaAiSummary({ summary }: { summary: string }) {
-  return (
-    <div className="rounded-xl border border-[#C6DDD0] bg-[#EEF5F1]/60 p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-[#1C4A2E]">AI quality engineer</p>
-      <p className="mt-2 text-sm leading-relaxed">&ldquo;{summary}&rdquo;</p>
-    </div>
-  );
+  return <MissionAiSummaryBlock title="AI quality engineer" summary={summary} />;
 }
