@@ -69,6 +69,7 @@ export type PmMissionControl = {
   pendingProposals: number;
   statusReports: WeeklyStatusReportSummary[];
   stakeholderActionQueue: StakeholderActionRow[];
+  dataSources: { deliveryPlan: "live" | "fallback" };
 };
 
 export async function getPmMissionControl(projectId?: string): Promise<PmMissionControl> {
@@ -205,6 +206,9 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
   const criticalRisks = risks.filter(
     (r) => r.severity === "high" || r.severity === "critical",
   );
+
+  const usingDefaultBudget = !ctx?.budget;
+  const usingDefaultMilestones = milestones.length === 0;
 
   const budget = {
     approved: ctx?.budget?.approved ?? 750_000,
@@ -357,6 +361,10 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
     pendingProposals,
     statusReports,
     stakeholderActionQueue,
+    dataSources: {
+      deliveryPlan:
+        usingDefaultMilestones || usingDefaultBudget ? "fallback" : "live",
+    },
   };
 }
 

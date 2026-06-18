@@ -21,6 +21,7 @@ import {
 import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-status-reports-panel";
 import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MockDataBanner } from "@/components/dx/mock-data-banner";
 import { ProjectMemoryPanel } from "@/components/memory/project-memory-panel";
 import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
@@ -94,6 +95,9 @@ export default async function PmMissionControlPage({
         </p>
 
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
+        {data.dataSources.deliveryPlan === "fallback" ? (
+          <MockDataBanner message="Milestones, budget, and timeline panels use illustrative defaults until you connect a project charter or run AI delivery analysis." />
+        ) : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
           personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]}
@@ -153,8 +157,12 @@ export default async function PmMissionControlPage({
           <DeliveryMilestonesPanel
             milestones={data.milestones}
             goLiveProbability={data.overview.goLiveProbability}
+            usesFallback={data.dataSources.deliveryPlan === "fallback"}
           />
-          <DeliveryBudgetPanel budget={data.budget} />
+          <DeliveryBudgetPanel
+            budget={data.budget}
+            usesFallback={data.dataSources.deliveryPlan === "fallback"}
+          />
         </div>
 
         <DeliveryBenefitsPanel benefits={data.benefits} />

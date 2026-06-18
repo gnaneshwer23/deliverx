@@ -1,5 +1,6 @@
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
+import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
 
 const tierLabel: Record<PmMissionControl["overview"]["healthTier"], string> = {
   healthy: "Green",
@@ -21,6 +22,8 @@ export function DeliveryPmMissionOverview({ data }: { data: PmMissionControl }) 
   const budgetPct = budgetProgressPct(overview.budgetLabel);
   const goLivePct =
     overview.goLiveProbability != null ? Math.round(overview.goLiveProbability * 100) : undefined;
+  const deliveryHint =
+    data.dataSources.deliveryPlan === "fallback" ? FALLBACK_KPI_HINT : undefined;
 
   return (
     <MissionKpiGrid layout="wide">
@@ -34,7 +37,7 @@ export function DeliveryPmMissionOverview({ data }: { data: PmMissionControl }) 
       <MissionKpiCard
         label="Timeline"
         value={`${overview.timelineComplete}%`}
-        hint="complete"
+        hint={deliveryHint ?? "complete"}
         tone={overview.timelineComplete >= 75 ? "healthy" : overview.timelineComplete >= 50 ? "watch" : "at-risk"}
         progressPct={overview.timelineComplete}
         valueSize="xl"
@@ -42,6 +45,7 @@ export function DeliveryPmMissionOverview({ data }: { data: PmMissionControl }) 
       <MissionKpiCard
         label="Budget"
         value={overview.budgetLabel}
+        hint={deliveryHint}
         tone={
           budgetPct != null && budgetPct > 90
             ? "watch"

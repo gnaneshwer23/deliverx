@@ -1,7 +1,7 @@
 # DeliverX Architecture Audit
 
-**Last updated:** 2026-05-31  
-**Production `main`:** `44f2216` (PR #11 merged)  
+**Last updated:** 2026-06-18  
+**Production `main`:** see latest merge on GitHub  
 **Build:** `npm run build` — passing  
 **Estimated diagram coverage:** ~78%
 
@@ -25,6 +25,7 @@ This audit maps the **End-to-End AI Delivery Intelligence OS** flowchart to what
 | Executive portfolio | Built |
 | Closure package | Built |
 | AI provider | **OpenAI** (`OPENAI_API_KEY` or `open_api_key` alias) |
+| Persona mission controls (7 roles) | Built — see `docs/I4_STAKEHOLDER_MATRIX.md` |
 
 ---
 
@@ -125,6 +126,7 @@ Portfolio, programmes, PMO, executive, coordination, global, twin, adaptive, ale
 
 ## Related docs
 
+- `docs/I4_STAKEHOLDER_MATRIX.md` — seven personas: routes, onboarding, mission dashboards, proposals/audit access
 - `docs/PHASE0_CHECKLIST.md` — ship checklist
 - `docs/SETUP_AUDIT.md` — production AI/auth
 - `docs/API_KEYS.md` — environment variables

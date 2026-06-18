@@ -164,13 +164,20 @@ export function DeliveryRaidPanel({ raid }: { raid: PmMissionControl["raid"] }) 
 export function DeliveryMilestonesPanel({
   milestones,
   goLiveProbability,
+  usesFallback = false,
 }: {
   milestones: PmMissionControl["milestones"];
   goLiveProbability: number | null;
+  usesFallback?: boolean;
 }) {
   return (
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Milestones & timeline</h3>
+      {usesFallback ? (
+        <p className="mb-3 text-xs text-[#B7620A]">
+          Illustrative delivery phases — connect milestones from your project charter.
+        </p>
+      ) : null}
       <div className="flex flex-wrap gap-3">
         {milestones.map((m) => (
           <div
@@ -192,7 +199,13 @@ export function DeliveryMilestonesPanel({
   );
 }
 
-export function DeliveryBudgetPanel({ budget }: { budget: PmMissionControl["budget"] }) {
+export function DeliveryBudgetPanel({
+  budget,
+  usesFallback = false,
+}: {
+  budget: PmMissionControl["budget"];
+  usesFallback?: boolean;
+}) {
   const sym = budget.currency === "GBP" ? "£" : budget.currency === "USD" ? "$" : "";
   const fmt = (n: number) =>
     n >= 1000 ? `${sym}${Math.round(n / 1000)}k` : `${sym}${n.toLocaleString()}`;
@@ -200,6 +213,11 @@ export function DeliveryBudgetPanel({ budget }: { budget: PmMissionControl["budg
   return (
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Budget</h3>
+      {usesFallback ? (
+        <p className="mb-3 text-xs text-[#B7620A]">
+          Illustrative budget figures — upload business case or set approved spend in delivery context.
+        </p>
+      ) : null}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Stat label="Approved" value={fmt(budget.approved)} />
         <Stat label="Spent" value={fmt(budget.spent)} />

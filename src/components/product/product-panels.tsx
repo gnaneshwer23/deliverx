@@ -1,5 +1,6 @@
 import type { ProductMissionControl } from "@/services/pmDashboard";
 import type { CrossRoleProductImpact, ProductGuidedTask } from "@/services/pmProductEngine";
+import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ProductGuidedTasks({ tasks }: { tasks: ProductGuidedTask[] }) {
@@ -25,7 +26,13 @@ export function ProductGuidedTasks({ tasks }: { tasks: ProductGuidedTask[] }) {
   );
 }
 
-export function ProductRoadmapPanel({ roadmap }: { roadmap: ProductMissionControl["roadmap"] }) {
+export function ProductRoadmapPanel({
+  roadmap,
+  usesFallback = false,
+}: {
+  roadmap: ProductMissionControl["roadmap"];
+  usesFallback?: boolean;
+}) {
   const columns = [
     { key: "now" as const, label: "Now", items: roadmap.now },
     { key: "next" as const, label: "Next", items: roadmap.next },
@@ -35,6 +42,11 @@ export function ProductRoadmapPanel({ roadmap }: { roadmap: ProductMissionContro
   return (
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Product roadmap</h3>
+      {usesFallback ? (
+        <p className="mb-3 text-xs text-[#B7620A]">
+          Illustrative Now / Next / Later — upload product context to populate live roadmap.
+        </p>
+      ) : null}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {columns.map((col) => (
           <div key={col.key} className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] p-4">
@@ -51,13 +63,20 @@ export function ProductRoadmapPanel({ roadmap }: { roadmap: ProductMissionContro
 
 export function ProductRicePanel({
   features,
+  usesFallback = false,
 }: {
   features: ProductMissionControl["topFeatures"];
+  usesFallback?: boolean;
 }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`}>
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Feature prioritisation (RICE)</h3>
+        {usesFallback ? (
+          <p className="mt-1 text-xs text-[#B7620A]">
+            Illustrative RICE scores — run product analysis to score your backlog.
+          </p>
+        ) : null}
       </div>
       <table className="w-full text-sm">
         <thead>
