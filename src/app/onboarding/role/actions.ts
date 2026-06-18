@@ -2,7 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { upsertGatewaySession } from "@/services/gatewayOnboarding";
+import {
+  completeGatewaySession,
+  upsertGatewaySession,
+} from "@/services/gatewayOnboarding";
+import {
+  getInitialGatewayStepForRole,
+  getPostRoleSelectRedirect,
+} from "@/services/gatewayOnboardingEngine";
 
 export type RoleState = { ok: boolean; error?: string };
 
@@ -31,10 +38,15 @@ export async function setRoleAction(
   if (error) return { ok: false, error: error.message };
 
   try {
-    await upsertGatewaySession({ step: "project" });
+    const step = getInitialGatewayStepForRole(role);
+    if (role === "team_member") {
+      await upsertGatewaySession({ step: "complete", complete: true });
+    } else {
+      await upsertGatewaySession({ step });
+    }
   } catch {
     /* optional until migration applied */
   }
 
-  redirect("/project/new");
+  redirect(getPostRoleSelectRedirect(role));
 }

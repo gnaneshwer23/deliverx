@@ -17,6 +17,7 @@ export async function requireCompleteOnboarding() {
     hasOrg: Boolean(profile.organisation_id),
     hasRole: Boolean(profile.role),
     gatewayStep,
+    role: profile.role,
   });
   if (gatewayRedirect) redirect(gatewayRedirect);
 
@@ -35,6 +36,7 @@ export async function getOnboardingRedirectIfIncomplete(): Promise<string | null
       hasOrg: Boolean(profile?.organisation_id),
       hasRole: Boolean(profile?.role),
       gatewayStep,
+      role: profile?.role,
     });
   }
   return null;
