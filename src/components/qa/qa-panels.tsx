@@ -8,6 +8,7 @@ import type {
   QaTraceRow,
   QaUatRow,
 } from "@/services/qaEngine";
+import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 export function QaGuidedTasks({ tasks }: { tasks: QaGuidedTask[] }) {
@@ -135,10 +136,7 @@ export function QaDefectsPanel({
           ))}
         </tbody>
       </table>
-      <p className="border-t border-[#E4E4DC] px-6 py-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {insight}
-      </p>
+      <PanelAiInsight text={insight} className="border-t border-[#E4E4DC] px-6 py-4" />
     </div>
   );
 }
@@ -209,10 +207,7 @@ export function QaUatPanel({ rows, insight }: { rows: QaUatRow[]; insight: strin
           ))}
         </tbody>
       </table>
-      <p className="text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {insight}
-      </p>
+      <PanelAiInsight text={insight} />
     </div>
   );
 }

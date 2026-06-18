@@ -5,6 +5,7 @@ import type {
   PmGuidedTask,
   StakeholderDeliveryRow,
 } from "@/services/deliveryPmEngine";
+import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 const toneDot: Record<string, string> = {
@@ -64,10 +65,7 @@ export function DeliveryHealthPanel({
           </div>
         ))}
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {insight}
-      </p>
+      <PanelAiInsight text={insight} />
     </div>
   );
 }
@@ -190,10 +188,10 @@ export function DeliveryMilestonesPanel({
         ))}
       </div>
       {goLiveProbability != null ? (
-        <p className="mt-4 text-sm text-[#6B6B64]">
-          <span className="font-medium text-[#0D0D0B]">AI prediction: </span>
-          {Math.round(goLiveProbability * 100)}% probability of meeting go-live on current velocity.
-        </p>
+        <PanelAiInsight
+          label="AI prediction"
+          text={`${Math.round(goLiveProbability * 100)}% probability of meeting go-live on current velocity.`}
+        />
       ) : null}
     </div>
   );

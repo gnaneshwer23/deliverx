@@ -1,6 +1,7 @@
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import type { CrossRoleFounderImpact } from "@/services/founderEngine";
 import { FounderDecisionActions } from "@/components/founder/founder-decision-actions";
+import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 const toneDot: Record<string, string> = {
@@ -132,10 +133,7 @@ export function FounderObjectivesPanel({
           </div>
         ))}
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {insight}
-      </p>
+      <PanelAiInsight text={insight} />
     </div>
   );
 }
@@ -154,10 +152,7 @@ export function FounderFundingPanel({ funding }: { funding: FounderMissionContro
         <Stat label="Runway" value={`${funding.runwayMonths} mo`} />
         <Stat label="Next raise" value={funding.nextRaise} />
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI prediction: </span>
-        {funding.runwayEndPrediction}
-      </p>
+      <PanelAiInsight label="AI prediction" text={funding.runwayEndPrediction} />
     </div>
   );
 }
@@ -288,10 +283,7 @@ export function FounderTeamHealthPanel({
         <MiniStat label="Burnout risk" value={health.burnoutRisk} />
         <MiniStat label="Hiring need" value={health.hiringNeed} />
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI recommendation: </span>
-        {health.recommendation}
-      </p>
+      <PanelAiInsight label="AI recommendation" text={health.recommendation} />
     </div>
   );
 }

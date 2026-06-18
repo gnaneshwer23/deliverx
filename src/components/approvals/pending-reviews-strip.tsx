@@ -39,7 +39,6 @@ export function PendingReviewsStrip({
                 AI output review
                 {personaLabel ? ` · ${personaLabel}` : ""}
               </p>
-              <p className="text-[10px] text-[#6B6B64]">Responses audit · top pending items</p>
             </div>
           </div>
           <Link

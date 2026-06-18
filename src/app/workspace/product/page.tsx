@@ -65,7 +65,7 @@ export default async function ProductMissionControlPage({
       <div className="space-y-6 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
         {data.dataSources.roadmapRice === "fallback" ? (
-          <MockDataBanner message="Roadmap and RICE prioritisation use illustrative defaults until you run AI product analysis or add features." />
+          <MockDataBanner message="Roadmap and RICE are illustrative until you run product analysis." />
         ) : null}
         <PendingReviewsStrip
           reviews={pendingReviews}

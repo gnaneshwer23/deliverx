@@ -6,6 +6,7 @@ import type {
   EngineerStakeholderRow,
   EngineerTraceRow,
 } from "@/services/engineerEngine";
+import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 export function EngineerGuidedTasks({ tasks }: { tasks: EngineerGuidedTask[] }) {
@@ -138,10 +139,7 @@ export function EngineerDependenciesPanel({
           ))}
         </tbody>
       </table>
-      <p className="border-t border-[#F0F0E8] px-6 py-3 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI insight: </span>
-        {insight}
-      </p>
+      <PanelAiInsight text={insight} className="border-t border-[#F0F0E8] px-6 py-3" />
     </div>
   );
 }
@@ -188,10 +186,7 @@ export function EngineerDebtPanel({
         <MiniStat label="Refactor candidates" value={debt.refactorCandidates} />
         <MiniStat label="Security risks" value={debt.securityRisks} />
       </div>
-      <p className="mt-4 text-sm text-[#6B6B64]">
-        <span className="font-medium text-[#0D0D0B]">AI recommendation: </span>
-        {debt.recommendation}
-      </p>
+      <PanelAiInsight label="AI recommendation" text={debt.recommendation} />
     </div>
   );
 }

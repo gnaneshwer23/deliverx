@@ -65,7 +65,7 @@ export default async function FounderMissionControlPage() {
           inlineActions
         />
         {data.dataSources.financials === "fallback" ? (
-          <MockDataBanner message="Financial KPIs (runway, burn, MRR, ARR) are illustrative until you upload pitch deck or business case context." />
+          <MockDataBanner message="Financial KPIs are illustrative until you upload pitch deck or business case." />
         ) : null}
 
         <FounderMissionOverview data={data} />

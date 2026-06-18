@@ -73,7 +73,7 @@ export default async function QaMissionControlPage({
           inlineActions
         />
         {data.dataSources.qaMetrics === "fallback" ? (
-          <MockDataBanner message="QA KPIs and quality panels use illustrative defaults until test cases, defects, or UAT data is recorded." />
+          <MockDataBanner message="QA KPIs are illustrative until test cases, defects, or UAT data is recorded." />
         ) : null}
 
         {data.projects.length > 1 && data.primaryProject ? (
