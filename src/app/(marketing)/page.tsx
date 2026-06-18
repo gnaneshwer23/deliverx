@@ -5,6 +5,7 @@ import { MarketingLoopSection } from "@/components/marketing/marketing-loop";
 import { MarketingNav, MarketingFooter } from "@/components/marketing/marketing-nav";
 import { MarketingOnboardingSection } from "@/components/marketing/marketing-onboarding";
 import { MarketingPricingSection } from "@/components/marketing/marketing-pricing";
+import { MarketingProductSection } from "@/components/marketing/marketing-product";
 import { MarketingProofSection } from "@/components/marketing/marketing-proof";
 
 export default function LandingPage() {
@@ -13,6 +14,8 @@ export default function LandingPage() {
       <MarketingNav />
       <main id="main-content">
         <MarketingHero />
+        <MarketingProductSection />
+        <MarketingDivider />
         <MarketingLoopSection />
         <MarketingDivider />
         <MarketingOnboardingSection />
