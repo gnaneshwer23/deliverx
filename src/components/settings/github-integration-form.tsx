@@ -17,10 +17,12 @@ import type {
 const initial: SettingsState = { ok: false };
 
 export function GitHubIntegrationForm({
+  webhookUrl,
   orgSettings,
   projects,
   projectSettings,
 }: {
+  webhookUrl: string | null;
   orgSettings: OrgIntegrationSettings | null;
   projects: Array<{ id: string; name: string }>;
   projectSettings: Record<string, ProjectIntegrationSettings | null>;
@@ -90,9 +92,18 @@ export function GitHubIntegrationForm({
             name="github_webhook_secret"
             type="password"
             autoComplete="off"
-            placeholder="For future webhook ingestion"
+            placeholder="Required for inbound webhook ingestion"
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
           />
+          {webhookUrl ? (
+            <p className="mt-2 text-xs text-[#6B6B64]">
+              Webhook URL:{" "}
+              <code className="break-all rounded bg-[#F7F7F2] px-1 py-0.5">{webhookUrl}</code>
+            </p>
+          ) : null}
+          <p className="mt-1 text-xs text-[#6B6B64]">
+            Subscribe to pull_request, workflow_run, and push events in GitHub.
+          </p>
         </div>
         <label className="flex items-center gap-2 text-sm">
           <input

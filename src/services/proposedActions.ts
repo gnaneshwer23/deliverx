@@ -22,6 +22,7 @@ import {
   type ProposalStatus,
   type StructuredProposal,
 } from "./proposedActionEngine";
+import { emitProposalAppliedEvent } from "./platformWebhooks";
 
 export type ProposedActionRow = {
   id: string;
@@ -256,6 +257,15 @@ export async function applyProposal(id: string): Promise<ProposedActionRow> {
   await processProposalAppliedSideEffects(mapped, applyResult).catch(() => ({
     impactEvents: 0,
   }));
+
+  void emitProposalAppliedEvent(mapped.organisation_id, {
+    proposalId: mapped.id,
+    projectId: mapped.project_id,
+    actionType: mapped.action_type,
+    title: mapped.title,
+    applyResult,
+    source: "workflow",
+  }).catch(() => undefined);
 
   return mapped;
 }

@@ -32,7 +32,9 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("name, email, role, avatar_url, organisations(name, industry, team_size, delivery_type)")
+    .select(
+      "name, email, role, avatar_url, organisation_id, organisations(name, industry, team_size, delivery_type)",
+    )
     .single();
 
   const org = profile?.organisations as {
@@ -52,6 +54,12 @@ export default async function SettingsPage() {
   for (const p of projects.slice(0, 20)) {
     projectSettings[p.id] = await getProjectIntegrationSettings(p.id).catch(() => null);
   }
+
+  const orgId = profile?.organisation_id ? String(profile.organisation_id) : "";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000";
+  const githubWebhookUrl = orgId
+    ? `${appUrl}/api/integrations/github/webhook?org=${orgId}`
+    : null;
 
   return (
     <>
@@ -101,6 +109,7 @@ export default async function SettingsPage() {
         <section className={`${dxClass.cardPad}`}>
           <h2 className="mb-4 font-semibold">GitHub integration</h2>
           <GitHubIntegrationForm
+            webhookUrl={githubWebhookUrl}
             orgSettings={githubOrgSettings}
             projects={projects.map((p) => ({ id: p.id, name: p.name }))}
             projectSettings={projectSettings}

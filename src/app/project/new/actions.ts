@@ -10,6 +10,7 @@ import {
 } from "@/services/aiBusinessCaseReview";
 import { saveBusinessCaseReview } from "@/services/businessCaseReview";
 import { bootstrapProjectWorkspaces } from "@/services/projectBootstrap";
+import { emitPlatformEvent } from "@/services/platformWebhooks";
 
 export type ProjectState = { ok: boolean; error?: string };
 
@@ -113,6 +114,16 @@ export async function createProjectDraftAction(
 
   if (error || !project) {
     return { ok: false, error: error?.message ?? "Failed to create project." };
+  }
+
+  if (bcGoAccepted) {
+    void emitPlatformEvent(String(profile.organisation_id), "project.go_accepted", {
+      projectId: project.id,
+      projectName: name,
+      recommendation: bcReport?.recommendation ?? "go",
+      deliveryType,
+      source: "business_case_gateway",
+    }).catch(() => undefined);
   }
 
   if (bcReport) {

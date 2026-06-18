@@ -242,6 +242,71 @@ export async function emitPlatformEvent(
   );
 }
 
+export async function emitTaskCreatedEvent(
+  orgId: string,
+  input: {
+    taskId: string;
+    projectId: string;
+    projectName: string;
+    title: string;
+    priority: string;
+    source: string;
+  },
+): Promise<void> {
+  await emitPlatformEvent(orgId, "task.created", {
+    taskId: input.taskId,
+    projectId: input.projectId,
+    projectName: input.projectName,
+    title: input.title,
+    priority: input.priority,
+    source: input.source,
+  });
+}
+
+export async function emitReportPublishedEvent(
+  orgId: string,
+  input: {
+    reportId: string;
+    projectId: string;
+    title: string;
+    reviewStatus: string;
+    stakeholderCount?: number;
+    emailSent?: boolean;
+    source: string;
+  },
+): Promise<void> {
+  await emitPlatformEvent(orgId, "report.published", {
+    reportId: input.reportId,
+    projectId: input.projectId,
+    title: input.title,
+    reviewStatus: input.reviewStatus,
+    stakeholderCount: input.stakeholderCount ?? 0,
+    emailSent: input.emailSent ?? false,
+    source: input.source,
+  });
+}
+
+export async function emitProposalAppliedEvent(
+  orgId: string,
+  input: {
+    proposalId: string;
+    projectId: string;
+    actionType: string;
+    title: string;
+    applyResult: Record<string, unknown>;
+    source: string;
+  },
+): Promise<void> {
+  await emitPlatformEvent(orgId, "proposal.applied", {
+    proposalId: input.proposalId,
+    projectId: input.projectId,
+    actionType: input.actionType,
+    title: input.title,
+    applyResult: input.applyResult,
+    source: input.source,
+  });
+}
+
 export async function listPlatformWebhookDeliveries(
   orgId: string,
   limit = 20,
