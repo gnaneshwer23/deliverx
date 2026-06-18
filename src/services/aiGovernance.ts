@@ -8,9 +8,16 @@ import {
   enrichRecommendationsSystem,
 } from "@/lib/ai/prompts/enrich-recommendations";
 import {
-  meetingSummaryPrompt,
-  meetingSummarySystem,
-} from "@/lib/ai/prompts/meeting-summary";
+  meetingIntelligencePrompt,
+  meetingIntelligenceSystem,
+  type MeetingCeremonyType,
+} from "@/lib/ai/prompts/meeting-ceremonies";
+import {
+  normalizeMeetingIntelligence,
+  type MeetingIntelligenceResult,
+  type MeetingProposal,
+  type MeetingSummaryResult,
+} from "./meetingIntelligenceEngine";
 import {
   raidSuggestPrompt,
   raidSuggestSystem,
@@ -32,16 +39,7 @@ export type RaidSuggestion = {
   mitigation: string;
 };
 
-export type MeetingSummaryResult = {
-  summary: string;
-  actions: string[];
-  decisions: Array<{ title: string; context: string }>;
-  risks: Array<{
-    type: "risk" | "issue" | "dependency";
-    title: string;
-    description: string;
-  }>;
-};
+export type { MeetingProposal, MeetingSummaryResult };
 
 export type ReportDraft = {
   title: string;
@@ -70,19 +68,20 @@ export async function summarizeMeetingNotes(input: {
   title: string;
   notes: string;
   projectName?: string;
+  ceremonyType?: MeetingCeremonyType;
 }): Promise<MeetingSummaryResult> {
-  const raw = await generateJSON<MeetingSummaryResult>({
-    system: meetingSummarySystem,
-    prompt: meetingSummaryPrompt(input),
-    maxTokens: 2048,
+  const raw = await generateJSON<MeetingIntelligenceResult>({
+    system: meetingIntelligenceSystem,
+    prompt: meetingIntelligencePrompt({
+      title: input.title,
+      notes: input.notes,
+      projectName: input.projectName,
+      ceremonyType: input.ceremonyType ?? "general",
+    }),
+    maxTokens: 4096,
   });
 
-  return {
-    summary: raw.summary ?? "",
-    actions: raw.actions ?? [],
-    decisions: raw.decisions ?? [],
-    risks: raw.risks ?? [],
-  };
+  return normalizeMeetingIntelligence(raw);
 }
 
 async function buildProjectSnapshot(projectId: string, projectName: string) {

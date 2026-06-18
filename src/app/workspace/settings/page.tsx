@@ -5,6 +5,20 @@ import { EnvKeysGuide } from "@/components/settings/env-keys-guide";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { SetupDiagnostics } from "@/components/settings/setup-diagnostics";
 import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
+import { NotificationSettingsForm } from "@/components/settings/notification-settings-form";
+import { PhaseBHealthPanel } from "@/components/settings/phase-b-health-panel";
+import { PhaseCHealthPanel } from "@/components/settings/phase-c-health-panel";
+import { PhaseDHealthPanel } from "@/components/settings/phase-d-health-panel";
+import { PlatformApiKeysForm } from "@/components/settings/platform-api-keys-form";
+import { GitHubIntegrationForm } from "@/components/settings/github-integration-form";
+import { isEmailConfigured } from "@/lib/email/resend";
+import { getOrgNotificationSettings } from "@/services/notificationService";
+import {
+  getOrgIntegrationSettings,
+  getProjectIntegrationSettings,
+} from "@/services/githubIntegration";
+import { listOrgApiKeys } from "@/services/platformApi";
+import { listProjectsForOrg } from "@/services/portfolio";
 import { dxClass } from "@/lib/dx-theme";
 
 export default async function SettingsPage() {
@@ -24,6 +38,16 @@ export default async function SettingsPage() {
     team_size?: string | null;
     delivery_type?: string | null;
   } | null;
+
+  const notificationSettings = await getOrgNotificationSettings().catch(() => null);
+  const apiKeys = await listOrgApiKeys().catch(() => []);
+  const githubOrgSettings = await getOrgIntegrationSettings().catch(() => null);
+  const projects = await listProjectsForOrg().catch(() => []);
+  const projectSettings: Record<string, Awaited<ReturnType<typeof getProjectIntegrationSettings>>> =
+    {};
+  for (const p of projects.slice(0, 20)) {
+    projectSettings[p.id] = await getProjectIntegrationSettings(p.id).catch(() => null);
+  }
 
   return (
     <>
@@ -61,6 +85,32 @@ export default async function SettingsPage() {
             )}
           </section>
         </div>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Notifications</h2>
+          <NotificationSettingsForm
+            settings={notificationSettings}
+            emailConfigured={isEmailConfigured()}
+          />
+        </section>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">GitHub integration</h2>
+          <GitHubIntegrationForm
+            orgSettings={githubOrgSettings}
+            projects={projects.map((p) => ({ id: p.id, name: p.name }))}
+            projectSettings={projectSettings}
+          />
+        </section>
+
+        <PhaseBHealthPanel />
+        <PhaseCHealthPanel />
+        <PhaseDHealthPanel />
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Platform API keys</h2>
+          <PlatformApiKeysForm keys={apiKeys} />
+        </section>
 
         <AiIntegrationStatus />
         <EnvKeysGuide />

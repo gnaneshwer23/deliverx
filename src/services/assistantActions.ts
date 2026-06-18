@@ -2,6 +2,12 @@ import { generateJSON } from "@/lib/ai/anthropic";
 import { requireAuth } from "@/lib/api/auth";
 import { createTask } from "@/services/delivery";
 import { createRaidItem, type RaidItemType, type RaidSeverity } from "@/services/governance";
+import { createMilestone } from "@/services/milestones";
+import {
+  createStakeholder,
+  type StakeholderLevel,
+  type StakeholderSentiment,
+} from "@/services/traceability";
 import type { ChatMessage } from "@/services/assistant";
 
 export type ProposedAction =
@@ -23,16 +29,44 @@ export type ProposedAction =
       description?: string;
       priority?: "low" | "medium" | "high" | "critical";
       summary: string;
+    }
+  | {
+      id: string;
+      type: "create_milestone";
+      projectId: string;
+      title: string;
+      description?: string;
+      targetDate?: string;
+      summary: string;
+    }
+  | {
+      id: string;
+      type: "create_stakeholder";
+      projectId: string;
+      name: string;
+      roleLabel?: string;
+      email?: string;
+      influence?: StakeholderLevel;
+      interest?: StakeholderLevel;
+      sentiment?: StakeholderSentiment;
+      summary: string;
     };
 
 type RawProposal = {
   actions?: Array<{
     type?: string;
     title?: string;
+    name?: string;
     description?: string;
     raidType?: string;
     severity?: string;
     priority?: string;
+    targetDate?: string;
+    roleLabel?: string;
+    email?: string;
+    influence?: string;
+    interest?: string;
+    sentiment?: string;
     summary?: string;
   }>;
 };
@@ -46,7 +80,17 @@ export async function proposeAssistantActions(
 
   const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
   const lower = `${lastUser} ${assistantReply}`.toLowerCase();
-  const actionSignals = ["create", "add", "log", "register", "raise", "new risk", "new task"];
+  const actionSignals = [
+    "create",
+    "add",
+    "log",
+    "register",
+    "raise",
+    "new risk",
+    "new task",
+    "milestone",
+    "stakeholder",
+  ];
   if (!actionSignals.some((s) => lower.includes(s))) {
     return [];
   }
@@ -57,6 +101,8 @@ Return JSON: { "actions": [ ... ] }
 Each action must be one of:
 - create_raid: { type, title, description?, raidType?: risk|issue|assumption|dependency, severity?: low|medium|high|critical, summary }
 - create_task: { type, title, description?, priority?: low|medium|high|critical, summary }
+- create_milestone: { type, title, description?, targetDate?: YYYY-MM-DD, summary }
+- create_stakeholder: { type, name, roleLabel?, email?, influence?: low|medium|high, interest?: low|medium|high, sentiment?: champion|neutral|skeptic|blocker, summary }
 Only propose actions the user clearly requested. Max 3 actions. If none, return { "actions": [] }.`,
     prompt: `Project ID: ${projectId}
 User: ${lastUser}
@@ -122,6 +168,50 @@ function normalizeAction(
     };
   }
 
+  if (raw.type === "create_milestone") {
+    return {
+      id,
+      type: "create_milestone",
+      projectId,
+      title,
+      description: raw.description?.trim(),
+      targetDate: raw.targetDate?.trim() || undefined,
+      summary,
+    };
+  }
+
+  if (raw.type === "create_stakeholder") {
+    const name = raw.name?.trim() || title;
+    if (!name) return null;
+    const influence = (["low", "medium", "high"] as const).includes(
+      raw.influence as StakeholderLevel,
+    )
+      ? (raw.influence as StakeholderLevel)
+      : "medium";
+    const interest = (["low", "medium", "high"] as const).includes(
+      raw.interest as StakeholderLevel,
+    )
+      ? (raw.interest as StakeholderLevel)
+      : "medium";
+    const sentiment = (
+      ["champion", "neutral", "skeptic", "blocker"] as const
+    ).includes(raw.sentiment as StakeholderSentiment)
+      ? (raw.sentiment as StakeholderSentiment)
+      : "neutral";
+    return {
+      id,
+      type: "create_stakeholder",
+      projectId,
+      name,
+      roleLabel: raw.roleLabel?.trim(),
+      email: raw.email?.trim(),
+      influence,
+      interest,
+      sentiment,
+      summary,
+    };
+  }
+
   return null;
 }
 
@@ -139,6 +229,29 @@ export async function applyAssistantAction(
       severity: action.severity ?? "medium",
     });
     return { entityType: "raid", entityId: row.id };
+  }
+
+  if (action.type === "create_milestone") {
+    const row = await createMilestone({
+      projectId: action.projectId,
+      title: action.title,
+      description: action.description,
+      targetDate: action.targetDate,
+    });
+    return { entityType: "milestone", entityId: row.id };
+  }
+
+  if (action.type === "create_stakeholder") {
+    const row = await createStakeholder({
+      projectId: action.projectId,
+      name: action.name,
+      roleLabel: action.roleLabel,
+      email: action.email,
+      influence: action.influence,
+      interest: action.interest,
+      sentiment: action.sentiment,
+    });
+    return { entityType: "stakeholder", entityId: row.id };
   }
 
   const row = await createTask({

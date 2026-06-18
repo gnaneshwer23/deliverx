@@ -8,9 +8,34 @@ const initial: RoleState = { ok: false };
 
 const roles = [
   {
+    value: "product_manager",
+    title: "Product Manager",
+    desc: "Vision, roadmap, prioritisation, and customer value.",
+  },
+  {
+    value: "ba",
+    title: "Business Analyst",
+    desc: "Requirements, stakeholder alignment, traceability.",
+  },
+  {
     value: "pm",
     title: "Project / Programme Manager",
     desc: "Plan delivery, run governance, ship outcomes.",
+  },
+  {
+    value: "qa",
+    title: "QA / Test Manager",
+    desc: "Test design, defects, release readiness, and quality traceability.",
+  },
+  {
+    value: "scrum_master",
+    title: "Scrum Master",
+    desc: "Facilitate sprints, remove impediments, and coach team delivery.",
+  },
+  {
+    value: "engineer",
+    title: "Engineer",
+    desc: "Build features, trace requirements to code, ship with AI copilot.",
   },
   {
     value: "team_member",
@@ -19,8 +44,8 @@ const roles = [
   },
   {
     value: "executive",
-    title: "Executive",
-    desc: "Oversight, reporting, decisions.",
+    title: "Founder / Sponsor",
+    desc: "Vision, funding, decisions, investor updates, and outcomes.",
   },
 ] as const;
 

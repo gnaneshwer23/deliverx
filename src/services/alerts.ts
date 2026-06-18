@@ -13,6 +13,8 @@ import {
 import { loadProjectSignals } from "./projectSignals";
 import { computeProjectHealth, computeDeliveryConfidence } from "./intelligenceEngine";
 import { listPendingApprovals } from "./approvals";
+import { listPendingArtifactReviews } from "./artifactReviews";
+import { listPendingProposals } from "./proposedActions";
 
 export type AlertSeverity = "critical" | "high" | "medium" | "low";
 
@@ -28,6 +30,8 @@ export type DeliveryAlert = {
     | "milestone"
     | "capacity"
     | "approval"
+    | "artifact"
+    | "proposal"
     | "standup";
   title: string;
   description: string;
@@ -43,15 +47,25 @@ function sevRank(s: AlertSeverity): number {
 export async function getOrgAlertQueue(limit = 30): Promise<DeliveryAlert[]> {
   const alerts: DeliveryAlert[] = [];
 
-  const [projects, openRisks, pendingDecisions, stats, blockedTasks, approvals] =
-    await Promise.all([
-      listProjectsForOrg(),
-      listOpenRaidOrg(12),
-      listOrgDecisionsPending(10),
-      getOrgGovernanceStats(),
-      listOrgTasks({ status: "blocked", limit: 15 }),
-      listPendingApprovals(10).catch(() => []),
-    ]);
+  const [
+    projects,
+    openRisks,
+    pendingDecisions,
+    stats,
+    blockedTasks,
+    approvals,
+    artifactReviews,
+    proposals,
+  ] = await Promise.all([
+    listProjectsForOrg(),
+    listOpenRaidOrg(12),
+    listOrgDecisionsPending(10),
+    getOrgGovernanceStats(),
+    listOrgTasks({ status: "blocked", limit: 15 }),
+    listPendingApprovals(10).catch(() => []),
+    listPendingArtifactReviews(8).catch(() => []),
+    listPendingProposals(8).catch(() => []),
+  ]);
 
   for (const risk of openRisks) {
     alerts.push({
@@ -101,6 +115,31 @@ export async function getOrgAlertQueue(limit = 30): Promise<DeliveryAlert[]> {
       description: `${a.entity_type} awaiting ${a.approval_level} sign-off`,
       projectId: a.project_id,
       href: `/workspace/governance/approvals`,
+    });
+  }
+
+  for (const review of artifactReviews) {
+    alerts.push({
+      id: `art-${review.id}`,
+      severity: "medium",
+      category: "artifact",
+      title: review.title,
+      description: `AI ${review.entity_type.replace(/_/g, " ")} pending review${review.project_name ? ` — ${review.project_name}` : ""}`,
+      projectId: review.project_id,
+      projectName: review.project_name,
+      href: `/workspace/proposals`,
+    });
+  }
+
+  for (const p of proposals) {
+    alerts.push({
+      id: `prop-${p.id}`,
+      severity: "medium",
+      category: "proposal",
+      title: p.title,
+      description: `${p.action_type.replace(/_/g, " ")} proposal awaiting sign-off`,
+      projectId: p.project_id,
+      href: `/workspace/proposals`,
     });
   }
 

@@ -1,11 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
+import { searchOrgMemory } from "@/services/projectMemoryRag";
 
 export type SearchResultItem = {
   id: string;
-  type: "project" | "task" | "raid" | "document";
+  type: "project" | "task" | "raid" | "document" | "memory";
   title: string;
   subtitle: string;
   href: string;
+  similarity?: number | null;
 };
 
 export type WorkspaceSearchResults = {
@@ -40,7 +42,7 @@ export async function searchWorkspace(
   const safe = q.replace(/[%_,]/g, " ").trim();
   const pattern = `%${safe}%`;
 
-  const [projects, tasks, raid, documents] = await Promise.all([
+  const [projects, tasks, raid, documents, memoryHits] = await Promise.all([
     supabase
       .from("projects")
       .select("id, name, status")
@@ -61,6 +63,7 @@ export async function searchWorkspace(
       .select("id, title, project_id, projects!inner(name)")
       .or(`title.ilike.${pattern},content_text.ilike.${pattern}`)
       .limit(limitPerType),
+    searchOrgMemory(q, limitPerType).catch(() => []),
   ]);
 
   const items: SearchResultItem[] = [];
@@ -107,6 +110,25 @@ export async function searchWorkspace(
       href: `/project/${d.project_id}/documents`,
     });
   }
+
+  for (const hit of memoryHits) {
+    const excerpt = hit.content.replace(/\s+/g, " ").trim().slice(0, 80);
+    items.push({
+      id: hit.id,
+      type: "memory",
+      title: hit.title ?? `${hit.sourceType.replace(/_/g, " ")} memory`,
+      subtitle: `Memory · ${hit.projectName} · ${excerpt}${excerpt.length >= 80 ? "…" : ""}`,
+      href: `/project/${hit.projectId}/traceability`,
+      similarity: hit.similarity,
+    });
+  }
+
+  items.sort((a, b) => {
+    const simA = a.similarity ?? -1;
+    const simB = b.similarity ?? -1;
+    if (simA !== simB) return simB - simA;
+    return a.title.localeCompare(b.title);
+  });
 
   return { query: q, items };
 }

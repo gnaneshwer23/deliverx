@@ -9,6 +9,8 @@ import type { MeetingSummaryResult } from "@/services/aiGovernance";
 import { saveMeetingSummaryAction, type ActionState } from "../ai/actions";
 import { MeetingAlignmentPreview } from "@/components/alignment/meeting-alignment-preview";
 import { MeetingAudioUpload } from "@/components/meetings/meeting-audio-upload";
+import { MeetingCeremonyBadge } from "@/components/meetings/meeting-ceremony";
+import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 
 const initial: ActionState = { ok: false };
 
@@ -23,18 +25,21 @@ export function MeetingAiPanel({
   title,
   notes,
   hasSummary,
+  ceremonyType = "general",
 }: {
   projectId: string;
   meetingId: string;
   title: string;
   notes: string | null;
   hasSummary: boolean;
+  ceremonyType?: MeetingCeremonyType;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState<MeetingSummaryResult | null>(null);
   const [createDecisions, setCreateDecisions] = useState(true);
   const [createRisks, setCreateRisks] = useState(true);
+  const [queueToApproval, setQueueToApproval] = useState(true);
   const [state, formAction, pending] = useActionState(saveMeetingSummaryAction, initial);
   const router = useRouter();
 
@@ -75,6 +80,16 @@ export function MeetingAiPanel({
     return (
       <p className="mt-2 text-xs font-medium text-[#0F766E]">
         Summary saved{hasSummary ? " (updated)" : ""}.
+        {state.queuedProposals ? (
+          <>
+            {" "}
+            {state.queuedProposals} proposal(s) queued for approval —{" "}
+            <a href="/workspace/proposals" className="underline">
+              review queue
+            </a>
+            .
+          </>
+        ) : null}
         {state.alignmentScore != null ? (
           <>
             {" "}
@@ -88,6 +103,10 @@ export function MeetingAiPanel({
 
   return (
     <div className="mt-3 border-t border-slate-100 pt-3">
+      <div className="mb-2 flex items-center gap-2">
+        <MeetingCeremonyBadge type={ceremonyType} />
+        <span className="text-[10px] text-slate-400">Ceremony-aware extraction</span>
+      </div>
       <MeetingAudioUpload projectId={projectId} meetingId={meetingId} />
       {!draft ? (
         <>
@@ -117,6 +136,7 @@ export function MeetingAiPanel({
         <form action={formAction} className="space-y-3 rounded-lg bg-slate-50 p-3">
           <input type="hidden" name="projectId" value={projectId} />
           <input type="hidden" name="meetingId" value={meetingId} />
+          <input type="hidden" name="meetingTitle" value={title} />
           <input type="hidden" name="payload" value={JSON.stringify(draft)} />
           <p className="text-xs font-semibold uppercase text-slate-400">AI preview</p>
           <textarea
@@ -130,29 +150,76 @@ export function MeetingAiPanel({
               <span className="font-medium">Actions:</span> {draft.actions.join("; ")}
             </div>
           ) : null}
+          {draft.blockers?.length ? (
+            <div className="text-xs text-slate-600">
+              <span className="font-medium">Blockers:</span>{" "}
+              {draft.blockers.map((b) => b.title).join("; ")}
+            </div>
+          ) : null}
+          {draft.dependencies?.length ? (
+            <div className="text-xs text-slate-600">
+              <span className="font-medium">Dependencies:</span>{" "}
+              {draft.dependencies.map((d) => d.title).join("; ")}
+            </div>
+          ) : null}
+          {draft.ceremonyInsights?.length ? (
+            <ul className="list-inside list-disc text-xs text-slate-600">
+              {draft.ceremonyInsights.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
           <MeetingAlignmentPreview
             projectId={projectId}
             meetingId={meetingId}
             meetingContext={draft.summary}
           />
+          {draft.proposals && draft.proposals.length > 0 ? (
+            <ul className="space-y-1 text-xs text-slate-600">
+              {draft.proposals.map((p, i) => (
+                <li key={i}>
+                  <span className="font-medium capitalize">{p.actionType.replace("_", " ")}:</span>{" "}
+                  {p.title}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <label className="flex items-center gap-2 text-xs text-slate-600">
             <input
               type="checkbox"
-              name="createDecisions"
-              checked={createDecisions}
-              onChange={(e) => setCreateDecisions(e.target.checked)}
+              name="queueToApproval"
+              checked={queueToApproval}
+              onChange={(e) => setQueueToApproval(e.target.checked)}
             />
-            Create {draft.decisions.length} proposed decision(s)
+            Queue follow-ups to approval (recommended — nothing auto-applies)
           </label>
-          <label className="flex items-center gap-2 text-xs text-slate-600">
-            <input
-              type="checkbox"
-              name="createRisks"
-              checked={createRisks}
-              onChange={(e) => setCreateRisks(e.target.checked)}
-            />
-            Create {draft.risks.length} RAID item(s)
-          </label>
+          {queueToApproval ? (
+            <input type="hidden" name="queueToApproval" value="on" />
+          ) : (
+            <input type="hidden" name="queueToApproval" value="off" />
+          )}
+          {!queueToApproval ? (
+            <>
+              <label className="flex items-center gap-2 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  name="createDecisions"
+                  checked={createDecisions}
+                  onChange={(e) => setCreateDecisions(e.target.checked)}
+                />
+                Create {draft.decisions.length} proposed decision(s) immediately
+              </label>
+              <label className="flex items-center gap-2 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  name="createRisks"
+                  checked={createRisks}
+                  onChange={(e) => setCreateRisks(e.target.checked)}
+                />
+                Create {draft.risks.length} RAID item(s) immediately
+              </label>
+            </>
+          ) : null}
           {state.error ? (
             <p className="text-xs text-red-600">{state.error}</p>
           ) : null}

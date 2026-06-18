@@ -258,6 +258,12 @@ export async function onProjectClose(
 
   const savedInsights = await saveInsights(projectId, insights);
 
+  const { syncProjectLearningSignals } = await import("./continuousLearning");
+  await syncProjectLearningSignals(projectId).catch(() => ({
+    estimateRows: 0,
+    defectRows: 0,
+  }));
+
   const draft = generatePlaybook([
     {
       id: project.id,

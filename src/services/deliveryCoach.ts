@@ -72,6 +72,20 @@ const COACH_MAP: Record<
     action: "Escalate to governance forum with decision pack ready",
     href: a.href,
   }),
+  artifact: (a) => ({
+    id: `coach-${a.id}`,
+    priority: "medium",
+    behaviour: "AI-generated artifacts are waiting for human review.",
+    action: `Review and approve or reject "${a.title}"`,
+    href: a.href ?? "/workspace/proposals",
+  }),
+  proposal: (a) => ({
+    id: `coach-${a.id}`,
+    priority: "medium",
+    behaviour: "Assistant proposals need a decision before they can apply.",
+    action: `Approve or reject "${a.title}" in the approval centre`,
+    href: a.href ?? "/workspace/proposals",
+  }),
   standup: (a) => ({
     id: `coach-${a.id}`,
     priority: "low",

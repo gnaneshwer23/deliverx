@@ -4,7 +4,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
-import { applyProjectStructure } from "@/services/applyProjectStructure";
+import {
+  parseBusinessCaseReviewJson,
+  type BusinessCaseReview,
+} from "@/services/aiBusinessCaseReview";
+import { saveBusinessCaseReview } from "@/services/businessCaseReview";
+import { bootstrapProjectWorkspaces } from "@/services/projectBootstrap";
 
 export type ProjectState = { ok: boolean; error?: string };
 
@@ -18,9 +23,45 @@ export async function createProjectDraftAction(
   const timeline = String(formData.get("timeline") ?? "").trim() || null;
   const playbookId = String(formData.get("playbook_id") ?? "").trim() || null;
   const aiDraftRaw = String(formData.get("ai_draft") ?? "").trim();
+  const brief = String(formData.get("brief") ?? "").trim();
+  const bcReportRaw = String(formData.get("bc_report") ?? "").trim();
+  const bcGoAccepted = formData.get("bc_go_accepted") === "true";
+  const discoveryAnswersRaw = String(formData.get("discovery_answers") ?? "").trim();
   const publish = formData.get("publish") === "on";
 
   if (!name) return { ok: false, error: "Project name is required." };
+
+  let bcReport: BusinessCaseReview | null = null;
+  if (bcReportRaw) {
+    try {
+      bcReport = parseBusinessCaseReviewJson(bcReportRaw);
+    } catch {
+      return { ok: false, error: "Invalid business case report." };
+    }
+
+    if (!bcGoAccepted) {
+      return {
+        ok: false,
+        error: "Accept the GO recommendation before creating a project from a reviewed business case.",
+      };
+    }
+
+    if (bcReport.recommendation === "no_go") {
+      return {
+        ok: false,
+        error: "No-Go business cases cannot proceed through the sponsor gateway.",
+      };
+    }
+  }
+
+  let discoveryAnswers: Record<string, string> | undefined;
+  if (discoveryAnswersRaw) {
+    try {
+      discoveryAnswers = JSON.parse(discoveryAnswersRaw) as Record<string, string>;
+    } catch {
+      return { ok: false, error: "Invalid discovery answers." };
+    }
+  }
 
   let aiDraft: ProjectStructureDraft | null = null;
   if (aiDraftRaw) {
@@ -31,6 +72,8 @@ export async function createProjectDraftAction(
     }
   }
 
+  const shouldBootstrap = bcGoAccepted && Boolean(brief);
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -39,12 +82,15 @@ export async function createProjectDraftAction(
 
   const { data: profile } = await supabase
     .from("users")
-    .select("organisation_id")
+    .select("organisation_id, organisations(name)")
     .single();
 
   if (!profile?.organisation_id) {
     return { ok: false, error: "Create an organisation first." };
   }
+
+  const orgName =
+    (profile.organisations as { name?: string } | null)?.name ?? null;
 
   const insert: Record<string, unknown> = {
     organisation_id: profile.organisation_id,
@@ -55,6 +101,7 @@ export async function createProjectDraftAction(
     timeline,
     status: publish ? "active" : "draft",
     published_at: publish ? new Date().toISOString() : null,
+    bootstrap_status: shouldBootstrap ? "running" : "skipped",
   };
   if (playbookId) insert.applied_playbook_id = playbookId;
 
@@ -68,7 +115,59 @@ export async function createProjectDraftAction(
     return { ok: false, error: error?.message ?? "Failed to create project." };
   }
 
-  if (aiDraft) {
+  if (bcReport) {
+    try {
+      await saveBusinessCaseReview({
+        briefExcerpt: brief || name,
+        report: bcReport,
+        projectId: project.id,
+        goDecision: "accepted",
+      });
+    } catch (err) {
+      return {
+        ok: false,
+        error:
+          err instanceof Error
+            ? err.message
+            : "Project created but business case audit failed to save.",
+      };
+    }
+  }
+
+  if (shouldBootstrap) {
+    try {
+      await bootstrapProjectWorkspaces({
+        projectId: project.id,
+        projectName: name,
+        brief,
+        goal,
+        deliveryType,
+        timeline,
+        discoveryAnswers,
+        bcReport,
+        structureDraft: aiDraft,
+        orgName,
+      });
+      revalidatePath("/workspace/dashboard");
+      revalidatePath("/workspace/tasks");
+      revalidatePath("/workspace/founder");
+      revalidatePath("/workspace/product");
+      revalidatePath("/workspace/ba");
+      revalidatePath("/workspace/pm-mission");
+      revalidatePath("/workspace/engineer");
+      revalidatePath("/workspace/scrum-mission");
+      revalidatePath("/workspace/qa");
+    } catch (err) {
+      return {
+        ok: false,
+        error:
+          err instanceof Error
+            ? err.message
+            : "Project created but workspace bootstrap failed. Retry from the project overview.",
+      };
+    }
+  } else if (aiDraft) {
+    const { applyProjectStructure } = await import("@/services/applyProjectStructure");
     try {
       await applyProjectStructure(project.id, aiDraft);
       revalidatePath("/workspace/dashboard");

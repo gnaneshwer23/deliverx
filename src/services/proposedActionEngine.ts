@@ -1,0 +1,107 @@
+/**
+ * Proposed action types — unified approval queue for meeting and assistant flows.
+ */
+
+export type ProposalActionType =
+  | "create_task"
+  | "create_raid"
+  | "create_decision"
+  | "calendar_event"
+  | "create_requirement"
+  | "create_feature"
+  | "apply_structure";
+
+export type ProposalSource =
+  | "meeting"
+  | "assistant"
+  | "bootstrap"
+  | "ba"
+  | "product"
+  | "report"
+  | "structure";
+
+export type ProposalStatus = "pending" | "approved" | "rejected" | "applied";
+
+export type TaskProposalPayload = {
+  title: string;
+  description?: string;
+  priority?: "low" | "medium" | "high" | "critical";
+};
+
+export type RaidProposalPayload = {
+  title: string;
+  description?: string;
+  raidType?: "risk" | "issue" | "assumption" | "dependency";
+  severity?: "low" | "medium" | "high" | "critical";
+};
+
+export type DecisionProposalPayload = {
+  title: string;
+  context?: string;
+};
+
+export type CalendarEventPayload = {
+  title: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  description?: string;
+  location?: string;
+};
+
+export type ProposalPayload =
+  | ({ kind: "create_task" } & TaskProposalPayload)
+  | ({ kind: "create_raid" } & RaidProposalPayload)
+  | ({ kind: "create_decision" } & DecisionProposalPayload)
+  | ({ kind: "calendar_event" } & CalendarEventPayload);
+
+export type StructuredProposal = {
+  actionType: ProposalActionType;
+  title: string;
+  summary: string;
+  payload: Record<string, unknown>;
+};
+
+function formatCalendarUtc(d: Date): string {
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "").slice(0, 15) + "Z";
+}
+
+export function buildGoogleCalendarUrl(input: CalendarEventPayload): string {
+  const start = new Date(input.scheduledAt);
+  const end = new Date(start.getTime() + input.durationMinutes * 60_000);
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: input.title,
+    dates: `${formatCalendarUtc(start)}/${formatCalendarUtc(end)}`,
+  });
+  if (input.description) params.set("details", input.description);
+  if (input.location) params.set("location", input.location);
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/** Outlook web calendar deeplink (no OAuth required). */
+export function buildOutlookCalendarUrl(input: CalendarEventPayload): string {
+  const start = new Date(input.scheduledAt);
+  const end = new Date(start.getTime() + input.durationMinutes * 60_000);
+
+  const params = new URLSearchParams({
+    path: "/calendar/action/compose",
+    rru: "addevent",
+    subject: input.title,
+    startdt: start.toISOString(),
+    enddt: end.toISOString(),
+  });
+  if (input.description) params.set("body", input.description);
+  if (input.location) params.set("location", input.location);
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
+
+export const ACTION_TYPE_LABELS: Record<ProposalActionType, string> = {
+  create_task: "Create task",
+  create_raid: "Create RAID item",
+  create_decision: "Log decision",
+  calendar_event: "Schedule calendar event",
+  create_requirement: "Create requirement",
+  create_feature: "Create feature",
+  apply_structure: "Apply delivery structure",
+};

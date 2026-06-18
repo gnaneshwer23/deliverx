@@ -18,8 +18,17 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  if (!body.action?.type || !body.action.projectId || !body.action.title) {
+  if (!body.action?.type || !body.action.projectId) {
     return Response.json({ error: "Invalid action payload" }, { status: 400 });
+  }
+
+  const action = body.action;
+  if (action.type === "create_stakeholder") {
+    if (!action.name?.trim()) {
+      return Response.json({ error: "Stakeholder name required" }, { status: 400 });
+    }
+  } else if (!action.title?.trim()) {
+    return Response.json({ error: "Action title required" }, { status: 400 });
   }
 
   try {

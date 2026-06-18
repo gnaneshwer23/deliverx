@@ -10,7 +10,7 @@ export { buildInviteUrl };
 export type InvitationRow = {
   id: string;
   email: string;
-  role: "pm" | "team_member" | "executive";
+  role: "pm" | "team_member" | "executive" | "ba" | "product_manager" | "engineer" | "scrum_master" | "qa";
   status: "pending" | "accepted" | "expired" | "revoked";
   token: string;
   created_at: string;

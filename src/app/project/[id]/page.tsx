@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getProjectIntelligence } from "@/services/intelligence";
 import { getDeliveryForecast } from "@/services/deliveryForecast";
+import { getDeliveryPrediction } from "@/services/deliveryPrediction";
 import { listEstimationPacks } from "@/services/estimationPacks";
 import { getProjectSuccessScore } from "@/services/successScore";
 import { loadProjectSignals } from "@/services/projectSignals";
@@ -13,6 +14,10 @@ import { ConfidenceCard } from "@/components/intelligence/confidence-card";
 import { DeliveryForecastCard } from "@/components/intelligence/delivery-forecast-card";
 import { DeliverySuccessScoreCard } from "@/components/intelligence/delivery-success-score-card";
 import { EstimationPacksPanel } from "@/components/intelligence/estimation-packs-panel";
+import { DeliveryPredictionPanel } from "@/components/prediction/delivery-prediction-panel";
+import { DeliveryNarratorPanel } from "@/components/intelligence/delivery-narrator-panel";
+import { DeliveryBriefingPanel } from "@/components/intelligence/delivery-briefing-panel";
+import { VoiceProjectCopilot } from "@/components/voice/voice-project-copilot";
 import { RecommendationsPanel } from "@/components/intelligence/recommendations-panel";
 import { DriftPanel } from "@/components/intelligence/drift-panel";
 import { BlockerInsights } from "@/components/intelligence/blocker-insights";
@@ -41,8 +46,10 @@ import { AlignmentSummaryCard } from "@/components/alignment/alignment-summary-c
 import { TraceabilityPanel } from "@/components/traceability/traceability-panel";
 import { ProjectOverviewTabs } from "@/components/project/project-overview-tabs";
 import { ProjectQuickNav } from "@/components/project/project-quick-nav";
+import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { ProjectGovernanceOverview } from "@/components/project/project-governance-overview";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { listVoiceProjectLogs } from "@/services/voiceProjectUpdate";
 import {
   Table,
   TableBody,
@@ -62,7 +69,7 @@ export default async function ProjectOverviewPage({
   const supabase = await createClient();
   const { data: project } = await supabase
     .from("projects")
-    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at")
+    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at, bootstrap_status, bootstrap_summary")
     .eq("id", id)
     .single();
 
@@ -74,7 +81,7 @@ export default async function ProjectOverviewPage({
     | "completed"
     | "archived";
 
-  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, estimationPacks, successScore] =
+  const [intelligence, signals, memory, adaptive, reviews, aiReviews, tasks, members, alignment, trace, raid, decisions, meetings, standups, reports, standupToday, deliveryForecast, deliveryPrediction, estimationPacks, successScore, voiceLogs] =
     await Promise.all([
       getProjectIntelligence(id),
       loadProjectSignals(id),
@@ -93,8 +100,10 @@ export default async function ProjectOverviewPage({
       listReports(id, { pageSize: 4 }),
       hasStandupToday(id),
       getDeliveryForecast(id).catch(() => null),
+      getDeliveryPrediction(id).catch(() => null),
       listEstimationPacks(id).catch(() => []),
       getProjectSuccessScore(id).catch(() => null),
+      listVoiceProjectLogs(id).catch(() => []),
     ]);
 
   const aiReviewMap = Object.fromEntries(
@@ -176,6 +185,12 @@ export default async function ProjectOverviewPage({
         <ProjectQuickNav projectId={id} />
       </div>
 
+      <ProjectBootstrapPanel
+        projectId={id}
+        initialStatus={(project?.bootstrap_status as string) ?? "skipped"}
+        summary={(project?.bootstrap_summary as Record<string, unknown>) ?? {}}
+      />
+
       <ProjectOverviewTabs
         overview={
           <div className="space-y-6">
@@ -199,6 +214,21 @@ export default async function ProjectOverviewPage({
             </div>
 
             <EstimationPacksPanel projectId={id} packs={estimationPacks} />
+
+            {deliveryPrediction ? (
+              <DeliveryPredictionPanel prediction={deliveryPrediction} projectId={id} />
+            ) : null}
+
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+              <DeliveryNarratorPanel projectId={id} projectName={projectName} />
+              <DeliveryBriefingPanel projectId={id} />
+            </div>
+
+            <VoiceProjectCopilot
+              projectId={id}
+              projectName={projectName}
+              recentLogs={voiceLogs}
+            />
 
             <TraceabilityPanel projectId={id} trace={trace} compact />
 

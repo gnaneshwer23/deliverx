@@ -86,7 +86,55 @@ export async function getDeliveryForecast(
     loadProjectSignals(projectId),
     loadForecastContext(projectId),
   ]);
-  return computeDeliveryForecast(signals, context);
+
+  const rulesForecast = computeDeliveryForecast(signals, context);
+  const rulesDelay = rulesForecast.rulesDelayDays ?? rulesForecast.delayDays;
+
+  try {
+    const {
+      trainOrgSlipModel,
+    } = await import("./deliverySlipModelTrain");
+    const {
+      extractSlipFeatures,
+      predictSlipDays,
+      blendDelayDays,
+    } = await import("./deliverySlipModel");
+    const { computeProjectHealth, computeDeliveryConfidence } = await import(
+      "./intelligenceEngine"
+    );
+
+    const model = await trainOrgSlipModel();
+    if (!model) return rulesForecast;
+
+    const health = computeProjectHealth(signals);
+    const confidence = computeDeliveryConfidence(signals);
+    const features = extractSlipFeatures({
+      signals,
+      healthScore: health.score,
+      confidenceScore: confidence.score,
+    });
+    const mlDelay = predictSlipDays(model, features);
+    const { blended, mlWeight } = blendDelayDays(rulesDelay, mlDelay, model.sampleCount);
+
+    if (mlWeight <= 0 || blended === rulesDelay) {
+      return {
+        ...rulesForecast,
+        mlDelayDays: mlDelay,
+        modelSampleCount: model.sampleCount,
+        mlWeight: 0,
+      };
+    }
+
+    return computeDeliveryForecast(signals, context, {
+      delayDaysOverride: blended,
+      rulesDelayDays: rulesDelay,
+      mlDelayDays: mlDelay,
+      modelSampleCount: model.sampleCount,
+      mlWeight,
+    });
+  } catch {
+    return rulesForecast;
+  }
 }
 
 export async function listProjectForecasts(

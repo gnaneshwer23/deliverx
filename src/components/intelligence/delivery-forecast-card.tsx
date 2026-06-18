@@ -119,6 +119,16 @@ export function DeliveryForecastCard({
         <p className="text-[11px] text-slate-400">
           {Math.round(forecast.confidence * 100)}% confidence ·{" "}
           {forecast.horizonDays}-day horizon
+          {forecast.modelSampleCount != null &&
+          forecast.modelSampleCount >= 3 &&
+          forecast.mlWeight != null &&
+          forecast.mlWeight > 0 ? (
+            <>
+              {" "}
+              · Model v1 ({Math.round(forecast.mlWeight * 100)}% blend, n=
+              {forecast.modelSampleCount})
+            </>
+          ) : null}
         </p>
         {projectId ? (
           <Link

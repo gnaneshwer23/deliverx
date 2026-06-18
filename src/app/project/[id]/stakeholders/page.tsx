@@ -1,10 +1,12 @@
 import { Users } from "lucide-react";
 import { listStakeholders } from "@/services/traceability";
+import { listStakeholderShareLinks } from "@/services/stakeholderShare";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StakeholderMap } from "@/components/traceability/stakeholder-map";
 import { StakeholderForm } from "./stakeholder-form";
 import { DeleteStakeholderButton } from "./delete-stakeholder-button";
+import { StakeholderSharePanel } from "@/components/stakeholder/stakeholder-share-panel";
 
 type Params = Promise<{ id: string }>;
 
@@ -21,7 +23,10 @@ export default async function ProjectStakeholdersPage({
   params: Params;
 }) {
   const { id } = await params;
-  const stakeholders = await listStakeholders(id);
+  const [stakeholders, shareLinks] = await Promise.all([
+    listStakeholders(id),
+    listStakeholderShareLinks(id).catch(() => []),
+  ]);
 
   return (
     <main className="p-6">
@@ -30,6 +35,10 @@ export default async function ProjectStakeholdersPage({
         description="Map influence, interest, and sentiment for delivery traceability."
         icon={Users}
       />
+
+      <div className="mb-8">
+        <StakeholderSharePanel projectId={id} links={shareLinks} />
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">

@@ -26,7 +26,7 @@ export function WorkspaceSearchForm({ initialQuery }: { initialQuery: string }) 
           name="q"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search projects, tasks, RAID, documents…"
+          placeholder="Search projects, tasks, RAID, documents, memory…"
           className={`${dxClass.input} h-10 pl-9`}
         />
       </div>

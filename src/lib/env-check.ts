@@ -87,7 +87,7 @@ export function getEnvDiagnostics(): EnvDiagnostics {
       key: "CRON_SECRET",
       ok: isEnvSet("CRON_SECRET"),
       required: false,
-      hint: "Vercel production — twin (06:00 UTC) + coordination/global loops (07:00 UTC)",
+      hint: "Vercel production — twin (06:00), loops (07:00), notifications digest (08:00 UTC)",
     },
     {
       key: "RESEND_API_KEY",

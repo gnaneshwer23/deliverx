@@ -10,6 +10,13 @@ export type RaidStatus = "open" | "mitigated" | "closed" | "accepted";
 export type RaidSeverity = "low" | "medium" | "high" | "critical";
 export type DecisionStatus = "proposed" | "approved" | "rejected" | "superseded";
 export type MeetingStatus = "scheduled" | "completed" | "cancelled";
+export type MeetingCeremonyType =
+  | "general"
+  | "standup"
+  | "planning"
+  | "retro"
+  | "steering"
+  | "workshop";
 export type ChangeStatus =
   | "draft"
   | "submitted"
@@ -62,6 +69,9 @@ export type MeetingRow = {
   transcript: string | null;
   recording_path: string | null;
   ai_summary: string | null;
+  ceremony_type: MeetingCeremonyType;
+  extraction_json: Record<string, unknown> | null;
+  proposals_queued_at: string | null;
   status: MeetingStatus;
   created_by: string | null;
   created_at: string;
@@ -138,7 +148,7 @@ async function getOrgContext() {
 
   const { data: profile, error: profileError } = await supabase
     .from("users")
-    .select("organisation_id")
+    .select("organisation_id, role")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -149,6 +159,7 @@ async function getOrgContext() {
     supabase,
     userId: user.id,
     orgId: profile.organisation_id as string,
+    role: profile.role as string | null,
   };
 }
 
@@ -411,6 +422,93 @@ export async function createDecision(input: {
   return row;
 }
 
+export async function resolveOrgDecision(
+  id: string,
+  status: "approved" | "rejected",
+  outcome?: string,
+): Promise<DecisionRow> {
+  const { supabase, orgId, userId, role } = await getOrgContext();
+
+  if (role !== "executive" && role !== "pm") {
+    throw new Error("Only PMs and executives can resolve decisions.");
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("decisions")
+    .select("*")
+    .eq("id", id)
+    .eq("organisation_id", orgId)
+    .single();
+
+  if (fetchError || !existing) {
+    throw new Error("Decision not found.");
+  }
+
+  const { data, error } = await supabase
+    .from("decisions")
+    .update({
+      status,
+      outcome: outcome?.trim() || (status === "approved" ? "Approved" : "Rejected"),
+      decided_by: userId,
+      decided_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+
+  await supabase
+    .from("governance_approvals")
+    .update({
+      status,
+      decided_by: userId,
+      decided_at: new Date().toISOString(),
+    })
+    .eq("entity_type", "decision")
+    .eq("entity_id", id)
+    .eq("status", "pending");
+
+  return data as DecisionRow;
+}
+
+export async function escalateOrgDecision(id: string, notes?: string): Promise<void> {
+  const { supabase, orgId, userId, role } = await getOrgContext();
+
+  if (role !== "executive" && role !== "pm") {
+    throw new Error("Only PMs and executives can escalate decisions.");
+  }
+
+  const { data: decision, error } = await supabase
+    .from("decisions")
+    .select("id, project_id, title, context")
+    .eq("id", id)
+    .eq("organisation_id", orgId)
+    .single();
+
+  if (error || !decision) throw new Error("Decision not found.");
+
+  const escalationNote = notes?.trim() || "Escalated to steering committee for review.";
+  const context = [decision.context, `[Escalated] ${escalationNote}`]
+    .filter(Boolean)
+    .join("\n\n");
+
+  await supabase
+    .from("decisions")
+    .update({ context, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  await requestApproval({
+    projectId: decision.project_id as string,
+    entityType: "decision",
+    entityId: decision.id as string,
+    approvalLevel: "steering",
+    notes: escalationNote,
+  }).catch(() => undefined);
+
+  void userId;
+}
+
 // ---------------------------------------------------------------------------
 // Meetings
 // ---------------------------------------------------------------------------
@@ -462,6 +560,7 @@ export async function createMeeting(input: {
   notes?: string;
   summary?: string;
   status?: MeetingStatus;
+  ceremonyType?: MeetingCeremonyType;
 }): Promise<MeetingRow> {
   const { supabase, orgId, userId } = await getOrgContext();
   await assertProjectInOrg(supabase, orgId, input.projectId);
@@ -475,6 +574,7 @@ export async function createMeeting(input: {
       scheduled_at: input.scheduledAt ?? null,
       notes: input.notes?.trim() || null,
       summary: input.summary?.trim() || null,
+      ceremony_type: input.ceremonyType ?? "general",
       status: input.status ?? "scheduled",
       created_by: userId,
     })
@@ -490,7 +590,17 @@ export async function updateMeeting(
   patch: Partial<
     Pick<
       MeetingRow,
-      "title" | "scheduled_at" | "notes" | "summary" | "status" | "transcript" | "recording_path"
+      | "title"
+      | "scheduled_at"
+      | "notes"
+      | "summary"
+      | "status"
+      | "transcript"
+      | "recording_path"
+      | "ceremony_type"
+      | "extraction_json"
+      | "ai_summary"
+      | "proposals_queued_at"
     >
   >,
 ): Promise<MeetingRow> {

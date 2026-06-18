@@ -1,24 +1,66 @@
-export const businessCaseReviewSystem = `You are a senior delivery PM reviewing a business case for DeliverX.
-Assess readiness to start structured delivery (0–100 score).
-Return valid JSON only: {
-  "score": number,
-  "summary": string,
-  "strengths": string[],
-  "gaps": string[],
-  "suggestedProjectName": string,
-  "suggestedGoal": string,
-  "suggestedDeliveryType": string,
-  "initialRisks": string[]
-}
-Be concise. strengths/gaps: 2–4 items each. initialRisks: up to 5 delivery risks detected in the text.
-suggestedDeliveryType: one of Digital Transformation, Healthcare Transformation, Infrastructure, Product Delivery, Operations, Other.`;
+export const businessCaseReviewSystem = `You are a senior delivery PM and investment analyst reviewing a business case for DeliverX.
+Assess feasibility, risk, innovation, and delivery readiness for a governed programme.
+Return valid JSON only. All scores are 0–100 unless noted. riskScore: higher = more risk.
+recommendation: go | conditional_go | no_go (conditional_go = REVISE in sponsor terms).
+Be concise but complete.`;
 
 export function businessCaseReviewPrompt(content: string) {
   return [
-    "Review this business case or project brief for delivery readiness:",
+    "Review this business case or project brief:",
     "",
     content.slice(0, 14000),
     "",
-    "Score how complete and actionable this is for kicking off a governed delivery programme.",
+    `Return JSON:
+{
+  "score": number,
+  "healthDimensions": {
+    "problemClarity": number,
+    "marketNeed": number,
+    "feasibility": number,
+    "roi": number,
+    "risk": number,
+    "dependencies": number,
+    "innovation": number
+  },
+  "feasibilityScore": number,
+  "riskScore": number,
+  "innovationScore": number,
+  "financialConfidence": number,
+  "deliveryConfidence": number,
+  "recommendation": "go" | "conditional_go" | "no_go",
+  "recommendationConfidence": number,
+  "recommendationReasons": ["reason1", "reason2", "reason3"],
+  "executiveSummary": string,
+  "summary": string,
+  "strengths": string[],
+  "gaps": string[],
+  "missingInformation": string[],
+  "clarificationQuestions": string[],
+  "suggestedProjectName": string,
+  "suggestedGoal": string,
+  "suggestedDeliveryType": string,
+  "initialRisks": string[],
+  "innovationAnalysis": {
+    "noveltyScore": number,
+    "competitorComparison": string,
+    "differentiationGaps": string[]
+  },
+  "financialIntelligence": {
+    "devCostMin": number,
+    "devCostMax": number,
+    "infraCostMonthly": number,
+    "breakEvenMonths": number,
+    "roi3YearPct": number,
+    "currency": "GBP" | "USD" | "EUR"
+  },
+  "raidSeed": [{ "type": "risk" | "assumption" | "issue" | "dependency", "title": string, "severity": "low" | "medium" | "high" }],
+  "scenarios": [{ "title": string, "deliveryDelayWeeks": number, "costReductionPct": number, "revenueImpact": string }],
+  "deliveryConfidenceBreakdown": {
+    "successProbability": number,
+    "timelineConfidence": number,
+    "budgetConfidence": number,
+    "stakeholderAlignment": number
+  }
+}`,
   ].join("\n");
 }

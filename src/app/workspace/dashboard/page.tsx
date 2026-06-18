@@ -42,6 +42,17 @@ import { AiInsights } from "./ai-insights";
 import { AlertQueuePanel } from "@/components/dashboard/alert-queue-panel";
 import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel";
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
+import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
+import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
+import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
+import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
+import { RunLoopButton } from "@/components/intelligence/run-loop-button";
+import { listOrgImpactEvents } from "@/services/deliveryImpact";
+import { listAgentActivityFeed } from "@/services/agentOrchestration";
+import { getIntelligenceLoopSnapshot } from "@/services/intelligenceLoop";
+import { getPendingApprovalCounts } from "@/services/approvalCentre";
+import { listPendingArtifactReviews } from "@/services/artifactReviews";
+import { listPendingProposals } from "@/services/proposedActions";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -51,18 +62,42 @@ export const dynamic = "force-dynamic";
 
 function roleHeading(role: string, name: string | null) {
   const greeting = name ? `, ${name}` : "";
-  if (role === "executive") return `Executive overview${greeting}`;
+  if (role === "executive") return `Founder overview${greeting}`;
+  if (role === "engineer") return `Engineering workspace${greeting}`;
+  if (role === "scrum_master") return `Scrum workspace${greeting}`;
+  if (role === "qa") return `QA workspace${greeting}`;
   if (role === "team_member") return `My workspace${greeting}`;
+  if (role === "ba") return `BA workspace${greeting}`;
+  if (role === "product_manager") return `Product workspace${greeting}`;
+  if (role === "pm") return `PM workspace${greeting}`;
   return `Delivery command centre${greeting}`;
 }
 
 function roleSubtitle(role: string, orgName: string | null) {
   const org = orgName ? `${orgName} · ` : "";
   if (role === "executive") {
-    return `${org}Portfolio health, governance, and delivery signals at a glance.`;
+    return `${org}Runway, portfolio health, decisions, and investor readiness — open Founder Mission Control.`;
+  }
+  if (role === "engineer") {
+    return `${org}Stories, traceability, and guided build tasks — open Engineer Mission Control.`;
+  }
+  if (role === "scrum_master") {
+    return `${org}Sprint health, impediments, and ceremonies — open Scrum Mission Control.`;
+  }
+  if (role === "qa") {
+    return `${org}Test coverage, defects, and release readiness — open QA Mission Control.`;
   }
   if (role === "team_member") {
     return `${org}Your tasks, standups, and project updates in one place.`;
+  }
+  if (role === "ba") {
+    return `${org}Requirements, clarifications, and traceability — open BA Mission Control for guided tasks.`;
+  }
+  if (role === "product_manager") {
+    return `${org}Roadmap, customer discovery, and RICE prioritisation — open Product Mission Control.`;
+  }
+  if (role === "pm") {
+    return `${org}Governance, RAID, milestones, and guided delivery — open PM Mission Control.`;
   }
   return `${org}Tasks, RAID, meetings, decisions, standups, and intelligence — unified.`;
 }
@@ -105,6 +140,16 @@ export default async function DashboardPage() {
       console.error("[dashboard] project intelligence", err);
     }
   }
+
+  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop] =
+    await Promise.all([
+    listPendingProposals(3).catch(() => []),
+    listPendingArtifactReviews(3).catch(() => []),
+    getPendingApprovalCounts().catch(() => ({ proposals: 0, artifacts: 0, total: 0 })),
+    listOrgImpactEvents(8).catch(() => []),
+    listAgentActivityFeed(12).catch(() => []),
+    getIntelligenceLoopSnapshot().catch(() => null),
+  ]);
 
   const kpis = [
     {
@@ -184,6 +229,17 @@ export default async function DashboardPage() {
       accent: data.governance.pendingDecisions > 0 ? ("amber" as const) : ("slate" as const),
     },
     {
+      label: "Pending approvals",
+      value: approvalCounts.total,
+      hint:
+        approvalCounts.total > 0
+          ? `${approvalCounts.artifacts} artifacts · ${approvalCounts.proposals} proposals`
+          : undefined,
+      href: "/workspace/proposals",
+      icon: CalendarClock,
+      accent: approvalCounts.total > 0 ? ("amber" as const) : ("slate" as const),
+    },
+    {
       label: "Standups (7d)",
       value: data.delivery.standupsThisWeek,
       href: "/workspace/meetings",
@@ -236,6 +292,12 @@ export default async function DashboardPage() {
         <KpiStrip items={kpis} />
       </div>
 
+      {intelligenceLoop ? (
+        <div className="mb-8">
+          <IntelligenceLoopPanel snapshot={intelligenceLoop} />
+        </div>
+      ) : null}
+
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-2">
         <DashboardSection title="AI alert queue" href="/workspace/alerts">
           <AlertQueuePanel alerts={alerts} />
@@ -248,6 +310,38 @@ export default async function DashboardPage() {
       <div className="mb-8">
         <DashboardSection title="Delivery forecasts" href="/workspace/pmo">
           <DeliveryForecastStrip entries={forecastRollup} />
+        </DashboardSection>
+      </div>
+
+      {approvalCounts.total > 0 ? (
+        <div className="mb-8">
+          <DashboardSection title="Approval centre" href="/workspace/proposals">
+            <ApprovalCentrePanel
+              artifactReviews={pendingArtifactReviews}
+              proposals={pendingProposals}
+            />
+          </DashboardSection>
+        </div>
+      ) : null}
+
+      {impactEvents.length > 0 ? (
+        <div className="mb-8">
+          <DashboardSection title="Delivery updates" href="/workspace/proposals">
+            <DeliveryImpactFeed events={impactEvents} showProject />
+          </DashboardSection>
+        </div>
+      ) : null}
+
+      <div className="mb-8">
+        <DashboardSection title="Agent orchestration" href="/workspace/coordination">
+          <div className="mb-4">
+            <RunLoopButton
+              postUrl="/api/agents/sweep"
+              label="Run agent sweep"
+              successMessage="Agent sweep complete — refreshing…"
+            />
+          </div>
+          <CommandCentreAgentFeed events={agentEvents} />
         </DashboardSection>
       </div>
 
