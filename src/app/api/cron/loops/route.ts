@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { isCronAuthorized } from "@/lib/api/cron-auth";
 import { captureAllCoordinationRuns } from "@/services/coordination";
 import { captureAllGlobalContributions } from "@/services/global";
+import { sweepOrgAgentOrchestration } from "@/services/agentOrchestration";
+import { syncProposalQualityScores } from "@/services/continuousLearning";
 
 /**
  * Vercel cron (07:00 UTC) — coordination snapshots + global network contributions.
@@ -13,15 +15,19 @@ export async function GET(req: Request) {
   }
 
   try {
-    const [coordination, global] = await Promise.all([
+    const [coordination, global, agents, learning] = await Promise.all([
       captureAllCoordinationRuns(),
       captureAllGlobalContributions(),
+      sweepOrgAgentOrchestration(3).catch(() => ({ runs: 0, projectIds: [] })),
+      syncProposalQualityScores().catch(() => 0),
     ]);
     return NextResponse.json({
       ok: true,
       cron: true,
       coordination,
       global,
+      agents,
+      learning: { proposalScoresSynced: learning },
     });
   } catch (err) {
     return NextResponse.json(

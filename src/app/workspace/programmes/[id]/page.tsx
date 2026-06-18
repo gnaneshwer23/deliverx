@@ -11,6 +11,7 @@ import {
 import { DependencyMap } from "@/components/portfolio/dependency-map";
 import { AssignProjectForm } from "./assign-project-form";
 import { DependencyForm } from "./dependency-form";
+import { ProgrammeOrchestrationPanel } from "@/components/programmes/programme-orchestration-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -194,6 +195,10 @@ export default async function ProgrammeDetailPage({
             </ul>
           )}
         </section>
+      </div>
+
+      <div className="mt-6">
+        <ProgrammeOrchestrationPanel programmeId={programme.id} />
       </div>
 
       <div className="mt-6 space-y-3">

@@ -8,6 +8,8 @@ import { OrganisationSettingsForm, ProfileSettingsForm } from "./settings-form";
 import { NotificationSettingsForm } from "@/components/settings/notification-settings-form";
 import { PhaseBHealthPanel } from "@/components/settings/phase-b-health-panel";
 import { PhaseCHealthPanel } from "@/components/settings/phase-c-health-panel";
+import { PhaseDHealthPanel } from "@/components/settings/phase-d-health-panel";
+import { PlatformApiKeysForm } from "@/components/settings/platform-api-keys-form";
 import { GitHubIntegrationForm } from "@/components/settings/github-integration-form";
 import { isEmailConfigured } from "@/lib/email/resend";
 import { getOrgNotificationSettings } from "@/services/notificationService";
@@ -15,6 +17,7 @@ import {
   getOrgIntegrationSettings,
   getProjectIntegrationSettings,
 } from "@/services/githubIntegration";
+import { listOrgApiKeys } from "@/services/platformApi";
 import { listProjectsForOrg } from "@/services/portfolio";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -37,6 +40,7 @@ export default async function SettingsPage() {
   } | null;
 
   const notificationSettings = await getOrgNotificationSettings().catch(() => null);
+  const apiKeys = await listOrgApiKeys().catch(() => []);
   const githubOrgSettings = await getOrgIntegrationSettings().catch(() => null);
   const projects = await listProjectsForOrg().catch(() => []);
   const projectSettings: Record<string, Awaited<ReturnType<typeof getProjectIntegrationSettings>>> =
@@ -101,6 +105,12 @@ export default async function SettingsPage() {
 
         <PhaseBHealthPanel />
         <PhaseCHealthPanel />
+        <PhaseDHealthPanel />
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Platform API keys</h2>
+          <PlatformApiKeysForm keys={apiKeys} />
+        </section>
 
         <AiIntegrationStatus />
         <EnvKeysGuide />
