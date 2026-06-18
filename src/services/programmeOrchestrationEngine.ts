@@ -3,6 +3,7 @@
  */
 
 import type { AgentOrchestrationResult } from "./agentOrchestrationEngine";
+import type { DeliveryImpactEventDraft } from "./deliveryImpactEngine";
 
 export type ProgrammeOrchestrationProjectResult = {
   projectId: string;
@@ -50,6 +51,33 @@ export function buildProgrammePortfolioBrief(input: {
   }
 
   return `Programme "${input.programmeName}" (${input.programmeHealth}/100): ${input.results.length} projects orchestrated with no critical escalations.${highlights.length ? ` Highlights: ${highlights.join(" · ")}.` : ""} Human approval required before execution.`;
+}
+
+const PROGRAMME_ESCALATION_PATTERN =
+  /\b(blocked|critical|overdue|hold release|executive review|need attention)\b/i;
+
+export function programmeResultsToImpactDrafts(
+  results: ProgrammeOrchestrationProjectResult[],
+): Array<{ projectId: string; drafts: DeliveryImpactEventDraft[] }> {
+  return results
+    .filter((r) =>
+      PROGRAMME_ESCALATION_PATTERN.test(`${r.synthesis} ${r.topInsight ?? ""}`),
+    )
+    .map((r) => ({
+      projectId: r.projectId,
+      drafts: [
+        {
+          targetRole: "founder" as const,
+          message: `${r.projectName}: ${r.topInsight ?? r.synthesis}`,
+          tone: "waiting" as const,
+        },
+        {
+          targetRole: "pm" as const,
+          message: `${r.projectName}: ${r.topInsight ?? r.synthesis}`,
+          tone: "blocked" as const,
+        },
+      ],
+    }));
 }
 
 export function aggregateProgrammeOrchestration(input: {

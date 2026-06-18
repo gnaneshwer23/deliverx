@@ -5,9 +5,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { getProgramme, listProjectsForProgramme, runProgrammeAnalysis } from "./portfolio";
 import { orchestrateProjectAgents } from "./agentOrchestration";
+import { emitDeliveryImpactEvents } from "./deliveryImpact";
 import {
   aggregateProgrammeOrchestration,
   pickTopInsight,
+  programmeResultsToImpactDrafts,
   type ProgrammeOrchestrationSnapshot,
 } from "./programmeOrchestrationEngine";
 
@@ -46,12 +48,26 @@ export async function orchestrateProgrammePortfolio(
     }),
   );
 
-  return aggregateProgrammeOrchestration({
+  const snapshot = aggregateProgrammeOrchestration({
     programmeId,
     programmeName: programme.name,
     programmeHealth: analysis.programmeHealth,
     results: projectResults,
   });
+
+  for (const { projectId, drafts } of programmeResultsToImpactDrafts(projectResults)) {
+    if (drafts.length === 0) continue;
+    await emitDeliveryImpactEvents({
+      projectId,
+      source: "agent",
+      actionType: "programme_orchestration",
+      entityType: "programme",
+      entityId: programmeId,
+      drafts,
+    }).catch(() => 0);
+  }
+
+  return snapshot;
 }
 
 export async function listProgrammeOrchestrationHistory(programmeId: string, limit = 5) {

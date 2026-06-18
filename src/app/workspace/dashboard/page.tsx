@@ -46,12 +46,14 @@ import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
 import { CommandCentreImpactFeed } from "@/components/dashboard/command-centre-impact-feed";
 import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
+import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
 import type { DeliveryImpactRole, ImpactFeedSeverity } from "@/services/deliveryImpactEngine";
 import { listOrgProjects } from "@/services/delivery";
 import { listAgentActivityFeed } from "@/services/agentOrchestration";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { getIntelligenceLoopSnapshot } from "@/services/intelligenceLoop";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
@@ -160,7 +162,7 @@ export default async function DashboardPage({
     }
   }
 
-  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop, feedProjects] =
+  const [pendingProposals, pendingArtifactReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop, feedProjects, collaborativeLoop] =
     await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
@@ -174,6 +176,7 @@ export default async function DashboardPage({
     listAgentActivityFeed(12).catch(() => []),
     getIntelligenceLoopSnapshot().catch(() => null),
     listOrgProjects().catch(() => []),
+    getCollaborativeLoopSnapshot("pm", feedProject ?? topProject?.id).catch(() => null),
   ]);
 
   const kpis = [
@@ -320,6 +323,14 @@ export default async function DashboardPage({
       {intelligenceLoop ? (
         <div className="mb-8">
           <IntelligenceLoopPanel snapshot={intelligenceLoop} />
+        </div>
+      ) : null}
+
+      {collaborativeLoop ? (
+        <div className="mb-8">
+          <DashboardSection title="Stakeholder loop" href="/workspace/pm-mission">
+            <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+          </DashboardSection>
         </div>
       ) : null}
 

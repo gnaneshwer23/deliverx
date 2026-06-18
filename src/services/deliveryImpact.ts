@@ -22,7 +22,7 @@ export type DeliveryImpactEventRow = {
   id: string;
   organisation_id: string;
   project_id: string;
-  source: "proposal" | "meeting" | "artifact" | "bootstrap";
+  source: "proposal" | "meeting" | "artifact" | "bootstrap" | "agent";
   source_id: string | null;
   proposal_id: string | null;
   action_type: string;

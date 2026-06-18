@@ -1,7 +1,8 @@
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { runCollaborativeLoopEngineSmokeTest } from "./collaborativeLoopEngine";
 import { runCollaborativeLoopPropagationSmokeTest } from "./collaborativeLoopPropagation";
+import { runAgentOrchestrationImpactSmokeTest } from "./agentOrchestrationImpact";
 
 export type PhaseHSmokeCheck = {
   feature: string;
@@ -41,6 +42,23 @@ const H2_PATHS = [
   "src/services/collaborativeLoopPropagation.ts",
   "src/services/collaborativeLoopPropagation.test.ts",
 ];
+
+const H3_PATHS = [
+  "supabase/migrations/0057_collaborative_loop_snapshots.sql",
+  "src/services/agentOrchestrationImpact.ts",
+  "src/services/agentOrchestrationImpact.test.ts",
+  "src/services/collaborativeLoopSnapshot.ts",
+];
+
+function dashboardHasCollaborativePanels(): boolean {
+  const path = join(process.cwd(), "src/app/workspace/dashboard/page.tsx");
+  if (!existsSync(path)) return false;
+  const content = readFileSync(path, "utf8");
+  return (
+    content.includes("CollaborativePanelsGrid") &&
+    content.includes("getCollaborativeLoopSnapshot")
+  );
+}
 
 export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
   const checks: PhaseHSmokeCheck[] = [];
@@ -119,6 +137,52 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     sprint: "H2",
     ok: h2FilesOk,
     detail: `${H2_PATHS.length} H2 artifacts`,
+  });
+
+  const agentImpact = runAgentOrchestrationImpactSmokeTest();
+  checks.push({
+    feature: "Agent orchestration impact bridge",
+    sprint: "H3",
+    ok: agentImpact.ok,
+    detail: `${agentImpact.draftCount} drafts → ${agentImpact.rolesReached} roles`,
+  });
+
+  const commandCentreOk = dashboardHasCollaborativePanels();
+  checks.push({
+    feature: "Command centre collaborative panels",
+    sprint: "H3",
+    ok: commandCentreOk,
+    detail: "Stakeholder loop + team needs + pulse on /workspace/dashboard",
+  });
+
+  const programmeHookOk = existsSync(
+    join(process.cwd(), "src/services/programmeOrchestration.ts"),
+  ) && readFileSync(join(process.cwd(), "src/services/programmeOrchestration.ts"), "utf8").includes(
+    "programmeResultsToImpactDrafts",
+  );
+  checks.push({
+    feature: "Programme orchestration impact hook",
+    sprint: "H3",
+    ok: programmeHookOk,
+    detail: "org-wide impact events on programme escalations",
+  });
+
+  const snapshotMigrationOk = existsSync(
+    join(process.cwd(), "supabase/migrations/0057_collaborative_loop_snapshots.sql"),
+  );
+  checks.push({
+    feature: "Collaborative loop snapshots",
+    sprint: "H3",
+    ok: snapshotMigrationOk,
+    detail: "0057_collaborative_loop_snapshots.sql",
+  });
+
+  const h3FilesOk = H3_PATHS.every((p) => existsSync(join(process.cwd(), p)));
+  checks.push({
+    feature: "H3 orchestration module",
+    sprint: "H3",
+    ok: h3FilesOk,
+    detail: `${H3_PATHS.length} H3 artifacts`,
   });
 
   return checks;
