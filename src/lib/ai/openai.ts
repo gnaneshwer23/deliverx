@@ -16,6 +16,7 @@ const WHISPER_MODEL = "whisper-1";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 
 import { getOpenAiApiKey } from "@/lib/ai/config";
+import { assertOrgAiRateLimit } from "@/services/aiRateLimit";
 
 function getApiKey(): string {
   const key = getOpenAiApiKey();
@@ -27,6 +28,7 @@ export async function transcribeAudio(
   file: Blob,
   filename: string,
 ): Promise<string> {
+  await assertOrgAiRateLimit();
   const key = getApiKey();
   const body = new FormData();
   body.append("file", file, filename);

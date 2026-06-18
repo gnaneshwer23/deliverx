@@ -83,10 +83,12 @@ export function PlatformApiKeysForm({ keys }: { keys: OrgApiKeyRow[] }) {
         <li><code>POST /api/platform/v1/proposals/apply</code> — write:proposals</li>
         <li><code>POST /api/platform/v1/reports/publish</code> — write:reports</li>
         <li><code>GET /api/platform/v1/webhooks/deliveries</code> — read:webhooks</li>
+        <li><code>GET /api/platform/v1/intelligence/loop</code> — read:intelligence</li>
       </ul>
       <p className="text-xs text-[#6B6B64]">
         Rate limit: 120 requests/minute per API key. Responses include{" "}
-        <code className="text-xs">X-RateLimit-*</code> headers.
+        <code className="text-xs">X-RateLimit-*</code> headers. AI routes are limited to 30
+        generations/minute per organisation.
       </p>
 
       <div className="flex flex-wrap gap-2">

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { throwIfMissingTable } from "@/lib/db-errors";
 import { getTwinStateForOrg } from "./twin";
+import { getIntelligenceLoopSnapshotForOrg } from "./intelligenceLoop";
 import { emitTaskCreatedEvent, listPlatformWebhookDeliveries } from "./platformWebhooks";
 import { applyProposalForOrg } from "./platformWorkflow";
 import {
@@ -23,6 +24,7 @@ export const DEFAULT_PLATFORM_SCOPES = [
   "write:tasks",
   "write:proposals",
   "write:reports",
+  "read:intelligence",
 ] as const;
 
 export type OrgApiKeyRow = {
@@ -492,4 +494,8 @@ export async function publishPlatformReport(
 
 export async function getPlatformWebhookDeliveries(orgId: string, limit = 20) {
   return listPlatformWebhookDeliveries(orgId, limit);
+}
+
+export async function getPlatformIntelligenceLoop(orgId: string) {
+  return getIntelligenceLoopSnapshotForOrg(orgId);
 }
