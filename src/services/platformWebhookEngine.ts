@@ -9,6 +9,8 @@ export const PLATFORM_EVENT_TYPES = [
   "proposal.applied",
   "report.published",
   "project.go_accepted",
+  "project.go_decision",
+  "project.bootstrap_complete",
 ] as const;
 
 export type PlatformEventType = (typeof PLATFORM_EVENT_TYPES)[number];

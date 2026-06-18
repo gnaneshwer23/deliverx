@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { BusinessCaseReview } from "./aiBusinessCaseReview";
+import { emitPlatformEvent } from "./platformWebhooks";
 
 export async function saveBusinessCaseReview(input: {
   briefExcerpt: string;
@@ -41,6 +42,17 @@ export async function saveBusinessCaseReview(input: {
     .single();
 
   if (error) throw error;
+
+  if (input.goDecision === "accepted") {
+    void emitPlatformEvent(String(profile.organisation_id), "project.go_decision", {
+      reviewId: data.id,
+      projectId: input.projectId ?? null,
+      recommendation: input.report.recommendation,
+      confidence: input.report.recommendationConfidence,
+      source: "sponsor_gateway",
+    }).catch(() => undefined);
+  }
+
   return data.id as string;
 }
 

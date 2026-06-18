@@ -1,21 +1,41 @@
 import { redirect } from "next/navigation";
-import { getOnboardingProfile, isOnboardingComplete } from "@/lib/auth/onboarding";
+import {
+  getOnboardingProfile,
+  isAccountSetupComplete,
+  isSponsorGatewayComplete,
+} from "@/lib/auth/onboarding";
+import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
 
-/** Redirect unauthenticated or incomplete onboarding users away from app shells. */
+/** Redirect unauthenticated or incomplete sponsor gateway users away from app shells. */
 export async function requireCompleteOnboarding() {
-  const { user, profile } = await getOnboardingProfile();
+  const { user, profile, gatewayStep } = await getOnboardingProfile();
   if (!user) redirect("/login");
   if (!profile?.organisation_id) redirect("/onboarding/organisation");
   if (!profile?.role) redirect("/onboarding/role");
+
+  const gatewayRedirect = resolveGatewayRedirect({
+    hasOrg: Boolean(profile.organisation_id),
+    hasRole: Boolean(profile.role),
+    gatewayStep,
+  });
+  if (gatewayRedirect) redirect(gatewayRedirect);
+
   return { user, profile };
 }
 
 export async function getOnboardingRedirectIfIncomplete(): Promise<string | null> {
-  const { user, profile } = await getOnboardingProfile();
+  const { user, profile, gatewayStep } = await getOnboardingProfile();
   if (!user) return "/login";
-  if (!isOnboardingComplete(profile)) {
+  if (!isAccountSetupComplete(profile)) {
     if (!profile?.organisation_id) return "/onboarding/organisation";
     return "/onboarding/role";
+  }
+  if (!isSponsorGatewayComplete(profile, gatewayStep)) {
+    return resolveGatewayRedirect({
+      hasOrg: Boolean(profile?.organisation_id),
+      hasRole: Boolean(profile?.role),
+      gatewayStep,
+    });
   }
   return null;
 }

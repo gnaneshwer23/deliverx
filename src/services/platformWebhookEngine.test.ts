@@ -12,7 +12,7 @@ describe("platformWebhookEngine", () => {
   it("passes smoke test", () => {
     const result = runPlatformWebhookEngineSmokeTest();
     expect(result.ok).toBe(true);
-    expect(result.eventTypeCount).toBe(4);
+    expect(result.eventTypeCount).toBe(6);
   });
 
   it("rejects invalid webhook URLs", () => {
