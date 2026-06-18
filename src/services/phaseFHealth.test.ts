@@ -4,7 +4,7 @@ import { runPhaseFSmokeTests } from "./phaseFHealth";
 describe("phaseFHealth", () => {
   it("runs all Phase F smoke tests successfully", () => {
     const checks = runPhaseFSmokeTests();
-    expect(checks).toHaveLength(3);
+    expect(checks).toHaveLength(7);
     expect(checks.every((c) => c.ok)).toBe(true);
   });
 });

@@ -79,8 +79,15 @@ export function PlatformApiKeysForm({ keys }: { keys: OrgApiKeyRow[] }) {
         <li><code>GET /api/platform/v1/agents/activity</code> — read:agents</li>
         <li><code>GET /api/platform/v1/learning</code> — read:learning</li>
         <li><code>POST /api/platform/v1/tasks</code> — write:tasks</li>
+        <li><code>GET /api/platform/v1/proposals</code> — read:proposals</li>
+        <li><code>POST /api/platform/v1/proposals/apply</code> — write:proposals</li>
+        <li><code>POST /api/platform/v1/reports/publish</code> — write:reports</li>
         <li><code>GET /api/platform/v1/webhooks/deliveries</code> — read:webhooks</li>
       </ul>
+      <p className="text-xs text-[#6B6B64]">
+        Rate limit: 120 requests/minute per API key. Responses include{" "}
+        <code className="text-xs">X-RateLimit-*</code> headers.
+      </p>
 
       <div className="flex flex-wrap gap-2">
         <input

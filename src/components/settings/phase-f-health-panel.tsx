@@ -121,7 +121,7 @@ export function PhaseFHealthPanel() {
       {failedTables.length > 0 || failedSmoke.length > 0 ? (
         <p className="mt-4 text-xs text-amber-800">
           {failedTables.length > 0
-            ? `${failedTables.length} table(s) missing — apply migration 0049. `
+            ? `${failedTables.length} table(s) missing — apply migrations 0049–0050. `
             : ""}
           {failedSmoke.length > 0 ? `${failedSmoke.length} check(s) failed.` : ""}
         </p>

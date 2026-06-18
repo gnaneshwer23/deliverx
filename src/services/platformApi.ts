@@ -3,7 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { throwIfMissingTable } from "@/lib/db-errors";
 import { getTwinStateForOrg } from "./twin";
-import { emitPlatformEvent, listPlatformWebhookDeliveries } from "./platformWebhooks";
+import { emitTaskCreatedEvent, listPlatformWebhookDeliveries } from "./platformWebhooks";
+import { applyProposalForOrg } from "./platformWorkflow";
+import {
+  bucketStartIso,
+  computeRateLimitDecision,
+  DEFAULT_PLATFORM_RATE_LIMIT,
+  type RateLimitDecision,
+} from "./platformRateLimitEngine";
 
 export const DEFAULT_PLATFORM_SCOPES = [
   "read:projects",
@@ -12,7 +19,10 @@ export const DEFAULT_PLATFORM_SCOPES = [
   "read:agents",
   "read:learning",
   "read:webhooks",
+  "read:proposals",
   "write:tasks",
+  "write:proposals",
+  "write:reports",
 ] as const;
 
 export type OrgApiKeyRow = {
@@ -169,6 +179,67 @@ export function hasPlatformScope(scopes: string[], scope: string): boolean {
   return scopes.includes(scope);
 }
 
+export async function checkPlatformRateLimit(keyId: string): Promise<RateLimitDecision> {
+  const admin = createAdminClient();
+  const now = new Date();
+  const { maxRequests, windowMs } = DEFAULT_PLATFORM_RATE_LIMIT;
+  const windowBucket = bucketStartIso(now, windowMs);
+
+  const { data: existing, error: fetchError } = await admin
+    .from("platform_api_rate_limits")
+    .select("request_count")
+    .eq("key_id", keyId)
+    .eq("window_bucket", windowBucket)
+    .maybeSingle();
+
+  if (fetchError) {
+    if (fetchError.code === "42P01") {
+      return computeRateLimitDecision({
+        currentCount: 0,
+        maxRequests,
+        windowMs,
+        now,
+      });
+    }
+    throw fetchError;
+  }
+
+  const currentCount = Number(existing?.request_count ?? 0);
+  const decision = computeRateLimitDecision({
+    currentCount,
+    maxRequests,
+    windowMs,
+    now,
+  });
+
+  if (!decision.allowed) return decision;
+
+  if (existing) {
+    const { error: updateError } = await admin
+      .from("platform_api_rate_limits")
+      .update({ request_count: currentCount + 1 })
+      .eq("key_id", keyId)
+      .eq("window_bucket", windowBucket);
+
+    if (updateError) throw updateError;
+  } else {
+    const { error: insertError } = await admin.from("platform_api_rate_limits").insert({
+      key_id: keyId,
+      window_bucket: windowBucket,
+      request_count: 1,
+    });
+
+    if (insertError) throw insertError;
+  }
+
+  return computeRateLimitDecision({
+    currentCount: currentCount + 1,
+    maxRequests,
+    windowMs,
+    now,
+  });
+}
+
 export async function listPlatformProjects(orgId: string) {
   const { createAdminClient } = await import("@/lib/supabase/admin");
   const admin = createAdminClient();
@@ -315,7 +386,7 @@ export async function createPlatformTask(
     createdAt: String(data.created_at),
   };
 
-  void emitPlatformEvent(orgId, "task.created", {
+  void emitTaskCreatedEvent(orgId, {
     taskId: task.id,
     projectId: task.projectId,
     projectName: task.projectName,
@@ -325,6 +396,98 @@ export async function createPlatformTask(
   }).catch(() => undefined);
 
   return task;
+}
+
+export async function listPlatformProposals(orgId: string, limit = 20) {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("proposed_actions")
+    .select("id, project_id, action_type, title, summary, status, created_at, applied_at, projects!inner(name)")
+    .eq("organisation_id", orgId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    if (error.code === "42P01") return [];
+    throw error;
+  }
+
+  return (data ?? []).map((row) => {
+    const projects = row.projects as { name?: string } | { name?: string }[] | null;
+    const projectName = Array.isArray(projects)
+      ? (projects[0]?.name ?? "Project")
+      : (projects?.name ?? "Project");
+    return {
+      id: String(row.id),
+      projectId: String(row.project_id),
+      projectName,
+      actionType: String(row.action_type),
+      title: String(row.title),
+      summary: String(row.summary ?? ""),
+      status: String(row.status),
+      createdAt: String(row.created_at),
+      appliedAt: row.applied_at ? String(row.applied_at) : null,
+    };
+  });
+}
+
+export async function applyPlatformProposal(orgId: string, proposalId: string, reviewerNotes?: string) {
+  return applyProposalForOrg(orgId, proposalId, reviewerNotes);
+}
+
+export async function publishPlatformReport(
+  orgId: string,
+  reportId: string,
+  stakeholderEmails: string[] = [],
+) {
+  const admin = createAdminClient();
+  const emails = stakeholderEmails.map((e) => e.trim()).filter(Boolean);
+
+  const { data: existing, error: fetchError } = await admin
+    .from("reports")
+    .select("id, organisation_id, project_id, title, review_status")
+    .eq("id", reportId)
+    .eq("organisation_id", orgId)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+  if (!existing) throw new Error("Report not found");
+  if (existing.review_status === "published") {
+    throw new Error("Report is already published");
+  }
+
+  const { data, error } = await admin
+    .from("reports")
+    .update({
+      review_status: "published",
+      published_at: new Date().toISOString(),
+      stakeholder_emails: emails,
+    })
+    .eq("id", reportId)
+    .select("id, project_id, title, review_status, published_at")
+    .single();
+
+  if (error) throw error;
+
+  const { emitReportPublishedEvent } = await import("./platformWebhooks");
+  void emitReportPublishedEvent(orgId, {
+    reportId: String(data.id),
+    projectId: String(data.project_id),
+    title: String(data.title),
+    reviewStatus: String(data.review_status),
+    stakeholderCount: emails.length,
+    emailSent: false,
+    source: "platform_api",
+  }).catch(() => undefined);
+
+  return {
+    id: String(data.id),
+    projectId: String(data.project_id),
+    title: String(data.title),
+    reviewStatus: String(data.review_status),
+    publishedAt: String(data.published_at),
+    stakeholderEmails: emails,
+  };
 }
 
 export async function getPlatformWebhookDeliveries(orgId: string, limit = 20) {

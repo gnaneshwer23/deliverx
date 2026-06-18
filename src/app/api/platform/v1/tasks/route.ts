@@ -1,17 +1,12 @@
 import {
-  authenticatePlatformRequest,
-  createPlatformTask,
-  hasPlatformScope,
-} from "@/services/platformApi";
+  authorizePlatformV1Request,
+  platformV1Json,
+} from "@/lib/platform-v1";
+import { createPlatformTask } from "@/services/platformApi";
 
 export async function POST(req: Request) {
-  const auth = await authenticatePlatformRequest(req);
-  if (!auth) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (!hasPlatformScope(auth.scopes, "write:tasks")) {
-    return Response.json({ error: "Missing scope write:tasks" }, { status: 403 });
-  }
+  const authResult = await authorizePlatformV1Request(req, "write:tasks");
+  if (authResult instanceof Response) return authResult;
 
   const body = (await req.json()) as {
     projectId?: string;
@@ -21,20 +16,28 @@ export async function POST(req: Request) {
   };
 
   if (!body.projectId?.trim() || !body.title?.trim()) {
-    return Response.json({ error: "projectId and title are required" }, { status: 400 });
+    return platformV1Json(
+      { error: "projectId and title are required" },
+      authResult.rateHeaders,
+      400,
+    );
   }
 
   try {
-    const task = await createPlatformTask(auth.orgId, {
+    const task = await createPlatformTask(authResult.auth.orgId, {
       projectId: body.projectId.trim(),
       title: body.title,
       description: body.description,
       priority: body.priority,
     });
-    return Response.json({ ok: true, organisationId: auth.orgId, task }, { status: 201 });
+    return platformV1Json(
+      { ok: true, organisationId: authResult.auth.orgId, task },
+      authResult.rateHeaders,
+      201,
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Could not create task";
     const status = message.includes("not found") ? 404 : 400;
-    return Response.json({ error: message }, { status });
+    return platformV1Json({ error: message }, authResult.rateHeaders, status);
   }
 }

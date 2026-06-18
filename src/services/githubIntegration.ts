@@ -484,3 +484,190 @@ export async function testGitHubConnection(input: {
 }
 
 export { buildHealthFromCi, computePrDashboardStats };
+
+export type GitHubWebhookResult = {
+  ok: boolean;
+  event: string;
+  projectId: string | null;
+  action: string;
+  detail: string;
+};
+
+export async function getOrgIntegrationForWebhook(
+  orgId: string,
+): Promise<OrgIntegrationSettings | null> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("org_integrations")
+    .select("*")
+    .eq("organisation_id", orgId)
+    .maybeSingle();
+
+  if (error) {
+    if (error.code === "42P01") return null;
+    throw error;
+  }
+
+  if (!data) return null;
+  return mapOrgIntegration(data as Record<string, unknown>);
+}
+
+async function findProjectIntegrationByRepo(input: {
+  owner: string;
+  repo: string;
+}): Promise<{ orgId: string; projectId: string } | null> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("project_integrations")
+    .select("project_id, organisation_id")
+    .eq("github_owner", input.owner)
+    .eq("github_repo", input.repo)
+    .eq("enabled", true)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    if (error.code === "42P01") return null;
+    throw error;
+  }
+
+  if (!data) return null;
+  return {
+    orgId: String(data.organisation_id),
+    projectId: String(data.project_id),
+  };
+}
+
+export async function processGitHubWebhook(input: {
+  orgId: string;
+  event: string;
+  payload: Record<string, unknown>;
+  deliveryId: string | null;
+}): Promise<GitHubWebhookResult> {
+  const {
+    extractPullRequestLink,
+    extractWorkflowRunSummary,
+    isSupportedGitHubWebhookEvent,
+    parseGitHubRepository,
+  } = await import("./githubWebhookEngine");
+
+  if (!isSupportedGitHubWebhookEvent(input.event)) {
+    return {
+      ok: true,
+      event: input.event,
+      projectId: null,
+      action: "ignored",
+      detail: "Unsupported event type",
+    };
+  }
+
+  const orgSettings = await getOrgIntegrationForWebhook(input.orgId);
+  if (!orgSettings?.enabled) {
+    return {
+      ok: false,
+      event: input.event,
+      projectId: null,
+      action: "rejected",
+      detail: "GitHub integration disabled",
+    };
+  }
+
+  const repo = parseGitHubRepository(input.payload);
+  if (!repo) {
+    return {
+      ok: false,
+      event: input.event,
+      projectId: null,
+      action: "rejected",
+      detail: "Repository not found in payload",
+    };
+  }
+
+  const mapping = await findProjectIntegrationByRepo(repo);
+  if (!mapping || mapping.orgId !== input.orgId) {
+    return {
+      ok: true,
+      event: input.event,
+      projectId: null,
+      action: "ignored",
+      detail: "No mapped project for repository",
+    };
+  }
+
+  const admin = createAdminClient();
+  const now = new Date().toISOString();
+  let detail = "Event logged";
+
+  if (input.event === "pull_request") {
+    const link = extractPullRequestLink(input.payload);
+    if (link) {
+      await admin.from("external_task_links").upsert(
+        {
+          organisation_id: mapping.orgId,
+          project_id: mapping.projectId,
+          provider: "github",
+          link_type: link.link_type,
+          external_id: link.external_id,
+          external_url: link.external_url,
+          title: link.title,
+          status: link.status,
+          metadata: link.metadata,
+          synced_at: now,
+        },
+        { onConflict: "project_id,provider,link_type,external_id" },
+      );
+      detail = `Updated PR #${link.external_id}`;
+    }
+  }
+
+  if (input.event === "workflow_run") {
+    const summary = extractWorkflowRunSummary(input.payload);
+    if (summary) {
+      await admin.from("external_task_links").upsert(
+        {
+          organisation_id: mapping.orgId,
+          project_id: mapping.projectId,
+          provider: "github",
+          link_type: summary.link_type,
+          external_id: summary.external_id,
+          external_url: summary.external_url,
+          title: summary.title,
+          status: summary.status,
+          metadata: summary.metadata,
+          synced_at: now,
+        },
+        { onConflict: "project_id,provider,link_type,external_id" },
+      );
+      detail = `Updated CI summary (${summary.metadata.buildStatus})`;
+    }
+  }
+
+  if (input.event === "push") {
+    detail = `Push to ${repo.owner}/${repo.repo}`;
+  }
+
+  await logSync({
+    orgId: mapping.orgId,
+    projectId: mapping.projectId,
+    kind: `github_webhook_${input.event}`,
+    status: "ok",
+    summary: {
+      deliveryId: input.deliveryId,
+      repository: `${repo.owner}/${repo.repo}`,
+      action: input.payload.action,
+    },
+  });
+
+  await admin
+    .from("project_integrations")
+    .update({ last_sync_at: now, updated_at: now })
+    .eq("project_id", mapping.projectId);
+
+  return {
+    ok: true,
+    event: input.event,
+    projectId: mapping.projectId,
+    action: "processed",
+    detail,
+  };
+}
