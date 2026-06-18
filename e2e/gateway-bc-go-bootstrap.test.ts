@@ -3,6 +3,7 @@ import {
   runBcGoBootstrapSmokeTest,
   simulateBcGoBootstrapLoop,
 } from "@/services/gatewayBcGoBootstrapEngine";
+import { simulatePersonaOnboardingPath } from "@/services/gatewayOnboardingEngine";
 
 describe("E2E: BC → GO → bootstrap loop", () => {
   it("completes the sponsor gateway flow with GO acceptance", () => {
@@ -32,6 +33,15 @@ describe("E2E: BC → GO → bootstrap loop", () => {
   it("passes smoke test harness", () => {
     const smoke = runBcGoBootstrapSmokeTest();
     expect(smoke.ok).toBe(true);
+  });
+
+  it("routes BA signup to persona mission without forced GO gate", () => {
+    const result = simulatePersonaOnboardingPath({ role: "ba" });
+    expect(result.ok).toBe(true);
+    expect(result.skippedGoGate).toBe(true);
+    expect(result.steps).toEqual(["role_select", "persona_wizard", "workspace"]);
+    expect(result.missionHref).toBe("/workspace/ba");
+    expect(result.steps).not.toContain("go_gate");
   });
 
   it.skipIf(!process.env.OPENAI_API_KEY)("live AI review (requires OPENAI_API_KEY)", async () => {

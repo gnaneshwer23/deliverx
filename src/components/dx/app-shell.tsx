@@ -18,16 +18,19 @@ import {
   type WorkspaceNavItem,
 } from "@/config/workspace-nav";
 import { partitionCoreNav } from "@/lib/mission-nav";
+import type { MissionPersonaId } from "@/lib/mission-nav";
 
 function NavLink({
   item,
   pathname,
   pendingApprovals = 0,
+  missionBadgeCount = 0,
   prominent = false,
 }: {
   item: WorkspaceNavItem;
   pathname: string;
   pendingApprovals?: number;
+  missionBadgeCount?: number;
   prominent?: boolean;
 }) {
   const Icon = item.icon;
@@ -36,7 +39,9 @@ function NavLink({
     pathname === item.href ||
     pathname === hrefPath ||
     (hrefPath !== "/workspace/dashboard" && pathname.startsWith(hrefPath));
-  const badge = item.id === "prop" && pendingApprovals > 0 ? pendingApprovals : undefined;
+  const propBadge = item.id === "prop" && pendingApprovals > 0 ? pendingApprovals : undefined;
+  const missionBadge = missionBadgeCount > 0 ? missionBadgeCount : undefined;
+  const badge = propBadge ?? missionBadge;
 
   return (
     <Link
@@ -70,11 +75,13 @@ function NavSection({
   items,
   pathname,
   pendingApprovals = 0,
+  missionBadgeCounts,
 }: {
   label: string;
   items: WorkspaceNavItem[];
   pathname: string;
   pendingApprovals?: number;
+  missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
 }) {
   return (
     <div className="py-3.5">
@@ -82,7 +89,13 @@ function NavSection({
         {label}
       </div>
       {items.map((item) => (
-        <NavLink key={item.id} item={item} pathname={pathname} pendingApprovals={pendingApprovals} />
+        <NavLink
+          key={item.id}
+          item={item}
+          pathname={pathname}
+          pendingApprovals={pendingApprovals}
+          missionBadgeCount={missionBadgeCounts?.[item.id as MissionPersonaId] ?? 0}
+        />
       ))}
     </div>
   );
@@ -92,13 +105,19 @@ function CoreNavSection({
   userRole,
   pathname,
   pendingApprovals = 0,
+  missionBadgeCounts,
 }: {
   userRole?: string | null;
   pathname: string;
   pendingApprovals?: number;
+  missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
 }) {
   const [showOtherMissions, setShowOtherMissions] = useState(false);
   const { fixedCore, primaryMission, otherMissions } = partitionCoreNav(userRole);
+  const otherMissionPendingTotal = otherMissions.reduce(
+    (sum, item) => sum + (missionBadgeCounts?.[item.id as MissionPersonaId] ?? 0),
+    0,
+  );
 
   return (
     <div className="py-3.5">
@@ -113,6 +132,7 @@ function CoreNavSection({
           item={primaryMission}
           pathname={pathname}
           pendingApprovals={pendingApprovals}
+          missionBadgeCount={missionBadgeCounts?.[primaryMission.id as MissionPersonaId] ?? 0}
           prominent
         />
       ) : null}
@@ -128,6 +148,11 @@ function CoreNavSection({
             <span className="font-[family-name:var(--font-dx-mono)] text-[9px]">
               ({otherMissions.length})
             </span>
+            {otherMissionPendingTotal > 0 ? (
+              <span className="ml-auto min-w-[18px] rounded-full bg-[#B7620A] px-1.5 py-0.5 text-center font-[family-name:var(--font-dx-mono)] text-[9px] font-medium text-white">
+                {otherMissionPendingTotal > 99 ? "99+" : otherMissionPendingTotal}
+              </span>
+            ) : null}
           </button>
           {showOtherMissions
             ? otherMissions.map((item) => (
@@ -136,6 +161,7 @@ function CoreNavSection({
                   item={item}
                   pathname={pathname}
                   pendingApprovals={pendingApprovals}
+                  missionBadgeCount={missionBadgeCounts?.[item.id as MissionPersonaId] ?? 0}
                 />
               ))
             : null}
@@ -148,9 +174,11 @@ function CoreNavSection({
 export function AppSidebar({
   pendingApprovals = 0,
   userRole,
+  missionBadgeCounts,
 }: {
   pendingApprovals?: number;
   userRole?: string | null;
+  missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
 }) {
   const pathname = usePathname();
 
@@ -161,6 +189,7 @@ export function AppSidebar({
           userRole={userRole}
           pathname={pathname}
           pendingApprovals={pendingApprovals}
+          missionBadgeCounts={missionBadgeCounts}
         />
         <NavSection label="Workspace" items={workspaceDeliveryNav} pathname={pathname} />
         <NavSection
@@ -203,6 +232,7 @@ export function AppShell({
   orgName,
   userRole,
   pendingApprovals = 0,
+  missionBadgeCounts,
   showSidebar = true,
   alerts = [],
   alertCount = 0,
@@ -213,6 +243,7 @@ export function AppShell({
   orgName?: string | null;
   userRole?: string | null;
   pendingApprovals?: number;
+  missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
   showSidebar?: boolean;
   alerts?: DeliveryAlert[];
   alertCount?: number;
@@ -227,7 +258,11 @@ export function AppShell({
         alertCount={alertCount}
       />
       {showSidebar ? (
-        <AppSidebar pendingApprovals={pendingApprovals} userRole={userRole} />
+        <AppSidebar
+          pendingApprovals={pendingApprovals}
+          userRole={userRole}
+          missionBadgeCounts={missionBadgeCounts}
+        />
       ) : null}
       <AiDrawer projects={assistantProjects} />
       {children}

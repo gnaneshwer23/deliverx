@@ -190,3 +190,71 @@ export function runGatewayOnboardingEngineSmokeTest(): {
     personaCount: BOOTSTRAP_PERSONA_KEYS.length,
   };
 }
+
+export type PersonaOnboardingStep = "role_select" | "persona_wizard" | "workspace";
+
+export type PersonaOnboardingResult = {
+  ok: boolean;
+  steps: PersonaOnboardingStep[];
+  role: string;
+  missionHref: string;
+  skippedGoGate: boolean;
+  error?: string;
+};
+
+const PERSONA_MISSION_HREFS: Record<string, string> = {
+  ba: "/workspace/ba",
+  product_manager: "/workspace/product",
+  pm: "/workspace/pm-mission",
+  engineer: "/workspace/engineer",
+  scrum_master: "/workspace/scrum-mission",
+  qa: "/workspace/qa",
+};
+
+export function simulatePersonaOnboardingPath(input: {
+  role: string;
+}): PersonaOnboardingResult {
+  const role = input.role.trim();
+  const steps: PersonaOnboardingStep[] = ["role_select"];
+
+  if (role === "executive" || role === "team_member") {
+    return {
+      ok: false,
+      steps,
+      role,
+      missionHref: "/workspace/dashboard",
+      skippedGoGate: false,
+      error: "Persona onboarding path is for delivery personas only",
+    };
+  }
+
+  const redirect = resolveGatewayRedirect({
+    hasOrg: true,
+    hasRole: true,
+    gatewayStep: "project",
+    role,
+  });
+
+  if (redirect !== "/onboarding/persona") {
+    return {
+      ok: false,
+      steps,
+      role,
+      missionHref: redirect ?? "/workspace/dashboard",
+      skippedGoGate: false,
+      error: `Expected persona onboarding redirect, got ${redirect ?? "null"}`,
+    };
+  }
+
+  steps.push("persona_wizard", "workspace");
+
+  const missionHref = PERSONA_MISSION_HREFS[role] ?? "/workspace/dashboard";
+
+  return {
+    ok: true,
+    steps,
+    role,
+    missionHref,
+    skippedGoGate: true,
+  };
+}

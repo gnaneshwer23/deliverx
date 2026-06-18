@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { listOrgMembers } from "@/services/delivery";
 import { listPendingInvitations } from "@/services/invitations";
+import { getOrgActiveBootstrapProject } from "@/services/orgBootstrap";
+import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { InviteForm } from "@/app/onboarding/invite/invite-form";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -20,9 +22,10 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 export default async function WorkspaceTeamPage() {
-  const [members, pending] = await Promise.all([
+  const [members, pending, bootstrapProject] = await Promise.all([
     listOrgMembers(),
     listPendingInvitations().catch(() => []),
+    getOrgActiveBootstrapProject().catch(() => null),
   ]);
 
   return (
@@ -38,6 +41,15 @@ export default async function WorkspaceTeamPage() {
         }
       />
       <div className="grid gap-8 p-6 md:p-8 lg:grid-cols-2">
+        {bootstrapProject ? (
+          <section className="lg:col-span-2">
+            <ProjectBootstrapPanel
+              projectId={bootstrapProject.id}
+              initialStatus={bootstrapProject.bootstrap_status}
+              summary={bootstrapProject.bootstrap_summary}
+            />
+          </section>
+        ) : null}
         <section className={`${dxClass.cardPad}`}>
           <h2 className={`${dxClass.display} mb-4 text-lg`}>
             Members ({members.length})

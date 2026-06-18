@@ -74,3 +74,31 @@ export function countPendingReviewsByPersona<T extends Pick<ArtifactReviewRow, "
 ): number {
   return filterPendingReviewsForPersona(reviews, persona).length;
 }
+
+const MISSION_PERSONA_IDS: MissionPersonaId[] = [
+  "ba",
+  "product",
+  "pm-mission",
+  "founder",
+  "engineer",
+  "scrum",
+  "qa",
+];
+
+export function countPendingReviewsByPersonaMap<T extends Pick<ArtifactReviewRow, "entity_type">>(
+  reviews: T[],
+): Record<MissionPersonaId, number> {
+  const counts = {} as Record<MissionPersonaId, number>;
+  for (const persona of MISSION_PERSONA_IDS) {
+    counts[persona] = countPendingReviewsByPersona(reviews, persona);
+  }
+  return counts;
+}
+
+export function filterReviewsByProject<T extends Pick<ArtifactReviewRow, "project_id">>(
+  reviews: T[],
+  projectId: string | null | undefined,
+): T[] {
+  if (!projectId) return reviews;
+  return reviews.filter((review) => review.project_id === projectId);
+}

@@ -136,6 +136,16 @@ export function runPhaseGSmokeTests(): PhaseGSmokeCheck[] {
     detail: "Vitest flow spec in e2e/",
   });
 
+  const migrationOk = existsSync(
+    join(process.cwd(), "supabase/migrations/0053_gateway_onboarding.sql"),
+  );
+  checks.push({
+    feature: "Gateway onboarding migration",
+    sprint: "G1",
+    ok: migrationOk,
+    detail: "0053_gateway_onboarding.sql present",
+  });
+
 
   return checks;
 }

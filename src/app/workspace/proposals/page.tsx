@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { listPendingProposals } from "@/services/proposedActions";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
+import { listOrgProjects } from "@/services/delivery";
 import { ProposalsQueuePanel } from "@/components/proposals/proposals-queue-panel";
 import { ArtifactReviewsPanel } from "@/components/approvals/artifact-reviews-panel";
 import { ProposalsPersonaFilter } from "@/components/approvals/proposals-persona-filter";
+import { ProposalsProjectFilter } from "@/components/approvals/proposals-project-filter";
 import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
@@ -15,6 +17,10 @@ import {
   PROPOSALS_PERSONA_TABS,
   type ProposalsPersonaTab,
 } from "@/lib/approval/persona-reviews";
+import {
+  filterArtifactReviewsByProject,
+  filterProposalsByProject,
+} from "@/lib/approval/proposals-filter";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 
 export const dynamic = "force-dynamic";
@@ -29,34 +35,39 @@ function parsePersona(value?: string): ProposalsPersonaTab {
 export default async function ProposalsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ persona?: string }>;
+  searchParams: Promise<{ persona?: string; project?: string }>;
 }) {
   const params = await searchParams;
   const persona = parsePersona(params.persona);
+  const projectId = params.project ?? null;
 
-  const [proposals, artifactReviews, impactEvents] = await Promise.all([
+  const [proposals, artifactReviews, impactEvents, projects] = await Promise.all([
     listPendingProposals(50),
     listPendingArtifactReviews(50),
     listOrgImpactEvents({ limit: 10 }).catch(() => []),
+    listOrgProjects().catch(() => []),
   ]);
+
+  const projectScopedProposals = filterProposalsByProject(proposals, projectId);
+  const projectScopedReviews = filterArtifactReviewsByProject(artifactReviews, projectId);
 
   const filteredReviews =
     persona === "all"
-      ? artifactReviews
-      : filterPendingReviewsForPersona(artifactReviews, persona as MissionPersonaId);
+      ? projectScopedReviews
+      : filterPendingReviewsForPersona(projectScopedReviews, persona as MissionPersonaId);
 
   const personaCounts = {
-    all: artifactReviews.length,
-    ba: countPendingReviewsByPersona(artifactReviews, "ba"),
-    product: countPendingReviewsByPersona(artifactReviews, "product"),
-    "pm-mission": countPendingReviewsByPersona(artifactReviews, "pm-mission"),
-    engineer: countPendingReviewsByPersona(artifactReviews, "engineer"),
-    qa: countPendingReviewsByPersona(artifactReviews, "qa"),
-    scrum: countPendingReviewsByPersona(artifactReviews, "scrum"),
-    founder: countPendingReviewsByPersona(artifactReviews, "founder"),
+    all: projectScopedReviews.length,
+    ba: countPendingReviewsByPersona(projectScopedReviews, "ba"),
+    product: countPendingReviewsByPersona(projectScopedReviews, "product"),
+    "pm-mission": countPendingReviewsByPersona(projectScopedReviews, "pm-mission"),
+    engineer: countPendingReviewsByPersona(projectScopedReviews, "engineer"),
+    qa: countPendingReviewsByPersona(projectScopedReviews, "qa"),
+    scrum: countPendingReviewsByPersona(projectScopedReviews, "scrum"),
+    founder: countPendingReviewsByPersona(projectScopedReviews, "founder"),
   } as const;
 
-  const totalPending = proposals.length + artifactReviews.length;
+  const totalPending = projectScopedProposals.length + projectScopedReviews.length;
 
   return (
     <>
@@ -88,11 +99,16 @@ export default async function ProposalsPage({
           ) : null}
         </p>
 
+        <Suspense fallback={<p className="text-sm text-[#6B6B64]">Loading filters…</p>}>
+          <ProposalsProjectFilter projects={projects} currentProjectId={projectId} />
+        </Suspense>
+
         <section>
           <h2 className={`${dxClass.display} mb-3 text-lg`}>AI artifact reviews</h2>
           <p className="mb-4 text-sm text-[#6B6B64]">
             Requirements, roadmap features, delivery structure, and persona-specific outputs from
             GO-triggered bootstrap and assistants.
+            {projectId ? " Filtered to the selected project." : null}
           </p>
           <Suspense fallback={<p className="text-sm text-[#6B6B64]">Loading filters…</p>}>
             <ProposalsPersonaFilter counts={personaCounts} currentPersona={persona} />
@@ -114,7 +130,7 @@ export default async function ProposalsPage({
           <p className="mb-4 text-sm text-[#6B6B64]">
             Meeting follow-ups, calendar events, tasks, and RAID items from assistant flows.
           </p>
-          <ProposalsQueuePanel proposals={proposals} />
+          <ProposalsQueuePanel proposals={projectScopedProposals} />
         </section>
 
         <section>
