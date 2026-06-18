@@ -8,6 +8,7 @@ import { SignOutButton } from "@/components/auth/sign-out-button";
 import { AiDrawer } from "@/components/dx/ai-drawer";
 import { AiDrawerProvider } from "@/components/dx/ai-drawer-context";
 import { AppNav } from "@/components/dx/app-nav";
+import type { DeliveryAlert } from "@/services/alerts";
 import {
   workspaceCoreNav,
   workspaceDeliveryNav,
@@ -114,6 +115,8 @@ export function AppShell({
   orgName,
   pendingApprovals = 0,
   showSidebar = true,
+  alerts = [],
+  alertCount = 0,
 }: {
   children: ReactNode;
   assistantProjects?: Array<{ id: string; name: string }>;
@@ -121,6 +124,8 @@ export function AppShell({
   orgName?: string | null;
   pendingApprovals?: number;
   showSidebar?: boolean;
+  alerts?: DeliveryAlert[];
+  alertCount?: number;
 }) {
   return (
     <AiDrawerProvider>
@@ -128,6 +133,8 @@ export function AppShell({
         userEmail={userEmail}
         orgName={orgName}
         pendingApprovals={pendingApprovals}
+        alerts={alerts}
+        alertCount={alertCount}
       />
       {showSidebar ? <AppSidebar pendingApprovals={pendingApprovals} /> : null}
       <AiDrawer projects={assistantProjects} />

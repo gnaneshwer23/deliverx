@@ -7,6 +7,8 @@ import { Brain, Cpu, Plus } from "lucide-react";
 import { useAiDrawer } from "@/components/dx/ai-drawer-context";
 import { DxLogo } from "@/components/dx/dx-logo";
 import { UserMenu } from "@/components/dx/user-menu";
+import { AlertBellDropdown } from "@/components/dx/alert-bell-dropdown";
+import type { DeliveryAlert } from "@/services/alerts";
 import { dxClass } from "@/lib/dx-theme";
 
 function NavSearch() {
@@ -39,10 +41,14 @@ export function AppNav({
   userEmail,
   orgName,
   pendingApprovals = 0,
+  alerts = [],
+  alertCount = 0,
 }: {
   userEmail?: string | null;
   orgName?: string | null;
   pendingApprovals?: number;
+  alerts?: DeliveryAlert[];
+  alertCount?: number;
 }) {
   const { toggleDrawer } = useAiDrawer();
 
@@ -55,9 +61,10 @@ export function AppNav({
       <NavSearch />
 
       <div className="ml-auto flex items-center gap-2">
+        <AlertBellDropdown alerts={alerts} unreadCount={alertCount} />
         <Link
           href="/workspace/alerts"
-          className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
+          className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] lg:inline-flex`}
         >
           Alerts
         </Link>

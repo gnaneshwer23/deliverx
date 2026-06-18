@@ -208,3 +208,8 @@ export async function getOrgAlertQueue(limit = 30): Promise<DeliveryAlert[]> {
     .sort((a, b) => sevRank(a.severity) - sevRank(b.severity))
     .slice(0, limit);
 }
+
+export async function getOrgAlertCount(): Promise<number> {
+  const alerts = await getOrgAlertQueue(100);
+  return alerts.length;
+}

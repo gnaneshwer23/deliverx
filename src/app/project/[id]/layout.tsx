@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AppShell } from "@/components/dx/app-shell";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
+import { getOrgAlertCount, getOrgAlertQueue } from "@/services/alerts";
 import { listOrgProjects } from "@/services/delivery";
 import { ProjectSidebar } from "./sidebar";
 import { ProjectTopbar } from "./topbar";
@@ -33,7 +34,12 @@ export default async function ProjectLayout({
     .single();
 
   const orgName = (profile?.organisations as { name?: string } | null)?.name ?? null;
-  const assistantProjects = await listOrgProjects().catch(() => []);
+
+  const [assistantProjects, alerts, alertCount] = await Promise.all([
+    listOrgProjects().catch(() => []),
+    getOrgAlertQueue(8).catch(() => []),
+    getOrgAlertCount().catch(() => 0),
+  ]);
 
   return (
     <div className="min-h-screen bg-[#FAFAF5]">
@@ -42,6 +48,8 @@ export default async function ProjectLayout({
         orgName={orgName}
         showSidebar={false}
         assistantProjects={assistantProjects}
+        alerts={alerts}
+        alertCount={alertCount}
       >
         <div className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] flex min-h-[calc(100vh-var(--dx-navh))]">
           <ProjectSidebar projectId={project.id} projectName={project.name} />
