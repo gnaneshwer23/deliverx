@@ -87,7 +87,7 @@ export function MarketingHero() {
                         : undefined
                     }
                   >
-                    <span className="text-[0.9rem] leading-none">{d.sym}</span>
+                    <span className="text-[0.9rem] leading-none">{d.code}</span>
                     {ROLE_PILL_LABELS[id]}
                   </button>
                 );

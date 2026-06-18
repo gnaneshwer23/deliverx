@@ -42,7 +42,7 @@ export function MarketingLoopSection() {
                   color: role.accent,
                 }}
               >
-                {role.sym}
+                {role.code}
               </div>
               <p className="text-sm font-semibold text-[#F0EDE8]">{role.name}</p>
               <p className="mt-1 text-[0.6875rem] leading-snug text-[#7A7874]">{role.tagline}</p>

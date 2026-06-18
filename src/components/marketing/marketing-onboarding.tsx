@@ -56,7 +56,7 @@ export function MarketingOnboardingSection() {
                     : undefined
                 }
               >
-                <span>{d.sym}</span>
+                <span>{d.code}</span>
                 {ROLE_PILL_LABELS[id]}
               </button>
             );
@@ -112,7 +112,7 @@ export function MarketingOnboardingSection() {
                     className="flex size-8 shrink-0 items-center justify-center rounded-lg text-sm"
                     style={{ background: output.iconBg, color: output.iconColor }}
                   >
-                    {output.icon}
+                    {output.code}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[#F0EDE8]">{output.title}</p>
