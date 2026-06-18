@@ -126,6 +126,7 @@ export function MissionPersonaHeader({
       title={title}
       titleEm={titleEm}
       subtitle={meta.tagline}
+      sticky
       action={action ?? <DefaultMissionAction meta={meta} primaryProject={primaryProject} />}
     >
       <IdentityRow
@@ -154,6 +155,7 @@ export function CommandCentrePersonaHeader({
       title={commandCentreTitle(userRole, userName)}
       titleEm={titleEm}
       subtitle={commandCentreTagline(userRole, orgName ?? null)}
+      sticky
       action={action}
     >
       <IdentityRow

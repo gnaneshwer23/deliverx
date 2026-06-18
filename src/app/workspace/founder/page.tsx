@@ -61,7 +61,7 @@ export default async function FounderMissionControlPage() {
           : null,
       }}
     >
-      <div className="space-y-6 p-6 md:p-8">
+      <div className="space-y-4 p-6 md:p-8">
         <PendingReviewsStrip
           reviews={pendingReviews}
           personaLabel={PERSONA_REVIEW_LABELS.founder}
@@ -78,7 +78,7 @@ export default async function FounderMissionControlPage() {
         ) : null}
         <FounderAiSummary summary={data.aiSummary} />
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="funding" title="Funding & runway">
             <FounderFundingPanel funding={data.funding} />
           </DashboardPanelShell>
@@ -93,7 +93,7 @@ export default async function FounderMissionControlPage() {
         <DashboardPanelShell panelId="portfolio" title="Project portfolio">
           <FounderPortfolioPanel portfolio={data.portfolio} />
         </DashboardPanelShell>
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="investment-archive" title="Investment report archive">
             <FounderInvestmentArchivePanel reports={data.investmentReports} />
           </DashboardPanelShell>
@@ -108,7 +108,7 @@ export default async function FounderMissionControlPage() {
           <FounderDecisionPanel decisions={data.decisionsNeeded} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="delivery-health" title="Delivery health">
             <FounderDeliveryHealthPanel health={data.deliveryHealth} />
           </DashboardPanelShell>

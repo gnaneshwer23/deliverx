@@ -17,9 +17,7 @@ export function DashboardSection({
   return (
     <section className={`${dxClass.cardPad} ${className ?? ""}`}>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[#6B6B64]">
-          {title}
-        </h2>
+        <h2 className={dxClass.panelTitle}>{title}</h2>
         {href ? (
           <Link
             href={href}

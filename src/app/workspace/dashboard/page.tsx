@@ -317,32 +317,32 @@ export default async function DashboardPage({
         </div>
       ) : null}
 
-      <div className="mb-8">
+      <div className="mb-6">
         <KpiStrip items={kpis} />
       </div>
 
       {intelligenceLoop ? (
-        <div className="mb-8">
+        <div className="mb-6">
           <DashboardPanelShell panelId="intelligence-loop" title="Intelligence loop" card>
-            <IntelligenceLoopPanel snapshot={intelligenceLoop} />
+            <IntelligenceLoopPanel snapshot={intelligenceLoop} embedded />
           </DashboardPanelShell>
         </div>
       ) : null}
 
       {collaborativeLoop ? (
-        <div className="mb-8">
+        <div className="mb-6">
           <DashboardPanelShell
             panelId="stakeholder-loop"
             title="Stakeholder loop"
             href="/workspace/pm-mission"
             card
           >
-            <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+            <CollaborativePanelsGrid snapshot={collaborativeLoop} hideStakeholderLoopTitle />
           </DashboardPanelShell>
         </div>
       ) : null}
 
-      <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-2">
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
         <DashboardPanelShell panelId="alert-queue" title="AI alert queue" href="/workspace/alerts" card>
           <AlertQueuePanel alerts={alerts} />
         </DashboardPanelShell>
@@ -351,14 +351,14 @@ export default async function DashboardPage({
         </DashboardPanelShell>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-6">
         <DashboardPanelShell panelId="delivery-forecasts" title="Delivery forecasts" href="/workspace/pmo" card>
           <DeliveryForecastStrip entries={forecastRollup} />
         </DashboardPanelShell>
       </div>
 
       {approvalCounts.total > 0 ? (
-        <div className="mb-8">
+        <div className="mb-6">
           <DashboardPanelShell panelId="ai-output-review" title="AI output review" href="/workspace/proposals" card>
             <ApprovalCentrePanel
               artifactReviews={pendingArtifactReviews}
@@ -368,7 +368,7 @@ export default async function DashboardPage({
         </div>
       ) : null}
 
-      <div className="mb-8">
+      <div className="mb-6">
         <DashboardPanelShell
           panelId="command-centre-intelligence"
           title="Command Centre intelligence"
@@ -387,7 +387,7 @@ export default async function DashboardPage({
         </DashboardPanelShell>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-6">
         <DashboardPanelShell
           panelId="agent-orchestration"
           title="Agent orchestration"
@@ -405,7 +405,7 @@ export default async function DashboardPage({
         </DashboardPanelShell>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <DashboardPanelShell panelId="delivery-velocity" title="Delivery velocity" className="xl:col-span-2" card>
           <DeliveryVelocityChart weeks={data.weeklyVelocity} />
         </DashboardPanelShell>
@@ -418,13 +418,13 @@ export default async function DashboardPage({
         panelId="project-health"
         title="Project health"
         href="/workspace/projects"
-        className="mb-8"
+        className="mb-6"
         card
       >
         <ProjectHealthGrid projects={data.projectHealth} />
       </DashboardPanelShell>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <DashboardPanelShell panelId="active-tasks" title="Active tasks" href="/workspace/tasks" className="xl:col-span-2" card>
           {activeTaskRows.length === 0 ? (
             <p className="text-sm text-[#6b7280]">
@@ -573,7 +573,7 @@ export default async function DashboardPage({
           panelId="governance-by-project"
           title="Governance by project"
           href="/workspace/governance"
-          className="mb-8"
+          className="mb-6"
           card
         >
           <div className="overflow-x-auto">
@@ -609,7 +609,7 @@ export default async function DashboardPage({
       ) : null}
 
       {topProject && topAlignment ? (
-        <div className="mb-8">
+        <div className="mb-6">
           <AlignmentSummaryCard
             projectId={topProject.id}
             projectName={topProject.name}

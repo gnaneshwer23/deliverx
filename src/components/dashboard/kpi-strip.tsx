@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
   MissionKpiCard,
+  MissionKpiGrid,
   accentToTone,
   type MissionKpiDelta,
   type MissionKpiTone,
@@ -22,7 +23,7 @@ export type KpiItem = {
 
 export function KpiStrip({ items }: { items: KpiItem[] }) {
   return (
-    <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-4">
+    <MissionKpiGrid layout="wide">
       {items.map((item) => {
         const tone = item.tone ?? accentToTone(item.accent);
         const card = (
@@ -33,6 +34,7 @@ export function KpiStrip({ items }: { items: KpiItem[] }) {
             tone={tone}
             progressPct={item.progressPct}
             delta={item.delta}
+            valueSize="xl"
           />
         );
 
@@ -44,6 +46,6 @@ export function KpiStrip({ items }: { items: KpiItem[] }) {
           <div key={item.label}>{card}</div>
         );
       })}
-    </div>
+    </MissionKpiGrid>
   );
 }

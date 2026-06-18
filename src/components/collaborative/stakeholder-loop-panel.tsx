@@ -8,13 +8,21 @@ const TONE = {
   slate: "text-slate-600 bg-slate-50 border-slate-200",
 } as const;
 
-export function StakeholderLoopPanel({ rows }: { rows: StakeholderLoopRow[] }) {
+export function StakeholderLoopPanel({
+  rows,
+  hideTitle = false,
+}: {
+  rows: StakeholderLoopRow[];
+  hideTitle?: boolean;
+}) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`}>
-      <div className="border-b border-[#E4E4DC] px-6 py-4">
-        <h3 className={`${dxClass.display} text-lg`}>Stakeholder loop</h3>
-        <p className="mt-1 text-xs text-[#6B6B64]">Who needs what from whom — bidirectional</p>
-      </div>
+      {!hideTitle ? (
+        <div className="border-b border-[#E4E4DC] px-6 py-4">
+          <h3 className={`${dxClass.display} text-lg`}>Stakeholder loop</h3>
+          <p className="mt-1 text-xs text-[#6B6B64]">Who needs what from whom — bidirectional</p>
+        </div>
+      ) : null}
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px] text-sm">
           <thead>

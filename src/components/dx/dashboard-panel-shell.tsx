@@ -50,9 +50,7 @@ export function DashboardPanelShell({
           >
             {collapsed ? <ChevronRight size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
           </button>
-          <h2 className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[#6B6B64]">
-            {title}
-          </h2>
+          <h2 className={dxClass.panelTitle}>{title}</h2>
         </div>
         <div className="flex items-center gap-3">
           {editMode ? (
@@ -77,7 +75,9 @@ export function DashboardPanelShell({
         </div>
       </div>
       {!collapsed ? (
-        <div id={`panel-body-${panelId}`}>{card ? <div className={dxClass.cardPad}>{children}</div> : children}</div>
+        <div id={`panel-body-${panelId}`} className={dxClass.panelShellBody}>
+          {card ? <div className={dxClass.cardPad}>{children}</div> : children}
+        </div>
       ) : null}
     </section>
   );

@@ -53,7 +53,7 @@ export default async function BaMissionControlPage({
         primaryProject: data.primaryProject,
       }}
     >
-      <div className="space-y-6 p-6 md:p-8">
+      <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
         <PendingReviewsStrip
           reviews={pendingReviews}
@@ -90,7 +90,7 @@ export default async function BaMissionControlPage({
           <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         </DashboardPanelShell>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
             <BaGuidedTasks tasks={data.guidedTasks} />
           </DashboardPanelShell>
