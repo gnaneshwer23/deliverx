@@ -10,7 +10,12 @@ import {
   resolveFounderDashboardMode,
 } from "@/lib/founder-dashboard-mode";
 import { groupPendingFounderReviewsByCategory } from "@/lib/founder-day-one-panels";
-import { buildFounderSteadyStateSubtitle } from "@/lib/founder-steady-state-panels";
+import {
+  buildFounderAttentionFeed,
+  buildFounderGovernanceTabCounts,
+  buildFounderSteadyStateSubtitle,
+  countWaitingOnFounder,
+} from "@/lib/founder-steady-state-panels";
 import { FounderMissionShell } from "@/components/founder/founder-mission-shell";
 import { FounderMissionHeaderActions } from "@/components/founder/founder-mission-header-actions";
 import { FounderMissionPanelSwitch } from "@/components/founder/founder-mission-panel-switch";
@@ -23,30 +28,23 @@ import {
   FounderGetOrientedCard,
   FounderReviewInboxPanel,
 } from "@/components/founder/founder-day-one-panels";
+import {
+  FounderAiReviewInboxPanel,
+  FounderDeliveryHealthPanel,
+  FounderGovernanceTabsPanel,
+  FounderIntelligenceFeedPanel,
+  FounderNeedsAttentionPanel,
+  FounderProductHealthPanel,
+  FounderSteadyStateContextPanel,
+  FounderSteadyStateKpiStrip,
+  FounderSteadyStateLayout,
+  FounderTeamHealthPanel,
+} from "@/components/founder/founder-steady-state-panels";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
 import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
-import {
-  FounderAiSummary,
-  FounderMissionOverview,
-} from "@/components/founder/founder-mission-overview";
-import {
-  FounderCrossRolePanel,
-  FounderDecisionPanel,
-  FounderDeliveryHealthPanel,
-  FounderFundingPanel,
-  FounderInvestorPanel,
-  FounderInvestmentArchivePanel,
-  FounderBenefitsTrackerPanel,
-  FounderObjectivesPanel,
-  FounderPortfolioPanel,
-  FounderProductHealthPanel,
-  FounderTeamHealthPanel,
-} from "@/components/founder/founder-panels";
+import { FounderAiSummary } from "@/components/founder/founder-mission-overview";
 import { FounderContextWorkspace } from "@/components/founder/founder-workspace";
-import { FounderIntelligenceFeedPanel } from "@/components/founder/founder-intelligence-feed-panel";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import {
   filterReviewsByProject,
@@ -55,96 +53,8 @@ import {
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
-import type { FounderMissionControl } from "@/services/founderDashboard";
-import type { FounderContext } from "@/services/founderContext";
 
 export const dynamic = "force-dynamic";
-
-function FounderSteadyStatePanels({
-  data,
-  ctx,
-  projectId,
-  collaborativeLoop,
-}: {
-  data: FounderMissionControl;
-  ctx: FounderContext | null;
-  projectId?: string;
-  collaborativeLoop: Awaited<ReturnType<typeof getCollaborativeLoopSnapshot>>;
-}) {
-  return (
-    <>
-      <FounderMissionOverview data={data} />
-      {projectId ? <MissionPredictionKpis projectId={projectId} /> : null}
-      <FounderAiSummary summary={data.aiSummary} />
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <DashboardPanelShell panelId="funding" title="Funding & runway">
-          <FounderFundingPanel funding={data.funding} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="objectives" title="Strategic objectives" ownerNote="">
-          <FounderObjectivesPanel
-            objectives={data.strategicObjectives}
-            insight={data.strategicInsight}
-          />
-        </DashboardPanelShell>
-      </div>
-
-      <DashboardPanelShell panelId="portfolio" title="Project portfolio">
-        <FounderPortfolioPanel portfolio={data.portfolio} />
-      </DashboardPanelShell>
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <DashboardPanelShell panelId="investment-archive" title="Investment report archive">
-          <FounderInvestmentArchivePanel reports={data.investmentReports} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="benefits-tracker" title="Benefits tracker">
-          <FounderBenefitsTrackerPanel benefits={data.benefitsTracker} />
-        </DashboardPanelShell>
-      </div>
-      <DashboardPanelShell panelId="investor" title="Investor dashboard">
-        <FounderInvestorPanel bullets={data.investorUpdate} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="decisions" title="Decision centre" ownerNote="">
-        <FounderDecisionPanel
-          decisions={data.decisionsNeeded}
-          dataSource={data.dataSources.decisions}
-        />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="intelligence-feed" title="Intelligence feed">
-        <FounderIntelligenceFeedPanel
-          items={data.intelligenceFeed}
-          dataSource={data.dataSources.intelligence}
-        />
-      </DashboardPanelShell>
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <DashboardPanelShell panelId="delivery-health" title="Delivery health">
-          <FounderDeliveryHealthPanel health={data.deliveryHealth} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="product-health" title="Product health">
-          <FounderProductHealthPanel health={data.productHealth} />
-        </DashboardPanelShell>
-      </div>
-
-      <DashboardPanelShell panelId="team-health" title="Team health">
-        <FounderTeamHealthPanel health={data.teamHealth} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-        <FounderCrossRolePanel impacts={data.crossRoleImpact} />
-      </DashboardPanelShell>
-
-      <DashboardPanelShell panelId="founder-context" title="Founder context">
-        <FounderContextWorkspace
-          companyType={ctx?.company_type}
-          businessGoals={ctx?.business_goals}
-          extractionStatus={data.extractionStatus}
-        />
-      </DashboardPanelShell>
-    </>
-  );
-}
 
 export default async function FounderMissionControlPage({
   searchParams,
@@ -162,10 +72,9 @@ export default async function FounderMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, ctx, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, ctx, pendingReviews] = await Promise.all([
     getFounderMissionControl(params.project),
     getFounderContext().catch(() => null),
-    getCollaborativeLoopSnapshot("founder"),
     listPendingArtifactReviewsForPersona("founder").catch(() => []),
   ]);
 
@@ -193,6 +102,23 @@ export default async function FounderMissionControlPage({
     bridgeDismissed: false,
   });
 
+  const attentionFeed = buildFounderAttentionFeed({
+    decisions: data.decisionsNeeded,
+    pendingReviewCount: projectPendingReviews.length,
+    criticalRisks: data.deliveryHealth.criticalRisks,
+    blockedDependencies: data.deliveryHealth.blockedDependencies,
+    portfolio: data.portfolio,
+    intelligenceFeed: data.intelligenceFeed,
+    runwayMonths: data.kpis.runwayMonths,
+    projectId,
+  });
+  const waitingOnYouCount = countWaitingOnFounder(attentionFeed);
+  const governanceTabCounts = buildFounderGovernanceTabCounts({
+    decisionsCount: pendingDecisionsCount,
+    portfolioCount: data.portfolio.length,
+    objectivesCount: data.strategicObjectives.length,
+    runwayMonths: data.kpis.runwayMonths,
+  });
   const steadyStateSubtitle = buildFounderSteadyStateSubtitle({
     projectName: data.primaryProject?.name,
     pendingDecisionsCount,
@@ -248,11 +174,53 @@ export default async function FounderMissionControlPage({
   );
 
   const steadyStatePanels = (
-    <FounderSteadyStatePanels
-      data={data}
-      ctx={ctx}
-      projectId={projectId}
-      collaborativeLoop={collaborativeLoop}
+    <FounderSteadyStateLayout
+      kpiStrip={
+        <FounderSteadyStateKpiStrip data={data} waitingOnYouCount={waitingOnYouCount} />
+      }
+      aiSummary={<FounderAiSummary summary={data.aiSummary} />}
+      leftColumn={
+        <>
+          <FounderNeedsAttentionPanel
+            data={data}
+            pendingReviewCount={projectPendingReviews.length}
+            projectId={projectId}
+          />
+          <FounderGovernanceTabsPanel
+            data={data}
+            tabCounts={governanceTabCounts}
+            projectId={projectId}
+          />
+          <FounderAiReviewInboxPanel
+            pendingReviews={projectPendingReviews}
+            projectId={projectId}
+          />
+        </>
+      }
+      rightColumn={
+        <>
+          <FounderCompactPortfolioCard portfolio={data.portfolio} projectId={projectId} />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div data-panel="delivery-health">
+              <FounderDeliveryHealthPanel health={data.deliveryHealth} />
+            </div>
+            <div data-panel="product-health">
+              <FounderProductHealthPanel health={data.productHealth} />
+            </div>
+          </div>
+          <FounderIntelligenceFeedPanel
+            items={data.intelligenceFeed}
+            dataSource={data.dataSources.intelligence}
+          />
+          <FounderTeamHealthPanel health={data.teamHealth} />
+          {projectId ? <MissionPredictionKpis projectId={projectId} /> : null}
+          <FounderSteadyStateContextPanel
+            ctx={ctx}
+            extractionStatus={data.extractionStatus}
+            projectId={projectId}
+          />
+        </>
+      }
     />
   );
 
