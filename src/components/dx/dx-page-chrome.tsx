@@ -4,6 +4,7 @@ import { dxClass } from "@/lib/dx-theme";
 
 export function DxPageHeader({
   breadcrumb,
+  breadcrumbNode,
   title,
   titleEm,
   subtitle,
@@ -12,6 +13,7 @@ export function DxPageHeader({
   sticky = false,
 }: {
   breadcrumb: string;
+  breadcrumbNode?: ReactNode;
   title: string;
   titleEm?: string;
   subtitle?: string;
@@ -32,7 +34,7 @@ export function DxPageHeader({
         />
       ) : null}
       <div className="min-w-0 flex-1">
-        <DxCaps className="mb-1 text-[8px]">{breadcrumb}</DxCaps>
+        {breadcrumbNode ?? <DxCaps className="mb-1 text-[8px]">{breadcrumb}</DxCaps>}
         <h1 className={dxClass.pageTitle}>
           {title}
           {titleEm ? (

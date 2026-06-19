@@ -24,6 +24,7 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 | **S1-E** | ✅ Shipped | Post-audit prod deploy parity + BUILD_REPORT refresh (this update) |
 | **J1–J4** | ✅ Shipped | Event propagation, live narrative threads, founder command, bootstrap parity |
 | **K1–K2** | ✅ Shipped | Next-up strip + essential panel defaults |
+| **K3** | ✅ Shipped | Nav path simplification + Command Centre next-up |
 | **Organic loop** | ✅ Shipped | Remaining domain mutations emit without demo seed |
 | **Mobile UX** | ✅ Shipped | Mission fallback CTAs, auth layout, nav lint (PRs #86–#88) |
 
@@ -106,14 +107,15 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 
 ---
 
-## Horizon 3 — UX reduction (K1–K2 shipped)
+## Horizon 3 — UX reduction (K1–K3 shipped)
 
 | Item | PR | Production |
 |------|-----|------------|
 | **K2** — Essential panel defaults per persona (~4–6 visible) | [#81](https://github.com/gnaneshwer23/deliverx/pull/81) | ✅ |
 | **K1** — Next-up strip + role home routing | [#82](https://github.com/gnaneshwer23/deliverx/pull/82) | ✅ |
+| **K3** — Nav path simplification + Command Centre next-up | _this PR_ | — |
 
-Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`.
+Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `nav-path.ts`, `mission-nav-path.tsx`, `command-centre-next-up.ts`, `app-shell.tsx`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`.
 
 ---
 
@@ -180,7 +182,6 @@ Tracked after J1–J4, K1–K2, and post-audit mobile polish.
 
 | Item | Horizon | Notes |
 |------|---------|-------|
-| **K3** — Nav path simplification | H3 | Mission nav depth and wayfinding |
 | **K4** — Inline edit | H3 | Reduce modal hops on mission dashboards |
 | **K5** — Visual pass + onboarding trim | H3 | Density and wizard copy reduction |
 | Preview env var sync | S1-B follow-up | **6 vars still Preview-only missing** — see below |

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Building2, FolderKanban } from "lucide-react";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxBadge } from "@/components/dx/dx-badge";
+import { MissionNavPath } from "@/components/dx/mission-nav-path";
 import {
   commandCentreTagline,
   commandCentreTitle,
@@ -13,6 +14,7 @@ import {
   type MissionPersonaMeta,
 } from "@/config/mission-persona-meta";
 import type { MissionPersonaId } from "@/lib/mission-nav";
+import { buildNavPathSegments, buildMissionHomePathSegments, resolveNavPathContext } from "@/lib/nav-path";
 import { dxClass } from "@/lib/dx-theme";
 
 type ProjectChip = { id: string; name: string };
@@ -32,6 +34,7 @@ export type CommandCentreHeaderProps = {
   orgName?: string | null;
   titleEm?: string;
   action?: ReactNode;
+  pathname?: string;
 };
 
 export function DefaultMissionAction({
@@ -128,6 +131,13 @@ export function MissionPersonaHeader({
       subtitle={meta.tagline}
       sticky
       action={action ?? <DefaultMissionAction meta={meta} primaryProject={primaryProject} />}
+      breadcrumbNode={
+        <MissionNavPath
+          segments={buildMissionHomePathSegments(personaId)}
+          showHomeIcon
+          className="mb-1"
+        />
+      }
     >
       <IdentityRow
         userName={userName}
@@ -146,8 +156,10 @@ export function CommandCentrePersonaHeader({
   orgName,
   titleEm,
   action,
+  pathname = "/workspace/dashboard",
 }: Omit<CommandCentreHeaderProps, "variant">) {
   const roleLabel = getDbRoleDisplayLabel(userRole);
+  const navContext = resolveNavPathContext(pathname, userRole);
 
   return (
     <DxPageHeader
@@ -157,6 +169,13 @@ export function CommandCentrePersonaHeader({
       subtitle={commandCentreTagline(userRole, orgName ?? null)}
       sticky
       action={action}
+      breadcrumbNode={
+        <MissionNavPath
+          segments={buildNavPathSegments(navContext)}
+          showHomeIcon
+          className="mb-1"
+        />
+      }
     >
       <IdentityRow
         userName={userName}

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, Settings, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Home, Settings, X } from "lucide-react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { AiDrawer } from "@/components/dx/ai-drawer";
 import { AiDrawerProvider } from "@/components/dx/ai-drawer-context";
@@ -17,8 +17,15 @@ import {
   workspaceIntelligenceNav,
   type WorkspaceNavItem,
 } from "@/config/workspace-nav";
+import { getMissionPersonaMeta } from "@/config/mission-persona-meta";
+import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { partitionCoreNav } from "@/lib/mission-nav";
 import type { MissionPersonaId } from "@/lib/mission-nav";
+import {
+  isPersonaHomeNavActive,
+  isWorkspaceNavItemActive,
+  shouldExpandOtherMissions,
+} from "@/lib/nav-path";
 
 function NavLink({
   item,
@@ -26,6 +33,7 @@ function NavLink({
   pendingApprovals = 0,
   missionBadgeCount = 0,
   prominent = false,
+  userRole,
   onNavigate,
 }: {
   item: WorkspaceNavItem;
@@ -33,14 +41,11 @@ function NavLink({
   pendingApprovals?: number;
   missionBadgeCount?: number;
   prominent?: boolean;
+  userRole?: string | null;
   onNavigate?: () => void;
 }) {
   const Icon = item.icon;
-  const hrefPath = item.href.split("?")[0] ?? item.href;
-  const active =
-    pathname === item.href ||
-    pathname === hrefPath ||
-    (hrefPath !== "/workspace/dashboard" && pathname.startsWith(hrefPath));
+  const active = isWorkspaceNavItemActive(item, pathname, userRole);
   const propBadge = item.id === "prop" && pendingApprovals > 0 ? pendingApprovals : undefined;
   const missionBadge = missionBadgeCount > 0 ? missionBadgeCount : undefined;
   const badge = propBadge ?? missionBadge;
@@ -73,12 +78,54 @@ function NavLink({
   );
 }
 
+function PersonaHomeNavLink({
+  userRole,
+  pathname,
+  onNavigate,
+}: {
+  userRole?: string | null;
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  const homeHref = resolveRoleHomePath(userRole);
+  if (homeHref === "/workspace/dashboard") return null;
+
+  const { primaryMission } = partitionCoreNav(userRole);
+  if (!primaryMission) return null;
+
+  const meta = getMissionPersonaMeta(primaryMission.id as MissionPersonaId);
+  const active = isPersonaHomeNavActive(pathname, homeHref, userRole);
+
+  return (
+    <Link
+      href={homeHref}
+      onClick={onNavigate}
+      data-testid="persona-home-nav"
+      className={`mx-2 mb-1 flex items-center gap-2 rounded border px-2.5 py-2 text-[12px] transition ${
+        active
+          ? "border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]"
+          : "border-[#ECECE4] bg-[#FAFAF7] text-[#2C2C28] hover:border-[#C6DDD0] hover:bg-[#EEF5F1]"
+      }`}
+    >
+      <Home size={14} className={active ? "text-[#1C4A2E]" : "text-[#6B6B64]"} aria-hidden />
+      <span className="min-w-0 flex-1 truncate">
+        <span className="block font-medium">{meta.roleLabel} home</span>
+        <span className="block truncate text-[10px] text-[#6B6B64]">{meta.navLabel}</span>
+      </span>
+      <span className="rounded bg-[#EEF5F1] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-wide text-[#1C4A2E]">
+        You
+      </span>
+    </Link>
+  );
+}
+
 function NavSection({
   label,
   items,
   pathname,
   pendingApprovals = 0,
   missionBadgeCounts,
+  userRole,
   onNavigate,
 }: {
   label: string;
@@ -86,6 +133,7 @@ function NavSection({
   pathname: string;
   pendingApprovals?: number;
   missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
+  userRole?: string | null;
   onNavigate?: () => void;
 }) {
   return (
@@ -100,6 +148,7 @@ function NavSection({
           pathname={pathname}
           pendingApprovals={pendingApprovals}
           missionBadgeCount={missionBadgeCounts?.[item.id as MissionPersonaId] ?? 0}
+          userRole={userRole}
           onNavigate={onNavigate}
         />
       ))}
@@ -120,8 +169,13 @@ function CoreNavSection({
   missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
   onNavigate?: () => void;
 }) {
-  const [showOtherMissions, setShowOtherMissions] = useState(false);
   const { fixedCore, primaryMission, otherMissions } = partitionCoreNav(userRole);
+  const [showOtherMissions, setShowOtherMissions] = useState(() =>
+    shouldExpandOtherMissions(
+      pathname,
+      otherMissions.map((item) => item.id),
+    ),
+  );
   const otherMissionPendingTotal = otherMissions.reduce(
     (sum, item) => sum + (missionBadgeCounts?.[item.id as MissionPersonaId] ?? 0),
     0,
@@ -132,12 +186,14 @@ function CoreNavSection({
       <div className="mb-1 px-3.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.2em] text-[#A8A89E]">
         Core
       </div>
+      <PersonaHomeNavLink userRole={userRole} pathname={pathname} onNavigate={onNavigate} />
       {fixedCore.map((item) => (
         <NavLink
           key={item.id}
           item={item}
           pathname={pathname}
           pendingApprovals={pendingApprovals}
+          userRole={userRole}
           onNavigate={onNavigate}
         />
       ))}
@@ -148,6 +204,7 @@ function CoreNavSection({
           pendingApprovals={pendingApprovals}
           missionBadgeCount={missionBadgeCounts?.[primaryMission.id as MissionPersonaId] ?? 0}
           prominent
+          userRole={userRole}
           onNavigate={onNavigate}
         />
       ) : null}
@@ -177,6 +234,7 @@ function CoreNavSection({
                   pathname={pathname}
                   pendingApprovals={pendingApprovals}
                   missionBadgeCount={missionBadgeCounts?.[item.id as MissionPersonaId] ?? 0}
+                  userRole={userRole}
                   onNavigate={onNavigate}
                 />
               ))
@@ -241,6 +299,7 @@ function WorkspaceSidebarContent({
           label="Workspace"
           items={workspaceDeliveryNav}
           pathname={pathname}
+          userRole={userRole}
           onNavigate={onNavigate}
         />
         <NavSection
@@ -248,18 +307,21 @@ function WorkspaceSidebarContent({
           items={workspaceIntelligenceNav}
           pathname={pathname}
           pendingApprovals={pendingApprovals}
+          userRole={userRole}
           onNavigate={onNavigate}
         />
         <NavSection
           label="Ecosystem"
           items={workspaceEcosystemNav}
           pathname={pathname}
+          userRole={userRole}
           onNavigate={onNavigate}
         />
         <NavSection
           label="Governance"
           items={workspaceGovernanceNav}
           pathname={pathname}
+          userRole={userRole}
           onNavigate={onNavigate}
         />
       </div>
