@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { runCollaborativeLoopEngineSmokeTest } from "./collaborativeLoopEngine";
-import { runCollaborativeLoopPropagationSmokeTest } from "./collaborativeLoopPropagation";
+import { runCollaborativeLoopPropagationSmokeTest, runNarrativeThreadSemanticSmokeTest } from "./collaborativeLoopPropagation";
 import { runAgentOrchestrationImpactSmokeTest } from "./agentOrchestrationImpact";
 import { runLoopEventPropagationSmokeTest } from "./loopEventPropagation";
 
@@ -112,6 +112,14 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     sprint: "H2",
     ok: propagation.ok,
     detail: `${propagation.threadCount} threads → ${propagation.rolesReached} roles`,
+  });
+
+  const semanticThreads = runNarrativeThreadSemanticSmokeTest();
+  checks.push({
+    feature: "J2 live narrative thread signals",
+    sprint: "J2",
+    ok: semanticThreads.ok,
+    detail: `blocked ${semanticThreads.blockedTask ? "yes" : "no"} · defects ${semanticThreads.criticalDefects} · compliance ${semanticThreads.complianceGap ? "yes" : "no"}`,
   });
 
   const loopEvents = runLoopEventPropagationSmokeTest();
