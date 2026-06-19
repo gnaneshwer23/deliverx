@@ -80,9 +80,9 @@ export default async function QaMissionControlPage({
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.qa} />
         <MissionBootstrapBanner
+          personaId="qa"
           projectId={data.primaryProject?.id}
           showFallback={data.dataSources.qaMetrics === "fallback"}
-          fallbackMessage="QA KPIs are illustrative until test cases, defects, or UAT data is recorded."
         />
 
         {data.projects.length > 1 && data.primaryProject ? (

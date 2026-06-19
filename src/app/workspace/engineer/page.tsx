@@ -29,6 +29,7 @@ import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -81,6 +82,11 @@ export default async function EngineerMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
+        <MissionBootstrapBanner
+          personaId="engineer"
+          projectId={data.primaryProject?.id}
+          showFallback={data.dataSources.architecture === "fallback"}
+        />
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.engineer} />
 
         {data.projects.length > 1 && data.primaryProject ? (

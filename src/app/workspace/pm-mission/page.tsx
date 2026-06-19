@@ -93,9 +93,9 @@ export default async function PmMissionControlPage({
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
         <MissionBootstrapBanner
+          personaId="pm-mission"
           projectId={data.primaryProject?.id}
           showFallback={data.dataSources.deliveryPlan === "fallback"}
-          fallbackMessage="Milestones, budget, and timeline are illustrative until you upload a project charter."
         />
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
 

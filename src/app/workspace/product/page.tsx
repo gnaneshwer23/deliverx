@@ -79,9 +79,9 @@ export default async function ProductMissionControlPage({
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
         <MissionBootstrapBanner
+          personaId="product"
           projectId={data.primaryProject?.id}
           showFallback={data.dataSources.roadmapRice === "fallback"}
-          fallbackMessage="Roadmap and RICE are illustrative until you run product analysis."
         />
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.product} />
 

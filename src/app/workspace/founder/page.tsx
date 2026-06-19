@@ -78,9 +78,9 @@ export default async function FounderMissionControlPage() {
       <div className="space-y-4 p-6 md:p-8">
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.founder} />
         <MissionBootstrapBanner
+          personaId="founder"
           projectId={data.portfolio[0]?.id}
           showFallback={data.dataSources.financials === "fallback"}
-          fallbackMessage="Financial KPIs are illustrative until you upload pitch deck or business case."
         />
 
         <FounderMissionOverview data={data} />
