@@ -15,6 +15,8 @@ DeliverX preview deployments (Vercel **Preview**) should mirror **Production** f
 
 Preview is missing Supabase, app URL, and cron configuration. Login, database, and AI features will fail or behave incorrectly on preview URLs until these are synced.
 
+**Post-audit (2026-06-19):** unchanged — user must add the 6 Production-only vars above in the Vercel dashboard (secret values not settable from CI).
+
 **Note:** Production uses legacy name `open_api_key` for OpenAI. Code accepts both `open_api_key` and `OPENAI_API_KEY`; prefer `OPENAI_API_KEY` for new entries (see `docs/API_KEYS.md`).
 
 ---

@@ -1,8 +1,8 @@
 # DeliverX build report
 
-**Last updated:** 2026-06-19 (Sprint S1-D)  
+**Last updated:** 2026-06-19 (post-audit deploy parity)  
 **Production:** https://www.deliverx.dev  
-**Current `main` SHA:** see `git log -1 origin/main` — do not rely on a hardcoded commit in this doc.
+**Current `main` SHA:** `7124677` (PR [#88](https://github.com/gnaneshwer23/deliverx/pull/88)) — or `git log -1 origin/main`
 
 This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisation (S1-A/B/C/D)**. For persona routes and onboarding paths, see [I4 stakeholder matrix](./I4_STAKEHOLDER_MATRIX.md). For collaborative loop built-vs-spec detail, see [Collaborative loop status](./COLLABORATIVE_LOOP_STATUS.md).
 
@@ -21,9 +21,15 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 | **S1-B** | ✅ Shipped | Vercel Analytics + Speed Insights, preview env parity docs (PR #67) |
 | **S1-C** | ✅ Shipped | Phase I health smoke checks (I5 + loop + observability) |
 | **S1-D** | ✅ Shipped | This report + collaborative loop status doc |
+| **S1-E** | ✅ Shipped | Post-audit prod deploy parity + BUILD_REPORT refresh (this update) |
+| **J1–J4** | ✅ Shipped | Event propagation, live narrative threads, founder command, bootstrap parity |
+| **K1–K2** | ✅ Shipped | Next-up strip + essential panel defaults |
+| **Organic loop** | ✅ Shipped | Remaining domain mutations emit without demo seed |
+| **Mobile UX** | ✅ Shipped | Mission fallback CTAs, auth layout, nav lint (PRs #86–#88) |
 
 **Build:** `npm run build` — passing  
-**Tests:** `npm test -- --run` — see CI / local run for current count
+**Tests:** `npm test -- --run` — see CI / local run for current count  
+**Prod smoke (2026-06-19):** `/`, `/login` → 200; phase health routes → 401 without auth (expected)
 
 ---
 
@@ -85,11 +91,39 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 | **I5-C.4** — Page copy cleanup and KPI dedup | [#64](https://github.com/gnaneshwer23/deliverx/pull/64) | ✅ |
 | **I5-D** — Visual density and hierarchy polish | [#66](https://github.com/gnaneshwer23/deliverx/pull/66) | ✅ |
 
-## Sprint K2 — Panel diet (in progress)
+## Horizon 2 — Collaborative loop live wiring (J1–J4)
 
-Essential panel defaults per persona (~4–6 visible on first load); non-essential panels hidden until customize. Config: `dashboard-essential-panels.ts`.
+| Item | PR | Production |
+|------|-----|------------|
+| **J1-A** — Loop propagation core + demo seed gate | [#74](https://github.com/gnaneshwer23/deliverx/pull/74) | ✅ |
+| **J1-B** — Domain mutation propagation | [#76](https://github.com/gnaneshwer23/deliverx/pull/76) | ✅ |
+| **J2-A** — Semantic narrative thread signals | [#78](https://github.com/gnaneshwer23/deliverx/pull/78) | ✅ |
+| **J2-B** — J2 narrative smoke in phase health | [#79](https://github.com/gnaneshwer23/deliverx/pull/79) | ✅ |
+| **J2-C** — Collaborative loop status doc update | [#80](https://github.com/gnaneshwer23/deliverx/pull/80) | ✅ |
+| **J3** — Founder Decision Centre + intelligence feed | [#83](https://github.com/gnaneshwer23/deliverx/pull/83) | ✅ |
+| **J4** — Post-GO bootstrap checklist (live counts) | [#84](https://github.com/gnaneshwer23/deliverx/pull/84) | ✅ |
+| **Organic loop** — Remaining mutations without demo seed | [#85](https://github.com/gnaneshwer23/deliverx/pull/85) | ✅ |
 
-**Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`, `clampable-summary.tsx`, `mission-ai-summary-block.tsx`, `dx-theme.ts` (`stickyHeader`, `panelShellBody`).
+---
+
+## Horizon 3 — UX reduction (K1–K2 shipped)
+
+| Item | PR | Production |
+|------|-----|------------|
+| **K2** — Essential panel defaults per persona (~4–6 visible) | [#81](https://github.com/gnaneshwer23/deliverx/pull/81) | ✅ |
+| **K1** — Next-up strip + role home routing | [#82](https://github.com/gnaneshwer23/deliverx/pull/82) | ✅ |
+
+Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`.
+
+---
+
+## Post-audit mobile polish
+
+| Item | PR | Production |
+|------|-----|------------|
+| Mock → Live CTAs (persona mission fallback banners) | [#86](https://github.com/gnaneshwer23/deliverx/pull/86) | ✅ |
+| Mobile auth layout + workspace sidebar | [#87](https://github.com/gnaneshwer23/deliverx/pull/87) | ✅ |
+| Mobile nav lint (route-change reset) | [#88](https://github.com/gnaneshwer23/deliverx/pull/88) | ✅ |
 
 ---
 
@@ -140,23 +174,34 @@ Seven personas (Founder, PM, BA, Product, Engineer, QA, Scrum) map to mission co
 
 ---
 
-## Deferred items
+## Next horizon / deferred
 
-These are **out of scope** for I1–I5 and S1; tracked for Horizon 2+.
+Tracked after J1–J4, K1–K2, and post-audit mobile polish.
 
 | Item | Horizon | Notes |
 |------|---------|-------|
-| **J1** — Event-driven propagation without demo seed | H2 | Real task/RAID/requirement events → `delivery_impact_events` |
-| **J2** — Live narrative threads | H2 | Wire `resolveNarrativeThreads` to live DB queries |
-| **J3** — Founder command surface | H2 | Decision Centre + intelligence feed from live events |
-| **J4** — Bootstrap parity UI | H2 | Post-GO checklist with actual bootstrap counts |
-| **K1–K5** — Panel diet, nav path, inline edit, visual pass, onboarding | H3 | UX reduction and “next up” strip |
-| Preview env var sync | S1-B follow-up | Copy 6 missing Preview vars per [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md) |
+| **K3** — Nav path simplification | H3 | Mission nav depth and wayfinding |
+| **K4** — Inline edit | H3 | Reduce modal hops on mission dashboards |
+| **K5** — Visual pass + onboarding trim | H3 | Density and wizard copy reduction |
+| Preview env var sync | S1-B follow-up | **6 vars still Preview-only missing** — see below |
+| Server-side dashboard prefs | H4 | localStorage today (`dashboard-prefs.ts`) |
 | Document intelligence (PDF/PPT) | Backlog | `.txt/.md/.csv` only today |
 | Outbound report email | Backlog | Draft → publish pipeline exists; no Resend send |
 | Day-in-the-life automated narrative | Backlog | Section 6 explainer not one simulation |
-| Server-side dashboard prefs | H4 | localStorage today (`dashboard-prefs.ts`) |
-| Optional demo seed removal | H2 | `seedNarrativeThreadDemoData` still runs on bootstrap |
+| Optional demo seed removal | H2+ | `seedNarrativeThreadDemoData` still runs on bootstrap |
+
+### Preview env status (2026-06-19)
+
+Audited via `vercel env ls`. **Preview has 1 var** (`open_api_key`); **Production has 7**. Still missing on Preview (copy Production values in [Vercel dashboard](https://vercel.com/dashboard) — requires secret values; not committed here):
+
+1. `NEXT_PUBLIC_SUPABASE_URL`
+2. `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. `SUPABASE_SERVICE_ROLE_KEY`
+4. `NEXT_PUBLIC_APP_URL` (use preview URL or stable preview domain)
+5. `MINIMAX_MODEL` (optional legacy)
+6. `CRON_SECRET` (optional unless testing cron on preview)
+
+See [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md).
 
 ---
 
