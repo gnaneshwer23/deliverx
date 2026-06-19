@@ -1,10 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
+  isComplianceRequirement,
+  mapCriticalDefectRows,
   narrativeThreadsToImpactDrafts,
   narrativeThreadsToTeamNeeds,
   resolveNarrativeThreads,
   rolesReachedByThreads,
   runCollaborativeLoopPropagationSmokeTest,
+  runNarrativeThreadSemanticSmokeTest,
+  selectComplianceGapSignals,
+  selectPrimaryBlockedTask,
 } from "@/services/collaborativeLoopPropagation";
 
 const demoSignals = {
@@ -64,5 +69,101 @@ describe("collaborativeLoopPropagation", () => {
     expect(result.ok).toBe(true);
     expect(result.threadCount).toBe(3);
     expect(result.rolesReached).toBeGreaterThanOrEqual(3);
+  });
+
+  it("selects highest-priority blocked task without Auth API pattern", () => {
+    const task = selectPrimaryBlockedTask([
+      { id: "t-1", title: "Docs update", priority: "medium", blocked_reason: "Waiting on legal" },
+      { id: "t-2", title: "Payment gateway", priority: "critical", blocked_reason: "Vendor outage" },
+    ]);
+    expect(task?.id).toBe("t-2");
+    expect(task?.blockedReason).toBe("Vendor outage");
+  });
+
+  it("maps all critical open defects without fixed defect codes", () => {
+    const defects = mapCriticalDefectRows([
+      { id: "d-42", defect_code: "BUG-991", title: "Login regression" },
+      { id: "d-43", defect_code: "BUG-992", title: "Export failure" },
+    ]);
+    expect(defects).toHaveLength(2);
+    expect(defects.map((d) => d.code)).toEqual(["BUG-991", "BUG-992"]);
+  });
+
+  it("selects compliance gap from pending clarification and flags", () => {
+    const gap = selectComplianceGapSignals({
+      requirements: [
+        {
+          id: "req-a",
+          req_code: "FR-010",
+          title: "Audit logging",
+          status: "draft",
+          flags: [],
+        },
+        {
+          id: "req-b",
+          req_code: "FR-055",
+          title: "Consent management",
+          status: "pending_clarification",
+          flags: ["gdpr", "privacy"],
+        },
+      ],
+      clarifications: [
+        {
+          id: "clar-9",
+          question: "Which consent records must be retained?",
+          requirement_id: "req-b",
+          priority: "high",
+        },
+      ],
+      stories: [
+        {
+          id: "story-7",
+          story_code: "US-701",
+          title: "Consent withdrawal",
+          requirement_id: "req-b",
+          status: "blocked",
+        },
+      ],
+    });
+
+    expect(gap.fr003Requirement?.reqCode).toBe("FR-055");
+    expect(gap.fr003Clarification?.question).toContain("consent records");
+    expect(gap.us49Story?.storyCode).toBe("US-701");
+  });
+
+  it("detects compliance markers in requirement flags", () => {
+    expect(isComplianceRequirement(["gdpr"])).toBe(true);
+    expect(isComplianceRequirement(["performance"])).toBe(false);
+  });
+
+  it("resolves live semantic signals into three threads", () => {
+    const threads = resolveNarrativeThreads({
+      projectId: "proj-live",
+      authApiBlockedTask: {
+        id: "task-1",
+        title: "Vendor API integration",
+        blockedReason: "Vendor outage",
+      },
+      criticalDefects: [{ id: "def-1", code: "BUG-501", title: "Checkout crash" }],
+      fr003Requirement: { id: "req-1", reqCode: "FR-055", title: "Consent management" },
+      fr003Clarification: {
+        id: "clar-1",
+        question: "Which consent records must be retained?",
+      },
+      us49Story: { id: "story-1", storyCode: "US-701", title: "Consent withdrawal" },
+    });
+
+    expect(threads).toHaveLength(3);
+    expect(threads[0]?.title).toContain("Delivery blocker");
+    expect(threads[1]?.title).toContain("BUG-501");
+    expect(threads[2]?.title).toContain("FR-055");
+  });
+
+  it("passes semantic narrative thread smoke test", () => {
+    const result = runNarrativeThreadSemanticSmokeTest();
+    expect(result.ok).toBe(true);
+    expect(result.blockedTask).toBe(true);
+    expect(result.criticalDefects).toBe(2);
+    expect(result.complianceGap).toBe(true);
   });
 });
