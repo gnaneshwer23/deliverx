@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { emitTaskCreatedEvent } from "@/services/platformWebhooks";
+import { emitLoopPropagation, taskChangeToImpactDrafts } from "@/services/loopEventPropagation";
 
 export type WorkstreamStatus = "planned" | "active" | "completed";
 export type TaskStatus = "todo" | "in_progress" | "in_review" | "blocked" | "done";
@@ -278,6 +279,21 @@ export async function createTask(input: {
     source: "workspace",
   }).catch(() => undefined);
 
+  if (task.status === "blocked" || task.priority === "critical" || task.priority === "high") {
+    void emitLoopPropagation({
+      projectId: task.project_id,
+      actionType: "task_create",
+      entityType: "task",
+      entityId: task.id,
+      drafts: taskChangeToImpactDrafts({
+        title: task.title,
+        statusAfter: task.status,
+        priorityAfter: task.priority,
+        blockedReason: task.blocked_reason,
+      }),
+    }).catch(() => 0);
+  }
+
   return task;
 }
 
@@ -298,6 +314,13 @@ export async function updateTask(
   >,
 ): Promise<TaskRow> {
   const { supabase } = await getOrgContext();
+  const { data: before, error: beforeError } = await supabase
+    .from("tasks")
+    .select("project_id, title, status, priority, blocked_reason")
+    .eq("id", id)
+    .maybeSingle();
+  if (beforeError) throw beforeError;
+
   const { data, error } = await supabase
     .from("tasks")
     .update(patch)
@@ -306,7 +329,29 @@ export async function updateTask(
     .single();
 
   if (error) throw error;
-  return data as TaskRow;
+  const task = data as TaskRow;
+
+  if (before) {
+    const drafts = taskChangeToImpactDrafts({
+      title: task.title,
+      statusBefore: String(before.status),
+      statusAfter: task.status,
+      priorityBefore: String(before.priority),
+      priorityAfter: task.priority,
+      blockedReason: task.blocked_reason,
+    });
+    if (drafts.length > 0) {
+      void emitLoopPropagation({
+        projectId: task.project_id,
+        actionType: "task_update",
+        entityType: "task",
+        entityId: task.id,
+        drafts,
+      }).catch(() => 0);
+    }
+  }
+
+  return task;
 }
 
 export async function deleteTask(id: string) {

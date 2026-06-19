@@ -11,6 +11,11 @@ import type {
   TraceMatrixRow,
 } from "./baRequirementEngine";
 import { passesQualityGate } from "./baRequirementEngine";
+import {
+  clarificationChangeToImpactDrafts,
+  emitLoopPropagation,
+  requirementChangeToImpactDrafts,
+} from "./loopEventPropagation";
 
 export type BaProjectContext = {
   id: string;
@@ -294,6 +299,32 @@ export async function bulkInsertClarifications(
   if (rows.length === 0) return 0;
   const { error } = await supabase.from("requirement_clarifications").insert(rows);
   if (error) throw error;
+
+  const reqIds = [...new Set(items.map((i) => i.requirementId).filter(Boolean))] as string[];
+  const reqCodeById = new Map<string, string>();
+  if (reqIds.length > 0) {
+    const { data: reqs } = await supabase
+      .from("requirements")
+      .select("id, req_code")
+      .in("id", reqIds);
+    for (const req of reqs ?? []) {
+      reqCodeById.set(String(req.id), String(req.req_code));
+    }
+  }
+
+  for (const item of items) {
+    void emitLoopPropagation({
+      projectId,
+      actionType: "clarification_create",
+      entityType: "clarification",
+      drafts: clarificationChangeToImpactDrafts({
+        question: item.question,
+        reqCode: item.requirementId ? reqCodeById.get(item.requirementId) : undefined,
+        isNew: true,
+      }),
+    }).catch(() => 0);
+  }
+
   return rows.length;
 }
 
@@ -339,7 +370,7 @@ export async function updateRequirementStatus(
   if (status === "approved") {
     const { data: req, error: fetchError } = await supabase
       .from("requirements")
-      .select("quality, review_status, ai_generated")
+      .select("quality, review_status, ai_generated, project_id, req_code, title, status")
       .eq("id", requirementId)
       .maybeSingle();
     if (fetchError) throw fetchError;
@@ -361,11 +392,33 @@ export async function updateRequirementStatus(
     }
   }
 
+  const { data: before } = await supabase
+    .from("requirements")
+    .select("project_id, req_code, title, status")
+    .eq("id", requirementId)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("requirements")
     .update({ status })
     .eq("id", requirementId);
   if (error) throw error;
+
+  if (before) {
+    void emitLoopPropagation({
+      projectId: String(before.project_id),
+      actionType: "requirement_update",
+      entityType: "requirement",
+      entityId: requirementId,
+      drafts: requirementChangeToImpactDrafts({
+        reqCode: String(before.req_code),
+        title: String(before.title),
+        statusBefore: String(before.status),
+        statusAfter: status,
+      }),
+    }).catch(() => 0);
+  }
+
   return { ok: true };
 }
 
@@ -374,11 +427,41 @@ export async function answerClarification(
   answer: string,
 ): Promise<void> {
   const { supabase } = await getOrgContext();
+  const { data: clar } = await supabase
+    .from("requirement_clarifications")
+    .select("project_id, question, requirement_id")
+    .eq("id", clarificationId)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("requirement_clarifications")
     .update({ answer, status: "answered" })
     .eq("id", clarificationId);
   if (error) throw error;
+
+  if (clar?.project_id) {
+    let reqCode: string | undefined;
+    if (clar.requirement_id) {
+      const { data: req } = await supabase
+        .from("requirements")
+        .select("req_code")
+        .eq("id", clar.requirement_id)
+        .maybeSingle();
+      reqCode = req?.req_code ? String(req.req_code) : undefined;
+    }
+    void emitLoopPropagation({
+      projectId: String(clar.project_id),
+      actionType: "clarification_answered",
+      entityType: "clarification",
+      entityId: clarificationId,
+      drafts: [
+        { targetRole: "ba", message: `Clarification answered: ${clar.question}`, tone: "updated" },
+        { targetRole: "engineer", message: `${reqCode ?? "Requirement"} unblocked — clarification resolved`, tone: "ready" },
+        { targetRole: "scrum", message: `Planning can proceed after clarification on ${reqCode ?? "requirement"}`, tone: "updated" },
+      ],
+      syncNarrativeThreads: true,
+    }).catch(() => 0);
+  }
 }
 
 export async function buildTraceabilityMatrix(
