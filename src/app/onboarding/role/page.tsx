@@ -3,7 +3,7 @@ import { RoleForm } from "./role-form";
 import { ObCard } from "@/components/dx/ob-card";
 import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
-import { resolveGatewayRedirect, getPostRoleSelectRedirect } from "@/services/gatewayOnboardingEngine";
+import { formatSponsorGatewayObStep, resolveGatewayRedirect, getPostRoleSelectRedirect } from "@/services/gatewayOnboardingEngine";
 
 export default async function RolePage() {
   const { profile, gatewayStep } = await getOnboardingProfile();
@@ -26,9 +26,9 @@ export default async function RolePage() {
 
   return (
     <ObCard
-      step="Step 1 of 5 · Account"
+      step={formatSponsorGatewayObStep("account")}
       title="What's your role?"
-      description="We'll tailor dashboards, shortcuts, and intelligence to how you deliver."
+      description="Choose Founder / Sponsor to set up your first project and reach Founder Mission Control. Other roles follow a shorter workspace setup."
     >
       <RoleForm />
     </ObCard>

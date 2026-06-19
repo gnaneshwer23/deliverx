@@ -19,10 +19,10 @@ export default async function NewProjectPage({
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10 md:py-14">
-      <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Start your project</h1>
+      <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Set up your first project</h1>
       <p className="mt-2 text-[15px] font-light text-[#6B6B64]">
-        Paste a business case or use the guided questionnaire — AI review, follow-up questions,
-        then optional structure generation for workstreams, tasks, and RAID.
+        Founders: name your project, share your business case, review AI insights, then invite your team.
+        When setup finishes, you&apos;ll land in Founder Mission Control.
       </p>
 
       {playbooks.length > 0 ? (

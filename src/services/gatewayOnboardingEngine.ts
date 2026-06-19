@@ -35,6 +35,91 @@ export const GATEWAY_STEP_LABELS: Record<GatewayStep, string> = {
   complete: "Ready",
 };
 
+/** User-visible sponsor steps (excludes terminal complete). */
+export const SPONSOR_GATEWAY_USER_STEPS = GATEWAY_STEPS.filter(
+  (step): step is Exclude<GatewayStep, "complete"> => step !== "complete",
+);
+
+export const SPONSOR_GATEWAY_STEP_COUNT = SPONSOR_GATEWAY_USER_STEPS.length;
+
+export const PERSONA_GATEWAY_STEP_COUNT = 3;
+
+export const TEAM_MEMBER_STEP_COUNT = 2;
+
+export type OnboardingFlowKind = "sponsor" | "persona" | "team_member";
+
+export function resolveOnboardingFlowKind(role: string | null | undefined): OnboardingFlowKind {
+  if (role === "team_member") return "team_member";
+  if (role && role !== "executive") return "persona";
+  return "sponsor";
+}
+
+export function onboardingStepCount(role: string | null | undefined): number {
+  const kind = resolveOnboardingFlowKind(role);
+  if (kind === "team_member") return TEAM_MEMBER_STEP_COUNT;
+  if (kind === "persona") return PERSONA_GATEWAY_STEP_COUNT;
+  return SPONSOR_GATEWAY_STEP_COUNT;
+}
+
+export function formatObStepLabel(
+  stepNumber: number,
+  role: string | null | undefined,
+  stepLabel: string,
+): string {
+  return `Step ${stepNumber} of ${onboardingStepCount(role)} · ${stepLabel}`;
+}
+
+export function sponsorGatewayStepNumber(step: GatewayStep): number {
+  if (step === "complete") return SPONSOR_GATEWAY_STEP_COUNT;
+  return gatewayStepIndex(step) + 1;
+}
+
+export function formatSponsorGatewayObStep(step: Exclude<GatewayStep, "complete">): string {
+  return formatObStepLabel(
+    sponsorGatewayStepNumber(step),
+    "executive",
+    GATEWAY_STEP_LABELS[step],
+  );
+}
+
+export function formatPersonaGatewayObStep(roleLabel: string): string {
+  return `Step 2 of ${PERSONA_GATEWAY_STEP_COUNT} · ${roleLabel} workspace`;
+}
+
+export function formatTeamMemberGatewayObStep(step: 1 | 2): string {
+  const label = step === 1 ? GATEWAY_STEP_LABELS.account : GATEWAY_STEP_LABELS.complete;
+  return formatObStepLabel(step, "team_member", label);
+}
+
+export type ProjectFormStep = "project" | "brief" | "review" | "discovery" | "create";
+
+export function projectFormStepNumber(formStep: ProjectFormStep): number {
+  switch (formStep) {
+    case "project":
+      return sponsorGatewayStepNumber("project");
+    case "brief":
+      return sponsorGatewayStepNumber("business_case");
+    case "review":
+    case "discovery":
+    case "create":
+      return sponsorGatewayStepNumber("ai_review");
+    default:
+      return sponsorGatewayStepNumber("project");
+  }
+}
+
+export const PROJECT_CREATION_STEP_HINTS: Record<ProjectFormStep, string> = {
+  project:
+    "Give your initiative a name and timeline. Next you'll share your business case for AI review.",
+  brief: "Describe your initiative or paste a business case. AI will assess readiness and risks.",
+  review:
+    "Review the AI assessment and confirm you're ready to proceed before we set up your workspaces.",
+  discovery:
+    "Answer a few delivery questions so AI can structure your project accurately.",
+  create:
+    "Confirm project details — you'll invite your team on the next step.",
+};
+
 export const BOOTSTRAP_PERSONA_KEYS = [
   "ba",
   "product",
