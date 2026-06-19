@@ -21,6 +21,7 @@ import { getFounderContext } from "./founderContext";
 import { emitPlatformEvent } from "./platformWebhooks";
 import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import { seedNarrativeThreadDemoData } from "./collaborativeLoopPropagation";
+import { shouldSeedNarrativeDemoThreads } from "./loopEventPropagation";
 
 export type BootstrapStatus = "pending" | "running" | "complete" | "partial" | "skipped";
 
@@ -280,10 +281,12 @@ export async function bootstrapProjectWorkspaces(
         source: "sponsor_gateway",
       }).catch(() => undefined);
 
-      void seedNarrativeThreadDemoData(
-        input.projectId,
-        String(projectRow.organisation_id),
-      ).catch(() => undefined);
+      if (shouldSeedNarrativeDemoThreads()) {
+        void seedNarrativeThreadDemoData(
+          input.projectId,
+          String(projectRow.organisation_id),
+        ).catch(() => undefined);
+      }
     }
 
     refreshProjectDashboards(input.projectId);
