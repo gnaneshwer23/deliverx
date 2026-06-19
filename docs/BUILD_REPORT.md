@@ -85,7 +85,11 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 | **I5-C.4** — Page copy cleanup and KPI dedup | [#64](https://github.com/gnaneshwer23/deliverx/pull/64) | ✅ |
 | **I5-D** — Visual density and hierarchy polish | [#66](https://github.com/gnaneshwer23/deliverx/pull/66) | ✅ |
 
-**Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `dashboard-prefs.ts`, `dashboard-panel-shell.tsx`, `clampable-summary.tsx`, `mission-ai-summary-block.tsx`, `dx-theme.ts` (`stickyHeader`, `panelShellBody`).
+## Sprint K2 — Panel diet (in progress)
+
+Essential panel defaults per persona (~4–6 visible on first load); non-essential panels hidden until customize. Config: `dashboard-essential-panels.ts`.
+
+**Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`, `clampable-summary.tsx`, `mission-ai-summary-block.tsx`, `dx-theme.ts` (`stickyHeader`, `panelShellBody`).
 
 ---
 

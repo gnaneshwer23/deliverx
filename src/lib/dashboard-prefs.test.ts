@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach, vi } from "vitest";
 import {
   dashboardPrefsStorageKey,
   EMPTY_DASHBOARD_PREFS,
+  buildDefaultDashboardPrefs,
   mergeDashboardPrefs,
   parseDashboardPrefs,
   readDashboardPrefs,
@@ -9,6 +10,7 @@ import {
   setPanelHidden,
   writeDashboardPrefs,
 } from "./dashboard-prefs";
+import { essentialPanelCount } from "@/config/dashboard-essential-panels";
 
 function createStorage() {
   const store = new Map<string, string>();
@@ -51,6 +53,27 @@ describe("dashboard-prefs", () => {
       collapsed: { a: true, c: true },
       hidden: { b: true },
     });
+  });
+
+  it("returns panel-diet defaults when storage key is absent", () => {
+    const defaults = readDashboardPrefs("founder");
+    expect(Object.keys(defaults.hidden).length).toBeGreaterThan(0);
+    expect(defaults.hidden.portfolio).toBeUndefined();
+    expect(defaults.hidden.investor).toBe(true);
+  });
+
+  it("builds default prefs that show only essential panels", () => {
+    const defaults = buildDefaultDashboardPrefs("ba");
+    const visibleCount = Object.values(defaults.hidden).filter((v) => !v).length;
+    expect(visibleCount).toBe(0);
+    expect(essentialPanelCount("ba")).toBe(5);
+    expect(defaults.hidden["success-metrics"]).toBe(true);
+    expect(defaults.hidden["guided-tasks"]).toBeUndefined();
+  });
+
+  it("respects saved prefs when storage key exists", () => {
+    writeDashboardPrefs("founder", EMPTY_DASHBOARD_PREFS);
+    expect(readDashboardPrefs("founder")).toEqual(EMPTY_DASHBOARD_PREFS);
   });
 
   it("reads and writes prefs via localStorage", () => {
