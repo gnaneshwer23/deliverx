@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CircleDot } from "lucide-react";
+import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
+import type { MissionPersonaId } from "@/lib/mission-nav";
 import type { NextUpItem } from "@/lib/next-up-items";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -29,11 +31,16 @@ const TONE_STYLES: Record<NextUpItem["tone"], { border: string; icon: string; la
 export function NextUpStrip({
   items,
   personaLabel,
+  personaId,
 }: {
   items: NextUpItem[];
   personaLabel?: string;
+  /** Applies persona accent to section label when provided */
+  personaId?: MissionPersonaId;
 }) {
   if (items.length === 0) return null;
+
+  const accent = personaId ? getMissionPersonaAccent(personaId) : null;
 
   return (
     <section
@@ -42,9 +49,17 @@ export function NextUpStrip({
       aria-label="Next up"
     >
       <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-[#6B6B64]">
+        <p
+          className="text-[10px] font-semibold uppercase tracking-wide text-[#6B6B64]"
+          style={accent ? { borderLeft: `3px solid ${accent.primary}`, paddingLeft: "0.5rem" } : undefined}
+        >
           Next up
-          {personaLabel ? ` · ${personaLabel}` : ""}
+          {personaLabel ? (
+            <>
+              {" · "}
+              <span style={accent ? { color: accent.primary } : undefined}>{personaLabel}</span>
+            </>
+          ) : null}
         </p>
       </div>
       <ul className="divide-y divide-[#ECECE4]">

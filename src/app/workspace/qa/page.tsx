@@ -29,6 +29,13 @@ import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
+import { QaMissionShell } from "@/components/qa/qa-mission-shell";
+import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import { QA_DAY_ONE_SUBTITLE, resolveQaDashboardMode } from "@/lib/qa-dashboard-mode";
+import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
+import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +65,29 @@ export default async function QaMissionControlPage({
     listPendingArtifactReviewsForPersona("qa").catch(() => []),
   ]);
 
+  const projectId = data.primaryProject?.id;
+  const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  let bootstrapSummary: ProjectBootstrapSummary | null = null;
+  let hasBootstrapSummary = false;
+
+  if (projectId) {
+    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
+      bootstrapSummary = bootstrap.summary;
+      hasBootstrapSummary = true;
+    }
+  }
+
+  const serverQaMode = resolveQaDashboardMode({
+    projectId,
+    hasBootstrapSummary,
+    pendingReviewCount: projectPendingReviews.length,
+    criticalDefects: data.overview.criticalDefects,
+    bridgeDismissed: false,
+  });
+
+  const qaAccent = getMissionPersonaAccent("qa");
+
   const nextUpItems = buildMissionNextUpItems({
     personaId: "qa",
     primaryProject: data.primaryProject,
@@ -74,34 +104,53 @@ export default async function QaMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
+        subtitle: serverQaMode === "day-one" ? QA_DAY_ONE_SUBTITLE : undefined,
       }}
     >
-      <div className="space-y-4 p-6 md:p-8">
-        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
-        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.qa} />
-        <MissionBootstrapBanner
-          personaId="qa"
-          projectId={data.primaryProject?.id}
-          showFallback={data.dataSources.qaMetrics === "fallback"}
-        />
+      <QaMissionShell
+        projectId={projectId}
+        hasBootstrapSummary={hasBootstrapSummary}
+        pendingReviewCount={projectPendingReviews.length}
+        criticalDefects={data.overview.criticalDefects}
+        summary={bootstrapSummary}
+      >
+        <div className="space-y-4 p-6 md:p-8">
+          {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
+          <NextUpStrip
+            items={nextUpItems}
+            personaLabel={PERSONA_REVIEW_LABELS.qa}
+            personaId="qa"
+          />
+          <MissionBootstrapBanner
+            personaId="qa"
+            projectId={data.primaryProject?.id}
+            showFallback={data.dataSources.qaMetrics === "fallback"}
+          />
 
-        {data.projects.length > 1 && data.primaryProject ? (
-          <div className="flex flex-wrap gap-2">
-            {data.projects.slice(0, 8).map((p) => (
-              <Link
-                key={p.id}
-                href={`/workspace/qa?project=${p.id}`}
-                className={`rounded-full border px-3 py-1 text-xs font-medium ${
-                  p.id === data.primaryProject?.id
-                    ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
-                    : "border-[#E4E4DC] text-[#6B6B64]"
-                }`}
-              >
-                {p.name}
-              </Link>
-            ))}
-          </div>
-        ) : null}
+          {data.projects.length > 1 && data.primaryProject ? (
+            <div className="flex flex-wrap gap-2">
+              {data.projects.slice(0, 8).map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/workspace/qa?project=${p.id}`}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                    p.id === data.primaryProject?.id ? "" : "border-[#E4E4DC] text-[#6B6B64]"
+                  }`}
+                  style={
+                    p.id === data.primaryProject?.id
+                      ? {
+                          borderColor: qaAccent.primary,
+                          backgroundColor: qaAccent.bg,
+                          color: qaAccent.text,
+                        }
+                      : undefined
+                  }
+                >
+                  {p.name}
+                </Link>
+              ))}
+            </div>
+          ) : null}
 
         <QaMissionOverview data={data} />
         {data.primaryProject ? (
@@ -167,7 +216,8 @@ export default async function QaMissionControlPage({
         <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
           <QaCrossRolePanel impacts={data.crossRoleImpact} />
         </DashboardPanelShell>
-      </div>
+        </div>
+      </QaMissionShell>
     </MissionDashboardChrome>
   );
 }
