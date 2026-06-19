@@ -69,7 +69,7 @@ export default async function ProjectOverviewPage({
   const supabase = await createClient();
   const { data: project } = await supabase
     .from("projects")
-    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at, bootstrap_status, bootstrap_summary")
+    .select("name, status, delivery_type, timeline, goal, applied_playbook_id, closure_processed_at, bootstrap_status, bootstrap_summary, bootstrapped_at")
     .eq("id", id)
     .single();
 
@@ -189,6 +189,7 @@ export default async function ProjectOverviewPage({
         projectId={id}
         initialStatus={(project?.bootstrap_status as string) ?? "skipped"}
         summary={(project?.bootstrap_summary as Record<string, unknown>) ?? {}}
+        bootstrappedAt={(project?.bootstrapped_at as string | null) ?? null}
       />
 
       <ProjectOverviewTabs

@@ -6,7 +6,9 @@ import { getCompletionCopyForDbRole } from "@/config/persona-onboarding";
 import { resolveRoleHomePath, roleHomeCta } from "@/config/role-home-routing";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
 import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
-import { getOrgActiveBootstrapProject } from "@/services/orgBootstrap";
+import { BootstrapChecklistPanel } from "@/components/project/bootstrap-checklist-panel";
+import { getOrgActiveBootstrapProject, getOrgRecentBootstrapProject, projectHasBootstrapParity } from "@/services/orgBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 
 export default async function CompletePage() {
   const { user, profile, gatewayStep } = await getOnboardingProfile();
@@ -29,6 +31,9 @@ export default async function CompletePage() {
   const completion = getCompletionCopyForDbRole(profile.role);
   const gatewayDone = isSponsorGatewayComplete(profile, gatewayStep);
   const bootstrapProject = await getOrgActiveBootstrapProject().catch(() => null);
+  const recentBootstrap = bootstrapProject
+    ? null
+    : await getOrgRecentBootstrapProject().catch(() => null);
 
   return (
     <ObCard step={completion.stepLabel} title={completion.title} className="text-center">
@@ -38,6 +43,14 @@ export default async function CompletePage() {
             projectId={bootstrapProject.id}
             initialStatus={bootstrapProject.bootstrap_status}
             summary={bootstrapProject.bootstrap_summary}
+            bootstrappedAt={bootstrapProject.bootstrapped_at}
+          />
+        </div>
+      ) : recentBootstrap && projectHasBootstrapParity(recentBootstrap) ? (
+        <div className="mb-6 text-left">
+          <BootstrapChecklistPanel
+            summary={recentBootstrap.bootstrap_summary as ProjectBootstrapSummary}
+            bootstrappedAt={recentBootstrap.bootstrapped_at}
           />
         </div>
       ) : null}
