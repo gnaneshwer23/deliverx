@@ -99,14 +99,26 @@ Register → role onboarding → (Executive) business case → GO
 
 | Thread ID | Title pattern | Demo seed | Live wiring | Roles reached |
 |-----------|---------------|:---------:|:-----------:|---------------|
-| `auth-api-blocker` | Auth API blocker on blocked task | ✅ `seedNarrativeThreadDemoData` on bootstrap | ❌ Not emitted from organic task block events | Engineer, PM, Scrum, Founder |
-| `critical-defects` | Critical open defects (BUG-142 style) | ✅ Demo defects seeded | ❌ Not fully driven by defect CRUD | QA, Engineer, PM, Scrum |
-| `fr003-gdpr-gap` | FR-003 GDPR clarification gap | ✅ Demo requirement + clarification | ❌ Not fully driven by requirement approval flow | BA, Engineer, QA, Scrum |
+| `auth-api-blocker` | Auth API blocker on blocked task | ✅ `seedNarrativeThreadDemoData` on bootstrap | ✅ Blocked tasks (priority-ranked) | Engineer, PM, Scrum, Founder |
+| `critical-defects` | Critical open defects (BUG-142 style) | ✅ Demo defects seeded | ✅ All critical open defects | QA, Engineer, PM, Scrum |
+| `fr003-gdpr-gap` | FR-003 GDPR clarification gap | ✅ Demo requirement + clarification | ✅ Pending clarification / compliance flags + open clarifications | BA, Engineer, QA, Scrum |
 
 **Resolver:** `resolveNarrativeThreads()` in `src/services/collaborativeLoopPropagation.ts`  
 **Smoke test:** `runCollaborativeLoopPropagationSmokeTest()` — 3 threads, ≥3 roles (also checked in `phaseIHealth.ts` and `phaseHHealth.ts`)
 
-**Honest limit:** Threads are **first-class in code and visible on dashboards after bootstrap**, but **J2** is required to replace demo signals with live DB queries.
+**Honest limit:** Thread IDs are stable, but **signal loading now queries live blocked tasks, critical defects, and compliance/clarification gaps** instead of fixed FR-003/BUG-142/Auth API patterns. Demo seed still uses NHS-specific codes for bootstrap parity; organic mutations emit impact via J1 wiring.
+
+---
+
+## J2 — Live narrative threads (foundation)
+
+| Area | Before | After (J2 foundation) |
+|------|--------|------------------------|
+| Blocked task signal | `title`/`blocked_reason` ilike `%Auth API%` | Any `status=blocked`, highest priority first |
+| Critical defects | Only `BUG-142`, `BUG-167` | All `severity=critical` and `status≠closed` |
+| Compliance gap | `req_code=FR-003`, GDPR question, `US-49` | `pending_clarification` / compliance flags + open clarifications + blocked linked stories |
+
+**Still pattern-based:** Thread IDs (`auth-api-blocker`, `fr003-gdpr-gap`), demo seed entity codes (FR-003, US-49, BUG-142), and J1 mutation draft heuristics (e.g. Auth API substring for founder alerts).
 
 ---
 
@@ -117,7 +129,7 @@ These sprints close the gap between the explainer and live product behaviour. Ho
 | Sprint | Goal | Exit criteria |
 |--------|------|---------------|
 | **J1** — Event-driven propagation | Real DB changes emit `delivery_impact_events` without demo seed | Vitest “Auth API blocker” passes without `seedNarrativeThreadDemoData`; PM Team Needs update from real task state |
-| **J2** — Live narrative threads | Wire thread resolver to blocked tasks, critical defects, open clarifications | Three thread IDs unchanged; inputs from live queries |
+| **J2** — Live narrative threads | Wire thread resolver to blocked tasks, critical defects, open clarifications | Three thread IDs unchanged; signal queries use semantic categories (blocked / critical / compliance) |
 | **J3** — Founder command surface | Decision Centre inline approve + intelligence feed (7 items max) | Founder dashboard driven by `delivery_impact_events` + agent events |
 | **J4** — Bootstrap parity UI | Post-GO checklist with **actual** bootstrap counts | New sponsor sees loop panels update from **their** actions, not NHS demo only |
 
