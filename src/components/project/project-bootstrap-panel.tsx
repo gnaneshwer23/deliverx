@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { dxClass } from "@/lib/dx-theme";
+import { BootstrapChecklistPanel } from "@/components/project/bootstrap-checklist-panel";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 
 const PERSONA_LABELS: Record<string, string> = {
   ba: "Business Analyst",
@@ -14,19 +16,33 @@ const PERSONA_LABELS: Record<string, string> = {
   founder: "Founder",
 };
 
+type BootstrapApiResponse = {
+  status?: string;
+  summary?: ProjectBootstrapSummary;
+  bootstrappedAt?: string | null;
+};
+
 export function ProjectBootstrapPanel({
   projectId,
   initialStatus,
   summary,
+  bootstrappedAt,
+  showChecklistOnComplete = true,
 }: {
   projectId: string;
   initialStatus: string;
   summary: Record<string, unknown>;
+  bootstrappedAt?: string | null;
+  showChecklistOnComplete?: boolean;
 }) {
   const [status, setStatus] = useState(initialStatus);
   const [personas, setPersonas] = useState<Record<string, { ok: boolean; error?: string }>>(
     () => ((summary.personas as Record<string, { ok: boolean; error?: string }>) ?? {}),
   );
+  const [bootstrapSummary, setBootstrapSummary] = useState<ProjectBootstrapSummary>(
+    () => (summary as ProjectBootstrapSummary) ?? { personas: {} },
+  );
+  const [completedAt, setCompletedAt] = useState<string | null | undefined>(bootstrappedAt);
 
   useEffect(() => {
     if (status !== "pending" && status !== "running") return;
@@ -35,13 +51,12 @@ export function ProjectBootstrapPanel({
 
     async function poll() {
       const res = await fetch(`/api/project/${projectId}/bootstrap`);
-      const data = (await res.json()) as {
-        status?: string;
-        summary?: { personas?: Record<string, { ok: boolean; error?: string }> };
-      };
+      const data = (await res.json()) as BootstrapApiResponse;
       if (cancelled || !res.ok) return;
       if (data.status) setStatus(data.status);
       if (data.summary?.personas) setPersonas(data.summary.personas);
+      if (data.summary) setBootstrapSummary(data.summary);
+      if (data.bootstrappedAt !== undefined) setCompletedAt(data.bootstrappedAt);
       if (data.status === "pending" || data.status === "running") {
         window.setTimeout(poll, 3000);
       }
@@ -53,7 +68,13 @@ export function ProjectBootstrapPanel({
     };
   }, [projectId, status]);
 
-  if (status === "skipped" || status === "complete") return null;
+  if (status === "skipped") return null;
+
+  if ((status === "complete" || status === "partial") && showChecklistOnComplete) {
+    return (
+      <BootstrapChecklistPanel summary={bootstrapSummary} bootstrappedAt={completedAt ?? null} />
+    );
+  }
 
   const isRunning = status === "pending" || status === "running";
   const failed = Object.entries(personas).filter(([, p]) => !p.ok);

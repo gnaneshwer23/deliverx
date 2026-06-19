@@ -19,7 +19,7 @@ import {
   ProductSegmentsPanel,
 } from "@/components/product/product-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
-import { MockDataBanner } from "@/components/dx/mock-data-banner";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
@@ -78,9 +78,11 @@ export default async function ProductMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
-        {data.dataSources.roadmapRice === "fallback" ? (
-          <MockDataBanner message="Roadmap and RICE are illustrative until you run product analysis." />
-        ) : null}
+        <MissionBootstrapBanner
+          projectId={data.primaryProject?.id}
+          showFallback={data.dataSources.roadmapRice === "fallback"}
+          fallbackMessage="Roadmap and RICE are illustrative until you run product analysis."
+        />
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.product} />
 
         {data.projects.length > 1 && data.primaryProject ? (

@@ -28,7 +28,7 @@ import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { MockDataBanner } from "@/components/dx/mock-data-banner";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -79,9 +79,11 @@ export default async function QaMissionControlPage({
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.qa} />
-        {data.dataSources.qaMetrics === "fallback" ? (
-          <MockDataBanner message="QA KPIs are illustrative until test cases, defects, or UAT data is recorded." />
-        ) : null}
+        <MissionBootstrapBanner
+          projectId={data.primaryProject?.id}
+          showFallback={data.dataSources.qaMetrics === "fallback"}
+          fallbackMessage="QA KPIs are illustrative until test cases, defects, or UAT data is recorded."
+        />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

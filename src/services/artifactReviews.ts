@@ -175,6 +175,21 @@ export async function countPendingArtifactReviews(): Promise<number> {
   return count ?? 0;
 }
 
+export async function countProjectPendingArtifactReviews(projectId: string): Promise<number> {
+  const { supabase } = await getOrgContext();
+  const { count, error } = await supabase
+    .from("artifact_reviews")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId)
+    .eq("status", "needs_review");
+
+  if (error) {
+    if (error.code === "42P01") return 0;
+    throw error;
+  }
+  return count ?? 0;
+}
+
 export async function listProjectArtifactReviews(
   projectId: string,
   limit = 20,

@@ -15,7 +15,7 @@ import {
   structureProjectFromBrief,
   type ProjectStructureDraft,
 } from "./aiProjectStructuring";
-import { queueArtifactReview } from "./artifactReviews";
+import { countProjectPendingArtifactReviews, queueArtifactReview } from "./artifactReviews";
 import { upsertCharter } from "./charter";
 import { getFounderContext } from "./founderContext";
 import { emitPlatformEvent } from "./platformWebhooks";
@@ -25,9 +25,20 @@ import { shouldSeedNarrativeDemoThreads } from "./loopEventPropagation";
 
 export type BootstrapStatus = "pending" | "running" | "complete" | "partial" | "skipped";
 
+export type PersonaBootstrapCounts = {
+  requirements?: number;
+  clarifications?: number;
+  features?: number;
+  guidedTasks?: number;
+  criticalRisks?: number;
+  impediments?: number;
+  decisionsSuggested?: number;
+};
+
 export type PersonaBootstrapResult = {
   ok: boolean;
   error?: string;
+  counts?: PersonaBootstrapCounts;
 };
 
 export type ProjectBootstrapSummary = {
@@ -41,7 +52,49 @@ export type ProjectBootstrapSummary = {
   };
   personas: Record<string, PersonaBootstrapResult>;
   pendingArtifactReviews?: number;
+  narrativeDemo?: {
+    seeded: boolean;
+    threadCount: number;
+    impactEvents: number;
+  };
+  impactEvents?: number;
 };
+
+function extractPersonaBootstrapCounts(key: string, value: unknown): PersonaBootstrapCounts | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const record = value as Record<string, unknown>;
+
+  switch (key) {
+    case "ba":
+      return {
+        requirements: Array.isArray(record.requirements) ? record.requirements.length : undefined,
+        clarifications: Array.isArray(record.clarifications) ? record.clarifications.length : undefined,
+      };
+    case "product":
+      return {
+        features: Array.isArray(record.features) ? record.features.length : undefined,
+      };
+    case "pm":
+      return {
+        guidedTasks: Array.isArray(record.guidedTasks) ? record.guidedTasks.length : undefined,
+        criticalRisks: Array.isArray(record.criticalRisks) ? record.criticalRisks.length : undefined,
+      };
+    case "engineer":
+    case "scrum":
+      return {
+        guidedTasks: Array.isArray(record.guidedTasks) ? record.guidedTasks.length : undefined,
+        impediments: Array.isArray(record.impediments) ? record.impediments.length : undefined,
+      };
+    case "founder":
+      return {
+        decisionsSuggested: Array.isArray(record.decisionsSuggested)
+          ? record.decisionsSuggested.length
+          : undefined,
+      };
+    default:
+      return undefined;
+  }
+}
 
 export type BootstrapProjectInput = {
   projectId: string;
@@ -249,7 +302,10 @@ export async function bootstrapProjectWorkspaces(
     results.forEach((result, index) => {
       const key = personaJobs[index].key;
       if (result.status === "fulfilled") {
-        summary.personas[key] = { ok: true };
+        summary.personas[key] = {
+          ok: true,
+          counts: extractPersonaBootstrapCounts(key, result.value),
+        };
       } else {
         summary.personas[key] = {
           ok: false,
@@ -258,7 +314,7 @@ export async function bootstrapProjectWorkspaces(
       }
     });
 
-    summary.pendingArtifactReviews = 3;
+    summary.pendingArtifactReviews = await countProjectPendingArtifactReviews(input.projectId);
 
     const failed = Object.values(summary.personas).filter((p) => !p.ok).length;
     const status: BootstrapStatus = failed === 0 ? "complete" : "partial";
@@ -282,10 +338,20 @@ export async function bootstrapProjectWorkspaces(
       }).catch(() => undefined);
 
       if (shouldSeedNarrativeDemoThreads()) {
-        void seedNarrativeThreadDemoData(
+        const demoSeed = await seedNarrativeThreadDemoData(
           input.projectId,
           String(projectRow.organisation_id),
-        ).catch(() => undefined);
+        ).catch(() => null);
+
+        if (demoSeed) {
+          summary.narrativeDemo = {
+            seeded: demoSeed.seeded,
+            threadCount: demoSeed.threads.length,
+            impactEvents: demoSeed.impactEvents,
+          };
+          summary.impactEvents = demoSeed.impactEvents;
+          await updateBootstrapStatus(input.projectId, status, summary);
+        }
       }
     }
 

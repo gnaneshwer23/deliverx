@@ -30,7 +30,7 @@ import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { MockDataBanner } from "@/components/dx/mock-data-banner";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -77,9 +77,11 @@ export default async function FounderMissionControlPage() {
     >
       <div className="space-y-4 p-6 md:p-8">
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.founder} />
-        {data.dataSources.financials === "fallback" ? (
-          <MockDataBanner message="Financial KPIs are illustrative until you upload pitch deck or business case." />
-        ) : null}
+        <MissionBootstrapBanner
+          projectId={data.portfolio[0]?.id}
+          showFallback={data.dataSources.financials === "fallback"}
+          fallbackMessage="Financial KPIs are illustrative until you upload pitch deck or business case."
+        />
 
         <FounderMissionOverview data={data} />
         {data.portfolio[0] ? (

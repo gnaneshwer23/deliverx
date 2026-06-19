@@ -22,7 +22,7 @@ import {
 import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-status-reports-panel";
 import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
-import { MockDataBanner } from "@/components/dx/mock-data-banner";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { ProjectMemoryPanel } from "@/components/memory/project-memory-panel";
 import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
@@ -92,9 +92,11 @@ export default async function PmMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
-        {data.dataSources.deliveryPlan === "fallback" ? (
-          <MockDataBanner message="Milestones, budget, and timeline are illustrative until you upload a project charter." />
-        ) : null}
+        <MissionBootstrapBanner
+          projectId={data.primaryProject?.id}
+          showFallback={data.dataSources.deliveryPlan === "fallback"}
+          fallbackMessage="Milestones, budget, and timeline are illustrative until you upload a project charter."
+        />
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
 
         {data.projects.length > 1 && data.primaryProject ? (
