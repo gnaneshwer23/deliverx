@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { PmWelcomeBridge } from "@/components/delivery-pm/pm-welcome-bridge";
+import { PmDashboardModeContext } from "@/components/delivery-pm/pm-mission-panel-switch";
 import {
   isPmBridgeDismissed,
   resolvePmDashboardMode,
@@ -45,16 +46,18 @@ export function PmMissionShell({
   const showBridge = mode === "day-one" && projectId && summary;
 
   return (
-    <div data-pm-mode={mode}>
-      {showBridge ? (
-        <PmWelcomeBridge
-          projectId={projectId}
-          summary={summary}
-          teamJoinedCount={teamJoinedCount}
-          onDismiss={() => setBridgeDismissed(true)}
-        />
-      ) : null}
-      {children}
-    </div>
+    <PmDashboardModeContext.Provider value={mode}>
+      <div data-pm-mode={mode}>
+        {showBridge ? (
+          <PmWelcomeBridge
+            projectId={projectId}
+            summary={summary}
+            teamJoinedCount={teamJoinedCount}
+            onDismiss={() => setBridgeDismissed(true)}
+          />
+        ) : null}
+        {children}
+      </div>
+    </PmDashboardModeContext.Provider>
   );
 }

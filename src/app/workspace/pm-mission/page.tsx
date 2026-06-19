@@ -21,20 +21,38 @@ import {
 } from "@/components/delivery-pm/delivery-pm-panels";
 import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-status-reports-panel";
 import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
+import {
+  PmCompactRaidCard,
+  PmDayOneKpiStrip,
+  PmDayOneMilestonesPanel,
+  PmGetOrientedCard,
+  PmReviewAiBuiltPanel,
+  PmTeamRosterPanel,
+} from "@/components/delivery-pm/pm-day-one-panels";
+import { PmMissionPanelSwitch } from "@/components/delivery-pm/pm-mission-panel-switch";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { ProjectMemoryPanel } from "@/components/memory/project-memory-panel";
 import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
 import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
-import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import {
+  listPendingArtifactReviews,
+  listPendingArtifactReviewsForPersona,
+} from "@/services/artifactReviews";
 import { listPendingInvitations } from "@/services/invitations";
+import { listOrgMembers } from "@/services/delivery";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import { groupPendingReviewsByCategory } from "@/lib/pm-day-one-panels";
 import { PM_DAY_ONE_SUBTITLE, resolvePmDashboardMode } from "@/lib/pm-dashboard-mode";
 import { PmMissionShell } from "@/components/delivery-pm/pm-mission-shell";
-import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import {
+  filterPendingReviewsForPersona,
+  filterReviewsByProject,
+  PERSONA_REVIEW_LABELS,
+} from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
@@ -59,11 +77,12 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews, pendingInvites] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews, pendingInvites, orgMembers] = await Promise.all([
     getPmMissionControl(params.project),
     getCollaborativeLoopSnapshot("pm", params.project),
     listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
     listPendingInvitations().catch(() => []),
+    listOrgMembers().catch(() => []),
   ]);
 
   const projectId = data.primaryProject?.id;
@@ -78,7 +97,18 @@ export default async function PmMissionControlPage({
     }
   }
 
+  const allPmReviews = filterPendingReviewsForPersona(
+    await listPendingArtifactReviews(50).catch(() => []),
+    "pm-mission",
+  );
+  const projectPendingReviews = filterReviewsByProject(allPmReviews, projectId);
+  const reviewGroups = groupPendingReviewsByCategory(projectPendingReviews);
+
   const teamInvitesPending = pendingInvites.length;
+  const teamJoinedCount =
+    orgMembers.length || bootstrapSummary?.structure?.stakeholders || 1;
+  const teamTotalCount = Math.max(teamJoinedCount + teamInvitesPending, teamJoinedCount);
+
   const serverPmMode = resolvePmDashboardMode({
     projectId,
     hasBootstrapSummary,
@@ -110,6 +140,140 @@ export default async function PmMissionControlPage({
       : undefined,
   });
 
+  const projectPicker =
+    data.projects.length > 1 && data.primaryProject ? (
+      <div className="flex flex-wrap gap-2">
+        {data.projects.slice(0, 8).map((p) => (
+          <Link
+            key={p.id}
+            href={`/workspace/pm-mission?project=${p.id}`}
+            className={`rounded-full border px-3 py-1 text-xs font-medium ${
+              p.id === data.primaryProject?.id
+                ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
+                : "border-[#E4E4DC] text-[#6B6B64]"
+            }`}
+          >
+            {p.name}
+          </Link>
+        ))}
+      </div>
+    ) : null;
+
+  const dayOnePanels = (
+    <>
+      <PmDayOneKpiStrip
+        pendingReviewCount={projectPendingReviews.length}
+        bootstrapSummary={bootstrapSummary}
+        data={data}
+        teamJoinedCount={teamJoinedCount}
+        teamTotalCount={teamTotalCount}
+      />
+      <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
+        <div className="space-y-4">
+          <PmReviewAiBuiltPanel
+            groups={reviewGroups}
+            projectId={projectId}
+            pendingReviews={projectPendingReviews}
+          />
+          <PmDayOneMilestonesPanel
+            milestones={data.milestones}
+            usesFallback={data.dataSources.deliveryPlan === "fallback"}
+          />
+          <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
+        </div>
+        <div className="space-y-4">
+          <PmCompactRaidCard raid={data.raid} projectId={projectId} />
+          <PmTeamRosterPanel
+            members={orgMembers}
+            pendingInvites={pendingInvites}
+            bootstrapSummary={bootstrapSummary}
+          />
+          <PmGetOrientedCard projectId={projectId} />
+        </div>
+      </div>
+    </>
+  );
+
+  const steadyStatePanels = (
+    <>
+      <DeliveryPmMissionOverview data={data} />
+      {data.primaryProject ? (
+        <MissionPredictionKpis projectId={data.primaryProject.id} />
+      ) : null}
+      <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <DashboardPanelShell panelId="guided-tasks" title="Today's guided tasks" ownerNote="">
+          <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="health" title="Project health" ownerNote="">
+          <DeliveryHealthPanel
+            dimensions={data.healthDimensions}
+            insight={data.healthInsight}
+          />
+        </DashboardPanelShell>
+      </div>
+
+      <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
+        <DeliveryStakeholdersPanel rows={data.stakeholders} />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="stakeholder-actions" title="Stakeholder action queue">
+        <DeliveryStakeholderActionQueue actions={data.stakeholderActionQueue} />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="status-reports" title="Status reports">
+        <DeliveryStatusReportsPanel
+          projectId={data.primaryProject?.id}
+          reports={data.statusReports}
+        />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="project-memory" title="Project memory">
+        <ProjectMemoryPanel
+          projectId={data.primaryProject?.id}
+          initialStats={memoryStats}
+        />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="meeting-intelligence" title="Meeting intelligence">
+        <MeetingIntelligencePanel
+          projectId={data.primaryProject?.id}
+          stats={meetingStats}
+        />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="raid" title="RAID control centre">
+        <DeliveryRaidPanel raid={data.raid} />
+      </DashboardPanelShell>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <DashboardPanelShell panelId="milestones" title="Milestones & timeline">
+          <DeliveryMilestonesPanel
+            milestones={data.milestones}
+            goLiveProbability={data.overview.goLiveProbability}
+            usesFallback={data.dataSources.deliveryPlan === "fallback"}
+          />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="budget" title="Budget">
+          <DeliveryBudgetPanel
+            budget={data.budget}
+            usesFallback={data.dataSources.deliveryPlan === "fallback"}
+          />
+        </DashboardPanelShell>
+      </div>
+
+      <DashboardPanelShell panelId="benefits" title="Benefits realisation">
+        <DeliveryBenefitsPanel benefits={data.benefits} />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="decisions" title="Decision register">
+        <DeliveryDecisionsPanel decisions={data.decisions} />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
+      </DashboardPanelShell>
+      <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
+        <DeliveryCrossRolePanel impacts={data.crossRoleImpact} />
+      </DashboardPanelShell>
+    </>
+  );
+
   return (
     <MissionDashboardChrome
       personaId="pm-mission"
@@ -127,108 +291,17 @@ export default async function PmMissionControlPage({
         summary={bootstrapSummary}
         teamJoinedCount={bootstrapSummary?.structure?.stakeholders}
       >
-      <div className="space-y-4 p-6 md:p-8">
-        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
-        <MissionBootstrapBanner
-          personaId="pm-mission"
-          projectId={data.primaryProject?.id}
-          showFallback={data.dataSources.deliveryPlan === "fallback"}
-        />
-        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
-
-        {data.projects.length > 1 && data.primaryProject ? (
-          <div className="flex flex-wrap gap-2">
-            {data.projects.slice(0, 8).map((p) => (
-              <Link
-                key={p.id}
-                href={`/workspace/pm-mission?project=${p.id}`}
-                className={`rounded-full border px-3 py-1 text-xs font-medium ${
-                  p.id === data.primaryProject?.id
-                    ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
-                    : "border-[#E4E4DC] text-[#6B6B64]"
-                }`}
-              >
-                {p.name}
-              </Link>
-            ))}
-          </div>
-        ) : null}
-
-        <DeliveryPmMissionOverview data={data} />
-        {data.primaryProject ? (
-          <MissionPredictionKpis projectId={data.primaryProject.id} />
-        ) : null}
-        <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Today's guided tasks" ownerNote="">
-            <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="health" title="Project health" ownerNote="">
-            <DeliveryHealthPanel
-              dimensions={data.healthDimensions}
-              insight={data.healthInsight}
-            />
-          </DashboardPanelShell>
+        <div className="space-y-4 p-6 md:p-8">
+          {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
+          <MissionBootstrapBanner
+            personaId="pm-mission"
+            projectId={data.primaryProject?.id}
+            showFallback={data.dataSources.deliveryPlan === "fallback"}
+          />
+          <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
+          {projectPicker}
+          <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />
         </div>
-
-        <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
-          <DeliveryStakeholdersPanel rows={data.stakeholders} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="stakeholder-actions" title="Stakeholder action queue">
-          <DeliveryStakeholderActionQueue actions={data.stakeholderActionQueue} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="status-reports" title="Status reports">
-          <DeliveryStatusReportsPanel
-            projectId={data.primaryProject?.id}
-            reports={data.statusReports}
-          />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="project-memory" title="Project memory">
-          <ProjectMemoryPanel
-            projectId={data.primaryProject?.id}
-            initialStats={memoryStats}
-          />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="meeting-intelligence" title="Meeting intelligence">
-          <MeetingIntelligencePanel
-            projectId={data.primaryProject?.id}
-            stats={meetingStats}
-          />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="raid" title="RAID control centre">
-          <DeliveryRaidPanel raid={data.raid} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="milestones" title="Milestones & timeline">
-            <DeliveryMilestonesPanel
-              milestones={data.milestones}
-              goLiveProbability={data.overview.goLiveProbability}
-              usesFallback={data.dataSources.deliveryPlan === "fallback"}
-            />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="budget" title="Budget">
-            <DeliveryBudgetPanel
-              budget={data.budget}
-              usesFallback={data.dataSources.deliveryPlan === "fallback"}
-            />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="benefits" title="Benefits realisation">
-          <DeliveryBenefitsPanel benefits={data.benefits} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="decisions" title="Decision register">
-          <DeliveryDecisionsPanel decisions={data.decisions} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
-          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-          <DeliveryCrossRolePanel impacts={data.crossRoleImpact} />
-        </DashboardPanelShell>
-      </div>
       </PmMissionShell>
     </MissionDashboardChrome>
   );
