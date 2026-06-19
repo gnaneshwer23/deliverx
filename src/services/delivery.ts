@@ -4,7 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { emitTaskCreatedEvent } from "@/services/platformWebhooks";
-import { emitLoopPropagation, taskChangeToImpactDrafts } from "@/services/loopEventPropagation";
+import { emitLoopPropagation, taskChangeToImpactDrafts, workstreamChangeToImpactDrafts } from "@/services/loopEventPropagation";
 
 export type WorkstreamStatus = "planned" | "active" | "completed";
 export type TaskStatus = "todo" | "in_progress" | "in_review" | "blocked" | "done";
@@ -123,7 +123,22 @@ export async function createWorkstream(input: {
     .single();
 
   if (error) throw error;
-  return data as WorkstreamRow;
+  const row = data as WorkstreamRow;
+
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "workstream_create",
+    entityType: "workstream",
+    entityId: row.id,
+    drafts: workstreamChangeToImpactDrafts({
+      name: row.name,
+      statusAfter: row.status,
+      isNew: true,
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
+
+  return row;
 }
 
 export async function updateWorkstream(
@@ -133,6 +148,13 @@ export async function updateWorkstream(
   >,
 ): Promise<WorkstreamRow> {
   const { supabase } = await getOrgContext();
+  const { data: before, error: beforeError } = await supabase
+    .from("workstreams")
+    .select("name, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (beforeError) throw beforeError;
+
   const { data, error } = await supabase
     .from("workstreams")
     .update(patch)
@@ -141,7 +163,27 @@ export async function updateWorkstream(
     .single();
 
   if (error) throw error;
-  return data as WorkstreamRow;
+  const row = data as WorkstreamRow;
+
+  if (before) {
+    const drafts = workstreamChangeToImpactDrafts({
+      name: row.name,
+      statusBefore: String(before.status),
+      statusAfter: row.status,
+    });
+    if (drafts.length > 0) {
+      void emitLoopPropagation({
+        projectId: row.project_id,
+        actionType: "workstream_update",
+        entityType: "workstream",
+        entityId: row.id,
+        drafts,
+        syncNarrativeThreads: false,
+      }).catch(() => 0);
+    }
+  }
+
+  return row;
 }
 
 export async function deleteWorkstream(id: string) {

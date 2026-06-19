@@ -15,6 +15,7 @@ import {
   clarificationChangeToImpactDrafts,
   emitLoopPropagation,
   requirementChangeToImpactDrafts,
+  storyChangeToImpactDrafts,
 } from "./loopEventPropagation";
 
 export type BaProjectContext = {
@@ -358,7 +359,22 @@ export async function insertUserStory(input: {
     .select("*")
     .single();
   if (error) throw error;
-  return mapStory(data);
+  const story = mapStory(data);
+
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "story_create",
+    entityType: "user_story",
+    entityId: story.id,
+    drafts: storyChangeToImpactDrafts({
+      storyCode: story.story_code,
+      title: story.title,
+      statusAfter: story.status,
+      isNew: true,
+    }),
+  }).catch(() => 0);
+
+  return story;
 }
 
 export async function updateRequirementStatus(

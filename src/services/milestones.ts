@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { throwIfMissingTable } from "@/lib/db-errors";
+import { emitLoopPropagation, milestoneChangeToImpactDrafts } from "./loopEventPropagation";
 
 export type MilestoneStatus = "planned" | "at_risk" | "completed" | "slipped";
 
@@ -95,7 +96,23 @@ export async function createMilestone(input: {
     .select("*")
     .single();
   if (error) throw error;
-  return data as MilestoneRow;
+  const row = data as MilestoneRow;
+
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "milestone_create",
+    entityType: "milestone",
+    entityId: row.id,
+    drafts: milestoneChangeToImpactDrafts({
+      title: row.title,
+      statusAfter: row.status,
+      confidenceScore: row.confidence_score,
+      isNew: true,
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
+
+  return row;
 }
 
 export async function updateMilestoneConfidence(
@@ -104,6 +121,13 @@ export async function updateMilestoneConfidence(
   status?: MilestoneStatus,
 ): Promise<MilestoneRow> {
   const { supabase } = await getOrgContext();
+  const { data: before, error: beforeError } = await supabase
+    .from("milestones")
+    .select("title, status, confidence_score")
+    .eq("id", id)
+    .maybeSingle();
+  if (beforeError) throw beforeError;
+
   const patch: Record<string, unknown> = { confidence_score: confidenceScore };
   if (status) patch.status = status;
   const { data, error } = await supabase
@@ -113,5 +137,27 @@ export async function updateMilestoneConfidence(
     .select("*")
     .single();
   if (error) throw error;
-  return data as MilestoneRow;
+  const row = data as MilestoneRow;
+
+  if (before) {
+    const drafts = milestoneChangeToImpactDrafts({
+      title: row.title,
+      statusBefore: String(before.status),
+      statusAfter: row.status,
+      confidenceScore: row.confidence_score,
+      confidenceBefore: Number(before.confidence_score),
+    });
+    if (drafts.length > 0) {
+      void emitLoopPropagation({
+        projectId: row.project_id,
+        actionType: "milestone_update",
+        entityType: "milestone",
+        entityId: row.id,
+        drafts,
+        syncNarrativeThreads: false,
+      }).catch(() => 0);
+    }
+  }
+
+  return row;
 }

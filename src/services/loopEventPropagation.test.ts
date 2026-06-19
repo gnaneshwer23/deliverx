@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
+  artifactReviewChangeToImpactDrafts,
+  changeRequestChangeToImpactDrafts,
   clarificationChangeToImpactDrafts,
   decisionChangeToImpactDrafts,
   defectChangeToImpactDrafts,
+  milestoneChangeToImpactDrafts,
+  raidChangeToImpactDrafts,
   requirementChangeToImpactDrafts,
   runLoopEventPropagationSmokeTest,
+  runOrganicLoopSmokeTest,
   shouldSeedNarrativeDemoThreads,
+  storyChangeToImpactDrafts,
   taskChangeToImpactDrafts,
+  workstreamChangeToImpactDrafts,
 } from "@/services/loopEventPropagation";
 
 describe("loopEventPropagation", () => {
@@ -106,5 +113,68 @@ describe("loopEventPropagation", () => {
     expect(result.defectDrafts).toBe(4);
     expect(result.requirementDrafts).toBeGreaterThanOrEqual(4);
     expect(result.decisionDrafts).toBeGreaterThanOrEqual(3);
+  });
+
+  it("builds artifact review approve/reject impact drafts", () => {
+    const approved = artifactReviewChangeToImpactDrafts({
+      entityType: "requirement",
+      title: "FR-101 Data retention",
+      decision: "approved",
+    });
+    const rejected = artifactReviewChangeToImpactDrafts({
+      entityType: "user_story",
+      title: "US-12 Delete portal",
+      decision: "rejected",
+    });
+    expect(approved.some((d) => d.targetRole === "engineer")).toBe(true);
+    expect(rejected.some((d) => d.targetRole === "pm")).toBe(true);
+  });
+
+  it("builds RAID, story, workstream, milestone, and change impact drafts", () => {
+    expect(
+      raidChangeToImpactDrafts({
+        type: "risk",
+        title: "Vendor SLA breach",
+        severity: "critical",
+        status: "open",
+        isNew: true,
+      }).length,
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      storyChangeToImpactDrafts({
+        storyCode: "US-12",
+        title: "Delete portal",
+        statusAfter: "blocked",
+        isNew: true,
+      }).length,
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      workstreamChangeToImpactDrafts({ name: "Platform", statusAfter: "active", isNew: true }).length,
+    ).toBeGreaterThanOrEqual(2);
+    expect(
+      milestoneChangeToImpactDrafts({ title: "Beta", statusAfter: "at_risk", isNew: true }).length,
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      changeRequestChangeToImpactDrafts({
+        title: "Extend retention",
+        status: "submitted",
+        isNew: true,
+      }).length,
+    ).toBeGreaterThanOrEqual(2);
+  });
+
+  it("passes organic loop smoke test without demo seed env", () => {
+    const prev = process.env.SEED_NARRATIVE_DEMO_THREADS;
+    delete process.env.SEED_NARRATIVE_DEMO_THREADS;
+
+    const result = runOrganicLoopSmokeTest();
+    expect(result.demoSeedOff).toBe(true);
+    expect(result.organicThreadCount).toBe(3);
+    expect(result.organicRolesReached).toBeGreaterThanOrEqual(3);
+    expect(result.wiredMutationDrafts).toBeGreaterThanOrEqual(12);
+    expect(result.ok).toBe(true);
+
+    if (prev) process.env.SEED_NARRATIVE_DEMO_THREADS = prev;
+    else delete process.env.SEED_NARRATIVE_DEMO_THREADS;
   });
 });

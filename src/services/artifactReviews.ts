@@ -13,6 +13,7 @@ import { filterPendingReviewsForPersona } from "@/lib/approval/persona-reviews";
 import { logAuditEvent } from "./auditEvents";
 import { applyProjectStructure } from "./applyProjectStructure";
 import type { ProjectStructureDraft } from "./aiProjectStructuring";
+import { artifactReviewChangeToImpactDrafts, emitLoopPropagation } from "./loopEventPropagation";
 
 export type ArtifactReviewRow = {
   id: string;
@@ -343,6 +344,21 @@ export async function resolveArtifactReview(
       artifactReviewId: review.id,
       metadata: applyResult,
     });
+  }
+
+  const reviewDrafts = artifactReviewChangeToImpactDrafts({
+    entityType: review.entity_type,
+    title: review.title,
+    decision: status,
+  });
+  if (reviewDrafts.length > 0) {
+    void emitLoopPropagation({
+      projectId: review.project_id,
+      actionType: status === "approved" ? "artifact_approve" : "artifact_reject",
+      entityType: review.entity_type,
+      entityId: review.id,
+      drafts: reviewDrafts,
+    }).catch(() => 0);
   }
 
   return updated;

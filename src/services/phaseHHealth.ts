@@ -3,7 +3,7 @@ import { join } from "path";
 import { runCollaborativeLoopEngineSmokeTest } from "./collaborativeLoopEngine";
 import { runCollaborativeLoopPropagationSmokeTest, runNarrativeThreadSemanticSmokeTest } from "./collaborativeLoopPropagation";
 import { runAgentOrchestrationImpactSmokeTest } from "./agentOrchestrationImpact";
-import { runLoopEventPropagationSmokeTest } from "./loopEventPropagation";
+import { runLoopEventPropagationSmokeTest, runOrganicLoopSmokeTest } from "./loopEventPropagation";
 
 export type PhaseHSmokeCheck = {
   feature: string;
@@ -128,6 +128,14 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     sprint: "J1",
     ok: loopEvents.ok,
     detail: `task ${loopEvents.taskDrafts} · defect ${loopEvents.defectDrafts} · req ${loopEvents.requirementDrafts} · decision ${loopEvents.decisionDrafts}`,
+  });
+
+  const organicLoop = runOrganicLoopSmokeTest();
+  checks.push({
+    feature: "Organic loop propagation",
+    sprint: "Organic",
+    ok: organicLoop.ok,
+    detail: `seed off · ${organicLoop.organicThreadCount} threads · ${organicLoop.wiredMutationDrafts} mutation drafts`,
   });
 
   const liveRefreshOk = existsSync(

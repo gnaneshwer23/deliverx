@@ -5,7 +5,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { requestApproval } from "@/services/approvals";
 import { emitReportPublishedEvent } from "@/services/platformWebhooks";
-import { decisionChangeToImpactDrafts, emitLoopPropagation } from "@/services/loopEventPropagation";
+import { decisionChangeToImpactDrafts, emitLoopPropagation, raidChangeToImpactDrafts, changeRequestChangeToImpactDrafts } from "@/services/loopEventPropagation";
 
 export type RaidItemType = "risk" | "assumption" | "issue" | "dependency";
 export type RaidStatus = "open" | "mitigated" | "closed" | "accepted";
@@ -330,7 +330,23 @@ export async function createRaidItem(input: {
     .single();
 
   if (error) throw error;
-  return data as RaidItemRow;
+  const row = data as RaidItemRow;
+
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "raid_create",
+    entityType: "raid_item",
+    entityId: row.id,
+    drafts: raidChangeToImpactDrafts({
+      type: row.type,
+      title: row.title,
+      severity: row.severity,
+      status: row.status,
+      isNew: true,
+    }),
+  }).catch(() => 0);
+
+  return row;
 }
 
 export async function updateRaidItem(
@@ -343,6 +359,13 @@ export async function updateRaidItem(
   >,
 ): Promise<RaidItemRow> {
   const { supabase } = await getOrgContext();
+  const { data: before, error: beforeError } = await supabase
+    .from("raid_items")
+    .select("type, title, severity, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (beforeError) throw beforeError;
+
   const { data, error } = await supabase
     .from("raid_items")
     .update(patch)
@@ -350,7 +373,28 @@ export async function updateRaidItem(
     .select("*")
     .single();
   if (error) throw error;
-  return data as RaidItemRow;
+  const row = data as RaidItemRow;
+
+  if (before) {
+    const drafts = raidChangeToImpactDrafts({
+      type: row.type,
+      title: row.title,
+      severity: row.severity,
+      status: row.status,
+      statusBefore: String(before.status),
+    });
+    if (drafts.length > 0) {
+      void emitLoopPropagation({
+        projectId: row.project_id,
+        actionType: "raid_update",
+        entityType: "raid_item",
+        entityId: row.id,
+        drafts,
+      }).catch(() => 0);
+    }
+  }
+
+  return row;
 }
 
 // ---------------------------------------------------------------------------
@@ -815,6 +859,19 @@ export async function createChangeRequest(input: {
       notes: `Change request submitted: ${row.title}`,
     }).catch(() => undefined);
   }
+
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "change_create",
+    entityType: "change_request",
+    entityId: row.id,
+    drafts: changeRequestChangeToImpactDrafts({
+      title: row.title,
+      status: row.status,
+      isNew: true,
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
 
   return row;
 }

@@ -8,6 +8,7 @@ import {
   loadNarrativeThreadSignals,
   narrativeThreadsToImpactDrafts,
   resolveNarrativeThreads,
+  rolesReachedByThreads,
 } from "./collaborativeLoopPropagation";
 
 export function shouldSeedNarrativeDemoThreads(): boolean {
@@ -170,6 +171,237 @@ export function decisionChangeToImpactDrafts(input: {
   return [{ targetRole: "pm", message: `Decision updated: ${input.title}`, tone: "updated" }];
 }
 
+export function artifactReviewChangeToImpactDrafts(input: {
+  entityType: string;
+  title: string;
+  decision: "approved" | "rejected";
+}): DeliveryImpactEventDraft[] {
+  const label = input.title.trim() || "Artifact";
+
+  if (input.decision === "rejected") {
+    return [
+      { targetRole: "pm", message: `Review rejected: ${label}`, tone: "updated" },
+      { targetRole: "ba", message: `Rework needed — ${label}`, tone: "waiting" },
+    ];
+  }
+
+  switch (input.entityType) {
+    case "requirement":
+      return [
+        { targetRole: "ba", message: `Requirement approved — ${label}`, tone: "updated" },
+        { targetRole: "engineer", message: `${label} ready for implementation`, tone: "ready" },
+        { targetRole: "qa", message: `Update test coverage for ${label}`, tone: "waiting" },
+      ];
+    case "user_story":
+      return [
+        { targetRole: "scrum", message: `Story ready for sprint: ${label}`, tone: "ready" },
+        { targetRole: "engineer", message: `Implement approved story: ${label}`, tone: "ready" },
+        { targetRole: "qa", message: `Acceptance tests for ${label}`, tone: "waiting" },
+      ];
+    case "raid_item":
+      return [
+        { targetRole: "pm", message: `RAID item approved: ${label}`, tone: "updated" },
+        { targetRole: "scrum", message: `Track RAID item in sprint: ${label}`, tone: "waiting" },
+      ];
+    case "structure_bundle":
+      return [
+        { targetRole: "pm", message: "Project structure applied", tone: "updated" },
+        { targetRole: "scrum", message: "Workstreams and milestones are live", tone: "updated" },
+        { targetRole: "engineer", message: "Delivery structure approved — review tasks", tone: "ready" },
+        { targetRole: "founder", message: "GO workspace structure is active", tone: "updated" },
+      ];
+    case "task":
+      return [
+        { targetRole: "engineer", message: `Task approved: ${label}`, tone: "ready" },
+        { targetRole: "scrum", message: `Sprint task cleared: ${label}`, tone: "updated" },
+      ];
+    default:
+      return [
+        { targetRole: "pm", message: `Approved: ${label}`, tone: "updated" },
+        { targetRole: "ba", message: `Artifact cleared for delivery: ${label}`, tone: "updated" },
+      ];
+  }
+}
+
+export function raidChangeToImpactDrafts(input: {
+  type: string;
+  title: string;
+  severity: string;
+  status: string;
+  statusBefore?: string;
+  isNew?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const statusChanged = input.statusBefore !== undefined && input.statusBefore !== input.status;
+  if (!input.isNew && !statusChanged) return [];
+
+  if (input.status === "closed" || input.status === "mitigated") {
+    return [{ targetRole: "pm", message: `${input.type} resolved: ${input.title}`, tone: "updated" }];
+  }
+
+  if (input.severity !== "critical" && input.severity !== "high") {
+    if (input.isNew) {
+      return [{ targetRole: "pm", message: `${input.type} logged: ${input.title}`, tone: "updated" }];
+    }
+    return [];
+  }
+
+  const drafts: DeliveryImpactEventDraft[] = [
+    { targetRole: "pm", message: `${input.type} — ${input.title}`, tone: "blocked" },
+    { targetRole: "scrum", message: `Impediment: ${input.title}`, tone: "blocked" },
+    { targetRole: "engineer", message: `RAID may block delivery: ${input.title}`, tone: "waiting" },
+  ];
+
+  if (input.severity === "critical") {
+    drafts.push({
+      targetRole: "founder",
+      message: `Critical ${input.type}: ${input.title}`,
+      tone: "waiting",
+    });
+  }
+
+  return drafts;
+}
+
+export function storyChangeToImpactDrafts(input: {
+  storyCode: string;
+  title: string;
+  statusBefore?: string;
+  statusAfter: string;
+  isNew?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const statusChanged = input.statusBefore !== undefined && input.statusBefore !== input.statusAfter;
+  if (!input.isNew && !statusChanged) return [];
+
+  if (input.statusAfter === "blocked") {
+    return [
+      { targetRole: "engineer", message: `Story blocked: ${input.storyCode}`, tone: "blocked" },
+      { targetRole: "scrum", message: `Sprint item blocked: ${input.storyCode} — ${input.title}`, tone: "blocked" },
+      { targetRole: "ba", message: `${input.storyCode} blocked — check acceptance criteria`, tone: "waiting" },
+      { targetRole: "qa", message: `Test planning blocked on ${input.storyCode}`, tone: "waiting" },
+    ];
+  }
+
+  if (input.isNew || input.statusAfter === "ready") {
+    return [
+      { targetRole: "scrum", message: `New story ${input.storyCode}: ${input.title}`, tone: "ready" },
+      { targetRole: "engineer", message: `Story available: ${input.storyCode}`, tone: "waiting" },
+    ];
+  }
+
+  return [
+    { targetRole: "scrum", message: `${input.storyCode} → ${input.statusAfter}`, tone: "updated" },
+    { targetRole: "engineer", message: `Story status updated: ${input.storyCode}`, tone: "updated" },
+  ];
+}
+
+export function workstreamChangeToImpactDrafts(input: {
+  name: string;
+  statusBefore?: string;
+  statusAfter: string;
+  isNew?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const statusChanged = input.statusBefore !== undefined && input.statusBefore !== input.statusAfter;
+  if (!input.isNew && !statusChanged) return [];
+
+  if (input.isNew) {
+    return [
+      { targetRole: "pm", message: `Workstream created: ${input.name}`, tone: "updated" },
+      { targetRole: "scrum", message: `New delivery stream: ${input.name}`, tone: "updated" },
+    ];
+  }
+
+  if (input.statusAfter === "completed") {
+    return [
+      { targetRole: "pm", message: `Workstream completed: ${input.name}`, tone: "updated" },
+      { targetRole: "founder", message: `Delivery stream closed: ${input.name}`, tone: "updated" },
+    ];
+  }
+
+  return [
+    { targetRole: "pm", message: `${input.name} → ${input.statusAfter}`, tone: "updated" },
+    { targetRole: "engineer", message: `Workstream status: ${input.name}`, tone: "updated" },
+  ];
+}
+
+export function milestoneChangeToImpactDrafts(input: {
+  title: string;
+  statusBefore?: string;
+  statusAfter: string;
+  confidenceScore?: number;
+  confidenceBefore?: number;
+  isNew?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const statusChanged = input.statusBefore !== undefined && input.statusBefore !== input.statusAfter;
+  const confidenceChanged =
+    input.confidenceBefore !== undefined &&
+    input.confidenceScore !== undefined &&
+    input.confidenceBefore !== input.confidenceScore;
+
+  if (!input.isNew && !statusChanged && !confidenceChanged) return [];
+
+  if (input.statusAfter === "at_risk" || input.statusAfter === "slipped") {
+    return [
+      { targetRole: "pm", message: `Milestone ${input.statusAfter}: ${input.title}`, tone: "blocked" },
+      { targetRole: "founder", message: `Timeline risk — ${input.title}`, tone: "waiting" },
+      { targetRole: "scrum", message: `Sprint target at risk: ${input.title}`, tone: "waiting" },
+    ];
+  }
+
+  if (input.statusAfter === "completed") {
+    return [
+      { targetRole: "pm", message: `Milestone reached: ${input.title}`, tone: "updated" },
+      { targetRole: "founder", message: `Milestone completed: ${input.title}`, tone: "updated" },
+    ];
+  }
+
+  if (input.isNew) {
+    return [
+      { targetRole: "pm", message: `Milestone planned: ${input.title}`, tone: "updated" },
+      { targetRole: "scrum", message: `Delivery target set: ${input.title}`, tone: "updated" },
+    ];
+  }
+
+  if (confidenceChanged && input.confidenceScore !== undefined && input.confidenceScore < 60) {
+    return [
+      { targetRole: "pm", message: `Low confidence (${input.confidenceScore}%) — ${input.title}`, tone: "waiting" },
+      { targetRole: "founder", message: `Milestone confidence dropped: ${input.title}`, tone: "waiting" },
+    ];
+  }
+
+  return [{ targetRole: "pm", message: `Milestone updated: ${input.title}`, tone: "updated" }];
+}
+
+export function changeRequestChangeToImpactDrafts(input: {
+  title: string;
+  status: string;
+  statusBefore?: string;
+  isNew?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const statusChanged = input.statusBefore !== undefined && input.statusBefore !== input.status;
+  if (!input.isNew && !statusChanged) return [];
+
+  if (input.status === "submitted") {
+    return [
+      { targetRole: "pm", message: `Change submitted: ${input.title}`, tone: "waiting" },
+      { targetRole: "founder", message: `Change request needs decision: ${input.title}`, tone: "waiting" },
+      { targetRole: "ba", message: `Scope impact review: ${input.title}`, tone: "waiting" },
+    ];
+  }
+
+  if (input.status === "approved" || input.status === "rejected") {
+    return [
+      { targetRole: "pm", message: `Change ${input.status}: ${input.title}`, tone: "updated" },
+      { targetRole: "product", message: `Backlog may shift — ${input.title}`, tone: "waiting" },
+    ];
+  }
+
+  if (input.isNew) {
+    return [{ targetRole: "pm", message: `Change draft logged: ${input.title}`, tone: "updated" }];
+  }
+
+  return [];
+}
+
 export async function propagateNarrativeThreadsForProject(
   projectId: string,
   sourceId?: string | null,
@@ -258,4 +490,78 @@ export function runLoopEventPropagationSmokeTest(): {
   const ok = taskDrafts >= 3 && defectDrafts >= 4 && requirementDrafts >= 4 && decisionDrafts >= 3;
 
   return { ok, taskDrafts, defectDrafts, requirementDrafts, decisionDrafts };
+}
+
+export function runOrganicLoopSmokeTest(): {
+  ok: boolean;
+  demoSeedOff: boolean;
+  organicThreadCount: number;
+  organicRolesReached: number;
+  wiredMutationDrafts: number;
+} {
+  const demoSeedOff = !shouldSeedNarrativeDemoThreads();
+
+  const organicSignals = {
+    projectId: "proj-organic",
+    authApiBlockedTask: { id: "task-1", title: "Payment gateway integration" },
+    criticalDefects: [{ id: "def-1", code: "BUG-501", title: "Session timeout failure" }],
+    fr003Requirement: { id: "req-1", reqCode: "FR-101", title: "Data retention policy" },
+    fr003Clarification: {
+      id: "clar-1",
+      question: "What retention period applies to audit logs?",
+    },
+    us49Story: { id: "story-1", storyCode: "US-12", title: "Delete my data portal" },
+  };
+
+  const threads = resolveNarrativeThreads(organicSignals);
+  const roles = rolesReachedByThreads(threads);
+
+  const wiredMutationDrafts =
+    artifactReviewChangeToImpactDrafts({
+      entityType: "requirement",
+      title: "FR-101 Data retention",
+      decision: "approved",
+    }).length +
+    raidChangeToImpactDrafts({
+      type: "risk",
+      title: "Vendor SLA breach",
+      severity: "critical",
+      status: "open",
+      isNew: true,
+    }).length +
+    storyChangeToImpactDrafts({
+      storyCode: "US-12",
+      title: "Delete my data portal",
+      statusAfter: "blocked",
+      isNew: true,
+    }).length +
+    workstreamChangeToImpactDrafts({
+      name: "Platform",
+      statusAfter: "active",
+      isNew: true,
+    }).length +
+    milestoneChangeToImpactDrafts({
+      title: "Beta launch",
+      statusAfter: "at_risk",
+      isNew: true,
+    }).length +
+    changeRequestChangeToImpactDrafts({
+      title: "Extend audit retention",
+      status: "submitted",
+      isNew: true,
+    }).length;
+
+  const ok =
+    demoSeedOff &&
+    threads.length === 3 &&
+    roles.length >= 3 &&
+    wiredMutationDrafts >= 12;
+
+  return {
+    ok,
+    demoSeedOff,
+    organicThreadCount: threads.length,
+    organicRolesReached: roles.length,
+    wiredMutationDrafts,
+  };
 }
