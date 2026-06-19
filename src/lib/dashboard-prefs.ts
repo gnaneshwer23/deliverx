@@ -1,6 +1,9 @@
-import type { MissionPersonaId } from "@/lib/mission-nav";
+import {
+  nonEssentialPanelIds,
+  type DashboardPersonaId,
+} from "@/config/dashboard-essential-panels";
 
-export type DashboardPersonaId = MissionPersonaId | "command-centre";
+export type { DashboardPersonaId } from "@/config/dashboard-essential-panels";
 
 export type DashboardPrefs = {
   collapsed: Record<string, boolean>;
@@ -40,9 +43,20 @@ export function parseDashboardPrefs(raw: string | null): DashboardPrefs {
   }
 }
 
+export function buildDefaultDashboardPrefs(personaId: DashboardPersonaId): DashboardPrefs {
+  const hidden: Record<string, boolean> = {};
+  for (const panelId of nonEssentialPanelIds(personaId)) {
+    hidden[panelId] = true;
+  }
+  return { ...EMPTY_DASHBOARD_PREFS, hidden };
+}
+
 export function readDashboardPrefs(personaId: DashboardPersonaId): DashboardPrefs {
-  if (typeof window === "undefined") return { ...EMPTY_DASHBOARD_PREFS };
-  return parseDashboardPrefs(localStorage.getItem(dashboardPrefsStorageKey(personaId)));
+  if (typeof window === "undefined") return buildDefaultDashboardPrefs(personaId);
+  const key = dashboardPrefsStorageKey(personaId);
+  const raw = localStorage.getItem(key);
+  if (raw === null) return buildDefaultDashboardPrefs(personaId);
+  return parseDashboardPrefs(raw);
 }
 
 export function writeDashboardPrefs(
