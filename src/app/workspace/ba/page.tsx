@@ -18,7 +18,8 @@ import { CollaborativePanelsGrid } from "@/components/collaborative/collaborativ
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { ClampableSummary } from "@/components/dx/clampable-summary";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -46,6 +47,18 @@ export default async function BaMissionControlPage({
     listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 
+  const nextUpItems = buildMissionNextUpItems({
+    personaId: "ba",
+    primaryProject: data.primaryProject,
+    hasProjects: data.projects.length > 0,
+    pendingReviews,
+    openClarifications: data.kpis.pendingClarification,
+    guidedTaskTitle: data.guidedTasks[0]?.title,
+    guidedTaskHref: data.primaryProject
+      ? `/project/${data.primaryProject.id}/requirements`
+      : undefined,
+  });
+
   return (
     <MissionDashboardChrome
       personaId="ba"
@@ -56,12 +69,7 @@ export default async function BaMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
-        <PendingReviewsStrip
-          reviews={pendingReviews}
-          personaLabel={PERSONA_REVIEW_LABELS["ba"]}
-          persona="ba"
-          inlineActions
-        />
+        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.ba} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <ProjectPicker projects={data.projects} currentId={data.primaryProject.id} />

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { RoleForm } from "./role-form";
 import { ObCard } from "@/components/dx/ob-card";
+import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
 import { resolveGatewayRedirect, getPostRoleSelectRedirect } from "@/services/gatewayOnboardingEngine";
 
@@ -8,7 +9,7 @@ export default async function RolePage() {
   const { profile, gatewayStep } = await getOnboardingProfile();
 
   if (isSponsorGatewayComplete(profile, gatewayStep)) {
-    redirect("/workspace/dashboard");
+    redirect(resolveRoleHomePath(profile?.role));
   }
   if (!profile?.organisation_id) {
     redirect("/onboarding/organisation");

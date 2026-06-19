@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatAuthError } from "@/lib/auth-errors";
+import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 import { findSsoForEmail } from "@/services/orgSso";
 
 export type LoginState = { ok: boolean; error?: string };
@@ -38,17 +39,5 @@ export async function loginAction(
     return { ok: false, error: formatAuthError(error.message) };
   }
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("organisation_id")
-    .single();
-
-  const dest =
-    next.startsWith("/") && !next.startsWith("//")
-      ? next
-      : profile?.organisation_id
-        ? "/workspace/dashboard"
-        : "/onboarding/organisation";
-
-  redirect(dest);
+  redirect(await resolveAuthenticatedPath(supabase, next || null));
 }

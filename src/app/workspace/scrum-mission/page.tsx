@@ -30,7 +30,8 @@ import { CollaborativePanelsGrid } from "@/components/collaborative/collaborativ
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,18 @@ export default async function ScrumMissionControlPage({
     listPendingArtifactReviewsForPersona("scrum").catch(() => []),
   ]);
 
+  const nextUpItems = buildMissionNextUpItems({
+    personaId: "scrum",
+    primaryProject: data.primaryProject,
+    hasProjects: data.projects.length > 0,
+    pendingReviews,
+    impediments: data.impediments.length,
+    impedimentTitle: data.impediments[0]?.title,
+    blockedTasks: data.overview.blockedStories,
+    guidedTaskTitle: data.guidedTasks[0]?.title,
+    guidedTaskHref: data.primaryProject ? `/project/${data.primaryProject.id}/scrum` : undefined,
+  });
+
   return (
     <MissionDashboardChrome
       personaId="scrum"
@@ -70,12 +83,7 @@ export default async function ScrumMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
-        <PendingReviewsStrip
-          reviews={pendingReviews}
-          personaLabel={PERSONA_REVIEW_LABELS["scrum"]}
-          persona="scrum"
-          inlineActions
-        />
+        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.scrum} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

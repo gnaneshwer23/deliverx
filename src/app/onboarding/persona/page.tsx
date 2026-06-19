@@ -6,6 +6,7 @@ import {
   usesPersonaOnboarding,
   usesSponsorGateway,
 } from "@/config/persona-onboarding";
+import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { ROLE_PILL_LABELS } from "@/lib/marketing/landing-data";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
 import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
@@ -17,7 +18,7 @@ export default async function PersonaPage() {
   const { profile, gatewayStep } = await getOnboardingProfile();
 
   if (isSponsorGatewayComplete(profile, gatewayStep)) {
-    redirect("/workspace/dashboard");
+    redirect(resolveRoleHomePath(profile?.role));
   }
   if (!profile?.organisation_id) {
     redirect("/onboarding/organisation");

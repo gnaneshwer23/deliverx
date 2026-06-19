@@ -29,7 +29,8 @@ import { getProjectMemoryStats } from "@/services/projectMemoryRag";
 import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
@@ -67,6 +68,20 @@ export default async function PmMissionControlPage({
     ? await getProjectMeetingIntelligenceStats(data.primaryProject.id).catch(() => undefined)
     : undefined;
 
+  const nextUpItems = buildMissionNextUpItems({
+    personaId: "pm-mission",
+    primaryProject: data.primaryProject,
+    hasProjects: data.projects.length > 0,
+    pendingReviews,
+    openDecisions: data.overview.openDecisions,
+    decisionTitle: data.decisions.find((d) => d.status === "proposed")?.title,
+    blockedTasks: data.overview.blockedDependencies,
+    guidedTaskTitle: data.guidedTasks[0]?.title,
+    guidedTaskHref: data.primaryProject
+      ? `/project/${data.primaryProject.id}/delivery`
+      : undefined,
+  });
+
   return (
     <MissionDashboardChrome
       personaId="pm-mission"
@@ -80,12 +95,7 @@ export default async function PmMissionControlPage({
         {data.dataSources.deliveryPlan === "fallback" ? (
           <MockDataBanner message="Milestones, budget, and timeline are illustrative until you upload a project charter." />
         ) : null}
-        <PendingReviewsStrip
-          reviews={pendingReviews}
-          personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]}
-          persona="pm-mission"
-          inlineActions
-        />
+        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

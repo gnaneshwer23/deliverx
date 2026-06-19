@@ -25,7 +25,8 @@ import { CollaborativePanelsGrid } from "@/components/collaborative/collaborativ
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -56,6 +57,17 @@ export default async function ProductMissionControlPage({
     listPendingArtifactReviewsForPersona("product").catch(() => []),
   ]);
 
+  const nextUpItems = buildMissionNextUpItems({
+    personaId: "product",
+    primaryProject: data.primaryProject,
+    hasProjects: data.projects.length > 0,
+    pendingReviews,
+    guidedTaskTitle: data.guidedTasks[0]?.title,
+    guidedTaskHref: data.primaryProject
+      ? `/project/${data.primaryProject.id}/product`
+      : undefined,
+  });
+
   return (
     <MissionDashboardChrome
       personaId="product"
@@ -69,12 +81,7 @@ export default async function ProductMissionControlPage({
         {data.dataSources.roadmapRice === "fallback" ? (
           <MockDataBanner message="Roadmap and RICE are illustrative until you run product analysis." />
         ) : null}
-        <PendingReviewsStrip
-          reviews={pendingReviews}
-          personaLabel={PERSONA_REVIEW_LABELS["product"]}
-          persona="product"
-          inlineActions
-        />
+        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.product} />
 
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">

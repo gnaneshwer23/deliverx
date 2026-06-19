@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { resolveRoleHomePath } from "@/config/role-home-routing";
 
 export async function resolveAuthenticatedPath(
   supabase: SupabaseClient,
@@ -18,13 +19,5 @@ export async function resolveAuthenticatedPath(
 
   if (safeNext) return safeNext;
 
-  if (profile.role === "ba") return "/workspace/ba";
-  if (profile.role === "product_manager") return "/workspace/product";
-  if (profile.role === "pm") return "/workspace/pm-mission";
-  if (profile.role === "executive") return "/workspace/founder";
-  if (profile.role === "engineer") return "/workspace/engineer";
-  if (profile.role === "scrum_master") return "/workspace/scrum-mission";
-  if (profile.role === "qa") return "/workspace/qa";
-
-  return "/workspace/dashboard";
+  return resolveRoleHomePath(profile.role);
 }

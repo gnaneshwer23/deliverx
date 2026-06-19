@@ -17,8 +17,8 @@ Seven marketing/onboarding personas map to database roles and mission-control da
 
 ## Command Centre vs mission control
 
-- **Command Centre** (`/workspace/dashboard`) — shared org hub; role-aware copy and widgets; all onboarded users land here from nav.
-- **Mission control** — persona-primary dashboard (see table); surfaced first in sidebar via `partitionCoreNav()` in `src/lib/mission-nav.ts`.
+- **Command Centre** (`/workspace/dashboard`) — shared org hub; role-aware copy and widgets; `team_member` and explicit nav still use it.
+- **Mission control** — persona-primary dashboard (see table); post-login/onboarding landing for all seven personas (K1); surfaced first in sidebar via `partitionCoreNav()` in `src/lib/mission-nav.ts`.
 
 ## AI output review & responses audit
 

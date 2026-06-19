@@ -3,51 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { getCompletionCopyForDbRole } from "@/config/persona-onboarding";
+import { resolveRoleHomePath, roleHomeCta } from "@/config/role-home-routing";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
 import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { getOrgActiveBootstrapProject } from "@/services/orgBootstrap";
-
-function workspaceHref(role: string | null): string {
-  switch (role) {
-    case "product_manager":
-      return "/workspace/product";
-    case "ba":
-      return "/workspace/ba";
-    case "pm":
-      return "/workspace/pm-mission";
-    case "executive":
-      return "/workspace/founder";
-    case "engineer":
-      return "/workspace/engineer";
-    case "scrum_master":
-      return "/workspace/scrum-mission";
-    case "qa":
-      return "/workspace/qa";
-    default:
-      return "/workspace/dashboard";
-  }
-}
-
-function workspaceCta(role: string | null): string {
-  switch (role) {
-    case "product_manager":
-      return "Open Product Mission Control →";
-    case "ba":
-      return "Open BA Mission Control →";
-    case "pm":
-      return "Open PM Mission Control →";
-    case "executive":
-      return "Open Founder Mission Control →";
-    case "engineer":
-      return "Open Engineer Mission Control →";
-    case "scrum_master":
-      return "Open Scrum Mission Control →";
-    case "qa":
-      return "Open QA Mission Control →";
-    default:
-      return "Enter workspace →";
-  }
-}
 
 export default async function CompletePage() {
   const { user, profile, gatewayStep } = await getOnboardingProfile();
@@ -90,10 +49,10 @@ export default async function CompletePage() {
         <Row label="Organisation" value={orgName ?? "—"} />
         <Row label="Signed in as" value={user?.email ?? "—"} />
         <Row label="Onboarding" value={gatewayDone ? completion.gatewayLabel : "In progress"} />
-        <Row label="Next step" value={workspaceCta(profile.role).replace(" →", "")} />
+        <Row label="Next step" value={roleHomeCta(profile.role).replace(" →", "")} />
       </dl>
-      <DxButtonLink href={workspaceHref(profile.role)} className="mt-8 w-full">
-        {workspaceCta(profile.role)}
+      <DxButtonLink href={resolveRoleHomePath(profile.role)} className="mt-8 w-full">
+        {roleHomeCta(profile.role)}
       </DxButtonLink>
     </ObCard>
   );
