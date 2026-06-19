@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getPmMissionControl } from "@/services/deliveryPmDashboard";
@@ -45,7 +44,9 @@ import {
   buildPmTeamCapacityRows,
   countWaitingOnPm,
 } from "@/lib/pm-steady-state-panels";
+import { PmMissionHeaderActions } from "@/components/delivery-pm/pm-mission-header-actions";
 import { PmMissionShell } from "@/components/delivery-pm/pm-mission-shell";
+import { PmProjectChip } from "@/components/delivery-pm/pm-project-chip";
 import {
   filterPendingReviewsForPersona,
   filterReviewsByProject,
@@ -159,25 +160,6 @@ export default async function PmMissionControlPage({
       : undefined,
   });
 
-  const projectPicker =
-    data.projects.length > 1 && data.primaryProject ? (
-      <div className="flex flex-wrap gap-2">
-        {data.projects.slice(0, 8).map((p) => (
-          <Link
-            key={p.id}
-            href={`/workspace/pm-mission?project=${p.id}`}
-            className={`rounded-full border px-3 py-1 text-xs font-medium ${
-              p.id === data.primaryProject?.id
-                ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
-                : "border-[#E4E4DC] text-[#6B6B64]"
-            }`}
-          >
-            {p.name}
-          </Link>
-        ))}
-      </div>
-    ) : null;
-
   const dayOnePanels = (
     <>
       <PmDayOneKpiStrip
@@ -277,6 +259,14 @@ export default async function PmMissionControlPage({
         primaryProject: data.primaryProject,
         subtitle: serverPmMode === "day-one" ? PM_DAY_ONE_SUBTITLE : steadyStateSubtitle,
       }}
+      headerActions={
+        <PmMissionHeaderActions
+          projectId={projectId}
+          hasBootstrapSummary={hasBootstrapSummary}
+          pendingReviewCount={pendingReviews.length}
+          teamInvitesPending={teamInvitesPending}
+        />
+      }
     >
       <PmMissionShell
         projectId={projectId}
@@ -294,7 +284,12 @@ export default async function PmMissionControlPage({
             showFallback={data.dataSources.deliveryPlan === "fallback"}
           />
           <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
-          {projectPicker}
+          {data.primaryProject ? (
+            <PmProjectChip
+              projects={data.projects.map((project) => ({ id: project.id, name: project.name }))}
+              selectedProjectId={data.primaryProject.id}
+            />
+          ) : null}
           <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />
         </div>
       </PmMissionShell>
