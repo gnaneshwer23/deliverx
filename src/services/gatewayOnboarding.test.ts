@@ -2,13 +2,21 @@ import { describe, expect, it } from "vitest";
 import {
   BOOTSTRAP_PERSONA_KEYS,
   canProceedFromGoReview,
+  formatObStepLabel,
+  formatPersonaGatewayObStep,
+  formatSponsorGatewayObStep,
+  formatTeamMemberGatewayObStep,
   gatewayStepRoute,
   getInitialGatewayStepForRole,
   getPostRoleSelectRedirect,
+  onboardingStepCount,
+  projectFormStepNumber,
   projectFormStepToGatewayStep,
   resolveGatewayRedirect,
+  resolveOnboardingFlowKind,
   runGatewayOnboardingEngineSmokeTest,
   simulatePersonaOnboardingPath,
+  SPONSOR_GATEWAY_STEP_COUNT,
 } from "./gatewayOnboardingEngine";
 
 describe("gatewayOnboardingEngine", () => {
@@ -149,5 +157,28 @@ describe("gatewayOnboardingEngine", () => {
     const result = simulatePersonaOnboardingPath({ role: "ba" });
     expect(result.ok).toBe(true);
     expect(result.missionHref).toBe("/workspace/ba");
+  });
+
+  it("uses a single sponsor step count across onboarding surfaces", () => {
+    expect(SPONSOR_GATEWAY_STEP_COUNT).toBe(5);
+    expect(formatSponsorGatewayObStep("account")).toBe("Step 1 of 5 · Account");
+    expect(formatSponsorGatewayObStep("team")).toBe("Step 5 of 5 · Team");
+    expect(formatPersonaGatewayObStep("PM")).toBe("Step 2 of 3 · PM workspace");
+    expect(formatTeamMemberGatewayObStep(1)).toBe("Step 1 of 2 · Account");
+    expect(formatTeamMemberGatewayObStep(2)).toBe("Step 2 of 2 · Ready");
+  });
+
+  it("defaults unknown roles to the founder sponsor flow", () => {
+    expect(resolveOnboardingFlowKind(null)).toBe("sponsor");
+    expect(onboardingStepCount(null)).toBe(5);
+    expect(formatObStepLabel(1, null, "Account")).toBe("Step 1 of 5 · Account");
+  });
+
+  it("maps project form substeps to sponsor gateway step numbers", () => {
+    expect(projectFormStepNumber("project")).toBe(2);
+    expect(projectFormStepNumber("brief")).toBe(3);
+    expect(projectFormStepNumber("review")).toBe(4);
+    expect(projectFormStepNumber("discovery")).toBe(4);
+    expect(projectFormStepNumber("create")).toBe(4);
   });
 });

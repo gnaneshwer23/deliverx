@@ -6,6 +6,7 @@ import { ObCard } from "@/components/dx/ob-card";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
+import { formatSponsorGatewayObStep } from "@/services/gatewayOnboardingEngine";
 import { createClient } from "@/lib/supabase/server";
 import { TeamContinueButton } from "./team-continue-button";
 
@@ -47,9 +48,9 @@ export default async function TeamPage({ searchParams }: { searchParams: Search 
 
   return (
     <ObCard
-      step="Step 5 of 5 · Team"
+      step={formatSponsorGatewayObStep("team")}
       title="Invite your delivery team"
-      description="Add teammates by email while persona workspaces bootstrap from your GO decision."
+      description="Almost there — invite teammates by email while persona workspaces finish bootstrapping. Then open Founder Mission Control."
     >
       {projectId ? (
         <ProjectBootstrapPanel

@@ -2,16 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GATEWAY_STEP_LABELS } from "@/services/gatewayOnboardingEngine";
-import { usesSponsorGateway } from "@/config/persona-onboarding";
+import {
+  GATEWAY_STEP_LABELS,
+  PERSONA_GATEWAY_STEP_COUNT,
+  SPONSOR_GATEWAY_USER_STEPS,
+  TEAM_MEMBER_STEP_COUNT,
+  resolveOnboardingFlowKind,
+} from "@/services/gatewayOnboardingEngine";
 
-const sponsorSteps = [
-  { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account },
-  { href: "/project/new", label: GATEWAY_STEP_LABELS.project },
-  { href: "/project/new", label: GATEWAY_STEP_LABELS.business_case },
-  { href: "/project/new", label: GATEWAY_STEP_LABELS.ai_review },
-  { href: "/onboarding/team", label: GATEWAY_STEP_LABELS.team },
-];
+const sponsorSteps = SPONSOR_GATEWAY_USER_STEPS.map((step) => ({
+  href:
+    step === "account"
+      ? "/onboarding/organisation"
+      : step === "team"
+        ? "/onboarding/team"
+        : "/project/new",
+  label: GATEWAY_STEP_LABELS[step],
+}));
 
 const personaSteps = [
   { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account },
@@ -25,18 +32,21 @@ const teamMemberSteps = [
 ];
 
 function stepsForRole(role: string | null | undefined) {
-  if (!role || role === "team_member") return teamMemberSteps;
-  if (usesSponsorGateway(role)) return sponsorSteps;
-  return personaSteps;
+  const kind = resolveOnboardingFlowKind(role);
+  if (kind === "team_member") return teamMemberSteps;
+  if (kind === "persona") return personaSteps;
+  return sponsorSteps;
 }
 
 function currentStepIndex(pathname: string, role: string | null | undefined): number {
+  const kind = resolveOnboardingFlowKind(role);
+
   if (pathname.startsWith("/onboarding/organisation") || pathname.startsWith("/onboarding/role")) {
     return 0;
   }
 
-  if (usesSponsorGateway(role)) {
-    if (pathname.startsWith("/project/new")) return 2;
+  if (kind === "sponsor") {
+    if (pathname.startsWith("/project/new")) return 1;
     if (pathname.startsWith("/onboarding/team") || pathname.startsWith("/onboarding/invite")) {
       return 4;
     }
@@ -44,7 +54,7 @@ function currentStepIndex(pathname: string, role: string | null | undefined): nu
     return -1;
   }
 
-  if (role === "team_member") {
+  if (kind === "team_member") {
     if (pathname.startsWith("/onboarding/complete")) return 1;
     return -1;
   }
@@ -54,22 +64,30 @@ function currentStepIndex(pathname: string, role: string | null | undefined): nu
   return -1;
 }
 
+function doneThroughIndex(role: string | null | undefined): number {
+  const kind = resolveOnboardingFlowKind(role);
+  if (kind === "team_member") return TEAM_MEMBER_STEP_COUNT - 1;
+  if (kind === "persona") return PERSONA_GATEWAY_STEP_COUNT - 1;
+  return SPONSOR_GATEWAY_USER_STEPS.length;
+}
+
 export function DxStepper({ role }: { role?: string | null } = {}) {
   const pathname = usePathname();
   const steps = stepsForRole(role);
   const currentIndex = currentStepIndex(pathname, role);
-  const doneThrough = usesSponsorGateway(role) ? 5 : role === "team_member" ? 1 : 2;
+  const doneThrough = doneThroughIndex(role);
+  const kind = resolveOnboardingFlowKind(role);
 
   return (
     <nav
-      aria-label={usesSponsorGateway(role) ? "Sponsor gateway progress" : "Onboarding progress"}
+      aria-label={kind === "sponsor" ? "Founder setup progress" : "Onboarding progress"}
       className="hidden items-center md:flex"
     >
       {steps.map((step, i) => {
         const done = currentIndex > i || currentIndex === doneThrough;
         const active =
           i === currentIndex ||
-          (usesSponsorGateway(role) &&
+          (kind === "sponsor" &&
             currentIndex >= 1 &&
             currentIndex <= 3 &&
             i >= 1 &&
