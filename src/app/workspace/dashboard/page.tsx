@@ -59,6 +59,9 @@ import { listPendingArtifactReviews, listPendingArtifactReviewsForPersona } from
 import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
 import { roleToMissionPersona } from "@/lib/mission-nav";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildCommandCentreNextUpItems } from "@/lib/command-centre-next-up";
+import { getDbRoleDisplayLabel } from "@/config/mission-persona-meta";
 import { listPendingProposals } from "@/services/proposedActions";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
@@ -146,6 +149,22 @@ export default async function DashboardPage({
         data.weeklyVelocity[data.weeklyVelocity.length - 2].completed
       : null;
   const alignmentDelta = topAlignment?.latest?.delta ?? null;
+
+  const blockedTaskRow = activeTaskRows.find((task) => task.status === "blocked");
+  const nextUpItems = buildCommandCentreNextUpItems({
+    userRole: data.userRole,
+    persona,
+    primaryProject: topProject ? { id: topProject.id, name: topProject.name } : null,
+    hasProjects: data.recentProjects.length > 0,
+    pendingReviews: personaPendingReviews,
+    approvalTotal: approvalCounts.total,
+    overdueTasks: data.delivery.overdueTasks,
+    blockedTasks: data.delivery.blockedTasks,
+    blockedTaskTitle: blockedTaskRow?.title,
+  });
+  const nextUpPersonaLabel = persona
+    ? PERSONA_REVIEW_LABELS[persona]
+    : getDbRoleDisplayLabel(data.userRole);
 
   const kpis = [
     {
@@ -301,6 +320,10 @@ export default async function DashboardPage({
       }}
     >
       <div className="p-6 md:p-8">
+
+      <div className="mb-6">
+        <NextUpStrip items={nextUpItems} personaLabel={nextUpPersonaLabel} />
+      </div>
 
       <div className="mb-6">
         <QuickActionsBar role={data.userRole} />
