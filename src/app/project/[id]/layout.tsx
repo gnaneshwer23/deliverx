@@ -5,6 +5,7 @@ import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgAlertCount, getOrgAlertQueue } from "@/services/alerts";
 import { listOrgProjects } from "@/services/delivery";
+import { workspaceMainFullWidthClass } from "@/lib/responsive-layout";
 import { ProjectSidebar } from "./sidebar";
 import { ProjectTopbar } from "./topbar";
 
@@ -51,7 +52,7 @@ export default async function ProjectLayout({
         alerts={alerts}
         alertCount={alertCount}
       >
-        <div className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] flex min-h-[calc(100vh-var(--dx-navh))]">
+        <div className={`${workspaceMainFullWidthClass} flex`}>
           <ProjectSidebar projectId={project.id} projectName={project.name} />
           <div className="flex min-w-0 flex-1 flex-col">
             <ProjectTopbar userEmail={user.email ?? null} />

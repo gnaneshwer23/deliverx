@@ -38,7 +38,7 @@ export function LoginForm({ next }: { next?: string }) {
               <span className={dxClass.label}>Password</span>
               <Link
                 href="/login/forgot"
-                className="text-xs text-[#1C4A2E] hover:underline"
+                className="inline-flex min-h-11 items-center text-xs text-[#1C4A2E] hover:underline"
               >
                 Forgot password?
               </Link>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { Brain, Cpu, Plus } from "lucide-react";
+import { Brain, Cpu, Menu, Plus, X } from "lucide-react";
 import { useAiDrawer } from "@/components/dx/ai-drawer-context";
 import { DxLogo } from "@/components/dx/dx-logo";
 import { UserMenu } from "@/components/dx/user-menu";
@@ -43,18 +43,41 @@ export function AppNav({
   pendingApprovals = 0,
   alerts = [],
   alertCount = 0,
+  showMobileNavToggle = false,
+  mobileNavOpen = false,
+  onToggleMobileNav,
 }: {
   userEmail?: string | null;
   orgName?: string | null;
   pendingApprovals?: number;
   alerts?: DeliveryAlert[];
   alertCount?: number;
+  showMobileNavToggle?: boolean;
+  mobileNavOpen?: boolean;
+  onToggleMobileNav?: () => void;
 }) {
   const { toggleDrawer } = useAiDrawer();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-3 border-b border-[#E4E4DC] bg-white px-4 md:px-5">
-      <div className="mr-1 border-r border-[#E4E4DC] pr-3">
+    <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-2 border-b border-[#E4E4DC] bg-white px-3 md:gap-3 md:px-5">
+      {showMobileNavToggle ? (
+        <button
+          type="button"
+          aria-expanded={mobileNavOpen}
+          aria-controls="workspace-mobile-nav"
+          onClick={onToggleMobileNav}
+          className="flex size-10 shrink-0 items-center justify-center border border-[#E4E4DC] text-[#6B6B64] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E] lg:hidden"
+        >
+          {mobileNavOpen ? (
+            <X size={18} aria-hidden />
+          ) : (
+            <Menu size={18} aria-hidden />
+          )}
+          <span className="sr-only">{mobileNavOpen ? "Close menu" : "Open menu"}</span>
+        </button>
+      ) : null}
+
+      <div className={`shrink-0 border-r border-[#E4E4DC] pr-3 ${showMobileNavToggle ? "" : "mr-1"}`}>
         <DxLogo href="/workspace/dashboard" showTag />
       </div>
 
