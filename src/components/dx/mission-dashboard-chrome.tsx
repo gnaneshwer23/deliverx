@@ -30,10 +30,13 @@ function ContentEditBanner() {
 export function MissionDashboardChrome({
   personaId,
   header,
+  headerActions,
   children,
 }: {
   personaId: MissionPersonaId;
   header: Omit<MissionPersonaHeaderProps, "personaId" | "action">;
+  /** Replaces default mission workspace CTA when provided (e.g. PM generate report). */
+  headerActions?: ReactNode;
   children: ReactNode;
 }) {
   const meta = getMissionPersonaMeta(personaId);
@@ -45,7 +48,9 @@ export function MissionDashboardChrome({
         {...header}
         action={
           <DashboardHeaderActions>
-            <DefaultMissionAction meta={meta} primaryProject={header.primaryProject} />
+            {headerActions ?? (
+              <DefaultMissionAction meta={meta} primaryProject={header.primaryProject} />
+            )}
           </DashboardHeaderActions>
         }
       />
