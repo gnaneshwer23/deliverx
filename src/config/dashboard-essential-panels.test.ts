@@ -44,8 +44,9 @@ describe("dashboard-essential-panels", () => {
     }
   });
 
-  it("includes collaborative-loop for all mission personas", () => {
+  it("includes collaborative-loop for delivery personas except pm-mission steady-state", () => {
     for (const personaId of listMissionPersonaIds()) {
+      if (personaId === "pm-mission") continue;
       expect(isEssentialPanel(personaId, "collaborative-loop")).toBe(true);
     }
   });

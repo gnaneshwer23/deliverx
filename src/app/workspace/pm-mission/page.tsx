@@ -3,24 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getPmMissionControl } from "@/services/deliveryPmDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
-import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
-import {
-  DeliveryPmAiSummary,
-  DeliveryPmMissionOverview,
-} from "@/components/delivery-pm/delivery-pm-mission-overview";
-import {
-  DeliveryBenefitsPanel,
-  DeliveryBudgetPanel,
-  DeliveryCrossRolePanel,
-  DeliveryDecisionsPanel,
-  DeliveryHealthPanel,
-  DeliveryMilestonesPanel,
-  DeliveryPmGuidedTasks,
-  DeliveryRaidPanel,
-  DeliveryStakeholdersPanel,
-} from "@/components/delivery-pm/delivery-pm-panels";
-import { DeliveryStatusReportsPanel } from "@/components/delivery-pm/delivery-status-reports-panel";
-import { DeliveryStakeholderActionQueue } from "@/components/delivery-pm/delivery-stakeholder-action-queue";
+import { DeliveryPmAiSummary } from "@/components/delivery-pm/delivery-pm-mission-overview";
+import { DeliveryPmGuidedTasks } from "@/components/delivery-pm/delivery-pm-panels";
 import {
   PmCompactRaidCard,
   PmDayOneKpiStrip,
@@ -30,23 +14,37 @@ import {
   PmTeamRosterPanel,
 } from "@/components/delivery-pm/pm-day-one-panels";
 import { PmMissionPanelSwitch } from "@/components/delivery-pm/pm-mission-panel-switch";
+import {
+  DeliveryPmAiSummary as SteadyStateAiSummary,
+  PmAiReviewInboxPanel,
+  PmGovernanceTabsPanel,
+  PmNeedsAttentionPanel,
+  PmSteadyStateKpiStrip,
+  PmSteadyStateLayout,
+  PmSteadyStateMilestonesPanel,
+  PmTeamCapacityPanel,
+} from "@/components/delivery-pm/pm-steady-state-panels";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
-import { ProjectMemoryPanel } from "@/components/memory/project-memory-panel";
-import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intelligence-panel";
-import { getProjectMemoryStats } from "@/services/projectMemoryRag";
-import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
 import {
   listPendingArtifactReviews,
   listPendingArtifactReviewsForPersona,
 } from "@/services/artifactReviews";
 import { listPendingInvitations } from "@/services/invitations";
-import { listOrgMembers } from "@/services/delivery";
+import { listOrgMembers, listOrgTasks } from "@/services/delivery";
+import { getOrgGovernanceStats, listOrgChangeRequests } from "@/services/governance";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
 import { groupPendingReviewsByCategory } from "@/lib/pm-day-one-panels";
 import { PM_DAY_ONE_SUBTITLE, resolvePmDashboardMode } from "@/lib/pm-dashboard-mode";
+import {
+  buildPmAttentionFeed,
+  buildPmGovernanceTabCounts,
+  buildPmSteadyStateSubtitle,
+  buildPmTeamCapacityRows,
+  countWaitingOnPm,
+} from "@/lib/pm-steady-state-panels";
 import { PmMissionShell } from "@/components/delivery-pm/pm-mission-shell";
 import {
   filterPendingReviewsForPersona,
@@ -55,9 +53,6 @@ import {
 } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 
 export const dynamic = "force-dynamic";
 
@@ -77,15 +72,20 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews, pendingInvites, orgMembers] = await Promise.all([
-    getPmMissionControl(params.project),
-    getCollaborativeLoopSnapshot("pm", params.project),
-    listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
-    listPendingInvitations().catch(() => []),
-    listOrgMembers().catch(() => []),
-  ]);
+  const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges] =
+    await Promise.all([
+      getPmMissionControl(params.project),
+      listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
+      listPendingInvitations().catch(() => []),
+      listOrgMembers().catch(() => []),
+      getOrgGovernanceStats().catch(() => ({ openChanges: 0, pendingDecisions: 0, openRisks: 0, openIssues: 0 })),
+      listOrgChangeRequests({ status: ["draft", "submitted"], limit: 20 }).catch(() => []),
+    ]);
 
   const projectId = data.primaryProject?.id;
+  const projectTasks = projectId
+    ? await listOrgTasks({ projectId, limit: 200 }).catch(() => [])
+    : [];
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
 
@@ -116,15 +116,34 @@ export default async function PmMissionControlPage({
     teamInvitesPending,
     bridgeDismissed: false,
   });
-  const memoryStats = data.primaryProject
-    ? await getProjectMemoryStats(data.primaryProject.id).catch(() => ({
-        totalChunks: 0,
-        bySource: {},
-      }))
-    : undefined;
-  const meetingStats = data.primaryProject
-    ? await getProjectMeetingIntelligenceStats(data.primaryProject.id).catch(() => undefined)
-    : undefined;
+
+  const projectChanges = projectId
+    ? orgChanges.filter((change) => change.project_id === projectId)
+    : orgChanges;
+  const attentionFeed = buildPmAttentionFeed({
+    stakeholderActionQueue: data.stakeholderActionQueue,
+    decisions: data.decisions,
+    blockedDependencies: data.overview.blockedDependencies,
+    projectId,
+    pendingReviewCount: projectPendingReviews.length,
+  });
+  const waitingOnYouCount = countWaitingOnPm(attentionFeed);
+  const { members: capacityMembers, avgLoadPct } = buildPmTeamCapacityRows({
+    tasks: projectTasks,
+    members: orgMembers,
+  });
+  const governanceTabCounts = buildPmGovernanceTabCounts({
+    raid: data.raid,
+    openDecisions: data.overview.openDecisions,
+    openChanges: projectChanges.length || governanceStats.openChanges,
+    pendingReviews: projectPendingReviews,
+  });
+  const steadyStateSubtitle = buildPmSteadyStateSubtitle({
+    projectName: data.primaryProject?.name,
+    waitingOnYouCount,
+    blockerCount: data.overview.blockedDependencies,
+    openDecisions: data.overview.openDecisions,
+  });
 
   const nextUpItems = buildMissionNextUpItems({
     personaId: "pm-mission",
@@ -196,82 +215,58 @@ export default async function PmMissionControlPage({
   );
 
   const steadyStatePanels = (
-    <>
-      <DeliveryPmMissionOverview data={data} />
-      {data.primaryProject ? (
-        <MissionPredictionKpis projectId={data.primaryProject.id} />
-      ) : null}
-      <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <DashboardPanelShell panelId="guided-tasks" title="Today's guided tasks" ownerNote="">
-          <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="health" title="Project health" ownerNote="">
-          <DeliveryHealthPanel
-            dimensions={data.healthDimensions}
-            insight={data.healthInsight}
+    <PmSteadyStateLayout
+      kpiStrip={
+        <PmSteadyStateKpiStrip
+          data={data}
+          waitingOnYouCount={waitingOnYouCount}
+          teamCapacityPct={avgLoadPct}
+        />
+      }
+      aiSummary={
+        <SteadyStateAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
+      }
+      leftColumn={
+        <>
+          <PmNeedsAttentionPanel
+            stakeholderActionQueue={data.stakeholderActionQueue}
+            data={data}
+            pendingReviewCount={projectPendingReviews.length}
           />
-        </DashboardPanelShell>
-      </div>
-
-      <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
-        <DeliveryStakeholdersPanel rows={data.stakeholders} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="stakeholder-actions" title="Stakeholder action queue">
-        <DeliveryStakeholderActionQueue actions={data.stakeholderActionQueue} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="status-reports" title="Status reports">
-        <DeliveryStatusReportsPanel
-          projectId={data.primaryProject?.id}
-          reports={data.statusReports}
-        />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="project-memory" title="Project memory">
-        <ProjectMemoryPanel
-          projectId={data.primaryProject?.id}
-          initialStats={memoryStats}
-        />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="meeting-intelligence" title="Meeting intelligence">
-        <MeetingIntelligencePanel
-          projectId={data.primaryProject?.id}
-          stats={meetingStats}
-        />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="raid" title="RAID control centre">
-        <DeliveryRaidPanel raid={data.raid} />
-      </DashboardPanelShell>
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <DashboardPanelShell panelId="milestones" title="Milestones & timeline">
-          <DeliveryMilestonesPanel
+          <PmGovernanceTabsPanel
+            raid={data.raid}
+            decisions={data.decisions}
+            changes={projectChanges.map((change) => ({
+              id: change.id,
+              title: change.title,
+              status: change.status,
+              impact: change.impact,
+            }))}
+            pendingReviews={projectPendingReviews}
+            tabCounts={governanceTabCounts}
+            projectId={projectId}
+          />
+          <PmAiReviewInboxPanel
+            pendingReviews={projectPendingReviews}
+            projectId={projectId}
+          />
+        </>
+      }
+      rightColumn={
+        <>
+          <PmSteadyStateMilestonesPanel
             milestones={data.milestones}
             goLiveProbability={data.overview.goLiveProbability}
             usesFallback={data.dataSources.deliveryPlan === "fallback"}
           />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="budget" title="Budget">
-          <DeliveryBudgetPanel
-            budget={data.budget}
-            usesFallback={data.dataSources.deliveryPlan === "fallback"}
+          <PmTeamCapacityPanel
+            members={capacityMembers}
+            usesPlaceholder={avgLoadPct == null}
           />
-        </DashboardPanelShell>
-      </div>
-
-      <DashboardPanelShell panelId="benefits" title="Benefits realisation">
-        <DeliveryBenefitsPanel benefits={data.benefits} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="decisions" title="Decision register">
-        <DeliveryDecisionsPanel decisions={data.decisions} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
-        <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-        <DeliveryCrossRolePanel impacts={data.crossRoleImpact} />
-      </DashboardPanelShell>
-    </>
+          <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
+        </>
+      }
+    />
   );
 
   return (
@@ -280,7 +275,7 @@ export default async function PmMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
-        subtitle: serverPmMode === "day-one" ? PM_DAY_ONE_SUBTITLE : undefined,
+        subtitle: serverPmMode === "day-one" ? PM_DAY_ONE_SUBTITLE : steadyStateSubtitle,
       }}
     >
       <PmMissionShell
