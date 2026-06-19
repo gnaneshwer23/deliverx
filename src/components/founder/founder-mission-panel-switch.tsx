@@ -9,7 +9,7 @@ export function useFounderDashboardMode(): FounderDashboardMode {
   return useContext(FounderDashboardModeContext);
 }
 
-/** P-Founder-1+ will swap day-one vs steady-state panel layouts. */
+/** Swaps day-one vs steady-state panel layouts via founder dashboard mode context. */
 export function FounderMissionPanelSwitch({
   dayOne,
   steadyState,

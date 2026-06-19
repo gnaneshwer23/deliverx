@@ -9,11 +9,20 @@ import {
   FOUNDER_DAY_ONE_SUBTITLE,
   resolveFounderDashboardMode,
 } from "@/lib/founder-dashboard-mode";
+import { groupPendingFounderReviewsByCategory } from "@/lib/founder-day-one-panels";
 import { buildFounderSteadyStateSubtitle } from "@/lib/founder-steady-state-panels";
 import { FounderMissionShell } from "@/components/founder/founder-mission-shell";
 import { FounderMissionHeaderActions } from "@/components/founder/founder-mission-header-actions";
 import { FounderMissionPanelSwitch } from "@/components/founder/founder-mission-panel-switch";
 import { FounderProjectChip } from "@/components/founder/founder-project-chip";
+import {
+  FounderCompactDecisionsCard,
+  FounderCompactPortfolioCard,
+  FounderDayOneFundingCard,
+  FounderDayOneKpiStrip,
+  FounderGetOrientedCard,
+  FounderReviewInboxPanel,
+} from "@/components/founder/founder-day-one-panels";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
 import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import {
@@ -50,54 +59,6 @@ import type { FounderMissionControl } from "@/services/founderDashboard";
 import type { FounderContext } from "@/services/founderContext";
 
 export const dynamic = "force-dynamic";
-
-function FounderDayOnePanels({
-  data,
-  ctx,
-  projectId,
-}: {
-  data: FounderMissionControl;
-  ctx: FounderContext | null;
-  projectId?: string;
-}) {
-  return (
-    <>
-      <FounderMissionOverview data={data} />
-      {projectId ? <MissionPredictionKpis projectId={projectId} /> : null}
-      <FounderAiSummary summary={data.aiSummary} />
-      <DashboardPanelShell panelId="decisions" title="Decision centre" ownerNote="">
-        <FounderDecisionPanel
-          decisions={data.decisionsNeeded}
-          dataSource={data.dataSources.decisions}
-        />
-      </DashboardPanelShell>
-      <DashboardPanelShell panelId="intelligence-feed" title="Intelligence feed">
-        <FounderIntelligenceFeedPanel
-          items={data.intelligenceFeed}
-          dataSource={data.dataSources.intelligence}
-        />
-      </DashboardPanelShell>
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <DashboardPanelShell panelId="funding" title="Funding & runway">
-          <FounderFundingPanel funding={data.funding} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="objectives" title="Strategic objectives" ownerNote="">
-          <FounderObjectivesPanel
-            objectives={data.strategicObjectives}
-            insight={data.strategicInsight}
-          />
-        </DashboardPanelShell>
-      </div>
-      <DashboardPanelShell panelId="founder-context" title="Founder context">
-        <FounderContextWorkspace
-          companyType={ctx?.company_type}
-          businessGoals={ctx?.business_goals}
-          extractionStatus={data.extractionStatus}
-        />
-      </DashboardPanelShell>
-    </>
-  );
-}
 
 function FounderSteadyStatePanels({
   data,
@@ -210,6 +171,7 @@ export default async function FounderMissionControlPage({
 
   const projectId = data.primaryProject?.id;
   const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  const reviewGroups = groupPendingFounderReviewsByCategory(projectPendingReviews);
 
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
@@ -249,7 +211,40 @@ export default async function FounderMissionControlPage({
   });
 
   const dayOnePanels = (
-    <FounderDayOnePanels data={data} ctx={ctx} projectId={projectId} />
+    <>
+      <FounderDayOneKpiStrip
+        pendingReviewCount={projectPendingReviews.length}
+        pendingDecisionsCount={pendingDecisionsCount}
+        data={data}
+      />
+      <FounderAiSummary summary={data.aiSummary} />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
+        <div className="space-y-4">
+          <FounderReviewInboxPanel
+            groups={reviewGroups}
+            projectId={projectId}
+            pendingReviews={projectPendingReviews}
+          />
+          <FounderCompactDecisionsCard
+            decisions={data.decisionsNeeded}
+            projectId={projectId}
+            dataSource={data.dataSources.decisions}
+          />
+          <FounderDayOneFundingCard funding={data.funding} />
+        </div>
+        <div className="space-y-4">
+          <FounderCompactPortfolioCard portfolio={data.portfolio} projectId={projectId} />
+          <FounderGetOrientedCard projectId={projectId} />
+          <DashboardPanelShell panelId="founder-context" title="Founder context">
+            <FounderContextWorkspace
+              companyType={ctx?.company_type}
+              businessGoals={ctx?.business_goals}
+              extractionStatus={data.extractionStatus}
+            />
+          </DashboardPanelShell>
+        </div>
+      </div>
+    </>
   );
 
   const steadyStatePanels = (
