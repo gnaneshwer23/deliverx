@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { ClampableSummary } from "@/components/dx/clampable-summary";
 import { useDashboardCustomize } from "@/components/dx/dashboard-customize-context";
 import { dxClass } from "@/lib/dx-theme";
@@ -25,10 +25,11 @@ export function InlineEditableText({
   const { contentEditMode, resolveFieldText, setFieldText } = useDashboardCustomize();
   const resolved = resolveFieldText(fieldKey, defaultValue);
   const [draft, setDraft] = useState(resolved);
-
-  useEffect(() => {
+  const [prevResolved, setPrevResolved] = useState(resolved);
+  if (resolved !== prevResolved) {
+    setPrevResolved(resolved);
     setDraft(resolved);
-  }, [resolved]);
+  }
 
   const commit = useCallback(() => {
     setFieldText(fieldKey, draft);
