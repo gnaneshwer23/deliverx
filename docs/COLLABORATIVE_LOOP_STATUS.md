@@ -1,6 +1,6 @@
 # Collaborative loop status
 
-**Last updated:** 2026-06-19 (Sprint J4)  
+**Last updated:** 2026-06-19 (Organic Loop sprint)  
 **Production:** https://www.deliverx.dev  
 **Current `main` SHA:** see `git log -1 origin/main`
 
@@ -23,7 +23,7 @@ The loop is **architecturally built** — engine, panels, impact events, propaga
 | Business case → GO gate | ✅ | | | Sponsor gateway, AI BC review, Accept GO / No-Go |
 | AI workspace generation on GO | | ✅ | | `projectBootstrap.ts` structures project + persona AI drafts; counts vary |
 | Human approval gate | ✅ | | | `/workspace/proposals`, `/workspace/audit`, inline approve on dashboards |
-| Cross-dashboard propagation (`delivery_impact_events`) | | ✅ | | Realtime + live refresh wired; many flows still demo-seeded |
+| Cross-dashboard propagation (`delivery_impact_events`) | | ✅ | | Realtime + live refresh wired; J1 + organic mutations emit without demo seed |
 | 13-step loop table (every arrow = live feed) | | ✅ | | Bootstrap path strong; ongoing project events incomplete |
 | Three narrative threads (Auth API, defects, FR-003) | | ✅ | | Codified in `collaborativeLoopPropagation.ts`; demo seed on bootstrap |
 | Meeting intelligence (Recall) | ✅ | | | G3 — needs Recall env on deploy |
@@ -106,7 +106,13 @@ Register → role onboarding → (Executive) business case → GO
 **Resolver:** `resolveNarrativeThreads()` in `src/services/collaborativeLoopPropagation.ts`  
 **Smoke test:** `runCollaborativeLoopPropagationSmokeTest()` — 3 threads, ≥3 roles (also checked in `phaseIHealth.ts` and `phaseHHealth.ts`)
 
-**Honest limit:** Thread IDs are stable, but **signal loading now queries live blocked tasks, critical defects, and compliance/clarification gaps** instead of fixed FR-003/BUG-142/Auth API patterns. Demo seed still uses NHS-specific codes for bootstrap parity; organic mutations emit impact via J1 wiring.
+**Honest limit:** Thread IDs are stable, but **signal loading now queries live blocked tasks, critical defects, and compliance/clarification gaps** instead of fixed FR-003/BUG-142/Auth API patterns. Demo seed still uses NHS-specific codes for bootstrap parity; **organic mutations** (tasks, defects, requirements, clarifications, decisions, artifact review, RAID, stories, workstreams, milestones, change requests) emit impact via `emitLoopPropagation()` without `SEED_NARRATIVE_DEMO_THREADS`.
+
+| Organic loop | Status | Notes |
+|--------------|:------:|-------|
+| Mutation → impact wiring | ✅ | `loopEventPropagation.ts` draft builders + service hooks |
+| Demo seed required | ❌ | `runOrganicLoopSmokeTest()` passes with env flag off |
+| Health check | ✅ | `phaseHHealth.ts` — Organic loop propagation row |
 
 ---
 
