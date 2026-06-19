@@ -38,6 +38,8 @@ import {
 export type FounderMissionControl = {
   userName: string | null;
   orgName: string | null;
+  primaryProject: { id: string; name: string } | null;
+  projects: Array<{ id: string; name: string; status: string }>;
   companyHealth: { tier: "green" | "amber" | "red"; label: string };
   dataSources: {
     financials: "live" | "fallback";
@@ -105,7 +107,9 @@ export type FounderMissionControl = {
   }>;
 };
 
-export async function getFounderMissionControl(): Promise<FounderMissionControl> {
+export async function getFounderMissionControl(
+  projectId?: string,
+): Promise<FounderMissionControl> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -173,6 +177,11 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   }
 
   const activeProjects = projects.filter((p) => p.status === "active");
+  const primary =
+    activeProjects.find((p) => p.id === projectId) ??
+    activeProjects[0] ??
+    projects[0] ??
+    null;
   const projectScores = await Promise.all(
     activeProjects.slice(0, 8).map(async (p) => {
       const [score, forecast, deliveryCtx, raid, tasks] = await Promise.all([
@@ -286,8 +295,8 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   let productNps: number | null = null;
   let productRetention: number | null = null;
   let featureAdoption = 74;
-  if (activeProjects[0]) {
-    const productCtx = await getPmProductContext(activeProjects[0].id).catch(() => null);
+  if (primary) {
+    const productCtx = await getPmProductContext(primary.id).catch(() => null);
     const analytics = (productCtx?.analytics ?? {}) as Record<string, unknown>;
     productNps = typeof analytics.nps === "number" ? analytics.nps : 52;
     productRetention =
@@ -317,7 +326,7 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
       ? "Hiring one senior engineer may accelerate roadmap delivery by 18%."
       : "Team capacity is stable — monitor delivery strain as portfolio grows.");
 
-  const impactProjectId = activeProjects[0]?.id ?? null;
+  const impactProjectId = primary?.id ?? null;
   let crossRoleImpact = buildFounderCrossRoleImpact({
     pendingDecisions: governance.pendingDecisions,
     criticalRisks: governance.openRisks,
@@ -330,6 +339,12 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   return {
     userName: profile?.name ?? user?.email ?? null,
     orgName,
+    primaryProject: primary ? { id: primary.id, name: primary.name } : null,
+    projects: projects.map((p) => ({
+      id: p.id,
+      name: p.name,
+      status: p.status,
+    })),
     companyHealth,
     dataSources: {
       financials: ctx?.financials ? "live" : "fallback",
