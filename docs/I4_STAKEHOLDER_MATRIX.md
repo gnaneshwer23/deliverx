@@ -41,13 +41,15 @@ Per-persona artifact review scopes (pending reviews on mission dashboards):
 
 ## Mock-data fallback banners (I4-F)
 
-Mission dashboards show `MockDataBanner` when panels use illustrative defaults until live project context exists:
+Mission dashboards show `LiveDataPromptBanner` (via `MissionBootstrapBanner`) when panels use illustrative defaults until live project context exists. `BootstrapParityBanner` takes priority when bootstrap summary exists.
 
-| Dashboard | `dataSources` key | Trigger |
-|-----------|-------------------|---------|
-| Founder | `financials` | No pitch/business-case financials in context |
-| PM | `deliveryPlan` | Default milestone phases and/or budget |
-| Product | `roadmapRice` | No `product_features` rows for project |
-| Engineer | `architecture` | No architecture notes in delivery plan |
-| Scrum | `velocity` | No velocity history in delivery plan |
-| QA | `qaMetrics` | No QA metrics in database |
+| Dashboard | `dataSources` key | Trigger | Live CTAs |
+|-----------|-------------------|---------|-----------|
+| Founder | `financials` | No pitch/business-case financials in context | Upload pitch deck · Start business case |
+| PM | `deliveryPlan` | Default milestone phases and/or budget | Open delivery plan · Import charter · Review AI outputs |
+| Product | `roadmapRice` | No `product_features` rows for project | Add features · Run product analysis |
+| Engineer | `architecture` | No architecture notes in delivery plan | Upload architecture doc · Open engineering workspace |
+| Scrum | `velocity` | No velocity history in delivery plan | Open scrum workspace · Import sprint data |
+| QA | `qaMetrics` | No QA metrics in database | Review defects · Review test artifacts |
+
+CTA config: `src/lib/live-data-prompt-ctas.ts`
