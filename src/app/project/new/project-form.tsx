@@ -305,7 +305,7 @@ export function ProjectForm({
         <ProjectCreationStepper current="project" />
         <StepHeader n={projectFormStepNumber("project")} label="Name your project" />
         <p className="text-sm text-[#6B6B64]">
-          Give your initiative a name and delivery context. Next you'll share your business case for AI review.
+          Give your initiative a name and delivery context. Next you&apos;ll share your business case for AI review.
         </p>
         <Field
           label="Project name"
@@ -470,7 +470,7 @@ export function ProjectForm({
           </div>
         ) : (
           <div className="border border-[#C6DDD0] bg-[#EEF5F1] p-4 space-y-3">
-            <p className="text-sm font-medium text-[#1C4A2E]">Confirm you're ready to proceed</p>
+            <p className="text-sm font-medium text-[#1C4A2E]">Confirm you&apos;re ready to proceed</p>
             <p className="text-sm text-[#6B6B64]">
               AI recommends{" "}
               <strong>{businessCaseRecommendationLabel(review.recommendation)}</strong>. Accept to
