@@ -126,6 +126,7 @@ Portfolio, programmes, PMO, executive, coordination, global, twin, adaptive, ale
 
 ## Related docs
 
+- `docs/COLLABORATIVE_LOOP_STATUS.md` — collaborative loop built vs spec matrix and J1–J4 next steps
 - `docs/I4_STAKEHOLDER_MATRIX.md` — seven personas: routes, onboarding, mission dashboards, proposals/audit access
 - `docs/PHASE0_CHECKLIST.md` — ship checklist
 - `docs/SETUP_AUDIT.md` — production AI/auth
