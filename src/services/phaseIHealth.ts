@@ -76,7 +76,9 @@ function missionOverviewsUseAiSummary(): boolean {
     const path = join(process.cwd(), relativePath);
     if (!existsSync(path)) return false;
     const content = readFileSync(path, "utf8");
-    return content.includes("MissionAiSummaryBlock");
+    return (
+      content.includes("MissionAiSummaryBlock") || content.includes("EditableMissionAiSummary")
+    );
   });
 }
 
@@ -153,7 +155,7 @@ export function runPhaseISmokeTests(): PhaseISmokeCheck[] {
     feature: "Mission AI summary wiring",
     sprint: "I5-C",
     ok: missionSummariesOk,
-    detail: "7 mission overview components use MissionAiSummaryBlock",
+    detail: "7 mission overview components use MissionAiSummaryBlock or EditableMissionAiSummary",
   });
 
   const stickyOk = stickyHeaderTokensPresent();

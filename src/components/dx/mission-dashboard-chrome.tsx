@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { DashboardCustomizeProvider } from "@/components/dx/dashboard-customize-context";
+import { DashboardCustomizeProvider, useDashboardCustomize } from "@/components/dx/dashboard-customize-context";
 import { DashboardHeaderActions } from "@/components/dx/dashboard-customize-toggle";
 import {
   DefaultMissionAction,
@@ -10,6 +10,22 @@ import {
 } from "@/components/dx/mission-persona-header";
 import { getMissionPersonaMeta } from "@/config/mission-persona-meta";
 import type { MissionPersonaId } from "@/lib/mission-nav";
+
+function ContentEditBanner() {
+  const { contentEditMode } = useDashboardCustomize();
+  if (!contentEditMode) return null;
+
+  return (
+    <div
+      className="border-b border-[#C6DDD0] bg-[#EEF5F1] px-6 py-2.5 md:px-8"
+      role="status"
+    >
+      <p className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.12em] text-[#1C4A2E]">
+        Inline edit mode — text saves to this browser only
+      </p>
+    </div>
+  );
+}
 
 export function MissionDashboardChrome({
   personaId,
@@ -33,6 +49,7 @@ export function MissionDashboardChrome({
           </DashboardHeaderActions>
         }
       />
+      <ContentEditBanner />
       {children}
     </DashboardCustomizeProvider>
   );

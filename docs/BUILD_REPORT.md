@@ -107,15 +107,18 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 
 ---
 
-## Horizon 3 — UX reduction (K1–K3 shipped)
+## Horizon 3 — UX reduction (K1–K4)
 
 | Item | PR | Production |
 |------|-----|------------|
 | **K2** — Essential panel defaults per persona (~4–6 visible) | [#81](https://github.com/gnaneshwer23/deliverx/pull/81) | ✅ |
 | **K1** — Next-up strip + role home routing | [#82](https://github.com/gnaneshwer23/deliverx/pull/82) | ✅ |
-| **K3** — Nav path simplification + Command Centre next-up | [#91](https://github.com/gnaneshwer23/deliverx/pull/91) | — |
+| **K3** — Nav path simplification + Command Centre next-up | [#91](https://github.com/gnaneshwer23/deliverx/pull/91) | ✅ |
+| **K4** — Inline edit on mission dashboards | — | — |
 
-Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `nav-path.ts`, `mission-nav-path.tsx`, `command-centre-next-up.ts`, `app-shell.tsx`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`.
+Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `nav-path.ts`, `mission-nav-path.tsx`, `command-centre-next-up.ts`, `app-shell.tsx`, `dashboard-prefs.ts`, `dashboard-inline-edit.ts`, `inline-editable-text.tsx`, `editable-mission-ai-summary.tsx`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`.
+
+**K4 persistence:** localStorage keyed by persona (`dx-dashboard-inline-edit:{personaId}`), matching `dashboard-prefs.ts`. Server-side sync deferred to H4.
 
 ---
 
@@ -182,10 +185,10 @@ Tracked after J1–J4, K1–K2, and post-audit mobile polish.
 
 | Item | Horizon | Notes |
 |------|---------|-------|
-| **K4** — Inline edit | H3 | Reduce modal hops on mission dashboards |
 | **K5** — Visual pass + onboarding trim | H3 | Density and wizard copy reduction |
+| **K4 rollout** — Inline edit on remaining personas | H3 | Pattern in PM + Founder; extend to BA/Product/Engineer/QA/Scrum |
 | Preview env var sync | S1-B follow-up | **6 vars still Preview-only missing** — see below |
-| Server-side dashboard prefs | H4 | localStorage today (`dashboard-prefs.ts`) |
+| Server-side dashboard prefs + inline edits | H4 | localStorage today (`dashboard-prefs.ts`, `dashboard-inline-edit.ts`) |
 | Document intelligence (PDF/PPT) | Backlog | `.txt/.md/.csv` only today |
 | Outbound report email | Backlog | Draft → publish pipeline exists; no Resend send |
 | Day-in-the-life automated narrative | Backlog | Section 6 explainer not one simulation |

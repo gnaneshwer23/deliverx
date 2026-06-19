@@ -93,7 +93,7 @@ export default async function FounderMissionControlPage() {
           <DashboardPanelShell panelId="funding" title="Funding & runway">
             <FounderFundingPanel funding={data.funding} />
           </DashboardPanelShell>
-          <DashboardPanelShell panelId="objectives" title="Strategic objectives">
+          <DashboardPanelShell panelId="objectives" title="Strategic objectives" ownerNote="">
             <FounderObjectivesPanel
               objectives={data.strategicObjectives}
               insight={data.strategicInsight}
@@ -115,7 +115,7 @@ export default async function FounderMissionControlPage() {
         <DashboardPanelShell panelId="investor" title="Investor dashboard">
           <FounderInvestorPanel bullets={data.investorUpdate} />
         </DashboardPanelShell>
-        <DashboardPanelShell panelId="decisions" title="Decision centre">
+        <DashboardPanelShell panelId="decisions" title="Decision centre" ownerNote="">
           <FounderDecisionPanel
             decisions={data.decisionsNeeded}
             dataSource={data.dataSources.decisions}

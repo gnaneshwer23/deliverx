@@ -1,7 +1,7 @@
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
-import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
+import { EditableMissionAiSummary } from "@/components/dx/editable-mission-ai-summary";
 
 const tierTone = {
   green: "healthy" as const,
@@ -29,5 +29,5 @@ export function FounderMissionOverview({ data }: { data: FounderMissionControl }
 }
 
 export function FounderAiSummary({ summary }: { summary: string }) {
-  return <MissionAiSummaryBlock title="AI Chief of Staff summary" summary={summary} />;
+  return <EditableMissionAiSummary title="AI Chief of Staff summary" summary={summary} />;
 }
