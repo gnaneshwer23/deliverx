@@ -3,7 +3,7 @@ import { OrganisationForm } from "./organisation-form";
 import { ObCard } from "@/components/dx/ob-card";
 import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { getOnboardingProfile, isSponsorGatewayComplete } from "@/lib/auth/onboarding";
-import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
+import { formatSponsorGatewayObStep, resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
 
 export default async function OrganisationPage() {
   const { profile, gatewayStep } = await getOnboardingProfile();
@@ -23,9 +23,9 @@ export default async function OrganisationPage() {
 
   return (
     <ObCard
-      step="Step 1 of 5 · Account"
+      step={formatSponsorGatewayObStep("account")}
       title="Tell us about your organisation"
-      description="We'll use this to set up your workspace and tailor delivery intelligence to your context."
+      description="This is step 1 of founder setup: account and workspace context. Next you'll name your project, review your business case with AI, and invite your team — then your Founder Mission Control opens."
     >
       <OrganisationForm />
     </ObCard>

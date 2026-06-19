@@ -15,6 +15,7 @@ import { BusinessCaseReport } from "@/components/project/business-case-report";
 import {
   canProceedFromGoReview,
   projectFormStepToGatewayStep,
+  projectFormStepNumber,
 } from "@/services/gatewayOnboardingEngine";
 import { createProjectDraftAction, type ProjectState } from "./actions";
 
@@ -302,9 +303,9 @@ export function ProjectForm({
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="project" />
-        <StepHeader n={2} label="Project shell" />
+        <StepHeader n={projectFormStepNumber("project")} label="Name your project" />
         <p className="text-sm text-[#6B6B64]">
-          Name your programme and delivery context before the business case review.
+          Give your initiative a name and delivery context. Next you'll share your business case for AI review.
         </p>
         <Field
           label="Project name"
@@ -352,7 +353,7 @@ export function ProjectForm({
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="brief" />
-        <StepHeader n={3} label="Business case" />
+        <StepHeader n={projectFormStepNumber("brief")} label="Business case" />
 
         <div className="flex gap-1 border border-[#E4E4DC] p-0.5">
           <button
@@ -432,7 +433,7 @@ export function ProjectForm({
           onClick={() => goToStep("project")}
           className="w-full text-center text-sm text-[#6B6B64] hover:text-[#1C4A2E]"
         >
-          ← Back to project shell
+          ← Back to project details
         </button>
           </>
         )}
@@ -455,25 +456,25 @@ export function ProjectForm({
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="review" />
-        <StepHeader n={4} label="Business case intelligence report" />
+        <StepHeader n={projectFormStepNumber("review")} label="AI review" />
 
         <BusinessCaseReport review={review} />
 
         {isNoGo ? (
           <div className="border border-[#C0392B]/30 bg-[#FDF1F0] px-4 py-3 text-sm text-[#8B2E2E]">
-            <p className="font-medium">Sponsor gateway: No-Go</p>
+            <p className="font-medium">Not ready to proceed</p>
             <p className="mt-1">
-              This business case does not meet the GO threshold. Revise your brief and re-run the
-              review — project creation is blocked until recommendation improves.
+              This business case does not meet the readiness threshold. Revise your brief and re-run the
+              review — project creation is blocked until the assessment improves.
             </p>
           </div>
         ) : (
           <div className="border border-[#C6DDD0] bg-[#EEF5F1] p-4 space-y-3">
-            <p className="text-sm font-medium text-[#1C4A2E]">Sponsor GO gate</p>
+            <p className="text-sm font-medium text-[#1C4A2E]">Confirm you're ready to proceed</p>
             <p className="text-sm text-[#6B6B64]">
               AI recommends{" "}
               <strong>{businessCaseRecommendationLabel(review.recommendation)}</strong>. Accept to
-              proceed through the sponsor gateway.
+              continue setting up your project and workspaces.
             </p>
             <label className="flex items-start gap-2 text-sm">
               <input
@@ -535,7 +536,7 @@ export function ProjectForm({
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="discovery" />
-        <StepHeader n={5} label="AI discovery questionnaire" />
+        <StepHeader n={projectFormStepNumber("discovery")} label="Delivery questions" />
         <p className="text-sm text-[#6B6B64]">
           Answer follow-up questions so DeliverX can generate a complete delivery structure.
         </p>
@@ -568,7 +569,7 @@ export function ProjectForm({
   return (
     <form action={formAction} className="space-y-4">
       <ProjectCreationStepper current="create" />
-      <StepHeader n={6} label="Project setup" />
+      <StepHeader n={projectFormStepNumber("create")} label="Confirm project details" />
 
       {playbookId ? <input type="hidden" name="playbook_id" value={playbookId} /> : null}
       {draft ? <input type="hidden" name="ai_draft" value={JSON.stringify(draft)} /> : null}
