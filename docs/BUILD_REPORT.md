@@ -113,7 +113,7 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 |------|-----|------------|
 | **K2** — Essential panel defaults per persona (~4–6 visible) | [#81](https://github.com/gnaneshwer23/deliverx/pull/81) | ✅ |
 | **K1** — Next-up strip + role home routing | [#82](https://github.com/gnaneshwer23/deliverx/pull/82) | ✅ |
-| **K3** — Nav path simplification + Command Centre next-up | _this PR_ | — |
+| **K3** — Nav path simplification + Command Centre next-up | [#91](https://github.com/gnaneshwer23/deliverx/pull/91) | — |
 
 Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.tsx`, `mission-persona-meta.ts`, `nav-path.ts`, `mission-nav-path.tsx`, `command-centre-next-up.ts`, `app-shell.tsx`, `dashboard-prefs.ts`, `dashboard-essential-panels.ts`, `dashboard-panel-shell.tsx`.
 
