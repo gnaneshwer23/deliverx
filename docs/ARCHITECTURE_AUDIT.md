@@ -126,6 +126,7 @@ Portfolio, programmes, PMO, executive, coordination, global, twin, adaptive, ale
 
 ## Related docs
 
+- `docs/BUILD_REPORT.md` — sprint index (I1–I5, I4, S1-A/B/C/D), PR numbers, deferred items
 - `docs/I4_STAKEHOLDER_MATRIX.md` — seven personas: routes, onboarding, mission dashboards, proposals/audit access
 - `docs/PHASE0_CHECKLIST.md` — ship checklist
 - `docs/SETUP_AUDIT.md` — production AI/auth
