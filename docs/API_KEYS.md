@@ -76,9 +76,10 @@ Publishing a report still works without these keys; the UI shows a warning if em
 
 1. Open [Vercel Dashboard](https://vercel.com/) → project **deliverx**
 2. **Settings → Environment Variables**
-3. Add **`OPENAI_API_KEY`** for **Production** (and Preview if needed)
-4. Optionally add `OPENAI_MODEL` (e.g. `gpt-4o-mini`)
-5. **Redeploy** after saving env vars
+3. Add **`OPENAI_API_KEY`** for **Production** and **Preview** (see [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md))
+4. Mirror Supabase and `NEXT_PUBLIC_APP_URL` to Preview where safe
+5. Optionally add `OPENAI_MODEL` (e.g. `gpt-4o-mini`)
+6. **Redeploy** after saving env vars
 
 ```bash
 vercel env add OPENAI_API_KEY production

@@ -36,6 +36,12 @@ Redirect: `https://www.deliverx.dev/auth/callback`
 
 ---
 
+## Preview deployments
+
+Preview env vars are often missing compared to Production. See **`docs/PREVIEW_ENV_PARITY.md`** for required names and Vercel sync steps (no secrets in repo).
+
+---
+
 ## Local check
 
 ```bash
@@ -44,3 +50,8 @@ cp .env.example .env.local
 node scripts/check-env.mjs
 npm run dev
 ```
+
+## Observability (S1-B)
+
+- **Vercel Analytics** and **Speed Insights** are wired in the root layout; they run on **Production** deploys only unless `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=true`.
+- **Settings → Setup audit** includes a non-blocking check that the observability component is present.
