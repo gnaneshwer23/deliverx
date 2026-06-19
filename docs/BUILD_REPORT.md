@@ -27,6 +27,7 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 | **K3** | ✅ Shipped | Nav path simplification + Command Centre next-up |
 | **Organic loop** | ✅ Shipped | Remaining domain mutations emit without demo seed |
 | **Mobile UX** | ✅ Shipped | Mission fallback CTAs, auth layout, nav lint (PRs #86–#88) |
+| **P-PM-0** | ✅ Shipped | PM dual-mode shell — welcome bridge, mode resolver, `data-pm-mode` hook |
 
 **Build:** `npm run build` — passing  
 **Tests:** `npm test -- --run` — see CI / local run for current count  
@@ -193,6 +194,7 @@ Tracked after J1–J4, K1–K2, and post-audit mobile polish.
 | Outbound report email | Backlog | Draft → publish pipeline exists; no Resend send |
 | Day-in-the-life automated narrative | Backlog | Section 6 explainer not one simulation |
 | Optional demo seed removal | H2+ | `seedNarrativeThreadDemoData` still runs on bootstrap |
+| **P-PM-1** — Day-one panels | H3 | Grouped AI review, KPI strip, needs-attention strip, team invite form |
 
 ### Preview env status (2026-06-19)
 

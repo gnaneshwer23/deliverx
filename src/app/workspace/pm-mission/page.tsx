@@ -28,6 +28,12 @@ import { MeetingIntelligencePanel } from "@/components/meetings/meeting-intellig
 import { getProjectMemoryStats } from "@/services/projectMemoryRag";
 import { getProjectMeetingIntelligenceStats } from "@/services/meetingIntelligence";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { listPendingInvitations } from "@/services/invitations";
+import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import { PM_DAY_ONE_SUBTITLE, resolvePmDashboardMode } from "@/lib/pm-dashboard-mode";
+import { PmMissionShell } from "@/components/delivery-pm/pm-mission-shell";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
@@ -53,11 +59,33 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, collaborativeLoop, pendingReviews, pendingInvites] = await Promise.all([
     getPmMissionControl(params.project),
     getCollaborativeLoopSnapshot("pm", params.project),
     listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
+    listPendingInvitations().catch(() => []),
   ]);
+
+  const projectId = data.primaryProject?.id;
+  let bootstrapSummary: ProjectBootstrapSummary | null = null;
+  let hasBootstrapSummary = false;
+
+  if (projectId) {
+    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
+      bootstrapSummary = bootstrap.summary;
+      hasBootstrapSummary = true;
+    }
+  }
+
+  const teamInvitesPending = pendingInvites.length;
+  const serverPmMode = resolvePmDashboardMode({
+    projectId,
+    hasBootstrapSummary,
+    pendingReviewCount: pendingReviews.length,
+    teamInvitesPending,
+    bridgeDismissed: false,
+  });
   const memoryStats = data.primaryProject
     ? await getProjectMemoryStats(data.primaryProject.id).catch(() => ({
         totalChunks: 0,
@@ -88,8 +116,17 @@ export default async function PmMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
+        subtitle: serverPmMode === "day-one" ? PM_DAY_ONE_SUBTITLE : undefined,
       }}
     >
+      <PmMissionShell
+        projectId={projectId}
+        hasBootstrapSummary={hasBootstrapSummary}
+        pendingReviewCount={pendingReviews.length}
+        teamInvitesPending={teamInvitesPending}
+        summary={bootstrapSummary}
+        teamJoinedCount={bootstrapSummary?.structure?.stakeholders}
+      >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
         <MissionBootstrapBanner
@@ -192,6 +229,7 @@ export default async function PmMissionControlPage({
           <DeliveryCrossRolePanel impacts={data.crossRoleImpact} />
         </DashboardPanelShell>
       </div>
+      </PmMissionShell>
     </MissionDashboardChrome>
   );
 }
