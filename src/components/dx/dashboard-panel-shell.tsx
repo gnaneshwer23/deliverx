@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import { useDashboardCustomize } from "@/components/dx/dashboard-customize-context";
+import { InlineEditableText } from "@/components/dx/inline-editable-text";
+import { panelNoteFieldKey } from "@/lib/dashboard-inline-edit";
 import { dxClass } from "@/lib/dx-theme";
 
 export type DashboardPanelShellProps = {
@@ -12,6 +14,8 @@ export type DashboardPanelShellProps = {
   href?: string;
   className?: string;
   card?: boolean;
+  ownerNote?: string;
+  ownerNotePlaceholder?: string;
   children: ReactNode;
 };
 
@@ -21,13 +25,18 @@ export function DashboardPanelShell({
   href,
   className,
   card = false,
+  ownerNote,
+  ownerNotePlaceholder = "Add owner notes for this panel…",
   children,
 }: DashboardPanelShellProps) {
-  const { editMode, isCollapsed, isHidden, toggleCollapsed, toggleHidden } =
+  const { editMode, contentEditMode, isCollapsed, isHidden, toggleCollapsed, toggleHidden, resolveFieldText } =
     useDashboardCustomize();
 
   const collapsed = isCollapsed(panelId);
   const hidden = isHidden(panelId);
+  const noteFieldKey = panelNoteFieldKey(panelId);
+  const resolvedNote = ownerNote != null ? resolveFieldText(noteFieldKey, ownerNote) : "";
+  const showOwnerNote = ownerNote != null && (contentEditMode || resolvedNote.trim().length > 0);
 
   if (hidden && !editMode) {
     return null;
@@ -74,6 +83,15 @@ export function DashboardPanelShell({
           ) : null}
         </div>
       </div>
+      {showOwnerNote ? (
+        <InlineEditableText
+          fieldKey={noteFieldKey}
+          defaultValue={ownerNote ?? ""}
+          className="mb-3 text-sm text-[#6B6B64]"
+          placeholder={ownerNotePlaceholder}
+          label="Owner note"
+        />
+      ) : null}
       {!collapsed ? (
         <div id={`panel-body-${panelId}`} className={dxClass.panelShellBody}>
           {card ? <div className={dxClass.cardPad}>{children}</div> : children}

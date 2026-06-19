@@ -16,12 +16,24 @@ import {
   type DashboardPersonaId,
   type DashboardPrefs,
 } from "@/lib/dashboard-prefs";
+import {
+  readDashboardInlineEdits,
+  resolveInlineText,
+  setInlineEditField,
+  writeDashboardInlineEdits,
+  type DashboardInlineEdits,
+} from "@/lib/dashboard-inline-edit";
 
 type DashboardCustomizeContextValue = {
   personaId: DashboardPersonaId;
   editMode: boolean;
   setEditMode: (value: boolean) => void;
+  contentEditMode: boolean;
+  setContentEditMode: (value: boolean) => void;
   prefs: DashboardPrefs;
+  inlineEdits: DashboardInlineEdits;
+  resolveFieldText: (fieldKey: string, defaultValue: string) => string;
+  setFieldText: (fieldKey: string, value: string) => void;
   toggleCollapsed: (panelId: string) => void;
   toggleHidden: (panelId: string) => void;
   isCollapsed: (panelId: string) => boolean;
@@ -38,15 +50,20 @@ export function DashboardCustomizeProvider({
   children: ReactNode;
 }) {
   const [editMode, setEditMode] = useState(false);
+  const [contentEditMode, setContentEditMode] = useState(false);
   const [prefs, setPrefs] = useState<DashboardPrefs>(() => readDashboardPrefs(personaId));
+  const [inlineEdits, setInlineEdits] = useState<DashboardInlineEdits>(() =>
+    readDashboardInlineEdits(personaId),
+  );
   const [loadedPersonaId, setLoadedPersonaId] = useState(personaId);
 
   if (loadedPersonaId !== personaId) {
     setLoadedPersonaId(personaId);
     setPrefs(readDashboardPrefs(personaId));
+    setInlineEdits(readDashboardInlineEdits(personaId));
   }
 
-  const persist = useCallback(
+  const persistPrefs = useCallback(
     (next: DashboardPrefs) => {
       setPrefs(next);
       writeDashboardPrefs(personaId, next);
@@ -54,18 +71,39 @@ export function DashboardCustomizeProvider({
     [personaId],
   );
 
+  const persistInlineEdits = useCallback(
+    (next: DashboardInlineEdits) => {
+      setInlineEdits(next);
+      writeDashboardInlineEdits(personaId, next);
+    },
+    [personaId],
+  );
+
+  const resolveFieldText = useCallback(
+    (fieldKey: string, defaultValue: string) =>
+      resolveInlineText(inlineEdits, fieldKey, defaultValue),
+    [inlineEdits],
+  );
+
+  const setFieldText = useCallback(
+    (fieldKey: string, value: string) => {
+      persistInlineEdits(setInlineEditField(inlineEdits, fieldKey, value));
+    },
+    [inlineEdits, persistInlineEdits],
+  );
+
   const toggleCollapsed = useCallback(
     (panelId: string) => {
-      persist(setPanelCollapsed(prefs, panelId, !prefs.collapsed[panelId]));
+      persistPrefs(setPanelCollapsed(prefs, panelId, !prefs.collapsed[panelId]));
     },
-    [persist, prefs],
+    [persistPrefs, prefs],
   );
 
   const toggleHidden = useCallback(
     (panelId: string) => {
-      persist(setPanelHidden(prefs, panelId, !prefs.hidden[panelId]));
+      persistPrefs(setPanelHidden(prefs, panelId, !prefs.hidden[panelId]));
     },
-    [persist, prefs],
+    [persistPrefs, prefs],
   );
 
   const value = useMemo(
@@ -73,13 +111,28 @@ export function DashboardCustomizeProvider({
       personaId,
       editMode,
       setEditMode,
+      contentEditMode,
+      setContentEditMode,
       prefs,
+      inlineEdits,
+      resolveFieldText,
+      setFieldText,
       toggleCollapsed,
       toggleHidden,
       isCollapsed: (panelId: string) => Boolean(prefs.collapsed[panelId]),
       isHidden: (panelId: string) => Boolean(prefs.hidden[panelId]),
     }),
-    [personaId, editMode, prefs, toggleCollapsed, toggleHidden],
+    [
+      personaId,
+      editMode,
+      contentEditMode,
+      prefs,
+      inlineEdits,
+      resolveFieldText,
+      setFieldText,
+      toggleCollapsed,
+      toggleHidden,
+    ],
   );
 
   return (

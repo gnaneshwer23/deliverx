@@ -1,7 +1,7 @@
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
-import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
+import { EditableMissionAiSummary } from "@/components/dx/editable-mission-ai-summary";
 
 const tierLabel: Record<PmMissionControl["overview"]["healthTier"], string> = {
   healthy: "Green",
@@ -122,5 +122,5 @@ export function DeliveryPmAiSummary({
   summary: string;
   projectId?: string;
 }) {
-  return <MissionAiSummaryBlock title="AI delivery summary" summary={summary} />;
+  return <EditableMissionAiSummary title="AI delivery summary" summary={summary} />;
 }

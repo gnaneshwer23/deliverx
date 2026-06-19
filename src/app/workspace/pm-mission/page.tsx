@@ -124,10 +124,10 @@ export default async function PmMissionControlPage({
         <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
 
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Today's guided tasks">
+          <DashboardPanelShell panelId="guided-tasks" title="Today's guided tasks" ownerNote="">
             <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
           </DashboardPanelShell>
-          <DashboardPanelShell panelId="health" title="Project health">
+          <DashboardPanelShell panelId="health" title="Project health" ownerNote="">
             <DeliveryHealthPanel
               dimensions={data.healthDimensions}
               insight={data.healthInsight}
