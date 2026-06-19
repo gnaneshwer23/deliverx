@@ -44,6 +44,7 @@ export function DashboardPanelShell({
 
   return (
     <section
+      id={panelId}
       className={`${className ?? ""} ${hidden && editMode ? "opacity-60" : ""}`.trim()}
       data-panel-id={panelId}
     >
