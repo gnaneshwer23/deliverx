@@ -182,12 +182,14 @@ export function FounderInvestorPanel({ bullets }: { bullets: string[] }) {
 
 export function FounderDecisionPanel({
   decisions,
+  dataSource = "live",
 }: {
   decisions: FounderMissionControl["decisionsNeeded"];
+  dataSource?: "live" | "fallback";
 }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`}>
-      <div className="border-b border-[#E4E4DC] px-6 py-4">
+      <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>
           Decision centre
           {decisions.length > 0 ? (
@@ -196,6 +198,11 @@ export function FounderDecisionPanel({
             </span>
           ) : null}
         </h3>
+        {dataSource === "live" ? (
+          <span className="rounded-full bg-[#EEF5F1] px-2 py-0.5 text-[10px] font-medium text-[#1C4A2E]">
+            Live
+          </span>
+        ) : null}
       </div>
       <table className="w-full text-sm">
         <thead>

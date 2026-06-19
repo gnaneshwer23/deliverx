@@ -130,7 +130,7 @@ These sprints close the gap between the explainer and live product behaviour. Ho
 |--------|------|---------------|
 | **J1** — Event-driven propagation | Real DB changes emit `delivery_impact_events` without demo seed | Vitest “Auth API blocker” passes without `seedNarrativeThreadDemoData`; PM Team Needs update from real task state |
 | **J2** — Live narrative threads | Wire thread resolver to blocked tasks, critical defects, open clarifications | Three thread IDs unchanged; signal queries use semantic categories (blocked / critical / compliance) |
-| **J3** — Founder command surface | Decision Centre inline approve + intelligence feed (7 items max) | Founder dashboard driven by `delivery_impact_events` + agent events |
+| **J3** — Founder command surface | Decision Centre inline approve + intelligence feed (7 items max) | ✅ Foundation: live decisions + `buildFounderIntelligenceFeed` (impact + agent events), inline approve/reject, `DeliveryImpactLiveRefresh` via workspace layout |
 | **J4** — Bootstrap parity UI | Post-GO checklist with **actual** bootstrap counts | New sponsor sees loop panels update from **their** actions, not NHS demo only |
 
 **Recommended order after S1:** J1 → J2 → K2 (panel diet) → K1 → J3 → K3 → J4
