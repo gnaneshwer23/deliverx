@@ -350,7 +350,7 @@ export function AppSidebar({
   );
 }
 
-export function AppShell({
+function AppShellLayout({
   children,
   assistantProjects = [],
   userEmail,
@@ -373,15 +373,10 @@ export function AppShell({
   alerts?: DeliveryAlert[];
   alertCount?: number;
 }) {
-  const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  useEffect(() => {
-    setMobileNavOpen(false);
-  }, [pathname]);
-
   return (
-    <AiDrawerProvider>
+    <>
       <AppNav
         userEmail={userEmail}
         orgName={orgName}
@@ -410,6 +405,16 @@ export function AppShell({
       ) : null}
       <AiDrawer projects={assistantProjects} />
       {children}
+    </>
+  );
+}
+
+export function AppShell(props: React.ComponentProps<typeof AppShellLayout>) {
+  const pathname = usePathname();
+
+  return (
+    <AiDrawerProvider>
+      <AppShellLayout key={pathname} {...props} />
     </AiDrawerProvider>
   );
 }
