@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { DeliveryImpactEventRow } from "@/services/deliveryImpact";
 import type { DeliveryImpactRole, ImpactFeedSeverity } from "@/services/deliveryImpactEngine";
-import { IMPACT_ROLE_LABELS } from "@/services/deliveryImpactEngine";
 import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
 
 const SEVERITY_OPTIONS: Array<{ value: ImpactFeedSeverity; label: string }> = [

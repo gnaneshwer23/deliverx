@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { searchWorkspace } from "@/services/search";
 import { dxClass } from "@/lib/dx-theme";

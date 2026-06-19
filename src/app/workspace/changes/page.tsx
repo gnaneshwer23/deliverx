@@ -11,8 +11,6 @@ export default async function WorkspaceChangesPage() {
     listOrgChangeRequests({ limit: 200 }),
   ]);
 
-  const open = changes.filter((c) => c.status === "draft" || c.status === "submitted");
-
   const rows = changes.map((c) => [
     projectLink(c.project_id, c.project_name),
     <Link

@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import type { ProgrammeOrchestrationSnapshot } from "@/services/programmeOrchestrationEngine";
-import { dxClass } from "@/lib/dx-theme";
 
 type Response = { ok: true; snapshot: ProgrammeOrchestrationSnapshot };
 

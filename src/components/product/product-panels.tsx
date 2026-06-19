@@ -1,6 +1,5 @@
 import type { ProductMissionControl } from "@/services/pmDashboard";
 import type { CrossRoleProductImpact, ProductGuidedTask } from "@/services/pmProductEngine";
-import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ProductGuidedTasks({ tasks }: { tasks: ProductGuidedTask[] }) {
