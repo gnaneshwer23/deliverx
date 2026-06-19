@@ -26,7 +26,8 @@ import { CollaborativePanelsGrid } from "@/components/collaborative/collaborativ
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MockDataBanner } from "@/components/dx/mock-data-banner";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +58,16 @@ export default async function QaMissionControlPage({
     listPendingArtifactReviewsForPersona("qa").catch(() => []),
   ]);
 
+  const nextUpItems = buildMissionNextUpItems({
+    personaId: "qa",
+    primaryProject: data.primaryProject,
+    hasProjects: data.projects.length > 0,
+    pendingReviews,
+    criticalDefects: data.overview.criticalDefects,
+    guidedTaskTitle: data.guidedTasks[0]?.title,
+    guidedTaskHref: data.primaryProject ? `/project/${data.primaryProject.id}/qa` : undefined,
+  });
+
   return (
     <MissionDashboardChrome
       personaId="qa"
@@ -67,12 +78,7 @@ export default async function QaMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="QA" /> : null}
-        <PendingReviewsStrip
-          reviews={pendingReviews}
-          personaLabel={PERSONA_REVIEW_LABELS["qa"]}
-          persona="qa"
-          inlineActions
-        />
+        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.qa} />
         {data.dataSources.qaMetrics === "fallback" ? (
           <MockDataBanner message="QA KPIs are illustrative until test cases, defects, or UAT data is recorded." />
         ) : null}

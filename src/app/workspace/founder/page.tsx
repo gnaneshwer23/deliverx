@@ -27,7 +27,8 @@ import { CollaborativePanelsGrid } from "@/components/collaborative/collaborativ
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { PendingReviewsStrip } from "@/components/approvals/pending-reviews-strip";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MockDataBanner } from "@/components/dx/mock-data-banner";
 
 export const dynamic = "force-dynamic";
@@ -50,6 +51,18 @@ export default async function FounderMissionControlPage() {
     listPendingArtifactReviewsForPersona("founder").catch(() => []),
   ]);
 
+  const nextUpItems = buildMissionNextUpItems({
+    personaId: "founder",
+    primaryProject: data.portfolio[0]
+      ? { id: data.portfolio[0].id, name: data.portfolio[0].name }
+      : null,
+    hasProjects: data.portfolio.length > 0,
+    pendingReviews,
+    openDecisions: data.decisionsNeeded.length,
+    decisionTitle: data.decisionsNeeded[0]?.title,
+    blockedTasks: data.deliveryHealth.blockedDependencies,
+  });
+
   return (
     <MissionDashboardChrome
       personaId="founder"
@@ -62,12 +75,7 @@ export default async function FounderMissionControlPage() {
       }}
     >
       <div className="space-y-4 p-6 md:p-8">
-        <PendingReviewsStrip
-          reviews={pendingReviews}
-          personaLabel={PERSONA_REVIEW_LABELS.founder}
-          persona="founder"
-          inlineActions
-        />
+        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.founder} />
         {data.dataSources.financials === "fallback" ? (
           <MockDataBanner message="Financial KPIs are illustrative until you upload pitch deck or business case." />
         ) : null}

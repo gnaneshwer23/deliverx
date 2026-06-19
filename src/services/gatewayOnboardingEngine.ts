@@ -2,6 +2,8 @@
  * Sponsor gateway onboarding — pure step routing and validation.
  */
 
+import { missionHrefForDbRole } from "@/config/role-home-routing";
+
 export const GATEWAY_STEPS = [
   "account",
   "project",
@@ -202,15 +204,6 @@ export type PersonaOnboardingResult = {
   error?: string;
 };
 
-const PERSONA_MISSION_HREFS: Record<string, string> = {
-  ba: "/workspace/ba",
-  product_manager: "/workspace/product",
-  pm: "/workspace/pm-mission",
-  engineer: "/workspace/engineer",
-  scrum_master: "/workspace/scrum-mission",
-  qa: "/workspace/qa",
-};
-
 export function simulatePersonaOnboardingPath(input: {
   role: string;
 }): PersonaOnboardingResult {
@@ -248,7 +241,7 @@ export function simulatePersonaOnboardingPath(input: {
 
   steps.push("persona_wizard", "workspace");
 
-  const missionHref = PERSONA_MISSION_HREFS[role] ?? "/workspace/dashboard";
+  const missionHref = missionHrefForDbRole(role);
 
   return {
     ok: true,
