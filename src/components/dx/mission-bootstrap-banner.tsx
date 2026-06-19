@@ -1,18 +1,20 @@
 import { getOrgRecentBootstrapProject, projectHasBootstrapParity } from "@/services/orgBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { BootstrapParityBanner } from "@/components/dx/bootstrap-parity-banner";
-import { MockDataBanner } from "@/components/dx/mock-data-banner";
+import { LiveDataPromptBanner } from "@/components/dx/live-data-prompt-banner";
+import {
+  buildLiveDataPromptConfig,
+  type LiveDataPromptPersonaId,
+} from "@/lib/live-data-prompt-ctas";
 
 export async function MissionBootstrapBanner({
+  personaId,
   projectId,
   showFallback,
-  fallbackMessage,
-  uploadHref,
 }: {
+  personaId: LiveDataPromptPersonaId;
   projectId?: string;
   showFallback: boolean;
-  fallbackMessage: string;
-  uploadHref?: string;
 }) {
   if (!showFallback) return null;
 
@@ -23,5 +25,5 @@ export async function MissionBootstrapBanner({
     );
   }
 
-  return <MockDataBanner message={fallbackMessage} uploadHref={uploadHref} />;
+  return <LiveDataPromptBanner {...buildLiveDataPromptConfig(personaId, projectId)} />;
 }

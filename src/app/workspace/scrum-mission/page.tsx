@@ -32,6 +32,7 @@ import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,11 @@ export default async function ScrumMissionControlPage({
     >
       <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
+        <MissionBootstrapBanner
+          personaId="scrum"
+          projectId={data.primaryProject?.id}
+          showFallback={data.dataSources.velocity === "fallback"}
+        />
         <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.scrum} />
 
         {data.projects.length > 1 && data.primaryProject ? (
