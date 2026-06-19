@@ -2,10 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import {
-  completeGatewaySession,
-  upsertGatewaySession,
-} from "@/services/gatewayOnboarding";
+import { upsertGatewaySession } from "@/services/gatewayOnboarding";
 import {
   getInitialGatewayStepForRole,
   getPostRoleSelectRedirect,

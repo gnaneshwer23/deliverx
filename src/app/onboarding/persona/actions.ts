@@ -44,9 +44,11 @@ async function ensureOrgProject(userId: string, organisationId: string): Promise
 }
 
 export async function completePersonaOnboardingAction(
-  _prev: PersonaState,
-  _formData: FormData,
+  prev: PersonaState,
+  formData: FormData,
 ): Promise<PersonaState> {
+  void prev;
+  void formData;
   const supabase = await createClient();
   const {
     data: { user },

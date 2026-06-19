@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  listCoordinationRuns,
-  saveCoordinationRun,
-  runEnterpriseCoordinationLoop,
-} from "@/services/coordination";
+import { listCoordinationRuns, saveCoordinationRun } from "@/services/coordination";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

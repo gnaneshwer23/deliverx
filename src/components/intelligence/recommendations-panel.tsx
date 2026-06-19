@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { Check, X, Sparkles, Loader2 } from "lucide-react";
-import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
+import { postAi } from "@/lib/ai/client-fetch";
 import type { Recommendation } from "@/services/intelligenceEngine";
 import type { AiReviewAction } from "@/services/recommendations";
 
