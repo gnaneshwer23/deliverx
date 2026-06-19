@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { VercelObservability } from "@/components/vercel-observability";
 import { dxFontClassName, dxSans } from "@/lib/dx-fonts";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster richColors closeButton position="top-right" />
+        <VercelObservability />
       </body>
     </html>
   );

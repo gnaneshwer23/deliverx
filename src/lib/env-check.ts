@@ -10,6 +10,10 @@ import {
   resolveAiProvider,
   resolveOpenAiKeyEnvName,
 } from "@/lib/ai/config";
+import {
+  getObservabilityDiagnostics,
+  type ObservabilityDiagnostics,
+} from "@/lib/observability";
 
 export type EnvCheckItem = {
   key: string;
@@ -37,6 +41,7 @@ export type EnvDiagnostics = {
     cron: boolean;
     email: boolean;
   };
+  observability: ObservabilityDiagnostics;
   checks: EnvCheckItem[];
   hints: string[];
 };
@@ -45,6 +50,7 @@ export function getEnvDiagnostics(): EnvDiagnostics {
   const provider = resolveAiProvider();
   const aiConfigured = isAiConfigured();
   const model = getDefaultAiModel();
+  const observability = getObservabilityDiagnostics();
 
   const checks: EnvCheckItem[] = [
     {
@@ -101,6 +107,14 @@ export function getEnvDiagnostics(): EnvDiagnostics {
       required: false,
       hint: "Verified sender in Resend, e.g. DeliverX <reports@yourdomain.com>",
     },
+    {
+      key: "Vercel Analytics (root layout)",
+      ok: observability.componentPresent,
+      required: false,
+      hint: observability.enabledOnDeploy
+        ? "Active on this deploy (production or NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=true)"
+        : "Shipped in code; loads on production deploys only",
+    },
   ];
 
   const supabaseMissing = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"]
@@ -155,6 +169,7 @@ export function getEnvDiagnostics(): EnvDiagnostics {
       cron: isEnvSet("CRON_SECRET"),
       email: isEnvSet("RESEND_API_KEY"),
     },
+    observability,
     checks,
     hints,
   };
