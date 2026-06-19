@@ -24,6 +24,8 @@ export type MissionPersonaHeaderProps = {
   userName: string | null;
   orgName?: string | null;
   primaryProject?: ProjectChip | null;
+  /** Overrides persona tagline — e.g. day-one PM welcome copy (P-PM-0). */
+  subtitle?: string;
   action?: ReactNode;
 };
 
@@ -118,6 +120,7 @@ export function MissionPersonaHeader({
   userName,
   orgName,
   primaryProject,
+  subtitle,
   action,
 }: MissionPersonaHeaderProps) {
   const meta = getMissionPersonaMeta(personaId);
@@ -128,7 +131,7 @@ export function MissionPersonaHeader({
       breadcrumb={meta.breadcrumb}
       title={title}
       titleEm={titleEm}
-      subtitle={meta.tagline}
+      subtitle={subtitle ?? meta.tagline}
       sticky
       action={action ?? <DefaultMissionAction meta={meta} primaryProject={primaryProject} />}
       breadcrumbNode={
