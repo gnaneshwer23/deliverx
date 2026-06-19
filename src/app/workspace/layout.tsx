@@ -8,6 +8,7 @@ import { getOrgAlertCount, getOrgAlertQueue } from "@/services/alerts";
 import { listOrgProjects } from "@/services/delivery";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { countPendingReviewsByPersonaMap } from "@/lib/approval/persona-reviews";
+import { workspaceMainOffsetClass } from "@/lib/responsive-layout";
 
 export default async function WorkspaceLayout({
   children,
@@ -55,7 +56,7 @@ export default async function WorkspaceLayout({
         alertCount={alertCount}
       >
         <DeliveryImpactLiveRefresh>
-          <main className="ml-[var(--dx-sbw)] mt-[var(--dx-navh)] min-h-[calc(100vh-var(--dx-navh))]">
+          <main className={workspaceMainOffsetClass}>
             {children}
           </main>
         </DeliveryImpactLiveRefresh>
