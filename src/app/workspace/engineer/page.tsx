@@ -30,6 +30,16 @@ import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
+import { EngineerMissionShell } from "@/components/engineer/engineer-mission-shell";
+import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import {
+  ENGINEER_DAY_ONE_SUBTITLE,
+  resolveEngineerDashboardMode,
+} from "@/lib/engineer-dashboard-mode";
+import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
+import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +69,29 @@ export default async function EngineerMissionControlPage({
     listPendingArtifactReviewsForPersona("engineer").catch(() => []),
   ]);
 
+  const projectId = data.primaryProject?.id;
+  const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  let bootstrapSummary: ProjectBootstrapSummary | null = null;
+  let hasBootstrapSummary = false;
+
+  if (projectId) {
+    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
+      bootstrapSummary = bootstrap.summary;
+      hasBootstrapSummary = true;
+    }
+  }
+
+  const serverEngineerMode = resolveEngineerDashboardMode({
+    projectId,
+    hasBootstrapSummary,
+    pendingReviewCount: projectPendingReviews.length,
+    blockedStories: data.overview.blockedStories,
+    bridgeDismissed: false,
+  });
+
+  const engineerAccent = getMissionPersonaAccent("engineer");
+
   const nextUpItems = buildMissionNextUpItems({
     personaId: "engineer",
     primaryProject: data.primaryProject,
@@ -78,34 +111,55 @@ export default async function EngineerMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
+        subtitle: serverEngineerMode === "day-one" ? ENGINEER_DAY_ONE_SUBTITLE : undefined,
       }}
     >
-      <div className="space-y-4 p-6 md:p-8">
-        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
-        <MissionBootstrapBanner
-          personaId="engineer"
-          projectId={data.primaryProject?.id}
-          showFallback={data.dataSources.architecture === "fallback"}
-        />
-        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.engineer} />
+      <EngineerMissionShell
+        projectId={projectId}
+        hasBootstrapSummary={hasBootstrapSummary}
+        pendingReviewCount={projectPendingReviews.length}
+        blockedStories={data.overview.blockedStories}
+        summary={bootstrapSummary}
+      >
+        <div className="space-y-4 p-6 md:p-8">
+          {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
+          <MissionBootstrapBanner
+            personaId="engineer"
+            projectId={data.primaryProject?.id}
+            showFallback={data.dataSources.architecture === "fallback"}
+          />
+          <NextUpStrip
+            items={nextUpItems}
+            personaLabel={PERSONA_REVIEW_LABELS.engineer}
+            personaId="engineer"
+          />
 
-        {data.projects.length > 1 && data.primaryProject ? (
-          <div className="flex flex-wrap gap-2">
-            {data.projects.slice(0, 8).map((p) => (
-              <Link
-                key={p.id}
-                href={`/workspace/engineer?project=${p.id}`}
-                className={`rounded-full border px-3 py-1 text-xs font-medium ${
-                  p.id === data.primaryProject?.id
-                    ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
-                    : "border-[#E4E4DC] text-[#6B6B64]"
-                }`}
-              >
-                {p.name}
-              </Link>
-            ))}
-          </div>
-        ) : null}
+          {data.projects.length > 1 && data.primaryProject ? (
+            <div className="flex flex-wrap gap-2">
+              {data.projects.slice(0, 8).map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/workspace/engineer?project=${p.id}`}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                    p.id === data.primaryProject?.id
+                      ? ""
+                      : "border-[#E4E4DC] text-[#6B6B64]"
+                  }`}
+                  style={
+                    p.id === data.primaryProject?.id
+                      ? {
+                          borderColor: engineerAccent.primary,
+                          backgroundColor: engineerAccent.bg,
+                          color: engineerAccent.text,
+                        }
+                      : undefined
+                  }
+                >
+                  {p.name}
+                </Link>
+              ))}
+            </div>
+          ) : null}
 
         <EngineerMissionOverview data={data} />
         {data.primaryProject ? (
@@ -174,7 +228,8 @@ export default async function EngineerMissionControlPage({
         <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
           <EngineerCrossRolePanel impacts={data.crossRoleImpact} />
         </DashboardPanelShell>
-      </div>
+        </div>
+      </EngineerMissionShell>
     </MissionDashboardChrome>
   );
 }

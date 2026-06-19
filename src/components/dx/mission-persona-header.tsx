@@ -13,6 +13,7 @@ import {
   userInitials,
   type MissionPersonaMeta,
 } from "@/config/mission-persona-meta";
+import { getMissionPersonaAccent, personaBtnPrimary } from "@/config/mission-persona-accent";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import { buildNavPathSegments, buildMissionHomePathSegments, resolveNavPathContext } from "@/lib/nav-path";
 import { dxClass } from "@/lib/dx-theme";
@@ -46,6 +47,9 @@ export function DefaultMissionAction({
   meta: MissionPersonaMeta;
   primaryProject?: ProjectChip | null;
 }) {
+  const accent = getMissionPersonaAccent(meta.personaId);
+  const btn = personaBtnPrimary(accent);
+
   if (meta.personaId === "founder") {
     return (
       <Link href="/workspace/portfolio" className={`${dxClass.btnGhost} text-[10px]`}>
@@ -58,7 +62,8 @@ export function DefaultMissionAction({
     return (
       <Link
         href={meta.workspacePath(primaryProject.id)}
-        className={`${dxClass.btnPrimary} text-[10px]`}
+        className={`${btn.className} text-[10px]`}
+        style={btn.style}
       >
         {meta.workspaceActionLabel}
       </Link>
@@ -66,7 +71,7 @@ export function DefaultMissionAction({
   }
 
   return (
-    <Link href="/project/new" className={`${dxClass.btnPrimary} text-[10px]`}>
+    <Link href="/project/new" className={`${btn.className} text-[10px]`} style={btn.style}>
       {meta.newProjectLabel}
     </Link>
   );
@@ -78,13 +83,18 @@ function IdentityRow({
   badgeTone,
   orgName,
   primaryProject,
+  personaId,
 }: {
   userName: string | null;
   roleLabel: string;
   badgeTone: MissionPersonaMeta["badgeTone"];
   orgName?: string | null;
   primaryProject?: ProjectChip | null;
+  personaId?: MissionPersonaId;
 }) {
+  const accent = personaId ? getMissionPersonaAccent(personaId) : null;
+  const PersonaIcon = personaId ? getMissionPersonaMeta(personaId).icon : null;
+
   return (
     <div className="mt-3 flex flex-wrap items-center gap-2.5">
       <div className="flex items-center gap-2">
@@ -98,14 +108,27 @@ function IdentityRow({
           <span className="text-sm font-medium text-[#2C2C28]">{userName}</span>
         ) : null}
       </div>
-      <DxBadge tone={badgeTone}>{roleLabel}</DxBadge>
+      <span className="inline-flex items-center gap-1">
+        {PersonaIcon && accent ? (
+          <PersonaIcon size={12} style={{ color: accent.primary }} aria-hidden />
+        ) : null}
+        <DxBadge tone={badgeTone}>{roleLabel}</DxBadge>
+      </span>
       {orgName ? (
         <span className="inline-flex items-center gap-1 rounded-full border border-[#E4E4DC] bg-[#F7F7F2] px-2.5 py-0.5 text-xs text-[#6B6B64]">
           <Building2 size={12} className="text-[#A8A89E]" aria-hidden />
           {orgName}
         </span>
       ) : null}
-      {primaryProject ? (
+      {primaryProject && accent ? (
+        <span
+          className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium"
+          style={{ borderColor: accent.border, backgroundColor: accent.bg, color: accent.text }}
+        >
+          <FolderKanban size={12} style={{ color: accent.mid }} aria-hidden />
+          {primaryProject.name}
+        </span>
+      ) : primaryProject ? (
         <span className="inline-flex items-center gap-1 rounded-full border border-[#C6DDD0] bg-[#EEF5F1] px-2.5 py-0.5 text-xs font-medium text-[#1C4A2E]">
           <FolderKanban size={12} className="text-[#3D9660]" aria-hidden />
           {primaryProject.name}
@@ -124,6 +147,7 @@ export function MissionPersonaHeader({
   action,
 }: MissionPersonaHeaderProps) {
   const meta = getMissionPersonaMeta(personaId);
+  const accent = getMissionPersonaAccent(personaId);
   const { title, titleEm } = missionControlTitle(meta.roleLabel);
 
   return (
@@ -133,6 +157,7 @@ export function MissionPersonaHeader({
       titleEm={titleEm}
       subtitle={subtitle ?? meta.tagline}
       sticky
+      accent={accent}
       action={action ?? <DefaultMissionAction meta={meta} primaryProject={primaryProject} />}
       breadcrumbNode={
         <MissionNavPath
@@ -148,6 +173,7 @@ export function MissionPersonaHeader({
         badgeTone={meta.badgeTone}
         orgName={orgName}
         primaryProject={primaryProject}
+        personaId={personaId}
       />
     </DxPageHeader>
   );

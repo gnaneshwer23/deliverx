@@ -251,7 +251,7 @@ export default async function FounderMissionControlPage({
         summary={bootstrapSummary}
       >
         <div className="space-y-4 p-6 md:p-8">
-          <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.founder} />
+          <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.founder} personaId="founder" />
           <MissionBootstrapBanner
             personaId="founder"
             projectId={projectId}

@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { MissionPersonaAccent } from "@/config/mission-persona-accent";
+import { personaHeaderStripStyle } from "@/config/mission-persona-accent";
 import { DxCaps, DxLogo } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -11,6 +13,7 @@ export function DxPageHeader({
   action,
   children,
   sticky = false,
+  accent,
 }: {
   breadcrumb: string;
   breadcrumbNode?: ReactNode;
@@ -20,7 +23,11 @@ export function DxPageHeader({
   action?: ReactNode;
   children?: ReactNode;
   sticky?: boolean;
+  /** Persona accent — top strip gradient and title emphasis color */
+  accent?: MissionPersonaAccent;
 }) {
+  const titleEmColor = accent?.primary ?? "#1C4A2E";
+
   return (
     <header
       className={`relative flex shrink-0 flex-wrap items-start justify-between gap-4 ${
@@ -29,7 +36,10 @@ export function DxPageHeader({
     >
       {sticky ? (
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-[#1C4A2E] via-[#3D9660] to-[#1C4A2E]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-0.5"
+          style={accent ? personaHeaderStripStyle(accent) : {
+            background: "linear-gradient(to right, #1C4A2E, #3D9660, #1C4A2E)",
+          }}
           aria-hidden
         />
       ) : null}
@@ -40,7 +50,9 @@ export function DxPageHeader({
           {titleEm ? (
             <>
               {" "}
-              <em className="text-[#1C4A2E] not-italic">{titleEm}</em>
+              <em className="not-italic" style={{ color: titleEmColor }}>
+                {titleEm}
+              </em>
             </>
           ) : null}
         </h1>

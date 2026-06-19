@@ -283,7 +283,7 @@ export default async function PmMissionControlPage({
             projectId={data.primaryProject?.id}
             showFallback={data.dataSources.deliveryPlan === "fallback"}
           />
-          <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} />
+          <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} personaId="pm-mission" />
           {data.primaryProject ? (
             <PmProjectChip
               projects={data.projects.map((project) => ({ id: project.id, name: project.name }))}

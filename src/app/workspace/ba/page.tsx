@@ -12,16 +12,23 @@ import {
   BaStakeholderPanel,
 } from "@/components/ba/ba-stakeholder-panels";
 import { BaTraceabilityPreview } from "@/components/ba/ba-traceability-preview";
+import { BaMissionShell } from "@/components/ba/ba-mission-shell";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import { BA_DAY_ONE_SUBTITLE, resolveBaDashboardMode } from "@/lib/ba-dashboard-mode";
+import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { ClampableSummary } from "@/components/dx/clampable-summary";
 import { dxClass } from "@/lib/dx-theme";
+import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +54,29 @@ export default async function BaMissionControlPage({
     listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 
+  const projectId = data.primaryProject?.id;
+  const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  let bootstrapSummary: ProjectBootstrapSummary | null = null;
+  let hasBootstrapSummary = false;
+
+  if (projectId) {
+    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
+      bootstrapSummary = bootstrap.summary;
+      hasBootstrapSummary = true;
+    }
+  }
+
+  const serverBaMode = resolveBaDashboardMode({
+    projectId,
+    hasBootstrapSummary,
+    pendingReviewCount: projectPendingReviews.length,
+    pendingClarifications: data.kpis.pendingClarification,
+    bridgeDismissed: false,
+  });
+
+  const baAccent = getMissionPersonaAccent("ba");
+
   const nextUpItems = buildMissionNextUpItems({
     personaId: "ba",
     primaryProject: data.primaryProject,
@@ -65,15 +95,31 @@ export default async function BaMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
+        subtitle: serverBaMode === "day-one" ? BA_DAY_ONE_SUBTITLE : undefined,
       }}
     >
-      <div className="space-y-4 p-6 md:p-8">
-        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
-        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.ba} />
+      <BaMissionShell
+        projectId={projectId}
+        hasBootstrapSummary={hasBootstrapSummary}
+        pendingReviewCount={projectPendingReviews.length}
+        pendingClarifications={data.kpis.pendingClarification}
+        summary={bootstrapSummary}
+      >
+        <div className="space-y-4 p-6 md:p-8">
+          {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
+          <NextUpStrip
+            items={nextUpItems}
+            personaLabel={PERSONA_REVIEW_LABELS.ba}
+            personaId="ba"
+          />
 
-        {data.projects.length > 1 && data.primaryProject ? (
-          <ProjectPicker projects={data.projects} currentId={data.primaryProject.id} />
-        ) : null}
+          {data.projects.length > 1 && data.primaryProject ? (
+            <ProjectPicker
+              projects={data.projects}
+              currentId={data.primaryProject.id}
+              accent={baAccent}
+            />
+          ) : null}
 
         <BaMissionOverview data={data} />
         {data.primaryProject ? (
@@ -133,7 +179,8 @@ export default async function BaMissionControlPage({
             </Link>
           </section>
         </DashboardPanelShell>
-      </div>
+        </div>
+      </BaMissionShell>
     </MissionDashboardChrome>
   );
 }
@@ -141,9 +188,11 @@ export default async function BaMissionControlPage({
 function ProjectPicker({
   projects,
   currentId,
+  accent,
 }: {
   projects: Array<{ id: string; name: string; status: string }>;
   currentId: string;
+  accent: ReturnType<typeof getMissionPersonaAccent>;
 }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -152,10 +201,13 @@ function ProjectPicker({
           key={p.id}
           href={`/workspace/ba?project=${p.id}`}
           className={`rounded-full border px-3 py-1 text-xs font-medium ${
-            p.id === currentId
-              ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
-              : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#A8A89E]"
+            p.id === currentId ? "" : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#A8A89E]"
           }`}
+          style={
+            p.id === currentId
+              ? { borderColor: accent.primary, backgroundColor: accent.bg, color: accent.text }
+              : undefined
+          }
         >
           {p.name}
         </Link>
