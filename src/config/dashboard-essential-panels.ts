@@ -88,6 +88,11 @@ export const ALL_DASHBOARD_PANELS: Record<DashboardPersonaId, readonly string[]>
     "founder-context",
   ],
   "pm-mission": [
+    "pm-review-ai-built",
+    "pm-day-one-milestones",
+    "pm-day-one-raid",
+    "pm-team-roster",
+    "pm-get-oriented",
     "guided-tasks",
     "health",
     "stakeholders",
