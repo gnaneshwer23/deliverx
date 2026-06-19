@@ -5,6 +5,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { requestApproval } from "@/services/approvals";
 import { emitReportPublishedEvent } from "@/services/platformWebhooks";
+import { decisionChangeToImpactDrafts, emitLoopPropagation } from "@/services/loopEventPropagation";
 
 export type RaidItemType = "risk" | "assumption" | "issue" | "dependency";
 export type RaidStatus = "open" | "mitigated" | "closed" | "accepted";
@@ -423,6 +424,20 @@ export async function createDecision(input: {
     }).catch(() => undefined);
   }
 
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "decision_create",
+    entityType: "decision",
+    entityId: row.id,
+    drafts: decisionChangeToImpactDrafts({
+      title: row.title,
+      status: row.status,
+      outcome: row.outcome,
+      isNew: true,
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
+
   return row;
 }
 
@@ -473,7 +488,21 @@ export async function resolveOrgDecision(
     .eq("entity_id", id)
     .eq("status", "pending");
 
-  return data as DecisionRow;
+  const decision = data as DecisionRow;
+  void emitLoopPropagation({
+    projectId: decision.project_id,
+    actionType: "decision_resolve",
+    entityType: "decision",
+    entityId: decision.id,
+    drafts: decisionChangeToImpactDrafts({
+      title: decision.title,
+      status: decision.status,
+      outcome: decision.outcome,
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
+
+  return decision;
 }
 
 export async function escalateOrgDecision(id: string, notes?: string): Promise<void> {
