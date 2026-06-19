@@ -22,6 +22,7 @@ import {
   FounderTeamHealthPanel,
 } from "@/components/founder/founder-panels";
 import { FounderContextWorkspace } from "@/components/founder/founder-workspace";
+import { FounderIntelligenceFeedPanel } from "@/components/founder/founder-intelligence-feed-panel";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
@@ -113,7 +114,16 @@ export default async function FounderMissionControlPage() {
           <FounderInvestorPanel bullets={data.investorUpdate} />
         </DashboardPanelShell>
         <DashboardPanelShell panelId="decisions" title="Decision centre">
-          <FounderDecisionPanel decisions={data.decisionsNeeded} />
+          <FounderDecisionPanel
+            decisions={data.decisionsNeeded}
+            dataSource={data.dataSources.decisions}
+          />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="intelligence-feed" title="Intelligence feed">
+          <FounderIntelligenceFeedPanel
+            items={data.intelligenceFeed}
+            dataSource={data.dataSources.intelligence}
+          />
         </DashboardPanelShell>
 
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">

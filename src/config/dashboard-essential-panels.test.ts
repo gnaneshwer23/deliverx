@@ -11,12 +11,17 @@ import {
 describe("dashboard-essential-panels", () => {
   const personaIds = [...listMissionPersonaIds(), "command-centre"] as const;
 
-  it("keeps 4–6 essential panels per persona", () => {
+  it("keeps 4–6 essential panels per persona (founder allows 7 for J3 intelligence feed)", () => {
     for (const personaId of personaIds) {
       const count = essentialPanelCount(personaId);
+      const max = personaId === "founder" ? 7 : 6;
       expect(count, `${personaId} essential count`).toBeGreaterThanOrEqual(4);
-      expect(count, `${personaId} essential count`).toBeLessThanOrEqual(6);
+      expect(count, `${personaId} essential count`).toBeLessThanOrEqual(max);
     }
+  });
+
+  it("includes intelligence-feed for founder", () => {
+    expect(isEssentialPanel("founder", "intelligence-feed")).toBe(true);
   });
 
   it("marks only registered panels as essential", () => {

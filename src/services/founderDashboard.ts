@@ -27,13 +27,25 @@ import { getPmDeliveryContext } from "./deliveryPmContext";
 import { getPmProductContext } from "./pmProduct";
 import { getPmoSnapshot, listProjectsForOrg } from "./portfolio";
 import { getProjectSuccessScore } from "./successScore";
-import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
+import { listOrgImpactEvents, mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
+import { listAgentActivityFeed } from "./agentOrchestration";
+import { mergeFounderDecisionRows } from "@/lib/founder-decisions";
+import {
+  buildFounderIntelligenceFeed,
+  type FounderIntelligenceFeedItem,
+} from "@/lib/founder-intelligence-feed";
 
 export type FounderMissionControl = {
   userName: string | null;
   orgName: string | null;
   companyHealth: { tier: "green" | "amber" | "red"; label: string };
-  dataSources: { financials: "live" | "fallback"; strategicObjectives: "live" | "fallback" };
+  dataSources: {
+    financials: "live" | "fallback";
+    strategicObjectives: "live" | "fallback";
+    decisions: "live" | "fallback";
+    intelligence: "live" | "fallback";
+  };
+  intelligenceFeed: FounderIntelligenceFeedItem[];
   kpis: {
     runwayMonths: number;
     monthlyBurn: number;
@@ -107,21 +119,34 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
   const orgName =
     (profile?.organisations as { name?: string } | null)?.name ?? null;
 
-  const [ctx, pmo, governance, pendingDecisions, pendingApprovals, capacity, projects, bcReviews, orgBenefits] =
-    await Promise.all([
-      getFounderContext().catch(() => null),
-      getPmoSnapshot().catch(() => null),
-      getOrgGovernanceStats().catch(() => ({
-        openRisks: 0,
-        pendingDecisions: 0,
-      })),
-      listOrgDecisionsPending(8).catch(() => []),
-      listPendingApprovals(8).catch(() => []),
-      getOrgCapacitySnapshot().catch(() => null),
-      listProjectsForOrg().catch(() => []),
-      listBusinessCaseReviews(12).catch(() => []),
-      listOrgBenefits(24).catch(() => []),
-    ]);
+  const [
+    ctx,
+    pmo,
+    governance,
+    pendingDecisions,
+    pendingApprovals,
+    capacity,
+    projects,
+    bcReviews,
+    orgBenefits,
+    impactEvents,
+    agentEvents,
+  ] = await Promise.all([
+    getFounderContext().catch(() => null),
+    getPmoSnapshot().catch(() => null),
+    getOrgGovernanceStats().catch(() => ({
+      openRisks: 0,
+      pendingDecisions: 0,
+    })),
+    listOrgDecisionsPending(8).catch(() => []),
+    listPendingApprovals(8).catch(() => []),
+    getOrgCapacitySnapshot().catch(() => null),
+    listProjectsForOrg().catch(() => []),
+    listBusinessCaseReviews(12).catch(() => []),
+    listOrgBenefits(24).catch(() => []),
+    listOrgImpactEvents({ limit: 20 }).catch(() => []),
+    listAgentActivityFeed(20).catch(() => []),
+  ]);
 
   const financials = ctx?.financials ?? {};
   const runwayMonths = financials.runwayMonths ?? 14;
@@ -237,35 +262,26 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
     );
   }
 
-  const decisionRows: FounderDecisionRow[] = pendingDecisions.map((d) => ({
-    id: d.id,
-    title: d.title,
-    impact: "Medium",
-    status: d.status,
-    projectName: d.project_name,
-    projectId: d.project_id,
-    kind: "decision" as const,
-  }));
+  const decisionsNeeded = mergeFounderDecisionRows(
+    pendingDecisions.map((d) => ({
+      id: d.id,
+      title: d.title,
+      status: d.status,
+      project_id: d.project_id,
+      project_name: d.project_name,
+    })),
+    pendingApprovals.map((a) => ({
+      id: a.id,
+      entity_type: a.entity_type,
+      approval_level: a.approval_level,
+      status: a.status,
+      project_id: a.project_id,
+      project_name: a.project_name,
+    })),
+  );
 
-  const approvalRows: FounderDecisionRow[] = pendingApprovals.map((a) => ({
-    id: a.id,
-    title: `${a.entity_type} approval (${a.approval_level})`,
-    impact: a.approval_level === "steering" ? "High" : "Medium",
-    status: a.status,
-    projectName: a.project_name,
-    projectId: a.project_id,
-    kind: "approval" as const,
-  }));
-
-  const seen = new Set<string>();
-  const decisionsNeeded: FounderDecisionRow[] = [...decisionRows, ...approvalRows].filter(
-    (row) => {
-      const key = `${row.kind}:${row.id}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    },
-  ).slice(0, 10);
+  const intelligenceFeed = buildFounderIntelligenceFeed(impactEvents, agentEvents);
+  const intelligenceLive = impactEvents.length > 0 || agentEvents.length > 0;
 
   let productNps: number | null = null;
   let productRetention: number | null = null;
@@ -315,7 +331,13 @@ export async function getFounderMissionControl(): Promise<FounderMissionControl>
     userName: profile?.name ?? user?.email ?? null,
     orgName,
     companyHealth,
-    dataSources: { financials: ctx?.financials ? "live" : "fallback", strategicObjectives: storedObjectives.length > 0 ? "live" : "fallback" },
+    dataSources: {
+      financials: ctx?.financials ? "live" : "fallback",
+      strategicObjectives: storedObjectives.length > 0 ? "live" : "fallback",
+      decisions: "live",
+      intelligence: intelligenceLive ? "live" : "fallback",
+    },
+    intelligenceFeed,
     kpis: {
       runwayMonths,
       monthlyBurn,
