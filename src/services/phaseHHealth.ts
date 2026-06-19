@@ -3,6 +3,7 @@ import { join } from "path";
 import { runCollaborativeLoopEngineSmokeTest } from "./collaborativeLoopEngine";
 import { runCollaborativeLoopPropagationSmokeTest } from "./collaborativeLoopPropagation";
 import { runAgentOrchestrationImpactSmokeTest } from "./agentOrchestrationImpact";
+import { runLoopEventPropagationSmokeTest } from "./loopEventPropagation";
 
 export type PhaseHSmokeCheck = {
   feature: string;
@@ -41,6 +42,8 @@ const H2_PATHS = [
   "src/components/intelligence/delivery-impact-live-refresh.tsx",
   "src/services/collaborativeLoopPropagation.ts",
   "src/services/collaborativeLoopPropagation.test.ts",
+  "src/services/loopEventPropagation.ts",
+  "src/services/loopEventPropagation.test.ts",
 ];
 
 const H3_PATHS = [
@@ -109,6 +112,14 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     sprint: "H2",
     ok: propagation.ok,
     detail: `${propagation.threadCount} threads → ${propagation.rolesReached} roles`,
+  });
+
+  const loopEvents = runLoopEventPropagationSmokeTest();
+  checks.push({
+    feature: "J1 loop event propagation",
+    sprint: "J1",
+    ok: loopEvents.ok,
+    detail: `task ${loopEvents.taskDrafts} · defect ${loopEvents.defectDrafts} · req ${loopEvents.requirementDrafts} · decision ${loopEvents.decisionDrafts}`,
   });
 
   const liveRefreshOk = existsSync(
