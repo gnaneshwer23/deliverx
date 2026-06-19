@@ -37,12 +37,12 @@ function MobileNavDrawer({
       <button
         type="button"
         aria-label="Close menu"
-        className="fixed inset-0 z-[199] bg-black/60 backdrop-blur-sm md:hidden"
+        className="fixed inset-0 z-[210] bg-[var(--mkt-ink)]/85 md:hidden"
         onClick={onClose}
       />
       <nav
         id="marketing-mobile-nav"
-        className="fixed inset-y-0 right-0 z-[200] flex w-[min(100%,320px)] flex-col border-l border-[var(--mkt-border)] bg-[rgba(12,12,10,.98)] p-6 shadow-2xl md:hidden"
+        className="fixed inset-y-0 right-0 z-[220] flex min-h-dvh w-[min(100%,320px)] flex-col border-l border-[var(--mkt-border)] bg-[var(--mkt-ink)] p-6 shadow-2xl md:hidden"
         aria-label="Mobile"
       >
         <div className="mb-8 flex items-center justify-between">
@@ -98,43 +98,45 @@ export function MarketingNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-[200] flex h-[var(--mkt-navh)] items-center border-b border-[var(--mkt-border)] bg-[rgba(12,12,10,.88)] px-5 backdrop-blur-xl md:px-10 lg:px-12">
-      <MarketingLogo />
-      <nav className="hidden items-center gap-0.5 md:flex" aria-label="Primary">
-        {NAV_LINKS.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className="rounded-md px-3.5 py-1.5 text-[0.8125rem] text-[var(--mkt-text3)] no-underline transition hover:bg-[var(--mkt-s3)] hover:text-[var(--mkt-text1)]"
+    <>
+      <header className="fixed inset-x-0 top-0 z-[200] flex h-[var(--mkt-navh)] items-center border-b border-[var(--mkt-border)] bg-[rgba(12,12,10,.88)] px-5 backdrop-blur-xl md:px-10 lg:px-12">
+        <MarketingLogo />
+        <nav className="hidden items-center gap-0.5 md:flex" aria-label="Primary">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-md px-3.5 py-1.5 text-[0.8125rem] text-[var(--mkt-text3)] no-underline transition hover:bg-[var(--mkt-s3)] hover:text-[var(--mkt-text1)]"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        <div className="ml-auto flex items-center gap-2 md:ml-3">
+          <button
+            type="button"
+            aria-expanded={mobileOpen}
+            aria-controls="marketing-mobile-nav"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="flex size-10 items-center justify-center rounded-md border border-[var(--mkt-border)] text-[var(--mkt-text2)] transition hover:bg-[var(--mkt-s3)] hover:text-[var(--mkt-text1)] md:hidden"
           >
-            {link.label}
-          </a>
-        ))}
-      </nav>
-      <div className="ml-auto flex items-center gap-2 md:ml-3">
-        <button
-          type="button"
-          aria-expanded={mobileOpen}
-          aria-controls="marketing-mobile-nav"
-          onClick={() => setMobileOpen((v) => !v)}
-          className="flex size-10 items-center justify-center rounded-md border border-[var(--mkt-border)] text-[var(--mkt-text2)] transition hover:bg-[var(--mkt-s3)] hover:text-[var(--mkt-text1)] md:hidden"
-        >
-          {mobileOpen ? (
-            <X className="size-5" aria-hidden />
-          ) : (
-            <Menu className="size-5" aria-hidden />
-          )}
-          <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
-        </button>
-        <MarketingButtonLink href="/login" variant="ghost" className="hidden sm:inline-flex">
-          Sign in
-        </MarketingButtonLink>
-        <MarketingButtonLink href="/signup" variant="primary">
-          Start free trial
-        </MarketingButtonLink>
-      </div>
+            {mobileOpen ? (
+              <X className="size-5" aria-hidden />
+            ) : (
+              <Menu className="size-5" aria-hidden />
+            )}
+            <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
+          </button>
+          <MarketingButtonLink href="/login" variant="ghost" className="hidden sm:inline-flex">
+            Sign in
+          </MarketingButtonLink>
+          <MarketingButtonLink href="/signup" variant="primary">
+            Start free trial
+          </MarketingButtonLink>
+        </div>
+      </header>
       <MobileNavDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
-    </header>
+    </>
   );
 }
 
