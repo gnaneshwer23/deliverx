@@ -26,6 +26,28 @@ async function resolveProjectId(projectId?: string | null): Promise<string | nul
   return active[0]?.id ?? projects[0]?.id ?? null;
 }
 
+/** Safe empty snapshot when loop data fetch fails — keeps mission pages renderable. */
+export function emptyCollaborativeLoopSnapshot(
+  persona: CollaborativePersona,
+): CollaborativeLoopSnapshot {
+  return buildCollaborativeLoopSnapshot({
+    persona,
+    governance: {
+      openRisks: 0,
+      openIssues: 0,
+      pendingDecisions: 0,
+      openChanges: 0,
+    },
+    blockedTasks: 0,
+    openClarifications: 0,
+    pendingProposals: 0,
+    criticalDefects: 0,
+    clarifications: [],
+    pendingDecisions: [],
+    criticalRisks: [],
+  });
+}
+
 export async function getCollaborativeLoopSnapshot(
   persona: CollaborativePersona,
   projectId?: string | null,

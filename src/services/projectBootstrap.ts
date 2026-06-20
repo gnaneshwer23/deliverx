@@ -60,6 +60,38 @@ export type ProjectBootstrapSummary = {
   impactEvents?: number;
 };
 
+/** Coerce persisted JSON into a safe summary — null/missing personas must not crash dashboards. */
+export function normalizeProjectBootstrapSummary(raw: unknown): ProjectBootstrapSummary {
+  if (!raw || typeof raw !== "object") {
+    return { personas: {} };
+  }
+
+  const record = raw as Record<string, unknown>;
+  const personas =
+    record.personas &&
+    typeof record.personas === "object" &&
+    !Array.isArray(record.personas)
+      ? (record.personas as Record<string, PersonaBootstrapResult>)
+      : {};
+
+  const summary: ProjectBootstrapSummary = { personas };
+
+  if (record.structure && typeof record.structure === "object") {
+    summary.structure = record.structure as ProjectBootstrapSummary["structure"];
+  }
+  if (typeof record.pendingArtifactReviews === "number") {
+    summary.pendingArtifactReviews = record.pendingArtifactReviews;
+  }
+  if (record.narrativeDemo && typeof record.narrativeDemo === "object") {
+    summary.narrativeDemo = record.narrativeDemo as ProjectBootstrapSummary["narrativeDemo"];
+  }
+  if (typeof record.impactEvents === "number") {
+    summary.impactEvents = record.impactEvents;
+  }
+
+  return summary;
+}
+
 function extractPersonaBootstrapCounts(key: string, value: unknown): PersonaBootstrapCounts | undefined {
   if (!value || typeof value !== "object") return undefined;
   const record = value as Record<string, unknown>;
@@ -386,7 +418,7 @@ export async function getProjectBootstrapStatus(projectId: string): Promise<{
 
   return {
     status: (data.bootstrap_status as BootstrapStatus) ?? "pending",
-    summary: (data.bootstrap_summary as ProjectBootstrapSummary) ?? { personas: {} },
+    summary: normalizeProjectBootstrapSummary(data.bootstrap_summary),
     bootstrappedAt: data.bootstrapped_at as string | null,
   };
 }

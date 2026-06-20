@@ -91,4 +91,21 @@ describe("ba-dashboard-mode", () => {
       { label: "outputs to review", count: 3 },
     ]);
   });
+
+  it("builds welcome bridge chips when personas map is missing", () => {
+    expect(
+      buildBaWelcomeBridgeChips(
+        {
+          structure: { workstreams: 1, tasks: 4, raidItems: 0, milestones: 0, stakeholders: 0 },
+          personas: null as unknown as ProjectBootstrapSummary["personas"],
+        },
+        { pendingClarifications: 1, pendingReviewCount: 2 },
+      ),
+    ).toEqual([
+      { label: "requirements", count: 4 },
+      { label: "clarifications", count: 1 },
+      { label: "stories linked", count: 4 },
+      { label: "outputs to review", count: 2 },
+    ]);
+  });
 });

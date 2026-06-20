@@ -16,7 +16,7 @@ import { BaMissionShell } from "@/components/ba/ba-mission-shell";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
 import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { getCollaborativeLoopSnapshot, emptyCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
@@ -50,7 +50,9 @@ export default async function BaMissionControlPage({
   const params = await searchParams;
   const [data, collaborativeLoop, pendingReviews] = await Promise.all([
     getBaMissionControl(params.project),
-    getCollaborativeLoopSnapshot("ba", params.project),
+    getCollaborativeLoopSnapshot("ba", params.project).catch(() =>
+      emptyCollaborativeLoopSnapshot("ba"),
+    ),
     listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 
