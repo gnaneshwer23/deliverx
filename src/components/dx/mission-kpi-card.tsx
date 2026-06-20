@@ -152,7 +152,7 @@ export function MissionKpiGrid({
 }) {
   const gridClass =
     layout === "wide"
-      ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-8"
+      ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-5"
       : layout === "mission"
         ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-7"
         : "grid grid-cols-2 gap-2 lg:grid-cols-4 xl:grid-cols-4";

@@ -60,10 +60,9 @@ export const ESSENTIAL_DASHBOARD_PANELS: Record<DashboardPersonaId, readonly str
     "collaborative-loop",
   ],
   "command-centre": [
-    "project-health",
-    "active-tasks",
-    "ai-output-review",
     "alert-queue",
+    "active-tasks",
+    "project-health",
     "pending-decisions",
     "recent-projects",
   ],

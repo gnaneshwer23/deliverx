@@ -1,4 +1,5 @@
 import type { PmDayOneKpi } from "@/lib/pm-day-one-panels";
+import { formatHonestPct } from "@/lib/honest-kpi";
 import { clampPct } from "@/lib/pm-viz-helpers";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
@@ -183,7 +184,10 @@ export type BuildPmSteadyStateKpisInput = {
 
 /** Five KPIs for steady-state PM dashboard strip. */
 export function buildPmSteadyStateKpis(input: BuildPmSteadyStateKpisInput): PmDayOneKpi[] {
-  const onTrackPct = input.overview.timelineComplete;
+  const timelineIsLive = input.dataSources.deliveryPlan === "live";
+  const onTrack = timelineIsLive
+    ? formatHonestPct(input.overview.timelineComplete, "Connect milestones from charter")
+    : formatHonestPct(null, "Connect milestones from charter");
   const blockers = input.overview.blockedDependencies;
   const capacityValue =
     input.teamCapacityPct != null
@@ -208,10 +212,16 @@ export function buildPmSteadyStateKpis(input: BuildPmSteadyStateKpisInput): PmDa
     },
     {
       label: "On track",
-      value: `${onTrackPct}%`,
-      hint: "Milestone progress",
-      tone: onTrackPct >= 75 ? "healthy" : onTrackPct >= 50 ? "watch" : "at-risk",
-      progressPct: onTrackPct,
+      value: String(onTrack.value),
+      hint: onTrack.hint ?? "Milestone progress",
+      tone: onTrack.isEmpty
+        ? "default"
+        : input.overview.timelineComplete >= 75
+          ? "healthy"
+          : input.overview.timelineComplete >= 50
+            ? "watch"
+            : "at-risk",
+      progressPct: onTrack.progressPct,
     },
     {
       label: "Active blockers",
