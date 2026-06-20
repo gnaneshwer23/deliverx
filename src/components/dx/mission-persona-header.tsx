@@ -192,7 +192,7 @@ export function CommandCentrePersonaHeader({
 
   return (
     <DxPageHeader
-      breadcrumb="DeliverX OS · Command Centre"
+      breadcrumb="DeliverX · Command Centre"
       title={commandCentreTitle(userRole, userName)}
       titleEm={titleEm}
       subtitle={commandCentreTagline(userRole, orgName ?? null)}

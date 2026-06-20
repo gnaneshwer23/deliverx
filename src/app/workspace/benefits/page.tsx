@@ -15,7 +15,7 @@ export default async function WorkspaceBenefitsPage() {
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Intelligence" title="Benefits" titleEm="realisation" />
+      <DxPageHeader breadcrumb="DeliverX · Intelligence" title="Benefits" titleEm="realisation" />
       <div className="p-6 md:p-8">
         <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-3">
           <DxStatCard label="Benefit hypotheses" value={benefits.length} />

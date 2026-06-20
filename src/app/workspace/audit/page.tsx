@@ -25,7 +25,7 @@ export default async function AuditTrailPage({
   return (
     <>
       <DxPageHeader
-        breadcrumb="DeliverX OS · Governance"
+        breadcrumb="DeliverX · Governance"
         title="Responses"
         titleEm="audit"
         action={

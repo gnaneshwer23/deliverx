@@ -36,18 +36,18 @@ describe("nav-path", () => {
     expect(context.isMissionHome).toBe(true);
     expect(context.homePersonaId).toBe("pm-mission");
     expect(buildNavPathSegments(context)).toEqual([
-      { label: "DeliverX OS", href: "/workspace/dashboard" },
+      { label: "DeliverX", href: "/workspace/dashboard" },
       { label: "Delivery PM", href: "/workspace/pm-mission" },
       { label: "Mission Control" },
     ]);
-    expect(missionNavPathLabel(context)).toBe("DeliverX OS · Delivery PM · Mission Control");
+    expect(missionNavPathLabel(context)).toBe("DeliverX · Delivery PM · Mission Control");
   });
 
   it("builds command centre path with persona home link", () => {
     const context = resolveNavPathContext("/workspace/dashboard", "ba");
     expect(context.isCommandCentre).toBe(true);
     expect(buildNavPathSegments(context)).toEqual([
-      { label: "DeliverX OS", href: "/workspace/dashboard" },
+      { label: "DeliverX", href: "/workspace/dashboard" },
       { label: "BA", href: "/workspace/ba" },
       { label: "Command Centre" },
     ]);
@@ -56,7 +56,7 @@ describe("nav-path", () => {
   it("builds workspace section path with persona context", () => {
     const context = resolveNavPathContext("/workspace/proposals", "engineer");
     expect(buildNavPathSegments(context)).toEqual([
-      { label: "DeliverX OS", href: "/workspace/dashboard" },
+      { label: "DeliverX", href: "/workspace/dashboard" },
       { label: "Engineer", href: "/workspace/engineer" },
       { label: "AI output review", href: "/workspace/proposals" },
     ]);
@@ -82,7 +82,7 @@ describe("nav-path", () => {
     const context = resolveNavPathContext("/workspace/dashboard", "team_member");
     expect(context.homeHref).toBe("/workspace/dashboard");
     expect(buildNavPathSegments(context)).toEqual([
-      { label: "DeliverX OS", href: "/workspace/dashboard" },
+      { label: "DeliverX", href: "/workspace/dashboard" },
       { label: "Command Centre" },
     ]);
   });

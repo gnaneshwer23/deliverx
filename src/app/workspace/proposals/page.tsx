@@ -72,7 +72,7 @@ export default async function ProposalsPage({
   return (
     <>
       <DxPageHeader
-        breadcrumb="DeliverX OS · Governance"
+        breadcrumb="DeliverX · Governance"
         title="AI output"
         titleEm="review"
         action={

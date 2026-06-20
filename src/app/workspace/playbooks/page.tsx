@@ -11,7 +11,7 @@ export default async function PlaybooksPage() {
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Memory" title="Delivery" titleEm="playbooks" />
+      <DxPageHeader breadcrumb="DeliverX · Memory" title="Delivery" titleEm="playbooks" />
       <div className="p-6 md:p-8">
         {playbooks.length === 0 ? (
           <div className={`${dxClass.cardPad} text-center`}>

@@ -156,7 +156,7 @@ export function buildBootstrapChecklistItems(
   if (demo && options?.demoThreadsEnabled !== false) {
     items.push({
       id: "narrative-threads",
-      label: "Collaborative loop narrative threads",
+      label: "Team needs narrative threads",
       count: demo.threadCount,
       status: demo.seeded ? "ready" : "skipped",
       detail: demo.seeded

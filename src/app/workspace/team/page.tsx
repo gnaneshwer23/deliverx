@@ -31,7 +31,7 @@ export default async function WorkspaceTeamPage() {
   return (
     <>
       <DxPageHeader
-        breadcrumb="DeliverX OS · Workspace"
+        breadcrumb="DeliverX · Workspace"
         title="Team"
         titleEm="& governance"
         action={

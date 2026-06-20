@@ -162,7 +162,7 @@ export function SettingsHeader() {
         <Settings size={22} className="text-slate-600" /> Settings
       </h1>
       <p className="mt-1 text-sm text-slate-500">
-        Organisation profile and account details.
+        Profile, notifications, and account details.
       </p>
     </header>
   );

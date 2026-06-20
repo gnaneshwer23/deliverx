@@ -20,7 +20,6 @@ import {
   LayoutDashboard,
   MessageSquare,
   NotebookPen,
-  Plus,
   RefreshCw,
   Search,
   Shield,
@@ -52,8 +51,6 @@ export const workspaceCoreNav: WorkspaceNavItem[] = [
 ];
 
 export const workspaceDeliveryNav: WorkspaceNavItem[] = [
-  { href: "/project/new", label: "New project", icon: Plus, id: "newproj" },
-  { href: "/project/new?mode=chat", label: "Guided setup (chat)", icon: MessageSquare, id: "chatproj" },
   { href: "/workspace/projects", label: "Projects", icon: FolderKanban, id: "proj" },
   { href: "/workspace/tasks", label: "Tasks", icon: CheckSquare, id: "task" },
   { href: "/workspace/team", label: "Team & Gov", icon: Users, id: "team" },

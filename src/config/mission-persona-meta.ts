@@ -112,13 +112,13 @@ const NAV_LABELS: Record<MissionPersonaId, string> = {
 };
 
 const BREADCRUMB_LABELS: Record<MissionPersonaId, string> = {
-  founder: "DeliverX OS · Founder",
-  "pm-mission": "DeliverX OS · Delivery PM",
-  ba: "DeliverX OS · Business Analysis",
-  product: "DeliverX OS · Product",
-  engineer: "DeliverX OS · Engineering",
-  scrum: "DeliverX OS · Scrum",
-  qa: "DeliverX OS · QA",
+  founder: "DeliverX · Founder",
+  "pm-mission": "DeliverX · Delivery PM",
+  ba: "DeliverX · Business Analysis",
+  product: "DeliverX · Product",
+  engineer: "DeliverX · Engineering",
+  scrum: "DeliverX · Scrum",
+  qa: "DeliverX · QA",
 };
 
 const ROLE_LABELS: Record<MissionPersonaId, string> = {

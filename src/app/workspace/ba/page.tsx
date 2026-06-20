@@ -143,7 +143,7 @@ export default async function BaMissionControlPage({
 
         <BaAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
 
-        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
           <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         </DashboardPanelShell>
 

@@ -11,7 +11,7 @@ export default async function CapacityPage() {
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Intelligence" title="Resource" titleEm="capacity" />
+      <DxPageHeader breadcrumb="DeliverX · Intelligence" title="Resource" titleEm="capacity" />
       <div className="p-6 md:p-8">
         <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <DxStatCard label="Avg open tasks / member" value={snap.avgLoad} />

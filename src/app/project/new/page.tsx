@@ -24,6 +24,14 @@ export default async function NewProjectPage({
         Founders: name your project, share your business case, review AI insights, then invite your team.
         When setup finishes, you&apos;ll land in Founder Mission Control.
       </p>
+      {initialMode !== "chat" ? (
+        <p className="mt-3 text-sm text-[#6B6B64]">
+          Prefer to talk it through instead?{" "}
+          <Link href="/project/new?mode=chat" className="font-medium text-[#1C4A2E] hover:underline">
+            Start guided setup →
+          </Link>
+        </p>
+      ) : null}
 
       {playbooks.length > 0 ? (
         <section className={`${dxClass.cardPad} mt-8`}>

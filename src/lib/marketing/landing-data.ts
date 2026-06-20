@@ -253,7 +253,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Clarification Hub",
-    "loopTitle": "Stakeholder Loop",
+    "loopTitle": "Team Needs",
     "feeds": [
       {
         "dot": "#DC2626",
@@ -339,7 +339,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Now · Next · Later",
-    "loopTitle": "Stakeholder Loop",
+    "loopTitle": "Team Needs",
     "feeds": [
       {
         "dot": "#A78BFA",
@@ -425,7 +425,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "My Stories — Sprint 24",
-    "loopTitle": "Stakeholder Loop",
+    "loopTitle": "Team Needs",
     "feeds": [
       {
         "dot": "#3D9660",
@@ -511,7 +511,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Defect Board",
-    "loopTitle": "Stakeholder Loop",
+    "loopTitle": "Team Needs",
     "feeds": [
       {
         "dot": "#DC2626",
@@ -597,7 +597,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Impediment Board",
-    "loopTitle": "Stakeholder Loop",
+    "loopTitle": "Team Needs",
     "feeds": [
       {
         "dot": "#DC2626",

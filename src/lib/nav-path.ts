@@ -182,7 +182,7 @@ export function resolveNavPathContext(
 }
 
 export function buildNavPathSegments(context: NavPathContext): NavPathSegment[] {
-  const segments: NavPathSegment[] = [{ label: "DeliverX OS", href: COMMAND_CENTRE_HOME }];
+  const segments: NavPathSegment[] = [{ label: "DeliverX", href: COMMAND_CENTRE_HOME }];
 
   const personaId = context.routePersonaId ?? context.homePersonaId;
   if (personaId) {
@@ -216,7 +216,7 @@ export function buildNavPathSegments(context: NavPathContext): NavPathSegment[] 
 export function buildMissionHomePathSegments(personaId: MissionPersonaId): NavPathSegment[] {
   const meta = getMissionPersonaMeta(personaId);
   return [
-    { label: "DeliverX OS", href: COMMAND_CENTRE_HOME },
+    { label: "DeliverX", href: COMMAND_CENTRE_HOME },
     { label: meta.roleLabel, href: meta.routeBase },
     { label: "Mission Control" },
   ];

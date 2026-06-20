@@ -1,4 +1,4 @@
-/** DeliverX OS design tokens (from product prototype) */
+/** DeliverX design tokens (from product prototype) */
 export const dx = {
   ink: "#0D0D0B",
   ink2: "#1A1A17",

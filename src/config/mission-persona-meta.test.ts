@@ -26,7 +26,7 @@ describe("mission-persona-meta config", () => {
   it("exposes seven mission persona profiles aligned with nav", () => {
     expect(Object.keys(MISSION_PERSONA_META)).toHaveLength(7);
     expect(getMissionPersonaMeta("pm-mission").navLabel).toBe("PM Mission Control");
-    expect(getMissionPersonaMeta("founder").breadcrumb).toBe("DeliverX OS · Founder");
+    expect(getMissionPersonaMeta("founder").breadcrumb).toBe("DeliverX · Founder");
     expect(getMissionPersonaMeta("scrum").roleLabel).toBe("Scrum Master");
   });
 

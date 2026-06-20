@@ -89,7 +89,7 @@ export default async function WorkspaceTasksPage({
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Workspace" title="Tasks" titleEm="inbox" />
+      <DxPageHeader breadcrumb="DeliverX · Workspace" title="Tasks" titleEm="inbox" />
       <div className="p-6 md:p-8">
         <TaskViewToggle view={view} projectId={projectId} statusFilter={statusFilter} />
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isOrgAdmin } from "@/lib/org-admin";
 import {
   saveOrgNotificationSettings,
   sendTestNotification,
@@ -16,6 +17,25 @@ import { saveOrgSsoSettings } from "@/services/orgSso";
 
 export type SettingsState = { ok: boolean; error?: string };
 
+async function assertOrgAdmin(): Promise<SettingsState | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  const { data: profile } = await supabase.from("users").select("role").eq("id", user.id).single();
+  if (!isOrgAdmin(profile?.role)) {
+    return { ok: false, error: "Only organisation admins can change these settings." };
+  }
+  return null;
+}
+
+function revalidateSettingsPaths() {
+  revalidatePath("/workspace/settings");
+  revalidatePath("/workspace/settings/organisation");
+}
+
 export async function updateOrganisationAction(
   _prev: SettingsState,
   formData: FormData,
@@ -26,6 +46,9 @@ export async function updateOrganisationAction(
   const deliveryType = String(formData.get("delivery_type") ?? "").trim() || null;
 
   if (!name) return { ok: false, error: "Organisation name is required." };
+
+  const denied = await assertOrgAdmin();
+  if (denied) return denied;
 
   const supabase = await createClient();
   const {
@@ -53,7 +76,7 @@ export async function updateOrganisationAction(
 
   if (error) return { ok: false, error: error.message };
 
-  revalidatePath("/workspace/settings");
+  revalidateSettingsPaths();
   revalidatePath("/workspace/dashboard");
   return { ok: true };
 }
@@ -136,6 +159,9 @@ export async function saveGitHubOrgSettingsAction(
   formData: FormData,
 ): Promise<SettingsState> {
   try {
+    const denied = await assertOrgAdmin();
+    if (denied) return denied;
+
     const tokenRaw = String(formData.get("github_token") ?? "").trim();
     const existing = await getOrgIntegrationSettings().catch(() => null);
 
@@ -148,7 +174,7 @@ export async function saveGitHubOrgSettingsAction(
       enabled: formData.get("enabled") === "on",
     });
 
-    revalidatePath("/workspace/settings");
+    revalidateSettingsPaths();
     revalidatePath("/workspace/engineer");
     return { ok: true };
   } catch (err) {
@@ -164,6 +190,9 @@ export async function saveGitHubProjectSettingsAction(
   formData: FormData,
 ): Promise<SettingsState> {
   try {
+    const denied = await assertOrgAdmin();
+    if (denied) return denied;
+
     const projectId = String(formData.get("project_id") ?? "").trim();
     const githubOwner = String(formData.get("github_owner") ?? "").trim();
     const githubRepo = String(formData.get("github_repo") ?? "").trim();
@@ -179,7 +208,7 @@ export async function saveGitHubProjectSettingsAction(
       githubRepo,
     });
 
-    revalidatePath("/workspace/settings");
+    revalidateSettingsPaths();
     revalidatePath("/workspace/engineer");
     return { ok: true };
   } catch (err) {
@@ -195,6 +224,9 @@ export async function testGitHubConnectionAction(
   formData: FormData,
 ): Promise<SettingsState> {
   try {
+    const denied = await assertOrgAdmin();
+    if (denied) return denied;
+
     const owner = String(formData.get("github_owner") ?? "").trim();
     const repo = String(formData.get("github_repo") ?? "").trim();
     let token = String(formData.get("github_token") ?? "").trim();
@@ -223,6 +255,9 @@ export async function saveOrgSsoSettingsAction(
   formData: FormData,
 ): Promise<SettingsState> {
   try {
+    const denied = await assertOrgAdmin();
+    if (denied) return denied;
+
     await saveOrgSsoSettings({
       enabled: formData.get("enabled") === "on",
       allowedDomainsRaw: String(formData.get("allowed_domains") ?? ""),
@@ -230,7 +265,7 @@ export async function saveOrgSsoSettingsAction(
       ssoRequired: formData.get("sso_required") === "on",
     });
 
-    revalidatePath("/workspace/settings");
+    revalidateSettingsPaths();
     revalidatePath("/login");
     return { ok: true };
   } catch (err) {

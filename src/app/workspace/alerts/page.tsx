@@ -14,7 +14,7 @@ export default async function AlertsPage() {
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Intelligence" title="AI alert" titleEm="queue" />
+      <DxPageHeader breadcrumb="DeliverX · Intelligence" title="AI alert" titleEm="queue" />
       <div className="grid gap-8 p-6 md:p-8 lg:grid-cols-2">
         <section>
           <h2 className="mb-3 font-semibold">Active alerts ({alerts.length})</h2>
