@@ -16,7 +16,7 @@ export function MarketingLoopSection() {
     <MarketingSection id="loop" className="!pb-0">
       <MarketingContainer>
         <MarketingSectionIntro
-          label="The collaborative loop"
+          label="Team needs"
           title={
             <>
               One signal feeds <em>every</em> role.

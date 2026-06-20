@@ -12,7 +12,7 @@ export default async function GovernanceApprovalsPage() {
   return (
     <>
       <DxPageHeader
-        breadcrumb="DeliverX OS · Governance"
+        breadcrumb="DeliverX · Governance"
         title="Steering"
         titleEm="approvals"
         action={

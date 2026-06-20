@@ -25,7 +25,7 @@ export default async function WorkspaceSearchPage({
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Search" title="Workspace" titleEm="search" />
+      <DxPageHeader breadcrumb="DeliverX · Search" title="Workspace" titleEm="search" />
       <div className="p-6 md:p-8">
         <WorkspaceSearchForm initialQuery={query} />
 

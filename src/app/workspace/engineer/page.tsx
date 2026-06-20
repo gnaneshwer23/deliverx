@@ -222,7 +222,7 @@ export default async function EngineerMissionControlPage({
         <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
           <EngineerStakeholdersPanel rows={data.stakeholders} />
         </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
           <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         </DashboardPanelShell>
         <DashboardPanelShell panelId="cross-role" title="Cross-role impact">

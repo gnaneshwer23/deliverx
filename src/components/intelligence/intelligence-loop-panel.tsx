@@ -37,7 +37,6 @@ export function IntelligenceLoopPanel({
     <section className={`${dxClass.cardPad} space-y-5`}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          {!embedded ? <h3 className="font-semibold">Closed-loop intelligence</h3> : null}
           <p className={`max-w-2xl text-sm text-[#6B6B64] ${embedded ? "" : "mt-1"}`}>
             Observe → Understand → Predict → Recommend → Approve → Learn. AI suggests;
             humans approve; dashboards update; outcomes compound.

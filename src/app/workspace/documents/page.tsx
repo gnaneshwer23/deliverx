@@ -37,7 +37,7 @@ export default async function WorkspaceDocumentsPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX OS · Intelligence"
+      breadcrumb="DeliverX · Intelligence"
       title="Documents"
       titleEm="library"
       stats={[{ label: "Total documents", value: documents.length }]}

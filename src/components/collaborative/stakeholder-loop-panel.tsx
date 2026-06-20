@@ -19,7 +19,7 @@ export function StakeholderLoopPanel({
     <div className={`${dxClass.card} overflow-hidden p-0`}>
       {!hideTitle ? (
         <div className="border-b border-[#E4E4DC] px-6 py-4">
-          <h3 className={`${dxClass.display} text-lg`}>Stakeholder loop</h3>
+          <h3 className={`${dxClass.display} text-lg`}>Counterparty needs</h3>
           <p className="mt-1 text-xs text-[#6B6B64]">Who needs what from whom — bidirectional</p>
         </div>
       ) : null}

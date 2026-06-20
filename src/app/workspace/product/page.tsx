@@ -156,7 +156,7 @@ export default async function ProductMissionControlPage({
         <DashboardPanelShell panelId="adoption" title="Feature adoption">
           <ProductAdoptionPanel adoption={data.featureAdoption} voc={data.voiceOfCustomer} />
         </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
           <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         </DashboardPanelShell>
         <DashboardPanelShell panelId="cross-role" title="Cross-role impact">

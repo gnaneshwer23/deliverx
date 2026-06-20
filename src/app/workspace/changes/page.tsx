@@ -38,7 +38,7 @@ export default async function WorkspaceChangesPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX OS · Governance"
+      breadcrumb="DeliverX · Governance"
       title="Change"
       titleEm="requests"
       stats={[

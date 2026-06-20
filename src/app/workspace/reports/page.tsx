@@ -10,7 +10,7 @@ export default async function WorkspaceReportsPage() {
 
   return (
     <>
-      <DxPageHeader breadcrumb="DeliverX OS · Intelligence" title="Status" titleEm="reports" />
+      <DxPageHeader breadcrumb="DeliverX · Intelligence" title="Status" titleEm="reports" />
       <div className="p-6 md:p-8">
         {reports.length === 0 ? (
           <div className={`${dxClass.cardPad} text-center`}>

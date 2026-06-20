@@ -30,7 +30,7 @@ export default async function WorkspaceDecisionsPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX OS · Governance"
+      breadcrumb="DeliverX · Governance"
       title="Decisions"
       titleEm="register"
       stats={[

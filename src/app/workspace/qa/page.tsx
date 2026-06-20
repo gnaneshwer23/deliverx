@@ -210,7 +210,7 @@ export default async function QaMissionControlPage({
         <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
           <QaStakeholdersPanel rows={data.stakeholders} />
         </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Collaborative loop">
+        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
           <CollaborativePanelsGrid snapshot={collaborativeLoop} />
         </DashboardPanelShell>
         <DashboardPanelShell panelId="cross-role" title="Cross-role impact">

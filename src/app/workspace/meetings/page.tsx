@@ -17,7 +17,7 @@ export default async function WorkspaceMeetingsPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX OS · Intelligence"
+      breadcrumb="DeliverX · Intelligence"
       title="Meetings"
       titleEm="& standups"
       stats={[

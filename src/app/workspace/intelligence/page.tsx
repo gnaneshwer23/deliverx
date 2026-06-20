@@ -23,7 +23,7 @@ export default async function IntelligencePage() {
   return (
     <>
       <DxPageHeader
-        breadcrumb="DeliverX OS · Intelligence"
+        breadcrumb="DeliverX · Intelligence"
         title="Delivery"
         titleEm="learning"
         action={

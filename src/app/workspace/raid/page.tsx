@@ -40,7 +40,7 @@ export default async function WorkspaceRaidPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX OS · Governance"
+      breadcrumb="DeliverX · Governance"
       title="RAID"
       titleEm="log"
       stats={[
