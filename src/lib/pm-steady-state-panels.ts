@@ -1,10 +1,9 @@
 import type { PmDayOneKpi } from "@/lib/pm-day-one-panels";
-import { formatHonestPct } from "@/lib/honest-kpi";
-import { clampPct } from "@/lib/pm-viz-helpers";
+import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
+import type { TaskWithMeta } from "@/services/delivery";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
-import type { TaskWithMeta } from "@/services/delivery";
 
 export type PmAttentionPill = {
   label: "Urgent" | "Decide" | "Clear";
@@ -35,12 +34,6 @@ export type PmTeamCapacityMember = {
 };
 
 export type PmGovernanceTabId = "risks" | "decisions" | "changes" | "approvals";
-
-const TIER_LABEL: Record<PmMissionControl["overview"]["healthTier"], string> = {
-  healthy: "Green",
-  watch: "Amber",
-  "at-risk": "Red",
-};
 
 function initialsFromLabel(label: string): string {
   const parts = label.trim().split(/\s+/).filter(Boolean);
@@ -176,82 +169,20 @@ export function buildPmAttentionFeed(input: BuildPmAttentionFeedInput): PmAttent
 
 export type BuildPmSteadyStateKpisInput = {
   overview: PmMissionControl["overview"];
-  waitingOnYouCount: number;
+  raid: PmMissionControl["raid"];
+  pendingApprovalCount: number;
   teamCapacityPct: number | null;
-  teamCapacityLabel?: string;
-  dataSources: PmMissionControl["dataSources"];
+  tasks: TaskWithMeta[];
+  projectId?: string;
+  /** @deprecated Kept for subtitle builders — not shown in KPI strip after R3. */
+  waitingOnYouCount?: number;
+  /** @deprecated */
+  dataSources?: PmMissionControl["dataSources"];
 };
 
-/** Five KPIs for steady-state PM dashboard strip. */
+/** Five KPIs for PM control room strip (delegates to R3 builder). */
 export function buildPmSteadyStateKpis(input: BuildPmSteadyStateKpisInput): PmDayOneKpi[] {
-  const timelineIsLive = input.dataSources.deliveryPlan === "live";
-  const onTrack = timelineIsLive
-    ? formatHonestPct(input.overview.timelineComplete, "Connect milestones from charter")
-    : formatHonestPct(null, "Connect milestones from charter");
-  const blockers = input.overview.blockedDependencies;
-  const capacityValue =
-    input.teamCapacityPct != null
-      ? `${input.teamCapacityPct}%`
-      : input.teamCapacityLabel ?? "—";
-  const capacityHint =
-    input.teamCapacityPct != null
-      ? "Avg load from assigned tasks"
-      : "Connect sprint data for live capacity";
-
-  const blockerBarPct = blockers > 0 ? clampPct((blockers / 5) * 100) : 0;
-  const waitingBarPct =
-    input.waitingOnYouCount > 0 ? clampPct((input.waitingOnYouCount / 6) * 100) : 0;
-
-  return [
-    {
-      label: "Project health",
-      value: TIER_LABEL[input.overview.healthTier],
-      hint: `${input.overview.healthScore}/100 score`,
-      tone: input.overview.healthTier,
-      progressPct: input.overview.healthScore,
-    },
-    {
-      label: "On track",
-      value: String(onTrack.value),
-      hint: onTrack.hint ?? "Milestone progress",
-      tone: onTrack.isEmpty
-        ? "default"
-        : input.overview.timelineComplete >= 75
-          ? "healthy"
-          : input.overview.timelineComplete >= 50
-            ? "watch"
-            : "at-risk",
-      progressPct: onTrack.progressPct,
-    },
-    {
-      label: "Active blockers",
-      value: String(blockers),
-      hint: blockers > 0 ? "Tasks or dependencies" : "None open",
-      tone: blockers > 0 ? "at-risk" : "healthy",
-      progressPct: blockerBarPct || undefined,
-    },
-    {
-      label: "Waiting on you",
-      value: String(input.waitingOnYouCount),
-      hint: input.waitingOnYouCount === 1 ? "Item needs PM action" : "Items need PM action",
-      tone: input.waitingOnYouCount > 0 ? "watch" : "healthy",
-      progressPct: waitingBarPct || undefined,
-    },
-    {
-      label: "Team capacity",
-      value: capacityValue,
-      hint: capacityHint,
-      tone:
-        input.teamCapacityPct == null
-          ? "default"
-          : input.teamCapacityPct >= 90
-            ? "at-risk"
-            : input.teamCapacityPct >= 70
-              ? "watch"
-              : "healthy",
-      progressPct: input.teamCapacityPct ?? undefined,
-    },
-  ];
+  return buildPmControlRoomKpis(input).map(({ href: _href, ...kpi }) => kpi);
 }
 
 export type BuildPmTeamCapacityInput = {

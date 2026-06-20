@@ -33,6 +33,12 @@ function action(overrides: Partial<StakeholderActionRow> & Pick<StakeholderActio
   };
 }
 
+const SAMPLE_RAID: PmMissionControl["raid"] = {
+  risks: [{ title: "Vendor delay", severity: "high", owner: "PM" }],
+  issues: [{ title: "API outage", severity: "critical" }],
+  dependencies: [],
+};
+
 describe("pm-steady-state-panels", () => {
   it("maps due labels to wait days for sorting", () => {
     expect(dueLabelToWaitDays("Today", "high")).toBe(0);
@@ -84,28 +90,27 @@ describe("pm-steady-state-panels", () => {
     expect(blockedItems).toHaveLength(1);
   });
 
-  it("builds five steady-state KPIs from overview and capacity", () => {
+  it("builds five control-room KPIs from overview and capacity", () => {
     const kpis = buildPmSteadyStateKpis({
       overview: SAMPLE_OVERVIEW,
-      waitingOnYouCount: 4,
+      raid: SAMPLE_RAID,
+      pendingApprovalCount: 2,
       teamCapacityPct: 78,
-      dataSources: { deliveryPlan: "live" },
+      tasks: [],
+      projectId: "proj-1",
     });
 
     expect(kpis).toHaveLength(5);
     expect(kpis.map((kpi) => kpi.label)).toEqual([
-      "Project health",
-      "On track",
-      "Active blockers",
-      "Waiting on you",
-      "Team capacity",
+      "Blocked",
+      "Overdue",
+      "Approvals",
+      "RAID critical",
+      "Team load",
     ]);
-    expect(kpis.find((kpi) => kpi.label === "On track")?.value).toBe("62%");
-    expect(kpis.find((kpi) => kpi.label === "On track")?.progressPct).toBe(62);
-    expect(kpis.find((kpi) => kpi.label === "Active blockers")?.value).toBe("3");
-    expect(kpis.find((kpi) => kpi.label === "Waiting on you")?.value).toBe("4");
-    expect(kpis.find((kpi) => kpi.label === "Team capacity")?.value).toBe("78%");
-    expect(kpis.find((kpi) => kpi.label === "Team capacity")?.progressPct).toBe(78);
+    expect(kpis.find((kpi) => kpi.label === "Blocked")?.value).toBe("3");
+    expect(kpis.find((kpi) => kpi.label === "Team load")?.value).toBe("78%");
+    expect(kpis.find((kpi) => kpi.label === "Team load")?.progressPct).toBe(78);
   });
 
   it("shows honest placeholder capacity when no task assignees", () => {
@@ -142,17 +147,18 @@ describe("pm-steady-state-panels", () => {
     expect(members.find((m) => m.id === "u2")?.assignedCount).toBe(1);
   });
 
-  it("shows em-dash timeline when delivery plan is fallback", () => {
+  it("shows em-dash team load when no assignees", () => {
     const kpis = buildPmSteadyStateKpis({
       overview: SAMPLE_OVERVIEW,
-      waitingOnYouCount: 1,
-      teamCapacityPct: 55,
-      dataSources: { deliveryPlan: "fallback" },
+      raid: SAMPLE_RAID,
+      pendingApprovalCount: 0,
+      teamCapacityPct: null,
+      tasks: [],
     });
 
-    expect(kpis.find((kpi) => kpi.label === "On track")).toMatchObject({
+    expect(kpis.find((kpi) => kpi.label === "Team load")).toMatchObject({
       value: "—",
-      hint: "Connect milestones from charter",
+      hint: "Assign tasks to see team load",
     });
   });
 

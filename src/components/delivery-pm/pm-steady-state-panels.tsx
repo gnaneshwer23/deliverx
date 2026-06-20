@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { dxClass } from "@/lib/dx-theme";
+import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
 import {
   buildPmAttentionFeed,
-  buildPmSteadyStateKpis,
   type PmAttentionItem,
   type PmGovernanceTabCounts,
   type PmGovernanceTabId,
@@ -39,6 +39,7 @@ import {
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
+import type { TaskWithMeta } from "@/services/delivery";
 import { DeliveryPmAiSummary } from "@/components/delivery-pm/delivery-pm-mission-overview";
 
 function proposalsHref(projectId?: string, reviewId?: string): string {
@@ -54,36 +55,80 @@ const PILL_STYLE = {
   clear: "border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]",
 } as const;
 
+export function PmControlRoomKpiStrip({
+  data,
+  pendingApprovalCount,
+  teamCapacityPct,
+  tasks,
+  projectId,
+}: {
+  data: PmMissionControl;
+  pendingApprovalCount: number;
+  teamCapacityPct: number | null;
+  tasks: TaskWithMeta[];
+  projectId?: string;
+}) {
+  const kpis = buildPmControlRoomKpis({
+    overview: data.overview,
+    raid: data.raid,
+    pendingApprovalCount,
+    teamCapacityPct,
+    tasks,
+    projectId,
+  });
+
+  return (
+    <MissionKpiGrid layout="wide" className="pm-control-room-kpis">
+      {kpis.map((kpi) => {
+        const card = (
+          <MissionKpiCard
+            label={kpi.label}
+            value={kpi.value}
+            hint={kpi.hint}
+            tone={kpi.tone}
+            progressPct={kpi.progressPct}
+            valueSize="xl"
+            className={kpi.href ? "transition hover:border-[#B8D8D8]" : undefined}
+          />
+        );
+
+        return kpi.href ? (
+          <Link key={kpi.label} href={kpi.href} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A5C5C]">
+            {card}
+          </Link>
+        ) : (
+          <div key={kpi.label}>{card}</div>
+        );
+      })}
+    </MissionKpiGrid>
+  );
+}
+
+/** @deprecated Use PmControlRoomKpiStrip */
 export function PmSteadyStateKpiStrip({
   data,
   waitingOnYouCount,
   teamCapacityPct,
+  pendingApprovalCount = 0,
+  tasks = [],
+  projectId,
 }: {
   data: PmMissionControl;
   waitingOnYouCount: number;
   teamCapacityPct: number | null;
+  pendingApprovalCount?: number;
+  tasks?: TaskWithMeta[];
+  projectId?: string;
 }) {
-  const kpis = buildPmSteadyStateKpis({
-    overview: data.overview,
-    waitingOnYouCount,
-    teamCapacityPct,
-    dataSources: data.dataSources,
-  });
-
+  void waitingOnYouCount;
   return (
-    <MissionKpiGrid layout="wide">
-      {kpis.map((kpi) => (
-        <MissionKpiCard
-          key={kpi.label}
-          label={kpi.label}
-          value={kpi.value}
-          hint={kpi.hint}
-          tone={kpi.tone}
-          progressPct={kpi.progressPct}
-          valueSize="xl"
-        />
-      ))}
-    </MissionKpiGrid>
+    <PmControlRoomKpiStrip
+      data={data}
+      pendingApprovalCount={pendingApprovalCount}
+      teamCapacityPct={teamCapacityPct}
+      tasks={tasks}
+      projectId={projectId ?? data.primaryProject?.id}
+    />
   );
 }
 
@@ -622,6 +667,31 @@ export function PmSteadyStateMilestonesPanel({
   );
 }
 
+export function PmControlRoomLayout({
+  aiSummary,
+  kpiStrip,
+  milestoneRaidRow,
+  teamNeedsFeed,
+  capacityGovernanceRow,
+}: {
+  aiSummary: ReactNode;
+  kpiStrip: ReactNode;
+  milestoneRaidRow: ReactNode;
+  teamNeedsFeed: ReactNode;
+  capacityGovernanceRow: ReactNode;
+}) {
+  return (
+    <div className="space-y-4" data-layout="pm-control-room">
+      {aiSummary}
+      {kpiStrip}
+      {milestoneRaidRow}
+      {teamNeedsFeed}
+      {capacityGovernanceRow}
+    </div>
+  );
+}
+
+/** @deprecated Use PmControlRoomLayout */
 export function PmSteadyStateLayout({
   kpiStrip,
   leftColumn,
@@ -634,14 +704,13 @@ export function PmSteadyStateLayout({
   aiSummary?: ReactNode;
 }) {
   return (
-    <div className="space-y-4" data-layout="pm-steady-state">
-      {kpiStrip}
-      {aiSummary}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
-        <div className="space-y-4">{leftColumn}</div>
-        <div className="space-y-4">{rightColumn}</div>
-      </div>
-    </div>
+    <PmControlRoomLayout
+      aiSummary={aiSummary}
+      kpiStrip={kpiStrip}
+      milestoneRaidRow={rightColumn}
+      teamNeedsFeed={leftColumn}
+      capacityGovernanceRow={null}
+    />
   );
 }
 
