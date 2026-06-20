@@ -17,12 +17,12 @@ export function PhaseHHealthPanel() {
         const res = await fetch("/api/setup/phase-h-health");
         const json = (await res.json()) as PhaseHHealthReport & { error?: string };
         if (!res.ok) {
-          if (!cancelled) setError(json.error ?? "Could not load Phase H health");
+          if (!cancelled) setError(json.error ?? "Could not load team sync health");
           return;
         }
         if (!cancelled) setData(json);
       } catch {
-        if (!cancelled) setError("Could not reach Phase H health endpoint");
+        if (!cancelled) setError("Could not reach team sync health endpoint");
       }
     })();
     return () => {
@@ -42,7 +42,7 @@ export function PhaseHHealthPanel() {
     return (
       <section className={dxClass.cardPad}>
         <p className="flex items-center gap-2 text-sm text-[#6B6B64]">
-          <Loader2 size={14} className="animate-spin" /> Checking collaborative loop spine…
+          <Loader2 size={14} className="animate-spin" /> Checking team sync spine…
         </p>
       </section>
     );
@@ -54,9 +54,9 @@ export function PhaseHHealthPanel() {
     <section className={`${dxClass.cardPad} ${!data.ok ? "border-amber-200 bg-amber-50/80" : ""}`}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="font-semibold">Phase H collaborative loop</h2>
+          <h2 className="font-semibold">Team sync &amp; mission dashboards</h2>
           <p className="mt-1 text-sm text-[#6B6B64]">
-            Universal stakeholder loop, team needs, and pulse on all mission dashboards.
+            Team needs, stakeholder pulse, and cross-role updates on mission dashboards.
           </p>
         </div>
         <DxBadge tone={data.ok ? "green" : "amber"}>{data.ok ? "Healthy" : "Needs attention"}</DxBadge>

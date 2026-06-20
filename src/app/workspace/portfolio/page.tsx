@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Briefcase } from "lucide-react";
 import {
-  getDefaultPortfolio,
+  resolveDefaultPortfolio,
   getPortfolioSnapshot,
 } from "@/services/portfolio";
 import { PortfolioSummary } from "@/components/portfolio/portfolio-summary";
@@ -12,7 +12,7 @@ import { PortfolioCreateForm } from "./create-form";
 export const dynamic = "force-dynamic";
 
 export default async function PortfolioPage() {
-  const portfolio = await getDefaultPortfolio();
+  const portfolio = await resolveDefaultPortfolio();
 
   if (!portfolio) {
     return (

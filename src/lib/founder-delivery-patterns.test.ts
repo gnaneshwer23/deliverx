@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { FounderIntelligenceFeedItem } from "@/lib/founder-intelligence-feed";
 import { pickFounderDeliveryPatternInsight } from "./founder-delivery-patterns";
+import { DELIVERY_PATTERNS_HREF } from "./intelligence-nav-labels";
 
 const SAMPLE_INTEL: FounderIntelligenceFeedItem = {
   id: "intel-1",
@@ -29,7 +30,7 @@ describe("founder-delivery-patterns", () => {
     );
 
     expect(insight?.headline).toBe(SAMPLE_INTEL.message);
-    expect(insight?.href).toBe("/workspace/coordination");
+    expect(insight?.href).toBe(DELIVERY_PATTERNS_HREF);
     expect(insight?.detail).toMatch(/Alpha/);
   });
 });

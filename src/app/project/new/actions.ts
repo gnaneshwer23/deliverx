@@ -12,6 +12,7 @@ import { saveBusinessCaseReview } from "@/services/businessCaseReview";
 import { advanceGatewayToTeam, getGatewaySession } from "@/services/gatewayOnboarding";
 import { bootstrapProjectWorkspaces } from "@/services/projectBootstrap";
 import { emitPlatformEvent } from "@/services/platformWebhooks";
+import { ensureDefaultPortfolio } from "@/services/portfolio";
 
 export type ProjectState = { ok: boolean; error?: string };
 
@@ -115,6 +116,12 @@ export async function createProjectDraftAction(
 
   if (error || !project) {
     return { ok: false, error: error?.message ?? "Failed to create project." };
+  }
+
+  try {
+    await ensureDefaultPortfolio(orgName);
+  } catch (err) {
+    console.error("[project/new] ensureDefaultPortfolio", err);
   }
 
   if (bcGoAccepted) {

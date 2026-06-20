@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Telescope } from "lucide-react";
 import { runEnterpriseLoop } from "@/services/twin";
-import { getDefaultPortfolio } from "@/services/portfolio";
+import { resolveDefaultPortfolio } from "@/services/portfolio";
 import { TwinKpiStrip } from "@/components/twin/twin-kpi-strip";
 import {
   SystemMetricsPanel,
@@ -17,7 +17,7 @@ import { listTwinSnapshots } from "@/services/twin";
 export const dynamic = "force-dynamic";
 
 export default async function DigitalTwinPage() {
-  const portfolio = await getDefaultPortfolio();
+  const portfolio = await resolveDefaultPortfolio();
 
   if (!portfolio) {
     return (
@@ -93,7 +93,7 @@ export default async function DigitalTwinPage() {
       </div>
 
       <p className="mt-6 text-[11px] text-slate-400">
-        Phase 8 guardrails: nothing auto-applies to governance, teams, or
+        Phase guardrails: nothing auto-applies to governance, teams, or
         timelines. The twin simulates — your team decides.
       </p>
     </main>

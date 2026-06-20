@@ -1,4 +1,5 @@
 import { Network } from "lucide-react";
+import { BENCHMARKS_RECOMMENDATIONS_NAV_LABEL } from "@/lib/intelligence-nav-labels";
 import type { GlobalKnowledgeGraph } from "@/services/globalEngine";
 
 export function GlobalGraphPanel({ graph }: { graph: GlobalKnowledgeGraph }) {
@@ -11,7 +12,7 @@ export function GlobalGraphPanel({ graph }: { graph: GlobalKnowledgeGraph }) {
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center gap-2">
         <Network size={16} className="text-slate-500" />
-        <h3 className="font-semibold">Global Knowledge Graph</h3>
+        <h3 className="font-semibold">{BENCHMARKS_RECOMMENDATIONS_NAV_LABEL}</h3>
         <span className="text-xs text-slate-400">
           {graph.nodes.length} nodes · {graph.edges.length} edges
         </span>

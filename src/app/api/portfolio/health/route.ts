@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getDefaultPortfolio, getPortfolioSnapshot } from "@/services/portfolio";
+import { resolveDefaultPortfolio, getPortfolioSnapshot } from "@/services/portfolio";
 
 export async function GET() {
   try {
-    const portfolio = await getDefaultPortfolio();
+    const portfolio = await resolveDefaultPortfolio();
     if (!portfolio) {
       return NextResponse.json({
         configured: false,

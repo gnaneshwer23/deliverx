@@ -57,7 +57,7 @@ export function PhaseDHealthPanel() {
         <div>
           <h2 className="font-semibold">Phase D autonomous intelligence</h2>
           <p className="mt-1 text-sm text-[#6B6B64]">
-            Continuous learning, agent orchestration, platform API, and closed-loop integration.
+            Continuous learning, agent orchestration, platform API, and connected delivery insights.
           </p>
         </div>
         {data.ok ? (

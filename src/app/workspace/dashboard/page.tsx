@@ -65,6 +65,14 @@ import { getDbRoleDisplayLabel } from "@/config/mission-persona-meta";
 import { listPendingProposals } from "@/services/proposedActions";
 import { DxButtonLink } from "@/components/dx/dx-button";
 import { DxBadge } from "@/components/dx/dx-badge";
+import { runEnterpriseCoordinationLoop } from "@/services/coordination";
+import { pickPmDeliveryPatternInsight } from "@/lib/delivery-patterns-insight";
+import { DeliveryPatternsInsightCard } from "@/components/founder/founder-delivery-patterns-card";
+import {
+  DELIVERY_INSIGHTS_NAV_LABEL,
+  DELIVERY_PATTERNS_HREF,
+  DELIVERY_PATTERNS_NAV_LABEL,
+} from "@/lib/intelligence-nav-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -211,6 +219,9 @@ export default async function DashboardPage({
         projectId: feedProject ?? topProject?.id ?? undefined,
       })
     : [];
+
+  const coordinationSnapshot = await runEnterpriseCoordinationLoop().catch(() => null);
+  const deliveryPatternInsight = pickPmDeliveryPatternInsight(coordinationSnapshot);
 
   return (
     <CommandCentreDashboardChrome
@@ -418,7 +429,7 @@ export default async function DashboardPage({
 
       {intelligenceLoop ? (
         <div className="mb-6">
-          <DashboardPanelShell panelId="intelligence-loop" title="Intelligence loop" card>
+          <DashboardPanelShell panelId="intelligence-loop" title={DELIVERY_INSIGHTS_NAV_LABEL} card>
             <IntelligenceLoopPanel snapshot={intelligenceLoop} embedded />
           </DashboardPanelShell>
         </div>
@@ -429,6 +440,10 @@ export default async function DashboardPage({
           <PmTeamNeedsFeed items={teamNeedsFeed} />
         </div>
       ) : null}
+
+      <div className="mb-6">
+        <DeliveryPatternsInsightCard insight={deliveryPatternInsight} />
+      </div>
 
       <div className="mb-6">
         <DashboardPanelShell panelId="delivery-forecasts" title="Delivery forecasts" href="/workspace/pmo" card>
@@ -458,8 +473,8 @@ export default async function DashboardPage({
       <div className="mb-6">
         <DashboardPanelShell
           panelId="agent-orchestration"
-          title="Agent orchestration"
-          href="/workspace/coordination"
+          title={DELIVERY_PATTERNS_NAV_LABEL}
+          href={DELIVERY_PATTERNS_HREF}
           card
         >
           <div className="mb-4">

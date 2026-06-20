@@ -1,5 +1,12 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BENCHMARKS_RECOMMENDATIONS_HREF,
+  BENCHMARKS_RECOMMENDATIONS_NAV_LABEL,
+  DELIVERY_INSIGHTS_NAV_LABEL,
+  DELIVERY_PATTERNS_HREF,
+  DELIVERY_PATTERNS_NAV_LABEL,
+} from "@/lib/intelligence-nav-labels";
+import {
   BarChart3,
   BookOpen,
   Brain,
@@ -64,10 +71,10 @@ export const workspaceIntelligenceNav: WorkspaceNavItem[] = [
   { href: "/workspace/meetings", label: "Meetings", icon: MessageSquare, id: "meet" },
   { href: "/workspace/benefits", label: "Benefits", icon: Target, id: "ben" },
   { href: "/workspace/capacity", label: "Capacity", icon: Gauge, id: "cap" },
-  { href: "/workspace/intelligence", label: "Learning loop", icon: BrainCircuit, id: "learn" },
+  { href: "/workspace/intelligence", label: DELIVERY_INSIGHTS_NAV_LABEL, icon: BrainCircuit, id: "learn" },
   { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, id: "twin" },
-  { href: "/workspace/global", label: "Global Intel", icon: Globe2, id: "global" },
-  { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit, id: "coord" },
+  { href: BENCHMARKS_RECOMMENDATIONS_HREF, label: BENCHMARKS_RECOMMENDATIONS_NAV_LABEL, icon: Globe2, id: "global" },
+  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_PATTERNS_NAV_LABEL, icon: BrainCircuit, id: "coord" },
   { href: "/workspace/documents", label: "Documents", icon: FileText, id: "docs" },
   { href: "/workspace/reports", label: "Reports", icon: BarChart3, id: "rep" },
 ];

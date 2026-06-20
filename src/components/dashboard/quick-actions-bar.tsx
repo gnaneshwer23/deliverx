@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import { DELIVERY_PATTERNS_HREF, DELIVERY_PATTERNS_NAV_LABEL } from "@/lib/intelligence-nav-labels";
 import type { UserRole } from "@/services/dashboard";
 
 type Action = {
@@ -74,7 +75,7 @@ const ACTIONS: Action[] = [
   { href: "/workspace/pmo", label: "PMO view", icon: Command, roles: ["pm", "executive"] },
   { href: "/workspace/twin", label: "Digital twin", icon: Cpu, roles: ["pm", "executive"] },
   { href: "/workspace/portfolio", label: "Portfolio", icon: ClipboardList, roles: ["pm", "executive"] },
-  { href: "/workspace/coordination", label: "Coordination", icon: Calendar, roles: ["executive"] },
+  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_PATTERNS_NAV_LABEL, icon: Calendar, roles: ["executive"] },
 ];
 
 export function QuickActionsBar({ role }: { role: UserRole }) {
