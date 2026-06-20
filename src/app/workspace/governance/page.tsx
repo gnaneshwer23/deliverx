@@ -1,26 +1,60 @@
-import Link from "next/link";
 import {
   getOrgGovernanceStats,
-  getGovernanceRollup,
+  listOrgChangeRequests,
+  listOrgDecisions,
+  listOrgRaidItems,
 } from "@/services/governance";
+import { listPendingApprovals } from "@/services/approvals";
 import { DxPageHeader, DxStatCard } from "@/components/dx/dx-page-chrome";
-import { dxClass } from "@/lib/dx-theme";
+import { GovernanceTabNav } from "@/components/governance/governance-tab-nav";
+import { GovernanceEmptyState } from "@/components/governance/governance-empty-state";
+import {
+  GovernanceApprovalsPanel,
+  GovernanceChangesPanel,
+  GovernanceDecisionsPanel,
+  GovernanceRisksPanel,
+} from "@/components/governance/governance-tab-panels";
+import {
+  governanceEmptyStateForTab,
+  parseGovernanceTab,
+  type GovernanceTabId,
+} from "@/lib/governance-tabs";
 
 export const dynamic = "force-dynamic";
 
-export default async function WorkspaceGovernancePage() {
-  const [stats, rollup] = await Promise.all([
+export default async function WorkspaceGovernancePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const params = await searchParams;
+  const tab = parseGovernanceTab(params.tab);
+
+  const [stats, raidItems, decisions, changes, pendingApprovals] = await Promise.all([
     getOrgGovernanceStats(),
-    getGovernanceRollup(),
+    listOrgRaidItems({ status: ["open", "mitigated"], limit: 200 }),
+    listOrgDecisions({ limit: 200 }),
+    listOrgChangeRequests({ limit: 200 }),
+    listPendingApprovals(50),
   ]);
+
+  const tabCounts: Partial<Record<GovernanceTabId, number>> = {
+    risks: stats.openRisks + stats.openIssues,
+    decisions: stats.pendingDecisions,
+    changes: stats.openChanges,
+    approvals: pendingApprovals.length,
+  };
+
+  const isEmpty = tabContentIsEmpty(tab, {
+    raidItems,
+    decisions,
+    changes,
+    pendingApprovals,
+  });
 
   return (
     <>
-      <DxPageHeader
-        breadcrumb="DeliverX · Workspace"
-        title="Team"
-        titleEm="& governance"
-      />
+      <DxPageHeader breadcrumb="DeliverX · Workspace" title="Governance" />
       <div className="p-6 md:p-8">
         <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <DxStatCard
@@ -45,59 +79,44 @@ export default async function WorkspaceGovernancePage() {
           />
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-2">
-          <QuickLink href="/workspace/raid" label="RAID log" />
-          <QuickLink href="/workspace/decisions" label="Decisions" />
-          <QuickLink href="/workspace/changes" label="Changes" />
-          <QuickLink href="/workspace/meetings" label="Meetings" />
-        </div>
+        <GovernanceTabNav activeTab={tab} counts={tabCounts} />
 
-        <div className={`${dxClass.card} overflow-x-auto`}>
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-[#E4E4DC] bg-[#F7F7F2]">
-                {["Project", "Open risks", "Open issues", "Pending decisions", ""].map((h) => (
-                  <th
-                    key={h || "action"}
-                    className="px-4 py-3 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.12em] text-[#6B6B64]"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rollup.map((row) => (
-                <tr key={row.project_id} className="border-b border-[#F0F0E8] last:border-0">
-                  <td className="px-4 py-3 font-medium">{row.project_name}</td>
-                  <td className="px-4 py-3">{row.open_risks}</td>
-                  <td className="px-4 py-3">{row.open_issues}</td>
-                  <td className="px-4 py-3">{row.pending_decisions}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/project/${row.project_id}/raid`}
-                      className="text-sm text-[#1C4A2E] hover:underline"
-                    >
-                      Open RAID
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {isEmpty ? (
+          <GovernanceEmptyState config={governanceEmptyStateForTab(tab)} />
+        ) : (
+          <div data-governance-tab={tab}>
+            {tab === "risks" ? <GovernanceRisksPanel items={raidItems} /> : null}
+            {tab === "decisions" ? <GovernanceDecisionsPanel decisions={decisions} /> : null}
+            {tab === "changes" ? <GovernanceChangesPanel changes={changes} /> : null}
+            {tab === "approvals" ? (
+              <GovernanceApprovalsPanel pending={pendingApprovals} />
+            ) : null}
+          </div>
+        )}
       </div>
     </>
   );
 }
 
-function QuickLink({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="border border-[#E4E4DC] px-3 py-1.5 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.1em] text-[#6B6B64] hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
-    >
-      {label}
-    </Link>
-  );
+function tabContentIsEmpty(
+  tab: GovernanceTabId,
+  data: {
+    raidItems: Awaited<ReturnType<typeof listOrgRaidItems>>;
+    decisions: Awaited<ReturnType<typeof listOrgDecisions>>;
+    changes: Awaited<ReturnType<typeof listOrgChangeRequests>>;
+    pendingApprovals: Awaited<ReturnType<typeof listPendingApprovals>>;
+  },
+): boolean {
+  switch (tab) {
+    case "risks":
+      return data.raidItems.length === 0;
+    case "decisions":
+      return data.decisions.length === 0;
+    case "changes":
+      return data.changes.length === 0;
+    case "approvals":
+      return data.pendingApprovals.length === 0;
+    default:
+      return true;
+  }
 }

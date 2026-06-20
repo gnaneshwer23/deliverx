@@ -13,6 +13,7 @@ import {
 import { loadProjectSignals } from "./projectSignals";
 import { computeProjectHealth, computeDeliveryConfidence } from "./intelligenceEngine";
 import { listPendingApprovals } from "./approvals";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import { listPendingArtifactReviews } from "./artifactReviews";
 import { listPendingProposals } from "./proposedActions";
 
@@ -114,7 +115,7 @@ export async function getOrgAlertQueue(limit = 30): Promise<DeliveryAlert[]> {
       title: `${a.approval_level} approval required`,
       description: `${a.entity_type} awaiting ${a.approval_level} sign-off`,
       projectId: a.project_id,
-      href: `/workspace/governance/approvals`,
+      href: governanceTabHref("approvals"),
     });
   }
 

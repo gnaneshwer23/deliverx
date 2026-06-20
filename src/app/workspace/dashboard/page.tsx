@@ -39,7 +39,7 @@ import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
 import { CommandCentreImpactFeed } from "@/components/dashboard/command-centre-impact-feed";
 import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
+import { PmTeamNeedsFeed } from "@/components/delivery-pm/pm-team-needs-feed";
 import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
@@ -59,6 +59,8 @@ import {
   buildCommandCentreAiSynthesisLine,
   buildCommandCentreKpis,
 } from "@/lib/command-centre-kpis";
+import { buildPmTeamNeedsFeed } from "@/lib/pm-team-needs-feed";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import { getDbRoleDisplayLabel } from "@/config/mission-persona-meta";
 import { listPendingProposals } from "@/services/proposedActions";
 import { DxButtonLink } from "@/components/dx/dx-button";
@@ -200,6 +202,16 @@ export default async function DashboardPage({
     3,
   ).catch(() => []);
 
+  const teamNeedsFeed = collaborativeLoop
+    ? buildPmTeamNeedsFeed({
+        stakeholderActionQueue: [],
+        teamNeeds: collaborativeLoop.teamNeeds,
+        decisions: [],
+        blockedDependencies: data.delivery.blockedTasks,
+        projectId: feedProject ?? topProject?.id ?? undefined,
+      })
+    : [];
+
   return (
     <CommandCentreDashboardChrome
       header={{
@@ -303,7 +315,7 @@ export default async function DashboardPage({
           )}
         </DashboardPanelShell>
 
-        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" href="/workspace/decisions" card>
+        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" href={governanceTabHref("decisions")} card>
           {data.pendingDecisions.length === 0 ? (
             <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
           ) : (
@@ -414,14 +426,7 @@ export default async function DashboardPage({
 
       {collaborativeLoop ? (
         <div className="mb-6">
-          <DashboardPanelShell
-            panelId="stakeholder-loop"
-            title="Stakeholder loop"
-            href="/workspace/pm-mission"
-            card
-          >
-            <CollaborativePanelsGrid snapshot={collaborativeLoop} hideStakeholderLoopTitle />
-          </DashboardPanelShell>
+          <PmTeamNeedsFeed items={teamNeedsFeed} />
         </div>
       ) : null}
 
@@ -478,7 +483,7 @@ export default async function DashboardPage({
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <DashboardPanelShell panelId="risk-register" title="Risk register" href="/workspace/raid" card>
+        <DashboardPanelShell panelId="risk-register" title="Risk register" href={governanceTabHref("risks")} card>
           {data.openRisks.length === 0 ? (
             <p className="text-sm text-slate-500">No open risks logged.</p>
           ) : (

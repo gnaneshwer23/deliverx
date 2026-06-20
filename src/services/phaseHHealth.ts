@@ -53,12 +53,12 @@ const H3_PATHS = [
   "src/services/collaborativeLoopSnapshot.ts",
 ];
 
-function dashboardHasCollaborativePanels(): boolean {
+function dashboardHasTeamNeedsFeed(): boolean {
   const path = join(process.cwd(), "src/app/workspace/dashboard/page.tsx");
   if (!existsSync(path)) return false;
   const content = readFileSync(path, "utf8");
   return (
-    content.includes("CollaborativePanelsGrid") &&
+    content.includes("PmTeamNeedsFeed") &&
     content.includes("getCollaborativeLoopSnapshot")
   );
 }
@@ -174,12 +174,12 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     detail: `${agentImpact.draftCount} drafts → ${agentImpact.rolesReached} roles`,
   });
 
-  const commandCentreOk = dashboardHasCollaborativePanels();
+  const commandCentreOk = dashboardHasTeamNeedsFeed();
   checks.push({
-    feature: "Command centre collaborative panels",
+    feature: "Command centre team needs feed",
     sprint: "H3",
     ok: commandCentreOk,
-    detail: "Stakeholder loop + team needs + pulse on /workspace/dashboard",
+    detail: "Vertical team needs feed on /workspace/dashboard",
   });
 
   const programmeHookOk = existsSync(

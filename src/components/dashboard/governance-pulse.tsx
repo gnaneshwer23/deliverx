@@ -1,30 +1,31 @@
 import Link from "next/link";
 import type { OrgGovernanceStats } from "@/services/governance";
+import { governanceTabHref } from "@/lib/governance-tabs";
 
 export function GovernancePulse({ stats }: { stats: OrgGovernanceStats }) {
   const items = [
     {
       label: "Open risks",
       value: stats.openRisks,
-      href: "/workspace/governance",
+      href: governanceTabHref("risks"),
       color: stats.openRisks > 0 ? "text-rose-600" : "text-slate-700",
     },
     {
       label: "Open issues",
       value: stats.openIssues,
-      href: "/workspace/governance",
+      href: governanceTabHref("risks"),
       color: stats.openIssues > 0 ? "text-amber-600" : "text-slate-700",
     },
     {
       label: "Pending decisions",
       value: stats.pendingDecisions,
-      href: "/workspace/governance",
+      href: governanceTabHref("decisions"),
       color: stats.pendingDecisions > 0 ? "text-indigo-600" : "text-slate-700",
     },
     {
       label: "Open changes",
       value: stats.openChanges,
-      href: "/workspace/governance",
+      href: governanceTabHref("changes"),
       color: stats.openChanges > 0 ? "text-violet-600" : "text-slate-700",
     },
   ];

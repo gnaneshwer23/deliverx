@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { formatHonestKpi, limitDashboardKpis } from "@/lib/honest-kpi";
+import { governanceTabHref } from "@/lib/governance-tabs";
 
 export type CommandCentreKpiInput = {
   userRole: string | null;
@@ -172,7 +173,7 @@ function openRisksKpi(count: number): KpiItem {
   return baseKpi({
     label: "Open risks",
     value: count,
-    href: "/workspace/raid",
+    href: governanceTabHref("risks"),
     icon: Ban,
     accent: count > 0 ? "amber" : "slate",
     delta: count > 0 ? { value: `${count} open`, direction: "warn" } : undefined,

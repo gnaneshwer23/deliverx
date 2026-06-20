@@ -5,6 +5,7 @@
 
 import type { PmDayOneKpi } from "@/lib/pm-day-one-panels";
 import { formatHonestPct, limitDashboardKpis } from "@/lib/honest-kpi";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import { clampPct } from "@/lib/pm-viz-helpers";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { TaskWithMeta } from "@/services/delivery";
@@ -51,7 +52,7 @@ function tasksHref(projectId?: string): string {
 }
 
 function raidHref(projectId?: string): string {
-  return projectId ? `/project/${projectId}/raid` : "/workspace/raid";
+  return projectId ? `/project/${projectId}/raid` : governanceTabHref("risks");
 }
 
 function proposalsHref(projectId?: string): string {
