@@ -282,7 +282,7 @@ export function LandingCapabilities() {
     },
     {
       label: "Cross-org patterns",
-      desc: "Benchmarks and coordination loops at scale",
+      desc: "Benchmarks and delivery patterns at scale",
       icon: Globe2,
     },
   ];

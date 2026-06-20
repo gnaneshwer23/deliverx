@@ -6,7 +6,7 @@ import {
   createDependency,
   createProgramme,
   deleteDependency,
-  getDefaultPortfolio,
+  ensureDefaultPortfolio,
 } from "@/services/portfolio";
 
 export async function createProgrammeAction(formData: FormData) {
@@ -18,13 +18,7 @@ export async function createProgrammeAction(formData: FormData) {
 
   let portfolioId = portfolioFromForm;
   if (!portfolioId) {
-    const portfolio = await getDefaultPortfolio();
-    if (!portfolio) {
-      return {
-        error:
-          "No portfolio configured — visit /workspace/portfolio to set one up first.",
-      };
-    }
+    const portfolio = await ensureDefaultPortfolio();
     portfolioId = portfolio.id;
   }
 

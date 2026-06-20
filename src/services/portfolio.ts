@@ -8,6 +8,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
+import { defaultPortfolioName } from "@/lib/portfolio-default";
 import { loadProjectSignals } from "./projectSignals";
 import {
   computeProjectHealth,
@@ -112,6 +113,42 @@ export async function listPortfolios(): Promise<PortfolioRow[]> {
 export async function getDefaultPortfolio(): Promise<PortfolioRow | null> {
   const portfolios = await listPortfolios();
   return portfolios[0] ?? null;
+}
+
+async function loadOrgNameForCurrentUser(): Promise<string | null> {
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("users")
+    .select("organisations(name)")
+    .single();
+  return (profile?.organisations as { name?: string } | null)?.name ?? null;
+}
+
+/** Create the default portfolio when none exists (idempotent). */
+export async function ensureDefaultPortfolio(
+  orgName?: string | null,
+): Promise<PortfolioRow> {
+  const existing = await getDefaultPortfolio();
+  if (existing) return existing;
+
+  const resolvedOrgName = orgName ?? (await loadOrgNameForCurrentUser());
+  return createPortfolio({
+    name: defaultPortfolioName(resolvedOrgName),
+    description: "Default portfolio for your organisation.",
+  });
+}
+
+/**
+ * Return the default portfolio, auto-creating when the org already has projects.
+ */
+export async function resolveDefaultPortfolio(): Promise<PortfolioRow | null> {
+  const existing = await getDefaultPortfolio();
+  if (existing) return existing;
+
+  const projects = await listProjectsForOrg();
+  if (projects.length === 0) return null;
+
+  return ensureDefaultPortfolio();
 }
 
 export async function listProgrammes(

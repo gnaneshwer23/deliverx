@@ -49,7 +49,7 @@ export function MarketingProductSection() {
               One workspace. <em>Seven perspectives.</em>
             </>
           }
-          subtitle="Every role gets a tailored dashboard — KPIs, intelligence feeds, and stakeholder loops — all fed from the same delivery data. No duplicate RAID logs. No status-meeting archaeology."
+          subtitle="Every role gets a tailored dashboard — KPIs, intelligence feeds, and live team sync — all fed from the same delivery data. No duplicate RAID logs. No status-meeting archaeology."
         />
 
         <div className="mt-12 overflow-hidden rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] shadow-[0_16px_48px_rgba(0,0,0,.45)]">
@@ -106,7 +106,7 @@ export function MarketingProductSection() {
               desc: "Proposals, reports, and workspace updates require explicit approval before they apply.",
             },
             {
-              title: "Connected stakeholder loop",
+              title: "Connected team sync",
               desc: "One signal updates every relevant dashboard — from BA gap to Sponsor escalation.",
             },
           ].map((item) => (

@@ -17,12 +17,12 @@ export function PhaseGHealthPanel() {
         const res = await fetch("/api/setup/phase-g-health");
         const json = (await res.json()) as PhaseGHealthReport & { error?: string };
         if (!res.ok) {
-          if (!cancelled) setError(json.error ?? "Could not load Phase G health");
+          if (!cancelled) setError(json.error ?? "Could not load sponsor gateway health");
           return;
         }
         if (!cancelled) setData(json);
       } catch {
-        if (!cancelled) setError("Could not reach Phase G health endpoint");
+        if (!cancelled) setError("Could not reach sponsor gateway health endpoint");
       }
     })();
     return () => {
@@ -55,7 +55,7 @@ export function PhaseGHealthPanel() {
     <section className={`${dxClass.cardPad} ${!data.ok ? "border-amber-200 bg-amber-50/80" : ""}`}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="font-semibold">Phase G sponsor gateway</h2>
+          <h2 className="font-semibold">Sponsor gateway</h2>
           <p className="mt-1 text-sm text-[#6B6B64]">
             Account → Project → Business case → AI review → Team onboarding spine.
           </p>

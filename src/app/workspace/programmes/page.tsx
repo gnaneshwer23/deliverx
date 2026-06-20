@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Layers } from "lucide-react";
 import {
-  getDefaultPortfolio,
+  resolveDefaultPortfolio,
   getPortfolioSnapshot,
 } from "@/services/portfolio";
 import { ProgrammeCard } from "@/components/portfolio/programme-card";
@@ -10,7 +10,7 @@ import { ProgrammeCreateForm } from "./create-form";
 export const dynamic = "force-dynamic";
 
 export default async function ProgrammesPage() {
-  const portfolio = await getDefaultPortfolio();
+  const portfolio = await resolveDefaultPortfolio();
 
   if (!portfolio) {
     return (

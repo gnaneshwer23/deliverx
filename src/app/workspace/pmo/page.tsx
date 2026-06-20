@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Command, ArrowRight, Activity } from "lucide-react";
-import { getPmoSnapshot, getDefaultPortfolio } from "@/services/portfolio";
+import { getPmoSnapshot, resolveDefaultPortfolio } from "@/services/portfolio";
 import { ExecutiveSummary } from "@/components/portfolio/executive-summary";
 import { ForecastPanel } from "@/components/portfolio/forecast-panel";
 import {
@@ -20,7 +20,7 @@ const TIER_COLOR = (n: number) =>
         : "text-rose-600";
 
 export default async function PmoPage() {
-  const portfolio = await getDefaultPortfolio();
+  const portfolio = await resolveDefaultPortfolio();
   if (!portfolio) {
     return (
       <main className="p-8">

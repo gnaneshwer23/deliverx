@@ -24,6 +24,12 @@ import {
   Search,
 } from "lucide-react";
 import {
+  BENCHMARKS_RECOMMENDATIONS_HREF,
+  BENCHMARKS_RECOMMENDATIONS_NAV_LABEL,
+  DELIVERY_PATTERNS_HREF,
+  DELIVERY_PATTERNS_NAV_LABEL,
+} from "@/lib/intelligence-nav-labels";
+import {
   SidebarNavLinks,
   SidebarNavSection,
   type SidebarNavItem,
@@ -48,9 +54,9 @@ const advancedNav: SidebarNavItem[] = [
   { href: "/workspace/memory", label: "Organisational Memory", icon: Brain },
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge },
-  { href: "/workspace/coordination", label: "Coordination", icon: BrainCircuit },
+  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_PATTERNS_NAV_LABEL, icon: BrainCircuit },
   { href: "/workspace/marketplace", label: "Marketplace", icon: Store },
-  { href: "/workspace/global", label: "Global Intelligence", icon: Globe2 },
+  { href: BENCHMARKS_RECOMMENDATIONS_HREF, label: BENCHMARKS_RECOMMENDATIONS_NAV_LABEL, icon: Globe2 },
 ];
 
 export function WorkspaceSidebar({

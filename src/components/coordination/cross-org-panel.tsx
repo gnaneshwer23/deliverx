@@ -9,8 +9,8 @@ export function CrossOrgAlertsPanel({ alerts }: { alerts: string[] }) {
           <h3 className="font-semibold text-slate-700">Cross-Org Coordination</h3>
         </div>
         <p className="mt-3 text-sm text-slate-500">
-          No active cross-organisation delays. Add ecosystem partners to enable
-          vendor/client coordination intelligence.
+          No active cross-organisation delays. Add ecosystem partners to surface
+          delivery pattern alerts when shared dependencies slip.
         </p>
       </section>
     );

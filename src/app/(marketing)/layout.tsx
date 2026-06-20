@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DeliverX — AI Delivery Intelligence Platform",
     description:
-      "Role-specific dashboards, live stakeholder loops, and AI that surfaces risks and drafts reports — with human approval on every change.",
+      "Role-specific dashboards, live team sync, and AI that surfaces risks and drafts reports — with human approval on every change.",
     type: "website",
     siteName: "DeliverX",
     images: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "DeliverX — AI Delivery Intelligence Platform",
     description:
-      "Role-specific dashboards, live stakeholder loops, and AI that surfaces risks and drafts reports — with human approval on every change.",
+      "Role-specific dashboards, live team sync, and AI that surfaces risks and drafts reports — with human approval on every change.",
     images: ["/opengraph-image"],
   },
 };

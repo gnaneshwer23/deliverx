@@ -72,7 +72,7 @@ export function BootstrapChecklistPanel({
           <Link href="/workspace/proposals" className="font-medium text-[#1C4A2E] underline">
             AI output review
           </Link>{" "}
-          to apply structure and unlock live loop panels.
+          to apply structure and unlock live mission dashboard panels.
         </p>
       ) : null}
     </div>

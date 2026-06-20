@@ -10,6 +10,7 @@ import {
   PrivacyBadge,
 } from "@/components/global/localized-recs-panel";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
+import { BENCHMARKS_RECOMMENDATIONS_NAV_LABEL } from "@/lib/intelligence-nav-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,12 @@ export default async function GlobalIntelligencePage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-              <Globe2 size={22} className="text-sky-600" /> Global Intelligence
+              <Globe2 size={22} className="text-sky-600" /> {BENCHMARKS_RECOMMENDATIONS_NAV_LABEL}
             </h1>
             <p className="mt-1 max-w-3xl text-sm text-slate-500">
-              Privacy-preserving global intelligence infrastructure. Pattern-level
-              learning from enterprise delivery signals — localized recommendations
-              for your organisation, never raw cross-org data exposure.
+              Privacy-preserving industry benchmarks and recommendations. Pattern-level
+              learning from enterprise delivery signals — localized guidance for your
+              organisation, never raw cross-org data exposure.
             </p>
           </div>
           <div className="shrink-0 space-y-1 text-right">

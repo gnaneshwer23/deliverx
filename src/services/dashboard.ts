@@ -14,7 +14,7 @@ import {
   listOrgReports,
 } from "./governance";
 import { listOrgStandupsRecent } from "./traceability";
-import { getDefaultPortfolio, getPortfolioSnapshot, listProjectsForOrg } from "./portfolio";
+import { getPortfolioSnapshot, listProjectsForOrg, resolveDefaultPortfolio } from "./portfolio";
 import { loadProjectSignals } from "./projectSignals";
 import {
   computeProjectHealth,
@@ -269,7 +269,7 @@ export async function getWorkspaceDashboard(): Promise<WorkspaceDashboardData> {
     safeDashboardLoad("governanceRollup", getGovernanceRollup, []),
     safeDashboardLoad("weeklyVelocity", () => getWeeklyVelocity(supabase), []),
     safeDashboardLoad("projectHealth", buildProjectHealthSummaries, []),
-    safeDashboardLoad("portfolio", getDefaultPortfolio, null),
+    safeDashboardLoad("portfolio", resolveDefaultPortfolio, null),
   ]);
 
   let portfolioHealth: number | null = null;

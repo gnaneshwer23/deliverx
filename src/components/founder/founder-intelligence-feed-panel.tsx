@@ -41,7 +41,7 @@ export function FounderIntelligenceFeedPanel({
 
       {items.length === 0 ? (
         <FeedCardList
-          emptyMessage="Delivery impact and agent orchestration events will appear here as the loop propagates."
+          emptyMessage="Delivery impact and agent orchestration events will appear here as signals propagate."
           isEmpty
         />
       ) : (

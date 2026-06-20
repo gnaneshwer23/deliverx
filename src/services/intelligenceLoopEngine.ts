@@ -213,15 +213,15 @@ function buildLoopNarrative(stages: IntelligenceLoopStage[], input: Intelligence
   }
 
   if (input.activeProjectCount === 0) {
-    return "Intelligence loop idle — create an active project to start the closed loop.";
+    return "Delivery insights idle — create an active project to start generating recommendations.";
   }
 
   const healthy = stages.filter((s) => s.status === "healthy").length;
   if (healthy >= 5) {
-    return "Closed loop healthy — observe, predict, recommend, approve, and learn are all feeding the delivery OS.";
+    return "Delivery insights healthy — observe, predict, recommend, approve, and learn are all connected.";
   }
 
-  return "Delivery intelligence loop active — AI suggests, humans approve, dashboards update, outcomes feed learning.";
+  return "Delivery insights active — AI suggests, humans approve, dashboards update, outcomes improve over time.";
 }
 
 export function buildIntelligenceLoopSnapshot(

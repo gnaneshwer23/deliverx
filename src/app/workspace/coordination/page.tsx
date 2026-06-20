@@ -2,6 +2,7 @@ import { BrainCircuit } from "lucide-react";
 import {
   runEnterpriseCoordinationLoop,
   listPartners,
+  listCoordinationRuns,
 } from "@/services/coordination";
 import { AgentFeed } from "@/components/coordination/agent-feed";
 import { GraphView } from "@/components/coordination/graph-view";
@@ -14,7 +15,7 @@ import { CrossOrgAlertsPanel } from "@/components/coordination/cross-org-panel";
 import { PartnerForm } from "./partner-form";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { IntelligenceLiveRefresh } from "@/components/intelligence/intelligence-live-refresh";
-import { listCoordinationRuns } from "@/services/coordination";
+import { DELIVERY_PATTERNS_NAV_LABEL } from "@/lib/intelligence-nav-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -34,19 +35,18 @@ export default async function CoordinationPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-              <BrainCircuit size={22} className="text-violet-600" /> Coordination
-              Intelligence
+              <BrainCircuit size={22} className="text-violet-600" /> {DELIVERY_PATTERNS_NAV_LABEL}
             </h1>
             <p className="mt-1 max-w-2xl text-sm text-slate-500">
-              Multi-agent coordination across your enterprise ecosystem. Agents
-              analyse signals, traverse the knowledge graph, and propose unified
-              recommendations — always subject to human governance.
+              Cross-programme delivery patterns across your enterprise. Agents analyse
+              signals, traverse the knowledge graph, and propose unified recommendations
+              — always subject to human governance.
             </p>
           </div>
           <div className="shrink-0 space-y-1 text-right">
             <RunLoopButton
               postUrl="/api/coordination/loop"
-              label="Run coordination loop"
+              label="Refresh delivery patterns"
             />
             <p className="text-[11px] text-slate-400">
               Daily cron 07:00 UTC ·{" "}
@@ -81,8 +81,7 @@ export default async function CoordinationPage() {
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="mb-1 font-semibold">Ecosystem Partners</h3>
           <p className="mb-4 text-xs text-slate-500">
-            Model clients, vendors, and consulting partners for cross-org
-            coordination intelligence.
+            Model clients, vendors, and consulting partners for cross-org delivery patterns.
           </p>
           <PartnerForm />
           {partners.length > 0 ? (

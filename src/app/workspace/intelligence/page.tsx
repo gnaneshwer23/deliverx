@@ -35,7 +35,7 @@ export default async function IntelligencePage() {
       <div className="space-y-8 p-6 md:p-8">
         <p className="max-w-2xl text-sm text-[#6B6B64]">
           Narrator briefings, sponsor Q&amp;A, forecast evaluation, and training data
-          export — the learning loop for autonomous delivery intelligence.
+          export — delivery insights that improve with every approved change.
         </p>
 
         {loop ? <IntelligenceLoopPanel snapshot={loop} /> : null}

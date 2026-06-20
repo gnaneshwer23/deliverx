@@ -785,11 +785,11 @@ export const PRICING_TIERS = [
     "name": "Delivery teams",
     "price": "149",
     "period": "/ month",
-    "desc": "For teams with multiple roles — all 7 personalised dashboards and the full collaborative loop.",
+    "desc": "For teams with multiple roles — all 7 personalised dashboards and connected team sync.",
     "features": [
       "Unlimited projects",
       "All 7 personalised dashboards",
-      "Stakeholder loop — live sync",
+      "Team sync — live updates across roles",
       "Meeting intelligence",
       "Decision register",
       "Organisational memory"
