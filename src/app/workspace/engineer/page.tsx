@@ -3,34 +3,18 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getEngineerMissionControl } from "@/services/engineerDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
-import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
-import {
-  EngineerAiSummary,
-  EngineerMissionOverview,
-} from "@/components/engineer/engineer-mission-overview";
-import {
-  EngineerApiContractsPanel,
-  EngineerArchitecturePanel,
-  EngineerCicdPanel,
-  EngineerCrossRolePanel,
-  EngineerDebtPanel,
-  EngineerDependenciesPanel,
-  EngineerGuidedTasks,
-  EngineerPrPanel,
-  EngineerStakeholdersPanel,
-  EngineerTraceabilityPanel,
-} from "@/components/engineer/engineer-panels";
-import { GitHubActivityPanel } from "@/components/engineer/github-activity-panel";
-import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
-import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
-import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
-import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { NextUpStrip } from "@/components/dx/next-up-strip";
-import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { EngineerMissionShell } from "@/components/engineer/engineer-mission-shell";
+import { EngineerDashboardLayout } from "@/components/engineer/engineer-dashboard-layout";
+import { EngineerShippingKpiStrip } from "@/components/engineer/engineer-shipping-kpi-strip";
+import {
+  EngineerAssignedStoriesPanel,
+  EngineerOpenPrsPanel,
+} from "@/components/engineer/engineer-work-panels";
+import { EngineerDependenciesPanel } from "@/components/engineer/engineer-panels";
+import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
@@ -38,8 +22,11 @@ import {
   ENGINEER_DAY_ONE_SUBTITLE,
   resolveEngineerDashboardMode,
 } from "@/lib/engineer-dashboard-mode";
-import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
+import { filterReviewsByProject, PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
+import { buildEngineerShippingSynthesis } from "@/lib/engineer-shipping-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -63,9 +50,8 @@ export default async function EngineerMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, pendingReviews] = await Promise.all([
     getEngineerMissionControl(params.project),
-    getCollaborativeLoopSnapshot("engineer", params.project),
     listPendingArtifactReviewsForPersona("engineer").catch(() => []),
   ]);
 
@@ -91,6 +77,17 @@ export default async function EngineerMissionControlPage({
   });
 
   const engineerAccent = getMissionPersonaAccent("engineer");
+  const blockedDependencies = data.dependencies.filter((d) => d.status === "Delayed").length;
+
+  const shippingSummary = buildEngineerShippingSynthesis({
+    projectName: data.primaryProject?.name,
+    blockedStories: data.overview.blockedStories,
+    openPrs: data.overview.openPrs,
+    reviewsRequired: data.prDashboard.reviewsRequired,
+    blockedDependencies,
+    buildHealth: data.overview.buildHealth,
+    fallbackSummary: data.aiSummary,
+  });
 
   const nextUpItems = buildMissionNextUpItems({
     personaId: "engineer",
@@ -104,6 +101,41 @@ export default async function EngineerMissionControlPage({
       ? `/project/${data.primaryProject.id}/engineering`
       : undefined,
   });
+
+  const dashboard = (
+    <EngineerDashboardLayout
+      aiSynthesis={
+        <PersonaAiSynthesis
+          title="What's blocking your code from shipping"
+          summary={shippingSummary}
+          accent={engineerAccent}
+        />
+      }
+      kpiStrip={
+        <EngineerShippingKpiStrip
+          data={data}
+          blockedDependencies={blockedDependencies}
+          projectId={projectId}
+        />
+      }
+      workRow={
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <EngineerAssignedStoriesPanel tasks={data.guidedTasks} projectId={projectId} />
+          <EngineerOpenPrsPanel
+            openPullRequests={data.github.openPullRequests}
+            prStats={data.prDashboard}
+            configured={data.github.configured}
+          />
+        </div>
+      }
+      dependenciesPanel={
+        <EngineerDependenciesPanel
+          dependencies={data.dependencies}
+          insight={data.dependencyInsight}
+        />
+      }
+    />
+  );
 
   return (
     <MissionDashboardChrome
@@ -122,7 +154,9 @@ export default async function EngineerMissionControlPage({
         summary={bootstrapSummary}
       >
         <div className="space-y-4 p-6 md:p-8">
-          {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Engineering" /> : null}
+          {data.projects.length === 0 ? (
+            <MissionControlNoProjectBanner persona="Engineering" />
+          ) : null}
           <MissionBootstrapBanner
             personaId="engineer"
             projectId={data.primaryProject?.id}
@@ -133,7 +167,6 @@ export default async function EngineerMissionControlPage({
             personaLabel={PERSONA_REVIEW_LABELS.engineer}
             personaId="engineer"
           />
-
           {data.projects.length > 1 && data.primaryProject ? (
             <div className="flex flex-wrap gap-2">
               {data.projects.slice(0, 8).map((p) => (
@@ -160,74 +193,7 @@ export default async function EngineerMissionControlPage({
               ))}
             </div>
           ) : null}
-
-        <EngineerMissionOverview data={data} />
-        {data.primaryProject ? (
-          <MissionPredictionKpis projectId={data.primaryProject.id} />
-        ) : null}
-        <EngineerAiSummary summary={data.aiSummary} />
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
-            <EngineerGuidedTasks tasks={data.guidedTasks} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="dependencies" title="Dependencies">
-            <EngineerDependenciesPanel
-              dependencies={data.dependencies}
-              insight={data.dependencyInsight}
-            />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="traceability" title="Traceability">
-          <EngineerTraceabilityPanel rows={data.traceability} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="architecture" title="Architecture">
-            <EngineerArchitecturePanel
-              nodes={data.architecture}
-              usesFallback={data.dataSources.architecture === "fallback"}
-            />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="cicd" title="CI/CD">
-            <EngineerCicdPanel cicd={data.cicd} />
-          </DashboardPanelShell>
-        </div>
-
-        {data.primaryProject ? (
-          <DashboardPanelShell panelId="github-activity" title="GitHub activity">
-            <GitHubActivityPanel
-              projectId={data.primaryProject.id}
-              configured={data.github.configured}
-              lastSyncAt={data.github.lastSyncAt}
-              openPullRequests={data.github.openPullRequests}
-            />
-          </DashboardPanelShell>
-        ) : null}
-
-        <DashboardPanelShell panelId="api-contracts" title="API contracts">
-          <EngineerApiContractsPanel contracts={data.apiContracts} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="pull-requests" title="Pull requests">
-            <EngineerPrPanel pr={data.prDashboard} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="technical-debt" title="Technical debt">
-            <EngineerDebtPanel debt={data.technicalDebt} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
-          <EngineerStakeholdersPanel rows={data.stakeholders} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
-          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-          <EngineerCrossRolePanel impacts={data.crossRoleImpact} />
-        </DashboardPanelShell>
+          {dashboard}
         </div>
       </EngineerMissionShell>
     </MissionDashboardChrome>

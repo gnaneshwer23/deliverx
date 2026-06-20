@@ -11,6 +11,7 @@ import {
   buildStakeholderConnections,
   computeDeliveryImpact,
   computeTraceabilityScore,
+  type ClarificationRow,
   type CrossRoleImpact,
   type GuidedTask,
 } from "./baRequirementEngine";
@@ -42,6 +43,8 @@ export type BaMissionControl = {
   crossRoleImpact: CrossRoleImpact[];
   context: BaProjectContext | null;
   traceabilityPreview: Awaited<ReturnType<typeof buildTraceabilityMatrix>>;
+  clarifications: ClarificationRow[];
+  openClarifications: number;
   orgTotals: {
     totalRequirements: number;
     totalProjects: number;
@@ -188,6 +191,8 @@ export async function getBaMissionControl(
     crossRoleImpact,
     context,
     traceabilityPreview,
+    clarifications: stats.clarifications,
+    openClarifications: stats.openClarifications,
     orgTotals: {
       totalRequirements: orgTotalRequirements,
       totalProjects: active.length,

@@ -3,31 +3,19 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProductMissionControl } from "@/services/pmDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
-import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
-import {
-  ProductAiSummary,
-  ProductMissionOverview,
-  ProductVisionPanel,
-} from "@/components/product/product-mission-overview";
-import {
-  OpportunityTreePanel,
-  ProductAdoptionPanel,
-  ProductCrossRolePanel,
-  ProductGuidedTasks,
-  ProductRicePanel,
-  ProductRoadmapPanel,
-  ProductSegmentsPanel,
-} from "@/components/product/product-panels";
+import { ProductDashboardLayout } from "@/components/product/product-dashboard-layout";
+import { ProductRoadmapKpiStrip } from "@/components/product/product-roadmap-kpi-strip";
+import { ProductRoadmapKanban } from "@/components/product/product-roadmap-kanban";
+import { ProductRiceBacklogTable } from "@/components/product/product-rice-backlog-table";
+import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
-import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
-import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { PERSONA_REVIEW_LABELS, filterReviewsByProject } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { dxClass } from "@/lib/dx-theme";
+import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
+import { buildProductRoadmapSynthesis } from "@/lib/product-roadmap-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -51,11 +39,25 @@ export default async function ProductMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, pendingReviews] = await Promise.all([
     getProductMissionControl(params.project),
-    getCollaborativeLoopSnapshot("product", params.project),
     listPendingArtifactReviewsForPersona("product").catch(() => []),
   ]);
+
+  const projectId = data.primaryProject?.id;
+  const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  const productAccent = getMissionPersonaAccent("product");
+  const isLive = data.dataSources.roadmapRice === "live";
+
+  const roadmapSummary = buildProductRoadmapSynthesis({
+    projectName: data.primaryProject?.name,
+    nowCount: data.roadmap.now.length,
+    nextCount: data.roadmap.next.length,
+    pendingReviewCount: projectPendingReviews.length,
+    productHealth: data.kpis.productHealth,
+    isLive,
+    fallbackSummary: data.aiSummary,
+  });
 
   const nextUpItems = buildMissionNextUpItems({
     personaId: "product",
@@ -67,6 +69,29 @@ export default async function ProductMissionControlPage({
       ? `/project/${data.primaryProject.id}/product`
       : undefined,
   });
+
+  const dashboard = (
+    <ProductDashboardLayout
+      aiSynthesis={
+        <PersonaAiSynthesis
+          title="What's blocking adoption/roadmap progress"
+          summary={roadmapSummary}
+          accent={productAccent}
+        />
+      }
+      kpiStrip={<ProductRoadmapKpiStrip data={data} projectId={projectId} />}
+      roadmapKanban={
+        <ProductRoadmapKanban
+          roadmap={data.roadmap}
+          usesFallback={!isLive}
+          projectId={projectId}
+        />
+      }
+      riceBacklog={
+        <ProductRiceBacklogTable features={data.topFeatures} usesFallback={!isLive} />
+      }
+    />
+  );
 
   return (
     <MissionDashboardChrome
@@ -81,10 +106,13 @@ export default async function ProductMissionControlPage({
         <MissionBootstrapBanner
           personaId="product"
           projectId={data.primaryProject?.id}
-          showFallback={data.dataSources.roadmapRice === "fallback"}
+          showFallback={!isLive}
         />
-        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.product} />
-
+        <NextUpStrip
+          items={nextUpItems}
+          personaLabel={PERSONA_REVIEW_LABELS.product}
+          personaId="product"
+        />
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
             {data.projects.slice(0, 8).map((p) => (
@@ -93,88 +121,25 @@ export default async function ProductMissionControlPage({
                 href={`/workspace/product?project=${p.id}`}
                 className={`rounded-full border px-3 py-1 text-xs font-medium ${
                   p.id === data.primaryProject?.id
-                    ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
+                    ? ""
                     : "border-[#E4E4DC] text-[#6B6B64]"
                 }`}
+                style={
+                  p.id === data.primaryProject?.id
+                    ? {
+                        borderColor: productAccent.primary,
+                        backgroundColor: productAccent.bg,
+                        color: productAccent.text,
+                      }
+                    : undefined
+                }
               >
                 {p.name}
               </Link>
             ))}
           </div>
         ) : null}
-
-        <ProductMissionOverview data={data} />
-        {data.primaryProject ? (
-          <MissionPredictionKpis projectId={data.primaryProject.id} />
-        ) : null}
-        <ProductAiSummary
-          summary={data.aiSummary}
-          differentiation={data.differentiationInsight}
-          projectId={data.primaryProject?.id}
-        />
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
-            <ProductGuidedTasks tasks={data.guidedTasks} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="vision" title="Product vision">
-            <ProductVisionPanel vision={data.vision} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="roadmap" title="Roadmap">
-          <ProductRoadmapPanel
-            roadmap={data.roadmap}
-            usesFallback={data.dataSources.roadmapRice === "fallback"}
-          />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="rice" title="RICE prioritisation">
-          <ProductRicePanel
-            features={data.topFeatures}
-            usesFallback={data.dataSources.roadmapRice === "fallback"}
-          />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="opportunity-tree" title="Opportunity tree">
-          <OpportunityTreePanel tree={data.opportunityTree} />
-        </DashboardPanelShell>
-
-        {data.topPainPoints.length > 0 ? (
-          <DashboardPanelShell panelId="pain-points" title="Top customer pain points">
-            <div className={`${dxClass.card} p-6`}>
-              <ol className="list-inside list-decimal text-sm text-[#6B6B64]">
-                {data.topPainPoints.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ol>
-            </div>
-          </DashboardPanelShell>
-        ) : null}
-
-        <DashboardPanelShell panelId="segments" title="Customer segments">
-          <ProductSegmentsPanel segments={data.customerSegments} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="adoption" title="Feature adoption">
-          <ProductAdoptionPanel adoption={data.featureAdoption} voc={data.voiceOfCustomer} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
-          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-          <ProductCrossRolePanel impacts={data.crossRoleImpact} />
-        </DashboardPanelShell>
-
-        <DashboardPanelShell panelId="stakeholders" title="Stakeholder connections">
-          <div className={`${dxClass.card} p-6`}>
-            <ul className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-              {data.stakeholderConnections.map((s) => (
-                <li key={s.stakeholder} className="flex justify-between border-b border-[#F0F0E8] py-2">
-                  <span className="font-medium">{s.stakeholder}</span>
-                  <span className="text-[#6B6B64]">{s.dependency}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </DashboardPanelShell>
+        {dashboard}
       </div>
     </MissionDashboardChrome>
   );
