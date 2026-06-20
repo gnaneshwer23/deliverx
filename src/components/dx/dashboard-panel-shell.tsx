@@ -11,7 +11,11 @@ import { dxClass } from "@/lib/dx-theme";
 export type DashboardPanelShellProps = {
   panelId: string;
   title: string;
+  subtitle?: string;
+  count?: number;
+  countTone?: "accent" | "neutral" | "urgent";
   href?: string;
+  actionLabel?: string;
   className?: string;
   card?: boolean;
   ownerNote?: string;
@@ -22,7 +26,11 @@ export type DashboardPanelShellProps = {
 export function DashboardPanelShell({
   panelId,
   title,
+  subtitle,
+  count,
+  countTone = "accent",
   href,
+  actionLabel = "View all",
   className,
   card = false,
   ownerNote,
@@ -48,19 +56,37 @@ export function DashboardPanelShell({
       className={`${className ?? ""} ${hidden && editMode ? "opacity-60" : ""}`.trim()}
       data-panel-id={panelId}
     >
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-start gap-2">
           <button
             type="button"
             onClick={() => toggleCollapsed(panelId)}
-            className="inline-flex shrink-0 items-center justify-center rounded border border-[#E4E4DC] bg-white p-1 text-[#6B6B64] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
+            className="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-md border border-[#E4E4DC] bg-white p-1 text-[#6B6B64] shadow-sm transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
             aria-expanded={!collapsed}
             aria-controls={`panel-body-${panelId}`}
             aria-label={collapsed ? `Expand ${title}` : `Collapse ${title}`}
           >
             {collapsed ? <ChevronRight size={14} aria-hidden /> : <ChevronDown size={14} aria-hidden />}
           </button>
-          <h2 className={dxClass.panelTitle}>{title}</h2>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className={`${dxClass.display} text-base leading-tight text-[#0D0D0B]`}>{title}</h2>
+              {count != null ? (
+                <span
+                  className={`inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[9px] font-bold tabular-nums ${
+                    countTone === "urgent"
+                      ? "bg-[#FDF1F0] text-[#C0392B]"
+                      : countTone === "neutral"
+                        ? "bg-[#F0F0E8] text-[#6B6B64]"
+                        : "bg-[#EEF5F1] text-[#1C4A2E]"
+                  }`}
+                >
+                  {count}
+                </span>
+              ) : null}
+            </div>
+            {subtitle ? <p className="mt-0.5 text-xs text-[#6B6B64]">{subtitle}</p> : null}
+          </div>
         </div>
         <div className="flex items-center gap-3">
           {editMode ? (
@@ -77,9 +103,9 @@ export function DashboardPanelShell({
           {href ? (
             <Link
               href={href}
-              className="inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.06em] text-[#1C4A2E] hover:text-[#2D7048]"
+              className="inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.08em] text-[#1C4A2E] transition hover:text-[#2D7048]"
             >
-              View all <ArrowUpRight size={12} />
+              {actionLabel} <ArrowUpRight size={12} />
             </Link>
           ) : null}
         </div>
@@ -95,7 +121,7 @@ export function DashboardPanelShell({
       ) : null}
       {!collapsed ? (
         <div id={`panel-body-${panelId}`} className={dxClass.panelShellBody}>
-          {card ? <div className={dxClass.cardPad}>{children}</div> : children}
+          {card ? <div className={`${dxClass.cardPad} overflow-hidden`}>{children}</div> : children}
         </div>
       ) : null}
     </section>

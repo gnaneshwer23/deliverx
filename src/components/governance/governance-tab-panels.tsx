@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OrgListTable, projectLink } from "@/components/workspace/org-list-shell";
-import { DxBadge } from "@/components/dx/dx-badge";
+import { DxStatusPill, severityToPillTone } from "@/components/dx/dx-status-pill";
 import { dxClass } from "@/lib/dx-theme";
 import { ApprovalActions } from "@/app/workspace/governance/approvals/approval-actions";
 import type { listOrgChangeRequests, listOrgDecisions, listOrgRaidItems } from "@/services/governance";
@@ -11,9 +11,12 @@ type OrgDecision = Awaited<ReturnType<typeof listOrgDecisions>>[number];
 type OrgChangeRequest = Awaited<ReturnType<typeof listOrgChangeRequests>>[number];
 type PendingApproval = Awaited<ReturnType<typeof listPendingApprovals>>[number];
 
-function severityTone(severity: string): "red" | "amber" | "green" | "slate" {
-  if (severity === "critical" || severity === "high") return "red";
-  if (severity === "medium") return "amber";
+function governanceStatusPillTone(status: string): "proposed" | "submitted" | "approved" | "pending" | "slate" {
+  const s = status.toLowerCase();
+  if (s === "proposed") return "proposed";
+  if (s === "submitted") return "submitted";
+  if (s === "approved") return "approved";
+  if (s === "open" || s === "mitigated" || s === "pending") return "pending";
   return "slate";
 }
 
@@ -30,12 +33,12 @@ export function GovernanceRisksPanel({ items }: { items: OrgRaidItem[] }) {
     >
       {item.title}
     </Link>,
-    <DxBadge key="sev" tone={severityTone(item.severity)}>
+    <DxStatusPill key="sev" tone={severityToPillTone(item.severity)} size="xs">
       {item.severity}
-    </DxBadge>,
-    <span key="status" className="capitalize">
+    </DxStatusPill>,
+    <DxStatusPill key="status" tone={governanceStatusPillTone(item.status)} size="xs">
       {item.status}
-    </span>,
+    </DxStatusPill>,
     item.due_date ? new Date(item.due_date).toLocaleDateString() : "—",
   ]);
 
@@ -57,9 +60,9 @@ export function GovernanceDecisionsPanel({ decisions }: { decisions: OrgDecision
     >
       {d.title}
     </Link>,
-    <DxBadge key="status" tone={d.status === "proposed" ? "amber" : "slate"}>
+    <DxStatusPill key="status" tone={governanceStatusPillTone(d.status)} size="xs">
       {d.status}
-    </DxBadge>,
+    </DxStatusPill>,
     new Date(d.created_at).toLocaleDateString(),
   ]);
 
@@ -78,12 +81,9 @@ export function GovernanceChangesPanel({ changes }: { changes: OrgChangeRequest[
     >
       {c.title}
     </Link>,
-    <DxBadge
-      key="status"
-      tone={c.status === "submitted" ? "amber" : c.status === "approved" ? "green" : "slate"}
-    >
+    <DxStatusPill key="status" tone={governanceStatusPillTone(c.status)} size="xs">
       {c.status}
-    </DxBadge>,
+    </DxStatusPill>,
     c.impact ? (
       <span key="impact" className="line-clamp-2 max-w-xs text-[#6B6B64]">
         {c.impact}

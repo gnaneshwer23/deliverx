@@ -12,6 +12,8 @@ import {
   Users,
 } from "lucide-react";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
+import { DxStatusPill } from "@/components/dx/dx-status-pill";
+import { DxWidgetHeader } from "@/components/dx/dx-widget-header";
 import { dxClass } from "@/lib/dx-theme";
 import { governanceTabHref } from "@/lib/governance-tabs";
 import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
@@ -50,10 +52,10 @@ function proposalsHref(projectId?: string, reviewId?: string): string {
   return `/workspace/proposals?${params.toString()}`;
 }
 
-const PILL_STYLE = {
-  urgent: "border-rose-200 bg-rose-50 text-rose-700",
-  decide: "border-amber-200 bg-amber-50 text-amber-800",
-  clear: "border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]",
+const ATTENTION_PILL_TONE = {
+  urgent: "urgent",
+  decide: "decide",
+  clear: "clear",
 } as const;
 
 export function PmControlRoomKpiStrip({
@@ -158,12 +160,13 @@ function AttentionFeedRow({ item }: { item: PmAttentionItem }) {
           <p className="mt-0.5 truncate text-sm text-[#2C2C28]">{item.title}</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {item.pills.map((pill) => (
-              <span
+              <DxStatusPill
                 key={`${item.id}-${pill.label}`}
-                className={`rounded-full border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${PILL_STYLE[pill.tone]}`}
+                tone={ATTENTION_PILL_TONE[pill.tone]}
+                size="xs"
               >
                 {pill.label}
-              </span>
+              </DxStatusPill>
             ))}
           </div>
         </div>
@@ -208,12 +211,11 @@ export function PmNeedsAttentionPanel({
 
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`} data-panel="pm-needs-attention">
-      <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-3">
-        <h3 className={`${dxClass.display} text-lg`}>Needs your attention</h3>
-        <span className="rounded-full bg-[#EDF7F7] px-2 py-0.5 text-[10px] font-semibold tabular-nums text-[#1A5C5C]">
-          {items.length}
-        </span>
-      </div>
+      <DxWidgetHeader
+        title="Needs your attention"
+        count={items.length}
+        countTone={items.some((i) => i.pills.some((p) => p.tone === "urgent")) ? "urgent" : "accent"}
+      />
       <ul className="divide-y divide-[#F0F0E8]">
         {items.length ? (
           items.map((item) => <AttentionFeedRow key={item.id} item={item} />)
@@ -254,21 +256,30 @@ function GovernanceTabButton({
   progressPct: number;
   onClick: () => void;
 }) {
+  const tabColor = TAB_COLORS[id];
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
         active
-          ? "border-[#1A5C5C] bg-[#EDF7F7] text-[#1A5C5C]"
-          : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#B8D8D8]"
+          ? "border-transparent text-white shadow-sm"
+          : "border-[#E4E4DC] bg-white text-[#6B6B64] hover:border-[#B8D8D8]"
       }`}
+      style={active ? { backgroundColor: tabColor } : undefined}
     >
       {TAB_LABELS[id]}
       {count > 0 ? (
-        <span className="ml-1.5 tabular-nums text-[10px] opacity-80">({count})</span>
+        <span
+          className={`inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
+            active ? "bg-white/20 text-white" : "bg-[#F0F0E8] text-[#6B6B64]"
+          }`}
+        >
+          {count}
+        </span>
       ) : null}
-      <PmTabProgressDot pct={progressPct} color={TAB_COLORS[id]} />
+      <PmTabProgressDot pct={progressPct} color={active ? "#FFFFFF" : tabColor} />
     </button>
   );
 }
