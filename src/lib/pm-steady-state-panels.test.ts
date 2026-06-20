@@ -142,6 +142,20 @@ describe("pm-steady-state-panels", () => {
     expect(members.find((m) => m.id === "u2")?.assignedCount).toBe(1);
   });
 
+  it("shows em-dash timeline when delivery plan is fallback", () => {
+    const kpis = buildPmSteadyStateKpis({
+      overview: SAMPLE_OVERVIEW,
+      waitingOnYouCount: 1,
+      teamCapacityPct: 55,
+      dataSources: { deliveryPlan: "fallback" },
+    });
+
+    expect(kpis.find((kpi) => kpi.label === "On track")).toMatchObject({
+      value: "—",
+      hint: "Connect milestones from charter",
+    });
+  });
+
   it("builds steady-state subtitle from project and counts", () => {
     expect(
       buildPmSteadyStateSubtitle({

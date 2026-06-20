@@ -5,6 +5,7 @@ import {
   pendingReviewBarPct,
   teamJoinPct,
 } from "@/lib/pm-viz-helpers";
+import { formatHonestKpi } from "@/lib/honest-kpi";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
@@ -255,8 +256,9 @@ export function buildPmDayOneKpis(input: BuildPmDayOneKpisInput): PmDayOneKpi[] 
   const milestonePct = milestoneProgressPct(input.milestones, milestoneTotal);
 
   const budgetIsLive = input.dataSources.deliveryPlan === "live";
-  const budgetValue = budgetIsLive ? input.overview.budgetLabel : "—";
-  const budgetHint = budgetIsLive ? "Approved vs spent" : "Set budget after charter review";
+  const budget = budgetIsLive
+    ? formatHonestKpi(input.overview.budgetLabel, "Set budget after charter review")
+    : formatHonestKpi(null, "Set budget after charter review");
   const budgetPct = budgetIsLive ? budgetSpendPct(input.overview.budgetLabel) : null;
 
   return [
@@ -292,8 +294,8 @@ export function buildPmDayOneKpis(input: BuildPmDayOneKpisInput): PmDayOneKpi[] 
     },
     {
       label: "Budget",
-      value: budgetValue,
-      hint: budgetHint,
+      value: String(budget.value),
+      hint: budget.hint ?? "Approved vs spent",
       tone: budgetIsLive ? "default" : "default",
       progressPct: budgetPct ?? undefined,
     },

@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { Loader2, Sparkles } from "lucide-react";
 import { AiStatusBanner } from "@/components/ai/ai-status-banner";
+import { getDbRoleDisplayLabel } from "@/config/mission-persona-meta";
 import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 
 type InsightsResponse = {
@@ -14,15 +15,19 @@ type InsightsResponse = {
 export function AiInsights({
   projectId,
   projectName,
+  userRole,
   healthTier,
   confidenceScore,
-  recommendation,
+  synthesisLine,
+  ruleBasedSignal,
 }: {
   projectId: string | null;
   projectName: string | null;
+  userRole: string | null;
   healthTier: "healthy" | "watch" | "at-risk";
   confidenceScore: number;
-  recommendation: string;
+  synthesisLine: string;
+  ruleBasedSignal: string;
 }) {
   const [narrative, setNarrative] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -62,7 +67,8 @@ export function AiInsights({
     };
   }, [projectId]);
 
-  const body = narrative ?? recommendation;
+  const body = narrative ?? synthesisLine;
+  const roleLabel = getDbRoleDisplayLabel(userRole);
 
   return (
     <motion.section
@@ -89,7 +95,7 @@ export function AiInsights({
         </p>
       ) : (
         <p className="mb-2 text-xs text-slate-500">
-          Create a project and tasks to unlock delivery intelligence.
+          {roleLabel} view — create a project and tasks to unlock delivery intelligence.
         </p>
       )}
       {aiError ? (
@@ -100,7 +106,7 @@ export function AiInsights({
       <p className="text-sm text-slate-600">{body}</p>
       {narrative ? (
         <p className="mt-2 text-xs text-slate-400">
-          Rule-based signal: {recommendation}
+          Rule-based signal: {ruleBasedSignal}
         </p>
       ) : null}
     </motion.section>

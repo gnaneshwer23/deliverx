@@ -2,13 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
-  Ban,
   CalendarClock,
-  CheckSquare,
-  Clock,
-  Layers,
-  Scale,
-  Users,
 } from "lucide-react";
 import {
   EMPTY_WORKSPACE_DASHBOARD,
@@ -61,6 +55,10 @@ import { roleToMissionPersona } from "@/lib/mission-nav";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildCommandCentreNextUpItems } from "@/lib/command-centre-next-up";
+import {
+  buildCommandCentreAiSynthesisLine,
+  buildCommandCentreKpis,
+} from "@/lib/command-centre-kpis";
 import { getDbRoleDisplayLabel } from "@/config/mission-persona-meta";
 import { listPendingProposals } from "@/services/proposedActions";
 import { DxButtonLink } from "@/components/dx/dx-button";
@@ -166,123 +164,28 @@ export default async function DashboardPage({
     ? PERSONA_REVIEW_LABELS[persona]
     : getDbRoleDisplayLabel(data.userRole);
 
-  const kpis = [
-    {
-      label: "Active projects",
-      value: data.activeProjectCount,
-      href: "/workspace/projects",
-      icon: Layers,
-      accent: "teal" as const,
-    },
-    ...(data.portfolioHealth != null
-      ? [
-          {
-            label: "Portfolio health",
-            value: data.portfolioHealth,
-            hint: "/ 100",
-            href: "/workspace/portfolio",
-            icon: Scale,
-            accent:
-              data.portfolioHealth >= 80
-                ? ("teal" as const)
-                : data.portfolioHealth >= 60
-                  ? ("amber" as const)
-                  : ("rose" as const),
-            progressPct: data.portfolioHealth,
-            delta:
-              alignmentDelta != null
-                ? {
-                    value: `${alignmentDelta > 0 ? "+" : ""}${alignmentDelta}%`,
-                    direction:
-                      alignmentDelta > 0
-                        ? ("up" as const)
-                        : alignmentDelta < 0
-                          ? ("down" as const)
-                          : ("neutral" as const),
-                  }
-                : undefined,
-          },
-        ]
-      : []),
-    ...(successScoreValue != null
-      ? [
-          {
-            label: "Success score",
-            value: successScoreValue,
-            hint: "/ 100",
-            href: topProject ? `/project/${topProject.id}` : "/workspace/projects",
-            icon: CalendarClock,
-            accent:
-              successScoreValue >= 75
-                ? ("teal" as const)
-                : successScoreValue >= 55
-                  ? ("amber" as const)
-                  : ("rose" as const),
-            progressPct: successScoreValue,
-          },
-        ]
-      : []),
-    {
-      label: "Tasks in progress",
-      value: data.delivery.tasksInProgress,
-      href: "/workspace/tasks",
-      icon: CheckSquare,
-      accent: "teal" as const,
-      delta:
-        velocityTrend != null
-          ? {
-              value: `${velocityTrend > 0 ? "+" : ""}${velocityTrend} vs last wk`,
-              direction:
-                velocityTrend > 0 ? ("up" as const) : velocityTrend < 0 ? ("down" as const) : ("neutral" as const),
-            }
-          : undefined,
-    },
-    {
-      label: "Overdue",
-      value: data.delivery.overdueTasks,
-      href: "/workspace/tasks",
-      icon: Clock,
-      accent: data.delivery.overdueTasks > 0 ? ("amber" as const) : ("slate" as const),
-      delta:
-        data.delivery.overdueTasks > 0
-          ? { value: "Needs attention", direction: "warn" as const }
-          : { value: "On track", direction: "neutral" as const },
-    },
-    {
-      label: "Blocked",
-      value: data.delivery.blockedTasks,
-      href: "/workspace/tasks",
-      icon: Ban,
-      accent: data.delivery.blockedTasks > 0 ? ("rose" as const) : ("slate" as const),
-      delta:
-        data.delivery.blockedTasks > 0
-          ? { value: `${data.delivery.blockedTasks} blocked`, direction: "down" as const }
-          : undefined,
-    },
-    {
-      label: "Pending approvals",
-      value: approvalCounts.total,
-      hint:
-        approvalCounts.total > 0
-          ? `${approvalCounts.artifacts} artifacts · ${approvalCounts.proposals} proposals`
-          : undefined,
-      href: "/workspace/proposals",
-      icon: CalendarClock,
-      accent: approvalCounts.total > 0 ? ("amber" as const) : ("slate" as const),
-      delta:
-        approvalCounts.total > 0
-          ? { value: `${approvalCounts.total} awaiting`, direction: "warn" as const }
-          : undefined,
-    },
-    {
-      label: "Standups (7d)",
-      value: data.delivery.standupsThisWeek,
-      href: "/workspace/meetings",
-      icon: Users,
-      accent: "teal" as const,
-      progressPct: Math.min(100, Math.round((data.delivery.standupsThisWeek / 5) * 100)),
-    },
-  ];
+  const kpis = buildCommandCentreKpis({
+    userRole: data.userRole,
+    activeProjectCount: data.activeProjectCount,
+    portfolioHealth: data.portfolioHealth,
+    successScoreValue,
+    alignmentDelta,
+    topProjectId: topProject?.id ?? null,
+    delivery: data.delivery,
+    approvalCounts,
+    velocityTrend,
+    governanceOpenRisks: data.governance.openRisks,
+  });
+
+  const aiSynthesisLine = buildCommandCentreAiSynthesisLine({
+    userRole: data.userRole,
+    hasProjects: data.recentProjects.length > 0,
+    blockedTasks: data.delivery.blockedTasks,
+    overdueTasks: data.delivery.overdueTasks,
+    openRisks: data.governance.openRisks,
+    pendingApprovals: approvalCounts.total,
+    projectName: insightProjectName,
+  });
 
   const atRiskProjects = data.governanceRollup.filter(
     (r) => r.open_risks > 0 || r.open_issues > 0 || r.pending_decisions > 0,
@@ -344,99 +247,6 @@ export default async function DashboardPage({
         <KpiStrip items={kpis} />
       </div>
 
-      {intelligenceLoop ? (
-        <div className="mb-6">
-          <DashboardPanelShell panelId="intelligence-loop" title="Intelligence loop" card>
-            <IntelligenceLoopPanel snapshot={intelligenceLoop} embedded />
-          </DashboardPanelShell>
-        </div>
-      ) : null}
-
-      {collaborativeLoop ? (
-        <div className="mb-6">
-          <DashboardPanelShell
-            panelId="stakeholder-loop"
-            title="Stakeholder loop"
-            href="/workspace/pm-mission"
-            card
-          >
-            <CollaborativePanelsGrid snapshot={collaborativeLoop} hideStakeholderLoopTitle />
-          </DashboardPanelShell>
-        </div>
-      ) : null}
-
-      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <DashboardPanelShell panelId="alert-queue" title="AI alert queue" href="/workspace/alerts" card>
-          <AlertQueuePanel alerts={alerts} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="delivery-coach" title="Delivery coach" href="/workspace/alerts" card>
-          <DeliveryCoachPanel suggestions={coach} />
-        </DashboardPanelShell>
-      </div>
-
-      <div className="mb-6">
-        <DashboardPanelShell panelId="delivery-forecasts" title="Delivery forecasts" href="/workspace/pmo" card>
-          <DeliveryForecastStrip entries={forecastRollup} />
-        </DashboardPanelShell>
-      </div>
-
-      {approvalCounts.total > 0 ? (
-        <div className="mb-6">
-          <DashboardPanelShell panelId="ai-output-review" title="AI output review" href="/workspace/proposals" card>
-            <ApprovalCentrePanel
-              artifactReviews={pendingArtifactReviews}
-              proposals={pendingProposals}
-            />
-          </DashboardPanelShell>
-        </div>
-      ) : null}
-
-      <div className="mb-6">
-        <DashboardPanelShell
-          panelId="command-centre-intelligence"
-          title="Command Centre intelligence"
-          href="/workspace/proposals"
-          card
-        >
-          <Suspense fallback={<p className="text-sm text-[#6B6B64]">Loading feed…</p>}>
-            <CommandCentreImpactFeed
-              events={impactEvents}
-              severity={feedSeverity}
-              role={feedRole}
-              projectId={feedProject}
-              projects={feedProjects}
-            />
-          </Suspense>
-        </DashboardPanelShell>
-      </div>
-
-      <div className="mb-6">
-        <DashboardPanelShell
-          panelId="agent-orchestration"
-          title="Agent orchestration"
-          href="/workspace/coordination"
-          card
-        >
-          <div className="mb-4">
-            <RunLoopButton
-              postUrl="/api/agents/sweep"
-              label="Run agent sweep"
-              successMessage="Agent sweep complete — refreshing…"
-            />
-          </div>
-          <CommandCentreAgentFeed events={agentEvents} />
-        </DashboardPanelShell>
-      </div>
-
-      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <DashboardPanelShell panelId="delivery-velocity" title="Delivery velocity" className="xl:col-span-2" card>
-          <DeliveryVelocityChart weeks={data.weeklyVelocity} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="governance-pulse" title="Governance pulse" href="/workspace/governance" card>
-          <GovernancePulse stats={data.governance} />
-        </DashboardPanelShell>
-      </div>
-
       <DashboardPanelShell
         panelId="project-health"
         title="Project health"
@@ -493,6 +303,181 @@ export default async function DashboardPage({
           )}
         </DashboardPanelShell>
 
+        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" href="/workspace/decisions" card>
+          {data.pendingDecisions.length === 0 ? (
+            <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
+          ) : (
+            <ul className="space-y-3 text-sm">
+              {data.pendingDecisions.map((d) => (
+                <li key={d.id} className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
+                  <Link
+                    href={`/project/${d.project_id}/decisions`}
+                    className="font-medium text-indigo-900 hover:underline"
+                  >
+                    {d.title}
+                  </Link>
+                  <span className="mt-0.5 block text-xs text-indigo-600/70">{d.project_name}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardPanelShell>
+      </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <DashboardPanelShell panelId="alert-queue" title="AI alert queue" href="/workspace/alerts" card>
+          <AlertQueuePanel alerts={alerts} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="delivery-coach" title="Delivery coach" href="/workspace/alerts" card>
+          <DeliveryCoachPanel suggestions={coach} />
+        </DashboardPanelShell>
+      </div>
+
+      {approvalCounts.total > 0 ? (
+        <div className="mb-6">
+          <DashboardPanelShell panelId="ai-output-review" title="AI output review" href="/workspace/proposals" card>
+            <ApprovalCentrePanel
+              artifactReviews={pendingArtifactReviews}
+              proposals={pendingProposals}
+            />
+          </DashboardPanelShell>
+        </div>
+      ) : null}
+
+      <DashboardPanelShell panelId="recent-projects" title="Recent projects" className="mb-6" card>
+        <div className="mb-4 flex items-center justify-between">
+          <Link
+            href="/workspace/projects"
+            className="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#4b5563] hover:text-[#0a0e14]"
+          >
+            All projects <ArrowUpRight size={14} />
+          </Link>
+        </div>
+        {data.recentProjects.length > 0 ? (
+          <ul className="divide-y divide-slate-100">
+            {data.recentProjects.map((p) => {
+              const health = data.projectHealth.find((h) => h.id === p.id);
+              return (
+                <li key={p.id}>
+                  <Link
+                    href={`/project/${p.id}`}
+                    className="flex items-center justify-between gap-4 py-3 transition hover:bg-slate-50"
+                  >
+                    <div>
+                      <div className="font-medium">{p.name}</div>
+                      <div className="text-xs text-slate-500">
+                        {p.delivery_type ?? "—"} ·{" "}
+                        {new Date(p.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {health ? (
+                        <span
+                          className={`text-sm font-semibold ${
+                            health.healthScore >= 80
+                              ? "text-emerald-600"
+                              : health.healthScore >= 60
+                                ? "text-amber-600"
+                                : "text-rose-600"
+                          }`}
+                        >
+                          {health.healthScore}
+                        </span>
+                      ) : null}
+                      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-600">
+                        {p.status}
+                      </span>
+                      <ArrowUpRight size={14} className="text-slate-400" />
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+            No projects yet.{" "}
+            <Link href="/project/new" className="font-medium text-[#0a0e14] underline decoration-[#6ee7c7]/60">
+              Create your first project
+            </Link>
+          </div>
+        )}
+      </DashboardPanelShell>
+
+      {intelligenceLoop ? (
+        <div className="mb-6">
+          <DashboardPanelShell panelId="intelligence-loop" title="Intelligence loop" card>
+            <IntelligenceLoopPanel snapshot={intelligenceLoop} embedded />
+          </DashboardPanelShell>
+        </div>
+      ) : null}
+
+      {collaborativeLoop ? (
+        <div className="mb-6">
+          <DashboardPanelShell
+            panelId="stakeholder-loop"
+            title="Stakeholder loop"
+            href="/workspace/pm-mission"
+            card
+          >
+            <CollaborativePanelsGrid snapshot={collaborativeLoop} hideStakeholderLoopTitle />
+          </DashboardPanelShell>
+        </div>
+      ) : null}
+
+      <div className="mb-6">
+        <DashboardPanelShell panelId="delivery-forecasts" title="Delivery forecasts" href="/workspace/pmo" card>
+          <DeliveryForecastStrip entries={forecastRollup} />
+        </DashboardPanelShell>
+      </div>
+
+      <div className="mb-6">
+        <DashboardPanelShell
+          panelId="command-centre-intelligence"
+          title="Command Centre intelligence"
+          href="/workspace/proposals"
+          card
+        >
+          <Suspense fallback={<p className="text-sm text-[#6B6B64]">Loading feed…</p>}>
+            <CommandCentreImpactFeed
+              events={impactEvents}
+              severity={feedSeverity}
+              role={feedRole}
+              projectId={feedProject}
+              projects={feedProjects}
+            />
+          </Suspense>
+        </DashboardPanelShell>
+      </div>
+
+      <div className="mb-6">
+        <DashboardPanelShell
+          panelId="agent-orchestration"
+          title="Agent orchestration"
+          href="/workspace/coordination"
+          card
+        >
+          <div className="mb-4">
+            <RunLoopButton
+              postUrl="/api/agents/sweep"
+              label="Run agent sweep"
+              successMessage="Agent sweep complete — refreshing…"
+            />
+          </div>
+          <CommandCentreAgentFeed events={agentEvents} />
+        </DashboardPanelShell>
+      </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <DashboardPanelShell panelId="delivery-velocity" title="Delivery velocity" className="xl:col-span-2" card>
+          <DeliveryVelocityChart weeks={data.weeklyVelocity} />
+        </DashboardPanelShell>
+        <DashboardPanelShell panelId="governance-pulse" title="Governance pulse" href="/workspace/governance" card>
+          <GovernancePulse stats={data.governance} />
+        </DashboardPanelShell>
+      </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <DashboardPanelShell panelId="risk-register" title="Risk register" href="/workspace/raid" card>
           {data.openRisks.length === 0 ? (
             <p className="text-sm text-slate-500">No open risks logged.</p>
@@ -538,26 +523,6 @@ export default async function DashboardPage({
                       ? ` · ${new Date(m.scheduled_at).toLocaleDateString()}`
                       : null}
                   </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </DashboardPanelShell>
-
-        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" href="/workspace/decisions" card>
-          {data.pendingDecisions.length === 0 ? (
-            <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
-          ) : (
-            <ul className="space-y-3 text-sm">
-              {data.pendingDecisions.map((d) => (
-                <li key={d.id} className="rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
-                  <Link
-                    href={`/project/${d.project_id}/decisions`}
-                    className="font-medium text-indigo-900 hover:underline"
-                  >
-                    {d.title}
-                  </Link>
-                  <span className="mt-0.5 block text-xs text-indigo-600/70">{d.project_name}</span>
                 </li>
               ))}
             </ul>
@@ -648,70 +613,12 @@ export default async function DashboardPage({
       <AiInsights
         projectId={topProject?.id ?? null}
         projectName={insightProjectName}
+        userRole={data.userRole}
         healthTier={healthTier}
         confidenceScore={confidenceScore}
-        recommendation={recommendation}
+        synthesisLine={aiSynthesisLine}
+        ruleBasedSignal={recommendation}
       />
-
-      <DashboardPanelShell panelId="recent-projects" title="Recent projects" className="mt-8" card>
-        <div className="mb-4 flex items-center justify-between">
-          <Link
-            href="/workspace/projects"
-            className="inline-flex items-center gap-1 text-xs font-medium uppercase tracking-[0.1em] text-[#4b5563] hover:text-[#0a0e14]"
-          >
-            All projects <ArrowUpRight size={14} />
-          </Link>
-        </div>
-        {data.recentProjects.length > 0 ? (
-          <ul className="divide-y divide-slate-100">
-            {data.recentProjects.map((p) => {
-              const health = data.projectHealth.find((h) => h.id === p.id);
-              return (
-                <li key={p.id}>
-                  <Link
-                    href={`/project/${p.id}`}
-                    className="flex items-center justify-between gap-4 py-3 transition hover:bg-slate-50"
-                  >
-                    <div>
-                      <div className="font-medium">{p.name}</div>
-                      <div className="text-xs text-slate-500">
-                        {p.delivery_type ?? "—"} ·{" "}
-                        {new Date(p.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {health ? (
-                        <span
-                          className={`text-sm font-semibold ${
-                            health.healthScore >= 80
-                              ? "text-emerald-600"
-                              : health.healthScore >= 60
-                                ? "text-amber-600"
-                                : "text-rose-600"
-                          }`}
-                        >
-                          {health.healthScore}
-                        </span>
-                      ) : null}
-                      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs uppercase tracking-wide text-slate-600">
-                        {p.status}
-                      </span>
-                      <ArrowUpRight size={14} className="text-slate-400" />
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
-            No projects yet.{" "}
-            <Link href="/project/new" className="font-medium text-[#0a0e14] underline decoration-[#6ee7c7]/60">
-              Create your first project
-            </Link>
-          </div>
-        )}
-      </DashboardPanelShell>
       </div>
     </CommandCentreDashboardChrome>
   );
