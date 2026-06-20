@@ -1,4 +1,10 @@
 import type { ArtifactEntityType } from "@/lib/approval/constants";
+import {
+  budgetSpendPct,
+  milestoneProgressPct,
+  pendingReviewBarPct,
+  teamJoinPct,
+} from "@/lib/pm-viz-helpers";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
@@ -22,6 +28,7 @@ export type PmDayOneKpi = {
   value: string;
   hint?: string;
   tone?: "default" | "healthy" | "watch" | "at-risk";
+  progressPct?: number;
 };
 
 export type PmRaidSummaryCounts = {
@@ -245,10 +252,12 @@ export function buildPmDayOneKpis(input: BuildPmDayOneKpisInput): PmDayOneKpi[] 
   const milestoneTotal =
     input.bootstrapSummary?.structure?.milestones ?? input.milestones.length;
   const milestoneDone = input.milestones.filter((m) => m.status === "done").length;
+  const milestonePct = milestoneProgressPct(input.milestones, milestoneTotal);
 
   const budgetIsLive = input.dataSources.deliveryPlan === "live";
   const budgetValue = budgetIsLive ? input.overview.budgetLabel : "—";
   const budgetHint = budgetIsLive ? "Approved vs spent" : "Set budget after charter review";
+  const budgetPct = budgetIsLive ? budgetSpendPct(input.overview.budgetLabel) : null;
 
   return [
     {
@@ -262,12 +271,14 @@ export function buildPmDayOneKpis(input: BuildPmDayOneKpisInput): PmDayOneKpi[] 
       value: `${milestoneDone}/${milestoneTotal || 0}`,
       hint: milestoneTotal ? "From GO bootstrap" : "Awaiting milestone plan",
       tone: milestoneDone > 0 ? "healthy" : "default",
+      progressPct: milestonePct,
     },
     {
       label: "Awaiting review",
       value: String(input.pendingReviewCount),
       hint: input.pendingReviewCount === 1 ? "AI proposal" : "AI proposals",
       tone: input.pendingReviewCount > 0 ? "watch" : "healthy",
+      progressPct: pendingReviewBarPct(input.pendingReviewCount),
     },
     {
       label: "Team joined",
@@ -277,12 +288,14 @@ export function buildPmDayOneKpis(input: BuildPmDayOneKpisInput): PmDayOneKpi[] 
           ? `${input.teamTotalCount - input.teamJoinedCount} invite pending`
           : "Org members on project",
       tone: input.teamJoinedCount >= input.teamTotalCount ? "healthy" : "watch",
+      progressPct: teamJoinPct(input.teamJoinedCount, input.teamTotalCount),
     },
     {
       label: "Budget",
       value: budgetValue,
       hint: budgetHint,
       tone: budgetIsLive ? "default" : "default",
+      progressPct: budgetPct ?? undefined,
     },
   ];
 }

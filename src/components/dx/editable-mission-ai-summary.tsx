@@ -8,26 +8,28 @@ export function EditableMissionAiSummary({
   title,
   summary,
   icon = false,
+  compact = false,
 }: {
   title: string;
   summary: string;
   icon?: boolean;
+  compact?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-[#C6DDD0] bg-[#EEF5F1]/60 p-5">
+    <div className={`rounded-xl border border-[#B8D8D8] bg-[#EDF7F7]/60 ${compact ? "p-4" : "p-5"}`}>
       {icon ? (
-        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1C4A2E]">
+        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1A5C5C]">
           <Sparkles size={14} aria-hidden />
           {title}
         </div>
       ) : (
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#1C4A2E]">{title}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-[#1A5C5C]">{title}</p>
       )}
       <InlineEditableText
         fieldKey={aiSummaryFieldKey()}
         defaultValue={summary}
         quote
-        className="mt-2 text-[#0D0D0B]"
+        className={`mt-2 text-[#0D0D0B] ${compact ? "line-clamp-2 text-sm" : ""}`}
         placeholder="Write your delivery summary…"
         label="AI summary"
       />

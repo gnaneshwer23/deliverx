@@ -1,4 +1,5 @@
 import type { PmDayOneKpi } from "@/lib/pm-day-one-panels";
+import { clampPct } from "@/lib/pm-viz-helpers";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
@@ -88,7 +89,9 @@ export type BuildPmAttentionFeedInput = {
   decisions: PmMissionControl["decisions"];
   blockedDependencies: number;
   projectId?: string;
+  /** @deprecated Pending reviews live in governance Approvals tab — omit from feed to avoid triple-counting. */
   pendingReviewCount?: number;
+  includePendingReviews?: boolean;
 };
 
 /** Merge stakeholder queue, blockers, and pending decisions into a sorted attention feed. */
@@ -152,7 +155,9 @@ export function buildPmAttentionFeed(input: BuildPmAttentionFeedInput): PmAttent
     });
   }
 
-  if ((input.pendingReviewCount ?? 0) > 0) {
+  if (input.includePendingReviews && (input.pendingReviewCount ?? 0) > 0) {
+    const params = new URLSearchParams({ persona: "pm-mission" });
+    if (input.projectId) params.set("project", input.projectId);
     items.push({
       id: "pending-reviews-feed",
       avatarInitials: "AI",
@@ -161,7 +166,7 @@ export function buildPmAttentionFeed(input: BuildPmAttentionFeedInput): PmAttent
       pills: [{ label: "Decide", tone: "decide" }],
       waitLabel: waitLabelFromDays(2),
       waitSortDays: 2,
-      href: "/workspace/proposals?persona=pm-mission",
+      href: `/workspace/proposals?${params.toString()}`,
     });
   }
 
@@ -189,30 +194,38 @@ export function buildPmSteadyStateKpis(input: BuildPmSteadyStateKpisInput): PmDa
       ? "Avg load from assigned tasks"
       : "Connect sprint data for live capacity";
 
+  const blockerBarPct = blockers > 0 ? clampPct((blockers / 5) * 100) : 0;
+  const waitingBarPct =
+    input.waitingOnYouCount > 0 ? clampPct((input.waitingOnYouCount / 6) * 100) : 0;
+
   return [
     {
       label: "Project health",
       value: TIER_LABEL[input.overview.healthTier],
       hint: `${input.overview.healthScore}/100 score`,
       tone: input.overview.healthTier,
+      progressPct: input.overview.healthScore,
     },
     {
       label: "On track",
       value: `${onTrackPct}%`,
       hint: "Milestone progress",
       tone: onTrackPct >= 75 ? "healthy" : onTrackPct >= 50 ? "watch" : "at-risk",
+      progressPct: onTrackPct,
     },
     {
       label: "Active blockers",
       value: String(blockers),
       hint: blockers > 0 ? "Tasks or dependencies" : "None open",
       tone: blockers > 0 ? "at-risk" : "healthy",
+      progressPct: blockerBarPct || undefined,
     },
     {
       label: "Waiting on you",
       value: String(input.waitingOnYouCount),
       hint: input.waitingOnYouCount === 1 ? "Item needs PM action" : "Items need PM action",
       tone: input.waitingOnYouCount > 0 ? "watch" : "healthy",
+      progressPct: waitingBarPct || undefined,
     },
     {
       label: "Team capacity",
@@ -226,6 +239,7 @@ export function buildPmSteadyStateKpis(input: BuildPmSteadyStateKpisInput): PmDa
             : input.teamCapacityPct >= 70
               ? "watch"
               : "healthy",
+      progressPct: input.teamCapacityPct ?? undefined,
     },
   ];
 }

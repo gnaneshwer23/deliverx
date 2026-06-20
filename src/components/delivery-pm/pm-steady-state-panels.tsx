@@ -21,10 +21,24 @@ import {
   type PmGovernanceTabId,
   type PmTeamCapacityMember,
 } from "@/lib/pm-steady-state-panels";
+import {
+  attentionSeverityPct,
+  buildGovernanceTabBarSegments,
+  buildMilestoneTimelineSegments,
+  buildRaidBarSegments,
+  governanceTabProgressPct,
+  pmRaidHref,
+} from "@/lib/pm-viz-helpers";
+import {
+  PmBarLegend,
+  PmHorizontalStackedBar,
+  PmMilestoneTimelineStrip,
+  PmSeverityBar,
+  PmTabProgressDot,
+} from "@/components/delivery-pm/pm-viz-primitives";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
-import { DeliveryMilestonesPanel } from "@/components/delivery-pm/delivery-pm-panels";
 import { DeliveryPmAiSummary } from "@/components/delivery-pm/delivery-pm-mission-overview";
 
 function proposalsHref(projectId?: string, reviewId?: string): string {
@@ -65,6 +79,7 @@ export function PmSteadyStateKpiStrip({
           value={kpi.value}
           hint={kpi.hint}
           tone={kpi.tone}
+          progressPct={kpi.progressPct}
           valueSize="xl"
         />
       ))}
@@ -73,26 +88,33 @@ export function PmSteadyStateKpiStrip({
 }
 
 function AttentionFeedRow({ item }: { item: PmAttentionItem }) {
+  const severityTone = item.pills.some((pill) => pill.tone === "urgent")
+    ? "urgent"
+    : item.pills.some((pill) => pill.tone === "decide")
+      ? "decide"
+      : "default";
+  const severityPct = attentionSeverityPct(item.waitSortDays);
+
   return (
-    <li className="px-5 py-4">
+    <li className="px-5 py-3">
       <div className="flex items-start gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#EEF5F1] text-xs font-semibold text-[#1C4A2E]">
-          {item.avatarInitials}
-        </span>
+        <div className="flex shrink-0 flex-col items-center gap-1 pt-1">
+          <span className="flex size-8 items-center justify-center rounded-full bg-[#EDF7F7] text-[10px] font-semibold text-[#1A5C5C]">
+            {item.avatarInitials}
+          </span>
+          <PmSeverityBar pct={severityPct} tone={severityTone} />
+        </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-medium text-[#2C2C28]">{item.role}</p>
-            <span className="text-xs text-[#A8A89E]">{item.waitLabel}</span>
+            <span className="text-[10px] text-[#A8A89E]">{item.waitLabel}</span>
           </div>
-          <p className="mt-0.5 text-sm text-[#2C2C28]">{item.title}</p>
-          {item.subtitle ? (
-            <p className="mt-0.5 text-xs text-[#6B6B64]">{item.subtitle}</p>
-          ) : null}
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <p className="mt-0.5 truncate text-sm text-[#2C2C28]">{item.title}</p>
+          <div className="mt-1.5 flex flex-wrap gap-1">
             {item.pills.map((pill) => (
               <span
                 key={`${item.id}-${pill.label}`}
-                className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${PILL_STYLE[pill.tone]}`}
+                className={`rounded-full border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${PILL_STYLE[pill.tone]}`}
               >
                 {pill.label}
               </span>
@@ -127,27 +149,24 @@ function AttentionFeedRow({ item }: { item: PmAttentionItem }) {
 export function PmNeedsAttentionPanel({
   stakeholderActionQueue,
   data,
-  pendingReviewCount,
 }: {
   stakeholderActionQueue: StakeholderActionRow[];
   data: PmMissionControl;
-  pendingReviewCount: number;
 }) {
   const items = buildPmAttentionFeed({
     stakeholderActionQueue,
     decisions: data.decisions,
     blockedDependencies: data.overview.blockedDependencies,
     projectId: data.primaryProject?.id,
-    pendingReviewCount,
   });
 
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`} data-panel="pm-needs-attention">
-      <div className="border-b border-[#E4E4DC] px-6 py-4">
+      <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-3">
         <h3 className={`${dxClass.display} text-lg`}>Needs your attention</h3>
-        <p className="mt-1 text-sm text-[#6B6B64]">
-          Merged stakeholder queue, blockers, and governance decisions — sorted by wait time.
-        </p>
+        <span className="rounded-full bg-[#EDF7F7] px-2 py-0.5 text-[10px] font-semibold tabular-nums text-[#1A5C5C]">
+          {items.length}
+        </span>
       </div>
       <ul className="divide-y divide-[#F0F0E8]">
         {items.length ? (
@@ -169,77 +188,91 @@ const TAB_LABELS: Record<PmGovernanceTabId, string> = {
   approvals: "Approvals",
 };
 
+const TAB_COLORS: Record<PmGovernanceTabId, string> = {
+  risks: "#C0392B",
+  decisions: "#B7620A",
+  changes: "#1A5C5C",
+  approvals: "#2A8A8A",
+};
+
 function GovernanceTabButton({
   id,
   active,
   count,
+  progressPct,
   onClick,
 }: {
   id: PmGovernanceTabId;
   active: boolean;
   count: number;
+  progressPct: number;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium transition ${
         active
-          ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
-          : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#C6DDD0]"
+          ? "border-[#1A5C5C] bg-[#EDF7F7] text-[#1A5C5C]"
+          : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#B8D8D8]"
       }`}
     >
       {TAB_LABELS[id]}
       {count > 0 ? (
         <span className="ml-1.5 tabular-nums text-[10px] opacity-80">({count})</span>
       ) : null}
+      <PmTabProgressDot pct={progressPct} color={TAB_COLORS[id]} />
     </button>
   );
 }
 
 function GovernanceRisksTab({ raid, projectId }: { raid: PmMissionControl["raid"]; projectId?: string }) {
-  const raidHref = projectId ? `/project/${projectId}/delivery#raid` : "/workspace/raid";
+  const raidHref = pmRaidHref(projectId);
+  const counts = {
+    highRisk: raid.risks.filter((r) => /high|critical/i.test(r.severity)).length,
+    assumptions: raid.risks.filter((r) => !/high|critical/i.test(r.severity)).length,
+    issues: raid.issues.length,
+    dependencies: raid.dependencies.length,
+  };
+  const segments = buildRaidBarSegments({
+    highRisk: counts.highRisk,
+    assumptions: counts.assumptions,
+    issues: counts.issues,
+    dependencies: counts.dependencies,
+  });
+
   return (
     <div className="space-y-3 text-sm">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-[#6B6B64]">Open RAID</p>
-        <Link href={raidHref} className="text-xs font-medium text-[#1C4A2E] hover:underline">
+        <Link href={raidHref} className="text-xs font-medium text-[#1A5C5C] hover:underline">
           Open RAID log
         </Link>
       </div>
+      <PmHorizontalStackedBar segments={segments} heightClass="h-2" />
+      <PmBarLegend segments={segments} />
       {raid.risks.length || raid.issues.length ? (
-        <ul className="space-y-2">
-          {raid.risks.map((risk) => (
-            <li key={risk.title} className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2">
-              <span className="font-medium">{risk.title}</span>
-              <span className="ml-2 text-xs text-[#6B6B64]">
-                {risk.severity} · {risk.owner}
-              </span>
-            </li>
-          ))}
-          {raid.issues.map((issue) => (
-            <li key={issue.title} className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2">
-              <span className="font-medium">{issue.title}</span>
-              <span className="ml-2 text-xs text-[#6B6B64]">{issue.severity}</span>
+        <ul className="space-y-1.5">
+          {[...raid.risks.slice(0, 3), ...raid.issues.slice(0, 2)].map((item) => (
+            <li
+              key={item.title}
+              className="flex items-center gap-2 rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2"
+            >
+              <span
+                className={`size-1.5 shrink-0 rounded-full ${
+                  "severity" in item && /high|critical/i.test(item.severity)
+                    ? "bg-[#C0392B]"
+                    : "bg-[#B7620A]"
+                }`}
+              />
+              <span className="min-w-0 truncate font-medium">{item.title}</span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-[#6B6B64]">No open risks or issues logged.</p>
+        <p className="text-xs text-[#6B6B64]">No open risks or issues logged.</p>
       )}
-      {raid.dependencies.length ? (
-        <div className="flex flex-wrap gap-2 pt-1">
-          {raid.dependencies.map((dep) => (
-            <span
-              key={dep}
-              className="rounded-full border border-[#E4E4DC] bg-white px-2.5 py-1 text-xs text-[#6B6B64]"
-            >
-              {dep}
-            </span>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -335,34 +368,23 @@ function GovernanceApprovalsTab({
     <div className="space-y-3 text-sm">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-[#6B6B64]">
-          Pending reviews
+          AI approval inbox
         </p>
         <Link
           href={proposalsHref(projectId)}
-          className="text-xs font-medium text-[#1C4A2E] hover:underline"
+          className="text-xs font-medium text-[#1A5C5C] hover:underline"
         >
-          Open inbox
+          Open all
         </Link>
       </div>
       {pendingReviews.length ? (
         <ul className="space-y-2">
           {pendingReviews.slice(0, 5).map((review) => (
-            <li
-              key={review.id}
-              className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2"
-            >
-              <p className="font-medium">{review.title}</p>
-              <Link
-                href={proposalsHref(projectId, review.id)}
-                className="text-xs text-[#1C4A2E] hover:underline"
-              >
-                Review proposal
-              </Link>
-            </li>
+            <PmReviewInboxRow key={review.id} review={review} projectId={projectId} />
           ))}
         </ul>
       ) : (
-        <p className="text-[#6B6B64]">No pending AI approvals.</p>
+        <p className="text-xs text-[#6B6B64]">No pending AI approvals.</p>
       )}
     </div>
   );
@@ -383,7 +405,15 @@ export function PmGovernanceTabsPanel({
   tabCounts: PmGovernanceTabCounts;
   projectId?: string;
 }) {
-  const [activeTab, setActiveTab] = useState<PmGovernanceTabId>("risks");
+  const [activeTab, setActiveTab] = useState<PmGovernanceTabId>(() => {
+    const entries = (Object.entries(tabCounts) as Array<[PmGovernanceTabId, number]>).filter(
+      ([, count]) => count > 0,
+    );
+    if (entries.length === 0) return "risks";
+    return entries.sort((a, b) => b[1] - a[1])[0]![0];
+  });
+
+  const governanceSegments = buildGovernanceTabBarSegments(tabCounts);
 
   const tabContent: Record<PmGovernanceTabId, ReactNode> = {
     risks: <GovernanceRisksTab raid={raid} projectId={projectId} />,
@@ -394,21 +424,21 @@ export function PmGovernanceTabsPanel({
 
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-governance-tabs">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className={`${dxClass.display} text-lg`}>Governance</h3>
-          <p className="mt-1 text-sm text-[#6B6B64]">
-            Risks, decisions, changes, and approvals in one place.
-          </p>
-        </div>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <h3 className={`${dxClass.display} text-lg`}>Governance</h3>
+        <span className="text-[10px] tabular-nums text-[#6B6B64]">
+          {governanceSegments.reduce((sum, s) => sum + s.value, 0)} open
+        </span>
       </div>
-      <div className="mb-4 flex flex-wrap gap-2">
+      <PmHorizontalStackedBar segments={governanceSegments} heightClass="h-1.5" />
+      <div className="mb-4 mt-3 flex flex-wrap gap-2">
         {(Object.keys(TAB_LABELS) as PmGovernanceTabId[]).map((tabId) => (
           <GovernanceTabButton
             key={tabId}
             id={tabId}
             active={activeTab === tabId}
             count={tabCounts[tabId]}
+            progressPct={governanceTabProgressPct(tabCounts[tabId], tabCounts)}
             onClick={() => setActiveTab(tabId)}
           />
         ))}
@@ -478,45 +508,6 @@ function PmReviewInboxRow({
   );
 }
 
-export function PmAiReviewInboxPanel({
-  pendingReviews,
-  projectId,
-}: {
-  pendingReviews: ArtifactReviewRow[];
-  projectId?: string;
-}) {
-  return (
-    <div className={`${dxClass.card} p-6`} data-panel="pm-ai-review-inbox">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h3 className={`${dxClass.display} text-lg`}>AI approval inbox</h3>
-          <p className="mt-1 text-sm text-[#6B6B64]">
-            Compact proposals — approve or edit without leaving the dashboard.
-          </p>
-        </div>
-        <Link
-          href={proposalsHref(projectId)}
-          className="inline-flex items-center gap-1 text-xs font-medium text-[#1C4A2E] hover:underline"
-        >
-          Open all
-          <ExternalLink size={12} />
-        </Link>
-      </div>
-      {pendingReviews.length ? (
-        <ul className="space-y-2">
-          {pendingReviews.slice(0, 4).map((review) => (
-            <PmReviewInboxRow key={review.id} review={review} projectId={projectId} />
-          ))}
-        </ul>
-      ) : (
-        <p className="rounded-lg bg-[#FAFAF7] p-4 text-sm text-[#6B6B64]">
-          No pending AI outputs — inbox is clear.
-        </p>
-      )}
-    </div>
-  );
-}
-
 const LOAD_BAR: Record<PmTeamCapacityMember["tone"], string> = {
   healthy: "bg-[#1A6B3A]",
   watch: "bg-[#B7620A]",
@@ -530,18 +521,33 @@ export function PmTeamCapacityPanel({
   members: PmTeamCapacityMember[];
   usesPlaceholder: boolean;
 }) {
+  const avgLoad =
+    members.length && !usesPlaceholder
+      ? Math.round(members.reduce((sum, m) => sum + m.loadPct, 0) / members.length)
+      : null;
+
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-team-capacity">
-      <div className="mb-4 flex items-start justify-between gap-2">
-        <div>
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
           <h3 className={`${dxClass.display} text-lg`}>Team capacity</h3>
-          <p className="mt-1 text-sm text-[#6B6B64]">
-            {usesPlaceholder
-              ? "Connect sprint data or assign tasks to see live load."
-              : "Load derived from active task assignments."}
-          </p>
+          {avgLoad != null ? (
+            <div className="mt-2 flex items-center gap-2">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#E4E4DC]">
+                <div
+                  className={`h-full rounded-full ${LOAD_BAR[avgLoad >= 90 ? "at-risk" : avgLoad >= 70 ? "watch" : "healthy"]}`}
+                  style={{ width: `${avgLoad}%` }}
+                />
+              </div>
+              <span className="shrink-0 text-xs tabular-nums font-semibold text-[#1A5C5C]">
+                {avgLoad}%
+              </span>
+            </div>
+          ) : (
+            <p className="mt-0.5 text-[10px] text-[#6B6B64]">Assign tasks to see load</p>
+          )}
         </div>
-        <Users size={18} className="shrink-0 text-[#1C4A2E]" />
+        <Users size={18} className="shrink-0 text-[#1A5C5C]" />
       </div>
       {members.length ? (
         <ul className="space-y-3">
@@ -584,13 +590,34 @@ export function PmSteadyStateMilestonesPanel({
   goLiveProbability: number | null;
   usesFallback?: boolean;
 }) {
+  const timelineSegments = buildMilestoneTimelineSegments(milestones);
+  const goLivePct = goLiveProbability != null ? Math.round(goLiveProbability * 100) : null;
+
   return (
-    <div data-panel="pm-steady-state-milestones">
-      <DeliveryMilestonesPanel
-        milestones={milestones}
-        goLiveProbability={goLiveProbability}
-        usesFallback={usesFallback}
-      />
+    <div className={`${dxClass.card} p-6`} data-panel="pm-steady-state-milestones">
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <h3 className={`${dxClass.display} text-lg`}>Milestones & timeline</h3>
+        {goLivePct != null ? (
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[#E4E4DC]">
+              <div
+                className={`h-full rounded-full ${
+                  goLivePct >= 75 ? "bg-[#1A6B3A]" : goLivePct >= 50 ? "bg-[#B7620A]" : "bg-[#C0392B]"
+                }`}
+                style={{ width: `${goLivePct}%` }}
+              />
+            </div>
+            <span className="text-[10px] font-semibold tabular-nums text-[#1A5C5C]">{goLivePct}%</span>
+          </div>
+        ) : null}
+      </div>
+      {usesFallback ? (
+        <p className="mb-2 text-[10px] text-[#B7620A]">Bootstrap phases — connect charter for live dates.</p>
+      ) : null}
+      <PmMilestoneTimelineStrip segments={timelineSegments} compact />
+      {goLivePct != null ? (
+        <p className="mt-2 text-[10px] text-[#6B6B64]">Go-live probability at current velocity</p>
+      ) : null}
     </div>
   );
 }

@@ -118,9 +118,13 @@ export function DeliveryPmMissionOverview({ data }: { data: PmMissionControl }) 
 
 export function DeliveryPmAiSummary({
   summary,
+  compact = false,
 }: {
   summary: string;
   projectId?: string;
+  compact?: boolean;
 }) {
-  return <EditableMissionAiSummary title="AI delivery summary" summary={summary} />;
+  return (
+    <EditableMissionAiSummary title="AI delivery summary" summary={summary} compact={compact} />
+  );
 }
