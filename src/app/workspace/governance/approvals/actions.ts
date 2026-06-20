@@ -8,6 +8,7 @@ export async function resolveApprovalAction(
   status: "approved" | "rejected",
 ) {
   await resolveApproval(id, status);
+  revalidatePath("/workspace/governance");
   revalidatePath("/workspace/governance/approvals");
   revalidatePath("/workspace/alerts");
   revalidatePath("/workspace/dashboard");

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { dxClass } from "@/lib/dx-theme";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
 import {
   buildPmAttentionFeed,
@@ -329,7 +330,7 @@ function GovernanceDecisionsTab({
   decisions: PmMissionControl["decisions"];
   projectId?: string;
 }) {
-  const href = projectId ? `/project/${projectId}/decisions` : "/workspace/decisions";
+  const href = projectId ? `/project/${projectId}/decisions` : governanceTabHref("decisions");
   const proposed = decisions.filter((d) => d.status === "proposed");
 
   return (
@@ -368,7 +369,7 @@ function GovernanceChangesTab({
   changes: Array<{ id: string; title: string; status: string; impact: string | null }>;
   projectId?: string;
 }) {
-  const href = projectId ? `/project/${projectId}/changes` : "/workspace/changes";
+  const href = projectId ? `/project/${projectId}/changes` : governanceTabHref("changes");
 
   return (
     <div className="space-y-3 text-sm">

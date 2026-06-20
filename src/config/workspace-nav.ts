@@ -83,10 +83,7 @@ export const workspaceEcosystemNav: WorkspaceNavItem[] = [
 ];
 
 export const workspaceGovernanceNav: WorkspaceNavItem[] = [
-  { href: "/workspace/raid", label: "RAID Log", icon: Shield, id: "raid" },
-  { href: "/workspace/decisions", label: "Decisions", icon: GitBranch, id: "dec" },
-  { href: "/workspace/changes", label: "Changes", icon: RefreshCw, id: "cr" },
-  { href: "/workspace/governance/approvals", label: "Approvals", icon: Shield, id: "appr" },
+  { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, id: "gov" },
 ];
 
 export const workspaceNavSections = [

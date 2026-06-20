@@ -3,6 +3,7 @@
  */
 
 import { dueLabelToWaitDays } from "@/lib/pm-steady-state-panels";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
 import type { TeamNeedRow } from "@/services/collaborativeLoopEngine";
@@ -132,7 +133,7 @@ export function buildPmTeamNeedsFeed(input: BuildPmTeamNeedsFeedInput): PmTeamNe
       waitLabel: waitLabelFromDays(waitDays),
       waitSortDays: waitDays,
       status: "Review",
-      href: input.projectId ? `/project/${input.projectId}/decisions` : "/workspace/decisions",
+      href: input.projectId ? `/project/${input.projectId}/decisions` : governanceTabHref("decisions"),
       escalateHref: input.projectId
         ? `/project/${input.projectId}/governance`
         : "/workspace/governance",

@@ -10,6 +10,7 @@ export async function founderResolveDecisionAction(
 ) {
   await resolveOrgDecision(id, status);
   revalidatePath("/workspace/founder");
+  revalidatePath("/workspace/governance");
   revalidatePath("/workspace/governance/approvals");
   revalidatePath("/workspace/alerts");
 }
@@ -20,6 +21,7 @@ export async function founderResolveApprovalAction(
 ) {
   await resolveApproval(id, status);
   revalidatePath("/workspace/founder");
+  revalidatePath("/workspace/governance");
   revalidatePath("/workspace/governance/approvals");
   revalidatePath("/workspace/alerts");
 }
@@ -27,6 +29,7 @@ export async function founderResolveApprovalAction(
 export async function founderEscalateDecisionAction(id: string) {
   await escalateOrgDecision(id);
   revalidatePath("/workspace/founder");
+  revalidatePath("/workspace/governance");
   revalidatePath("/workspace/governance/approvals");
   revalidatePath("/workspace/alerts");
 }

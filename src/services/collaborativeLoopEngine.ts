@@ -10,6 +10,7 @@ import { buildScrumStakeholders } from "./scrumEngine";
 import { buildStakeholderProductConnections } from "./pmProductEngine";
 import type { DeliveryImpactRole } from "./deliveryImpactEngine";
 import type { OrgGovernanceStats } from "./governance";
+import { governanceTabHref } from "@/lib/governance-tabs";
 
 export type CollaborativePersona = DeliveryImpactRole;
 
@@ -332,25 +333,25 @@ export function buildStakeholderPulse(input: CollaborativeLoopInput): Stakeholde
     {
       label: "Open risks",
       value: governance.openRisks,
-      href: "/workspace/governance",
+      href: governanceTabHref("risks"),
       tone: governance.openRisks > 0 ? "critical" : "neutral",
     },
     {
       label: "Open issues",
       value: governance.openIssues,
-      href: "/workspace/governance",
+      href: governanceTabHref("risks"),
       tone: governance.openIssues > 0 ? "warning" : "neutral",
     },
     {
       label: "Pending decisions",
       value: governance.pendingDecisions,
-      href: "/workspace/decisions",
+      href: governanceTabHref("decisions"),
       tone: governance.pendingDecisions > 0 ? "info" : "neutral",
     },
     {
       label: "Open changes",
       value: governance.openChanges,
-      href: "/workspace/changes",
+      href: governanceTabHref("changes"),
       tone: governance.openChanges > 0 ? "warning" : "neutral",
     },
     {

@@ -6,6 +6,7 @@ import {
 import type { FounderIntelligenceFeedItem } from "@/lib/founder-intelligence-feed";
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import type { FounderDecisionRow, FounderPortfolioRow } from "@/services/founderEngine";
+import { governanceTabHref } from "@/lib/governance-tabs";
 
 /** Panel ids prioritized in founder steady-state layout (P-Founder-3). */
 export const FOUNDER_STEADY_STATE_PANEL_IDS = [
@@ -138,7 +139,7 @@ export function buildFounderAttentionFeed(input: BuildFounderAttentionFeedInput)
       pills: [{ label: "Urgent", tone: "urgent" }, { label: "Clear", tone: "clear" }],
       waitLabel: "Waiting today",
       waitSortDays: 0,
-      href: input.projectId ? `/project/${input.projectId}/delivery#raid` : "/workspace/raid",
+      href: input.projectId ? `/project/${input.projectId}/delivery#raid` : governanceTabHref("risks"),
     });
   }
 

@@ -11,6 +11,7 @@ import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { dxClass } from "@/lib/dx-theme";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import {
   countPendingReviewsByPersona,
   filterPendingReviewsForPersona,
@@ -80,7 +81,7 @@ export default async function ProposalsPage({
             <Link href="/workspace/audit" className={`${dxClass.btnGhost} text-[10px]`}>
               Responses audit →
             </Link>
-            <Link href="/workspace/governance/approvals" className={`${dxClass.btnGhost} text-[10px]`}>
+            <Link href={governanceTabHref("approvals")} className={`${dxClass.btnGhost} text-[10px]`}>
               Steering approvals →
             </Link>
           </div>

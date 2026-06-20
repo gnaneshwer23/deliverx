@@ -2,6 +2,7 @@ import type { PmDayOneKpi } from "@/lib/pm-day-one-panels";
 import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
 import type { TaskWithMeta } from "@/services/delivery";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import { governanceTabHref } from "@/lib/governance-tabs";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
 
@@ -125,7 +126,7 @@ export function buildPmAttentionFeed(input: BuildPmAttentionFeedInput): PmAttent
       pills: [{ label: "Decide", tone: "decide" }],
       waitLabel: waitLabelFromDays(waitDays),
       waitSortDays: waitDays,
-      href: input.projectId ? `/project/${input.projectId}/decisions` : "/workspace/decisions",
+      href: input.projectId ? `/project/${input.projectId}/decisions` : governanceTabHref("decisions"),
       escalateHref: input.projectId
         ? `/project/${input.projectId}/governance`
         : "/workspace/governance",
