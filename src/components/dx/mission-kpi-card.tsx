@@ -111,7 +111,7 @@ export function MissionKpiCard({
 
   return (
     <div
-      className={`${dxClass.card} border-t-2 ${BORDER_TOP[tone]} px-3.5 py-3 transition hover:shadow-[0_4px_20px_rgba(13,13,11,0.09)] ${className}`}
+      className={`${dxClass.card} border-t-2 ${BORDER_TOP[tone]} rounded-xl px-4 py-3.5 transition hover:shadow-[0_4px_20px_rgba(13,13,11,0.09)] ${className}`}
     >
       <p className="mb-1 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.16em] text-[#A8A89E]">
         {label}
@@ -133,8 +133,14 @@ export function MissionKpiCard({
         <p className="mt-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] leading-snug text-[#6B6B64]">{hint}</p>
       ) : null}
       {barWidth ? (
-        <div className="mt-1.5 h-[2px] overflow-hidden bg-[#F0F0E8]" role="progressbar" aria-valuenow={clampPct(progressPct!)} aria-valuemin={0} aria-valuemax={100}>
-          <div className={`h-full ${BAR_COLOR[tone]}`} style={{ width: barWidth }} />
+        <div
+          className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#E4E4DC]/70 shadow-inner"
+          role="progressbar"
+          aria-valuenow={clampPct(progressPct!)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <div className={`h-full rounded-full ${BAR_COLOR[tone]}`} style={{ width: barWidth }} />
         </div>
       ) : null}
     </div>
@@ -154,8 +160,8 @@ export function MissionKpiGrid({
     layout === "wide"
       ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-5"
       : layout === "mission"
-        ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-7"
-        : "grid grid-cols-2 gap-2 lg:grid-cols-4 xl:grid-cols-4";
+        ? "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7"
+        : "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-4";
 
   return <div className={`${gridClass} ${className}`}>{children}</div>;
 }

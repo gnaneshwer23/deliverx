@@ -2,15 +2,10 @@
 
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
+import { DxStatusPill, teamNeedStatusToPillTone } from "@/components/dx/dx-status-pill";
+import { DxWidgetHeader } from "@/components/dx/dx-widget-header";
 import { dxClass } from "@/lib/dx-theme";
-import type { PmTeamNeedFeedItem, PmTeamNeedStatus } from "@/lib/pm-team-needs-feed";
-
-const STATUS_STYLE: Record<PmTeamNeedStatus, string> = {
-  Urgent: "border-rose-200 bg-rose-50 text-rose-700",
-  Waiting: "border-[#E4E4DC] bg-[#FAFAF7] text-[#6B6B64]",
-  Review: "border-amber-200 bg-amber-50 text-amber-800",
-  Clear: "border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]",
-};
+import type { PmTeamNeedFeedItem } from "@/lib/pm-team-needs-feed";
 
 function TeamNeedFeedRow({ item }: { item: PmTeamNeedFeedItem }) {
   return (
@@ -23,11 +18,9 @@ function TeamNeedFeedRow({ item }: { item: PmTeamNeedFeedItem }) {
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-medium text-[#2C2C28]">{item.name}</p>
             <span className="text-[10px] text-[#A8A89E]">{item.role}</span>
-            <span
-              className={`rounded-full border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${STATUS_STYLE[item.status]}`}
-            >
+            <DxStatusPill tone={teamNeedStatusToPillTone(item.status)} size="xs">
               {item.status}
-            </span>
+            </DxStatusPill>
           </div>
           <p className="mt-1 text-sm text-[#2C2C28]">{item.need}</p>
           <p className="mt-1 text-[10px] text-[#A8A89E]">{item.waitLabel}</p>
@@ -60,15 +53,12 @@ function TeamNeedFeedRow({ item }: { item: PmTeamNeedFeedItem }) {
 export function PmTeamNeedsFeed({ items }: { items: PmTeamNeedFeedItem[] }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`} data-panel="pm-team-needs-feed">
-      <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-3">
-        <div>
-          <h3 className={`${dxClass.display} text-lg`}>Team needs</h3>
-          <p className="mt-0.5 text-xs text-[#6B6B64]">Who is waiting on what from you</p>
-        </div>
-        <span className="rounded-full bg-[#EDF7F7] px-2 py-0.5 text-[10px] font-semibold tabular-nums text-[#1A5C5C]">
-          {items.length}
-        </span>
-      </div>
+      <DxWidgetHeader
+        title="Team needs"
+        subtitle="Who is waiting on what from you"
+        count={items.length}
+        countTone={items.some((i) => i.status === "Urgent") ? "urgent" : "accent"}
+      />
       <ul className="divide-y divide-[#F0F0E8]">
         {items.length ? (
           items.map((item) => <TeamNeedFeedRow key={item.id} item={item} />)

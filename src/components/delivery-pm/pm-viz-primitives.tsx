@@ -14,7 +14,7 @@ const MILESTONE_STATUS_BORDER = {
 
 export function PmHorizontalStackedBar({
   segments,
-  heightClass = "h-2.5",
+  heightClass = "h-3",
   emptyLabel = "No items",
 }: {
   segments: PmBarSegment[];
@@ -26,7 +26,7 @@ export function PmHorizontalStackedBar({
   if (total === 0) {
     return (
       <div
-        className={`${heightClass} overflow-hidden rounded-full bg-[#E4E4DC]`}
+        className={`${heightClass} overflow-hidden rounded-full bg-[#E4E4DC]/80`}
         role="img"
         aria-label={emptyLabel}
       />
@@ -35,17 +35,18 @@ export function PmHorizontalStackedBar({
 
   return (
     <div
-      className={`flex ${heightClass} overflow-hidden rounded-full bg-[#E4E4DC]`}
+      className={`flex ${heightClass} overflow-hidden rounded-full bg-[#E4E4DC]/60 shadow-inner`}
       role="img"
       aria-label={segments.map((s) => `${s.label}: ${s.value}`).join(", ")}
     >
-      {segments.map((segment) => (
+      {segments.map((segment, index) => (
         <div
           key={segment.id}
-          className="h-full transition-all"
+          className="h-full transition-all first:rounded-l-full last:rounded-r-full"
           style={{
             width: `${(segment.value / total) * 100}%`,
             backgroundColor: segment.color,
+            boxShadow: index > 0 ? "inset 2px 0 0 rgba(255,255,255,0.25)" : undefined,
           }}
           title={`${segment.label}: ${segment.value}`}
         />
@@ -58,15 +59,15 @@ export function PmBarLegend({ segments }: { segments: PmBarSegment[] }) {
   if (segments.length === 0) return null;
 
   return (
-    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+    <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
       {segments.map((segment) => (
         <span key={segment.id} className="inline-flex items-center gap-1.5 text-[10px] text-[#6B6B64]">
           <span
-            className="size-2 shrink-0 rounded-sm"
+            className="size-2.5 shrink-0 rounded-full"
             style={{ backgroundColor: segment.color }}
             aria-hidden
           />
-          <span className="tabular-nums font-medium text-[#2C2C28]">{segment.value}</span>
+          <span className="tabular-nums font-semibold text-[#2C2C28]">{segment.value}</span>
           <span>{segment.label}</span>
         </span>
       ))}
@@ -134,7 +135,7 @@ export function PmSeverityBar({
 
   return (
     <div
-      className="h-1 w-12 shrink-0 overflow-hidden rounded-full bg-[#E4E4DC]"
+      className="h-1.5 w-14 shrink-0 overflow-hidden rounded-full bg-[#E4E4DC]/80 shadow-inner"
       role="progressbar"
       aria-valuenow={pct}
       aria-valuemin={0}

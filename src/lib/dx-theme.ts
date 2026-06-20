@@ -52,6 +52,10 @@ export const dxClass = {
     "sticky top-0 z-20 border-b border-[#E4E4DC] bg-white/85 px-6 py-5 shadow-[0_1px_0_rgba(28,74,46,0.06)] backdrop-blur-md md:px-8",
   panelShellBody:
     "[&>div>h3.text-lg:first-child]:hidden [&>div>section>h3:first-child]:hidden",
-  card: "border border-[#E4E4DC] bg-white",
-  cardPad: "border border-[#E4E4DC] bg-white p-5 md:p-6",
+  card: "rounded-xl border border-[#E4E4DC] bg-white shadow-[0_1px_3px_rgba(13,13,11,0.04),0_4px_16px_rgba(13,13,11,0.03)]",
+  cardPad:
+    "rounded-xl border border-[#E4E4DC] bg-white p-5 shadow-[0_1px_3px_rgba(13,13,11,0.04),0_4px_16px_rgba(13,13,11,0.03)] md:p-6",
+  cardElevated:
+    "rounded-xl border border-[#E4E4DC] bg-white shadow-[0_2px_8px_rgba(13,13,11,0.05),0_8px_24px_rgba(13,13,11,0.04)] transition hover:shadow-[0_4px_12px_rgba(13,13,11,0.07),0_12px_32px_rgba(13,13,11,0.05)]",
+  widgetGrid: "grid gap-5 md:gap-6",
 } as const;

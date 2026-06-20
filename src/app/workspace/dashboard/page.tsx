@@ -281,7 +281,7 @@ export default async function DashboardPage({
       </DashboardPanelShell>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <DashboardPanelShell panelId="active-tasks" title="Active tasks" href="/workspace/tasks" className="xl:col-span-2" card>
+        <DashboardPanelShell panelId="active-tasks" title="Active tasks" subtitle="Open work across projects" count={activeTaskRows.length} href="/workspace/tasks" className="xl:col-span-2" card>
           {activeTaskRows.length === 0 ? (
             <p className="text-sm text-[#6b7280]">
               No open tasks.{" "}
@@ -326,7 +326,7 @@ export default async function DashboardPage({
           )}
         </DashboardPanelShell>
 
-        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" href={governanceTabHref("decisions")} card>
+        <DashboardPanelShell panelId="pending-decisions" title="Pending decisions" count={data.pendingDecisions.length} countTone={data.pendingDecisions.length > 0 ? "urgent" : "neutral"} href={governanceTabHref("decisions")} card>
           {data.pendingDecisions.length === 0 ? (
             <p className="text-sm text-slate-500">No decisions awaiting approval.</p>
           ) : (
@@ -348,7 +348,7 @@ export default async function DashboardPage({
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <DashboardPanelShell panelId="alert-queue" title="AI alert queue" href="/workspace/alerts" card>
+        <DashboardPanelShell panelId="alert-queue" title="AI alert queue" count={alerts.length} countTone={alerts.length > 0 ? "urgent" : "neutral"} href="/workspace/alerts" card>
           <AlertQueuePanel alerts={alerts} />
         </DashboardPanelShell>
         <DashboardPanelShell panelId="delivery-coach" title="Delivery coach" href="/workspace/alerts" card>
@@ -498,7 +498,7 @@ export default async function DashboardPage({
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <DashboardPanelShell panelId="risk-register" title="Risk register" href={governanceTabHref("risks")} card>
+        <DashboardPanelShell panelId="risk-register" title="Risk register" count={data.openRisks.length} countTone={data.openRisks.length > 0 ? "urgent" : "neutral"} href={governanceTabHref("risks")} card>
           {data.openRisks.length === 0 ? (
             <p className="text-sm text-slate-500">No open risks logged.</p>
           ) : (
