@@ -8,20 +8,18 @@ import {
   PmCompactRaidCard,
   PmDayOneKpiStrip,
   PmDayOneMilestonesPanel,
-  PmGetOrientedCard,
   PmReviewAiBuiltPanel,
   PmTeamRosterPanel,
 } from "@/components/delivery-pm/pm-day-one-panels";
 import { PmMissionPanelSwitch } from "@/components/delivery-pm/pm-mission-panel-switch";
 import {
-  DeliveryPmAiSummary as SteadyStateAiSummary,
+  PmControlRoomKpiStrip,
+  PmControlRoomLayout,
   PmGovernanceTabsPanel,
-  PmNeedsAttentionPanel,
-  PmSteadyStateKpiStrip,
-  PmSteadyStateLayout,
   PmSteadyStateMilestonesPanel,
   PmTeamCapacityPanel,
 } from "@/components/delivery-pm/pm-steady-state-panels";
+import { PmTeamNeedsFeed } from "@/components/delivery-pm/pm-team-needs-feed";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import {
@@ -37,12 +35,16 @@ import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
 import { groupPendingReviewsByCategory } from "@/lib/pm-day-one-panels";
 import { PM_DAY_ONE_SUBTITLE, resolvePmDashboardMode } from "@/lib/pm-dashboard-mode";
 import {
-  buildPmAttentionFeed,
+  buildPmBlockingYouSynthesis,
+  countCriticalRaidItems,
+  countOverdueTasks,
+} from "@/lib/pm-control-room-kpis";
+import {
   buildPmGovernanceTabCounts,
   buildPmSteadyStateSubtitle,
   buildPmTeamCapacityRows,
-  countWaitingOnPm,
 } from "@/lib/pm-steady-state-panels";
+import { buildPmTeamNeedsFeed } from "@/lib/pm-team-needs-feed";
 import { PmMissionHeaderActions } from "@/components/delivery-pm/pm-mission-header-actions";
 import { PmMissionShell } from "@/components/delivery-pm/pm-mission-shell";
 import { PmProjectChip } from "@/components/delivery-pm/pm-project-chip";
@@ -53,6 +55,7 @@ import {
 } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
+import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +75,7 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges] =
+  const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop] =
     await Promise.all([
       getPmMissionControl(params.project),
       listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
@@ -80,6 +83,7 @@ export default async function PmMissionControlPage({
       listOrgMembers().catch(() => []),
       getOrgGovernanceStats().catch(() => ({ openChanges: 0, pendingDecisions: 0, openRisks: 0, openIssues: 0 })),
       listOrgChangeRequests({ status: ["draft", "submitted"], limit: 20 }).catch(() => []),
+      getCollaborativeLoopSnapshot("pm", params.project).catch(() => null),
     ]);
 
   const projectId = data.primaryProject?.id;
@@ -120,13 +124,13 @@ export default async function PmMissionControlPage({
   const projectChanges = projectId
     ? orgChanges.filter((change) => change.project_id === projectId)
     : orgChanges;
-  const attentionFeed = buildPmAttentionFeed({
+  const teamNeedsFeed = buildPmTeamNeedsFeed({
     stakeholderActionQueue: data.stakeholderActionQueue,
+    teamNeeds: collaborativeLoop?.teamNeeds ?? [],
     decisions: data.decisions,
     blockedDependencies: data.overview.blockedDependencies,
     projectId,
   });
-  const waitingOnYouCount = countWaitingOnPm(attentionFeed);
   const { members: capacityMembers, avgLoadPct } = buildPmTeamCapacityRows({
     tasks: projectTasks,
     members: orgMembers,
@@ -139,9 +143,18 @@ export default async function PmMissionControlPage({
   });
   const steadyStateSubtitle = buildPmSteadyStateSubtitle({
     projectName: data.primaryProject?.name,
-    waitingOnYouCount,
+    waitingOnYouCount: teamNeedsFeed.length,
     blockerCount: data.overview.blockedDependencies,
     openDecisions: data.overview.openDecisions,
+  });
+  const blockingYouSummary = buildPmBlockingYouSynthesis({
+    projectName: data.primaryProject?.name,
+    blockedCount: data.overview.blockedDependencies,
+    overdueCount: countOverdueTasks(projectTasks),
+    pendingApprovals: projectPendingReviews.length,
+    criticalRaidCount: countCriticalRaidItems(data.raid),
+    teamNeedsCount: teamNeedsFeed.length,
+    fallbackSummary: data.aiSummary,
   });
 
   const nextUpItems = buildMissionNextUpItems({
@@ -158,60 +171,82 @@ export default async function PmMissionControlPage({
       : undefined,
   });
 
+  const aiSummaryLine = (
+    <DeliveryPmAiSummary
+      summary={blockingYouSummary}
+      projectId={projectId}
+      compact
+      title="What's blocking you today"
+    />
+  );
+
+  const milestoneRaidRow = (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      {serverPmMode === "day-one" ? (
+        <PmDayOneMilestonesPanel
+          milestones={data.milestones}
+          usesFallback={data.dataSources.deliveryPlan === "fallback"}
+        />
+      ) : (
+        <PmSteadyStateMilestonesPanel
+          milestones={data.milestones}
+          goLiveProbability={data.overview.goLiveProbability}
+          usesFallback={data.dataSources.deliveryPlan === "fallback"}
+        />
+      )}
+      <PmCompactRaidCard raid={data.raid} projectId={projectId} />
+    </div>
+  );
+
+  const teamNeedsRow = <PmTeamNeedsFeed items={teamNeedsFeed} />;
+
   const dayOnePanels = (
-    <>
-      <PmDayOneKpiStrip
-        pendingReviewCount={projectPendingReviews.length}
-        bootstrapSummary={bootstrapSummary}
-        data={data}
-        teamJoinedCount={teamJoinedCount}
-        teamTotalCount={teamTotalCount}
-      />
-      <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} compact={projectPendingReviews.length > 0} />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
-        <div className="space-y-4">
+    <PmControlRoomLayout
+      aiSummary={aiSummaryLine}
+      kpiStrip={
+        <PmDayOneKpiStrip
+          pendingReviewCount={projectPendingReviews.length}
+          bootstrapSummary={bootstrapSummary}
+          data={data}
+          teamJoinedCount={teamJoinedCount}
+          teamTotalCount={teamTotalCount}
+          teamCapacityPct={avgLoadPct}
+          tasks={projectTasks}
+          projectId={projectId}
+        />
+      }
+      milestoneRaidRow={milestoneRaidRow}
+      teamNeedsFeed={teamNeedsRow}
+      capacityGovernanceRow={
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <PmTeamCapacityPanel members={capacityMembers} usesPlaceholder={avgLoadPct == null} />
           <PmReviewAiBuiltPanel
             groups={reviewGroups}
             projectId={projectId}
             pendingReviews={projectPendingReviews}
           />
-          <PmDayOneMilestonesPanel
-            milestones={data.milestones}
-            usesFallback={data.dataSources.deliveryPlan === "fallback"}
-          />
-          <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
         </div>
-        <div className="space-y-4">
-          <PmCompactRaidCard raid={data.raid} projectId={projectId} />
-          <PmTeamRosterPanel
-            members={orgMembers}
-            pendingInvites={pendingInvites}
-            bootstrapSummary={bootstrapSummary}
-          />
-          <PmGetOrientedCard projectId={projectId} />
-        </div>
-      </div>
-    </>
+      }
+    />
   );
 
   const steadyStatePanels = (
-    <PmSteadyStateLayout
+    <PmControlRoomLayout
+      aiSummary={aiSummaryLine}
       kpiStrip={
-        <PmSteadyStateKpiStrip
+        <PmControlRoomKpiStrip
           data={data}
-          waitingOnYouCount={waitingOnYouCount}
+          pendingApprovalCount={projectPendingReviews.length}
           teamCapacityPct={avgLoadPct}
+          tasks={projectTasks}
+          projectId={projectId}
         />
       }
-      aiSummary={
-        <SteadyStateAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} compact />
-      }
-      leftColumn={
-        <>
-          <PmNeedsAttentionPanel
-            stakeholderActionQueue={data.stakeholderActionQueue}
-            data={data}
-          />
+      milestoneRaidRow={milestoneRaidRow}
+      teamNeedsFeed={teamNeedsRow}
+      capacityGovernanceRow={
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <PmTeamCapacityPanel members={capacityMembers} usesPlaceholder={avgLoadPct == null} />
           <PmGovernanceTabsPanel
             raid={data.raid}
             decisions={data.decisions}
@@ -225,21 +260,7 @@ export default async function PmMissionControlPage({
             tabCounts={governanceTabCounts}
             projectId={projectId}
           />
-        </>
-      }
-      rightColumn={
-        <>
-          <PmSteadyStateMilestonesPanel
-            milestones={data.milestones}
-            goLiveProbability={data.overview.goLiveProbability}
-            usesFallback={data.dataSources.deliveryPlan === "fallback"}
-          />
-          <PmTeamCapacityPanel
-            members={capacityMembers}
-            usesPlaceholder={avgLoadPct == null}
-          />
-          <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
-        </>
+        </div>
       }
     />
   );
@@ -284,6 +305,16 @@ export default async function PmMissionControlPage({
             />
           ) : null}
           <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />
+          {data.guidedTasks.length > 0 ? (
+            <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
+          ) : null}
+          {serverPmMode === "day-one" ? (
+            <PmTeamRosterPanel
+              members={orgMembers}
+              pendingInvites={pendingInvites}
+              bootstrapSummary={bootstrapSummary}
+            />
+          ) : null}
         </div>
       </PmMissionShell>
     </MissionDashboardChrome>

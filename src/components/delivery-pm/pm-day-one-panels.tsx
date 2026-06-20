@@ -6,8 +6,8 @@ import { useState, useTransition } from "react";
 import { Check, ExternalLink, Loader2, UserPlus, Users } from "lucide-react";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
 import { dxClass } from "@/lib/dx-theme";
+import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
 import {
-  buildPmDayOneKpis,
   buildPmRaidSummaryCounts,
   buildPmRaidTopItems,
   milestoneDayOneLabel,
@@ -28,6 +28,7 @@ import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import type { InvitationRow } from "@/services/invitations";
+import type { TaskWithMeta } from "@/services/delivery";
 
 type OrgMember = {
   id: string;
@@ -38,40 +39,53 @@ type OrgMember = {
 
 export function PmDayOneKpiStrip({
   pendingReviewCount,
-  bootstrapSummary,
   data,
-  teamJoinedCount,
-  teamTotalCount,
+  teamCapacityPct,
+  tasks,
+  projectId,
 }: {
   pendingReviewCount: number;
   bootstrapSummary: ProjectBootstrapSummary | null;
   data: PmMissionControl;
   teamJoinedCount: number;
   teamTotalCount: number;
+  teamCapacityPct?: number | null;
+  tasks?: TaskWithMeta[];
+  projectId?: string;
 }) {
-  const kpis = buildPmDayOneKpis({
-    pendingReviewCount,
-    bootstrapSummary,
+  void pendingReviewCount;
+  const kpis = buildPmControlRoomKpis({
     overview: data.overview,
-    milestones: data.milestones,
-    dataSources: data.dataSources,
-    teamJoinedCount,
-    teamTotalCount,
+    raid: data.raid,
+    pendingApprovalCount: pendingReviewCount,
+    teamCapacityPct: teamCapacityPct ?? null,
+    tasks: tasks ?? [],
+    projectId: projectId ?? data.primaryProject?.id,
   });
 
   return (
-    <MissionKpiGrid layout="wide">
-      {kpis.map((kpi) => (
-        <MissionKpiCard
-          key={kpi.label}
-          label={kpi.label}
-          value={kpi.value}
-          hint={kpi.hint}
-          tone={kpi.tone}
-          progressPct={kpi.progressPct}
-          valueSize="xl"
-        />
-      ))}
+    <MissionKpiGrid layout="wide" className="pm-control-room-kpis">
+      {kpis.map((kpi) => {
+        const card = (
+          <MissionKpiCard
+            label={kpi.label}
+            value={kpi.value}
+            hint={kpi.hint}
+            tone={kpi.tone}
+            progressPct={kpi.progressPct}
+            valueSize="xl"
+            className={kpi.href ? "transition hover:border-[#B8D8D8]" : undefined}
+          />
+        );
+
+        return kpi.href ? (
+          <Link key={kpi.label} href={kpi.href} className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A5C5C]">
+            {card}
+          </Link>
+        ) : (
+          <div key={kpi.label}>{card}</div>
+        );
+      })}
     </MissionKpiGrid>
   );
 }
