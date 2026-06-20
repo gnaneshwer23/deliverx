@@ -15,7 +15,6 @@ import {
 import { PmMissionPanelSwitch } from "@/components/delivery-pm/pm-mission-panel-switch";
 import {
   DeliveryPmAiSummary as SteadyStateAiSummary,
-  PmAiReviewInboxPanel,
   PmGovernanceTabsPanel,
   PmNeedsAttentionPanel,
   PmSteadyStateKpiStrip,
@@ -126,7 +125,6 @@ export default async function PmMissionControlPage({
     decisions: data.decisions,
     blockedDependencies: data.overview.blockedDependencies,
     projectId,
-    pendingReviewCount: projectPendingReviews.length,
   });
   const waitingOnYouCount = countWaitingOnPm(attentionFeed);
   const { members: capacityMembers, avgLoadPct } = buildPmTeamCapacityRows({
@@ -169,7 +167,7 @@ export default async function PmMissionControlPage({
         teamJoinedCount={teamJoinedCount}
         teamTotalCount={teamTotalCount}
       />
-      <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
+      <DeliveryPmAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} compact={projectPendingReviews.length > 0} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
         <div className="space-y-4">
           <PmReviewAiBuiltPanel
@@ -206,14 +204,13 @@ export default async function PmMissionControlPage({
         />
       }
       aiSummary={
-        <SteadyStateAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
+        <SteadyStateAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} compact />
       }
       leftColumn={
         <>
           <PmNeedsAttentionPanel
             stakeholderActionQueue={data.stakeholderActionQueue}
             data={data}
-            pendingReviewCount={projectPendingReviews.length}
           />
           <PmGovernanceTabsPanel
             raid={data.raid}
@@ -226,10 +223,6 @@ export default async function PmMissionControlPage({
             }))}
             pendingReviews={projectPendingReviews}
             tabCounts={governanceTabCounts}
-            projectId={projectId}
-          />
-          <PmAiReviewInboxPanel
-            pendingReviews={projectPendingReviews}
             projectId={projectId}
           />
         </>

@@ -106,8 +106,10 @@ describe("pm-day-one-panels", () => {
       hint: "Updates after first standup",
     });
     expect(kpis.find((kpi) => kpi.label === "Milestones")?.value).toBe("1/4");
+    expect(kpis.find((kpi) => kpi.label === "Milestones")?.progressPct).toBe(25);
     expect(kpis.find((kpi) => kpi.label === "Awaiting review")?.value).toBe("3");
     expect(kpis.find((kpi) => kpi.label === "Team joined")?.value).toBe("2/4");
+    expect(kpis.find((kpi) => kpi.label === "Team joined")?.progressPct).toBe(50);
     expect(kpis.find((kpi) => kpi.label === "Budget")?.value).toBe("—");
   });
 

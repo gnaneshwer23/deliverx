@@ -13,6 +13,17 @@ import {
   milestoneDayOneLabel,
   type PmReviewCategoryGroup,
 } from "@/lib/pm-day-one-panels";
+import {
+  buildMilestoneTimelineSegments,
+  buildRaidBarSegments,
+  pmRaidHref,
+  teamJoinPct,
+} from "@/lib/pm-viz-helpers";
+import {
+  PmBarLegend,
+  PmHorizontalStackedBar,
+  PmMilestoneTimelineStrip,
+} from "@/components/delivery-pm/pm-viz-primitives";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
@@ -57,6 +68,7 @@ export function PmDayOneKpiStrip({
           value={kpi.value}
           hint={kpi.hint}
           tone={kpi.tone}
+          progressPct={kpi.progressPct}
           valueSize="xl"
         />
       ))}
@@ -106,15 +118,27 @@ function PmReviewCategoryRow({
   }
 
   return (
-    <div className="rounded-lg border border-[#C6DDD0] bg-[#FAFAF7] p-4">
+    <div className="rounded-lg border border-[#B8D8D8] bg-[#EDF7F7] p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-medium text-[#2C2C28]">{group.label}</p>
-          <p className="mt-0.5 text-xs text-[#6B6B64]">{group.meta}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-medium text-[#2C2C28]">{group.label}</p>
+            <span className="rounded-full bg-white px-2 py-0.5 text-[10px] tabular-nums text-[#6B6B64]">
+              {group.meta}
+            </span>
+          </div>
           {group.confidencePct != null ? (
-            <p className="mt-1 text-xs font-medium text-[#1C4A2E]">
-              {group.confidencePct}% confidence
-            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <div className="h-1.5 flex-1 max-w-[120px] overflow-hidden rounded-full bg-[#D4EBEB]">
+                <div
+                  className="h-full rounded-full bg-[#1A5C5C]"
+                  style={{ width: `${group.confidencePct}%` }}
+                />
+              </div>
+              <span className="text-[10px] font-medium tabular-nums text-[#1A5C5C]">
+                {group.confidencePct}%
+              </span>
+            </div>
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
@@ -157,13 +181,11 @@ export function PmReviewAiBuiltPanel({
 }) {
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-review-ai-built">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className={`${dxClass.display} text-lg`}>Review what AI built</h3>
-          <p className="mt-1 text-sm text-[#6B6B64]">
-            Your GO bootstrap queued {pendingReviews.length} output
-            {pendingReviews.length === 1 ? "" : "s"} for sign-off. Accept, edit, or review each
-            bundle below.
+          <p className="mt-0.5 text-xs text-[#6B6B64]">
+            {pendingReviews.length} output{pendingReviews.length === 1 ? "" : "s"} queued for sign-off
           </p>
         </div>
         <Link
@@ -198,47 +220,37 @@ export function PmCompactRaidCard({
 }) {
   const counts = buildPmRaidSummaryCounts(raid);
   const topItems = buildPmRaidTopItems(raid);
-  const raidHref = projectId ? `/project/${projectId}/delivery#raid` : "#raid";
+  const barSegments = buildRaidBarSegments(counts);
+  const raidHref = pmRaidHref(projectId);
 
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-day-one-raid">
-      <div className="mb-4 flex items-start justify-between gap-2">
+      <div className="mb-3 flex items-start justify-between gap-2">
         <h3 className={`${dxClass.display} text-lg`}>RAID snapshot</h3>
-        <Link href={raidHref} className="text-xs font-medium text-[#1C4A2E] hover:underline">
+        <Link href={raidHref} className="text-xs font-medium text-[#1A5C5C] hover:underline">
           Open RAID log
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {[
-          { label: "High risk", count: counts.highRisk },
-          { label: "Assumptions", count: counts.assumptions },
-          { label: "Issues", count: counts.issues },
-          { label: "Dependencies", count: counts.dependencies },
-        ].map((cell) => (
-          <div
-            key={cell.label}
-            className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2 text-center"
-          >
-            <p className="text-lg font-semibold tabular-nums text-[#1C4A2E]">{cell.count}</p>
-            <p className="text-[10px] uppercase tracking-wide text-[#6B6B64]">{cell.label}</p>
-          </div>
-        ))}
-      </div>
-      <ul className="mt-4 space-y-2 text-sm">
+      <PmHorizontalStackedBar segments={barSegments} />
+      <PmBarLegend segments={barSegments} />
+      <ul className="mt-3 space-y-1.5 text-sm">
         {topItems.length ? (
           topItems.map((item) => (
-            <li key={`${item.kind}-${item.title}`} className="flex items-start gap-2 text-[#2C2C28]">
-              <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-[#B7620A]" />
-              <span>
-                {item.title}
-                {item.severity ? (
-                  <span className="ml-1 text-xs text-[#6B6B64]">· {item.severity}</span>
-                ) : null}
-              </span>
+            <li key={`${item.kind}-${item.title}`} className="flex items-center gap-2 text-[#2C2C28]">
+              <span
+                className={`size-1.5 shrink-0 rounded-full ${
+                  item.severity?.toLowerCase() === "high" || item.severity?.toLowerCase() === "critical"
+                    ? "bg-[#C0392B]"
+                    : item.kind === "issue"
+                      ? "bg-[#B7620A]"
+                      : "bg-[#1A5C5C]"
+                }`}
+              />
+              <span className="min-w-0 truncate">{item.title}</span>
             </li>
           ))
         ) : (
-          <li className="text-[#6B6B64]">No RAID items logged yet.</li>
+          <li className="text-xs text-[#6B6B64]">No RAID items logged yet.</li>
         )}
       </ul>
     </div>
@@ -268,15 +280,22 @@ export function PmTeamRosterPanel({
   const bootstrapStakeholders = bootstrapSummary?.structure?.stakeholders ?? 0;
   const joinedCount = members.length || bootstrapStakeholders;
   const pendingCount = pendingInvites.length;
+  const totalCount = Math.max(joinedCount + pendingCount, joinedCount);
+  const joinPct = teamJoinPct(joinedCount, totalCount);
 
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-team-roster">
-      <div className="mb-4 flex items-start justify-between gap-2">
-        <div>
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
           <h3 className={`${dxClass.display} text-lg`}>Team roster</h3>
-          <p className="mt-1 text-xs text-[#6B6B64]">
-            {joinedCount} joined · {pendingCount} pending invite{pendingCount === 1 ? "" : "s"}
-          </p>
+          <div className="mt-2 flex items-center gap-2">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#E4E4DC]">
+              <div className="h-full rounded-full bg-[#1A5C5C]" style={{ width: `${joinPct}%` }} />
+            </div>
+            <span className="shrink-0 text-[10px] tabular-nums text-[#6B6B64]">
+              {joinedCount}/{totalCount}
+            </span>
+          </div>
         </div>
         <Link
           href="/onboarding/invite"
@@ -335,25 +354,26 @@ export function PmDayOneMilestonesPanel({
   milestones: PmMissionControl["milestones"];
   usesFallback?: boolean;
 }) {
+  const timelineSegments = buildMilestoneTimelineSegments(milestones);
+
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-day-one-milestones">
-      <h3 className={`${dxClass.display} mb-1 text-lg`}>Milestones & timeline</h3>
+      <h3 className={`${dxClass.display} mb-3 text-lg`}>Milestones & timeline</h3>
       {usesFallback ? (
-        <p className="mb-3 text-xs text-[#B7620A]">
-          Phases from bootstrap — refine dates after first planning session.
-        </p>
+        <p className="mb-2 text-[10px] text-[#B7620A]">Bootstrap phases — refine after planning.</p>
       ) : null}
-      <ol className="space-y-3">
+      <PmMilestoneTimelineStrip segments={timelineSegments} />
+      <ol className="mt-3 space-y-1.5">
         {milestones.map((milestone, index) => (
           <li
             key={`${milestone.phase}-${index}`}
-            className="flex items-center justify-between gap-3 rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-4 py-3"
+            className="flex items-center justify-between gap-3 rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2"
           >
-            <span className="text-sm font-medium text-[#2C2C28]">{milestone.phase}</span>
+            <span className="truncate text-sm font-medium text-[#2C2C28]">{milestone.phase}</span>
             <span
-              className={`shrink-0 text-xs font-medium ${
+              className={`shrink-0 text-[10px] font-medium uppercase tracking-wide ${
                 milestone.status === "active"
-                  ? "text-[#B7620A]"
+                  ? "text-[#1A5C5C]"
                   : milestone.status === "done"
                     ? "text-[#1A6B3A]"
                     : "text-[#6B6B64]"
@@ -370,39 +390,28 @@ export function PmDayOneMilestonesPanel({
 
 export function PmGetOrientedCard({ projectId }: { projectId?: string }) {
   const links = [
-    {
-      label: "Review AI proposals",
-      href: proposalsHref(projectId),
-      description: "Accept or edit bootstrap outputs",
-    },
+    { label: "Review AI proposals", href: proposalsHref(projectId) },
     {
       label: "Delivery assistant",
       href: projectId ? `/project/${projectId}/delivery` : "/workspace/dashboard",
-      description: "Ask questions about your programme",
     },
-    {
-      label: "Invite teammates",
-      href: "/onboarding/invite",
-      description: "Send org invites for delivery roles",
-    },
+    { label: "Invite teammates", href: "/onboarding/invite" },
   ];
 
   return (
     <div className={`${dxClass.card} p-6`} data-panel="pm-get-oriented">
-      <h3 className={`${dxClass.display} mb-3 text-lg`}>Get oriented</h3>
-      <ul className="space-y-2">
+      <h3 className={`${dxClass.display} mb-3 text-lg`}>Quick links</h3>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {links.map((link) => (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              className="block rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-3 py-2.5 transition hover:border-[#C6DDD0] hover:bg-[#EEF5F1]"
-            >
-              <p className="text-sm font-medium text-[#1C4A2E]">{link.label}</p>
-              <p className="text-xs text-[#6B6B64]">{link.description}</p>
-            </Link>
-          </li>
+          <Link
+            key={link.href}
+            href={link.href}
+            className="rounded-lg border border-[#B8D8D8] bg-[#EDF7F7] px-3 py-3 text-center transition hover:border-[#1A5C5C] hover:bg-[#E2F2F2]"
+          >
+            <p className="text-sm font-medium text-[#1A5C5C]">{link.label}</p>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

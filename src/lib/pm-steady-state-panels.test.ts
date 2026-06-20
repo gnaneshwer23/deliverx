@@ -49,13 +49,25 @@ describe("pm-steady-state-panels", () => {
       decisions: [{ title: "Vendor selection", status: "proposed", impact: "High" }],
       blockedDependencies: 2,
       projectId: "proj-1",
-      pendingReviewCount: 1,
     });
 
     expect(feed.length).toBeGreaterThanOrEqual(3);
     expect(feed[0]?.waitSortDays).toBeLessThanOrEqual(feed[1]?.waitSortDays ?? 99);
     expect(feed.some((item) => item.pills.some((pill) => pill.label === "Urgent"))).toBe(true);
     expect(feed.some((item) => item.role === "Sponsor")).toBe(true);
+    expect(feed.find((item) => item.id === "pending-reviews-feed")).toBeFalsy();
+  });
+
+  it("includes pending reviews when explicitly requested", () => {
+    const feed = buildPmAttentionFeed({
+      stakeholderActionQueue: [],
+      decisions: [],
+      blockedDependencies: 0,
+      projectId: "proj-1",
+      pendingReviewCount: 2,
+      includePendingReviews: true,
+    });
+
     expect(feed.find((item) => item.id === "pending-reviews-feed")).toBeTruthy();
   });
 
@@ -89,9 +101,11 @@ describe("pm-steady-state-panels", () => {
       "Team capacity",
     ]);
     expect(kpis.find((kpi) => kpi.label === "On track")?.value).toBe("62%");
+    expect(kpis.find((kpi) => kpi.label === "On track")?.progressPct).toBe(62);
     expect(kpis.find((kpi) => kpi.label === "Active blockers")?.value).toBe("3");
     expect(kpis.find((kpi) => kpi.label === "Waiting on you")?.value).toBe("4");
     expect(kpis.find((kpi) => kpi.label === "Team capacity")?.value).toBe("78%");
+    expect(kpis.find((kpi) => kpi.label === "Team capacity")?.progressPct).toBe(78);
   });
 
   it("shows honest placeholder capacity when no task assignees", () => {
