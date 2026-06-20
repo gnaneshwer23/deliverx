@@ -56,11 +56,12 @@ export function buildBaWelcomeBridgeChips(
   options?: { pendingClarifications?: number; pendingReviewCount?: number },
 ): WelcomeBridgeChip[] {
   const structure = summary.structure;
-  const baPersona = summary.personas.ba;
+  const personas = summary.personas ?? {};
+  const baPersona = personas.ba;
   const requirements = baPersona?.counts?.requirements;
   const clarifications =
     options?.pendingClarifications ?? baPersona?.counts?.clarifications ?? 0;
-  const readyPersonas = Object.values(summary.personas).filter((p) => p.ok).length;
+  const readyPersonas = Object.values(personas).filter((p) => p.ok).length;
 
   return [
     {

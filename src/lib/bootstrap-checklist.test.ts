@@ -5,6 +5,7 @@ import {
   hasBootstrapParitySummary,
 } from "@/lib/bootstrap-checklist";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { normalizeProjectBootstrapSummary } from "@/services/projectBootstrap";
 
 const SAMPLE_SUMMARY: ProjectBootstrapSummary = {
   structure: {
@@ -82,5 +83,26 @@ describe("bootstrap-checklist", () => {
     expect(hasBootstrapParitySummary(SAMPLE_SUMMARY)).toBe(true);
     expect(hasBootstrapParitySummary({ personas: {} })).toBe(false);
     expect(hasBootstrapParitySummary(null)).toBe(false);
+  });
+
+  it("tolerates bootstrap summaries with null personas (legacy/partial JSON)", () => {
+    expect(
+      hasBootstrapParitySummary({
+        structure: { workstreams: 1, tasks: 5, raidItems: 0, milestones: 0, stakeholders: 0 },
+        personas: null as unknown as ProjectBootstrapSummary["personas"],
+      }),
+    ).toBe(true);
+  });
+
+  it("normalizes persisted bootstrap JSON with missing personas", () => {
+    expect(
+      normalizeProjectBootstrapSummary({
+        structure: { workstreams: 1, tasks: 5, raidItems: 0, milestones: 0, stakeholders: 0 },
+        personas: null,
+      }),
+    ).toEqual({
+      structure: { workstreams: 1, tasks: 5, raidItems: 0, milestones: 0, stakeholders: 0 },
+      personas: {},
+    });
   });
 });

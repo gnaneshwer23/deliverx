@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { normalizeProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
 
 export type OrgBootstrapProject = {
@@ -86,5 +86,7 @@ export async function getOrgRecentBootstrapProject(
 
 export function projectHasBootstrapParity(project: OrgBootstrapProject | null): project is OrgBootstrapProject {
   if (!project) return false;
-  return hasBootstrapParitySummary(project.bootstrap_summary as ProjectBootstrapSummary);
+  return hasBootstrapParitySummary(
+    normalizeProjectBootstrapSummary(project.bootstrap_summary),
+  );
 }

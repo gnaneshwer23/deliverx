@@ -26,18 +26,22 @@ const PERSONA_LABELS: Record<string, string> = {
   founder: "Founder",
 };
 
+function bootstrapPersonas(summary: ProjectBootstrapSummary): Record<string, ProjectBootstrapSummary["personas"][string]> {
+  return summary.personas ?? {};
+}
+
 function sumPersonaCounts(
   summary: ProjectBootstrapSummary,
   key: keyof NonNullable<ProjectBootstrapSummary["personas"][string]["counts"]>,
 ): number {
-  return Object.values(summary.personas).reduce((total, persona) => {
+  return Object.values(bootstrapPersonas(summary)).reduce((total, persona) => {
     const value = persona.counts?.[key];
     return total + (typeof value === "number" ? value : 0);
   }, 0);
 }
 
 function countReadyPersonas(summary: ProjectBootstrapSummary): number {
-  return Object.values(summary.personas).filter((persona) => persona.ok).length;
+  return Object.values(bootstrapPersonas(summary)).filter((persona) => persona.ok).length;
 }
 
 /** Build post-GO checklist rows from a persisted bootstrap summary. */
@@ -121,10 +125,11 @@ export function buildBootstrapChecklistItems(
     });
   }
 
+  const personas = bootstrapPersonas(summary);
   const personasReady = countReadyPersonas(summary);
-  const personaTotal = Object.keys(summary.personas).length;
+  const personaTotal = Object.keys(personas).length;
   if (personaTotal > 0) {
-    const failed = Object.entries(summary.personas).filter(([, persona]) => !persona.ok);
+    const failed = Object.entries(personas).filter(([, persona]) => !persona.ok);
     items.push({
       id: "persona-workspaces",
       label: "Persona workspaces seeded",
@@ -213,6 +218,6 @@ export function hasBootstrapParitySummary(summary: ProjectBootstrapSummary | nul
   return Boolean(
     summary.structure?.tasks ||
       summary.pendingArtifactReviews ||
-      Object.keys(summary.personas).length > 0,
+      Object.keys(summary.personas ?? {}).length > 0,
   );
 }
