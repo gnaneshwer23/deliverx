@@ -3,36 +3,25 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getScrumMissionControl } from "@/services/scrumDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
-import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
+import { ScrumDashboardLayout } from "@/components/scrum/scrum-dashboard-layout";
+import { ScrumHealthKpiStrip } from "@/components/scrum/scrum-health-kpi-strip";
+import { ScrumBurndownPanel } from "@/components/scrum/scrum-burndown-panel";
 import {
-  ScrumAiSummary,
-  ScrumMissionOverview,
-} from "@/components/scrum/scrum-mission-overview";
-import {
-  ScrumBurnoutPanel,
-  ScrumCapacityPanel,
-  ScrumCeremoniesPanel,
-  ScrumCrossRolePanel,
-  ScrumCrossTeamPanel,
-  ScrumGuidedTasks,
-  ScrumImpedimentsPanel,
-  ScrumMaturityPanel,
-  ScrumRetroPanel,
-  ScrumSprintHealthPanel,
-  ScrumStakeholdersPanel,
-  ScrumStandupPanel,
-  ScrumTeamHealthPanel,
-  ScrumVelocityPanel,
-} from "@/components/scrum/scrum-panels";
+  ScrumCeremoniesRow,
+  ScrumImpedimentBoard,
+} from "@/components/scrum/scrum-impediment-ceremonies";
+import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
-import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
+import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
+import {
+  buildScrumBurndownPoints,
+  buildScrumHealthSynthesis,
+} from "@/lib/scrum-health-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -56,11 +45,29 @@ export default async function ScrumMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, pendingReviews] = await Promise.all([
     getScrumMissionControl(params.project),
-    getCollaborativeLoopSnapshot("scrum", params.project),
     listPendingArtifactReviewsForPersona("scrum").catch(() => []),
   ]);
+
+  const projectId = data.primaryProject?.id;
+  const scrumAccent = getMissionPersonaAccent("scrum");
+
+  const burndownPoints = buildScrumBurndownPoints({
+    plannedPoints: data.sprintHealth.plannedPoints,
+    completedPoints: data.sprintHealth.completedPoints,
+    daysRemaining: data.overview.daysRemaining,
+  });
+
+  const teamSummary = buildScrumHealthSynthesis({
+    projectName: data.primaryProject?.name,
+    impedimentCount: data.impediments.length,
+    blockedStories: data.overview.blockedStories,
+    completionPct: data.overview.completionPct,
+    daysRemaining: data.overview.daysRemaining,
+    impedimentTitle: data.impediments[0]?.title,
+    fallbackSummary: data.aiSummary,
+  });
 
   const nextUpItems = buildMissionNextUpItems({
     personaId: "scrum",
@@ -73,6 +80,41 @@ export default async function ScrumMissionControlPage({
     guidedTaskTitle: data.guidedTasks[0]?.title,
     guidedTaskHref: data.primaryProject ? `/project/${data.primaryProject.id}/scrum` : undefined,
   });
+
+  const dashboard = (
+    <ScrumDashboardLayout
+      aiSynthesis={
+        <PersonaAiSynthesis
+          title="What's blocking the team as a unit"
+          summary={teamSummary}
+          accent={scrumAccent}
+        />
+      }
+      kpiStrip={<ScrumHealthKpiStrip data={data} projectId={projectId} />}
+      burndownPanel={
+        <ScrumBurndownPanel
+          points={burndownPoints}
+          sprintLabel={data.overview.sprintLabel}
+          plannedPoints={data.sprintHealth.plannedPoints}
+          completedPoints={data.sprintHealth.completedPoints}
+          usesFallback={data.dataSources.velocity === "fallback"}
+        />
+      }
+      impedimentCeremonyRow={
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <ScrumImpedimentBoard
+            impediments={data.impediments}
+            insight={data.impedimentInsight}
+          />
+          <ScrumCeremoniesRow
+            projectId={projectId}
+            ceremonies={data.ceremonies}
+            standupBlockers={data.standupSummary.blockers}
+          />
+        </div>
+      }
+    />
+  );
 
   return (
     <MissionDashboardChrome
@@ -89,8 +131,11 @@ export default async function ScrumMissionControlPage({
           projectId={data.primaryProject?.id}
           showFallback={data.dataSources.velocity === "fallback"}
         />
-        <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS.scrum} />
-
+        <NextUpStrip
+          items={nextUpItems}
+          personaLabel={PERSONA_REVIEW_LABELS.scrum}
+          personaId="scrum"
+        />
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
             {data.projects.slice(0, 8).map((p) => (
@@ -99,91 +144,25 @@ export default async function ScrumMissionControlPage({
                 href={`/workspace/scrum-mission?project=${p.id}`}
                 className={`rounded-full border px-3 py-1 text-xs font-medium ${
                   p.id === data.primaryProject?.id
-                    ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
+                    ? ""
                     : "border-[#E4E4DC] text-[#6B6B64]"
                 }`}
+                style={
+                  p.id === data.primaryProject?.id
+                    ? {
+                        borderColor: scrumAccent.primary,
+                        backgroundColor: scrumAccent.bg,
+                        color: scrumAccent.text,
+                      }
+                    : undefined
+                }
               >
                 {p.name}
               </Link>
             ))}
           </div>
         ) : null}
-
-        <ScrumMissionOverview data={data} />
-        {data.primaryProject ? (
-          <MissionPredictionKpis projectId={data.primaryProject.id} />
-        ) : null}
-        <ScrumAiSummary summary={data.aiSummary} />
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
-            <ScrumGuidedTasks tasks={data.guidedTasks} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="sprint-health" title="Sprint health">
-            <ScrumSprintHealthPanel health={data.sprintHealth} />
-          </DashboardPanelShell>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="team-health" title="Team health">
-            <ScrumTeamHealthPanel health={data.teamHealth} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="burnout" title="Burnout signals">
-            <ScrumBurnoutPanel burnout={data.burnout} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="impediments" title="Impediments">
-          <ScrumImpedimentsPanel impediments={data.impediments} insight={data.impedimentInsight} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="ceremonies" title="Ceremonies">
-            <ScrumCeremoniesPanel
-              projectId={data.primaryProject?.id}
-              ceremonies={data.ceremonies}
-            />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="standup" title="Standup summary">
-            <ScrumStandupPanel summary={data.standupSummary} />
-          </DashboardPanelShell>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="velocity" title="Velocity">
-            <ScrumVelocityPanel
-              velocity={data.velocity}
-              insight={data.velocityInsight}
-              usesFallback={data.dataSources.velocity === "fallback"}
-            />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="capacity" title="Capacity">
-            <ScrumCapacityPanel capacity={data.capacity} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="cross-team" title="Cross-team dependencies">
-          <ScrumCrossTeamPanel deps={data.crossTeamDeps} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="retro" title="Retrospective themes">
-            <ScrumRetroPanel themes={data.retroThemes} recommendation={data.retroRecommendation} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="maturity" title="Agile maturity">
-            <ScrumMaturityPanel maturity={data.agileMaturity} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
-          <ScrumStakeholdersPanel rows={data.stakeholders} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
-          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-          <ScrumCrossRolePanel impacts={data.crossRoleImpact} />
-        </DashboardPanelShell>
+        {dashboard}
       </div>
     </MissionDashboardChrome>
   );

@@ -2,33 +2,25 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBaMissionControl } from "@/services/baDashboard";
-import { DxStatCard } from "@/components/dx/dx-page-chrome";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
-import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
-import { BaMissionOverview, BaAiSummary } from "@/components/ba/ba-mission-overview";
-import { BaGuidedTasks } from "@/components/ba/ba-guided-tasks";
-import {
-  BaCrossRoleImpact,
-  BaStakeholderPanel,
-} from "@/components/ba/ba-stakeholder-panels";
-import { BaTraceabilityPreview } from "@/components/ba/ba-traceability-preview";
 import { BaMissionShell } from "@/components/ba/ba-mission-shell";
+import { BaDashboardLayout } from "@/components/ba/ba-dashboard-layout";
+import { BaHandoffKpiStrip } from "@/components/ba/ba-handoff-kpi-strip";
+import { BaTraceabilityMatrixPanel } from "@/components/ba/ba-traceability-matrix-panel";
+import { BaClarificationQueue } from "@/components/ba/ba-clarification-queue";
+import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
-import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot, emptyCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
 import { BA_DAY_ONE_SUBTITLE, resolveBaDashboardMode } from "@/lib/ba-dashboard-mode";
-import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
-import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { filterReviewsByProject, PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { ClampableSummary } from "@/components/dx/clampable-summary";
-import { dxClass } from "@/lib/dx-theme";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
+import { buildBaClarificationQueue } from "@/lib/ba-clarification-queue";
+import { buildBaHandoffSynthesis } from "@/lib/ba-handoff-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -48,11 +40,8 @@ export default async function BaMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, pendingReviews] = await Promise.all([
     getBaMissionControl(params.project),
-    getCollaborativeLoopSnapshot("ba", params.project).catch(() =>
-      emptyCollaborativeLoopSnapshot("ba"),
-    ),
     listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 
@@ -78,6 +67,16 @@ export default async function BaMissionControlPage({
   });
 
   const baAccent = getMissionPersonaAccent("ba");
+  const clarificationQueue = buildBaClarificationQueue(data.clarifications, projectId);
+  const handoffSummary = buildBaHandoffSynthesis({
+    projectName: data.primaryProject?.name,
+    openClarifications: data.openClarifications,
+    pendingClarification: data.kpis.pendingClarification,
+    storiesReady: data.kpis.storiesReady,
+    traceabilityScore: data.kpis.traceabilityScore,
+    pendingReviewCount: projectPendingReviews.length,
+    fallbackSummary: data.aiSummary,
+  });
 
   const nextUpItems = buildMissionNextUpItems({
     personaId: "ba",
@@ -90,6 +89,30 @@ export default async function BaMissionControlPage({
       ? `/project/${data.primaryProject.id}/requirements`
       : undefined,
   });
+
+  const dashboard = (
+    <BaDashboardLayout
+      aiSynthesis={
+        <PersonaAiSynthesis
+          title="What's blocking requirements reaching the team"
+          summary={handoffSummary}
+          accent={baAccent}
+        />
+      }
+      kpiStrip={
+        <BaHandoffKpiStrip
+          data={data}
+          openClarifications={data.openClarifications}
+          pendingReviewCount={projectPendingReviews.length}
+          projectId={projectId}
+        />
+      }
+      traceabilityMatrix={
+        <BaTraceabilityMatrixPanel rows={data.traceabilityPreview} projectId={projectId} />
+      }
+      clarificationQueue={<BaClarificationQueue items={clarificationQueue} />}
+    />
+  );
 
   return (
     <MissionDashboardChrome
@@ -114,7 +137,6 @@ export default async function BaMissionControlPage({
             personaLabel={PERSONA_REVIEW_LABELS.ba}
             personaId="ba"
           />
-
           {data.projects.length > 1 && data.primaryProject ? (
             <ProjectPicker
               projects={data.projects}
@@ -122,65 +144,7 @@ export default async function BaMissionControlPage({
               accent={baAccent}
             />
           ) : null}
-
-        <BaMissionOverview data={data} />
-        {data.primaryProject ? (
-          <MissionPredictionKpis projectId={data.primaryProject.id} />
-        ) : null}
-
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <DxStatCard
-            label="Org requirements"
-            value={data.orgTotals.totalRequirements}
-            hint={`${data.orgTotals.totalProjects} active projects`}
-          />
-          <DxStatCard
-            label="Primary project"
-            value={data.primaryProject?.name ?? "—"}
-            hint="Focus programme"
-          />
-        </div>
-
-        <BaAiSummary summary={data.aiSummary} projectId={data.primaryProject?.id} />
-
-        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
-          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
-            <BaGuidedTasks tasks={data.guidedTasks} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-            <BaCrossRoleImpact impacts={data.crossRoleImpact} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="stakeholders" title="Stakeholder connections">
-          <BaStakeholderPanel connections={data.stakeholderConnections} />
-        </DashboardPanelShell>
-
-        <DashboardPanelShell panelId="traceability" title="Traceability preview">
-          <BaTraceabilityPreview
-            rows={data.traceabilityPreview}
-            projectId={data.primaryProject?.id}
-          />
-        </DashboardPanelShell>
-
-        <DashboardPanelShell panelId="success-metrics" title="Success metrics">
-          <section className={`${dxClass.card} p-6`}>
-            <ClampableSummary
-              quote={false}
-              text="Track approval rate, clarification time, story quality, and traceability coverage on the learning dashboard — target 80% less ambiguity and 30% better delivery success."
-            />
-            <Link
-              href="/workspace/intelligence"
-              className="mt-3 inline-block text-xs font-medium text-[#1C4A2E] hover:underline"
-            >
-              Open learning dashboard →
-            </Link>
-          </section>
-        </DashboardPanelShell>
+          {dashboard}
         </div>
       </BaMissionShell>
     </MissionDashboardChrome>

@@ -3,39 +3,24 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getQaMissionControl } from "@/services/qaDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
-import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
-import { QaAiSummary, QaMissionOverview } from "@/components/qa/qa-mission-overview";
-import {
-  QaAutomationPanel,
-  QaCrossRolePanel,
-  QaDefectsPanel,
-  QaGuidedTasks,
-  QaImpactPanel,
-  QaPerformancePanel,
-  QaReleasePredictionPanel,
-  QaReleaseReadinessPanel,
-  QaSecurityPanel,
-  QaStakeholdersPanel,
-  QaTestCasesPanel,
-  QaTraceabilityPanel,
-  QaUatPanel,
-} from "@/components/qa/qa-panels";
-import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
-import { MissionPredictionKpis } from "@/components/prediction/mission-prediction-kpis";
-import { CollaborativePanelsGrid } from "@/components/collaborative/collaborative-panels-grid";
-import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
-import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
-import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
-import { NextUpStrip } from "@/components/dx/next-up-strip";
-import { buildMissionNextUpItems } from "@/lib/mission-next-up";
-import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { QaMissionShell } from "@/components/qa/qa-mission-shell";
+import { QaDashboardLayout } from "@/components/qa/qa-dashboard-layout";
+import { QaReleaseKpiStrip } from "@/components/qa/qa-release-kpi-strip";
+import { QaReleaseGauge } from "@/components/qa/qa-release-gauge";
+import { QaDefectBoard } from "@/components/qa/qa-defect-board";
+import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
+import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
+import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
+import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
 import { QA_DAY_ONE_SUBTITLE, resolveQaDashboardMode } from "@/lib/qa-dashboard-mode";
-import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
+import { filterReviewsByProject, PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { NextUpStrip } from "@/components/dx/next-up-strip";
+import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
+import { buildQaReleaseSynthesis } from "@/lib/qa-release-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -59,9 +44,8 @@ export default async function QaMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, collaborativeLoop, pendingReviews] = await Promise.all([
+  const [data, pendingReviews] = await Promise.all([
     getQaMissionControl(params.project),
-    getCollaborativeLoopSnapshot("qa", params.project),
     listPendingArtifactReviewsForPersona("qa").catch(() => []),
   ]);
 
@@ -87,6 +71,18 @@ export default async function QaMissionControlPage({
   });
 
   const qaAccent = getMissionPersonaAccent("qa");
+  const isLive = data.dataSources.qaMetrics === "live";
+
+  const releaseSummary = buildQaReleaseSynthesis({
+    projectName: data.primaryProject?.name,
+    releaseReadiness: data.releaseReadiness.overall,
+    recommendation: data.releaseReadiness.recommendation,
+    criticalDefects: data.overview.criticalDefects,
+    openDefects: data.overview.openDefects,
+    testCoverage: data.overview.testCoverage,
+    isLive,
+    fallbackSummary: data.aiSummary,
+  });
 
   const nextUpItems = buildMissionNextUpItems({
     personaId: "qa",
@@ -97,6 +93,26 @@ export default async function QaMissionControlPage({
     guidedTaskTitle: data.guidedTasks[0]?.title,
     guidedTaskHref: data.primaryProject ? `/project/${data.primaryProject.id}/qa` : undefined,
   });
+
+  const dashboard = (
+    <QaDashboardLayout
+      aiSynthesis={
+        <PersonaAiSynthesis
+          title="What's blocking release"
+          summary={releaseSummary}
+          accent={qaAccent}
+        />
+      }
+      kpiStrip={<QaReleaseKpiStrip data={data} projectId={projectId} />}
+      readinessRow={
+        <QaReleaseGauge
+          readiness={data.releaseReadiness}
+          criticalDefects={data.overview.criticalDefects}
+        />
+      }
+      defectBoard={<QaDefectBoard defects={data.defects} />}
+    />
+  );
 
   return (
     <MissionDashboardChrome
@@ -124,9 +140,8 @@ export default async function QaMissionControlPage({
           <MissionBootstrapBanner
             personaId="qa"
             projectId={data.primaryProject?.id}
-            showFallback={data.dataSources.qaMetrics === "fallback"}
+            showFallback={!isLive}
           />
-
           {data.projects.length > 1 && data.primaryProject ? (
             <div className="flex flex-wrap gap-2">
               {data.projects.slice(0, 8).map((p) => (
@@ -151,71 +166,7 @@ export default async function QaMissionControlPage({
               ))}
             </div>
           ) : null}
-
-        <QaMissionOverview data={data} />
-        {data.primaryProject ? (
-          <MissionPredictionKpis projectId={data.primaryProject.id} />
-        ) : null}
-        <QaAiSummary summary={data.aiSummary} />
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="guided-tasks" title="Guided tasks">
-            <QaGuidedTasks tasks={data.guidedTasks} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="release-prediction" title="Release prediction">
-            <QaReleasePredictionPanel prediction={data.releasePrediction} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="traceability" title="Traceability">
-          <QaTraceabilityPanel rows={data.traceability} />
-        </DashboardPanelShell>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="test-cases" title="Test cases">
-            <QaTestCasesPanel cases={data.testCases} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="defects" title="Defects">
-            <QaDefectsPanel defects={data.defects} insight={data.defectInsight} />
-          </DashboardPanelShell>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="automation" title="Automation">
-            <QaAutomationPanel automation={data.automation} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="impact" title="Impact analysis">
-            <QaImpactPanel impact={data.impactAnalysis} />
-          </DashboardPanelShell>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="uat" title="UAT">
-            <QaUatPanel rows={data.uat} insight={data.uatInsight} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="release-readiness" title="Release readiness">
-            <QaReleaseReadinessPanel readiness={data.releaseReadiness} />
-          </DashboardPanelShell>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <DashboardPanelShell panelId="performance" title="Performance">
-            <QaPerformancePanel performance={data.performance} />
-          </DashboardPanelShell>
-          <DashboardPanelShell panelId="security" title="Security">
-            <QaSecurityPanel security={data.security} />
-          </DashboardPanelShell>
-        </div>
-
-        <DashboardPanelShell panelId="stakeholders" title="Stakeholders">
-          <QaStakeholdersPanel rows={data.stakeholders} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="collaborative-loop" title="Team needs">
-          <CollaborativePanelsGrid snapshot={collaborativeLoop} />
-        </DashboardPanelShell>
-        <DashboardPanelShell panelId="cross-role" title="Cross-role impact">
-          <QaCrossRolePanel impacts={data.crossRoleImpact} />
-        </DashboardPanelShell>
+          {dashboard}
         </div>
       </QaMissionShell>
     </MissionDashboardChrome>
