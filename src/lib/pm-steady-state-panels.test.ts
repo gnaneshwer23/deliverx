@@ -113,7 +113,7 @@ describe("pm-steady-state-panels", () => {
     expect(kpis.find((kpi) => kpi.label === "Team load")?.progressPct).toBe(78);
   });
 
-  it("shows honest placeholder capacity when no task assignees", () => {
+  it("shows honest empty capacity when no sprint assignees", () => {
     const { members, avgLoadPct } = buildPmTeamCapacityRows({
       tasks: [
         { id: "t1", assignee_id: null, status: "todo" } as TaskWithMeta,
@@ -125,7 +125,7 @@ describe("pm-steady-state-panels", () => {
     });
 
     expect(avgLoadPct).toBeNull();
-    expect(members.every((member) => member.placeholder)).toBe(true);
+    expect(members).toHaveLength(0);
   });
 
   it("derives team load from assigned active tasks", () => {

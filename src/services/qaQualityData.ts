@@ -50,7 +50,7 @@ export type DbUatSignoff = {
   signed_off: boolean;
 };
 
-function mapTestCase(row: DbTestCase): QaTestCase {
+function mapTestCase(row: DbTestCase): QaTestCase & { status: string } {
   return {
     code: row.test_code,
     title: row.title,
@@ -58,6 +58,7 @@ function mapTestCase(row: DbTestCase): QaTestCase {
     linkedStory: row.linked_story_code ?? "—",
     automationCandidate: row.automation_candidate,
     type: row.test_type,
+    status: row.status,
   };
 }
 
@@ -203,7 +204,7 @@ export async function syncQaQualityFromAnalysis(
 }
 
 export function computeReleaseReadinessFromDb(input: {
-  testCases: QaTestCase[];
+  testCases: Array<QaTestCase & { status?: string }>;
   defects: QaDefect[];
   uat: QaUatRow[];
   storyCount: number;
@@ -213,18 +214,37 @@ export function computeReleaseReadinessFromDb(input: {
   openDefects: number;
   criticalDefects: number;
   uatCompletion: number;
+  passedTests: number;
+  failedTests: number;
+  automationCoverage: number;
+  defectScore: number;
 } {
   const openDefects = input.defects.filter((d) => d.status !== "closed").length;
   const criticalDefects = input.defects.filter(
     (d) => d.severity === "critical" && d.status !== "closed",
   ).length;
 
+  const passedTests = input.testCases.filter((t) => t.status === "passed").length;
+  const failedTests = input.testCases.filter((t) => t.status === "failed").length;
+  const executedTests = passedTests + failedTests;
+
   const testCoverage =
     input.storyCount > 0
       ? Math.min(100, Math.round((input.testCases.length / input.storyCount) * 100))
-      : input.testCases.length > 0
-        ? 85
-        : 0;
+      : executedTests > 0
+        ? Math.round((passedTests / executedTests) * 100)
+        : input.testCases.length > 0
+          ? 0
+          : 0;
+
+  const automationCoverage =
+    input.testCases.length > 0
+      ? Math.round(
+          (input.testCases.filter((t) => t.automationCandidate).length /
+            input.testCases.length) *
+            100,
+        )
+      : 0;
 
   const uatCompletion =
     input.uat.length > 0
@@ -233,14 +253,14 @@ export function computeReleaseReadinessFromDb(input: {
         )
       : 0;
 
+  const defectScore = Math.max(0, 100 - criticalDefects * 15 - openDefects * 3);
+
   const releaseReadiness = Math.max(
     0,
     Math.min(
       100,
       Math.round(
-        testCoverage * 0.35 +
-          (100 - criticalDefects * 15 - openDefects * 3) * 0.35 +
-          uatCompletion * 0.3,
+        testCoverage * 0.35 + defectScore * 0.35 + uatCompletion * 0.3,
       ),
     ),
   );
@@ -251,5 +271,9 @@ export function computeReleaseReadinessFromDb(input: {
     openDefects,
     criticalDefects,
     uatCompletion,
+    passedTests,
+    failedTests,
+    automationCoverage,
+    defectScore,
   };
 }

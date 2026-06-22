@@ -28,6 +28,7 @@ import {
 } from "@/services/artifactReviews";
 import { listPendingInvitations } from "@/services/invitations";
 import { listOrgMembers, listOrgTasks } from "@/services/delivery";
+import { loadProjectSprintMetrics } from "@/services/sprintData";
 import { getOrgGovernanceStats, listOrgChangeRequests } from "@/services/governance";
 import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
@@ -90,6 +91,9 @@ export default async function PmMissionControlPage({
   const projectTasks = projectId
     ? await listOrgTasks({ projectId, limit: 200 }).catch(() => [])
     : [];
+  const sprintMetrics = projectId
+    ? await loadProjectSprintMetrics(projectId).catch(() => null)
+    : null;
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
 
@@ -134,6 +138,7 @@ export default async function PmMissionControlPage({
   const { members: capacityMembers, avgLoadPct } = buildPmTeamCapacityRows({
     tasks: projectTasks,
     members: orgMembers,
+    sprintScope: sprintMetrics?.scope ?? null,
   });
   const governanceTabCounts = buildPmGovernanceTabCounts({
     raid: data.raid,

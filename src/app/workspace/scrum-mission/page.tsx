@@ -19,7 +19,6 @@ import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import {
-  buildScrumBurndownPoints,
   buildScrumHealthSynthesis,
 } from "@/lib/scrum-health-kpis";
 
@@ -53,11 +52,7 @@ export default async function ScrumMissionControlPage({
   const projectId = data.primaryProject?.id;
   const scrumAccent = getMissionPersonaAccent("scrum");
 
-  const burndownPoints = buildScrumBurndownPoints({
-    plannedPoints: data.sprintHealth.plannedPoints,
-    completedPoints: data.sprintHealth.completedPoints,
-    daysRemaining: data.overview.daysRemaining,
-  });
+  const burndownPoints = data.burndownPoints;
 
   const teamSummary = buildScrumHealthSynthesis({
     projectName: data.primaryProject?.name,
@@ -97,7 +92,7 @@ export default async function ScrumMissionControlPage({
           sprintLabel={data.overview.sprintLabel}
           plannedPoints={data.sprintHealth.plannedPoints}
           completedPoints={data.sprintHealth.completedPoints}
-          usesFallback={data.dataSources.velocity === "fallback"}
+          usesFallback={data.dataSources.burndown === "fallback"}
         />
       }
       impedimentCeremonyRow={
@@ -129,7 +124,7 @@ export default async function ScrumMissionControlPage({
         <MissionBootstrapBanner
           personaId="scrum"
           projectId={data.primaryProject?.id}
-          showFallback={data.dataSources.velocity === "fallback"}
+          showFallback={data.dataSources.velocity === "fallback" || data.dataSources.burndown === "fallback"}
         />
         <NextUpStrip
           items={nextUpItems}
