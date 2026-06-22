@@ -54,8 +54,8 @@ export function PmTeamNeedsFeed({ items }: { items: PmTeamNeedFeedItem[] }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`} data-panel="pm-team-needs-feed">
       <DxWidgetHeader
-        title="Team needs"
-        subtitle="Who is waiting on what from you"
+        title="AI Review Queue"
+        subtitle="Items waiting for your review before anything is applied"
         count={items.length}
         countTone={items.some((i) => i.status === "Urgent") ? "urgent" : "accent"}
       />
@@ -64,7 +64,7 @@ export function PmTeamNeedsFeed({ items }: { items: PmTeamNeedFeedItem[] }) {
           items.map((item) => <TeamNeedFeedRow key={item.id} item={item} />)
         ) : (
           <li className="px-6 py-8 text-center text-sm text-[#6B6B64]">
-            No one is waiting on you — team signals are clear.
+            No items in your AI Review Queue — team signals are clear.
           </li>
         )}
       </ul>

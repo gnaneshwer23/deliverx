@@ -36,7 +36,7 @@ export function AiConfigBanner() {
         <strong>AI is not configured on this server.</strong> Chat and reviews will not respond until
         you add <code className="rounded bg-amber-100 px-1">OPENAI_API_KEY</code>
         {model ? <> (model: {model})</> : null}, then redeploy.{" "}
-        <Link href="/workspace/settings" className="font-medium text-[#1C4A2E] underline">
+        <Link href="/settings/profile" className="font-medium text-[#1C4A2E] underline">
           Open setup audit →
         </Link>
       </p>

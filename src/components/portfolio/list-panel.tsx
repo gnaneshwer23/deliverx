@@ -40,7 +40,7 @@ export function BottlenecksPanel({ bottlenecks }: { bottlenecks: string[] }) {
         <ul className="space-y-2 text-sm text-slate-700">
           {bottlenecks.map((b, i) => (
             <li key={i} className="flex gap-2">
-              <span className="text-amber-500">🚧</span>
+              <Construction size={14} className="mt-0.5 shrink-0 text-amber-500" aria-hidden />
               <span>{b}</span>
             </li>
           ))}

@@ -15,7 +15,7 @@ import { CrossOrgAlertsPanel } from "@/components/coordination/cross-org-panel";
 import { PartnerForm } from "./partner-form";
 import { RunLoopButton } from "@/components/intelligence/run-loop-button";
 import { IntelligenceLiveRefresh } from "@/components/intelligence/intelligence-live-refresh";
-import { DELIVERY_PATTERNS_NAV_LABEL } from "@/lib/intelligence-nav-labels";
+import { DELIVERY_BRAIN_NAV_LABEL } from "@/lib/intelligence-nav-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,7 @@ export default async function CoordinationPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-              <BrainCircuit size={22} className="text-violet-600" /> {DELIVERY_PATTERNS_NAV_LABEL}
+              <BrainCircuit size={22} className="text-violet-600" /> {DELIVERY_BRAIN_NAV_LABEL}
             </h1>
             <p className="mt-1 max-w-2xl text-sm text-slate-500">
               Cross-programme delivery patterns across your enterprise. Agents analyse

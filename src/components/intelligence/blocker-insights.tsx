@@ -10,7 +10,7 @@ export function BlockerInsights({ blockers }: { blockers: string[] }) {
       <ul className="space-y-2 text-sm text-slate-700">
         {blockers.map((b) => (
           <li key={b} className="flex gap-2">
-            <span>🚧</span>
+            <Construction size={14} className="mt-0.5 shrink-0 text-slate-500" aria-hidden />
             <span>{b}</span>
           </li>
         ))}

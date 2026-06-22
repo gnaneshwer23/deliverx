@@ -70,7 +70,7 @@ export function GitHubActivityPanel({
       {!configured ? (
         <p className="text-sm text-[#6B6B64]">
           Connect GitHub in{" "}
-          <Link href="/workspace/settings" className="font-medium text-[#0F766E] underline">
+          <Link href="/settings/profile" className="font-medium text-[#0F766E] underline">
             Settings
           </Link>{" "}
           — add an org token and map this project to a repository.
