@@ -15,8 +15,10 @@ import {
   workspaceEcosystemNav,
   workspaceGovernanceNav,
   workspaceIntelligenceNav,
+  workspaceOrgAdminNav,
   type WorkspaceNavItem,
 } from "@/config/workspace-nav";
+import { isOrgAdmin } from "@/lib/org-admin";
 import { getMissionPersonaMeta } from "@/config/mission-persona-meta";
 import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { partitionCoreNav } from "@/lib/mission-nav";
@@ -249,7 +251,7 @@ function WorkspaceSidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="border-t border-[#E4E4DC] py-2.5">
       <Link
-        href="/workspace/settings"
+        href="/settings/profile"
         onClick={onNavigate}
         className="flex items-center gap-2 px-3.5 py-1.5 text-[12px] text-[#6B6B64] hover:text-[#1C4A2E]"
       >
@@ -324,6 +326,15 @@ function WorkspaceSidebarContent({
           userRole={userRole}
           onNavigate={onNavigate}
         />
+        {isOrgAdmin(userRole) ? (
+          <NavSection
+            label="Org admin"
+            items={workspaceOrgAdminNav}
+            pathname={pathname}
+            userRole={userRole}
+            onNavigate={onNavigate}
+          />
+        ) : null}
       </div>
       <WorkspaceSidebarFooter onNavigate={onNavigate} />
     </>
