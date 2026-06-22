@@ -2,25 +2,46 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, User } from "lucide-react";
+import { Building2, Code2, User } from "lucide-react";
 import { dxClass } from "@/lib/dx-theme";
+import {
+  SETTINGS_DEVELOPER_PATH,
+  SETTINGS_PROFILE_PATH,
+  SETTINGS_WORKSPACE_PATH,
+} from "@/lib/settings-routing";
 
 const TABS = [
-  { href: "/workspace/settings", label: "Profile & notifications", icon: User },
+  { href: SETTINGS_PROFILE_PATH, label: "Profile & notifications", icon: User },
   {
-    href: "/workspace/settings/organisation",
-    label: "Organisation & integrations",
+    href: SETTINGS_WORKSPACE_PATH,
+    label: "Workspace & organisation",
     icon: Building2,
     adminOnly: true,
   },
+  {
+    href: SETTINGS_DEVELOPER_PATH,
+    label: "Developer & integrations",
+    icon: Code2,
+    developerOnly: true,
+  },
 ] as const;
 
-export function SettingsNav({ isAdmin }: { isAdmin: boolean }) {
+export function SettingsNav({
+  isAdmin,
+  isDeveloper = false,
+}: {
+  isAdmin: boolean;
+  isDeveloper?: boolean;
+}) {
   const pathname = usePathname();
 
   return (
     <nav className="mb-6 flex flex-wrap gap-2 border-b border-[#E4E4DC] pb-4">
-      {TABS.filter((tab) => !("adminOnly" in tab && tab.adminOnly) || isAdmin).map((tab) => {
+      {TABS.filter((tab) => {
+        if ("adminOnly" in tab && tab.adminOnly) return isAdmin;
+        if ("developerOnly" in tab && tab.developerOnly) return isDeveloper;
+        return true;
+      }).map((tab) => {
         const active = pathname === tab.href;
         const Icon = tab.icon;
         return (
