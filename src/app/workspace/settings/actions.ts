@@ -32,6 +32,9 @@ async function assertOrgAdmin(): Promise<SettingsState | null> {
 }
 
 function revalidateSettingsPaths() {
+  revalidatePath("/settings/profile");
+  revalidatePath("/settings/workspace");
+  revalidatePath("/settings/developer");
   revalidatePath("/workspace/settings");
   revalidatePath("/workspace/settings/organisation");
 }
@@ -104,6 +107,10 @@ export async function updateProfileAction(
 
   if (error) return { ok: false, error: error.message };
 
+  revalidatePath("/settings/profile");
+  revalidatePath("/settings/workspace");
+  revalidatePath("/settings/profile");
+  revalidatePath("/settings/workspace");
   revalidatePath("/workspace/settings");
   revalidatePath("/workspace/dashboard");
   return { ok: true };
@@ -132,6 +139,9 @@ export async function saveNotificationSettingsAction(
       reminderThresholdHours: Number.isFinite(threshold) ? threshold : 48,
     });
 
+    revalidatePath("/settings/profile");
+    revalidatePath("/settings/workspace");
+    revalidatePath("/settings/profile");
     revalidatePath("/workspace/settings");
     return { ok: true };
   } catch (err) {

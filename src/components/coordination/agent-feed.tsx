@@ -33,9 +33,7 @@ export function AgentFeed({ items }: { items: AgentInsight[] }) {
               className={`rounded-lg border-l-4 p-3 text-sm ${SEVERITY_STYLE[item.severity] ?? SEVERITY_STYLE.low}`}
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="font-medium text-slate-800">
-                  🤖 {item.agent}
-                </p>
+                <p className="font-medium text-slate-800">{item.agent}</p>
                 <span className="shrink-0 text-xs text-slate-500">
                   {Math.round(item.confidence * 100)}%
                 </span>

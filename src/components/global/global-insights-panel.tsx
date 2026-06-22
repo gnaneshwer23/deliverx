@@ -14,7 +14,7 @@ export function GlobalInsightsPanel({ patterns }: { patterns: GlobalPattern[] })
             key={p.patternKey}
             className="rounded-lg border border-sky-100 bg-sky-50/40 p-3"
           >
-            <p className="text-slate-800">🌍 {p.pattern}</p>
+            <p className="text-slate-800">{p.pattern}</p>
             <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-500">
               <span>
                 Impact {p.impact > 0 ? "+" : ""}
