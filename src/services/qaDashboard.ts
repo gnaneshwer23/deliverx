@@ -234,7 +234,8 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
         : 0);
 
   const automationCoverage =
-    typeof plan.automationCoverage === "number"
+    dbMetrics?.automationCoverage ??
+    (typeof plan.automationCoverage === "number"
       ? plan.automationCoverage
       : testCases.length > 0
         ? Math.round(
@@ -242,13 +243,28 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
               Math.max(testCases.length, 1)) *
               100,
           )
-        : 0;
+        : 0);
 
   const releaseReadiness =
     dbMetrics?.releaseReadiness ??
     (typeof plan.releaseReadiness === "number"
       ? plan.releaseReadiness
       : Math.max(0, 100 - criticalDefects * 8 - openIssues * 2));
+
+  const openDefectCount =
+    dbMetrics?.openDefects ??
+    defects.filter((d) => d.status !== "closed").length;
+
+  const defectInsight = dbMetrics
+    ? openDefectCount > 0
+      ? `${openDefectCount} open defect${openDefectCount === 1 ? "" : "s"} tracked — ${dbMetrics.criticalDefects} critical, ${dbMetrics.failedTests} failed test${dbMetrics.failedTests === 1 ? "" : "s"}.`
+      : dbMetrics.failedTests > 0
+        ? `${dbMetrics.failedTests} failed test${dbMetrics.failedTests === 1 ? "" : "s"} with no open defects.`
+        : "No open defects — maintain regression coverage before release."
+    : (plan.defectInsight as string) ??
+      (openDefectCount > 0
+        ? `${openDefectCount} open defect${openDefectCount === 1 ? "" : "s"} in scope.`
+        : "Add test cases and defects to populate release intelligence.");
 
   const uatCompletion =
     dbMetrics?.uatCompletion ??
@@ -257,6 +273,33 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
           uatRows.reduce((s, r) => s + r.completionPct, 0) / uatRows.length,
         )
       : 0);
+
+  const releaseRecommendation =
+    dbMetrics && dbMetrics.criticalDefects > 0
+      ? "No-Go"
+      : dbMetrics && releaseReadiness >= 80
+        ? "Go"
+        : dbMetrics
+          ? "Hold"
+          : (releaseRaw.recommendation as string) ?? (criticalDefects > 0 ? "Conditional Go" : "Go");
+
+  const releaseReason = dbMetrics
+    ? dbMetrics.criticalDefects > 0
+      ? `${dbMetrics.criticalDefects} critical defect${dbMetrics.criticalDefects === 1 ? "" : "s"} open; UAT ${uatCompletion}%; ${dbMetrics.passedTests}/${dbMetrics.passedTests + dbMetrics.failedTests || dbMetrics.passedTests} tests passed.`
+      : dbMetrics.failedTests > 0
+        ? `${dbMetrics.failedTests} failed test${dbMetrics.failedTests === 1 ? "" : "s"} — resolve before release.`
+        : `Coverage ${testCoverage}%; ${openDefectCount} open defects; UAT ${uatCompletion}%.`
+    : (releaseRaw.reason as string) ??
+      (criticalDefects > 0
+        ? "Critical defects remain open."
+        : "Connect QA tables to compute live readiness.");
+
+  const automatedTests = dbMetrics
+    ? testCases.filter((t) => t.automationCandidate).length
+    : (automationRaw.automatedTests as number | undefined);
+  const manualTests = dbMetrics
+    ? testCases.filter((t) => !t.automationCandidate).length
+    : (automationRaw.manualTests as number | undefined);
 
   return {
     userName: profile?.name ?? user?.email ?? null,
@@ -287,24 +330,30 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
     traceability,
     testCases,
     defects,
-    defectInsight:
-      (plan.defectInsight as string) ??
-      "Authentication defects have increased by 25% this sprint.",
+    defectInsight,
     releasePrediction: {
       productionDefectProbability:
-        typeof plan.productionDefectProbability === "number"
-          ? plan.productionDefectProbability
-          : 18,
-      releaseConfidence:
-        typeof plan.releaseConfidence === "number" ? plan.releaseConfidence : deliveryConfidence,
-      insight:
-        "Changes to authentication have historically generated high defect rates.",
+        dbMetrics && openDefectCount > 0
+          ? Math.min(95, Math.round((openDefectCount / Math.max(testCases.length, 1)) * 100))
+          : typeof plan.productionDefectProbability === "number"
+            ? plan.productionDefectProbability
+            : 0,
+      releaseConfidence: dbMetrics ? releaseReadiness : deliveryConfidence,
+      insight: dbMetrics
+        ? releaseReason
+        : "Run QA analysis or sync defects and test cases for release prediction.",
     },
     automation: {
-      manualTests: automationRaw.manualTests ?? 120,
-      automatedTests: automationRaw.automatedTests ?? 340,
-      coveragePct: automationRaw.coveragePct ?? 78,
-      pipelineSuccessPct: automationRaw.pipelineSuccessPct ?? 97,
+      manualTests: manualTests ?? 0,
+      automatedTests: automatedTests ?? 0,
+      coveragePct: dbMetrics ? automationCoverage : (automationRaw.coveragePct as number) ?? automationCoverage,
+      pipelineSuccessPct: dbMetrics
+        ? dbMetrics.passedTests + dbMetrics.failedTests > 0
+          ? Math.round(
+              (dbMetrics.passedTests / (dbMetrics.passedTests + dbMetrics.failedTests)) * 100,
+            )
+          : 0
+        : (automationRaw.pipelineSuccessPct as number) ?? 0,
     },
     impactAnalysis: {
       affectedApis: (impactRaw.affectedApis as number) ?? 4,
@@ -316,20 +365,22 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
         "Retest authentication flows and report export after latest changes.",
     },
     uat: uatRows,
-    uatInsight: "Operations UAT remains below target.",
+    uatInsight: dbMetrics
+      ? uatCompletion >= 90
+        ? "UAT sign-off on track."
+        : uatRows.length > 0
+          ? `UAT averaging ${uatCompletion}% across ${uatRows.length} group${uatRows.length === 1 ? "" : "s"}.`
+          : "No UAT sign-offs recorded yet."
+      : "Set up UAT groups to track acceptance progress.",
     releaseReadiness: {
       overall: releaseReadiness,
-      coverage: (releaseRaw.coverage as number) ?? testCoverage,
-      defects: (releaseRaw.defects as number) ?? Math.max(0, 100 - criticalDefects * 10),
-      performance: (releaseRaw.performance as number) ?? 88,
-      security: (releaseRaw.security as number) ?? 92,
-      uat: (releaseRaw.uat as number) ?? uatCompletion,
-      recommendation: (releaseRaw.recommendation as string) ?? (criticalDefects > 0 ? "Conditional Go" : "Go"),
-      reason:
-        (releaseRaw.reason as string) ??
-        (criticalDefects > 0
-          ? "Two medium defects remain; UAT acceptable; security passed."
-          : "Coverage and security thresholds met."),
+      coverage: dbMetrics ? testCoverage : (releaseRaw.coverage as number) ?? testCoverage,
+      defects: dbMetrics ? dbMetrics.defectScore : (releaseRaw.defects as number) ?? Math.max(0, 100 - criticalDefects * 10),
+      performance: dbMetrics ? 0 : (releaseRaw.performance as number) ?? 0,
+      security: dbMetrics ? 0 : (releaseRaw.security as number) ?? 0,
+      uat: dbMetrics ? uatCompletion : (releaseRaw.uat as number) ?? uatCompletion,
+      recommendation: releaseRecommendation,
+      reason: releaseReason,
     },
     performance: {
       responseTimeMs: (perfRaw.responseTimeMs as number) ?? 220,

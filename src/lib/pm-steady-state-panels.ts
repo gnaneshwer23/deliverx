@@ -4,6 +4,8 @@ import type { TaskWithMeta } from "@/services/delivery";
 import type { ArtifactReviewRow } from "@/services/artifactReviews";
 import { governanceTabHref } from "@/lib/governance-tabs";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
+import type { SprintScope } from "@/lib/sprint-metrics";
+import { buildPmSprintCapacityRows } from "@/lib/sprint-metrics";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
 
 export type PmAttentionPill = {
@@ -189,6 +191,7 @@ export function buildPmSteadyStateKpis(input: BuildPmSteadyStateKpisInput): PmDa
 export type BuildPmTeamCapacityInput = {
   tasks: TaskWithMeta[];
   members: Array<{ id: string; name: string | null; email: string | null; role: string | null }>;
+  sprintScope?: SprintScope | null;
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -204,11 +207,27 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ACTIVE_TASK_STATUSES = new Set(["todo", "in_progress", "in_review", "blocked"]);
 
-/** MVP team load from task assignees; honest placeholder when no assignments exist. */
+/** Team load from sprint assignees + active workstream scope; honest empty when unassigned. */
 export function buildPmTeamCapacityRows(input: BuildPmTeamCapacityInput): {
   members: PmTeamCapacityMember[];
   avgLoadPct: number | null;
 } {
+  if (input.sprintScope) {
+    const sprintRows = buildPmSprintCapacityRows({
+      scope: input.sprintScope,
+      members: input.members,
+      roleLabels: ROLE_LABELS,
+    });
+
+    return {
+      members: sprintRows.members.map((member) => ({
+        ...member,
+        placeholder: false,
+      })),
+      avgLoadPct: sprintRows.avgLoadPct,
+    };
+  }
+
   const activeTasks = input.tasks.filter((t) => ACTIVE_TASK_STATUSES.has(t.status));
   const byAssignee = new Map<string, number>();
 
@@ -221,22 +240,7 @@ export function buildPmTeamCapacityRows(input: BuildPmTeamCapacityInput): {
   const assignedIds = [...byAssignee.keys()];
 
   if (assignedIds.length === 0) {
-    const placeholderCount = Math.min(input.members.length, 4);
-    if (placeholderCount === 0) {
-      return { members: [], avgLoadPct: null };
-    }
-
-    const members: PmTeamCapacityMember[] = input.members.slice(0, placeholderCount).map((m) => ({
-      id: m.id,
-      name: m.name ?? m.email ?? "Teammate",
-      role: ROLE_LABELS[m.role ?? ""] ?? m.role ?? "Team",
-      assignedCount: 0,
-      loadPct: 0,
-      tone: "healthy",
-      placeholder: true,
-    }));
-
-    return { members, avgLoadPct: null };
+    return { members: [], avgLoadPct: null };
   }
 
   const maxTasks = Math.max(...assignedIds.map((id) => byAssignee.get(id) ?? 0), 1);

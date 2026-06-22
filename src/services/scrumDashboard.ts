@@ -16,10 +16,7 @@ import {
   buildScrumStakeholders,
   buildImpedimentsFromSignals,
   aggregateStandupBlockers,
-  computeSprintCompletionFromTasks,
-  currentSprintLabel,
   computeAgileMaturityOverall,
-  defaultVelocityHistory,
   mapRaidToCrossTeamDeps,
   type AgileMaturityScores,
   type CrossRoleScrumImpact,
@@ -28,13 +25,16 @@ import {
   type ScrumStakeholderRow,
 } from "./scrumEngine";
 import { listUserStories } from "./baRequirements";
+import { loadProjectSprintMetrics } from "./sprintData";
 import { listStandups } from "./traceability";
+import type { ScrumBurndownPoint } from "@/lib/scrum-health-kpis";
 
 export type ScrumMissionControl = {
   userName: string | null;
   primaryProject: { id: string; name: string } | null;
   projects: Array<{ id: string; name: string; status: string }>;
-  dataSources: { velocity: "live" | "fallback" };
+  dataSources: { velocity: "live" | "fallback"; burndown: "live" | "fallback" };
+  burndownPoints: ScrumBurndownPoint[];
   overview: {
     sprintLabel: string;
     completionPct: number;
@@ -116,19 +116,22 @@ export async function getScrumMissionControl(
   let projectTasks: Awaited<ReturnType<typeof listOrgTasks>> = [];
   let projectRaid: Awaited<ReturnType<typeof listRaidItems>> = [];
   let standups: Awaited<ReturnType<typeof listStandups>> = [];
+  let sprintMetrics: Awaited<ReturnType<typeof loadProjectSprintMetrics>> | null = null;
 
   if (primary) {
-    const [tasks, stories, raid, forecast, recentStandups] = await Promise.all([
+    const [tasks, stories, raid, forecast, recentStandups, sprint] = await Promise.all([
       listOrgTasks({ projectId: primary.id, limit: 200 }).catch(() => []),
       listUserStories(primary.id).catch(() => []),
       listRaidItems(primary.id).catch(() => []),
       getDeliveryForecast(primary.id).catch(() => null),
       listStandups(primary.id, { days: 7, limit: 20 }).catch(() => []),
+      loadProjectSprintMetrics(primary.id).catch(() => null),
     ]);
 
     projectTasks = tasks;
     projectRaid = raid;
     standups = recentStandups;
+    sprintMetrics = sprint;
     blockedCount = tasks.filter((t) => t.status === "blocked").length;
     storiesCount = stories.length;
     deliveryConfidence = Math.round((forecast?.confidence ?? 0.84) * 100);
@@ -179,11 +182,13 @@ export async function getScrumMissionControl(
   const maturityRaw = (plan.agileMaturity ?? {}) as AgileMaturityScores;
 
   const completionPct =
-    projectTasks.length > 0
-      ? computeSprintCompletionFromTasks(projectTasks)
-      : storiesCount > 0
+    sprintMetrics && sprintMetrics.plannedPoints > 0
+      ? sprintMetrics.completionPct
+      : projectTasks.length > 0
         ? Math.round(
-            ((storiesCount - blockedCount) / Math.max(storiesCount, 1)) * 100,
+            (projectTasks.filter((t) => t.status === "done").length /
+              projectTasks.length) *
+              100,
           )
         : 0;
 
@@ -192,10 +197,20 @@ export async function getScrumMissionControl(
       ? plan.sprintSuccessProbability
       : Math.min(0.95, 0.7 + deliveryConfidence / 500);
 
-  const velocity = Array.isArray(plan.velocityHistory)
-    ? (plan.velocityHistory as Array<{ sprint: string; points: number }>)
-    : defaultVelocityHistory();
-  const velocitySource: "live" | "fallback" = Array.isArray(plan.velocityHistory) ? "live" : "fallback";
+  const velocity =
+    sprintMetrics && sprintMetrics.velocity.length > 0
+      ? sprintMetrics.velocity
+      : Array.isArray(plan.velocityHistory)
+        ? (plan.velocityHistory as Array<{ sprint: string; points: number }>)
+        : [];
+  const velocitySource: "live" | "fallback" =
+    sprintMetrics?.dataSources.velocity === "live"
+      ? "live"
+      : velocity.length > 0
+        ? "live"
+        : "fallback";
+  const burndownSource: "live" | "fallback" =
+    sprintMetrics?.dataSources.burndown === "live" ? "live" : "fallback";
 
   const retroThemes = Array.isArray(plan.retroThemes)
     ? (plan.retroThemes as string[])
@@ -215,8 +230,29 @@ export async function getScrumMissionControl(
     })),
   );
 
-  const plannedPoints = projectTasks.length || storiesCount || 0;
-  const completedPoints = projectTasks.filter((t) => t.status === "done").length;
+  const plannedPoints =
+    sprintMetrics?.plannedPoints ?? (projectTasks.length || storiesCount || 0);
+  const completedPoints =
+    sprintMetrics?.completedPoints ??
+    projectTasks.filter((t) => t.status === "done").length;
+  const burndownPoints = sprintMetrics?.burndownPoints ?? [];
+  const sprintLabel =
+    sprintMetrics?.sprintLabel ??
+    (plan.sprintLabel as string) ??
+    (velocity.length ? velocity[velocity.length - 1].sprint : "No active sprint");
+  const daysRemaining = sprintMetrics?.daysRemaining ?? 0;
+  const ceremonies =
+    sprintMetrics && sprintMetrics.ceremonies.length > 0
+      ? sprintMetrics.ceremonies
+      : ["Sprint Planning", "Daily Standup", "Refinement", "Sprint Review", "Retrospective"];
+  const velocityTrend =
+    velocity.length >= 2
+      ? velocity[velocity.length - 1].points >= velocity[velocity.length - 2].points
+        ? "Up"
+        : "Down"
+      : velocity.length === 1
+        ? "Baseline"
+        : "—";
 
   return {
     userName: profile?.name ?? user?.email ?? null,
@@ -226,18 +262,14 @@ export async function getScrumMissionControl(
       name: p.name,
       status: p.status ?? "active",
     })),
-    dataSources: { velocity: velocitySource },
+    dataSources: { velocity: velocitySource, burndown: burndownSource },
+    burndownPoints,
     overview: {
-      sprintLabel:
-        (plan.sprintLabel as string) ??
-        (velocity.length ? velocity[velocity.length - 1].sprint : currentSprintLabel()),
+      sprintLabel,
       completionPct,
-      daysRemaining: Math.max(
-        0,
-        14 - (Math.floor(Date.now() / 86_400_000) % 14),
-      ),
+      daysRemaining,
       blockedStories: blockedCount || impediments.length,
-      velocityTrend: "Stable",
+      velocityTrend,
       teamHealth: strain === "high" ? "Amber" : "Green",
       burnoutRisk: (burnoutRaw.risk as string) ?? (strain === "high" ? "Medium" : "Low"),
       sprintSuccessProbability: Math.round(sprintSuccessProbability * 100),
@@ -279,16 +311,15 @@ export async function getScrumMissionControl(
       impediments.length > 0
         ? `${impediments.length} active impediment${impediments.length === 1 ? "" : "s"} from blocked tasks and RAID.`
         : "No active impediments from delivery signals.",
-    ceremonies: [
-      "Sprint Planning",
-      "Daily Standup",
-      "Refinement",
-      "Review",
-      "Retrospective",
-    ],
+    ceremonies,
     standupSummary,
     velocity,
-    velocityInsight: "Velocity has stabilised over five sprints.",
+    velocityInsight:
+      velocity.length >= 2
+        ? `Latest velocity ${velocity[velocity.length - 1].points} pts vs ${velocity[velocity.length - 2].points} pts prior.`
+        : velocity.length === 1
+          ? `${velocity[0].points} pts completed in the latest sprint window.`
+          : "Complete a sprint workstream to populate velocity history.",
     capacity: {
       availableHours: (capacityRaw.availableHours as number) ?? 320,
       allocatedHours: (capacityRaw.allocatedHours as number) ?? 295,

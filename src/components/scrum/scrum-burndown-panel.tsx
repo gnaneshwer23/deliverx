@@ -38,9 +38,9 @@ export function ScrumBurndownPanel({
           </p>
         </div>
       </div>
-      {usesFallback ? (
+        {usesFallback ? (
         <p className="mb-3 text-xs text-[#6B6B64]">
-          Velocity uses fallback until delivery context is connected.
+          Burndown populates when sprint tasks are tracked in an active workstream.
         </p>
       ) : null}
       {points.length === 0 || plannedPoints <= 0 ? (
