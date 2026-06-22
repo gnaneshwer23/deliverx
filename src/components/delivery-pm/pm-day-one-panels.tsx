@@ -374,8 +374,11 @@ export function PmDayOneMilestonesPanel({
     <div className={`${dxClass.card} p-6`} data-panel="pm-day-one-milestones">
       <h3 className={`${dxClass.display} mb-3 text-lg`}>Milestones & timeline</h3>
       {usesFallback ? (
-        <p className="mb-2 text-[10px] text-[#B7620A]">Bootstrap phases — refine after planning.</p>
-      ) : null}
+        <p className="mb-2 text-xs text-[#6B6B64]">
+          — · Connect milestones from your project charter.
+        </p>
+      ) : (
+        <>
       <PmMilestoneTimelineStrip segments={timelineSegments} />
       <ol className="mt-3 space-y-1.5">
         {milestones.map((milestone, index) => (
@@ -398,6 +401,8 @@ export function PmDayOneMilestonesPanel({
           </li>
         ))}
       </ol>
+        </>
+      )}
     </div>
   );
 }

@@ -26,7 +26,8 @@ export function ProductRiceBacklogTable({
           </p>
         ) : null}
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[640px] text-sm">
         <thead>
           <tr className="bg-[#FAF0ED] text-left text-xs uppercase text-[#A8A89E]">
             <th className="px-6 py-2">Feature</th>
@@ -65,6 +66,7 @@ export function ProductRiceBacklogTable({
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

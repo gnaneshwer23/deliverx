@@ -89,7 +89,7 @@ export function QuickActionsBar({ role }: { role: UserRole }) {
           <Link
             key={action.href}
             href={action.href}
-            className="inline-flex items-center gap-1.5 border border-[#E4E4DC] bg-white px-3 py-1.5 text-xs text-[#6B6B64] transition hover:border-[#1C4A2E] hover:text-[#0D0D0B]"
+            className="inline-flex min-h-9 touch-manipulation items-center gap-1.5 border border-[#E4E4DC] bg-white px-3 py-1.5 text-xs text-[#6B6B64] transition hover:border-[#1C4A2E] hover:text-[#0D0D0B]"
           >
             <Icon size={13} />
             {action.label}

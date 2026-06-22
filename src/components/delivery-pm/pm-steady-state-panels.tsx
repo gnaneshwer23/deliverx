@@ -262,7 +262,7 @@ function GovernanceTabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+      className={`inline-flex min-h-9 shrink-0 snap-start touch-manipulation items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
         active
           ? "border-transparent text-white shadow-sm"
           : "border-[#E4E4DC] bg-white text-[#6B6B64] hover:border-[#B8D8D8]"
@@ -488,7 +488,7 @@ export function PmGovernanceTabsPanel({
         </span>
       </div>
       <PmHorizontalStackedBar segments={governanceSegments} heightClass="h-1.5" />
-      <div className="mb-4 mt-3 flex flex-wrap gap-2">
+      <div className="-mx-2 mb-4 mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-2 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0">
         {(Object.keys(TAB_LABELS) as PmGovernanceTabId[]).map((tabId) => (
           <GovernanceTabButton
             key={tabId}
@@ -669,12 +669,17 @@ export function PmSteadyStateMilestonesPanel({
         ) : null}
       </div>
       {usesFallback ? (
-        <p className="mb-2 text-[10px] text-[#B7620A]">Bootstrap phases — connect charter for live dates.</p>
-      ) : null}
+        <p className="mb-2 text-xs text-[#6B6B64]">
+          — · Connect milestones from your project charter.
+        </p>
+      ) : (
+        <>
       <PmMilestoneTimelineStrip segments={timelineSegments} compact />
       {goLivePct != null ? (
         <p className="mt-2 text-[10px] text-[#6B6B64]">Go-live probability at current velocity</p>
       ) : null}
+        </>
+      )}
     </div>
   );
 }

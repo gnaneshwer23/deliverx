@@ -17,7 +17,7 @@ export function GovernanceTabNav({
 }) {
   return (
     <nav
-      className="mb-6 flex flex-wrap gap-2 border-b border-[#E4E4DC] pb-3"
+      className="-mx-6 mb-6 flex snap-x snap-mandatory gap-2 overflow-x-auto border-b border-[#E4E4DC] px-6 pb-3 md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
       aria-label="Governance sections"
     >
       {GOVERNANCE_TABS.map((tab) => {
@@ -28,7 +28,7 @@ export function GovernanceTabNav({
             key={tab}
             href={governanceTabHref(tab)}
             aria-current={isActive ? "page" : undefined}
-            className={`inline-flex items-center gap-1.5 border px-3 py-1.5 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.1em] transition-colors ${
+            className={`inline-flex min-h-9 shrink-0 snap-start touch-manipulation items-center gap-1.5 border px-3 py-1.5 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.1em] transition-colors ${
               isActive
                 ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
                 : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#1C4A2E] hover:text-[#1C4A2E]"

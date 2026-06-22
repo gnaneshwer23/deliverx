@@ -166,7 +166,7 @@ function ProjectPicker({
         <Link
           key={p.id}
           href={`/workspace/ba?project=${p.id}`}
-          className={`rounded-full border px-3 py-1 text-xs font-medium ${
+          className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3 py-1 text-xs font-medium ${
             p.id === currentId ? "" : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#A8A89E]"
           }`}
           style={

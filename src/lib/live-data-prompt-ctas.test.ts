@@ -20,7 +20,7 @@ describe("live-data-prompt-ctas", () => {
 
   it("builds founder CTAs with project documents when project exists", () => {
     const config = buildLiveDataPromptConfig("founder", PROJECT_ID);
-    expect(config.message).toMatch(/Financial KPIs/);
+    expect(config.message).toMatch(/Financial KPIs need pitch deck/);
     expect(config.ctas.map((c) => c.href)).toEqual([
       `/project/${PROJECT_ID}/documents`,
       "/project/new",

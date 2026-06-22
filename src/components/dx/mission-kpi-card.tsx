@@ -158,7 +158,7 @@ export function MissionKpiGrid({
 }) {
   const gridClass =
     layout === "wide"
-      ? "grid grid-cols-2 gap-2.5 lg:grid-cols-4 xl:grid-cols-5"
+      ? "flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0 xl:grid-cols-5 [&>*]:min-w-[42%] [&>*]:shrink-0 [&>*]:snap-start lg:[&>*]:min-w-0 lg:[&>*]:shrink"
       : layout === "mission"
         ? "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7"
         : "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-4";

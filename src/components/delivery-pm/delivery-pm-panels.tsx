@@ -7,6 +7,7 @@ import type {
 } from "@/services/deliveryPmEngine";
 import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
+import { formatHonestKpi, type HonestKpiFormatted } from "@/lib/honest-kpi";
 
 const toneDot: Record<string, string> = {
   green: "bg-emerald-500",
@@ -76,7 +77,8 @@ export function DeliveryStakeholdersPanel({ rows }: { rows: StakeholderDeliveryR
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Stakeholders</h3>
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[480px] text-sm">
         <thead>
           <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
             <th className="px-6 py-2">Stakeholder</th>
@@ -99,6 +101,7 @@ export function DeliveryStakeholdersPanel({ rows }: { rows: StakeholderDeliveryR
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
@@ -172,21 +175,25 @@ export function DeliveryMilestonesPanel({
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Milestones & timeline</h3>
       {usesFallback ? (
-        <p className="mb-3 text-xs text-[#B7620A]">
-          Illustrative delivery phases — connect milestones from your project charter.
+        <p className="mb-3 text-xs text-[#6B6B64]">
+          {formatHonestKpi(null, "Connect milestones from your project charter").value} · Connect
+          milestones from your project charter.
         </p>
-      ) : null}
-      <div className="flex flex-wrap gap-3">
-        {milestones.map((m) => (
-          <div
-            key={m.phase}
-            className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-4 py-2 text-sm"
-          >
-            <span className="mr-2">{phaseIcon[m.status]}</span>
-            {m.phase}
-          </div>
-        ))}
-      </div>
+      ) : milestones.length ? (
+        <div className="flex flex-wrap gap-3">
+          {milestones.map((m) => (
+            <div
+              key={m.phase}
+              className="rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] px-4 py-2 text-sm"
+            >
+              <span className="mr-2">{phaseIcon[m.status]}</span>
+              {m.phase}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-[#6B6B64]">No milestones planned yet.</p>
+      )}
       {goLiveProbability != null ? (
         <PanelAiInsight
           label="AI prediction"
@@ -211,16 +218,34 @@ export function DeliveryBudgetPanel({
   return (
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Budget</h3>
-      {usesFallback ? (
-        <p className="mb-3 text-xs text-[#B7620A]">
-          Illustrative budget figures — upload business case or set approved spend in delivery context.
-        </p>
-      ) : null}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Stat label="Approved" value={fmt(budget.approved)} />
-        <Stat label="Spent" value={fmt(budget.spent)} />
-        <Stat label="Forecast" value={fmt(budget.forecast)} />
-        <Stat label="Burn rate" value={`${fmt(budget.burnRateMonthly)}/mo`} />
+        {usesFallback ? (
+          <>
+            <HonestStat
+              label="Approved"
+              formatted={formatHonestKpi(null, "Upload business case or set approved spend")}
+            />
+            <HonestStat
+              label="Spent"
+              formatted={formatHonestKpi(null, "Updates after spend is tracked")}
+            />
+            <HonestStat
+              label="Forecast"
+              formatted={formatHonestKpi(null, "Set forecast after charter review")}
+            />
+            <HonestStat
+              label="Burn rate"
+              formatted={formatHonestKpi(null, "Calculates after spend history exists")}
+            />
+          </>
+        ) : (
+          <>
+            <Stat label="Approved" value={fmt(budget.approved)} />
+            <Stat label="Spent" value={fmt(budget.spent)} />
+            <Stat label="Forecast" value={fmt(budget.forecast)} />
+            <Stat label="Burn rate" value={`${fmt(budget.burnRateMonthly)}/mo`} />
+          </>
+        )}
       </div>
     </div>
   );
@@ -235,13 +260,26 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
+function HonestStat({ label, formatted }: { label: string; formatted: HonestKpiFormatted }) {
+  return (
+    <div>
+      <p className="text-xs uppercase text-[#A8A89E]">{label}</p>
+      <p className={`${dxClass.display} text-xl`}>{formatted.value}</p>
+      {formatted.hint ? (
+        <p className="mt-0.5 text-[10px] leading-snug text-[#6B6B64]">{formatted.hint}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export function DeliveryBenefitsPanel({ benefits }: { benefits: PmMissionControl["benefits"] }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`}>
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Benefits realisation</h3>
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[560px] text-sm">
         <thead>
           <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
             <th className="px-6 py-2">Benefit</th>
@@ -275,6 +313,7 @@ export function DeliveryBenefitsPanel({ benefits }: { benefits: PmMissionControl
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
@@ -289,7 +328,8 @@ export function DeliveryDecisionsPanel({
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Decision register</h3>
       </div>
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[480px] text-sm">
         <thead>
           <tr className="bg-[#FAFAF7] text-left text-xs uppercase text-[#A8A89E]">
             <th className="px-6 py-2">Decision</th>
@@ -315,6 +355,7 @@ export function DeliveryDecisionsPanel({
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

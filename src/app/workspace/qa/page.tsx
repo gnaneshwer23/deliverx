@@ -148,7 +148,7 @@ export default async function QaMissionControlPage({
                 <Link
                   key={p.id}
                   href={`/workspace/qa?project=${p.id}`}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                  className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3 py-1 text-xs font-medium ${
                     p.id === data.primaryProject?.id ? "" : "border-[#E4E4DC] text-[#6B6B64]"
                   }`}
                   style={

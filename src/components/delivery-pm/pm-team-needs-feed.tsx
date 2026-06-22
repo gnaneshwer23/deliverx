@@ -10,7 +10,7 @@ import type { PmTeamNeedFeedItem } from "@/lib/pm-team-needs-feed";
 function TeamNeedFeedRow({ item }: { item: PmTeamNeedFeedItem }) {
   return (
     <li className="px-5 py-3">
-      <div className="flex items-start gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#EDF7F7] text-[10px] font-semibold text-[#1A5C5C]">
           {item.avatarInitials}
         </span>
@@ -25,11 +25,11 @@ function TeamNeedFeedRow({ item }: { item: PmTeamNeedFeedItem }) {
           <p className="mt-1 text-sm text-[#2C2C28]">{item.need}</p>
           <p className="mt-1 text-[10px] text-[#A8A89E]">{item.waitLabel}</p>
         </div>
-        <div className="flex shrink-0 flex-col gap-1.5">
+        <div className="flex shrink-0 flex-row gap-1.5 sm:flex-col">
           {item.href ? (
             <Link
               href={item.href}
-              className="inline-flex items-center gap-1 rounded border border-[#C6DDD0] bg-white px-2 py-1 text-[10px] font-medium text-[#1C4A2E] hover:bg-[#EEF5F1]"
+              className="inline-flex min-h-9 touch-manipulation items-center gap-1 rounded border border-[#C6DDD0] bg-white px-2 py-1 text-[10px] font-medium text-[#1C4A2E] hover:bg-[#EEF5F1]"
             >
               Open
               <ExternalLink size={10} />
@@ -38,7 +38,7 @@ function TeamNeedFeedRow({ item }: { item: PmTeamNeedFeedItem }) {
           {item.escalateHref ? (
             <Link
               href={item.escalateHref}
-              className="inline-flex items-center gap-1 rounded border border-[#E4E4DC] px-2 py-1 text-[10px] font-medium text-[#6B6B64] hover:bg-[#FAFAF7]"
+              className="inline-flex min-h-9 touch-manipulation items-center gap-1 rounded border border-[#E4E4DC] px-2 py-1 text-[10px] font-medium text-[#6B6B64] hover:bg-[#FAFAF7]"
             >
               <ArrowUpRight size={10} />
               Escalate
