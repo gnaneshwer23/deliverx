@@ -26,8 +26,8 @@ import {
 import {
   BENCHMARKS_RECOMMENDATIONS_HREF,
   BENCHMARKS_RECOMMENDATIONS_NAV_LABEL,
+  DELIVERY_BRAIN_NAV_LABEL,
   DELIVERY_PATTERNS_HREF,
-  DELIVERY_PATTERNS_NAV_LABEL,
 } from "@/lib/intelligence-nav-labels";
 import {
   SidebarNavLinks,
@@ -54,7 +54,7 @@ const advancedNav: SidebarNavItem[] = [
   { href: "/workspace/memory", label: "Organisational Memory", icon: Brain },
   { href: "/workspace/playbooks", label: "Playbooks", icon: BookOpen },
   { href: "/workspace/benchmarking", label: "Benchmarking", icon: Gauge },
-  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_PATTERNS_NAV_LABEL, icon: BrainCircuit },
+  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_BRAIN_NAV_LABEL, icon: BrainCircuit },
   { href: "/workspace/marketplace", label: "Marketplace", icon: Store },
   { href: BENCHMARKS_RECOMMENDATIONS_HREF, label: BENCHMARKS_RECOMMENDATIONS_NAV_LABEL, icon: Globe2 },
 ];
@@ -92,7 +92,7 @@ export function WorkspaceSidebar({
 
       <div className="mt-auto flex flex-col gap-3 border-t border-white/10 pt-4 text-xs">
         <Link
-          href="/workspace/settings"
+          href="/settings/profile"
           className="flex items-center gap-2 text-[#9ca3af] transition hover:text-[#6ee7c7]"
         >
           <Settings size={14} /> Settings

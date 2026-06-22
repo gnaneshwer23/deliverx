@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Layers, Target } from "lucide-react";
+import { Construction, Layers, Target } from "lucide-react";
 import {
   getProgramme,
   listProjectsForOrg,
@@ -188,7 +188,7 @@ export default async function ProgrammeDetailPage({
             <ul className="space-y-2 text-sm text-slate-700">
               {analysis.bottlenecks.map((b, i) => (
                 <li key={i} className="flex gap-2">
-                  <span className="text-amber-500">🚧</span>
+                  <Construction size={14} className="mt-0.5 shrink-0 text-amber-500" aria-hidden />
                   <span>{b}</span>
                 </li>
               ))}

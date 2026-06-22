@@ -167,7 +167,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Delivery Signals",
-    "loopTitle": "Team Needs",
+    "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#DC2626",
@@ -253,7 +253,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Clarification Hub",
-    "loopTitle": "Team Needs",
+    "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#DC2626",
@@ -339,7 +339,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Now · Next · Later",
-    "loopTitle": "Team Needs",
+    "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#A78BFA",
@@ -425,7 +425,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "My Stories — Sprint 24",
-    "loopTitle": "Team Needs",
+    "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#3D9660",
@@ -511,7 +511,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Defect Board",
-    "loopTitle": "Team Needs",
+    "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#DC2626",
@@ -597,7 +597,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       }
     ],
     "feedTitle": "Impediment Board",
-    "loopTitle": "Team Needs",
+    "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#DC2626",
