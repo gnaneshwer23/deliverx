@@ -10,7 +10,8 @@ import { listOrgProjects } from "@/services/delivery";
 import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { countPendingReviewsByPersonaMap } from "@/lib/approval/persona-reviews";
 import { workspaceMainOffsetClass } from "@/lib/responsive-layout";
-import { SETTINGS_PROFILE_PATH } from "@/lib/settings-routing";
+
+const SETTINGS_PROFILE_PATH = "/settings/profile";
 
 export default async function BrainLayout({ children }: { children: ReactNode }) {
   const { user, profile } = await requireCompleteOnboarding();
