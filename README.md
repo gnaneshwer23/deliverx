@@ -76,6 +76,15 @@ Run this smoke path after `npm run dev` (or on your deployed URL) to confirm the
 5. **Meeting** — Paste notes or upload audio → AI summary → approve decisions/RAID
 6. **Traceability** — Open `/project/[id]/traceability` and confirm graph links
 7. **Standup** — Submit at `/project/[id]/standups` → check health on project overview
-8. **AI status** — `GET /api/ai/status` returns `{ "configured": true }` when `MINIMAX_API_KEY` is set
+8. **AI status** — `GET /api/ai/status` returns `{ "configured": true }` when `OPENAI_API_KEY` (or legacy `open_api_key`) is set
 
-Required env vars for the full path: Supabase keys, `MINIMAX_API_KEY`. Optional: `OPENAI_API_KEY` for transcription and charter embeddings.
+Required env vars for the full path: Supabase keys, `OPENAI_API_KEY`. Optional: `RESEND_API_KEY` for report emails, `RECALL_*` for meeting bot. See [docs/API_KEYS.md](docs/API_KEYS.md).
+
+## Deployment
+
+**Production:** https://www.deliverx.dev (Vercel, branch `main`)
+
+1. Link the repo in [Vercel](https://vercel.com/) and set environment variables per [docs/API_KEYS.md](docs/API_KEYS.md).
+2. For **Preview** deployments, copy Production vars using the checklist in [docs/PREVIEW_ENV_PARITY.md](docs/PREVIEW_ENV_PARITY.md) — Preview currently has only `open_api_key`; Supabase and `NEXT_PUBLIC_APP_URL` are required for auth and data.
+3. After env changes, redeploy. Confirm **Settings → Setup audit** shows no missing required keys.
+4. Sprint history and prod SHA: [docs/BUILD_REPORT.md](docs/BUILD_REPORT.md).

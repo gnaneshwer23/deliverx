@@ -1,8 +1,8 @@
 # Collaborative loop status
 
-**Last updated:** 2026-06-19 (Organic Loop sprint)  
+**Last updated:** 2026-06-22 (R11 — post R8–R10 real data wiring)  
 **Production:** https://www.deliverx.dev  
-**Current `main` SHA:** see `git log -1 origin/main`
+**Current `main` SHA:** `a550972` (PR [#116](https://github.com/gnaneshwer23/deliverx/pull/116)) — or `git log -1 origin/main`
 
 Honest assessment of the **Collaborative Loop explainer** (7-role propagation, narrative threads, approval gate) against what is built and running in production. For sprint history and PR numbers, see [BUILD_REPORT.md](./BUILD_REPORT.md).
 
@@ -128,6 +128,12 @@ Register → role onboarding → (Executive) business case → GO
 
 ---
 
+## R8–R10 — Real data on mission dashboards
+
+After the R1–R7 IA rebuild, **R8–R10** wired honest KPIs from live DB where available (Scrum burndown, PM capacity, QA release readiness, Product features, Engineer PRs). Mock→live banners (`LiveDataPromptBanner`) remain when project context is missing. Loop propagation and organic mutations unchanged — see organic loop table above.
+
+---
+
 ## Next steps — Horizon 2 (J1–J4)
 
 These sprints close the gap between the explainer and live product behaviour. Horizon 3 **K1–K5** covers UX/wordiness (panel diet, “next up” strip); see [BUILD_REPORT.md](./BUILD_REPORT.md) deferred table.
@@ -162,6 +168,7 @@ API (authenticated): `GET /api/setup/phase-h-health`, `GET /api/setup/phase-i-he
 
 ## Related docs
 
+- [DASHBOARD_IA.md](./DASHBOARD_IA.md) — persona dashboard layouts
 - [BUILD_REPORT.md](./BUILD_REPORT.md) — sprint PR index and deferred items
 - [I4_STAKEHOLDER_MATRIX.md](./I4_STAKEHOLDER_MATRIX.md) — persona routes and mock-data banners
 - [ARCHITECTURE_AUDIT.md](./ARCHITECTURE_AUDIT.md) — full loop coverage audit
