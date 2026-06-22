@@ -66,7 +66,7 @@ export function ProductRoadmapKanban({
       />
       {usesFallback ? (
         <p className="border-b border-[#E4E4DC] px-6 py-2 text-xs text-[#6B6B64]">
-          Connect product context to replace placeholder horizons with live roadmap items.
+          — · Connect product context to populate live roadmap horizons.
         </p>
       ) : null}
       <div className="grid grid-cols-1 gap-0 md:grid-cols-3 md:divide-x md:divide-[#E4E4DC]">

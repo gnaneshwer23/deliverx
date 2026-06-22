@@ -43,6 +43,17 @@ export function buildEngineerShippingKpis(
     "Assign tasks to track sprint",
   );
 
+  const buildHasSignal =
+    githubConfigured ||
+    (cicd.buildStatus !== "—" && cicd.buildStatus !== "Unknown");
+  const buildValue = buildHasSignal
+    ? overview.buildHealth === "green"
+      ? "Pass"
+      : overview.buildHealth === "amber"
+        ? "Warn"
+        : "Fail"
+    : "—";
+
   const kpisList: EngineerShippingKpi[] = [
     {
       label: "Assigned",
@@ -79,9 +90,9 @@ export function buildEngineerShippingKpis(
     },
     {
       label: "Build",
-      value: overview.buildHealth === "green" ? "Pass" : overview.buildHealth === "amber" ? "Warn" : "Fail",
-      hint: cicd.buildStatus,
-      tone: BUILD_TONE[overview.buildHealth],
+      value: buildValue,
+      hint: buildHasSignal ? cicd.buildStatus : "Connect GitHub or CI plan",
+      tone: buildHasSignal ? BUILD_TONE[overview.buildHealth] : "default",
       href: engineeringHref(input.projectId),
     },
     {

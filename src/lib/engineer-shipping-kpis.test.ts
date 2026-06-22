@@ -30,6 +30,31 @@ describe("engineer-shipping-kpis", () => {
     expect(kpis).toHaveLength(5);
   });
 
+  it("shows em-dash for build when CI is not connected", () => {
+    const kpis = buildEngineerShippingKpis({
+      overview: {
+        assignedStories: 0,
+        blockedStories: 0,
+        openPrs: 0,
+        buildHealth: "amber",
+        sprintProgress: 0,
+        technicalDebt: "—",
+        deploymentRisk: "—",
+      },
+      prDashboard: { openPrs: 0, reviewsRequired: 0, avgReviewHours: 0 },
+      cicd: {
+        buildStatus: "—",
+        deployment: "—",
+        testCoverage: 0,
+        failedTests: 0,
+        lastDeployment: "—",
+      },
+      githubConfigured: false,
+      blockedDependencies: 0,
+    });
+    expect(kpis.find((k) => k.label === "Build")?.value).toBe("—");
+  });
+
   it("synthesises shipping blockers", () => {
     const summary = buildEngineerShippingSynthesis({
       blockedStories: 2,

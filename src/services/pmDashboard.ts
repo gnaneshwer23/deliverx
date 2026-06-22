@@ -44,7 +44,15 @@ export type ProductMissionControl = {
   crossRoleImpact: CrossRoleProductImpact[];
   stakeholderConnections: ReturnType<typeof buildStakeholderProductConnections>;
   roadmap: { now: string[]; next: string[]; later: string[] };
-  topFeatures: Array<{ title: string; score: number; horizon: string }>;
+  topFeatures: Array<{
+    title: string;
+    score: number;
+    horizon: string;
+    reach: number;
+    impact: number;
+    confidence: number;
+    effort: number;
+  }>;
   customerSegments: Awaited<ReturnType<typeof listCustomerSegments>>;
   topPainPoints: string[];
   featureAdoption: Array<{ feature: string; adoption: number }>;
@@ -176,7 +184,15 @@ export async function getProductMissionControl(
     topFeatures: [...stats.features]
       .sort((a, b) => b.rice.score - a.rice.score)
       .slice(0, 5)
-      .map((f) => ({ title: f.title, score: f.rice.score, horizon: f.horizon })),
+      .map((f) => ({
+        title: f.title,
+        score: f.rice.score,
+        horizon: f.horizon,
+        reach: f.rice.reach,
+        impact: f.rice.impact,
+        confidence: f.rice.confidence,
+        effort: f.rice.effort,
+      })),
     customerSegments: stats.segments,
     topPainPoints: stats.insights
       .filter((i) => i.insight_type === "pain_point" || i.priority === "high")
@@ -184,9 +200,15 @@ export async function getProductMissionControl(
       .map((i) => i.theme || i.content),
     featureAdoption: adoptionRows,
     voiceOfCustomer: {
-      positive: voc.positive ?? positivePct,
-      neutral: voc.neutral ?? 18,
-      negative: voc.negative ?? Math.max(0, 100 - positivePct - 18),
+      positive:
+        voc.positive ??
+        (stats.insights.length > 0 ? positivePct : 0),
+      neutral: voc.neutral ?? 0,
+      negative:
+        voc.negative ??
+        (stats.insights.length > 0
+          ? Math.max(0, 100 - positivePct - (voc.neutral ?? 0))
+          : 0),
       themes: voc.themes ?? stats.insights.slice(0, 3).map((i) => i.theme).filter(Boolean),
     },
     dataSources: {

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getScrumMissionControl } from "@/services/scrumDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
 import { ScrumDashboardLayout } from "@/components/scrum/scrum-dashboard-layout";
+import { ScrumMissionShell } from "@/components/scrum/scrum-mission-shell";
 import { ScrumHealthKpiStrip } from "@/components/scrum/scrum-health-kpi-strip";
 import { ScrumBurndownPanel } from "@/components/scrum/scrum-burndown-panel";
 import {
@@ -14,7 +15,14 @@ import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
-import { PERSONA_REVIEW_LABELS } from "@/lib/approval/persona-reviews";
+import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import {
+  SCRUM_DAY_ONE_SUBTITLE,
+  resolveScrumDashboardMode,
+} from "@/lib/scrum-dashboard-mode";
+import { PERSONA_REVIEW_LABELS, filterReviewsByProject } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
@@ -50,6 +58,27 @@ export default async function ScrumMissionControlPage({
   ]);
 
   const projectId = data.primaryProject?.id;
+  const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  let bootstrapSummary: ProjectBootstrapSummary | null = null;
+  let hasBootstrapSummary = false;
+
+  if (projectId) {
+    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
+      bootstrapSummary = bootstrap.summary;
+      hasBootstrapSummary = true;
+    }
+  }
+
+  const serverScrumMode = resolveScrumDashboardMode({
+    projectId,
+    hasBootstrapSummary,
+    pendingReviewCount: projectPendingReviews.length,
+    impedimentCount: data.impediments.length,
+    blockedStories: data.overview.blockedStories,
+    bridgeDismissed: false,
+  });
+
   const scrumAccent = getMissionPersonaAccent("scrum");
 
   const burndownPoints = data.burndownPoints;
@@ -117,9 +146,18 @@ export default async function ScrumMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
+        subtitle: serverScrumMode === "day-one" ? SCRUM_DAY_ONE_SUBTITLE : undefined,
       }}
     >
-      <div className="space-y-4 p-6 md:p-8">
+      <ScrumMissionShell
+        projectId={projectId}
+        hasBootstrapSummary={hasBootstrapSummary}
+        pendingReviewCount={projectPendingReviews.length}
+        impedimentCount={data.impediments.length}
+        blockedStories={data.overview.blockedStories}
+        summary={bootstrapSummary}
+      >
+        <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Scrum" /> : null}
         <MissionBootstrapBanner
           personaId="scrum"
@@ -158,7 +196,8 @@ export default async function ScrumMissionControlPage({
           </div>
         ) : null}
         {dashboard}
-      </div>
+        </div>
+      </ScrumMissionShell>
     </MissionDashboardChrome>
   );
 }

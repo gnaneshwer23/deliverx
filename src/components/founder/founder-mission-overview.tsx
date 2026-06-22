@@ -1,6 +1,6 @@
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
-import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
+import { formatHonestKpi, formatHonestPct } from "@/lib/honest-kpi";
 import { EditableMissionAiSummary } from "@/components/dx/editable-mission-ai-summary";
 
 const tierTone = {
@@ -11,19 +11,74 @@ const tierTone = {
 
 export function FounderMissionOverview({ data }: { data: FounderMissionControl }) {
   const sym = data.funding.currency === "GBP" ? "£" : "$";
-  const runwayPct = Math.min(100, Math.round((data.kpis.runwayMonths / 18) * 100));
-  const financialHint =
-    data.dataSources.financials === "fallback" ? FALLBACK_KPI_HINT : undefined;
+  const financialIsLive = data.dataSources.financials === "live";
+
+  const runway = formatHonestKpi(
+    financialIsLive ? `${data.kpis.runwayMonths} mo` : null,
+    "Set cash & burn in founder context",
+  );
+  const burn = formatHonestKpi(
+    financialIsLive ? `${sym}${Math.round(data.kpis.monthlyBurn / 1000)}k/mo` : null,
+    "Add financial profile for live burn",
+  );
+  const mrr = formatHonestKpi(
+    financialIsLive ? `${sym}${Math.round(data.kpis.mrr / 1000)}k` : null,
+    "Add revenue data for MRR",
+  );
+  const arr = formatHonestKpi(
+    financialIsLive ? `${sym}${Math.round(data.kpis.arr / 1000)}k` : null,
+    "Add revenue data for ARR",
+  );
+  const growth = formatHonestPct(
+    financialIsLive ? data.kpis.growthPct : null,
+    "Add growth metrics from financials",
+  );
+  const velocity = formatHonestKpi(
+    financialIsLive ? data.kpis.teamVelocity : null,
+    "Team velocity appears after delivery signals",
+  );
 
   return (
     <MissionKpiGrid layout="mission">
-      <MissionKpiCard label="Startup health" value={data.companyHealth.label} tone={tierTone[data.companyHealth.tier]} valueSize="xl" hint={financialHint} />
-      <MissionKpiCard label="Runway" value={`${data.kpis.runwayMonths} mo`} progressPct={runwayPct} tone={data.kpis.runwayMonths >= 12 ? "healthy" : data.kpis.runwayMonths >= 6 ? "watch" : "at-risk"} valueSize="xl" hint={financialHint} />
-      <MissionKpiCard label="Burn rate" value={`${sym}${Math.round(data.kpis.monthlyBurn / 1000)}k/mo`} valueSize="xl" hint={financialHint} />
-      <MissionKpiCard label="MRR" value={`${sym}${Math.round(data.kpis.mrr / 1000)}k`} valueSize="xl" hint={financialHint} />
-      <MissionKpiCard label="ARR" value={`${sym}${Math.round(data.kpis.arr / 1000)}k`} valueSize="xl" hint={financialHint} />
-      <MissionKpiCard label="Growth" value={`+${data.kpis.growthPct}%`} tone="healthy" progressPct={Math.min(100, data.kpis.growthPct)} delta={{ value: "MoM", direction: "up" }} valueSize="xl" hint={financialHint} />
-      <MissionKpiCard label="Team velocity" value={data.kpis.teamVelocity} valueSize="xl" />
+      <MissionKpiCard
+        label="Startup health"
+        value={financialIsLive ? data.companyHealth.label : "—"}
+        tone={financialIsLive ? tierTone[data.companyHealth.tier] : "default"}
+        hint={runway.hint}
+        valueSize="xl"
+      />
+      <MissionKpiCard
+        label="Runway"
+        value={String(runway.value)}
+        progressPct={
+          financialIsLive
+            ? Math.min(100, Math.round((data.kpis.runwayMonths / 18) * 100))
+            : undefined
+        }
+        tone={
+          financialIsLive
+            ? data.kpis.runwayMonths >= 12
+              ? "healthy"
+              : data.kpis.runwayMonths >= 6
+                ? "watch"
+                : "at-risk"
+            : "default"
+        }
+        hint={runway.hint}
+        valueSize="xl"
+      />
+      <MissionKpiCard label="Burn rate" value={String(burn.value)} hint={burn.hint} valueSize="xl" />
+      <MissionKpiCard label="MRR" value={String(mrr.value)} hint={mrr.hint} valueSize="xl" />
+      <MissionKpiCard label="ARR" value={String(arr.value)} hint={arr.hint} valueSize="xl" />
+      <MissionKpiCard
+        label="Growth"
+        value={String(growth.value)}
+        tone={growth.isEmpty ? "default" : "healthy"}
+        progressPct={growth.progressPct}
+        hint={growth.hint}
+        valueSize="xl"
+      />
+      <MissionKpiCard label="Team velocity" value={String(velocity.value)} hint={velocity.hint} valueSize="xl" />
     </MissionKpiGrid>
   );
 }

@@ -197,13 +197,19 @@ export async function getEngineerMissionControl(
     : [];
 
   const debtRaw = (plan.technicalDebt ?? {}) as EngineerMissionControl["technicalDebt"];
+  const hasDebtData =
+    debtRaw.openItems != null ||
+    debtRaw.outdatedLibraries != null ||
+    debtRaw.refactorCandidates != null ||
+    debtRaw.securityRisks != null;
   const technicalDebt = {
-    openItems: debtRaw.openItems ?? 12,
-    outdatedLibraries: debtRaw.outdatedLibraries ?? 4,
-    refactorCandidates: debtRaw.refactorCandidates ?? 3,
-    securityRisks: debtRaw.securityRisks ?? 1,
+    openItems: debtRaw.openItems ?? 0,
+    outdatedLibraries: debtRaw.outdatedLibraries ?? 0,
+    refactorCandidates: debtRaw.refactorCandidates ?? 0,
+    securityRisks: debtRaw.securityRisks ?? 0,
     recommendation:
-      debtRaw.recommendation ?? "Upgrading Auth Library reduces security risk.",
+      (debtRaw.recommendation as string | undefined) ??
+      (hasDebtData ? "Review technical debt backlog." : "Run engineering analysis for debt signals."),
   };
 
   const cicdRaw = (plan.cicd ?? {}) as Record<string, unknown>;
@@ -222,25 +228,39 @@ export async function getEngineerMissionControl(
   }
 
   const useGitHub = githubSnapshot.configured;
+  const hasPlanCicd =
+    cicdRaw.buildStatus != null ||
+    cicdRaw.deployment != null ||
+    cicdRaw.testCoverage != null ||
+    cicdRaw.failedTests != null ||
+    cicdRaw.lastDeployment != null;
   const cicd = useGitHub
     ? {
         buildStatus: githubSnapshot.ci.buildStatus,
         deployment: githubSnapshot.ci.deployment,
-        testCoverage: githubSnapshot.ci.testCoverage ?? ((cicdRaw.testCoverage as number) ?? 87),
+        testCoverage: githubSnapshot.ci.testCoverage ?? 0,
         failedTests: githubSnapshot.ci.failedTests,
         lastDeployment: githubSnapshot.ci.lastDeployment,
       }
-    : {
-        buildStatus: buildFailed ? "Failed" : "Success",
-        deployment: (cicdRaw.deployment as string) ?? "Staging",
-        testCoverage: (cicdRaw.testCoverage as number) ?? 87,
-        failedTests: (cicdRaw.failedTests as number) ?? 2,
-        lastDeployment: "2 hrs ago",
-      };
+    : hasPlanCicd
+      ? {
+          buildStatus: buildFailed ? "Failed" : String(cicdRaw.buildStatus ?? "Unknown"),
+          deployment: String(cicdRaw.deployment ?? "—"),
+          testCoverage: (cicdRaw.testCoverage as number) ?? 0,
+          failedTests: (cicdRaw.failedTests as number) ?? 0,
+          lastDeployment: String(cicdRaw.lastDeployment ?? "—"),
+        }
+      : {
+          buildStatus: "—",
+          deployment: "—",
+          testCoverage: 0,
+          failedTests: 0,
+          lastDeployment: "—",
+        };
 
   const prStats = useGitHub
     ? computePrDashboardStats(githubSnapshot.openPullRequests)
-    : { openPrs: 2, reviewsRequired: 2, avgReviewHours: 6 };
+    : { openPrs: 0, reviewsRequired: 0, avgReviewHours: 0 };
 
   const openPrs = prStats.openPrs;
   const buildHealth: "green" | "amber" | "red" = useGitHub
@@ -249,7 +269,9 @@ export async function getEngineerMissionControl(
       ? "red"
       : blockedTasks.length > 0
         ? "amber"
-        : "green";
+        : hasPlanCicd
+          ? "green"
+          : "amber";
 
   let crossRoleImpact = buildEngineerCrossRoleImpact({
     blockedTasks: blockedTasks.length,
@@ -271,13 +293,23 @@ export async function getEngineerMissionControl(
     })),
     dataSources: { architecture: architectureSource },
     overview: {
-      assignedStories: stories.length,
+      assignedStories: assignedTasks.length,
       blockedStories: blockedStories || blockedTasks.length,
       openPrs,
       buildHealth,
       sprintProgress,
-      technicalDebt: technicalDebt.openItems > 10 ? "Medium" : "Low",
-      deploymentRisk: buildHealth === "green" ? "Low" : "Medium",
+      technicalDebt:
+        technicalDebt.openItems === 0
+          ? "—"
+          : technicalDebt.openItems > 10
+            ? "Medium"
+            : "Low",
+      deploymentRisk:
+        !useGitHub && !hasPlanCicd
+          ? "—"
+          : buildHealth === "green"
+            ? "Low"
+            : "Medium",
     },
     aiSummary,
     guidedTasks: buildEngineerGuidedTasks({
