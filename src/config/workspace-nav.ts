@@ -2,9 +2,10 @@ import type { LucideIcon } from "lucide-react";
 import {
   BENCHMARKS_RECOMMENDATIONS_HREF,
   BENCHMARKS_RECOMMENDATIONS_NAV_LABEL,
+  DELIVERY_BRAIN_HREF,
+  DELIVERY_BRAIN_NAV_LABEL,
   DELIVERY_INSIGHTS_NAV_LABEL,
   DELIVERY_PATTERNS_HREF,
-  DELIVERY_PATTERNS_NAV_LABEL,
 } from "@/lib/intelligence-nav-labels";
 import {
   BarChart3,
@@ -74,7 +75,7 @@ export const workspaceIntelligenceNav: WorkspaceNavItem[] = [
   { href: "/workspace/intelligence", label: DELIVERY_INSIGHTS_NAV_LABEL, icon: BrainCircuit, id: "learn" },
   { href: "/workspace/twin", label: "Digital Twin", icon: Telescope, id: "twin" },
   { href: BENCHMARKS_RECOMMENDATIONS_HREF, label: BENCHMARKS_RECOMMENDATIONS_NAV_LABEL, icon: Globe2, id: "global" },
-  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_PATTERNS_NAV_LABEL, icon: BrainCircuit, id: "coord" },
+  { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_BRAIN_NAV_LABEL, icon: BrainCircuit, id: "coord" },
   { href: "/workspace/documents", label: "Documents", icon: FileText, id: "docs" },
   { href: "/workspace/reports", label: "Reports", icon: BarChart3, id: "rep" },
 ];
@@ -93,12 +94,18 @@ export const workspaceGovernanceNav: WorkspaceNavItem[] = [
   { href: "/workspace/governance", label: "Governance", icon: ShieldCheck, id: "gov" },
 ];
 
+/** Org admin surfaces — Delivery Brain Studio and related admin tools. */
+export const workspaceOrgAdminNav: WorkspaceNavItem[] = [
+  { href: DELIVERY_BRAIN_HREF, label: "Brain Studio", icon: BrainCircuit, id: "brain" },
+];
+
 export const workspaceNavSections = [
   { label: "Core", items: workspaceCoreNav },
   { label: "Workspace", items: workspaceDeliveryNav },
   { label: "Intelligence", items: workspaceIntelligenceNav },
   { label: "Ecosystem", items: workspaceEcosystemNav },
   { label: "Governance", items: workspaceGovernanceNav },
+  { label: "Org admin", items: workspaceOrgAdminNav, adminOnly: true as const },
 ] as const;
 
 export function allWorkspaceNavHrefs(): string[] {

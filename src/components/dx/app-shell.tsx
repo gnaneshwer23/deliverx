@@ -15,8 +15,10 @@ import {
   workspaceEcosystemNav,
   workspaceGovernanceNav,
   workspaceIntelligenceNav,
+  workspaceOrgAdminNav,
   type WorkspaceNavItem,
 } from "@/config/workspace-nav";
+import { isOrgAdmin } from "@/lib/org-admin";
 import { getMissionPersonaMeta } from "@/config/mission-persona-meta";
 import { resolveRoleHomePath } from "@/config/role-home-routing";
 import { partitionCoreNav } from "@/lib/mission-nav";
@@ -324,6 +326,15 @@ function WorkspaceSidebarContent({
           userRole={userRole}
           onNavigate={onNavigate}
         />
+        {isOrgAdmin(userRole) ? (
+          <NavSection
+            label="Org admin"
+            items={workspaceOrgAdminNav}
+            pathname={pathname}
+            userRole={userRole}
+            onNavigate={onNavigate}
+          />
+        ) : null}
       </div>
       <WorkspaceSidebarFooter onNavigate={onNavigate} />
     </>
