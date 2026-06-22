@@ -2,9 +2,6 @@ import Link from "next/link";
 import { Upload } from "lucide-react";
 import { dxClass } from "@/lib/dx-theme";
 
-/** @deprecated Prefer formatHonestKpi() — legacy mission overviews migrate in R3–R5. */
-export const FALLBACK_KPI_HINT = "Upload context to populate live metrics";
-
 export function MockDataBanner({
   message,
   uploadHref = "/workspace/assistant",

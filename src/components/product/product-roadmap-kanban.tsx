@@ -69,11 +69,11 @@ export function ProductRoadmapKanban({
           — · Connect product context to populate live roadmap horizons.
         </p>
       ) : null}
-      <div className="grid grid-cols-1 gap-0 md:grid-cols-3 md:divide-x md:divide-[#E4E4DC]">
+      <div className="flex snap-x snap-mandatory gap-0 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible md:snap-none">
         {columns.map((col) => {
           const style = COLUMN_STYLE[col.key];
           return (
-            <div key={col.key} className="flex flex-col">
+            <div key={col.key} className="flex min-w-[85%] shrink-0 snap-start flex-col border-[#E4E4DC] md:min-w-0 md:border-l md:first:border-l-0">
               <div
                 className="flex items-center justify-between px-4 py-2.5"
                 style={{ backgroundColor: style.headerBg, color: style.headerText }}

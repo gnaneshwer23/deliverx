@@ -1,5 +1,5 @@
 /**
- * Persona-specific CTAs for mission dashboards when panels use illustrative fallback data.
+ * Persona-specific CTAs for mission dashboards when panels have no live data yet.
  */
 
 import type { MissionPersonaId } from "@/lib/mission-nav";
@@ -28,12 +28,12 @@ function projectPath(projectId: string | undefined, segment: string): string | n
 }
 
 const PERSONA_MESSAGES: Record<LiveDataPromptPersonaId, string> = {
-  founder: "Financial KPIs are illustrative — add pitch deck or business case.",
-  "pm-mission": "Milestones and budget are illustrative — import your charter.",
-  product: "Roadmap and RICE are illustrative — add features or run analysis.",
-  qa: "QA KPIs are illustrative — connect test cases, defects, or UAT.",
-  engineer: "Architecture is illustrative — upload tech context.",
-  scrum: "Velocity is illustrative — add sprint history.",
+  founder: "— · Financial KPIs need pitch deck or business case to populate runway and revenue.",
+  "pm-mission": "— · Milestones and budget need a project charter to populate delivery timeline.",
+  product: "— · Roadmap and RICE scores need product context — add features or run analysis.",
+  qa: "— · QA metrics need test cases, defects, or UAT data to populate release readiness.",
+  engineer: "— · Architecture layers need tech context — upload docs to populate the stack view.",
+  scrum: "— · Sprint velocity needs delivery history — add sprint data to populate burndown.",
 };
 
 function buildPersonaCtas(

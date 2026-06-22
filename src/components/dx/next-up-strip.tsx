@@ -69,7 +69,7 @@ export function NextUpStrip({
             <li key={item.id}>
               <Link
                 href={item.href}
-                className={`group flex items-start gap-2 border-l-2 py-2 pl-3 pr-1 transition-colors hover:bg-[#F3F3EE] ${tone.border}`}
+                className={`group flex min-h-9 touch-manipulation items-start gap-2 border-l-2 py-2 pl-3 pr-1 transition-colors hover:bg-[#F3F3EE] ${tone.border}`}
               >
                 <CircleDot size={14} className={`mt-0.5 shrink-0 ${tone.icon}`} aria-hidden />
                 <span className="min-w-0 flex-1">

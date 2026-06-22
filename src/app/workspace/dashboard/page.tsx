@@ -234,7 +234,7 @@ export default async function DashboardPage({
             ? `${data.governance.openRisks + data.delivery.blockedTasks} signals need attention.`
             : undefined,
         action: (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <DxBadge tone="green" dot>
               Operational
             </DxBadge>

@@ -173,7 +173,7 @@ export default async function EngineerMissionControlPage({
                 <Link
                   key={p.id}
                   href={`/workspace/engineer?project=${p.id}`}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                  className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3 py-1 text-xs font-medium ${
                     p.id === data.primaryProject?.id
                       ? ""
                       : "border-[#E4E4DC] text-[#6B6B64]"
