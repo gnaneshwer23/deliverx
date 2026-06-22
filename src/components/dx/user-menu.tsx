@@ -52,7 +52,7 @@ export function UserMenu({
             {orgName ? <p className="truncate text-xs text-[#6B6B64]">{orgName}</p> : null}
           </div>
           <Link
-            href="/workspace/settings"
+            href="/settings/profile"
             role="menuitem"
             className="flex items-center gap-2 px-3 py-2 text-sm text-[#2C2C28] hover:bg-[#F7F7F2]"
             onClick={() => setOpen(false)}

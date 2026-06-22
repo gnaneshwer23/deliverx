@@ -16,9 +16,9 @@ const toneDot: Record<string, string> = {
 };
 
 const phaseIcon: Record<string, string> = {
-  done: "✓",
-  active: "🟡",
-  pending: "○",
+  done: "Done",
+  active: "Active",
+  pending: "Pending",
 };
 
 export function DeliveryPmGuidedTasks({ tasks }: { tasks: PmGuidedTask[] }) {
@@ -38,7 +38,7 @@ export function DeliveryPmGuidedTasks({ tasks }: { tasks: PmGuidedTask[] }) {
               </p>
               <p className="text-xs text-[#6B6B64]">Stakeholders: {task.stakeholders}</p>
               {task.dueLabel ? (
-                <p className="mt-1 text-xs font-medium text-[#B8860B]">Due: {task.dueLabel}</p>
+                <p className="mt-1 text-xs font-medium text-[var(--dx-status-warning)]">Due: {task.dueLabel}</p>
               ) : null}
             </li>
           ))}

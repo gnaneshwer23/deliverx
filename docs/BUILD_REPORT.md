@@ -1,10 +1,10 @@
 # DeliverX build report
 
-**Last updated:** 2026-06-19 (post-audit deploy parity)  
+**Last updated:** 2026-06-22 (R11 — post R10)  
 **Production:** https://www.deliverx.dev  
-**Current `main` SHA:** `7124677` (PR [#88](https://github.com/gnaneshwer23/deliverx/pull/88)) — or `git log -1 origin/main`
+**Current `main` SHA:** `a550972` (PR [#116](https://github.com/gnaneshwer23/deliverx/pull/116)) — or `git log -1 origin/main`
 
-This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisation (S1-A/B/C/D)**. For persona routes and onboarding paths, see [I4 stakeholder matrix](./I4_STAKEHOLDER_MATRIX.md). For collaborative loop built-vs-spec detail, see [Collaborative loop status](./COLLABORATIVE_LOOP_STATUS.md).
+This report summarises sprints **I1–I5**, **Horizon 1–3 (S1, J, K)**, **P-PM / P-Founder**, and **R1–R10** (role-differentiated dashboard rebuild + real data wiring). For persona routes and one-line IA per dashboard, see [Dashboard IA](./DASHBOARD_IA.md) and [I4 stakeholder matrix](./I4_STAKEHOLDER_MATRIX.md). For collaborative loop built-vs-spec detail, see [Collaborative loop status](./COLLABORATIVE_LOOP_STATUS.md).
 
 ---
 
@@ -27,12 +27,17 @@ This report summarises sprints **I1–I5**, **I4**, and **Horizon 1 stabilisatio
 | **K3** | ✅ Shipped | Nav path simplification + Command Centre next-up |
 | **Organic loop** | ✅ Shipped | Remaining domain mutations emit without demo seed |
 | **Mobile UX** | ✅ Shipped | Mission fallback CTAs, auth layout, nav lint (PRs #86–#88) |
-| **P-PM-0** | ✅ Shipped | PM dual-mode shell — welcome bridge, mode resolver, `data-pm-mode` hook |
-| **P-PM-1** | ✅ Shipped | Day-one panels — KPI strip, grouped AI review, RAID/team/milestones layout |
+| **P-PM-0–4** | ✅ Shipped | PM dual-mode shell, day-one/steady-state panels, visual KPI upgrade |
+| **P-Founder-0–3** | ✅ Shipped | Founder mode bridge, day-one components, steady-state board-memo layout |
+| **K5** | ✅ Shipped | Persona visual accents + day-one welcome bridges (PR [#103](https://github.com/gnaneshwer23/deliverx/pull/103)) |
+| **R1–R7** | ✅ Shipped | Settings split, Command Centre, PM/Founder/5-persona IA rebuilds, governance merge, portfolio, coord intel |
+| **R8–R10** | ✅ Shipped | Real data wiring (Scrum/PM/QA), Product/Engineer KPIs, honest KPI cleanup, mobile pass |
+| **Onboarding #98** | ✅ Shipped | Founder onboarding clarity — unified steps, plain-language copy |
+| **BA fix #105** | ✅ Shipped | Bootstrap summary crash on malformed AI payloads |
 
 **Build:** `npm run build` — passing  
 **Tests:** `npm test -- --run` — see CI / local run for current count  
-**Prod smoke (2026-06-19):** `/`, `/login` → 200; phase health routes → 401 without auth (expected)
+**Prod smoke (2026-06-22):** `/`, `/login` → 200; phase health routes → 401 without auth (expected)
 
 ---
 
@@ -139,9 +144,85 @@ Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.
 | Item | PR | What shipped |
 |------|-----|--------------|
 | **P-PM-0** — Dual-mode shell | [#94](https://github.com/gnaneshwer23/deliverx/pull/94) | `resolvePmDashboardMode`, welcome bridge, `data-pm-mode`, `PmMissionShell` |
-| **P-PM-1** — Day-one panels | — | KPI strip, grouped AI review panel, RAID snapshot, team roster, milestones variant, 2-column layout |
+| **P-PM-1** — Day-one panels | [#95](https://github.com/gnaneshwer23/deliverx/pull/95) | KPI strip, grouped AI review, RAID snapshot, team roster, milestones, 2-column layout |
+| **P-PM-2** — Steady-state panels | [#96](https://github.com/gnaneshwer23/deliverx/pull/96) | Needs-attention strip, governance-oriented steady layout |
+| **P-PM-3** — Polish | [#97](https://github.com/gnaneshwer23/deliverx/pull/97) | Project chip dropdown, generate report CTA |
+| **P-PM-4** — Visual upgrade | [#104](https://github.com/gnaneshwer23/deliverx/pull/104) | Visual KPI bars, deduplicated panels |
 
 **Key files:** `pm-dashboard-mode.ts`, `pm-day-one-panels.ts`, `pm-day-one-panels.tsx`, `pm-mission-panel-switch.tsx`, `pm-mission/page.tsx`.
+
+---
+
+## Founder mission dual-mode (P-Founder)
+
+| Item | PR | What shipped |
+|------|-----|--------------|
+| **P-Founder-0** — Mode bridge | [#99](https://github.com/gnaneshwer23/deliverx/pull/99) | `resolveFounderDashboardMode`, welcome bridge |
+| **P-Founder-1** — Header + panel switch | [#100](https://github.com/gnaneshwer23/deliverx/pull/100) | Header polish, day-one panel switching |
+| **P-Founder-2** — Day-one components | [#101](https://github.com/gnaneshwer23/deliverx/pull/101) | Day-one mission components |
+| **P-Founder-3** — Steady-state | [#102](https://github.com/gnaneshwer23/deliverx/pull/102) | Board-memo steady-state layout |
+
+**Onboarding clarity:** [#98](https://github.com/gnaneshwer23/deliverx/pull/98) — unified founder step indicators, plain-language project form copy.
+
+**Key files:** `founder-dashboard-mode.ts`, `founder-day-one-panels.tsx`, `founder-mission-panel-switch.tsx`, `founder/page.tsx`.
+
+---
+
+## Horizon 4 — Role-differentiated dashboard rebuild (R1–R7)
+
+| Item | PR | What shipped |
+|------|-----|------------|
+| **R1** — Settings split + jargon | [#106](https://github.com/gnaneshwer23/deliverx/pull/106) | Settings IA split, New Project collapse, jargon cleanup |
+| **R2** — Command Centre | [#107](https://github.com/gnaneshwer23/deliverx/pull/107) | Command Centre IA, honest KPI strip |
+| **R3** — PM dashboard rebuild | [#108](https://github.com/gnaneshwer23/deliverx/pull/108) | Control room layout, Team Needs feed |
+| **R4** — Founder board-memo | [#109](https://github.com/gnaneshwer23/deliverx/pull/109) | Founder dashboard IA rebuild |
+| **R5** — Five persona rebuilds | [#110](https://github.com/gnaneshwer23/deliverx/pull/110) | BA, Product, Engineer, QA, Scrum dashboard IA |
+| **R6** — Governance merge | [#111](https://github.com/gnaneshwer23/deliverx/pull/111) | Merged governance tabs, Team Needs feed cleanup |
+| **R7** — Portfolio + coord intel | [#112](https://github.com/gnaneshwer23/deliverx/pull/112) | Portfolio auto-create, Coord Intel promotion, jargon cleanup |
+
+**Visual polish:** [#113](https://github.com/gnaneshwer23/deliverx/pull/113) — Monday-inspired status pills, widget headers, card rhythm.
+
+**Bugfix:** [#105](https://github.com/gnaneshwer23/deliverx/pull/105) — BA mission dashboard crash on malformed bootstrap summaries.
+
+→ Persona one-liners: [DASHBOARD_IA.md](./DASHBOARD_IA.md)
+
+---
+
+## Horizon 4 — Real data wiring (R8–R10)
+
+| Item | PR | What shipped |
+|------|-----|------------|
+| **R8** — Core real data | [#114](https://github.com/gnaneshwer23/deliverx/pull/114) | Scrum burndown, PM team capacity, QA release readiness from live DB |
+| **R9** — Product + Engineer | [#115](https://github.com/gnaneshwer23/deliverx/pull/115) | Product/Engineer real data KPIs, welcome bridges, honest labels |
+| **R10** — Honest KPI + mobile | [#116](https://github.com/gnaneshwer23/deliverx/pull/116) | Final honest KPI cleanup, mission dashboard mobile pass |
+
+**Key files:** `sprint-metrics.ts`, `pm-team-capacity.ts`, `qa-release-kpis.ts`, `product-dashboard-kpis.ts`, `engineer-dashboard-kpis.ts`, `live-data-prompt-ctas.ts`.
+
+---
+
+## Key milestones — PRs #98–#116
+
+| PR | Theme | Summary |
+|----|-------|---------|
+| [#98](https://github.com/gnaneshwer23/deliverx/pull/98) | Onboarding | Founder onboarding clarity |
+| [#99](https://github.com/gnaneshwer23/deliverx/pull/99) | P-Founder | Mode bridge + welcome |
+| [#100](https://github.com/gnaneshwer23/deliverx/pull/100) | P-Founder | Header + panel switch |
+| [#101](https://github.com/gnaneshwer23/deliverx/pull/101) | P-Founder | Day-one components |
+| [#102](https://github.com/gnaneshwer23/deliverx/pull/102) | P-Founder | Steady-state layout |
+| [#103](https://github.com/gnaneshwer23/deliverx/pull/103) | K5 | Persona visual accents |
+| [#104](https://github.com/gnaneshwer23/deliverx/pull/104) | P-PM | Visual KPI upgrade |
+| [#105](https://github.com/gnaneshwer23/deliverx/pull/105) | Bugfix | BA bootstrap summary crash |
+| [#106](https://github.com/gnaneshwer23/deliverx/pull/106) | R1 | Settings split |
+| [#107](https://github.com/gnaneshwer23/deliverx/pull/107) | R2 | Command Centre honest KPIs |
+| [#108](https://github.com/gnaneshwer23/deliverx/pull/108) | R3 | PM IA rebuild |
+| [#109](https://github.com/gnaneshwer23/deliverx/pull/109) | R4 | Founder board-memo |
+| [#110](https://github.com/gnaneshwer23/deliverx/pull/110) | R5 | 5-persona rebuilds |
+| [#111](https://github.com/gnaneshwer23/deliverx/pull/111) | R6 | Governance merge |
+| [#112](https://github.com/gnaneshwer23/deliverx/pull/112) | R7 | Portfolio + coord intel |
+| [#113](https://github.com/gnaneshwer23/deliverx/pull/113) | UX | Monday-inspired polish |
+| [#114](https://github.com/gnaneshwer23/deliverx/pull/114) | R8 | Real data wiring |
+| [#115](https://github.com/gnaneshwer23/deliverx/pull/115) | R9 | Product/Engineer wiring |
+| [#116](https://github.com/gnaneshwer23/deliverx/pull/116) | R10 | Honest KPI + mobile |
 
 ---
 
@@ -173,11 +254,22 @@ Shipped in parallel with I-series work; health checks live in `phaseHHealth.ts`.
 
 ---
 
-## Stakeholder matrix
+## Stakeholder matrix & dashboard IA
 
 Seven personas (Founder, PM, BA, Product, Engineer, QA, Scrum) map to mission control routes, onboarding paths, and artifact review scopes.
 
-→ **[docs/I4_STAKEHOLDER_MATRIX.md](./I4_STAKEHOLDER_MATRIX.md)**
+| Persona | Route | IA summary |
+|---------|-------|------------|
+| Founder | `/workspace/founder` | Board-memo — funding, portfolio, decisions, intelligence feed |
+| PM | `/workspace/pm-mission` | Control room — governance tabs, AI inbox, milestones, capacity |
+| BA | `/workspace/ba` | Requirements hub — traceability, stakeholders, guided tasks |
+| Product | `/workspace/product` | Discovery — roadmap, RICE, vision |
+| Engineer | `/workspace/engineer` | Engineering — architecture, dependencies, PRs |
+| QA | `/workspace/qa` | Quality gate — release readiness, defects, test cases |
+| Scrum | `/workspace/scrum-mission` | Sprint ops — health, impediments, velocity, standup |
+| Command Centre | `/workspace/dashboard` | Org hub — alerts, project health, pending decisions |
+
+→ **[docs/DASHBOARD_IA.md](./DASHBOARD_IA.md)** · **[docs/I4_STAKEHOLDER_MATRIX.md](./I4_STAKEHOLDER_MATRIX.md)**
 
 ---
 
@@ -194,38 +286,39 @@ Seven personas (Founder, PM, BA, Product, Engineer, QA, Scrum) map to mission co
 
 ## Next horizon / deferred
 
-Tracked after J1–J4, K1–K2, and post-audit mobile polish.
+Tracked after R1–R10, K1–K5, and P-PM/P-Founder series.
 
 | Item | Horizon | Notes |
 |------|---------|-------|
-| **K5** — Visual pass + onboarding trim | H3 | Density and wizard copy reduction |
 | **K4 rollout** — Inline edit on remaining personas | H3 | Pattern in PM + Founder; extend to BA/Product/Engineer/QA/Scrum |
-| Preview env var sync | S1-B follow-up | **6 vars still Preview-only missing** — see below |
+| **Sprint points schema** | H4 | Burndown uses task counts today; dedicated sprint_points column deferred |
 | Server-side dashboard prefs + inline edits | H4 | localStorage today (`dashboard-prefs.ts`, `dashboard-inline-edit.ts`) |
+| Preview env var sync | S1-B / R11 follow-up | **5 vars still Production-only** — see below |
 | Document intelligence (PDF/PPT) | Backlog | `.txt/.md/.csv` only today |
 | Outbound report email | Backlog | Draft → publish pipeline exists; no Resend send |
 | Day-in-the-life automated narrative | Backlog | Section 6 explainer not one simulation |
 | Optional demo seed removal | H2+ | `seedNarrativeThreadDemoData` still runs on bootstrap |
-| **P-PM-2** — Steady-state needs-attention strip | H3 | Post day-one follow-up queue |
 | Full email invite form on PM dashboard | Backlog | Links to `/onboarding/invite` today |
+| Neo4j knowledge graph sync | Backlog | Postgres graph engine today (`projectKnowledgeGraphEngine.ts`) |
 
-### Preview env status (2026-06-19)
+### Preview env status (2026-06-22)
 
-Audited via `vercel env ls`. **Preview has 1 var** (`open_api_key`); **Production has 7**. Still missing on Preview (copy Production values in [Vercel dashboard](https://vercel.com/dashboard) — requires secret values; not committed here):
+Audited via `vercel env ls`. **Preview has 1 var** (`open_api_key`); **Production has 7**. Still missing on Preview (copy Production values in [Vercel dashboard](https://vercel.com/dashboard) — secret values not committed here):
 
 1. `NEXT_PUBLIC_SUPABASE_URL`
 2. `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 3. `SUPABASE_SERVICE_ROLE_KEY`
 4. `NEXT_PUBLIC_APP_URL` (use preview URL or stable preview domain)
-5. `MINIMAX_MODEL` (optional legacy)
+5. `MINIMAX_MODEL` (optional legacy — omit if using OpenAI only)
 6. `CRON_SECRET` (optional unless testing cron on preview)
 
-See [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md).
+See [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md) for the full checklist.
 
 ---
 
 ## Related docs
 
+- [DASHBOARD_IA.md](./DASHBOARD_IA.md) — seven persona layouts (acceptance §11)
 - [ARCHITECTURE_AUDIT.md](./ARCHITECTURE_AUDIT.md) — loop coverage vs flowchart
 - [COLLABORATIVE_LOOP_STATUS.md](./COLLABORATIVE_LOOP_STATUS.md) — built vs spec matrix
 - [SETUP_AUDIT.md](./SETUP_AUDIT.md) — production AI/auth diagnostics

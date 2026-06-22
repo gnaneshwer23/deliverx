@@ -26,9 +26,9 @@ export function TeamNeedsPanel({ needs }: { needs: TeamNeedRow[] }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`}>
       <div className="border-b border-[#E4E4DC] px-6 py-4">
-        <h3 className={`${dxClass.display} text-lg`}>Team needs</h3>
+        <h3 className={`${dxClass.display} text-lg`}>AI Review Queue</h3>
         <p className="mt-1 text-xs text-[#6B6B64]">
-          Open clarifications, blockers, decisions, and defects
+          Open clarifications, blockers, decisions, and defects awaiting review
         </p>
       </div>
       <ul className="divide-y divide-[#F0F0E8]">
@@ -63,7 +63,7 @@ export function TeamNeedsPanel({ needs }: { needs: TeamNeedRow[] }) {
           ))
         ) : (
           <li className="px-6 py-4 text-[#6B6B64]">
-            No open team needs from live delivery signals.
+            No open items in your AI Review Queue from live delivery signals.
           </li>
         )}
       </ul>
