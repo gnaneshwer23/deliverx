@@ -17,7 +17,7 @@ describe("product-roadmap-kpis", () => {
         insightsCount: 0,
       },
       roadmap: { now: [], next: ["A"], later: ["B"] },
-      topFeatures: [{ title: "Feature X", score: 42, horizon: "now" }],
+      topFeatures: [{ title: "Feature X", score: 42, horizon: "now", reach: 10, impact: 3, confidence: 80, effort: 2 }],
       dataSources: { roadmapRice: "fallback" },
     });
     expect(kpis.find((k) => k.label === "Top RICE")?.value).toBe("—");

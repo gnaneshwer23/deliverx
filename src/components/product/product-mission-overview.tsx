@@ -1,48 +1,66 @@
 import type { ProductMissionControl } from "@/services/pmDashboard";
 import { MissionKpiCard, MissionKpiGrid } from "@/components/dx/mission-kpi-card";
-import { FALLBACK_KPI_HINT } from "@/components/dx/mock-data-banner";
+import { formatHonestKpi, formatHonestPct } from "@/lib/honest-kpi";
 import { MissionAiSummaryBlock } from "@/components/dx/mission-ai-summary-block";
 import { PanelAiInsight } from "@/components/dx/panel-ai-insight";
 import { dxClass } from "@/lib/dx-theme";
 
 export function ProductMissionOverview({ data }: { data: ProductMissionControl }) {
   const { kpis } = data;
-  const roadmapHint =
-    data.dataSources.roadmapRice === "fallback" ? FALLBACK_KPI_HINT : undefined;
+  const isLive = data.dataSources.roadmapRice === "live";
+
+  const health = formatHonestPct(
+    isLive && kpis.productHealth > 0 ? kpis.productHealth : null,
+    "Run product analysis for health score",
+  );
+  const adoption = formatHonestPct(
+    isLive && kpis.featureAdoption > 0 ? kpis.featureAdoption : null,
+    "Connect usage data for adoption",
+  );
+  const nps = formatHonestKpi(kpis.nps, "Add NPS survey data");
+  const retention = formatHonestPct(kpis.retention, "Connect retention analytics");
+  const nowHorizon = formatHonestKpi(
+    isLive ? kpis.featuresNow : null,
+    "Populate roadmap after product analysis",
+  );
 
   return (
     <MissionKpiGrid layout="mission">
       <MissionKpiCard
         label="Product health"
-        value={`${kpis.productHealth}/100`}
-        tone={kpis.productHealth >= 75 ? "healthy" : kpis.productHealth >= 50 ? "watch" : "default"}
-        progressPct={kpis.productHealth}
+        value={String(health.value)}
+        tone={health.isEmpty ? "default" : (health.progressPct ?? 0) >= 75 ? "healthy" : "watch"}
+        progressPct={health.progressPct}
+        hint={health.hint}
         valueSize="xl"
       />
       <MissionKpiCard
         label="Feature adoption"
-        value={`${kpis.featureAdoption}%`}
-        progressPct={kpis.featureAdoption}
-        tone={kpis.featureAdoption >= 60 ? "healthy" : "default"}
+        value={String(adoption.value)}
+        progressPct={adoption.progressPct}
+        tone={adoption.isEmpty ? "default" : (adoption.progressPct ?? 0) >= 60 ? "healthy" : "default"}
+        hint={adoption.hint}
         valueSize="xl"
       />
       <MissionKpiCard
         label="NPS"
-        value={kpis.nps ?? "—"}
-        tone={kpis.nps != null && kpis.nps >= 40 ? "healthy" : kpis.nps != null && kpis.nps < 20 ? "watch" : "default"}
+        value={String(nps.value)}
+        tone={typeof nps.value === "number" && nps.value >= 40 ? "healthy" : "default"}
+        hint={nps.hint}
         valueSize="xl"
       />
       <MissionKpiCard
         label="Retention"
-        value={kpis.retention != null ? `${kpis.retention}%` : "—"}
-        progressPct={kpis.retention ?? undefined}
-        tone={kpis.retention != null && kpis.retention >= 70 ? "healthy" : "default"}
+        value={String(retention.value)}
+        progressPct={retention.progressPct}
+        tone={retention.isEmpty ? "default" : (retention.progressPct ?? 0) >= 70 ? "healthy" : "default"}
+        hint={retention.hint}
         valueSize="xl"
       />
       <MissionKpiCard
         label="Now horizon"
-        value={kpis.featuresNow}
-        hint={roadmapHint ?? `${kpis.featuresTotal} total`}
+        value={String(nowHorizon.value)}
+        hint={nowHorizon.hint ?? `${kpis.featuresTotal} total features`}
         tone="default"
         valueSize="xl"
       />

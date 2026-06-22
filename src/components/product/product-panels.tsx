@@ -42,8 +42,8 @@ export function ProductRoadmapPanel({
     <div className={`${dxClass.card} p-6`}>
       <h3 className={`${dxClass.display} mb-4 text-lg`}>Product roadmap</h3>
       {usesFallback ? (
-        <p className="mb-3 text-xs text-[#B7620A]">
-          Illustrative Now / Next / Later — upload product context to populate live roadmap.
+        <p className="mb-3 text-xs text-[#6B6B64]">
+          — · Upload product context to populate live Now / Next / Later horizons.
         </p>
       ) : null}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -72,8 +72,8 @@ export function ProductRicePanel({
       <div className="border-b border-[#E4E4DC] px-6 py-4">
         <h3 className={`${dxClass.display} text-lg`}>Feature prioritisation (RICE)</h3>
         {usesFallback ? (
-          <p className="mt-1 text-xs text-[#B7620A]">
-            Illustrative RICE scores — run product analysis to score your backlog.
+          <p className="mt-1 text-xs text-[#6B6B64]">
+            — · Run product analysis to score your backlog with RICE.
           </p>
         ) : null}
       </div>

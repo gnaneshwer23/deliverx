@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProductMissionControl } from "@/services/pmDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
 import { ProductDashboardLayout } from "@/components/product/product-dashboard-layout";
+import { ProductMissionShell } from "@/components/product/product-mission-shell";
 import { ProductRoadmapKpiStrip } from "@/components/product/product-roadmap-kpi-strip";
 import { ProductRoadmapKanban } from "@/components/product/product-roadmap-kanban";
 import { ProductRiceBacklogTable } from "@/components/product/product-rice-backlog-table";
@@ -11,6 +12,13 @@ import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
+import { getProjectBootstrapStatus } from "@/services/projectBootstrap";
+import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
+import { hasBootstrapParitySummary } from "@/lib/bootstrap-checklist";
+import {
+  PRODUCT_DAY_ONE_SUBTITLE,
+  resolveProductDashboardMode,
+} from "@/lib/product-dashboard-mode";
 import { PERSONA_REVIEW_LABELS, filterReviewsByProject } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
@@ -46,6 +54,28 @@ export default async function ProductMissionControlPage({
 
   const projectId = data.primaryProject?.id;
   const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
+  let bootstrapSummary: ProjectBootstrapSummary | null = null;
+  let hasBootstrapSummary = false;
+
+  if (projectId) {
+    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
+      bootstrapSummary = bootstrap.summary;
+      hasBootstrapSummary = true;
+    }
+  }
+
+  const roadmapItemCount =
+    data.roadmap.now.length + data.roadmap.next.length + data.roadmap.later.length;
+
+  const serverProductMode = resolveProductDashboardMode({
+    projectId,
+    hasBootstrapSummary,
+    pendingReviewCount: projectPendingReviews.length,
+    roadmapItemCount,
+    bridgeDismissed: false,
+  });
+
   const productAccent = getMissionPersonaAccent("product");
   const isLive = data.dataSources.roadmapRice === "live";
 
@@ -99,9 +129,17 @@ export default async function ProductMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
+        subtitle: serverProductMode === "day-one" ? PRODUCT_DAY_ONE_SUBTITLE : undefined,
       }}
     >
-      <div className="space-y-4 p-6 md:p-8">
+      <ProductMissionShell
+        projectId={projectId}
+        hasBootstrapSummary={hasBootstrapSummary}
+        pendingReviewCount={projectPendingReviews.length}
+        roadmapItemCount={roadmapItemCount}
+        summary={bootstrapSummary}
+      >
+        <div className="space-y-4 p-6 md:p-8">
         {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
         <MissionBootstrapBanner
           personaId="product"
@@ -140,7 +178,8 @@ export default async function ProductMissionControlPage({
           </div>
         ) : null}
         {dashboard}
-      </div>
+        </div>
+      </ProductMissionShell>
     </MissionDashboardChrome>
   );
 }

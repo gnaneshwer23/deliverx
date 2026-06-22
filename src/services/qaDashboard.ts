@@ -301,6 +301,45 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
     ? testCases.filter((t) => !t.automationCandidate).length
     : (automationRaw.manualTests as number | undefined);
 
+  const hasPerfData =
+    perfRaw.responseTimeMs != null ||
+    perfRaw.concurrentUsers != null ||
+    perfRaw.errorRatePct != null ||
+    perfRaw.cpuUsagePct != null;
+  const hasSecData =
+    secRaw.critical != null ||
+    secRaw.high != null ||
+    secRaw.medium != null ||
+    secRaw.low != null;
+  const hasImpactData =
+    impactRaw.affectedApis != null ||
+    impactRaw.affectedScreens != null ||
+    impactRaw.affectedTests != null;
+
+  const performanceScore =
+    typeof releaseRaw.performance === "number"
+      ? releaseRaw.performance
+      : hasPerfData
+        ? Math.max(
+            0,
+            100 -
+              Math.round(((perfRaw.errorRatePct as number) ?? 0) * 10) -
+              Math.max(0, Math.round(((perfRaw.responseTimeMs as number) ?? 0) / 50) - 4),
+          )
+        : 0;
+  const securityScore =
+    typeof releaseRaw.security === "number"
+      ? releaseRaw.security
+      : hasSecData
+        ? Math.max(
+            0,
+            100 -
+              ((secRaw.critical as number) ?? 0) * 25 -
+              ((secRaw.high as number) ?? 0) * 10 -
+              ((secRaw.medium as number) ?? 0) * 3,
+          )
+        : 0;
+
   return {
     userName: profile?.name ?? user?.email ?? null,
     primaryProject: primary ? { id: primary.id, name: primary.name } : null,
@@ -356,13 +395,15 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
         : (automationRaw.pipelineSuccessPct as number) ?? 0,
     },
     impactAnalysis: {
-      affectedApis: (impactRaw.affectedApis as number) ?? 4,
-      affectedScreens: (impactRaw.affectedScreens as number) ?? 2,
-      affectedTests: (impactRaw.affectedTests as number) ?? 21,
-      regressionScope: (impactRaw.regressionScope as string) ?? "Medium",
+      affectedApis: (impactRaw.affectedApis as number) ?? 0,
+      affectedScreens: (impactRaw.affectedScreens as number) ?? 0,
+      affectedTests: (impactRaw.affectedTests as number) ?? 0,
+      regressionScope: (impactRaw.regressionScope as string) ?? "—",
       summary:
         (impactRaw.summary as string) ??
-        "Retest authentication flows and report export after latest changes.",
+        (hasImpactData
+          ? "Impact analysis available from QA plan."
+          : "Run QA analysis to map regression scope."),
     },
     uat: uatRows,
     uatInsight: dbMetrics
@@ -376,28 +417,33 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
       overall: releaseReadiness,
       coverage: dbMetrics ? testCoverage : (releaseRaw.coverage as number) ?? testCoverage,
       defects: dbMetrics ? dbMetrics.defectScore : (releaseRaw.defects as number) ?? Math.max(0, 100 - criticalDefects * 10),
-      performance: dbMetrics ? 0 : (releaseRaw.performance as number) ?? 0,
-      security: dbMetrics ? 0 : (releaseRaw.security as number) ?? 0,
+      performance: performanceScore,
+      security: securityScore,
       uat: dbMetrics ? uatCompletion : (releaseRaw.uat as number) ?? uatCompletion,
       recommendation: releaseRecommendation,
       reason: releaseReason,
     },
     performance: {
-      responseTimeMs: (perfRaw.responseTimeMs as number) ?? 220,
-      concurrentUsers: (perfRaw.concurrentUsers as number) ?? 10000,
-      errorRatePct: (perfRaw.errorRatePct as number) ?? 0.3,
-      cpuUsagePct: (perfRaw.cpuUsagePct as number) ?? 52,
+      responseTimeMs: (perfRaw.responseTimeMs as number) ?? 0,
+      concurrentUsers: (perfRaw.concurrentUsers as number) ?? 0,
+      errorRatePct: (perfRaw.errorRatePct as number) ?? 0,
+      cpuUsagePct: (perfRaw.cpuUsagePct as number) ?? 0,
       warning:
         (perfRaw.warning as string) ??
-        "Response time increased by 18% after the latest deployment.",
+        (hasPerfData
+          ? "Performance metrics loaded from QA plan."
+          : "Connect performance test results for live metrics."),
     },
     security: {
       critical: (secRaw.critical as number) ?? 0,
-      high: (secRaw.high as number) ?? 1,
-      medium: (secRaw.medium as number) ?? 4,
-      low: (secRaw.low as number) ?? 12,
+      high: (secRaw.high as number) ?? 0,
+      medium: (secRaw.medium as number) ?? 0,
+      low: (secRaw.low as number) ?? 0,
       alert:
-        (secRaw.alert as string) ?? "Dependency audit recommended before release.",
+        (secRaw.alert as string) ??
+        (hasSecData
+          ? "Review open security findings before release."
+          : "Run security scan to populate vulnerability counts."),
     },
     stakeholders: buildQaStakeholders(),
     crossRoleImpact: await mergeProjectImpactIntoCrossRole(

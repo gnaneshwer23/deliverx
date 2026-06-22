@@ -134,7 +134,9 @@ export function EngineerOpenPrsPanel({
         </div>
         <div className="bg-white px-3 py-2">
           <p className="text-[#A8A89E]">Avg review</p>
-          <p className="font-semibold tabular-nums text-[#0D0D0B]">{prStats.avgReviewHours}h</p>
+          <p className="font-semibold tabular-nums text-[#0D0D0B]">
+            {configured && prStats.avgReviewHours > 0 ? `${prStats.avgReviewHours}h` : "—"}
+          </p>
         </div>
       </div>
     </div>
