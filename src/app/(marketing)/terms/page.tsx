@@ -3,7 +3,8 @@ import {
   MarketingContainer,
   MarketingPageShell,
 } from "@/components/marketing/marketing-layout";
-import { MarketingFooter, MarketingNav } from "@/components/marketing/marketing-nav";
+import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
 
 export const metadata = {
   title: "Terms of Service — DeliverX",
