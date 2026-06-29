@@ -99,7 +99,7 @@ function IdentityRow({
     <div className="mt-3 flex flex-wrap items-center gap-2.5">
       <div className="flex items-center gap-2">
         <span
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#0D0D0B] font-[family-name:var(--font-dx-display)] text-sm text-white"
+          className={`flex size-9 shrink-0 items-center justify-center rounded-full ${dxClass.avatar} text-sm`}
           aria-hidden
         >
           {userInitials(userName)}

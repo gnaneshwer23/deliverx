@@ -129,7 +129,7 @@ export function AiChatCore({
 
       <div
         ref={scrollRef}
-        className={`flex-1 space-y-4 overflow-y-auto ${compact ? "bg-white px-4 py-4" : "bg-[#FAFAF5] px-5 py-5 md:px-6"}`}
+        className={`flex-1 space-y-4 overflow-y-auto ${compact ? "bg-white px-4 py-4" : "bg-[var(--dx-page)] px-5 py-5 md:px-6"}`}
       >
         <AiConfigBanner />
         {messages.map((m, i) => (
@@ -138,18 +138,20 @@ export function AiChatCore({
             className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
           >
             <div
-              className={`flex size-7 shrink-0 items-center justify-center rounded-full font-[family-name:var(--font-dx-display)] text-[11px] text-white ${
-                m.role === "user" ? "bg-[#0D0D0B]" : "bg-[#1C4A2E]"
+              className={`flex size-7 shrink-0 items-center justify-center rounded-full font-[family-name:var(--font-dx-display)] text-[11px] ${
+                m.role === "user"
+                  ? "bg-[#EEF5F1] text-[#1C4A2E]"
+                  : "bg-[#1C4A2E] text-white"
               }`}
             >
               {m.role === "user" ? "U" : "D"}
             </div>
             <div className={`max-w-[85%] ${m.role === "user" ? "text-right" : ""}`}>
               <div
-                className={`px-3.5 py-2.5 text-sm font-light leading-relaxed ${
+                className={`rounded-xl px-3.5 py-2.5 text-sm font-light leading-relaxed ${
                   m.role === "user"
-                    ? "bg-[#1C4A2E] text-white"
-                    : "border border-[#E4E4DC] bg-white text-[#2C2C28]"
+                    ? "bg-[#EEF5F1] text-[#0D0D0B]"
+                    : "border border-[var(--dx-rul)] bg-white text-[#2C2C28] shadow-[var(--dx-shadow-sm)]"
                 }`}
               >
                 {m.content}

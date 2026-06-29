@@ -729,17 +729,17 @@ export const THREAD_CALLOUTS = [
   {
     "tone": "red",
     "title": "Auth API blocker",
-    "body": "Logged by Engineer on day 5 → SM impediment board → PM delivery signals → Sponsor intelligence feed. One event. Four dashboards. No manual update."
+    "body": "Logged by Engineer on day 5, routed to SM impediment board, PM delivery signals, and Sponsor intelligence feed. One event. Four dashboards. No manual update."
   },
   {
     "tone": "amber",
     "title": "2 critical defects",
-    "body": "QA logs BUG-142 and BUG-167 → PM release decision blocked → Engineer receives assignment → Sponsor portfolio card moves to Watch."
+    "body": "QA logs BUG-142 and BUG-167. PM release decision blocked. Engineer receives assignment. Sponsor portfolio card moves to Watch."
   },
   {
     "tone": "green",
     "title": "BA resolves FR-003",
-    "body": "Acceptance criteria accepted → Engineer story moves to ready → QA test cases generated → SM impediment cleared. Traceability 78% → 81%."
+    "body": "Acceptance criteria accepted. Engineer story moves to ready. QA test cases generated. SM impediment cleared. Traceability 78% to 81%."
   }
 ] as const;
 
@@ -747,7 +747,7 @@ export const PROOF_STATS = [
   {
     "n": "40%",
     "label": "PM time on admin",
-    "desc": "Status chasing and report writing consume nearly half the week — work that should happen automatically from the tools the team already uses."
+    "desc": "Status chasing and report writing consume nearly half the week. Work that should happen automatically from the tools the team already uses."
   },
   {
     "n": "3wk",
@@ -785,11 +785,11 @@ export const PRICING_TIERS = [
     "name": "Delivery teams",
     "price": "149",
     "period": "/ month",
-    "desc": "For teams with multiple roles — all 7 personalised dashboards and connected team sync.",
+    "desc": "For teams with multiple roles. All 7 personalised dashboards and connected team sync.",
     "features": [
       "Unlimited projects",
       "All 7 personalised dashboards",
-      "Team sync — live updates across roles",
+      "Team sync with live updates across roles",
       "Meeting intelligence",
       "Decision register",
       "Organisational memory"

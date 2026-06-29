@@ -31,7 +31,7 @@ export function DxPageHeader({
   return (
     <header
       className={`relative flex shrink-0 flex-wrap items-start justify-between gap-4 ${
-        sticky ? dxClass.stickyHeader : "border-b border-[#E4E4DC] bg-white px-6 py-5 md:px-8"
+        sticky ? dxClass.stickyHeader : "border-b border-[var(--dx-rul)] bg-white px-6 py-5 md:px-8"
       }`}
     >
       {sticky ? (

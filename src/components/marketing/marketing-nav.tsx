@@ -8,8 +8,7 @@ import { MarketingContainer } from "@/components/marketing/marketing-layout";
 
 export const NAV_LINKS = [
   { href: "#platform", label: "Platform" },
-  { href: "#loop", label: "How it works" },
-  { href: "#onboarding", label: "For your role" },
+  { href: "#workflow", label: "Pipeline" },
   { href: "#proof", label: "Why DeliverX" },
   { href: "#pricing", label: "Pricing" },
 ] as const;
@@ -37,7 +36,7 @@ function MobileNavDrawer({
       <button
         type="button"
         aria-label="Close menu"
-        className="fixed inset-0 z-[210] bg-[var(--mkt-ink)]/85 md:hidden"
+        className="fixed inset-0 z-[210] bg-[var(--mkt-text1)]/20 md:hidden"
         onClick={onClose}
       />
       <nav
@@ -99,7 +98,7 @@ export function MarketingNav() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-[200] flex h-[var(--mkt-navh)] items-center border-b border-[var(--mkt-border)] bg-[rgba(12,12,10,.88)] px-5 backdrop-blur-xl md:px-10 lg:px-12">
+      <header className="fixed inset-x-0 top-0 z-[200] flex h-[var(--mkt-navh)] items-center border-b border-[var(--mkt-border)] bg-[rgba(255,255,255,0.88)] px-5 backdrop-blur-xl md:px-10 lg:px-12">
         <MarketingLogo />
         <nav className="hidden items-center gap-0.5 md:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => (

@@ -49,16 +49,16 @@ export function MarketingProductSection() {
               One workspace. <em>Seven perspectives.</em>
             </>
           }
-          subtitle="Every role gets a tailored dashboard — KPIs, intelligence feeds, and live team sync — all fed from the same delivery data. No duplicate RAID logs. No status-meeting archaeology."
+          subtitle="Every role gets a tailored dashboard with KPIs, intelligence feeds, and live team sync, all fed from the same delivery data. No duplicate RAID logs. No status-meeting archaeology."
         />
 
-        <div className="mt-12 overflow-hidden rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] shadow-[0_16px_48px_rgba(0,0,0,.45)]">
+        <div className="mt-12 overflow-hidden rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] shadow-[0_16px_48px_rgba(15,23,42,0.08)]">
           <div className="flex h-[42px] items-center gap-2 border-b border-[var(--mkt-border)] bg-[var(--mkt-s3)] px-4">
             <span className="size-[9px] rounded-full bg-[#FF5F57]" aria-hidden />
             <span className="size-[9px] rounded-full bg-[#FFBD2E]" aria-hidden />
             <span className="size-[9px] rounded-full bg-[#28CA41]" aria-hidden />
             <span className="ml-2 text-[0.6875rem] font-medium text-[var(--mkt-text3)]">
-              DeliverX — Delivery intelligence workspace
+              DeliverX · Delivery intelligence workspace
             </span>
           </div>
 
@@ -102,12 +102,12 @@ export function MarketingProductSection() {
               desc: "KPIs, feeds, and actions calibrated to how each stakeholder actually works.",
             },
             {
-              title: "Human-in-the-loop AI",
+              title: "AI Review Queue",
               desc: "Proposals, reports, and workspace updates require explicit approval before they apply.",
             },
             {
               title: "Connected team sync",
-              desc: "One signal updates every relevant dashboard — from BA gap to Sponsor escalation.",
+              desc: "One signal updates every relevant dashboard, from BA gap to Sponsor escalation.",
             },
           ].map((item) => (
             <div

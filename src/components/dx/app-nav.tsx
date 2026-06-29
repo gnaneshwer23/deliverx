@@ -31,7 +31,7 @@ function NavSearch() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search projects, tasks, docs…"
-        className="w-full border border-[#E4E4DC] bg-[#F7F7F2] py-1.5 pl-8 pr-3 text-[13px] outline-none focus:border-[#1C4A2E]"
+        className="w-full rounded-lg border border-[var(--dx-rul)] bg-[var(--dx-srf)] py-1.5 pl-8 pr-3 text-[13px] outline-none focus:border-[#1C4A2E] focus:ring-2 focus:ring-[#1C4A2E]/10"
       />
     </form>
   );
@@ -59,7 +59,7 @@ export function AppNav({
   const { toggleDrawer } = useAiDrawer();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-2 border-b border-[#E4E4DC] bg-white px-3 md:gap-3 md:px-5">
+    <header className={`fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-2 ${dxClass.navBar} px-3 md:gap-3 md:px-5`}>
       {showMobileNavToggle ? (
         <button
           type="button"

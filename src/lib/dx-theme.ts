@@ -1,14 +1,15 @@
-/** DeliverX design tokens (from product prototype) */
+/** DeliverX design tokens (Brief v2 — light SaaS dashboard) */
 export const dx = {
+  page: "#F8F9FB",
   ink: "#0D0D0B",
   ink2: "#1A1A17",
   ink3: "#2C2C28",
-  mut: "#6B6B64",
-  fnt: "#A8A89E",
-  rul: "#E4E4DC",
-  rul2: "#F0F0E8",
-  srf: "#F7F7F2",
-  bas: "#FAFAF5",
+  mut: "#6B7280",
+  fnt: "#9CA3AF",
+  rul: "#E8EAED",
+  rul2: "#F0F1F4",
+  srf: "#F3F4F6",
+  bas: "#F8F9FB",
   wht: "#FFFFFF",
   acc: "#1C4A2E",
   acm: "#2D7048",
@@ -36,7 +37,17 @@ export const dxClass = {
   display: "font-[family-name:var(--font-dx-display)]",
   sans: "font-[family-name:var(--font-dx-sans)]",
   mono: "font-[family-name:var(--font-dx-mono)]",
-  caps: "font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.2em] text-[#6B6B64]",
+  pageBg: "bg-[var(--dx-page)]",
+  navBar:
+    "border-b border-[var(--dx-rul)] bg-white shadow-[var(--dx-shadow-nav)]",
+  sidebar:
+    "border-r border-[var(--dx-rul)] bg-white shadow-[var(--dx-shadow-sidebar)]",
+  avatar:
+    "bg-[#1C4A2E] font-[family-name:var(--font-dx-display)] text-white",
+  filterActive: "bg-[#1C4A2E] text-white shadow-[var(--dx-shadow-sm)]",
+  filterInactive:
+    "bg-white text-[var(--dx-mut)] shadow-[var(--dx-shadow-sm)] hover:bg-[var(--dx-srf)]",
+  caps: "font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.2em] text-[var(--dx-mut)]",
   capsAcc: "font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.2em] text-[#1C4A2E]",
   pageTitle: "font-[family-name:var(--font-dx-display)] text-2xl tracking-tight text-[#0D0D0B] md:text-3xl",
   sectionTitle:
@@ -44,23 +55,23 @@ export const dxClass = {
   btnPrimary:
     "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[#1C4A2E] bg-[#1C4A2E] px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-white transition hover:bg-[#2D7048]",
   btnGhost:
-    "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[#E4E4DC] bg-transparent px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-[#0D0D0B] transition hover:border-[#0D0D0B]",
+    "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[var(--dx-rul)] bg-white px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-[#0D0D0B] shadow-[var(--dx-shadow-sm)] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]",
   btnSm:
     "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[#1C4A2E] bg-[#1C4A2E] px-3.5 py-1.5 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.12em] text-white transition hover:bg-[#2D7048]",
   input:
-    "w-full border-[1.5px] border-[#E4E4DC] bg-white px-3 py-2.5 text-[15px] text-[#0D0D0B] outline-none transition placeholder:text-[#A8A89E] focus:border-[#1C4A2E]",
+    "w-full rounded-lg border border-[var(--dx-rul)] bg-white px-3 py-2.5 text-[15px] text-[#0D0D0B] shadow-[var(--dx-shadow-sm)] outline-none transition placeholder:text-[var(--dx-fnt)] focus:border-[#1C4A2E] focus:ring-2 focus:ring-[#1C4A2E]/10",
   label:
-    "font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.18em] text-[#6B6B64]",
+    "font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.18em] text-[var(--dx-mut)]",
   panelTitle:
-    "font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[#6B6B64]",
+    "font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[var(--dx-mut)]",
   stickyHeader:
-    "sticky top-0 z-20 border-b border-[#E4E4DC] bg-white/85 px-6 py-5 shadow-[0_1px_0_rgba(28,74,46,0.06)] backdrop-blur-md md:px-8",
+    "sticky top-0 z-20 border-b border-[var(--dx-rul)] bg-white/90 px-6 py-5 shadow-[var(--dx-shadow-nav)] backdrop-blur-md md:px-8",
   panelShellBody:
     "[&>div>h3.text-lg:first-child]:hidden [&>div>section>h3:first-child]:hidden",
-  card: "rounded-xl border border-[#E4E4DC] bg-white shadow-[0_1px_3px_rgba(13,13,11,0.04),0_4px_16px_rgba(13,13,11,0.03)]",
+  card: "rounded-xl border border-[var(--dx-rul)]/80 bg-white shadow-[var(--dx-shadow-card)]",
   cardPad:
-    "rounded-xl border border-[#E4E4DC] bg-white p-5 shadow-[0_1px_3px_rgba(13,13,11,0.04),0_4px_16px_rgba(13,13,11,0.03)] md:p-6",
+    "rounded-xl border border-[var(--dx-rul)]/80 bg-white p-5 shadow-[var(--dx-shadow-card)] md:p-6",
   cardElevated:
-    "rounded-xl border border-[#E4E4DC] bg-white shadow-[0_2px_8px_rgba(13,13,11,0.05),0_8px_24px_rgba(13,13,11,0.04)] transition hover:shadow-[0_4px_12px_rgba(13,13,11,0.07),0_12px_32px_rgba(13,13,11,0.05)]",
+    "rounded-xl border border-[var(--dx-rul)]/80 bg-white shadow-[var(--dx-shadow-card-hover)] transition hover:shadow-[0_4px_12px_rgba(15,23,42,0.07),0_12px_32px_rgba(15,23,42,0.05)]",
   widgetGrid: "grid gap-5 md:gap-6",
 } as const;

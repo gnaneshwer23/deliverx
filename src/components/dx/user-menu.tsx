@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { ChevronDown, Settings } from "lucide-react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { dxClass } from "@/lib/dx-theme";
 
 export function UserMenu({
   userEmail,
@@ -34,7 +35,7 @@ export function UserMenu({
         aria-haspopup="menu"
       >
         <span
-          className="flex size-7 items-center justify-center rounded-full bg-[#0D0D0B] font-[family-name:var(--font-dx-display)] text-[13px] text-white"
+          className={`flex size-7 items-center justify-center rounded-full ${dxClass.avatar} text-[13px]`}
           title={userEmail ?? undefined}
         >
           {initial}
