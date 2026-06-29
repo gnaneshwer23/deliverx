@@ -7,6 +7,7 @@ import {
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
 import {
+  DELIVERY_STAGES,
   ROLE_ORDER,
   ROLES,
   THREAD_CALLOUTS,
@@ -18,14 +19,6 @@ const THREAD_DOT: Record<string, string> = {
   amber: "#FBBF24",
   green: "#3D9660",
 };
-
-const DELIVERY_STAGES = [
-  { code: "01", label: "Brief", detail: "Business case ingested" },
-  { code: "02", label: "Structure", detail: "Delivery Brain maps scope" },
-  { code: "03", label: "Deliver", detail: "Tasks sync across roles" },
-  { code: "04", label: "Govern", detail: "RAID and decisions tracked" },
-  { code: "05", label: "Close", detail: "Memory compounds forward" },
-] as const;
 
 export function MarketingWorkflowSection() {
   const [activeRole, setActiveRole] = useState<RoleId>("pm");
@@ -165,20 +158,22 @@ export function MarketingWorkflowSection() {
                 {DELIVERY_STAGES.map((stage, i) => (
                   <li
                     key={stage.code}
-                    className="relative flex gap-4 border-b border-[var(--mkt-border)] py-3.5 last:border-b-0"
+                    className="relative flex gap-4 border-b border-[var(--mkt-border)] py-4 last:border-b-0"
                   >
                     {i < DELIVERY_STAGES.length - 1 ? (
                       <span
-                        className="absolute left-[1.125rem] top-[2.75rem] h-[calc(100%-0.5rem)] w-px bg-gradient-to-b from-[var(--mkt-green-l)] to-transparent opacity-40"
+                        className="absolute left-[1.125rem] top-[2.85rem] h-[calc(100%-0.25rem)] w-px bg-gradient-to-b from-[var(--mkt-green-l)] to-transparent opacity-40"
                         aria-hidden
                       />
                     ) : null}
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(61,150,96,0.25)] bg-[rgba(61,150,96,0.08)] font-[family-name:var(--font-mkt-mono)] text-[10px] font-semibold text-[var(--mkt-green-l)]">
                       {stage.code}
                     </span>
-                    <div>
+                    <div className="min-w-0 pt-0.5">
                       <p className="text-sm font-semibold text-[var(--mkt-text1)]">{stage.label}</p>
-                      <p className="mt-0.5 text-[0.8125rem] text-[var(--mkt-text2)]">{stage.detail}</p>
+                      <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
+                        {stage.detail}
+                      </p>
                     </div>
                   </li>
                 ))}
