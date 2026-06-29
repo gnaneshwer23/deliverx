@@ -18,6 +18,18 @@ function CheckIcon() {
   );
 }
 
+function ExcludedIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="mt-0.5 size-[13px] shrink-0 fill-none stroke-[var(--mkt-text3)] stroke-[1.5] [stroke-dasharray:3_2] [stroke-linecap:round]"
+      aria-hidden
+    >
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
 export function MarketingPricingSection() {
   return (
     <MarketingSection id="pricing">
@@ -69,12 +81,28 @@ export function MarketingPricingSection() {
               <p className="mt-2 text-[0.8125rem] leading-snug text-[var(--mkt-text2)]">{tier.desc}</p>
               <div className="my-5 h-px bg-[var(--mkt-border)]" />
               <ul className="space-y-1">
-                {tier.features.map((feature) => (
+                {tier.features.map((feature) => {
+                  const highlighted = tier.highlightFeatures?.includes(feature);
+                  return (
+                    <li
+                      key={feature}
+                      className={`flex items-start gap-2 text-[0.8125rem] leading-snug ${
+                        highlighted
+                          ? "font-semibold text-[var(--mkt-green-l)]"
+                          : "text-[var(--mkt-text2)]"
+                      }`}
+                    >
+                      <CheckIcon />
+                      {feature}
+                    </li>
+                  );
+                })}
+                {tier.excludedFeatures?.map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-start gap-2 text-[0.8125rem] leading-snug text-[var(--mkt-text2)]"
+                    className="flex items-start gap-2 border-b border-dashed border-[var(--mkt-border)] pb-1 text-[0.8125rem] leading-snug text-[var(--mkt-text3)] last:border-b-0 last:pb-0"
                   >
-                    <CheckIcon />
+                    <ExcludedIcon />
                     {feature}
                   </li>
                 ))}
@@ -87,6 +115,11 @@ export function MarketingPricingSection() {
                 >
                   {tier.cta}
                 </MarketingButtonLink>
+                {tier.upgradeNudge ? (
+                  <p className="mt-3 text-center text-[0.75rem] leading-snug text-[var(--mkt-text3)]">
+                    {tier.upgradeNudge}
+                  </p>
+                ) : null}
               </div>
             </div>
           ))}

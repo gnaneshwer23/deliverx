@@ -769,12 +769,23 @@ export const PRICING_TIERS = [
     "period": "/ month",
     "desc": "For individual project managers running up to 3 active projects.",
     "features": [
+      "1 personalised PM dashboard",
       "3 active projects",
       "Up to 10 team members",
       "AI document analysis",
       "Standup intelligence",
       "Weekly status reports"
     ],
+    "excludedFeatures": [
+      "Sponsor dashboard",
+      "Business Analyst dashboard",
+      "Product Manager dashboard",
+      "Engineer dashboard",
+      "QA dashboard",
+      "Scrum Master dashboard",
+      "Connected team sync"
+    ],
+    "upgradeNudge": "Need all 7 role dashboards and team sync? Upgrade to Professional.",
     "cta": "Start free trial",
     "ctaHref": "/signup",
     "featured": false,
@@ -785,15 +796,16 @@ export const PRICING_TIERS = [
     "name": "Delivery teams",
     "price": "149",
     "period": "/ month",
-    "desc": "For teams with multiple roles. All 7 personalised dashboards and connected team sync.",
+    "desc": "For teams with multiple roles. All 7 role dashboards and connected team sync.",
     "features": [
       "Unlimited projects",
-      "All 7 personalised dashboards",
+      "All 7 role dashboards",
       "Team sync with live updates across roles",
       "Meeting intelligence",
       "Decision register",
       "Organisational memory"
     ],
+    "highlightFeatures": ["All 7 role dashboards"],
     "cta": "Start free trial",
     "ctaHref": "/signup",
     "featured": true,
@@ -828,6 +840,9 @@ export type PricingTier = {
   period: string;
   desc: string;
   features: readonly string[];
+  excludedFeatures?: readonly string[];
+  highlightFeatures?: readonly string[];
+  upgradeNudge?: string;
   cta: string;
   ctaHref: string;
   featured: boolean;
