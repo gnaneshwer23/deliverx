@@ -41,8 +41,9 @@ export function MarketingProductSection() {
                 key={id}
                 type="button"
                 onClick={() => {
-                  if (id !== activeRole) trackRoleChipClick(id, "platform");
+                  const prev = activeRole;
                   setActiveRole(id);
+                  if (id !== prev) trackRoleChipClick(id, "platform");
                 }}
                 className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition duration-200 ${
                   isActive

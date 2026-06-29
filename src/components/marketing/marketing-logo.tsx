@@ -1,9 +1,36 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { MouseEvent } from "react";
 import { mktClass } from "@/lib/marketing/landing-theme";
 
+function normalizePath(path: string) {
+  if (path.length > 1 && path.endsWith("/")) return path.slice(0, -1);
+  return path;
+}
+
 export function MarketingLogo({ href = "/" }: { href?: string }) {
+  const pathname = usePathname();
+
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    const targetPath = normalizePath(href);
+    const currentPath = normalizePath(pathname);
+    if (targetPath !== currentPath) return;
+
+    if (window.location.hash || window.scrollY > 0) {
+      event.preventDefault();
+      window.history.pushState(null, "", href);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
-    <Link href={href} className="mr-auto flex items-center gap-2.5 no-underline">
+    <Link
+      href={href}
+      onClick={handleClick}
+      className="mr-auto flex items-center gap-2.5 no-underline"
+    >
       <span
         className="flex size-[30px] shrink-0 items-center justify-center rounded-[7px] bg-[var(--mkt-green)]"
         aria-hidden
