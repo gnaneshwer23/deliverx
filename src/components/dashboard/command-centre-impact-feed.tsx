@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import type { DeliveryImpactEventRow } from "@/services/deliveryImpact";
 import type { DeliveryImpactRole, ImpactFeedSeverity } from "@/services/deliveryImpactEngine";
 import { DeliveryImpactFeed } from "@/components/delivery/delivery-impact-feed";
+import { dxClass } from "@/lib/dx-theme";
 
 const SEVERITY_OPTIONS: Array<{ value: ImpactFeedSeverity; label: string }> = [
   { value: "all", label: "All" },
@@ -68,8 +69,8 @@ export function CommandCentreImpactFeed({
             href={filterHref(pathname, searchParams, { feedSeverity: opt.value })}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               severity === opt.value
-                ? "bg-[#1C4A2E] text-white"
-                : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                ? dxClass.filterActive
+                : dxClass.filterInactive
             }`}
           >
             {opt.label}
@@ -87,8 +88,8 @@ export function CommandCentreImpactFeed({
             href={filterHref(pathname, searchParams, { feedRole: opt.value })}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               (opt.value === "all" && !role) || role === opt.value
-                ? "bg-[#0D0D0B] text-white"
-                : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                ? dxClass.filterActive
+                : dxClass.filterInactive
             }`}
           >
             {opt.label}
@@ -105,8 +106,8 @@ export function CommandCentreImpactFeed({
             href={filterHref(pathname, searchParams, { feedProject: undefined })}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               !projectId
-                ? "bg-[#1C4A2E] text-white"
-                : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                ? dxClass.filterActive
+                : dxClass.filterInactive
             }`}
           >
             All projects
@@ -117,8 +118,8 @@ export function CommandCentreImpactFeed({
               href={filterHref(pathname, searchParams, { feedProject: p.id })}
               className={`rounded-full px-3 py-1 text-xs font-medium ${
                 projectId === p.id
-                  ? "bg-[#1C4A2E] text-white"
-                  : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                  ? dxClass.filterActive
+                  : dxClass.filterInactive
               }`}
             >
               {p.name}

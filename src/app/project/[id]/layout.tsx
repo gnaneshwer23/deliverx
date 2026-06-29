@@ -43,7 +43,7 @@ export default async function ProjectLayout({
   ]);
 
   return (
-    <div className="min-h-screen bg-[#FAFAF5]">
+    <div className="min-h-screen bg-[var(--dx-page)]">
       <AppShell
         userEmail={user.email}
         orgName={orgName}

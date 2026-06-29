@@ -98,8 +98,8 @@ export default async function WorkspaceTasksPage({
             href={buildHref({ project: undefined, page: 0, view })}
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               !projectId
-                ? "bg-[#0D0D0B] text-white"
-                : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                ? dxClass.filterActive
+                : dxClass.filterInactive
             }`}
           >
             All projects
@@ -110,8 +110,8 @@ export default async function WorkspaceTasksPage({
               href={buildHref({ project: p.id, page: 0, view })}
               className={`rounded-full px-3 py-1 text-xs font-medium ${
                 projectId === p.id
-                  ? "bg-[#0D0D0B] text-white"
-                  : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                  ? dxClass.filterActive
+                  : dxClass.filterInactive
               }`}
             >
               {p.name}
@@ -132,8 +132,8 @@ export default async function WorkspaceTasksPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${
                   (s.value === "all" && (!statusFilter || statusFilter === "all")) ||
                   statusFilter === s.value
-                    ? "bg-[#1C4A2E] text-white"
-                    : "bg-[#F7F7F2] text-[#6B6B64] hover:bg-[#E4E4DC]"
+                    ? dxClass.filterActive
+                    : dxClass.filterInactive
                 }`}
               >
                 {s.label}

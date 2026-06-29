@@ -28,6 +28,7 @@ import {
   isWorkspaceNavItemActive,
   shouldExpandOtherMissions,
 } from "@/lib/nav-path";
+import { dxClass } from "@/lib/dx-theme";
 
 function NavLink({
   item,
@@ -376,7 +377,7 @@ function WorkspaceMobileNavDrawer({
       <nav
         id="workspace-mobile-nav"
         aria-label="Workspace navigation"
-        className="fixed inset-y-0 left-0 z-[60] flex w-[min(100%,var(--dx-sbw))] flex-col border-r border-[#E4E4DC] bg-white shadow-2xl lg:hidden"
+        className="fixed inset-y-0 left-0 z-[60] flex w-[min(100%,var(--dx-sbw))] flex-col bg-white shadow-2xl lg:hidden"
         style={{ top: "var(--dx-navh)" }}
       >
         <div className="flex items-center justify-between border-b border-[#E4E4DC] px-3.5 py-2.5">
@@ -413,7 +414,7 @@ export function AppSidebar({
   missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
 }) {
   return (
-    <aside className="fixed bottom-0 left-0 top-[var(--dx-navh)] z-40 hidden w-[var(--dx-sbw)] flex-col border-r border-[#E4E4DC] bg-white lg:flex">
+    <aside className={`fixed bottom-0 left-0 top-[var(--dx-navh)] z-40 hidden w-[var(--dx-sbw)] flex-col ${dxClass.sidebar} lg:flex`}>
       <WorkspaceSidebarContent
         pendingApprovals={pendingApprovals}
         userRole={userRole}

@@ -61,7 +61,7 @@ export function DashboardPanelShell({
           <button
             type="button"
             onClick={() => toggleCollapsed(panelId)}
-            className="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-md border border-[#E4E4DC] bg-white p-1 text-[#6B6B64] shadow-sm transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
+            className="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--dx-rul)]/80 bg-white p-1 text-[var(--dx-mut)] shadow-[var(--dx-shadow-sm)] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
             aria-expanded={!collapsed}
             aria-controls={`panel-body-${panelId}`}
             aria-label={collapsed ? `Expand ${title}` : `Collapse ${title}`}

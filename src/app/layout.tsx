@@ -33,7 +33,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className={`${dxSans.className} min-h-full bg-[#FAFAF5] text-[#0D0D0B] flex flex-col`}
+        className={`${dxSans.className} min-h-full bg-[var(--dx-page)] text-[#0D0D0B] flex flex-col`}
       >
         {children}
         <Toaster richColors closeButton position="top-right" />

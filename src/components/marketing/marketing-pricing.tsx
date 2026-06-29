@@ -36,7 +36,7 @@ export function MarketingPricingSection() {
           {(PRICING_TIERS as readonly PricingTier[]).map((tier) => (
             <div
               key={tier.tier}
-              className={`relative rounded-2xl border bg-[var(--mkt-s1)] p-8 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_4px_16px_rgba(0,0,0,.5)] ${
+              className={`relative rounded-2xl border bg-[var(--mkt-s1)] p-8 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] ${
                 tier.featured
                   ? "border-[var(--mkt-green-l)] shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)]"
                   : "border-[var(--mkt-border)]"

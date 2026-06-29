@@ -49,38 +49,38 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  --background: oklch(0.985 0.003 264);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.36 0.08 155);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: oklch(0.975 0.004 264);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.965 0.004 264);
+  --muted-foreground: oklch(0.5 0.01 100);
+  --accent: oklch(0.955 0.02 155);
+  --accent-foreground: oklch(0.36 0.08 155);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.91 0.006 264);
+  --input: oklch(0.93 0.005 264);
+  --ring: oklch(0.36 0.08 155);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.36 0.08 155);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: oklch(0.955 0.02 155);
+  --sidebar-accent-foreground: oklch(0.36 0.08 155);
+  --sidebar-border: oklch(0.91 0.006 264);
+  --sidebar-ring: oklch(0.36 0.08 155);
 }
 
 .dark {
@@ -122,25 +122,31 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[var(--dx-page)] text-foreground;
   }
   html {
     @apply font-sans;
   }
 }
 
-/* DeliverX design tokens */
+/* DeliverX design tokens — light SaaS dashboard (Brief v2 + Dribbble-inspired) */
 :root {
+  --dx-page: #f8f9fb;
   --dx-ink: #0d0d0b;
   --dx-ink2: #1a1a17;
   --dx-ink3: #2c2c28;
-  --dx-mut: #6b6b64;
-  --dx-fnt: #a8a89e;
-  --dx-rul: #e4e4dc;
-  --dx-rul2: #f0f0e8;
-  --dx-srf: #f7f7f2;
-  --dx-bas: #fafaf5;
+  --dx-mut: #6b7280;
+  --dx-fnt: #9ca3af;
+  --dx-rul: #e8eaed;
+  --dx-rul2: #f0f1f4;
+  --dx-srf: #f3f4f6;
+  --dx-bas: #f8f9fb;
   --dx-wht: #ffffff;
+  --dx-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --dx-shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.04);
+  --dx-shadow-card-hover: 0 2px 8px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.05);
+  --dx-shadow-nav: 0 1px 0 rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.03);
+  --dx-shadow-sidebar: 1px 0 0 rgba(15, 23, 42, 0.04);
   --dx-acc: #1c4a2e;
   --dx-acm: #2d7048;
   --dx-acl: #3d9660;
@@ -380,5 +386,63 @@
 
   .landing-mock-3d > .landing-mock-float {
     transform: none !important;
+  }
+}
+
+/* Marketing landing — futuristic workflow pipeline */
+.marketing-workflow-mesh {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(61, 150, 96, 0.14), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 85% 30%, rgba(147, 197, 253, 0.1), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(110, 231, 183, 0.08), transparent 55%);
+}
+
+.marketing-workflow-grid {
+  background-image:
+    linear-gradient(rgba(28, 74, 46, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 74, 46, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 40%, black 20%, transparent 75%);
+}
+
+.marketing-workflow-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+}
+
+.marketing-workflow-line {
+  animation: mkt-flow-dash 12s linear infinite;
+}
+
+.marketing-workflow-pulse-dot {
+  offset-path: path("M0 16 H1000");
+  offset-distance: 0%;
+  animation: mkt-flow-pulse 4s ease-in-out infinite;
+}
+
+@keyframes mkt-flow-dash {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@keyframes mkt-flow-pulse {
+  0% {
+    offset-distance: 0%;
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-workflow-line,
+  .marketing-workflow-pulse-dot {
+    animation: none;
   }
 }

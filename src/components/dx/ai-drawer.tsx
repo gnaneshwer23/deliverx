@@ -19,7 +19,7 @@ export function AiDrawer({
       <button
         type="button"
         aria-label="Close AI assistant"
-        className="fixed inset-0 z-[60] bg-[#0D0D0B]/30"
+        className="fixed inset-0 z-[60] bg-black/20 backdrop-blur-[2px]"
         onClick={closeDrawer}
       />
       <aside

@@ -44,7 +44,7 @@ export default async function WorkspaceLayout({
   const missionBadgeCounts = countPendingReviewsByPersonaMap(pendingArtifactReviews);
 
   return (
-    <div className="min-h-screen bg-[#FAFAF5]">
+    <div className="min-h-screen bg-[var(--dx-page)]">
       <AppShell
         userEmail={user.email}
         orgName={orgName}

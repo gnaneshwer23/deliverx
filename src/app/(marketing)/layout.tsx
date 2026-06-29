@@ -7,13 +7,13 @@ const appUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: "DeliverX — AI Delivery Intelligence Platform",
+  title: "DeliverX · AI Delivery Intelligence Platform",
   description:
-    "DeliverX is the delivery intelligence platform for every role. One connected workspace from business case to closure — with human approval on every AI change.",
+    "DeliverX is the AI-native delivery OS for every role. One connected workspace from business case to closure, with human approval on every AI change.",
   openGraph: {
-    title: "DeliverX — AI Delivery Intelligence Platform",
+    title: "DeliverX · AI Delivery Intelligence Platform",
     description:
-      "Role-specific dashboards, live team sync, and AI that surfaces risks and drafts reports — with human approval on every change.",
+      "Role-specific dashboards, live team sync, and AI that surfaces risks and drafts reports. Every change routes through the AI Review Queue.",
     type: "website",
     siteName: "DeliverX",
     images: [
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "DeliverX — AI Delivery Intelligence Platform",
+        alt: "DeliverX · AI Delivery Intelligence Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "DeliverX — AI Delivery Intelligence Platform",
+    title: "DeliverX · AI Delivery Intelligence Platform",
     description:
-      "Role-specific dashboards, live team sync, and AI that surfaces risks and drafts reports — with human approval on every change.",
+      "Role-specific dashboards, live team sync, and AI that surfaces risks and drafts reports. Every change routes through the AI Review Queue.",
     images: ["/opengraph-image"],
   },
 };

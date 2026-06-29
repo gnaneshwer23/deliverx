@@ -31,7 +31,7 @@ export default async function ProjectNewLayout({ children }: { children: ReactNo
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAF5]">
+    <div className="flex min-h-screen flex-col bg-[var(--dx-page)]">
       <header className="flex h-[var(--dx-navh)] shrink-0 items-center justify-between border-b border-[#E4E4DC] bg-white px-6 md:px-11">
         <DxLogo href="/workspace/dashboard" showTag />
         <DxStepper role={profile?.role} />
