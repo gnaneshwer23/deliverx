@@ -743,6 +743,65 @@ export const THREAD_CALLOUTS = [
   }
 ] as const;
 
+export type DeliveryStage = {
+  code: string;
+  label: string;
+  detail: string;
+};
+
+/** End-to-end delivery pipeline steps shown in the workflow section. */
+export const DELIVERY_STAGES: readonly DeliveryStage[] = [
+  {
+    code: "01",
+    label: "Brief",
+    detail:
+      "Upload business case, charter, or plain text. Delivery Brain extracts scope, timeline, team, and objectives. You review the draft before anything enters the workspace.",
+  },
+  {
+    code: "02",
+    label: "Structure",
+    detail:
+      "AI proposes workstreams, milestones, and initial RAID. Nothing is applied until you accept, edit, or reject each item in the AI Review Queue.",
+  },
+  {
+    code: "03",
+    label: "Deliver",
+    detail:
+      "Each role gets a personalised dashboard. PM tracks milestones and risks, Engineer sees stories and PRs, QA monitors release readiness. One signal updates all seven roles instantly.",
+  },
+  {
+    code: "04",
+    label: "Govern",
+    detail:
+      "Decisions, changes, and risks in one place. AI drafts weekly status from live data. You review and publish. Nothing reaches stakeholders without your sign-off.",
+  },
+  {
+    code: "05",
+    label: "Close",
+    detail:
+      "You confirm closure. AI generates a retrospective and delivery playbook from project patterns. Lessons are stored in Organisational Memory for future projects.",
+  },
+] as const;
+
+export type PilotQuote = {
+  /** Set to true when a real pilot customer quote is approved for publication. */
+  enabled: boolean;
+  quote: string;
+  name: string;
+  title: string;
+  org: string;
+};
+
+/** Pilot social proof — hidden until a real quote is approved (enabled: true). */
+export const PILOT_QUOTE: PilotQuote = {
+  enabled: false,
+  // Replace placeholders below when a real pilot quote is approved for publication.
+  quote: "",
+  name: "",
+  title: "",
+  org: "",
+};
+
 export const PROOF_STATS = [
   {
     "n": "40%",

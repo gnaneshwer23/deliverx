@@ -6,6 +6,7 @@ import { MarketingNav, MarketingFooter } from "@/components/marketing/marketing-
 import { MarketingPricingSection } from "@/components/marketing/marketing-pricing";
 import { MarketingProductSection } from "@/components/marketing/marketing-product";
 import { MarketingProofSection } from "@/components/marketing/marketing-proof";
+import { MarketingSocialProofSection } from "@/components/marketing/marketing-social-proof";
 import { MarketingWorkflowSection } from "@/components/marketing/marketing-workflow";
 
 export default function LandingPage() {
@@ -20,6 +21,7 @@ export default function LandingPage() {
         <MarketingWorkflowSection />
         <MarketingDivider />
         <MarketingProofSection />
+        <MarketingSocialProofSection />
         <MarketingDivider />
         <MarketingPricingSection />
         <MarketingCtaSection />
