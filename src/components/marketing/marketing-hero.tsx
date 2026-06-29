@@ -18,7 +18,7 @@ export function MarketingHero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-[calc(var(--mkt-navh)+40px)] pb-16"
+      className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-[calc(var(--mkt-navh)+40px)] pb-10"
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(61,150,96,0.12)_0%,transparent_70%)]"
