@@ -835,3 +835,38 @@ export type PricingTier = {
   badge?: string;
   customPrice?: boolean;
 };
+
+export type TickerRole = {
+  symbol: string;
+  role: string;
+  meaning: string;
+};
+
+/** Row 1 — persona codes, names, and taglines for the landing marquee. */
+export const TICKER_ROLES: TickerRole[] = ROLE_ORDER.map((id) => {
+  const role = ROLES[id];
+  return {
+    symbol: "◈",
+    role: role.code,
+    meaning: role.tagline,
+  };
+});
+
+/** Row 2 — Brief v2 platform capabilities for the landing marquee. */
+export const TICKER_CAPABILITIES = [
+  "Delivery Brain",
+  "AI Review Queue",
+  "Brief ingestion",
+  "Connected team sync",
+  "RAID tracking",
+  "Meeting intelligence",
+  "Decision register",
+  "Organisational memory",
+  "Standup intelligence",
+  "Release readiness",
+  "Traceability matrix",
+  "Signal threads",
+  "Sprint health",
+  "Portfolio dashboard",
+  "Human-in-the-loop AI",
+] as const;
