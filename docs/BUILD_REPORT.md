@@ -1,10 +1,10 @@
 # DeliverX build report
 
-**Last updated:** 2026-06-22 (R11 — post R10)  
+**Last updated:** 2026-06-29 (R12 — homepage sprints 1–3 + role chip analytics)  
 **Production:** https://www.deliverx.dev  
-**Current `main` SHA:** `a550972` (PR [#116](https://github.com/gnaneshwer23/deliverx/pull/116)) — or `git log -1 origin/main`
+**Current `main` SHA:** `c3e81cd` (PR [#129](https://github.com/gnaneshwer23/deliverx/pull/129)) — or `git log -1 origin/main`
 
-This report summarises sprints **I1–I5**, **Horizon 1–3 (S1, J, K)**, **P-PM / P-Founder**, and **R1–R10** (role-differentiated dashboard rebuild + real data wiring). For persona routes and one-line IA per dashboard, see [Dashboard IA](./DASHBOARD_IA.md) and [I4 stakeholder matrix](./I4_STAKEHOLDER_MATRIX.md). For collaborative loop built-vs-spec detail, see [Collaborative loop status](./COLLABORATIVE_LOOP_STATUS.md).
+This report summarises sprints **I1–I5**, **Horizon 1–3 (S1, J, K)**, **P-PM / P-Founder**, **R1–R10** (role-differentiated dashboard rebuild + real data wiring), and **Homepage Sprints 1–3 (DX-HP-01–07)**. For persona routes and one-line IA per dashboard, see [Dashboard IA](./DASHBOARD_IA.md) and [I4 stakeholder matrix](./I4_STAKEHOLDER_MATRIX.md). For collaborative loop built-vs-spec detail, see [Collaborative loop status](./COLLABORATIVE_LOOP_STATUS.md).
 
 ---
 
@@ -34,10 +34,13 @@ This report summarises sprints **I1–I5**, **Horizon 1–3 (S1, J, K)**, **P-PM
 | **R8–R10** | ✅ Shipped | Real data wiring (Scrum/PM/QA), Product/Engineer KPIs, honest KPI cleanup, mobile pass |
 | **Onboarding #98** | ✅ Shipped | Founder onboarding clarity — unified steps, plain-language copy |
 | **BA fix #105** | ✅ Shipped | Bootstrap summary crash on malformed AI payloads |
+| **HP-1** | ✅ Shipped | Hero conversion copy, role chip UX, pricing honesty, auth branding cleanup (PR [#127](https://github.com/gnaneshwer23/deliverx/pull/127)) |
+| **HP-2** | ✅ Shipped | Expanded pipeline workflow copy, gated social proof shell (PR [#128](https://github.com/gnaneshwer23/deliverx/pull/128)) |
+| **HP-3** | ✅ Shipped | Seven differentiated role dashboard previews with `data-layout` markers (PR [#129](https://github.com/gnaneshwer23/deliverx/pull/129)) |
 
 **Build:** `npm run build` — passing  
 **Tests:** `npm test -- --run` — see CI / local run for current count  
-**Prod smoke (2026-06-22):** `/`, `/login` → 200; phase health routes → 401 without auth (expected)
+**Prod smoke (2026-06-29):** `/` role previews live (`data-layout` on hero); `/login` → 200; phase health routes → 401 without auth (expected)
 
 ---
 
@@ -200,6 +203,24 @@ Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.
 
 ---
 
+## Homepage Sprints 1–3 (DX-HP)
+
+Landing page polish shipped in three PRs after R10. Each sprint is independently deployable; Sprint 3 replaces generic KPI mockups with role-specific preview layouts.
+
+| Sprint | PR | What shipped |
+|--------|-----|--------------|
+| **HP-1** — Conversion copy & pricing honesty | [#127](https://github.com/gnaneshwer23/deliverx/pull/127) | Hero headline (“AI suggests. Humans decide. Delivery happens.”), role chip label + pulse, Starter exclusions + Professional highlight, auth OS badge removal |
+| **HP-2** — Pipeline & social proof shell | [#128](https://github.com/gnaneshwer23/deliverx/pull/128) | Expanded five-step workflow copy (`landing-data.ts`), `marketing-social-proof.tsx` gated by `PILOT_QUOTE.enabled` |
+| **HP-3** — Role dashboard previews | [#129](https://github.com/gnaneshwer23/deliverx/pull/129) | Seven differentiated previews in `role-previews/` — Founder board memo, PM milestones, BA traceability, Product kanban, Engineer stories, QA release gauge, Scrum burndown; platform section chip switcher |
+
+**Key files:** `marketing-hero.tsx`, `marketing-product.tsx`, `dashboard-preview.tsx`, `role-previews/*`, `landing-data.ts`, `marketing-social-proof.tsx`, `marketing-pricing.tsx`.
+
+**Analytics:** `role_chip_click` custom event (Vercel Web Analytics) — fires on hero and platform role pill changes; see `src/lib/marketing/analytics.ts`.
+
+**Prod verification:** `curl -sL https://www.deliverx.dev | grep data-layout` → role-specific layout ids (e.g. `founder-board-memo`).
+
+---
+
 ## Key milestones — PRs #98–#116
 
 | PR | Theme | Summary |
@@ -223,6 +244,9 @@ Config: `dashboard-essential-panels.ts`. **Key files:** `mission-persona-header.
 | [#114](https://github.com/gnaneshwer23/deliverx/pull/114) | R8 | Real data wiring |
 | [#115](https://github.com/gnaneshwer23/deliverx/pull/115) | R9 | Product/Engineer wiring |
 | [#116](https://github.com/gnaneshwer23/deliverx/pull/116) | R10 | Honest KPI + mobile |
+| [#127](https://github.com/gnaneshwer23/deliverx/pull/127) | HP-1 | Hero copy, role chips, pricing honesty |
+| [#128](https://github.com/gnaneshwer23/deliverx/pull/128) | HP-2 | Pipeline copy, social proof shell |
+| [#129](https://github.com/gnaneshwer23/deliverx/pull/129) | HP-3 | Differentiated role previews |
 
 ---
 
@@ -281,15 +305,22 @@ Seven personas (Founder, PM, BA, Product, Engineer, QA, Scrum) map to mission co
 | Phase I — I5 + loop + observability | `phaseIHealth.ts` | `GET /api/setup/phase-i-health` |
 | Setup audit observability | `observability.ts` | Settings → Setup audit |
 | Vercel Analytics / Speed Insights | `vercel-observability.tsx` | Root layout (production or `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=true`) |
+| Homepage role chip engagement | `marketing/analytics.ts` | Custom event `role_chip_click` — `{ role, section: hero \| platform }` |
 
 ---
 
 ## Next horizon / deferred
 
-Tracked after R1–R10, K1–K5, and P-PM/P-Founder series.
+Tracked after R1–R10, K1–K5, P-PM/P-Founder, and Homepage Sprints 1–3.
 
 | Item | Horizon | Notes |
 |------|---------|-------|
+| **Brief v2 Phase 3** — Brain ingest pipeline | Backlog | Storage + classification foundation from #122; needs scoping |
+| **Brief v2 Phase 3** — Reality Layer `/project/:id/readiness` | Backlog | Not built |
+| **Brief v2 Phase 3** — Project Auto-Builder | Backlog | Not built |
+| **Cross-persona AI Review Queue adoption** | Backlog | Extend beyond PM/Founder |
+| **Social proof quote** | HP-2 follow-up | Enable `PILOT_QUOTE.enabled` when real quote approved |
+| **Homepage mobile/cross-browser QA** | HP follow-up | Role chip switcher smoke on Safari/iOS |
 | **K4 rollout** — Inline edit on remaining personas | H3 | Pattern in PM + Founder; extend to BA/Product/Engineer/QA/Scrum |
 | **Sprint points schema** | H4 | Burndown uses task counts today; dedicated sprint_points column deferred |
 | Server-side dashboard prefs + inline edits | H4 | localStorage today (`dashboard-prefs.ts`, `dashboard-inline-edit.ts`) |
