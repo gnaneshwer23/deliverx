@@ -52,7 +52,7 @@ export function MarketingProductSection() {
           subtitle="Every role gets a tailored dashboard with KPIs, intelligence feeds, and live team sync, all fed from the same delivery data. No duplicate RAID logs. No status-meeting archaeology."
         />
 
-        <div className="mt-12 overflow-hidden rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] shadow-[0_16px_48px_rgba(15,23,42,0.08)]">
+        <div className="mt-8 overflow-hidden rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] shadow-[0_16px_48px_rgba(15,23,42,0.08)]">
           <div className="flex h-[42px] items-center gap-2 border-b border-[var(--mkt-border)] bg-[var(--mkt-s3)] px-4">
             <span className="size-[9px] rounded-full bg-[#FF5F57]" aria-hidden />
             <span className="size-[9px] rounded-full bg-[#FFBD2E]" aria-hidden />
@@ -95,7 +95,7 @@ export function MarketingProductSection() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[
             {
               title: "Role-specific dashboards",

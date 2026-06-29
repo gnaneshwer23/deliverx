@@ -47,7 +47,7 @@ export function MarketingSection({
   return (
     <section
       id={id}
-      className={`scroll-mt-[var(--mkt-navh)] py-20 md:py-[clamp(80px,10vw,120px)] ${className}`}
+      className={`scroll-mt-[var(--mkt-navh)] py-12 md:py-[clamp(48px,7vw,80px)] ${className}`}
     >
       {children}
     </section>
@@ -74,7 +74,7 @@ export function MarketingSectionIntro({
         {title}
       </h2>
       {subtitle ? (
-        <p className="mt-4 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
+        <p className="mt-3 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
           {subtitle}
         </p>
       ) : null}

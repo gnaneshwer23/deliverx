@@ -32,7 +32,7 @@ export function MarketingPricingSection() {
           subtitle="30-day free trial on all plans. No credit card required."
         />
 
-        <div className="mt-12 grid gap-4 max-[900px]:grid-cols-1 min-[901px]:grid-cols-3">
+        <div className="mt-8 grid gap-4 max-[900px]:grid-cols-1 min-[901px]:grid-cols-3">
           {(PRICING_TIERS as readonly PricingTier[]).map((tier) => (
             <div
               key={tier.tier}

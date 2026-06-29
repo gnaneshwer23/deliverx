@@ -5,7 +5,7 @@ export function MarketingCtaSection() {
   return (
     <section
       id="cta"
-      className="border-t border-[var(--mkt-border)] bg-[var(--mkt-green)] px-5 py-20 text-center md:px-10 md:py-[clamp(80px,10vw,120px)] lg:px-12"
+      className="border-t border-[var(--mkt-border)] bg-[var(--mkt-green)] px-5 py-12 text-center md:px-10 md:py-[clamp(48px,7vw,80px)] lg:px-12"
     >
       <MarketingContainer>
         <h2 className="font-[family-name:var(--font-dx-display)] text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.08] tracking-[-0.02em] text-white [&_em]:not-italic [&_em]:text-[var(--mkt-green-bright)]">
