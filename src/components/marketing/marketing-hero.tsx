@@ -96,7 +96,7 @@ export function MarketingHero() {
                 );
               })}
             </div>
-            <DashboardPreview role={role} accentBorder={`${role.accent}55`} />
+            <DashboardPreview role={role} roleId={activeRole} accentBorder={`${role.accent}55`} />
           </div>
         </div>
       </MarketingContainer>
