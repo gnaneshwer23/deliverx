@@ -4,6 +4,7 @@ import { useState, type CSSProperties } from "react";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingContainer, TrustChecklist } from "@/components/marketing/marketing-layout";
+import { trackRoleChipClick } from "@/lib/marketing/analytics";
 import {
   ROLE_ORDER,
   ROLES,
@@ -69,7 +70,10 @@ export function MarketingHero() {
                   <button
                     key={id}
                     type="button"
-                    onClick={() => setActiveRole(id)}
+                    onClick={() => {
+                      if (id !== activeRole) trackRoleChipClick(id, "hero");
+                      setActiveRole(id);
+                    }}
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition duration-200 ${
                       isActive
                         ? "border-[#1C4A2E] bg-[#1C4A2E] text-white ring-2 ring-[rgba(61,150,96,0.2)]"
