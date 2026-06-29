@@ -37,7 +37,7 @@ export function RolePreview({
   })();
 
   return (
-    <RolePreviewChrome role={role} accentBorder={accentBorder}>
+    <RolePreviewChrome key={roleId} role={role} accentBorder={accentBorder}>
       {content}
     </RolePreviewChrome>
   );
