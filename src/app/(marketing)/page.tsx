@@ -1,3 +1,4 @@
+import { DeliverXTicker } from "@/components/marketing/deliverx-ticker";
 import { MarketingCtaSection } from "@/components/marketing/marketing-cta";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
 import { MarketingDivider, MarketingPageShell } from "@/components/marketing/marketing-layout";
@@ -13,6 +14,7 @@ export default function LandingPage() {
       <MarketingNav />
       <main id="main-content">
         <MarketingHero />
+        <DeliverXTicker />
         <MarketingProductSection />
         <MarketingDivider />
         <MarketingWorkflowSection />
