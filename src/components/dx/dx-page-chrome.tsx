@@ -118,7 +118,7 @@ export function AuthBrandPanel() {
         aria-hidden
       />
       <div className="relative z-10">
-        <DxLogo href="/" showTag dark />
+        <DxLogo href="/" dark />
         <h2 className={`${dxClass.display} mt-12 max-w-sm text-3xl leading-tight text-white md:text-4xl`}>
           The workspace where
           <br />
