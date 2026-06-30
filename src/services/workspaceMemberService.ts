@@ -10,6 +10,10 @@ import {
   validateInviteToken,
   type InviteViewMode,
 } from "@/services/inviteTokenService";
+import {
+  emitLoopPropagation,
+  workspaceMemberJoinedToImpactDrafts,
+} from "@/services/loopEventPropagation";
 
 export type WorkspaceMemberRow = {
   id: string;
@@ -121,6 +125,26 @@ export async function acceptInviteToken(token: string): Promise<AcceptInviteResu
     projectId: validation.projectId,
     role: validation.role,
   });
+
+  const { data: profile } = await supabase
+    .from("users")
+    .select("name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  void emitLoopPropagation({
+    projectId: validation.projectId,
+    actionType: "workspace_member_joined",
+    entityType: "workspace_member",
+    entityId: member.id,
+    drafts: workspaceMemberJoinedToImpactDrafts({
+      role: validation.role,
+      projectName: validation.projectName,
+      memberName: (profile?.name as string | null) ?? null,
+      bootstrapSeeded: bootstrap.seeded,
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
 
   return {
     member,

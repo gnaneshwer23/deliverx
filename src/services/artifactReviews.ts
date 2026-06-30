@@ -350,6 +350,7 @@ export async function resolveArtifactReview(
     entityType: review.entity_type,
     title: review.title,
     decision: status,
+    source: review.source,
   });
   if (reviewDrafts.length > 0) {
     void emitLoopPropagation({
