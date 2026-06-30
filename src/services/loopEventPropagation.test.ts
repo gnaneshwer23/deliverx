@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   artifactReviewChangeToImpactDrafts,
   businessCaseUploadToImpactDrafts,
+  meetingIntelQueuedToImpactDrafts,
+  meetingProposalAppliedToImpactDrafts,
   changeRequestChangeToImpactDrafts,
   clarificationChangeToImpactDrafts,
   decisionChangeToImpactDrafts,
@@ -160,6 +162,27 @@ describe("loopEventPropagation", () => {
     });
     expect(approved.some((d) => d.targetRole === "pm")).toBe(true);
     expect(approved.some((d) => d.targetRole === "ba" && d.tone === "ready")).toBe(true);
+  });
+
+  it("builds meeting intel queued impact drafts", () => {
+    const drafts = meetingIntelQueuedToImpactDrafts({
+      meetingTitle: "Sprint planning",
+      proposalCount: 3,
+      speakerCount: 4,
+    });
+    expect(drafts.some((d) => d.targetRole === "pm" && d.tone === "waiting")).toBe(true);
+    expect(drafts.some((d) => d.targetRole === "engineer")).toBe(true);
+  });
+
+  it("builds meeting proposal applied impact drafts with assignee role", () => {
+    const drafts = meetingProposalAppliedToImpactDrafts({
+      actionType: "create_task",
+      title: "Fix OAuth refresh",
+      meetingTitle: "Standup",
+      assigneeRole: "engineer",
+    });
+    expect(drafts.some((d) => d.targetRole === "engineer" && d.tone === "ready")).toBe(true);
+    expect(drafts.some((d) => d.targetRole === "scrum")).toBe(true);
   });
 
   it("builds RAID, story, workstream, milestone, and change impact drafts", () => {

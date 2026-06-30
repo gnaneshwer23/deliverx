@@ -57,6 +57,7 @@ import {
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { listPendingMeetingProposals } from "@/services/proposedActions";
 import { getProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
 import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
 import { buildPmInviteRoleRows } from "@/lib/workspace-flow-invites";
@@ -64,6 +65,7 @@ import { getRequirementStats } from "@/services/baRequirements";
 import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-case-flow-panel";
 import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
 import { PmRoleInviteSection } from "@/components/workspace-flow/pm-role-invite-section";
+import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-review-panel";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -108,6 +110,7 @@ export default async function PmMissionControlPage({
   let flowSnapshot = null;
   let inviteRoleRows = null;
   let requirementStats = null;
+  let meetingProposals: Awaited<ReturnType<typeof listPendingMeetingProposals>> = [];
 
   if (projectId) {
     const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
@@ -115,11 +118,13 @@ export default async function PmMissionControlPage({
       bootstrapSummary = bootstrap.summary;
       hasBootstrapSummary = true;
     }
-    [businessCaseStatus, flowSnapshot, inviteRoleRows, requirementStats] = await Promise.all([
+    [businessCaseStatus, flowSnapshot, inviteRoleRows, requirementStats, meetingProposals] =
+      await Promise.all([
       getProjectBusinessCaseStatus(projectId).catch(() => null),
       getWorkspaceFlowSnapshot(projectId).catch(() => null),
       buildPmInviteRoleRows(projectId).catch(() => null),
       getRequirementStats(projectId).catch(() => null),
+      listPendingMeetingProposals(projectId, 8).catch(() => []),
     ]);
   }
 
@@ -321,6 +326,11 @@ export default async function PmMissionControlPage({
             showFallback={data.dataSources.deliveryPlan === "fallback"}
           />
           <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} personaId="pm-mission" />
+          {projectId && meetingProposals.length > 0 ? (
+            <div className="mb-4">
+              <MeetingIntelReviewPanel projectId={projectId} proposals={meetingProposals} />
+            </div>
+          ) : null}
           {data.primaryProject ? (
             <PmProjectChip
               projects={data.projects.map((project) => ({ id: project.id, name: project.name }))}

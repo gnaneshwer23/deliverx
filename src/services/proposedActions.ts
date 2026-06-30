@@ -24,6 +24,11 @@ import {
   type StructuredProposal,
 } from "./proposedActionEngine";
 import { emitProposalAppliedEvent } from "./platformWebhooks";
+import {
+  emitLoopPropagation,
+  meetingProposalAppliedToImpactDrafts,
+} from "./loopEventPropagation";
+import type { DeliveryImpactRole } from "./deliveryImpactEngine";
 
 export type ProposedActionRow = {
   id: string;
@@ -179,6 +184,28 @@ export async function queueProposals(input: {
   return (data ?? []).map((row) => mapRow(row as Record<string, unknown>));
 }
 
+export async function listPendingMeetingProposals(
+  projectId: string,
+  limit = 20,
+): Promise<ProposedActionRow[]> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("proposed_actions")
+    .select("*")
+    .eq("project_id", projectId)
+    .eq("source", "meeting")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throwIfMissingTable(error, "proposed_actions");
+    throw error;
+  }
+
+  return (data ?? []).map((row) => mapRow(row as Record<string, unknown>));
+}
+
 export async function resolveProposal(
   id: string,
   status: "approved" | "rejected",
@@ -258,6 +285,22 @@ export async function applyProposal(id: string): Promise<ProposedActionRow> {
   await processProposalAppliedSideEffects(mapped, applyResult).catch(() => ({
     impactEvents: 0,
   }));
+
+  if (mapped.source === "meeting") {
+    const assigneeRole = mapped.payload.assigneeRole as DeliveryImpactRole | undefined;
+    void emitLoopPropagation({
+      projectId: mapped.project_id,
+      actionType: "meeting_proposal_applied",
+      entityType: "proposal",
+      entityId: mapped.id,
+      drafts: meetingProposalAppliedToImpactDrafts({
+        actionType: mapped.action_type,
+        title: mapped.title,
+        assigneeRole: assigneeRole ?? null,
+      }),
+      syncNarrativeThreads: false,
+    }).catch(() => 0);
+  }
 
   refreshProjectDashboards(mapped.project_id);
 

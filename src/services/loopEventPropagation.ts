@@ -3,7 +3,7 @@
  */
 
 import { emitDeliveryImpactEvents } from "./deliveryImpact";
-import type { DeliveryImpactEventDraft } from "./deliveryImpactEngine";
+import type { DeliveryImpactEventDraft, DeliveryImpactRole } from "./deliveryImpactEngine";
 import {
   loadNarrativeThreadSignals,
   narrativeThreadsToImpactDrafts,
@@ -266,6 +266,92 @@ export function workspaceMemberJoinedToImpactDrafts(input: {
         { targetRole: "pm", message: `${who} joined ${input.projectName}`, tone: "updated" },
       ];
   }
+}
+
+export function meetingIntelQueuedToImpactDrafts(input: {
+  meetingTitle: string;
+  proposalCount: number;
+  speakerCount: number;
+}): DeliveryImpactEventDraft[] {
+  const title = input.meetingTitle.trim() || "Meeting";
+  const drafts: DeliveryImpactEventDraft[] = [
+    {
+      targetRole: "pm",
+      message:
+        input.proposalCount > 0
+          ? `${title} processed — ${input.proposalCount} proposal(s) in AI Review Queue`
+          : `${title} processed — no follow-ups queued`,
+      tone: input.proposalCount > 0 ? "waiting" : "updated",
+    },
+  ];
+
+  if (input.speakerCount > 0) {
+    drafts.push({
+      targetRole: "scrum",
+      message: `${input.speakerCount} speaker segment${input.speakerCount === 1 ? "" : "s"} captured from ${title}`,
+      tone: "updated",
+    });
+  }
+
+  if (input.proposalCount > 0) {
+    drafts.push(
+      { targetRole: "engineer", message: `Meeting actions pending PM approval — ${title}`, tone: "waiting" },
+      { targetRole: "ba", message: `Meeting intel queued for review — ${title}`, tone: "waiting" },
+    );
+  }
+
+  return drafts;
+}
+
+export function meetingProposalAppliedToImpactDrafts(input: {
+  actionType: string;
+  title: string;
+  meetingTitle?: string;
+  assigneeRole?: DeliveryImpactRole | null;
+}): DeliveryImpactEventDraft[] {
+  const label = input.title.trim() || "Meeting follow-up";
+  const meetingRef = input.meetingTitle?.trim() ? ` (${input.meetingTitle})` : "";
+  const primaryRole = input.assigneeRole ?? null;
+
+  const drafts: DeliveryImpactEventDraft[] = [];
+
+  if (primaryRole) {
+    drafts.push({
+      targetRole: primaryRole,
+      message: `New ${input.actionType.replace("create_", "")} from meeting${meetingRef}: ${label}`,
+      tone: "ready",
+    });
+  }
+
+  switch (input.actionType) {
+    case "create_task":
+      if (!primaryRole || primaryRole !== "engineer") {
+        drafts.push({
+          targetRole: "engineer",
+          message: `Task distributed from meeting${meetingRef}: ${label}`,
+          tone: "updated",
+        });
+      }
+      drafts.push({ targetRole: "pm", message: `Meeting task applied: ${label}`, tone: "updated" });
+      drafts.push({ targetRole: "scrum", message: `Sprint backlog updated — ${label}`, tone: "updated" });
+      break;
+    case "create_raid":
+      drafts.push(
+        { targetRole: "pm", message: `RAID updated from meeting${meetingRef}: ${label}`, tone: "blocked" },
+        { targetRole: "founder", message: `Meeting risk logged: ${label}`, tone: "updated" },
+      );
+      break;
+    case "create_decision":
+      drafts.push(
+        { targetRole: "founder", message: `Decision recorded from meeting${meetingRef}: ${label}`, tone: "updated" },
+        { targetRole: "ba", message: `Governance decision may affect requirements: ${label}`, tone: "waiting" },
+      );
+      break;
+    default:
+      drafts.push({ targetRole: "pm", message: `Meeting proposal applied: ${label}`, tone: "updated" });
+  }
+
+  return drafts;
 }
 
 export function artifactReviewChangeToImpactDrafts(input: {
