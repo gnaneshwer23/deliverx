@@ -2,8 +2,6 @@
  * Universal artifact approval — AI outputs require human sign-off.
  */
 
-import "server-only";
-
 import { createClient } from "@/lib/supabase/server";
 import { throwIfMissingTable } from "@/lib/db-errors";
 import type {

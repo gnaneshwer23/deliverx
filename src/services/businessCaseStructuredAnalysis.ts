@@ -2,8 +2,6 @@
  * PM onboarding — structured business case analysis (server-side workspace apply).
  */
 
-import "server-only";
-
 import type { ProjectStructureDraft } from "@/services/aiProjectStructuring";
 import { applyProjectStructure } from "@/services/applyProjectStructure";
 import { bulkInsertRequirements } from "@/services/baRequirements";
