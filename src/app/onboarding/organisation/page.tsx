@@ -24,8 +24,8 @@ export default async function OrganisationPage() {
   return (
     <ObCard
       step={formatSponsorGatewayObStep("account")}
-      title="Tell us about your organisation"
-      description="This is step 1 of founder setup: account and workspace context. Next you'll name your project, review your business case with AI, and invite your team — then your Founder Mission Control opens."
+      title="Set up your delivery workspace"
+      description="Tell us about the organisation your PMs, BAs, and delivery leads work in. This context powers Delivery Brain playbooks, Brief v2 templates, and the AI Review Queue. Next you will name your project, submit a business case for human-approved AI review, and invite your team."
     >
       <OrganisationForm />
     </ObCard>

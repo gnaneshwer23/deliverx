@@ -14,7 +14,7 @@ export default async function OnboardingLayout({
   if (!user) redirect("/login");
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAF5]">
+    <div className="flex min-h-screen flex-col bg-[#F8F9FB]">
       <header className="flex h-[var(--dx-navh)] shrink-0 items-center justify-between border-b border-[#E4E4DC] bg-white px-6 md:px-11">
         <DxLogo />
         <DxStepper role={profile?.role} />

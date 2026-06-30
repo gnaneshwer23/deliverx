@@ -50,7 +50,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Search 
     <ObCard
       step={formatSponsorGatewayObStep("team")}
       title="Invite your delivery team"
-      description="Almost there — invite teammates by email while persona workspaces finish bootstrapping. Then open Founder Mission Control."
+      description="Add PMs, BAs, delivery leads, and sponsors by email while persona workspaces finish bootstrapping. Every AI proposal still flows through the Review Queue until a human approves it."
     >
       {projectId ? (
         <ProjectBootstrapPanel

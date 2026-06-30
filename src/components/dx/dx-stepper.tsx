@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   GATEWAY_STEP_LABELS,
   PERSONA_GATEWAY_STEP_COUNT,
+  SPONSOR_GATEWAY_STEP_HINTS,
   SPONSOR_GATEWAY_USER_STEPS,
   TEAM_MEMBER_STEP_COUNT,
   resolveOnboardingFlowKind,
@@ -18,17 +19,18 @@ const sponsorSteps = SPONSOR_GATEWAY_USER_STEPS.map((step) => ({
         ? "/onboarding/team"
         : "/project/new",
   label: GATEWAY_STEP_LABELS[step],
+  hint: SPONSOR_GATEWAY_STEP_HINTS[step],
 }));
 
 const personaSteps = [
-  { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account },
-  { href: "/onboarding/persona", label: "Workspace" },
-  { href: "/onboarding/complete", label: GATEWAY_STEP_LABELS.complete },
+  { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account, hint: SPONSOR_GATEWAY_STEP_HINTS.account },
+  { href: "/onboarding/persona", label: "Workspace", hint: "Persona-specific day-one panels and tasks" },
+  { href: "/onboarding/complete", label: GATEWAY_STEP_LABELS.complete, hint: "Open your mission dashboard" },
 ];
 
 const teamMemberSteps = [
-  { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account },
-  { href: "/onboarding/complete", label: GATEWAY_STEP_LABELS.complete },
+  { href: "/onboarding/organisation", label: GATEWAY_STEP_LABELS.account, hint: SPONSOR_GATEWAY_STEP_HINTS.account },
+  { href: "/onboarding/complete", label: GATEWAY_STEP_LABELS.complete, hint: "Join your project workspace" },
 ];
 
 function stepsForRole(role: string | null | undefined) {
@@ -98,6 +100,7 @@ export function DxStepper({ role }: { role?: string | null } = {}) {
           <span key={step.label} className="flex items-center">
             <Link
               href={step.href}
+              title={"hint" in step ? step.hint : undefined}
               className={`flex items-center gap-1.5 px-3 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.1em] ${
                 active ? "text-[#1C4A2E]" : done ? "text-[#6B6B64]" : "text-[#A8A89E]"
               }`}

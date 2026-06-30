@@ -27,8 +27,8 @@ export default async function RolePage() {
   return (
     <ObCard
       step={formatSponsorGatewayObStep("account")}
-      title="What's your role?"
-      description="Choose Founder / Sponsor to set up your first project and reach Founder Mission Control. Other roles follow a shorter workspace setup."
+      title="What is your delivery role?"
+      description="Sponsors set up the full gateway: project, Brief v2 business case, AI review, and team invites. PMs, BAs, and other delivery personas get a shorter path to their workspace."
     >
       <RoleForm />
     </ObCard>
