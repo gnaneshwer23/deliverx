@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isReadOnlyProjectSegment,
   projectSegmentFromPathname,
-} from "@/lib/project-access";
+} from "@/lib/project-read-only-nav";
 
 describe("project-access", () => {
   it("allows read-only segments", () => {

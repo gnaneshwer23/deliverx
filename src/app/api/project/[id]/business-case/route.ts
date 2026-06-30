@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
+import { apiErrorResponse, requireProjectAccess, requireProjectWriteAccess } from "@/lib/api/auth";
 import {
   getProjectBusinessCaseStatus,
   uploadProjectBusinessCase,

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   isReadOnlyProjectSegment,
   projectSegmentFromPathname,
-} from "@/lib/project-access";
+} from "@/lib/project-read-only-nav";
 
 export function ReadOnlyProjectGuard({
   projectId,

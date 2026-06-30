@@ -18,7 +18,10 @@ export type ProjectStatus =
 
 export type StatusResult = { ok: true } | { ok: false; error: string };
 
-async function assertProjectWrite(projectId: string, userId: string): Promise<StatusResult | null> {
+async function assertProjectWrite(
+  projectId: string,
+  userId: string,
+): Promise<{ ok: false; error: string } | null> {
   const access = await getProjectAccess(userId, projectId);
   if (!access.canWrite) {
     return {
@@ -39,7 +42,7 @@ export async function extractInsightsAction(
     } = await supabase.auth.getUser();
     if (!user) return { ok: false, error: "Not authenticated" };
     const blocked = await assertProjectWrite(projectId, user.id);
-    if (blocked) return blocked;
+    if (blocked) return { ok: false, error: blocked.error };
 
     const { insights, playbook, skipped } = await onProjectClose(projectId, {
       force: true,
