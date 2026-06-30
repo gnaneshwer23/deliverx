@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildProductRoadmapKpis,
+  buildProductRoadmapSubtitle,
   buildProductRoadmapSynthesis,
 } from "./product-roadmap-kpis";
 
@@ -32,5 +33,25 @@ describe("product-roadmap-kpis", () => {
       isLive: true,
     });
     expect(summary).toContain("Now column is empty");
+  });
+
+  it("mentions AI review queue when reviews are pending", () => {
+    const summary = buildProductRoadmapSynthesis({
+      nowCount: 2,
+      nextCount: 1,
+      pendingReviewCount: 3,
+      productHealth: 80,
+      isLive: true,
+    });
+    expect(summary).toContain("AI review queue");
+  });
+
+  it("builds steady-state subtitle from roadmap and review counts", () => {
+    expect(
+      buildProductRoadmapSubtitle({ nowCount: 2, pendingReviewCount: 1 }),
+    ).toBe("2 in Now · 1 in AI review queue");
+    expect(buildProductRoadmapSubtitle({ nowCount: 0, pendingReviewCount: 0 })).toContain(
+      "Roadmap and RICE",
+    );
   });
 });

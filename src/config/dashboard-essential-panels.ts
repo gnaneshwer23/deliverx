@@ -27,14 +27,7 @@ export const ESSENTIAL_DASHBOARD_PANELS: Record<DashboardPersonaId, readonly str
     "guided-tasks",
   ],
   ba: ["guided-tasks", "stakeholders", "traceability", "collaborative-loop", "cross-role"],
-  product: [
-    "guided-tasks",
-    "roadmap",
-    "rice",
-    "vision",
-    "stakeholders",
-    "collaborative-loop",
-  ],
+  product: ["product-roadmap-kanban", "product-rice-backlog"],
   engineer: [
     "guided-tasks",
     "traceability",
@@ -121,6 +114,8 @@ export const ALL_DASHBOARD_PANELS: Record<DashboardPersonaId, readonly string[]>
     "success-metrics",
   ],
   product: [
+    "product-roadmap-kanban",
+    "product-rice-backlog",
     "guided-tasks",
     "vision",
     "roadmap",

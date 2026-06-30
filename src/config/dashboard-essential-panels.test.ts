@@ -11,11 +11,12 @@ import {
 describe("dashboard-essential-panels", () => {
   const personaIds = [...listMissionPersonaIds(), "command-centre"] as const;
 
-  it("keeps 4–6 essential panels per persona (founder allows 7 for J3 intelligence feed)", () => {
+  it("keeps 4–6 essential panels per persona (founder allows 7; product allows 2 roadmap panels)", () => {
     for (const personaId of personaIds) {
       const count = essentialPanelCount(personaId);
       const max = personaId === "founder" ? 7 : 6;
-      expect(count, `${personaId} essential count`).toBeGreaterThanOrEqual(4);
+      const min = personaId === "product" ? 2 : 4;
+      expect(count, `${personaId} essential count`).toBeGreaterThanOrEqual(min);
       expect(count, `${personaId} essential count`).toBeLessThanOrEqual(max);
     }
   });
@@ -44,16 +45,16 @@ describe("dashboard-essential-panels", () => {
     }
   });
 
-  it("includes collaborative-loop for delivery personas except pm-mission steady-state", () => {
+  it("includes collaborative-loop for delivery personas except pm-mission and product", () => {
     for (const personaId of listMissionPersonaIds()) {
-      if (personaId === "pm-mission") continue;
+      if (personaId === "pm-mission" || personaId === "product") continue;
       expect(isEssentialPanel(personaId, "collaborative-loop")).toBe(true);
     }
   });
 
-  it("includes guided-tasks for delivery personas except founder", () => {
+  it("includes guided-tasks for delivery personas except founder and product", () => {
     for (const personaId of listMissionPersonaIds()) {
-      if (personaId === "founder") continue;
+      if (personaId === "founder" || personaId === "product") continue;
       expect(isEssentialPanel(personaId, "guided-tasks")).toBe(true);
     }
   });
