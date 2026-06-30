@@ -25,6 +25,7 @@ import { buildBaHandoffSynthesis } from "@/lib/ba-handoff-kpis";
 import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
 import { getRequirementStats } from "@/services/baRequirements";
 import { BaWorkspaceFlowShell } from "@/components/workspace-flow/ba-workspace-flow-shell";
+import { dxClass } from "@/lib/dx-theme";
 import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
@@ -146,7 +147,7 @@ export default async function BaMissionControlPage({
         pendingClarifications={data.kpis.pendingClarification}
         summary={bootstrapSummary}
       >
-        <div className="space-y-4 p-6 md:p-8">
+        <div className={dxClass.workspaceContent}>
           {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="BA" /> : null}
           <NextUpStrip
             items={nextUpItems}
@@ -195,8 +196,8 @@ function ProjectPicker({
         <Link
           key={p.id}
           href={`/workspace/ba?project=${p.id}`}
-          className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3 py-1 text-xs font-medium ${
-            p.id === currentId ? "" : "border-[#E4E4DC] text-[#6B6B64] hover:border-[#A8A89E]"
+          className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3.5 py-1.5 text-xs font-medium shadow-[var(--dx-shadow-sm)] transition ${
+            p.id === currentId ? "" : "border-[var(--dx-rul)] text-[var(--dx-mut)] hover:border-[var(--dx-fnt)] hover:bg-white"
           }`}
           style={
             p.id === currentId

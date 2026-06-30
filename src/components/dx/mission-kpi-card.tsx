@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { Minus, TrendingDown, TrendingUp, TriangleAlert } from "lucide-react";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -26,6 +27,7 @@ export type MissionKpiCardProps = {
   tone?: MissionKpiTone;
   progressPct?: number;
   delta?: MissionKpiDelta;
+  icon?: LucideIcon;
   className?: string;
   valueSize?: "xl" | "2xl";
 };
@@ -54,6 +56,19 @@ const BORDER_TOP: Record<MissionKpiTone, string> = {
   rose: "border-t-[#C0392B]",
   red: "border-t-[#C0392B]",
   "at-risk": "border-t-[#C0392B]",
+};
+
+const ICON_BG: Record<MissionKpiTone, string> = {
+  default: "bg-[#EEF5F1] text-[#1C4A2E]",
+  slate: "bg-[#F3F4F6] text-[#1C4A2E]",
+  teal: "bg-[#EDF7F1] text-[#1A6B3A]",
+  green: "bg-[#EDF7F1] text-[#1A6B3A]",
+  healthy: "bg-[#EDF7F1] text-[#1A6B3A]",
+  amber: "bg-[#FEF6EC] text-[#B7620A]",
+  watch: "bg-[#FEF6EC] text-[#B7620A]",
+  rose: "bg-[#FDF1F0] text-[#C0392B]",
+  red: "bg-[#FDF1F0] text-[#C0392B]",
+  "at-risk": "bg-[#FDF1F0] text-[#C0392B]",
 };
 
 const BAR_COLOR: Record<MissionKpiTone, string> = {
@@ -102,6 +117,7 @@ export function MissionKpiCard({
   tone = "default",
   progressPct,
   delta,
+  icon: Icon,
   className = "",
   valueSize = "2xl",
 }: MissionKpiCardProps) {
@@ -111,11 +127,21 @@ export function MissionKpiCard({
 
   return (
     <div
-      className={`${dxClass.card} border-t-2 ${BORDER_TOP[tone]} rounded-xl px-4 py-3.5 transition hover:shadow-[0_4px_20px_rgba(13,13,11,0.09)] ${className}`}
+      className={`${dxClass.card} border-t-[3px] ${BORDER_TOP[tone]} px-5 py-4 transition hover:shadow-[var(--dx-shadow-card-hover)] ${className}`}
     >
-      <p className="mb-1 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.16em] text-[#A8A89E]">
-        {label}
-      </p>
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <p className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.16em] text-[var(--dx-fnt)]">
+          {label}
+        </p>
+        {Icon ? (
+          <span
+            className={`flex size-8 shrink-0 items-center justify-center rounded-[var(--dx-radius-sm)] ${ICON_BG[tone]}`}
+            aria-hidden
+          >
+            <Icon size={15} strokeWidth={2} />
+          </span>
+        ) : null}
+      </div>
       <div className="flex items-end justify-between gap-1.5">
         <p className={`${dxClass.display} ${valueClass} leading-none tabular-nums ${VALUE_COLOR[tone]}`}>
           {value}
@@ -130,11 +156,11 @@ export function MissionKpiCard({
         ) : null}
       </div>
       {hint ? (
-        <p className="mt-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] leading-snug text-[#6B6B64]">{hint}</p>
+        <p className="mt-1 font-[family-name:var(--font-dx-mono)] text-[7px] leading-snug text-[var(--dx-mut)]">{hint}</p>
       ) : null}
       {barWidth ? (
         <div
-          className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#E4E4DC]/70 shadow-inner"
+          className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-[var(--dx-rul2)]"
           role="progressbar"
           aria-valuenow={clampPct(progressPct!)}
           aria-valuemin={0}
@@ -160,8 +186,8 @@ export function MissionKpiGrid({
     layout === "wide"
       ? "flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0 xl:grid-cols-5 [&>*]:min-w-[42%] [&>*]:shrink-0 [&>*]:snap-start lg:[&>*]:min-w-0 lg:[&>*]:shrink"
       : layout === "mission"
-        ? "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-7"
-        : "grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-4";
+        ? "grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-7"
+        : "grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-4";
 
   return <div className={`${gridClass} ${className}`}>{children}</div>;
 }

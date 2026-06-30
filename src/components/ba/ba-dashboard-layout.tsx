@@ -17,7 +17,7 @@ export function BaDashboardLayout({
   footer?: ReactNode;
 }) {
   return (
-    <div className="space-y-4" data-layout="ba-traceability-matrix">
+    <div className="space-y-6" data-layout="ba-traceability-matrix">
       {aiSynthesis}
       {kpiStrip}
       {traceabilityMatrix}

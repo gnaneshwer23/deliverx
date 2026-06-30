@@ -51,7 +51,7 @@ export function BaWorkspaceFlowShell({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <WorkspaceFlowStageBar stage={stage} />
       {shouldShowReview ? (
         <BaExtractionReviewPanel

@@ -56,12 +56,12 @@ export function DashboardPanelShell({
       className={`${className ?? ""} ${hidden && editMode ? "opacity-60" : ""}`.trim()}
       data-panel-id={panelId}
     >
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex min-w-0 flex-1 items-start gap-2">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-start gap-2.5">
           <button
             type="button"
             onClick={() => toggleCollapsed(panelId)}
-            className="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-md border border-[var(--dx-rul)]/80 bg-white p-1 text-[var(--dx-mut)] shadow-[var(--dx-shadow-sm)] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
+            className="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-[var(--dx-radius-sm)] border border-[var(--dx-rul)]/80 bg-white p-1.5 text-[var(--dx-mut)] shadow-[var(--dx-shadow-sm)] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]"
             aria-expanded={!collapsed}
             aria-controls={`panel-body-${panelId}`}
             aria-label={collapsed ? `Expand ${title}` : `Collapse ${title}`}
@@ -70,7 +70,7 @@ export function DashboardPanelShell({
           </button>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className={`${dxClass.display} text-base leading-tight text-[#0D0D0B]`}>{title}</h2>
+              <h2 className={`${dxClass.display} text-lg leading-tight text-[#0D0D0B]`}>{title}</h2>
               {count != null ? (
                 <span
                   className={`inline-flex min-w-[1.25rem] items-center justify-center rounded-full px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[9px] font-bold tabular-nums ${
@@ -85,7 +85,7 @@ export function DashboardPanelShell({
                 </span>
               ) : null}
             </div>
-            {subtitle ? <p className="mt-0.5 text-xs text-[#6B6B64]">{subtitle}</p> : null}
+            {subtitle ? <p className="mt-1 text-xs leading-relaxed text-[var(--dx-mut)]">{subtitle}</p> : null}
           </div>
         </div>
         <div className="flex items-center gap-3">

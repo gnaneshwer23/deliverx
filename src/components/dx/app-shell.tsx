@@ -57,15 +57,15 @@ function NavLink({
     <Link
       href={item.href}
       onClick={onNavigate}
-      className={`flex items-center gap-2 border-l-2 px-3.5 py-1.5 text-[13px] transition ${
+      className={
         active
-          ? "border-[#1C4A2E] bg-[#EEF5F1] text-[#1C4A2E]"
+          ? dxClass.navLinkActive
           : prominent
-            ? "border-transparent font-medium text-[#2C2C28] hover:bg-[#F7F7F2] hover:text-[#0D0D0B]"
-            : "border-transparent text-[#6B6B64] hover:bg-[#F7F7F2] hover:text-[#0D0D0B]"
-      }`}
+            ? dxClass.navLinkProminent
+            : dxClass.navLinkInactive
+      }
     >
-      <Icon size={14} className={active ? "opacity-100" : "opacity-65"} />
+      <Icon size={16} className={active ? "text-[#1C4A2E]" : "opacity-60"} />
       <span className="flex-1">{item.label}</span>
       {prominent && !active ? (
         <span className="rounded bg-[#EEF5F1] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-wide text-[#1C4A2E]">
@@ -104,10 +104,10 @@ function PersonaHomeNavLink({
       href={homeHref}
       onClick={onNavigate}
       data-testid="persona-home-nav"
-      className={`mx-2 mb-1 flex items-center gap-2 rounded border px-2.5 py-2 text-[12px] transition ${
+      className={`mx-2 mb-2 flex items-center gap-2.5 rounded-[var(--dx-radius-md)] border px-3 py-2.5 text-[12px] transition ${
         active
-          ? "border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E]"
-          : "border-[#ECECE4] bg-[#FAFAF7] text-[#2C2C28] hover:border-[#C6DDD0] hover:bg-[#EEF5F1]"
+          ? "border-[#C6DDD0] bg-[#EEF5F1] text-[#1C4A2E] shadow-[var(--dx-shadow-sm)]"
+          : "border-[var(--dx-rul)] bg-white text-[#2C2C28] hover:border-[#C6DDD0] hover:bg-[#EEF5F1]"
       }`}
     >
       <Home size={14} className={active ? "text-[#1C4A2E]" : "text-[#6B6B64]"} aria-hidden />
@@ -140,8 +140,8 @@ function NavSection({
   onNavigate?: () => void;
 }) {
   return (
-    <div className="py-3.5">
-      <div className="mb-1 px-3.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.2em] text-[#A8A89E]">
+    <div className="py-4">
+      <div className={dxClass.navSectionLabel}>
         {label}
       </div>
       {items.map((item) => (
@@ -185,8 +185,8 @@ function CoreNavSection({
   );
 
   return (
-    <div className="py-3.5">
-      <div className="mb-1 px-3.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.2em] text-[#A8A89E]">
+    <div className="py-4">
+      <div className={dxClass.navSectionLabel}>
         Core
       </div>
       <PersonaHomeNavLink userRole={userRole} pathname={pathname} onNavigate={onNavigate} />
@@ -216,7 +216,7 @@ function CoreNavSection({
           <button
             type="button"
             onClick={() => setShowOtherMissions((open) => !open)}
-            className="flex w-full items-center gap-1.5 px-3.5 py-1 text-[11px] text-[#A8A89E] hover:text-[#6B6B64]"
+            className="mx-2 flex w-[calc(100%-1rem)] items-center gap-1.5 rounded-[var(--dx-radius-sm)] px-3 py-1.5 text-[11px] text-[var(--dx-fnt)] transition hover:bg-[var(--dx-srf)] hover:text-[var(--dx-mut)]"
           >
             {showOtherMissions ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             Other mission controls
@@ -250,25 +250,25 @@ function CoreNavSection({
 
 function WorkspaceSidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <div className="border-t border-[#E4E4DC] py-2.5">
+    <div className="border-t border-[var(--dx-rul2)] py-3">
       <Link
         href="/settings/profile"
         onClick={onNavigate}
-        className="flex items-center gap-2 px-3.5 py-1.5 text-[12px] text-[#6B6B64] hover:text-[#1C4A2E]"
+        className={`${dxClass.navLinkInactive} text-[12px]`}
       >
-        <Settings size={14} /> Settings
+        <Settings size={16} /> Settings
       </Link>
       <Link
         href="/"
         onClick={onNavigate}
-        className="flex items-center gap-2 px-3.5 py-1.5 text-[12px] text-[#A8A89E] hover:text-[#6B6B64]"
+        className="mx-2 flex items-center gap-2.5 rounded-[var(--dx-radius-md)] px-3 py-2 text-[12px] text-[var(--dx-fnt)] transition hover:bg-[var(--dx-srf)] hover:text-[var(--dx-mut)]"
       >
         ← Back to site
       </Link>
-      <div className="px-3.5 py-1.5">
+      <div className="px-4 py-1">
         <SignOutButton
           showIcon
-          className="flex items-center gap-2 text-[12px] text-[#6B6B64] hover:text-[#C0392B] disabled:opacity-60"
+          className="flex items-center gap-2 text-[12px] text-[var(--dx-mut)] hover:text-[#C0392B] disabled:opacity-60"
         />
       </div>
     </div>
@@ -377,7 +377,7 @@ function WorkspaceMobileNavDrawer({
       <nav
         id="workspace-mobile-nav"
         aria-label="Workspace navigation"
-        className="fixed inset-y-0 left-0 z-[60] flex w-[min(100%,var(--dx-sbw))] flex-col bg-white shadow-2xl lg:hidden"
+        className="fixed inset-y-0 left-0 z-[60] flex w-[min(100%,var(--dx-sbw))] flex-col rounded-r-[var(--dx-radius-xl)] bg-white shadow-2xl lg:hidden"
         style={{ top: "var(--dx-navh)" }}
       >
         <div className="flex items-center justify-between border-b border-[#E4E4DC] px-3.5 py-2.5">

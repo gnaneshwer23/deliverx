@@ -14,16 +14,16 @@ const STATUS_STYLE = {
 export function BaClarificationQueue({ items }: { items: BaClarificationQueueItem[] }) {
   return (
     <div className={`${dxClass.card} overflow-hidden p-0`} data-panel="ba-clarification-queue">
-      <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-3">
+      <div className={dxClass.panelHeader}>
         <div>
           <h3 className={`${dxClass.display} text-lg`}>Clarification queue</h3>
-          <p className="mt-0.5 text-xs text-[#6B6B64]">What&apos;s blocking handoff to dev and QA</p>
+          <p className="mt-0.5 text-xs text-[var(--dx-mut)]">What&apos;s blocking handoff to dev and QA</p>
         </div>
         <span className="rounded-full bg-[#FEF6EC] px-2 py-0.5 text-[10px] font-semibold tabular-nums text-[#8B4A08]">
           {items.length}
         </span>
       </div>
-      <ul className="divide-y divide-[#F0F0E8]">
+      <ul className="dx-divide-rows">
         {items.length ? (
           items.map((item) => (
             <li key={item.id} className="px-5 py-3">

@@ -64,6 +64,7 @@ import { getRequirementStats } from "@/services/baRequirements";
 import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-case-flow-panel";
 import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
 import { PmRoleInviteSection } from "@/components/workspace-flow/pm-role-invite-section";
+import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
 
@@ -312,7 +313,7 @@ export default async function PmMissionControlPage({
         summary={bootstrapSummary}
         teamJoinedCount={bootstrapSummary?.structure?.stakeholders}
       >
-        <div className="space-y-4 p-6 md:p-8">
+        <div className={dxClass.workspaceContent}>
           {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
           <MissionBootstrapBanner
             personaId="pm-mission"

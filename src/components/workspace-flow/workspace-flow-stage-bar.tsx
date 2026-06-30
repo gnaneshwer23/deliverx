@@ -16,7 +16,7 @@ export function WorkspaceFlowStageBar({
   return (
     <nav
       aria-label="Project workspace flow"
-      className={`rounded-xl border border-[var(--dx-rul)] bg-white px-4 py-4 shadow-[var(--dx-shadow-sm)] md:px-5 ${className}`}
+      className={`${dxClass.card} overflow-hidden px-4 py-4 md:px-5 ${className}`}
       data-panel="workspace-flow-stage-bar"
     >
       <p className={dxClass.capsAcc}>Project workspace flow</p>

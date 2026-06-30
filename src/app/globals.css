@@ -172,7 +172,44 @@
   --dx-space-6: 1.5rem;
   --dx-space-8: 2rem;
   --dx-navh: 60px;
-  --dx-sbw: 220px;
+  --dx-sbw: 248px;
+  --dx-radius-sm: 8px;
+  --dx-radius-md: 12px;
+  --dx-radius-lg: 14px;
+  --dx-radius-xl: 16px;
+  --dx-radius-pill: 9999px;
+}
+
+/* Workspace dashboard — Dribbble-inspired admin SaaS shell */
+.dx-workspace-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dx-workspace-content {
+    padding: 2rem 2.25rem;
+    gap: 1.75rem;
+  }
+}
+
+.dx-table-light thead tr {
+  border-bottom: 1px solid var(--dx-rul);
+  background: var(--dx-srf);
+}
+
+.dx-table-light tbody tr {
+  border-bottom: 1px solid var(--dx-rul2);
+}
+
+.dx-table-light tbody tr:last-child {
+  border-bottom: none;
+}
+
+.dx-divide-rows > * + * {
+  border-top: 1px solid var(--dx-rul2);
 }
 
 @keyframes dx-pulse {
