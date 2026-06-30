@@ -35,6 +35,18 @@ export const GATEWAY_STEP_LABELS: Record<GatewayStep, string> = {
   complete: "Ready",
 };
 
+/** Tooltip copy for sponsor onboarding stepper (what each step unlocks). */
+export const SPONSOR_GATEWAY_STEP_HINTS: Record<
+  Exclude<GatewayStep, "complete">,
+  string
+> = {
+  account: "Workspace context for Delivery Brain and your seven persona dashboards",
+  project: "Name your initiative and set a delivery timeline",
+  business_case: "Brief v2 capture for AI readiness and risk signals",
+  ai_review: "Human approval gate before workspaces go live",
+  team: "Invite PMs, BAs, delivery leads, and sponsors",
+};
+
 /** User-visible sponsor steps (excludes terminal complete). */
 export const SPONSOR_GATEWAY_USER_STEPS = GATEWAY_STEPS.filter(
   (step): step is Exclude<GatewayStep, "complete"> => step !== "complete",
@@ -110,14 +122,14 @@ export function projectFormStepNumber(formStep: ProjectFormStep): number {
 
 export const PROJECT_CREATION_STEP_HINTS: Record<ProjectFormStep, string> = {
   project:
-    "Give your initiative a name and timeline. Next you'll share your business case for AI review.",
-  brief: "Describe your initiative or paste a business case. AI will assess readiness and risks.",
+    "Name your initiative and timeline. Delivery Brain uses this to structure persona workspaces.",
+  brief: "Share your business case in Brief v2 format. AI assesses readiness, risks, and gaps.",
   review:
-    "Review the AI assessment and confirm you're ready to proceed before we set up your workspaces.",
+    "Review AI findings in the Review Queue. A human must approve before workspaces go live.",
   discovery:
-    "Answer a few delivery questions so AI can structure your project accurately.",
+    "Answer delivery questions so AI can structure RAID, milestones, and persona tasks accurately.",
   create:
-    "Confirm project details — you'll invite your team on the next step.",
+    "Confirm project details, then invite PMs, BAs, and delivery leads on the next step.",
 };
 
 export const BOOTSTRAP_PERSONA_KEYS = [

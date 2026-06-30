@@ -19,10 +19,11 @@ export default async function NewProjectPage({
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10 md:py-14">
-      <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Set up your first project</h1>
-      <p className="mt-2 text-[15px] font-light text-[#6B6B64]">
-        Founders: name your project, share your business case, review AI insights, then invite your team.
-        When setup finishes, you&apos;ll land in Founder Mission Control.
+      <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Name your first delivery project</h1>
+      <p className="mt-2 text-[15px] font-light text-[#6B7280]">
+        Sponsors and delivery leads: capture your initiative, submit a Brief v2 business case, and
+        pass the AI Review Queue with human approval. Then invite your team into seven persona
+        workspaces.
       </p>
       {initialMode !== "chat" ? (
         <p className="mt-3 text-sm text-[#6B6B64]">
