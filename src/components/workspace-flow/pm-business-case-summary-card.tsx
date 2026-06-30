@@ -66,7 +66,7 @@ export function PmBusinessCaseSummaryCard({
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-lg border border-[var(--dx-rul)] bg-[var(--dx-bas)] px-3 py-3 text-center"
+              className="rounded-[var(--dx-radius-md)] border border-[var(--dx-rul)]/70 border-t-[3px] border-t-[#1C4A2E] bg-white px-3 py-3 text-center shadow-[var(--dx-shadow-sm)]"
             >
               <p className={dxClass.panelTitle}>{stat.label}</p>
               <p

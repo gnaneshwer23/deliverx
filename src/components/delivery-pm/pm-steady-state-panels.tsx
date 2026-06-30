@@ -698,7 +698,7 @@ export function PmControlRoomLayout({
   capacityGovernanceRow: ReactNode;
 }) {
   return (
-    <div className="space-y-4" data-layout="pm-control-room">
+    <div className="space-y-6" data-layout="pm-control-room">
       {aiSummary}
       {kpiStrip}
       {milestoneRaidRow}

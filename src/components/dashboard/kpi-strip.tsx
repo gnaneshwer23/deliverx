@@ -34,6 +34,7 @@ export function KpiStrip({ items }: { items: KpiItem[] }) {
             tone={tone}
             progressPct={item.progressPct}
             delta={item.delta}
+            icon={item.icon}
             valueSize="xl"
           />
         );

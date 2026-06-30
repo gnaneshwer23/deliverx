@@ -57,7 +57,7 @@ export function DxPageHeader({
           ) : null}
         </h1>
         {subtitle ? (
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[#6B6B64]">{subtitle}</p>
+          <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-[var(--dx-mut)]">{subtitle}</p>
         ) : null}
         {children}
       </div>

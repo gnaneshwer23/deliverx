@@ -33,7 +33,7 @@ export function BaTraceabilityMatrixPanel({
       style={{ borderTopColor: baAccent.primary }}
       data-panel="ba-traceability-matrix"
     >
-      <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-4">
+      <div className={dxClass.panelHeader}>
         <div>
           <h3 className={`${dxClass.display} text-lg`}>Traceability matrix</h3>
           <p className="text-xs text-[#6B6B64]">Requirement → Story → Test → Release</p>
@@ -49,9 +49,9 @@ export function BaTraceabilityMatrixPanel({
         ) : null}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] text-xs">
+        <table className={`${dxClass.tableLight} min-w-[720px]`}>
           <thead>
-            <tr className="border-b border-[#E4E4DC] bg-[#FEF6EC] text-left uppercase tracking-wide text-[#A8A89E]">
+            <tr className="text-left uppercase tracking-wide text-[var(--dx-fnt)]">
               <th className="px-4 py-2">Requirement</th>
               <th className="px-4 py-2">Story</th>
               <th className="px-4 py-2">Test</th>
@@ -61,8 +61,8 @@ export function BaTraceabilityMatrixPanel({
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.requirementId ?? row.reqCode} className="border-b border-[#F0F0E8] last:border-0">
-                <td className="px-4 py-2">
+              <tr key={row.requirementId ?? row.reqCode}>
+                <td className="px-4 py-3">
                   <span className="font-mono text-[10px] text-[#A8A89E]">{row.reqCode}</span>
                   <div className="font-medium text-[#0D0D0B]">{row.requirement}</div>
                 </td>

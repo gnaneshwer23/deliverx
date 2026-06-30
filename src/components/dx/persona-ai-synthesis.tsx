@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Sparkles } from "lucide-react";
 import type { MissionPersonaAccent } from "@/config/mission-persona-accent";
 import { ClampableSummary } from "@/components/dx/clampable-summary";
+import { dxClass } from "@/lib/dx-theme";
 
 /** Role-specific AI one-liner with persona accent — distinct from PM teal / founder green. */
 export function PersonaAiSynthesis({
@@ -19,8 +20,8 @@ export function PersonaAiSynthesis({
 }) {
   return (
     <div
-      className="rounded-xl border p-4"
-      style={{ borderColor: accent.border, backgroundColor: `${accent.bg}99` }}
+      className={`${dxClass.cardElevated} p-5`}
+      style={{ borderColor: accent.border, backgroundColor: accent.bg }}
       data-panel="persona-ai-synthesis"
     >
       <div
