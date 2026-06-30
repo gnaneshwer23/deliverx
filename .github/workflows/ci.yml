@@ -23,8 +23,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Unit tests (Phase B engines)
+      - name: Unit and E2E smoke tests
         run: npm test
+        env:
+          INVITE_JWT_SECRET: ci-invite-jwt-secret
 
       - name: Production build
         run: npm run build
