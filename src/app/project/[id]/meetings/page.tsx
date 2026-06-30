@@ -16,6 +16,7 @@ import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 import { MeetingForm } from "./meeting-form";
 import { MeetingAiPanel } from "./meeting-ai-panel";
 import { MeetingRecallPanel } from "@/components/meetings/meeting-recall-panel";
+import { MeetingTranscriptIngest } from "@/components/meetings/meeting-transcript-ingest";
 
 type Params = Promise<{ id: string }>;
 type Search = Promise<{ page?: string; ceremony?: string }>;
@@ -135,6 +136,11 @@ export default async function ProjectMeetingsPage({
                       recallBotId={m.recall_bot_id}
                       syncStatus={m.sync_status}
                       recordingUrl={m.recording_url}
+                    />
+                    <MeetingTranscriptIngest
+                      projectId={id}
+                      meetingId={m.id}
+                      ceremonyType={m.ceremony_type ?? "general"}
                     />
                     <MeetingAiPanel
                       projectId={id}
