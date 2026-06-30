@@ -13,7 +13,16 @@ import { filterPendingReviewsForPersona } from "@/lib/approval/persona-reviews";
 import { logAuditEvent } from "./auditEvents";
 import { applyProjectStructure } from "./applyProjectStructure";
 import type { ProjectStructureDraft } from "./aiProjectStructuring";
-import { artifactReviewChangeToImpactDrafts, emitLoopPropagation } from "./loopEventPropagation";
+import {
+  applyBusinessCaseWorkspace,
+  type BusinessCaseStructuredAnalysis,
+  categoriesReadyToApply,
+} from "./businessCaseStructuredAnalysis";
+import {
+  artifactReviewChangeToImpactDrafts,
+  businessCaseWorkspaceToImpactDrafts,
+  emitLoopPropagation,
+} from "./loopEventPropagation";
 
 export type ArtifactReviewRow = {
   id: string;
@@ -274,8 +283,57 @@ async function applyStructureBundle(review: ArtifactReviewRow): Promise<Record<s
   const draft = review.payload.draft as ProjectStructureDraft | undefined;
   if (!draft) throw new Error("Structure bundle payload missing draft.");
 
+  if (review.source === "business_case_upload") {
+    const structuredAnalysis = review.payload.structuredAnalysis as
+      | BusinessCaseStructuredAnalysis
+      | undefined;
+    const projectName =
+      typeof review.payload.projectName === "string" ? review.payload.projectName : "Project";
+
+    if (structuredAnalysis && categoriesReadyToApply(structuredAnalysis)) {
+      const applied = await applyBusinessCaseWorkspace(review.project_id, {
+        draft,
+        structuredAnalysis,
+        projectName,
+      });
+      return applied as unknown as Record<string, unknown>;
+    }
+  }
+
   const applied = await applyProjectStructure(review.project_id, draft);
   return applied as unknown as Record<string, unknown>;
+}
+
+export async function updateArtifactReviewPayload(
+  id: string,
+  payloadPatch: Record<string, unknown>,
+): Promise<ArtifactReviewRow> {
+  const { supabase } = await getOrgContext();
+
+  const { data: existing, error: fetchErr } = await supabase
+    .from("artifact_reviews")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (fetchErr || !existing) throw new Error("Artifact review not found");
+
+  const review = mapRow(existing as Record<string, unknown>);
+  if (review.status !== "needs_review") {
+    throw new Error("Artifact is not pending review.");
+  }
+
+  const { data, error } = await supabase
+    .from("artifact_reviews")
+    .update({
+      payload: { ...review.payload, ...payloadPatch },
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return mapRow(data as Record<string, unknown>);
 }
 
 export async function resolveArtifactReview(
@@ -346,12 +404,25 @@ export async function resolveArtifactReview(
     });
   }
 
-  const reviewDrafts = artifactReviewChangeToImpactDrafts({
-    entityType: review.entity_type,
-    title: review.title,
-    decision: status,
-    source: review.source,
-  });
+  const reviewDrafts =
+    status === "approved" &&
+    review.source === "business_case_upload" &&
+    applyResult
+      ? businessCaseWorkspaceToImpactDrafts({
+          applyResult: applyResult as {
+            workstreams: number;
+            tasks: number;
+            raidItems: number;
+            milestones: number;
+            requirements: number;
+          },
+        })
+      : artifactReviewChangeToImpactDrafts({
+          entityType: review.entity_type,
+          title: review.title,
+          decision: status,
+          source: review.source,
+        });
   if (reviewDrafts.length > 0) {
     void emitLoopPropagation({
       projectId: review.project_id,

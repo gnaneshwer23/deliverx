@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
+import { buildStructuredAnalysisFromReview } from "@/services/businessCaseStructuredAnalysis";
 import { getRequirementStats } from "@/services/baRequirements";
 import {
   getProjectBusinessCaseStatus,
@@ -68,10 +69,15 @@ export async function getWorkspaceFlowSnapshot(
         })
       : null;
 
+  const structuredAnalysis = review?.report
+    ? buildStructuredAnalysisFromReview(review.report, review.briefExcerpt ?? undefined)
+    : null;
+
   const counts = buildExtractionCounts({
     requirementsExtracted: stats?.extracted ?? 0,
     traceabilityScore,
     report: review?.report ?? null,
+    structuredAnalysis,
   });
 
   const nothingAppliedYet = (stats?.extracted ?? 0) === 0 && (stats?.approved ?? 0) === 0;

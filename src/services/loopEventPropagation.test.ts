@@ -3,6 +3,7 @@ import {
   artifactReviewChangeToImpactDrafts,
   brainDocumentReviewToImpactDrafts,
   businessCaseUploadToImpactDrafts,
+  businessCaseWorkspaceToImpactDrafts,
   meetingIntelQueuedToImpactDrafts,
   meetingProposalAppliedToImpactDrafts,
   changeRequestChangeToImpactDrafts,
@@ -179,6 +180,31 @@ describe("loopEventPropagation", () => {
     });
     expect(approved.some((d) => d.targetRole === "pm")).toBe(true);
     expect(approved.some((d) => d.targetRole === "ba" && d.tone === "ready")).toBe(true);
+  });
+
+  it("builds workspace bootstrap impact drafts with honest counts", () => {
+    const drafts = businessCaseWorkspaceToImpactDrafts({
+      applyResult: {
+        workstreams: 1,
+        tasks: 3,
+        raidItems: 2,
+        milestones: 2,
+        requirements: 4,
+      },
+    });
+    expect(drafts.some((d) => d.message.includes("4 requirements"))).toBe(true);
+    expect(drafts.some((d) => d.targetRole === "scrum")).toBe(true);
+
+    const empty = businessCaseWorkspaceToImpactDrafts({
+      applyResult: {
+        workstreams: 0,
+        tasks: 0,
+        raidItems: 0,
+        milestones: 0,
+        requirements: 0,
+      },
+    });
+    expect(empty[0].message).toContain("Workspace shell created");
   });
 
   it("builds meeting intel queued impact drafts", () => {

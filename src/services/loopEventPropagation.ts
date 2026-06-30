@@ -216,6 +216,56 @@ export function businessCaseUploadToImpactDrafts(input: {
   return drafts;
 }
 
+export function businessCaseWorkspaceToImpactDrafts(input: {
+  applyResult: {
+    workstreams: number;
+    tasks: number;
+    raidItems: number;
+    milestones: number;
+    requirements: number;
+  };
+}): DeliveryImpactEventDraft[] {
+  const { workstreams, tasks, raidItems, milestones, requirements } = input.applyResult;
+  const parts: string[] = [];
+  if (workstreams > 0) parts.push(`${workstreams} workstream${workstreams === 1 ? "" : "s"}`);
+  if (tasks > 0) parts.push(`${tasks} task${tasks === 1 ? "" : "s"}`);
+  if (raidItems > 0) parts.push(`${raidItems} RAID`);
+  if (milestones > 0) parts.push(`${milestones} milestone${milestones === 1 ? "" : "s"}`);
+  if (requirements > 0) parts.push(`${requirements} requirement${requirements === 1 ? "" : "s"}`);
+
+  const summary =
+    parts.length > 0 ? parts.join(", ") : "Workspace shell created — add delivery data to populate";
+
+  return [
+    {
+      targetRole: "pm",
+      message: `Project workspace created from approved business case — ${summary}`,
+      tone: "updated",
+    },
+    {
+      targetRole: "ba",
+      message:
+        requirements > 0
+          ? `${requirements} requirement${requirements === 1 ? "" : "s"} seeded — refine in BA workspace`
+          : "Business case approved — begin requirements extraction",
+      tone: requirements > 0 ? "ready" : "waiting",
+    },
+    {
+      targetRole: "scrum",
+      message:
+        milestones > 0 || tasks > 0
+          ? `Delivery structure live — ${summary}`
+          : "Awaiting delivery structure from PM-approved business case",
+      tone: milestones > 0 || tasks > 0 ? "updated" : "waiting",
+    },
+    {
+      targetRole: "founder",
+      message: `Business case cleared — workspace bootstrap: ${summary}`,
+      tone: "updated",
+    },
+  ];
+}
+
 export function brainDocumentReviewToImpactDrafts(input: {
   title: string;
   documentType: string;
