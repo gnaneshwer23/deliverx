@@ -1,0 +1,60 @@
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  getInviteJwtSecret,
+  hashInviteToken,
+  signInviteJwt,
+  verifyInviteJwt,
+  type InviteJwtPayload,
+} from "@/services/inviteTokenService";
+
+const samplePayload: InviteJwtPayload = {
+  invite_id: "11111111-1111-4111-8111-111111111111",
+  project_id: "22222222-2222-4222-8222-222222222222",
+  project_name: "NHS EHR Transformation",
+  role: "product_manager",
+  invited_by: "33333333-3333-4333-8333-333333333333",
+  invited_by_name: "Sarah Johnson",
+  view_mode: "full",
+  expires_at: "2099-01-01T00:00:00.000Z",
+};
+
+describe("inviteTokenService", () => {
+  beforeEach(() => {
+    process.env.INVITE_JWT_SECRET = "test-invite-secret";
+  });
+
+  afterEach(() => {
+    delete process.env.INVITE_JWT_SECRET;
+  });
+
+  it("returns a configured secret", () => {
+    expect(getInviteJwtSecret()).toBe("test-invite-secret");
+  });
+
+  it("hashes tokens deterministically", () => {
+    const hashA = hashInviteToken("abc123");
+    const hashB = hashInviteToken("abc123");
+    expect(hashA).toBe(hashB);
+    expect(hashA).not.toBe(hashInviteToken("different"));
+  });
+
+  it("signs and verifies JWT payloads", () => {
+    const token = signInviteJwt(samplePayload);
+    expect(token.split(".")).toHaveLength(3);
+
+    const verified = verifyInviteJwt(token);
+    expect(verified).toEqual(samplePayload);
+  });
+
+  it("rejects tampered JWT signatures", () => {
+    const token = signInviteJwt(samplePayload);
+    const parts = token.split(".");
+    const tampered = `${parts[0]}.${parts[1]}.invalidsignature`;
+    expect(verifyInviteJwt(tampered)).toBeNull();
+  });
+
+  it("rejects malformed JWT strings", () => {
+    expect(verifyInviteJwt("not-a-jwt")).toBeNull();
+    expect(verifyInviteJwt("")).toBeNull();
+  });
+});
