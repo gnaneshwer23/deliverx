@@ -3,7 +3,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { listProjectsForOrg } from "./portfolio";
+import { listProjectsForCurrentUser } from "./portfolio";
 import { getOrgGovernanceStats } from "./governance";
 import {
   buildCrossRoleImpact,
@@ -64,7 +64,7 @@ export async function getBaMissionControl(
     .select("name, role, organisation_id")
     .maybeSingle();
 
-  const projects = await listProjectsForOrg().catch(() => []);
+  const projects = await listProjectsForCurrentUser().catch(() => []);
   const active = projects.filter((p) => p.status === "active");
   const primary =
     active.find((p) => p.id === projectId) ??

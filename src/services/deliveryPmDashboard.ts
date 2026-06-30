@@ -25,7 +25,7 @@ import { getOrgGovernanceStats, listDecisions, listRaidItems } from "./governanc
 import { listRecentStatusReports, type WeeklyStatusReportSummary } from "./deliveryPmReports";
 import { computeProjectHealth } from "./intelligenceEngine";
 import { listMilestones } from "./milestones";
-import { listProjectsForOrg } from "./portfolio";
+import { listProjectsForCurrentUser } from "./portfolio";
 import { loadProjectSignals } from "./projectSignals";
 import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 import { getProjectSuccessScore } from "./successScore";
@@ -82,7 +82,7 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
     .select("name")
     .maybeSingle();
 
-  const projects = await listProjectsForOrg().catch(() => []);
+  const projects = await listProjectsForCurrentUser().catch(() => []);
   const active = projects.filter((p) => p.status === "active");
   const primary =
     active.find((p) => p.id === projectId) ?? active[0] ?? projects[0] ?? null;

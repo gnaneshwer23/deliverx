@@ -5,6 +5,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { resolveRoleHomePath } from "@/config/role-home-routing";
+import { bootstrapRoleWorkspace } from "@/services/bootstrapRoleWorkspace";
 import {
   validateInviteToken,
   type InviteViewMode,
@@ -28,6 +29,7 @@ export type AcceptInviteResult = {
   projectName: string;
   role: string;
   viewMode: InviteViewMode;
+  bootstrap: Awaited<ReturnType<typeof bootstrapRoleWorkspace>>;
 };
 
 export async function createWorkspaceMember(input: {
@@ -115,6 +117,11 @@ export async function acceptInviteToken(token: string): Promise<AcceptInviteResu
     invitedBy: (inviteRow.invited_by as string | null) ?? null,
   });
 
+  const bootstrap = await bootstrapRoleWorkspace({
+    projectId: validation.projectId,
+    role: validation.role,
+  });
+
   return {
     member,
     redirectPath: buildInviteAcceptRedirectPath({
@@ -125,6 +132,7 @@ export async function acceptInviteToken(token: string): Promise<AcceptInviteResu
     projectName: validation.projectName,
     role: validation.role,
     viewMode: validation.viewMode,
+    bootstrap,
   };
 }
 
@@ -209,6 +217,17 @@ export async function listProjectWorkspaceMembersByRole(
       user_email: users?.email ?? null,
     };
   });
+}
+
+export async function listUserWorkspaceProjectIds(userId: string): Promise<string[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("workspace_members")
+    .select("project_id")
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  return (data ?? []).map((row) => row.project_id as string);
 }
 
 export async function getWorkspaceMember(

@@ -106,7 +106,12 @@ export default async function InviteAcceptPage({ params }: { params: Params }) {
     <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-semibold tracking-tight">Join your team</h1>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+          This is an <span className="font-medium">organisation email invite</span>. Project-scoped
+          delivery team invites use the{" "}
+          <span className="font-medium text-slate-800">/join</span> link from your Project Manager.
+        </p>
+        <p className="mt-3 text-sm text-slate-500">
           You&apos;ve been invited to join{" "}
           <span className="font-medium text-slate-700">
             {invitation.organisationName}

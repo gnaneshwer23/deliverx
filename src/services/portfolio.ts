@@ -185,6 +185,39 @@ export async function listProjectsForOrg(): Promise<ProjectRow[]> {
   return (data ?? []) as ProjectRow[];
 }
 
+/** Org-wide for PM/executive; workspace_members-scoped for invited delivery roles. */
+export async function listProjectsForCurrentUser(): Promise<ProjectRow[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data: profile } = await supabase
+    .from("users")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const allProjects = await listProjectsForOrg();
+  if (profile?.role === "pm" || profile?.role === "executive") {
+    return allProjects;
+  }
+
+  const { data: memberships, error } = await supabase
+    .from("workspace_members")
+    .select("project_id")
+    .eq("user_id", user.id);
+
+  if (error || !memberships?.length) {
+    return allProjects;
+  }
+
+  const allowed = new Set(memberships.map((row) => row.project_id as string));
+  const scoped = allProjects.filter((project) => allowed.has(project.id));
+  return scoped.length > 0 ? scoped : allProjects;
+}
+
 export async function listProjectsForProgramme(
   programmeId: string,
 ): Promise<ProjectRow[]> {

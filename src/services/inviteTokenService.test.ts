@@ -57,4 +57,22 @@ describe("inviteTokenService", () => {
     expect(verifyInviteJwt("not-a-jwt")).toBeNull();
     expect(verifyInviteJwt("")).toBeNull();
   });
+
+  it("reconstructs stable join URLs from invite metadata", async () => {
+    const { buildJoinUrlFromInviteRow } = await import("@/services/inviteTokenService");
+    const url = await buildJoinUrlFromInviteRow({
+      id: samplePayload.invite_id,
+      project_id: samplePayload.project_id,
+      role: samplePayload.role,
+      invited_by: samplePayload.invited_by,
+      view_mode: samplePayload.view_mode,
+      expires_at: samplePayload.expires_at,
+      projects: { name: samplePayload.project_name },
+      users: { name: samplePayload.invited_by_name },
+    });
+
+    expect(url).toContain("/join?token=");
+    const token = new URL(url, "http://localhost:3000").searchParams.get("token");
+    expect(verifyInviteJwt(token!)).toEqual(samplePayload);
+  });
 });

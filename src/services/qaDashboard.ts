@@ -5,7 +5,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { buildTraceabilityMatrix, listRequirements, listUserStories } from "./baRequirements";
 import { listRaidItems } from "./governance";
-import { listProjectsForOrg } from "./portfolio";
+import { listProjectsForCurrentUser } from "./portfolio";
 import { getDeliveryForecast } from "./deliveryForecast";
 import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 import { getQaContext } from "./qaContext";
@@ -126,7 +126,7 @@ export async function getQaMissionControl(projectId?: string): Promise<QaMission
     .select("name")
     .maybeSingle();
 
-  const projects = await listProjectsForOrg().catch(() => []);
+  const projects = await listProjectsForCurrentUser().catch(() => []);
   const active = projects.filter((p) => p.status === "active");
   const primary =
     active.find((p) => p.id === projectId) ?? active[0] ?? projects[0] ?? null;
