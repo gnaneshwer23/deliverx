@@ -8,7 +8,7 @@ import { getDeliveryForecast } from "./deliveryForecast";
 import { listOrgTasks } from "./delivery";
 import { mergeProjectImpactIntoCrossRole } from "./deliveryImpact";
 import { listRaidItems } from "./governance";
-import { listProjectsForOrg } from "./portfolio";
+import { listProjectsForCurrentUser } from "./portfolio";
 import { getScrumContext } from "./scrumContext";
 import {
   buildScrumCrossRoleImpact,
@@ -99,7 +99,7 @@ export async function getScrumMissionControl(
     .select("name")
     .maybeSingle();
 
-  const projects = await listProjectsForOrg().catch(() => []);
+  const projects = await listProjectsForCurrentUser().catch(() => []);
   const active = projects.filter((p) => p.status === "active");
   const primary =
     active.find((p) => p.id === projectId) ?? active[0] ?? projects[0] ?? null;

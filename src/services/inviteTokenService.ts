@@ -292,3 +292,112 @@ export async function listProjectInviteTokens(projectId: string): Promise<Invite
   if (error) throw error;
   return (data ?? []) as InviteTokenRow[];
 }
+
+export type ActiveInviteLink = {
+  inviteId: string;
+  role: string;
+  joinUrl: string;
+  expiresAt: string;
+  viewMode: InviteViewMode;
+};
+
+/** Reconstruct a stable JWT join URL from persisted invite row metadata. */
+export async function buildJoinUrlFromInviteRow(row: {
+  id: string;
+  project_id: string;
+  role: string;
+  invited_by: string | null;
+  view_mode: InviteViewMode;
+  expires_at: string;
+  projects?: { name: string } | { name: string }[] | null;
+  users?: { name: string | null } | { name: string | null }[] | null;
+}): Promise<string> {
+  const projectRaw = row.projects;
+  const project = Array.isArray(projectRaw) ? projectRaw[0] : projectRaw;
+  const userRaw = row.users;
+  const inviter = Array.isArray(userRaw) ? userRaw[0] : userRaw;
+
+  const payload: InviteJwtPayload = {
+    invite_id: row.id,
+    project_id: row.project_id,
+    project_name: project?.name ?? "Project workspace",
+    role: row.role,
+    invited_by: row.invited_by ?? "",
+    invited_by_name: inviter?.name ?? "Project Manager",
+    view_mode: row.view_mode,
+    expires_at: row.expires_at,
+  };
+
+  const token = signInviteJwt(payload);
+  return buildJoinUrl(token, row.view_mode === "read_only" ? "sponsor" : undefined);
+}
+
+export async function listActiveProjectInviteLinks(
+  projectId: string,
+): Promise<ActiveInviteLink[]> {
+  const { supabase } = await getInviteAuthorContext();
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("invite_tokens")
+    .select("id, project_id, role, invited_by, view_mode, expires_at, revoked_at")
+    .eq("project_id", projectId)
+    .is("revoked_at", null)
+    .gt("expires_at", now)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  if (!data?.length) return [];
+
+  const { data: project } = await supabase
+    .from("projects")
+    .select("name")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  const inviterIds = [
+    ...new Set(
+      data
+        .map((row) => row.invited_by as string | null)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  const inviterNames = new Map<string, string>();
+  if (inviterIds.length > 0) {
+    const { data: inviters } = await supabase
+      .from("users")
+      .select("id, name")
+      .in("id", inviterIds);
+    for (const inviter of inviters ?? []) {
+      inviterNames.set(
+        inviter.id as string,
+        (inviter.name as string | null) ?? "Project Manager",
+      );
+    }
+  }
+
+  const byRole = new Map<string, ActiveInviteLink>();
+  for (const row of data) {
+    const role = row.role as string;
+    if (byRole.has(role)) continue;
+    const invitedBy = row.invited_by as string | null;
+    const joinUrl = await buildJoinUrlFromInviteRow({
+      id: row.id as string,
+      project_id: row.project_id as string,
+      role,
+      invited_by: invitedBy,
+      view_mode: row.view_mode as InviteViewMode,
+      expires_at: row.expires_at as string,
+      projects: project ? { name: project.name as string } : null,
+      users: invitedBy ? { name: inviterNames.get(invitedBy) ?? null } : null,
+    });
+    byRole.set(role, {
+      inviteId: row.id as string,
+      role,
+      joinUrl,
+      expiresAt: row.expires_at as string,
+      viewMode: row.view_mode as InviteViewMode,
+    });
+  }
+
+  return [...byRole.values()];
+}

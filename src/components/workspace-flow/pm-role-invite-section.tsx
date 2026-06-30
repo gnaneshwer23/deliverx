@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
-import { Check, Copy, Loader2, UserPlus, Users } from "lucide-react";
+import { Check, Copy, Loader2, Trash2, UserPlus, Users } from "lucide-react";
 import { DxWidgetHeader } from "@/components/dx/dx-widget-header";
 import { formatInviteRoleLabel } from "@/lib/invite-role-labels";
 import { dxClass } from "@/lib/dx-theme";
@@ -13,6 +13,8 @@ export type InviteRoleRow = {
   member: { name: string | null; joinedAt: string } | null;
   joinUrl: string | null;
   inviteActive: boolean;
+  inviteId?: string | null;
+  expiresAt?: string | null;
 };
 
 const DEFAULT_INVITE_ROLES: Array<{ role: PersonaHomeRole; description: string }> = [
@@ -21,6 +23,10 @@ const DEFAULT_INVITE_ROLES: Array<{ role: PersonaHomeRole; description: string }
   { role: "qa", description: "Test coverage, defects, and UAT readiness" },
   { role: "product_manager", description: "Backlog prioritisation and roadmap alignment" },
   { role: "scrum_master", description: "Sprint cadence and team coordination" },
+  {
+    role: "executive",
+    description: "Read-only sponsor visibility — portfolio and delivery oversight",
+  },
 ];
 
 export function PmRoleInviteSection({
@@ -38,6 +44,8 @@ export function PmRoleInviteSection({
         member: null,
         joinUrl: null,
         inviteActive: false,
+        inviteId: null,
+        expiresAt: null,
       })),
   );
   const [copiedRole, setCopiedRole] = useState<string | null>(null);
@@ -58,23 +66,66 @@ export function PmRoleInviteSection({
     setError(null);
     startTransition(async () => {
       try {
+        const viewMode = role === "executive" ? "read_only" : undefined;
         const res = await fetch("/api/invites/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projectId, role }),
+          body: JSON.stringify({ projectId, role, viewMode }),
         });
-        const data = (await res.json()) as { ok?: boolean; joinUrl?: string; error?: string };
+        const data = (await res.json()) as {
+          ok?: boolean;
+          joinUrl?: string;
+          invite?: { id?: string; expires_at?: string };
+          error?: string;
+        };
         if (!res.ok || !data.ok || !data.joinUrl) {
           setError(data.error ?? `Could not generate ${formatInviteRoleLabel(role)} invite.`);
           return;
         }
         setLocalRows((prev) =>
           prev.map((row) =>
-            row.role === role ? { ...row, joinUrl: data.joinUrl!, inviteActive: true } : row,
+            row.role === role
+              ? {
+                  ...row,
+                  joinUrl: data.joinUrl!,
+                  inviteActive: true,
+                  inviteId: data.invite?.id ?? null,
+                  expiresAt: data.invite?.expires_at ?? null,
+                }
+              : row,
           ),
         );
       } catch {
         setError(`Could not generate ${formatInviteRoleLabel(role)} invite.`);
+      }
+    });
+  }
+
+  function revokeLink(role: PersonaHomeRole, inviteId: string) {
+    setError(null);
+    startTransition(async () => {
+      try {
+        const res = await fetch(`/api/invites/${inviteId}/revoke`, { method: "DELETE" });
+        const data = (await res.json()) as { ok?: boolean; error?: string };
+        if (!res.ok || !data.ok) {
+          setError(data.error ?? `Could not revoke ${formatInviteRoleLabel(role)} invite.`);
+          return;
+        }
+        setLocalRows((prev) =>
+          prev.map((row) =>
+            row.role === role
+              ? {
+                  ...row,
+                  joinUrl: null,
+                  inviteActive: false,
+                  inviteId: null,
+                  expiresAt: null,
+                }
+              : row,
+          ),
+        );
+      } catch {
+        setError(`Could not revoke ${formatInviteRoleLabel(role)} invite.`);
       }
     });
   }
@@ -105,6 +156,10 @@ export function PmRoleInviteSection({
                 </p>
               ) : row.inviteActive && !row.joinUrl ? (
                 <p className="mt-1 text-xs text-[#6B6B64]">Invite active — generate a link to share</p>
+              ) : row.inviteActive && row.expiresAt ? (
+                <p className="mt-1 text-xs text-[#6B6B64]">
+                  Link active · expires {new Date(row.expiresAt).toLocaleDateString()}
+                </p>
               ) : null}
             </div>
 
@@ -129,6 +184,17 @@ export function PmRoleInviteSection({
                     {copiedRole === row.role ? <Check size={14} /> : <Copy size={14} />}
                     {copiedRole === row.role ? "Copied" : "Copy"}
                   </button>
+                  {row.inviteId ? (
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => revokeLink(row.role, row.inviteId!)}
+                      className={`${dxClass.btnGhost} text-[#9B2C2C] hover:text-[#7A2222]`}
+                    >
+                      <Trash2 size={14} aria-hidden />
+                      Revoke
+                    </button>
+                  ) : null}
                 </>
               ) : (
                 <button

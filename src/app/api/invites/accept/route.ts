@@ -25,6 +25,7 @@ export async function POST(req: Request) {
       projectName: result.projectName,
       role: result.role,
       viewMode: result.viewMode,
+      bootstrap: result.bootstrap,
     });
   } catch (err) {
     return apiErrorResponse(err);

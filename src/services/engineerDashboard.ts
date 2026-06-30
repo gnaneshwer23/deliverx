@@ -20,7 +20,7 @@ import {
 import { getEngineerContext } from "./engineerContext";
 import { buildTraceabilityMatrix, listApprovedUserStories } from "./baRequirements";
 import { listRaidItems } from "./governance";
-import { listProjectsForOrg } from "./portfolio";
+import { listProjectsForCurrentUser } from "./portfolio";
 import type { TaskRow } from "./delivery";
 import {
   buildHealthFromCi,
@@ -97,7 +97,7 @@ export async function getEngineerMissionControl(
     .select("name")
     .maybeSingle();
 
-  const projects = await listProjectsForOrg().catch(() => []);
+  const projects = await listProjectsForCurrentUser().catch(() => []);
   const active = projects.filter((p) => p.status === "active");
   const primary =
     active.find((p) => p.id === projectId) ?? active[0] ?? projects[0] ?? null;
