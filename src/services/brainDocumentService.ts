@@ -99,14 +99,64 @@ export async function createBrainDocument(input: {
   return mapBrainDocument(data as Record<string, unknown>);
 }
 
+export async function getBrainDocument(id: string): Promise<BrainDocumentRow | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("brain_documents")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throwIfMissingTable(error, "brain_documents");
+    throw error;
+  }
+
+  return data ? mapBrainDocument(data as Record<string, unknown>) : null;
+}
+
+export async function listBrainDocumentsByStatus(
+  status: BrainDocumentStatus,
+  limit = 20,
+): Promise<BrainDocumentRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("brain_documents")
+    .select("*")
+    .eq("status", status)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    throwIfMissingTable(error, "brain_documents");
+    throw error;
+  }
+
+  return (data ?? []).map(mapBrainDocument);
+}
+
 export async function updateBrainDocumentStatus(
   id: string,
   status: BrainDocumentStatus,
 ): Promise<BrainDocumentRow> {
+  return updateBrainDocument(id, { status });
+}
+
+export async function updateBrainDocument(
+  id: string,
+  patch: {
+    status?: BrainDocumentStatus;
+    classification?: Record<string, unknown>;
+    title?: string;
+  },
+): Promise<BrainDocumentRow> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("brain_documents")
-    .update({ status, updated_at: new Date().toISOString() })
+    .update({
+      ...patch,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id)
     .select("*")
     .single();

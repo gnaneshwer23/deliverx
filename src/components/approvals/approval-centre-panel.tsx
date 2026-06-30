@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { ProposedActionRow } from "@/services/proposedActions";
 import { ArtifactReviewsPanel } from "./artifact-reviews-panel";
 import { ProposalsQueuePanel } from "@/components/proposals/proposals-queue-panel";

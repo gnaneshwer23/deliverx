@@ -24,7 +24,7 @@ import {
   PmHorizontalStackedBar,
   PmMilestoneTimelineStrip,
 } from "@/components/delivery-pm/pm-viz-primitives";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 import type { InvitationRow } from "@/services/invitations";

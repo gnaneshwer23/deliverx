@@ -8,7 +8,8 @@ import {
   ARTIFACT_ENTITY_LABELS,
   REVIEW_STATUS_LABELS,
 } from "@/lib/approval/constants";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
+import { BusinessCaseArtifactReviewItem } from "@/components/approvals/business-case-artifact-review";
 
 export function ArtifactReviewsPanel({
   reviews,
@@ -27,9 +28,14 @@ export function ArtifactReviewsPanel({
 
   return (
     <ul className="space-y-3">
-      {reviews.map((review) => (
-        <ArtifactReviewRowItem key={review.id} review={review} showProject={showProject} />
-      ))}
+      {reviews.map((review) =>
+        review.source === "business_case_upload" &&
+        review.payload?.structuredAnalysis != null ? (
+          <BusinessCaseArtifactReviewItem key={review.id} review={review} showProject={showProject} />
+        ) : (
+          <ArtifactReviewRowItem key={review.id} review={review} showProject={showProject} />
+        ),
+      )}
     </ul>
   );
 }

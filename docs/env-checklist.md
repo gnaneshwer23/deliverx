@@ -14,7 +14,7 @@ For full variable descriptions see [API_KEYS.md](./API_KEYS.md). For Vercel Prev
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | ✅ (placeholder) | Client Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | ✅ (placeholder) | Server admin, invite validation DB lookup |
 | `NEXT_PUBLIC_APP_URL` | ✅ | ✅ | Auth redirects, `/join?token=` links |
-| `OPENAI_API_KEY` | ✅ for live AI | Optional (placeholder in build) | Assistant, Helm, BC review, meeting extraction |
+| `OPENAI_API_KEY` | ✅ for live AI | Optional (placeholder in build) | Assistant, Helm, BC review, meeting extraction, **Brain ingest classification** |
 | `INVITE_JWT_SECRET` | ✅ | Optional | Signs project invite JWTs (7-day). Falls back to `CRON_SECRET` in dev |
 
 Quick local check:
@@ -77,6 +77,7 @@ After env is set: **Settings → Setup audit**, or `GET /api/setup/diagnostics` 
 
 ## Still manual (not covered by Slice A)
 
+- Apply Supabase migration `0060_brain_storage.sql` for Brain ingest uploads (`/brain/ingest`)
 - Browser login (Supabase OAuth / email) on `/join` and workspace routes
 - Live `POST /api/invites/generate` and `POST /api/invites/accept` against Supabase
 - Live `POST /api/project/[id]/meetings/ingest` with authenticated PM session

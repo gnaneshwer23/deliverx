@@ -24,7 +24,7 @@ import {
   type FounderGovernanceTabCounts,
   type FounderGovernanceTabId,
 } from "@/lib/founder-steady-state-panels";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import type { FounderDecisionRow } from "@/services/founderEngine";
 import type { FounderContext } from "@/services/founderContext";

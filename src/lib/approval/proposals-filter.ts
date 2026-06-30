@@ -1,4 +1,4 @@
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { ProposedActionRow } from "@/services/proposedActions";
 
 export function filterProposalsByProject<T extends Pick<ProposedActionRow, "project_id">>(

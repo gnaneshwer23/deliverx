@@ -3,7 +3,7 @@ import {
   filterArtifactReviewsByProject,
   filterProposalsByProject,
 } from "./proposals-filter";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { ProposedActionRow } from "@/services/proposedActions";
 
 function mockProposal(projectId: string, id = "p1"): ProposedActionRow {

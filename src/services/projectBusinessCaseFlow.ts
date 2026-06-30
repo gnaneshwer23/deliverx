@@ -15,6 +15,7 @@ import { createBrainDocument } from "@/services/brainDocumentService";
 import { saveBusinessCaseReview } from "@/services/businessCaseReview";
 import { generateInviteToken } from "@/services/inviteTokenService";
 import { listProjectWorkspaceMembersByRole } from "@/services/workspaceMemberService";
+import { buildBusinessCaseReviewPayload } from "@/lib/businessCaseStructuredAnalysis.shared";
 import {
   businessCaseUploadToImpactDrafts,
   emitLoopPropagation,
@@ -91,6 +92,18 @@ async function findPendingBusinessCaseReview(projectId: string) {
   return data as { id: string; title: string } | null;
 }
 
+async function hasApprovedBusinessCaseAnalysis(projectId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("artifact_reviews")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", projectId)
+    .eq("source", "business_case_upload")
+    .eq("status", "approved");
+
+  return (count ?? 0) > 0;
+}
+
 async function findActiveBaInvite(projectId: string) {
   const supabase = await createClient();
   const now = new Date().toISOString();
@@ -113,6 +126,7 @@ export async function getProjectBusinessCaseStatus(
 ): Promise<ProjectBusinessCaseStatus> {
   const charter = await getActiveCharter(projectId).catch(() => null);
   const pendingReview = await findPendingBusinessCaseReview(projectId);
+  const analysisApproved = await hasApprovedBusinessCaseAnalysis(projectId);
   const baMembers = await listProjectWorkspaceMembersByRole(projectId, "ba").catch(() => []);
   const activeInvite =
     baMembers.length === 0 ? await findActiveBaInvite(projectId) : null;
@@ -120,6 +134,7 @@ export async function getProjectBusinessCaseStatus(
   const hasBusinessCase = Boolean(charter?.content?.trim());
   let extractionStatus: BusinessCaseExtractionStatus = "none";
   if (pendingReview) extractionStatus = "queued";
+  else if (analysisApproved) extractionStatus = "complete";
   else if (hasBusinessCase) extractionStatus = "pending";
 
   return {
@@ -173,19 +188,29 @@ async function queueBusinessCaseExtraction(input: {
     }).catch(() => undefined);
   }
 
+  const briefExcerpt = excerpt(input.content, 500) ?? "";
+  const payload = review
+    ? buildBusinessCaseReviewPayload({
+        review,
+        briefExcerpt,
+        projectName: input.projectName,
+        extractionStatus,
+      })
+    : {
+        extractionStatus,
+        recommendation: null,
+        score: null,
+        briefExcerpt,
+        projectName: input.projectName,
+      };
+
   const queued = await queueArtifactReview({
     projectId: input.projectId,
     entityType: "structure_bundle",
     title: "Business case analysis — AI Review Queue",
     summary,
     source: "business_case_upload",
-    payload: {
-      extractionStatus,
-      recommendation: review?.recommendation ?? null,
-      score: review?.score ?? null,
-      briefExcerpt: excerpt(input.content, 500),
-      projectName: input.projectName,
-    },
+    payload,
   });
 
   return { reviewId: queued.id, extractionStatus };

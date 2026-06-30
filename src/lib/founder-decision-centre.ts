@@ -4,7 +4,7 @@
 
 import { buildFounderProposalsHref } from "@/lib/founder-day-one-panels";
 import { buildFounderDecisionCentreHref } from "@/lib/founder-steady-state-panels";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { FounderDecisionRow } from "@/services/founderEngine";
 
 export const FOUNDER_DECISION_CENTRE_MIN = 2;

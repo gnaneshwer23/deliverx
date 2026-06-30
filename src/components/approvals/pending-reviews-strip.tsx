@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { ARTIFACT_ENTITY_LABELS } from "@/lib/approval/constants";
 import { ArtifactReviewsPanel } from "@/components/approvals/artifact-reviews-panel";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import { dxClass } from "@/lib/dx-theme";
 
