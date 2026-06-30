@@ -34,7 +34,7 @@ node scripts/check-env.mjs
 | `OPENAI_MODEL` | Override default `gpt-4o-mini` |
 | `CRON_SECRET` | Vercel cron routes (`/api/twin/snapshot`, loops, notifications) |
 | `RESEND_API_KEY` + `EMAIL_FROM` | Report publish emails; **project invite emails** (`/api/invites/generate` with `email`) |
-| `RECALL_API_KEY`, `RECALL_REGION`, `RECALL_WEBHOOK_SECRET` | Recall.ai meeting bot |
+| `RECALL_API_KEY`, `RECALL_REGION`, `RECALL_WEBHOOK_SECRET` | Recall.ai meeting bot on `/project/[id]/meetings` — bot join, transcript sync, webhook auto-ingest. Without `RECALL_API_KEY`, use **Quick ingest** (paste transcript). `RECALL_REGION` defaults to `us-east-1`. `RECALL_WEBHOOK_SECRET` verifies `/api/integrations/recall/webhook` (requires `NEXT_PUBLIC_APP_URL`). |
 | `MINIMAX_API_KEY`, `ANTHROPIC_API_KEY` | Legacy AI fallbacks |
 | `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` | Analytics on Preview deploys |
 

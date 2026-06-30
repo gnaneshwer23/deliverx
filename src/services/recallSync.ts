@@ -9,15 +9,9 @@ import {
   getRecallBotTranscript,
   isRecallConfigured,
 } from "@/lib/integrations/recall";
-import { createClient } from "@/lib/supabase/server";
-import { getMeeting, updateMeeting } from "./governance";
-import {
-  extractMeetingIntelligence,
-  persistMeetingExtraction,
-} from "./meetingIntelligence";
-import { queueProposals } from "./proposedActions";
-import { intelligenceResultToProposals } from "./meetingIntelligenceEngine";
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
+import { getMeeting, updateMeeting } from "./governance";
+import { runMeetingIntelPipeline } from "./meetingIntelPipeline";
 
 export type MeetingRecallSyncStatus = "idle" | "pending" | "syncing" | "synced" | "failed";
 
@@ -88,7 +82,9 @@ export async function syncRecallTranscriptForMeeting(input: {
     >[1]);
     return {
       ok: false,
-      error: transcriptResult.ok ? "Transcript is empty — meeting may still be in progress" : transcriptResult.error,
+      error: transcriptResult.ok
+        ? "Transcript is empty — meeting may still be in progress"
+        : transcriptResult.error,
     };
   }
 
@@ -97,58 +93,24 @@ export async function syncRecallTranscriptForMeeting(input: {
     (typeof botResult.bot.recording === "string" ? botResult.bot.recording : null);
 
   await updateMeeting(input.meetingId, {
-    transcript: transcriptResult.text,
-    notes: meeting.notes?.trim()
-      ? `${meeting.notes.trim()}\n\n--- Recall transcript ---\n${transcriptResult.text}`
-      : transcriptResult.text,
     recording_url: recordingUrl,
     sync_status: "synced",
   } as Parameters<typeof updateMeeting>[1]);
 
-  const supabase = await createClient();
-  const { data: project } = await supabase
-    .from("projects")
-    .select("name")
-    .eq("id", input.projectId)
-    .maybeSingle();
-
-  const extraction = await extractMeetingIntelligence({
+  const pipeline = await runMeetingIntelPipeline({
     projectId: input.projectId,
     meetingId: input.meetingId,
     title: meeting.title,
-    notes: transcriptResult.text,
-    projectName: project?.name ?? undefined,
+    transcript: transcriptResult.text,
     ceremonyType: (meeting.ceremony_type ?? "general") as MeetingCeremonyType,
-  });
-
-  let queuedProposals = 0;
-  if (input.queueProposals !== false) {
-    const proposals = intelligenceResultToProposals(
-      extraction,
-      meeting.title,
-      (meeting.ceremony_type ?? "general") as MeetingCeremonyType,
-    );
-    const queued = await queueProposals({
-      projectId: input.projectId,
-      source: "meeting",
-      sourceId: input.meetingId,
-      proposals,
-    });
-    queuedProposals = queued.length;
-  }
-
-  await persistMeetingExtraction({
-    meetingId: input.meetingId,
-    projectId: input.projectId,
-    summary: extraction.summary,
-    extraction,
-    proposalsQueued: queuedProposals > 0,
+    queueProposals: input.queueProposals !== false,
+    transcriptSourceLabel: "Recall transcript",
   });
 
   return {
     ok: true,
     transcriptLength: transcriptResult.text.length,
-    queuedProposals,
+    queuedProposals: pipeline.queuedProposals,
   };
 }
 

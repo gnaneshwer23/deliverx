@@ -11,9 +11,16 @@ import { createTask } from "./delivery";
 import {
   createDecision,
   createRaidItem,
+  listRaidItems,
+  updateRaidItem,
   type RaidItemType,
   type RaidSeverity,
 } from "./governance";
+import {
+  findMatchingRaidItem,
+  maxRaidSeverity,
+  mergeRaidDescriptions,
+} from "@/lib/meetings/raid-merge";
 import {
   buildGoogleCalendarUrl,
   buildOutlookCalendarUrl,
@@ -323,24 +330,48 @@ async function executeProposal(
 
   switch (proposal.action_type) {
     case "create_task": {
+      const assigneeId =
+        typeof p.assigneeId === "string" && p.assigneeId.trim()
+          ? p.assigneeId.trim()
+          : undefined;
       const task = await createTask({
         projectId: proposal.project_id,
         title: String(p.title ?? proposal.title),
         description: p.description ? String(p.description) : undefined,
         priority: (p.priority as "low" | "medium" | "high" | "critical") ?? "medium",
+        assigneeId,
       });
-      return { entityType: "task", entityId: task.id };
+      return {
+        entityType: "task",
+        entityId: task.id,
+        assigneeId: assigneeId ?? null,
+      };
     }
     case "create_raid": {
+      const raidType = (p.raidType as RaidItemType) ?? "risk";
+      const title = String(p.title ?? proposal.title);
+      const severity = (p.severity as RaidSeverity) ?? "medium";
+      const description = p.description ? String(p.description) : undefined;
+      const existingItems = await listRaidItems(proposal.project_id);
+      const match = findMatchingRaidItem(existingItems, title, raidType);
+
+      if (match) {
+        const raid = await updateRaidItem(match.id, {
+          description: mergeRaidDescriptions(match.description, description),
+          severity: maxRaidSeverity(match.severity, severity),
+        });
+        return { entityType: "raid", entityId: raid.id, merged: true };
+      }
+
       const raid = await createRaidItem({
         projectId: proposal.project_id,
-        type: (p.raidType as RaidItemType) ?? "risk",
-        title: String(p.title ?? proposal.title),
-        description: p.description ? String(p.description) : undefined,
-        severity: (p.severity as RaidSeverity) ?? "medium",
+        type: raidType,
+        title,
+        description,
+        severity,
         sourceMeetingId: proposal.source_id ?? undefined,
       });
-      return { entityType: "raid", entityId: raid.id };
+      return { entityType: "raid", entityId: raid.id, merged: false };
     }
     case "create_decision": {
       const decision = await createDecision({

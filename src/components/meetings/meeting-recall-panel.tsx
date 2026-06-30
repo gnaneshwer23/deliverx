@@ -22,12 +22,14 @@ export function MeetingRecallPanel({
   recallBotId,
   syncStatus = "idle",
   recordingUrl,
+  recallConfigured = false,
 }: {
   projectId: string;
   meetingId: string;
   recallBotId?: string | null;
   syncStatus?: string | null;
   recordingUrl?: string | null;
+  recallConfigured?: boolean;
 }) {
   const [meetingUrl, setMeetingUrl] = useState("");
   const [joining, setJoining] = useState(false);
@@ -81,6 +83,23 @@ export function MeetingRecallPanel({
   }
 
   const statusLabel = SYNC_LABELS[status] ?? status;
+
+  if (!recallConfigured && !botId) {
+    return (
+      <div className="mt-3 rounded-lg border border-dashed border-[#E4E4DC] bg-[#FAFAF5] p-3">
+        <div className="mb-1 flex items-center gap-2">
+          <Video size={14} className="text-[#A8A89E]" />
+          <span className="text-xs font-semibold uppercase tracking-wide text-[#A8A89E]">
+            Recall.ai
+          </span>
+        </div>
+        <p className="text-xs text-[#6B6B64]">
+          Recall not configured — set <code className="font-[family-name:var(--font-dx-mono)] text-[10px]">RECALL_API_KEY</code>{" "}
+          to send a notetaker bot. Use <strong>Quick ingest</strong> below to paste a transcript instead.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-3 rounded-lg border border-[#E4E4DC] bg-[#FAFAF5] p-3">
