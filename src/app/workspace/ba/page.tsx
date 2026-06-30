@@ -8,6 +8,7 @@ import { BaDashboardLayout } from "@/components/ba/ba-dashboard-layout";
 import { BaHandoffKpiStrip } from "@/components/ba/ba-handoff-kpi-strip";
 import { BaTraceabilityMatrixPanel } from "@/components/ba/ba-traceability-matrix-panel";
 import { BaClarificationQueue } from "@/components/ba/ba-clarification-queue";
+import { BaRequirementsRegisterPanel } from "@/components/ba/ba-requirements-register-panel";
 import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
@@ -21,6 +22,10 @@ import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildBaClarificationQueue } from "@/lib/ba-clarification-queue";
 import { buildBaHandoffSynthesis } from "@/lib/ba-handoff-kpis";
+import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
+import { getRequirementStats } from "@/services/baRequirements";
+import { BaWorkspaceFlowShell } from "@/components/workspace-flow/ba-workspace-flow-shell";
+import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -49,13 +54,21 @@ export default async function BaMissionControlPage({
   const projectPendingReviews = filterReviewsByProject(pendingReviews, projectId);
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
+  let flowSnapshot = null;
+  let requirementsPreview: Awaited<ReturnType<typeof getRequirementStats>>["requirements"] = [];
 
   if (projectId) {
-    const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
+    const [bootstrap, snapshot, reqStats] = await Promise.all([
+      getProjectBootstrapStatus(projectId).catch(() => null),
+      getWorkspaceFlowSnapshot(projectId).catch(() => null),
+      getRequirementStats(projectId).catch(() => null),
+    ]);
     if (bootstrap && hasBootstrapParitySummary(bootstrap.summary)) {
       bootstrapSummary = bootstrap.summary;
       hasBootstrapSummary = true;
     }
+    flowSnapshot = snapshot;
+    requirementsPreview = reqStats?.requirements ?? [];
   }
 
   const serverBaMode = resolveBaDashboardMode({
@@ -111,6 +124,9 @@ export default async function BaMissionControlPage({
         <BaTraceabilityMatrixPanel rows={data.traceabilityPreview} projectId={projectId} />
       }
       clarificationQueue={<BaClarificationQueue items={clarificationQueue} />}
+      footer={
+        <BaRequirementsRegisterPanel requirements={requirementsPreview} projectId={projectId} />
+      }
     />
   );
 
@@ -144,7 +160,20 @@ export default async function BaMissionControlPage({
               accent={baAccent}
             />
           ) : null}
-          {dashboard}
+          {data.primaryProject && flowSnapshot ? (
+            <Suspense fallback={null}>
+              <BaWorkspaceFlowShell
+                projectId={data.primaryProject.id}
+                projectName={data.primaryProject.name}
+                snapshot={flowSnapshot}
+                storiesReady={data.kpis.storiesReady}
+              >
+                {dashboard}
+              </BaWorkspaceFlowShell>
+            </Suspense>
+          ) : (
+            dashboard
+          )}
         </div>
       </BaMissionShell>
     </MissionDashboardChrome>

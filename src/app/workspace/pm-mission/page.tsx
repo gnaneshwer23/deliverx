@@ -58,7 +58,12 @@ import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { getProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
+import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
+import { buildPmInviteRoleRows } from "@/lib/workspace-flow-invites";
+import { getRequirementStats } from "@/services/baRequirements";
 import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-case-flow-panel";
+import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
+import { PmRoleInviteSection } from "@/components/workspace-flow/pm-role-invite-section";
 
 export const dynamic = "force-dynamic";
 
@@ -99,6 +104,9 @@ export default async function PmMissionControlPage({
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
   let businessCaseStatus = null;
+  let flowSnapshot = null;
+  let inviteRoleRows = null;
+  let requirementStats = null;
 
   if (projectId) {
     const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
@@ -106,7 +114,12 @@ export default async function PmMissionControlPage({
       bootstrapSummary = bootstrap.summary;
       hasBootstrapSummary = true;
     }
-    businessCaseStatus = await getProjectBusinessCaseStatus(projectId).catch(() => null);
+    [businessCaseStatus, flowSnapshot, inviteRoleRows, requirementStats] = await Promise.all([
+      getProjectBusinessCaseStatus(projectId).catch(() => null),
+      getWorkspaceFlowSnapshot(projectId).catch(() => null),
+      buildPmInviteRoleRows(projectId).catch(() => null),
+      getRequirementStats(projectId).catch(() => null),
+    ]);
   }
 
   const allPmReviews = filterPendingReviewsForPersona(
@@ -314,11 +327,28 @@ export default async function PmMissionControlPage({
             />
           ) : null}
           {data.primaryProject && businessCaseStatus ? (
-            <PmBusinessCaseFlowPanel
-              projectId={data.primaryProject.id}
-              projectName={data.primaryProject.name}
-              initialStatus={businessCaseStatus}
-            />
+            <>
+              {flowSnapshot ? (
+                <PmBusinessCaseSummaryCard
+                  projectId={data.primaryProject.id}
+                  projectName={data.primaryProject.name}
+                  status={businessCaseStatus}
+                  counts={flowSnapshot.counts}
+                  aiSummary={flowSnapshot.aiSummary}
+                />
+              ) : null}
+              <PmBusinessCaseFlowPanel
+                projectId={data.primaryProject.id}
+                projectName={data.primaryProject.name}
+                initialStatus={businessCaseStatus}
+                extractionCounts={flowSnapshot?.counts}
+                requirementsExtracted={requirementStats?.extracted ?? 0}
+                storiesReady={requirementStats?.storiesReady ?? 0}
+              />
+              {inviteRoleRows ? (
+                <PmRoleInviteSection projectId={data.primaryProject.id} rows={inviteRoleRows} />
+              ) : null}
+            </>
           ) : null}
           <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />
           {data.guidedTasks.length > 0 ? (
