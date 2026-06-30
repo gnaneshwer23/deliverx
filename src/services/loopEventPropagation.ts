@@ -216,6 +216,41 @@ export function businessCaseUploadToImpactDrafts(input: {
   return drafts;
 }
 
+export function brainDocumentReviewToImpactDrafts(input: {
+  title: string;
+  documentType: string;
+  action: "accept" | "edit" | "discard";
+  personaRelevance?: string[];
+}): DeliveryImpactEventDraft[] {
+  if (input.action === "discard") return [];
+
+  const label = input.documentType.replace(/_/g, " ");
+  const drafts: DeliveryImpactEventDraft[] = [
+    {
+      targetRole: "founder",
+      message: `Brain ingest approved — ${label}: ${input.title}`,
+      tone: "updated",
+    },
+    {
+      targetRole: "pm",
+      message: `Delivery knowledge classified (${label}) — ${input.title}`,
+      tone: "ready",
+    },
+  ];
+
+  for (const persona of input.personaRelevance ?? []) {
+    const role = persona as DeliveryImpactRole;
+    if (role === "founder" || role === "pm") continue;
+    drafts.push({
+      targetRole: role,
+      message: `New ${label} may apply to your workspace — ${input.title}`,
+      tone: "waiting",
+    });
+  }
+
+  return drafts;
+}
+
 export function workspaceMemberJoinedToImpactDrafts(input: {
   role: string;
   projectName: string;

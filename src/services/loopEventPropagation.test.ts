@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   artifactReviewChangeToImpactDrafts,
+  brainDocumentReviewToImpactDrafts,
   businessCaseUploadToImpactDrafts,
   meetingIntelQueuedToImpactDrafts,
   meetingProposalAppliedToImpactDrafts,
@@ -142,6 +143,22 @@ describe("loopEventPropagation", () => {
     });
     expect(upload.some((d) => d.targetRole === "pm" && d.tone === "waiting")).toBe(true);
     expect(upload.some((d) => d.targetRole === "ba" && d.tone === "ready")).toBe(true);
+
+    const brain = brainDocumentReviewToImpactDrafts({
+      title: "Release checklist.pdf",
+      documentType: "playbook",
+      action: "accept",
+      personaRelevance: ["engineer", "qa"],
+    });
+    expect(brain.some((d) => d.targetRole === "founder")).toBe(true);
+    expect(brain.some((d) => d.targetRole === "engineer")).toBe(true);
+    expect(
+      brainDocumentReviewToImpactDrafts({
+        title: "Draft",
+        documentType: "other",
+        action: "discard",
+      }),
+    ).toEqual([]);
 
     const joined = workspaceMemberJoinedToImpactDrafts({
       role: "ba",
