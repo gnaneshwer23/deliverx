@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
-import { projectHref, projectNavSections, type ProjectNavSection } from "@/config/project-nav";
+import {
+  projectHref,
+  projectNavSections,
+  READ_ONLY_PROJECT_SEGMENTS,
+  type ProjectNavSection,
+} from "@/config/project-nav";
 
 function isActive(pathname: string, projectId: string, segment: string) {
   const href = projectHref(projectId, segment);
@@ -17,12 +22,21 @@ function isActive(pathname: string, projectId: string, segment: string) {
 export function ProjectSidebar({
   projectId,
   projectName,
+  readOnly = false,
 }: {
   projectId: string;
   projectName: string;
+  readOnly?: boolean;
 }) {
   const pathname = usePathname();
-  const sections: ProjectNavSection[] = projectNavSections;
+  const sections: ProjectNavSection[] = projectNavSections.map((section) => ({
+    ...section,
+    items: readOnly
+      ? section.items.filter(
+          (item) => READ_ONLY_PROJECT_SEGMENTS.has(item.segment),
+        )
+      : section.items,
+  })).filter((section) => section.items.length > 0);
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-[#E4E4DC] bg-white p-5 md:flex">
@@ -67,7 +81,9 @@ export function ProjectSidebar({
         </Link>
         <Link
           href="/project/new"
-          className="flex items-center gap-2 text-xs text-[#A8A89E] hover:text-[#1C4A2E]"
+          className={`flex items-center gap-2 text-xs text-[#A8A89E] hover:text-[#1C4A2E] ${readOnly ? "pointer-events-none opacity-40" : ""}`}
+          aria-disabled={readOnly}
+          tabIndex={readOnly ? -1 : undefined}
         >
           <Plus size={14} />
           New project

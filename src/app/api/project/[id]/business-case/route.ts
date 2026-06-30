@@ -32,7 +32,7 @@ export async function POST(
 ) {
   try {
     const { id } = await ctx.params;
-    const { project } = await requireProjectAccess(id);
+    const { project } = await requireProjectWriteAccess(id);
     const body = (await req.json()) as Body;
     const content = body.content?.trim();
 

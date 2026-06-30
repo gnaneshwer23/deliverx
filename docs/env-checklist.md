@@ -33,7 +33,7 @@ node scripts/check-env.mjs
 |----------|-------------|
 | `OPENAI_MODEL` | Override default `gpt-4o-mini` |
 | `CRON_SECRET` | Vercel cron routes (`/api/twin/snapshot`, loops, notifications) |
-| `RESEND_API_KEY` + `EMAIL_FROM` | Report publish emails |
+| `RESEND_API_KEY` + `EMAIL_FROM` | Report publish emails; **project invite emails** (`/api/invites/generate` with `email`) |
 | `RECALL_API_KEY`, `RECALL_REGION`, `RECALL_WEBHOOK_SECRET` | Recall.ai meeting bot |
 | `MINIMAX_API_KEY`, `ANTHROPIC_API_KEY` | Legacy AI fallbacks |
 | `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` | Analytics on Preview deploys |

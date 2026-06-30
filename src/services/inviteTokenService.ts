@@ -143,10 +143,13 @@ export async function generateInviteToken(input: {
   projectId: string;
   role: PersonaHomeRole | "team_member";
   viewMode?: InviteViewMode;
+  recipientEmail?: string;
 }): Promise<{
   token: string;
   joinUrl: string;
   invite: InviteTokenRow;
+  emailSent: boolean;
+  emailReason?: string;
 }> {
   const { supabase, userId, userName, orgId } = await getInviteAuthorContext();
 
@@ -207,10 +210,33 @@ export async function generateInviteToken(input: {
 
   if (updateError || !invite) throw updateError ?? new Error("Failed to finalize invite.");
 
+  const joinUrl = buildJoinUrl(token, viewMode === "read_only" ? "sponsor" : undefined);
+  let emailSent = false;
+  let emailReason: string | undefined;
+
+  const recipientEmail = input.recipientEmail?.trim().toLowerCase();
+  if (recipientEmail) {
+    const { sendProjectInviteEmail } = await import("@/lib/email/invite-emails");
+    const emailResult = await sendProjectInviteEmail({
+      to: recipientEmail,
+      projectName: project.name as string,
+      role: input.role,
+      invitedByName: userName,
+      joinUrl,
+      readOnly: viewMode === "read_only",
+    });
+    emailSent = emailResult.sent;
+    if (!emailResult.sent) {
+      emailReason = emailResult.reason;
+    }
+  }
+
   return {
     token,
-    joinUrl: buildJoinUrl(token, viewMode === "read_only" ? "sponsor" : undefined),
+    joinUrl,
     invite: invite as InviteTokenRow,
+    emailSent,
+    emailReason,
   };
 }
 
@@ -229,15 +255,18 @@ export async function validateInviteToken(token: string): Promise<InviteValidati
   }
 
   const admin = createAdminClient();
-  const tokenHash = hashInviteToken(token);
   const { data: row, error } = await admin
     .from("invite_tokens")
-    .select("id, revoked_at, expires_at, view_mode")
-    .eq("token_hash", tokenHash)
+    .select("id, revoked_at, expires_at, view_mode, project_id")
+    .eq("id", payload.invite_id)
     .maybeSingle();
 
   if (error || !row) {
     return { ok: false, reason: "missing", message: "This invite link is not valid." };
+  }
+
+  if ((row.project_id as string) !== payload.project_id) {
+    return { ok: false, reason: "invalid", message: "This invite link is not valid." };
   }
 
   if (row.revoked_at) {

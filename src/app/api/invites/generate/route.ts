@@ -7,6 +7,7 @@ type Body = {
   projectId?: string;
   role?: PersonaHomeRole | "team_member";
   viewMode?: InviteViewMode;
+  email?: string;
 };
 
 export async function POST(req: Request) {
@@ -22,10 +23,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "role is required" }, { status: 400 });
     }
 
+    const email = body.email?.trim().toLowerCase();
+    if (email && !email.includes("@")) {
+      return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+    }
+
     const result = await generateInviteToken({
       projectId,
       role,
       viewMode: body.viewMode,
+      recipientEmail: email,
     });
 
     return NextResponse.json({
@@ -33,6 +40,8 @@ export async function POST(req: Request) {
       token: result.token,
       joinUrl: result.joinUrl,
       invite: result.invite,
+      emailSent: result.emailSent,
+      emailReason: result.emailReason,
     });
   } catch (err) {
     return apiErrorResponse(err);

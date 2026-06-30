@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getProjectAccess } from "@/lib/project-access";
 
 export class ApiError extends Error {
   constructor(
@@ -23,7 +24,10 @@ export async function requireAuth() {
   return { supabase, user };
 }
 
-export async function requireProjectAccess(projectId: string) {
+export async function requireProjectAccess(
+  projectId: string,
+  options?: { write?: boolean },
+) {
   const { supabase, user } = await requireAuth();
 
   const { data: project, error } = await supabase
@@ -36,7 +40,19 @@ export async function requireProjectAccess(projectId: string) {
     throw new ApiError("Project not found", 404);
   }
 
-  return { supabase, user, project };
+  const access = await getProjectAccess(user.id, projectId);
+  if (options?.write && !access.canWrite) {
+    throw new ApiError(
+      "Read-only access — sponsors cannot modify this workspace.",
+      403,
+    );
+  }
+
+  return { supabase, user, project, access };
+}
+
+export async function requireProjectWriteAccess(projectId: string) {
+  return requireProjectAccess(projectId, { write: true });
 }
 
 export function apiErrorResponse(err: unknown) {

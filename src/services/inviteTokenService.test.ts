@@ -75,4 +75,15 @@ describe("inviteTokenService", () => {
     const token = new URL(url, "http://localhost:3000").searchParams.get("token");
     expect(verifyInviteJwt(token!)).toEqual(samplePayload);
   });
+
+  it("validates rehydrated tokens when inviter display name differs from original", async () => {
+    const originalToken = signInviteJwt(samplePayload);
+    const rehydratedToken = signInviteJwt({
+      ...samplePayload,
+      invited_by_name: "Project Manager",
+      project_name: "Renamed project",
+    });
+    expect(rehydratedToken).not.toBe(originalToken);
+    expect(verifyInviteJwt(rehydratedToken)?.invite_id).toBe(samplePayload.invite_id);
+  });
 });

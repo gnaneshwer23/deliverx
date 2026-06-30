@@ -1,13 +1,24 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { buildJoinUrl } from "@/lib/invite-url";
 import { getInvitationByToken } from "@/services/invitations";
 import { AcceptInviteForm } from "./accept-invite-form";
 import { StatusBadge } from "@/components/shared/status-badge";
 
 type Params = Promise<{ token: string }>;
 
+function isProjectInviteJwt(token: string): boolean {
+  return token.split(".").length === 3;
+}
+
 export default async function InviteAcceptPage({ params }: { params: Params }) {
   const { token } = await params;
+
+  if (isProjectInviteJwt(token)) {
+    redirect(buildJoinUrl(token));
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

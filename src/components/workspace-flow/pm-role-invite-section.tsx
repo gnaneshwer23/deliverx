@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
-import { Check, Copy, Loader2, Trash2, UserPlus, Users } from "lucide-react";
+import { Check, Copy, Loader2, Mail, Trash2, UserPlus, Users } from "lucide-react";
 import { DxWidgetHeader } from "@/components/dx/dx-widget-header";
 import { formatInviteRoleLabel } from "@/lib/invite-role-labels";
 import { dxClass } from "@/lib/dx-theme";
@@ -49,6 +49,10 @@ export function PmRoleInviteSection({
       })),
   );
   const [copiedRole, setCopiedRole] = useState<string | null>(null);
+  const [emailsByRole, setEmailsByRole] = useState<Partial<Record<PersonaHomeRole, string>>>({});
+  const [emailStatusByRole, setEmailStatusByRole] = useState<
+    Partial<Record<PersonaHomeRole, string>>
+  >({});
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -64,23 +68,36 @@ export function PmRoleInviteSection({
 
   function generateLink(role: PersonaHomeRole) {
     setError(null);
+    const email = emailsByRole[role]?.trim().toLowerCase();
     startTransition(async () => {
       try {
         const viewMode = role === "executive" ? "read_only" : undefined;
         const res = await fetch("/api/invites/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projectId, role, viewMode }),
+          body: JSON.stringify({ projectId, role, viewMode, email: email || undefined }),
         });
         const data = (await res.json()) as {
           ok?: boolean;
           joinUrl?: string;
           invite?: { id?: string; expires_at?: string };
+          emailSent?: boolean;
+          emailReason?: string;
           error?: string;
         };
         if (!res.ok || !data.ok || !data.joinUrl) {
           setError(data.error ?? `Could not generate ${formatInviteRoleLabel(role)} invite.`);
           return;
+        }
+        if (email) {
+          setEmailStatusByRole((prev) => ({
+            ...prev,
+            [role]: data.emailSent
+              ? `Invite emailed to ${email}`
+              : data.emailReason
+                ? `Link created — email not sent (${data.emailReason})`
+                : "Link created — email not configured",
+          }));
         }
         setLocalRows((prev) =>
           prev.map((row) =>
@@ -197,19 +214,36 @@ export function PmRoleInviteSection({
                   ) : null}
                 </>
               ) : (
-                <button
-                  type="button"
-                  disabled={isPending}
-                  onClick={() => generateLink(row.role)}
-                  className={dxClass.btnSm}
-                >
-                  {isPending ? (
-                    <Loader2 size={12} className="animate-spin" />
-                  ) : (
-                    <UserPlus size={12} aria-hidden />
-                  )}
-                  Generate link
-                </button>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="email"
+                    placeholder="Email (optional)"
+                    value={emailsByRole[row.role] ?? ""}
+                    onChange={(e) =>
+                      setEmailsByRole((prev) => ({ ...prev, [row.role]: e.target.value }))
+                    }
+                    className={`${dxClass.input} max-w-xs text-xs`}
+                    aria-label={`${formatInviteRoleLabel(row.role)} invite email`}
+                  />
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => generateLink(row.role)}
+                    className={dxClass.btnSm}
+                  >
+                    {isPending ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : emailsByRole[row.role]?.trim() ? (
+                      <Mail size={12} aria-hidden />
+                    ) : (
+                      <UserPlus size={12} aria-hidden />
+                    )}
+                    {emailsByRole[row.role]?.trim() ? "Send invite" : "Generate link"}
+                  </button>
+                  {emailStatusByRole[row.role] ? (
+                    <p className="text-xs text-[#6B6B64]">{emailStatusByRole[row.role]}</p>
+                  ) : null}
+                </div>
               )}
             </div>
           </div>
