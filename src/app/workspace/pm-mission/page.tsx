@@ -57,6 +57,8 @@ import {
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
+import { getProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
+import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-case-flow-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -96,6 +98,7 @@ export default async function PmMissionControlPage({
     : null;
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
+  let businessCaseStatus = null;
 
   if (projectId) {
     const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
@@ -103,6 +106,7 @@ export default async function PmMissionControlPage({
       bootstrapSummary = bootstrap.summary;
       hasBootstrapSummary = true;
     }
+    businessCaseStatus = await getProjectBusinessCaseStatus(projectId).catch(() => null);
   }
 
   const allPmReviews = filterPendingReviewsForPersona(
@@ -307,6 +311,13 @@ export default async function PmMissionControlPage({
             <PmProjectChip
               projects={data.projects.map((project) => ({ id: project.id, name: project.name }))}
               selectedProjectId={data.primaryProject.id}
+            />
+          ) : null}
+          {data.primaryProject && businessCaseStatus ? (
+            <PmBusinessCaseFlowPanel
+              projectId={data.primaryProject.id}
+              projectName={data.primaryProject.name}
+              initialStatus={businessCaseStatus}
             />
           ) : null}
           <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />

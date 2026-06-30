@@ -6,17 +6,22 @@ import { dxClass } from "@/lib/dx-theme";
 import { createClient } from "@/lib/supabase/server";
 import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 
-type Search = Promise<{ invite?: string }>;
+type Search = Promise<{ invite?: string; join?: string }>;
 
 export default async function SignupPage({ searchParams }: { searchParams: Search }) {
-  const { invite } = await searchParams;
+  const { invite, join } = await searchParams;
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (user) {
-    redirect(await resolveAuthenticatedPath(supabase, invite ? `/invite/${invite}` : null));
+    redirect(
+      await resolveAuthenticatedPath(
+        supabase,
+        join ? `/join?token=${encodeURIComponent(join)}` : invite ? `/invite/${invite}` : null,
+      ),
+    );
   }
 
   return (
@@ -26,18 +31,24 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
         30-day free trial. No credit card needed.
       </p>
 
-      {invite ? (
+      {invite || join ? (
         <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
-          You&apos;ve been invited to join a DeliverX workspace.
+          You&apos;ve been invited to join a DeliverX project workspace.
         </div>
       ) : null}
 
-      <SignupForm invite={invite} />
+      <SignupForm invite={invite} joinToken={join} />
 
       <p className="mt-5 text-center text-sm text-[#6B6B64]">
         Already have an account?{" "}
         <Link
-          href={invite ? `/login?next=${encodeURIComponent(`/invite/${invite}`)}` : "/login"}
+          href={
+            join
+              ? `/login?next=${encodeURIComponent(`/join?token=${encodeURIComponent(join)}`)}`
+              : invite
+                ? `/login?next=${encodeURIComponent(`/invite/${invite}`)}`
+                : "/login"
+          }
           className="font-medium text-[#1C4A2E] hover:underline"
         >
           Sign in

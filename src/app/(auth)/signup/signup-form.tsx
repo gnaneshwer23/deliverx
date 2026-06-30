@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/auth-errors";
 import { dxClass } from "@/lib/dx-theme";
 
-export function SignupForm({ invite }: { invite?: string }) {
+export function SignupForm({ invite, joinToken }: { invite?: string; joinToken?: string }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -32,9 +32,11 @@ export function SignupForm({ invite }: { invite?: string }) {
       return;
     }
 
-    const next = invite
-      ? `/invite/${encodeURIComponent(invite)}`
-      : "/onboarding/organisation";
+    const next = joinToken
+      ? `/join?token=${encodeURIComponent(joinToken)}`
+      : invite
+        ? `/invite/${encodeURIComponent(invite)}`
+        : "/onboarding/organisation";
 
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({
