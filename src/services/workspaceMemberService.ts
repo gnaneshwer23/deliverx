@@ -125,6 +125,46 @@ export async function acceptInviteToken(token: string): Promise<AcceptInviteResu
   };
 }
 
+export type ProjectWorkspaceMember = WorkspaceMemberRow & {
+  user_name: string | null;
+  user_email: string | null;
+};
+
+export async function listProjectWorkspaceMembersByRole(
+  projectId: string,
+  role: string,
+): Promise<ProjectWorkspaceMember[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("workspace_members")
+    .select("id, organisation_id, user_id, project_id, role, view_mode, invited_by, joined_at, users(name, email)")
+    .eq("project_id", projectId)
+    .eq("role", role)
+    .order("joined_at", { ascending: true });
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const usersRaw = row.users as
+      | { name: string | null; email: string | null }
+      | { name: string | null; email: string | null }[]
+      | null;
+    const users = Array.isArray(usersRaw) ? usersRaw[0] ?? null : usersRaw;
+    return {
+      id: row.id as string,
+      organisation_id: row.organisation_id as string,
+      user_id: row.user_id as string,
+      project_id: row.project_id as string,
+      role: row.role as string,
+      view_mode: row.view_mode as InviteViewMode,
+      invited_by: row.invited_by as string | null,
+      joined_at: row.joined_at as string,
+      user_name: users?.name ?? null,
+      user_email: users?.email ?? null,
+    };
+  });
+}
+
 export async function getWorkspaceMember(
   userId: string,
   projectId: string,
