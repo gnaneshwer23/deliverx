@@ -1,37 +1,15 @@
 "use client";
 
 import type { ProductMissionControl } from "@/services/pmDashboard";
-import { DxWidgetHeader } from "@/components/dx/dx-widget-header";
-import { dxClass } from "@/lib/dx-theme";
+import { DashboardPanelShell } from "@/components/dx/dashboard-panel-shell";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 
 const productAccent = getMissionPersonaAccent("product");
 
-const COLUMN_STYLE = {
-  now: {
-    header: "Now",
-    headerBg: productAccent.primary,
-    headerText: "#FFFFFF",
-    bg: productAccent.bg,
-    border: productAccent.border,
-    countBg: "rgba(255,255,255,0.22)",
-  },
-  next: {
-    header: "Next",
-    headerBg: "#B7620A",
-    headerText: "#FFFFFF",
-    bg: "#FEF6EC",
-    border: "#F0D4B0",
-    countBg: "rgba(255,255,255,0.22)",
-  },
-  later: {
-    header: "Later",
-    headerBg: "#6B6B64",
-    headerText: "#FFFFFF",
-    bg: "#FAFAF7",
-    border: "#E4E4DC",
-    countBg: "rgba(255,255,255,0.22)",
-  },
+const COLUMN_LABELS = {
+  now: "Now",
+  next: "Next",
+  later: "Later",
 } as const;
 
 export function ProductRoadmapKanban({
@@ -51,64 +29,56 @@ export function ProductRoadmapKanban({
   const totalItems = columns.reduce((sum, col) => sum + col.items.length, 0);
 
   return (
-    <div
-      className={`${dxClass.card} overflow-hidden border-t-[3px] p-0`}
-      style={{ borderTopColor: productAccent.primary }}
-      data-panel="product-roadmap-kanban"
+    <DashboardPanelShell
+      panelId="product-roadmap-kanban"
+      title="Now / Next / Later"
+      subtitle={
+        usesFallback
+          ? "— · Connect product context to populate live roadmap horizons"
+          : "What should we build next?"
+      }
+      count={totalItems}
+      countTone="neutral"
+      href={projectId ? `/project/${projectId}/product` : undefined}
+      actionLabel="Edit roadmap"
+      card
     >
-      <DxWidgetHeader
-        title="Now / Next / Later"
-        subtitle="What should we build next?"
-        count={totalItems}
-        countTone="neutral"
-        href={projectId ? `/project/${projectId}/product` : undefined}
-        actionLabel="Edit roadmap"
-      />
-      {usesFallback ? (
-        <p className="border-b border-[#E4E4DC] px-6 py-2 text-xs text-[#6B6B64]">
-          — · Connect product context to populate live roadmap horizons.
-        </p>
-      ) : null}
-      <div className="flex snap-x snap-mandatory gap-0 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible md:snap-none">
-        {columns.map((col) => {
-          const style = COLUMN_STYLE[col.key];
-          return (
-            <div key={col.key} className="flex min-w-[85%] shrink-0 snap-start flex-col border-[#E4E4DC] md:min-w-0 md:border-l md:first:border-l-0">
-              <div
-                className="flex items-center justify-between px-4 py-2.5"
-                style={{ backgroundColor: style.headerBg, color: style.headerText }}
+      <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible md:snap-none">
+        {columns.map((col) => (
+          <div
+            key={col.key}
+            className="flex min-w-[85%] shrink-0 snap-start flex-col rounded-lg border border-[#E4E4DC] bg-[#FAFAF7] md:min-w-0"
+          >
+            <div className="flex items-center justify-between border-b border-[#E4E4DC] px-3 py-2">
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider"
+                style={{ color: col.key === "now" ? productAccent.text : "#6B6B64" }}
               >
-                <span className="text-xs font-bold uppercase tracking-wider">{style.header}</span>
-                <span
-                  className="inline-flex min-w-[1.5rem] items-center justify-center rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums"
-                  style={{ backgroundColor: style.countBg }}
-                >
-                  {col.items.length}
-                </span>
-              </div>
-              <div className="flex-1 p-4" style={{ backgroundColor: style.bg }}>
-                <ul className="min-h-[80px] space-y-2">
-                  {col.items.length ? (
-                    col.items.map((item) => (
-                      <li
-                        key={item}
-                        className="rounded-lg border bg-white px-3 py-2.5 text-sm text-[#2C2C28] shadow-[0_1px_4px_rgba(13,13,11,0.04)]"
-                        style={{ borderColor: style.border }}
-                      >
-                        {item}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="rounded-lg border border-dashed px-3 py-4 text-center text-sm text-[#A8A89E]" style={{ borderColor: style.border }}>
-                      Drop items here
-                    </li>
-                  )}
-                </ul>
-              </div>
+                {COLUMN_LABELS[col.key]}
+              </span>
+              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-[#F0F0E8] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[9px] font-bold tabular-nums text-[#6B6B64]">
+                {col.items.length}
+              </span>
             </div>
-          );
-        })}
+            <ul className="min-h-[72px] space-y-2 p-3">
+              {col.items.length ? (
+                col.items.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-md border border-[#E4E4DC] bg-white px-3 py-2 text-sm text-[#2C2C28]"
+                  >
+                    {item}
+                  </li>
+                ))
+              ) : (
+                <li className="rounded-md border border-dashed border-[#E4E4DC] px-3 py-3 text-center text-sm text-[#A8A89E]">
+                  —
+                </li>
+              )}
+            </ul>
+          </div>
+        ))}
       </div>
-    </div>
+    </DashboardPanelShell>
   );
 }

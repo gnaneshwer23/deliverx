@@ -111,6 +111,31 @@ export type BuildProductRoadmapSynthesisInput = {
   fallbackSummary?: string;
 };
 
+export type BuildProductRoadmapSubtitleInput = {
+  nowCount: number;
+  pendingReviewCount: number;
+};
+
+/** Steady-state header line — roadmap counts and AI review queue only. */
+export function buildProductRoadmapSubtitle(input: BuildProductRoadmapSubtitleInput): string {
+  const parts: string[] = [];
+
+  if (input.nowCount > 0) {
+    parts.push(`${input.nowCount} in Now`);
+  }
+  if (input.pendingReviewCount > 0) {
+    parts.push(
+      `${input.pendingReviewCount} in AI review queue`,
+    );
+  }
+
+  if (parts.length === 0) {
+    return "Roadmap and RICE prioritisation for your product";
+  }
+
+  return parts.join(" · ");
+}
+
 const DEFAULT_PRODUCT_SUMMARY =
   "Upload product context and run AI analysis to populate roadmap and RICE prioritisation.";
 
@@ -130,7 +155,7 @@ export function buildProductRoadmapSynthesis(
   }
   if (input.pendingReviewCount > 0) {
     blockers.push(
-      `${input.pendingReviewCount} review${input.pendingReviewCount === 1 ? "" : "s"} waiting`,
+      `${input.pendingReviewCount} item${input.pendingReviewCount === 1 ? "" : "s"} in AI review queue`,
     );
   }
   if (input.productHealth < 60) {

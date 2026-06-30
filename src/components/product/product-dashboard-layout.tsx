@@ -2,27 +2,21 @@
 
 import type { ReactNode } from "react";
 
-/** Now/Next/Later roadmap-led product layout. */
+/** Roadmap-led product layout — synthesis, KPIs, then one dominant focus area. */
 export function ProductDashboardLayout({
   aiSynthesis,
   kpiStrip,
-  roadmapKanban,
-  riceBacklog,
-  footer,
+  primaryFocus,
 }: {
   aiSynthesis: ReactNode;
   kpiStrip: ReactNode;
-  roadmapKanban: ReactNode;
-  riceBacklog: ReactNode;
-  footer?: ReactNode;
+  primaryFocus: ReactNode;
 }) {
   return (
-    <div className="space-y-4" data-layout="product-roadmap">
+    <div className="space-y-6" data-layout="product-roadmap">
       {aiSynthesis}
       {kpiStrip}
-      {roadmapKanban}
-      {riceBacklog}
-      {footer}
+      {primaryFocus}
     </div>
   );
 }

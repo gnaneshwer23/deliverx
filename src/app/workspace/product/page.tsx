@@ -8,6 +8,7 @@ import { ProductMissionShell } from "@/components/product/product-mission-shell"
 import { ProductRoadmapKpiStrip } from "@/components/product/product-roadmap-kpi-strip";
 import { ProductRoadmapKanban } from "@/components/product/product-roadmap-kanban";
 import { ProductRiceBacklogTable } from "@/components/product/product-rice-backlog-table";
+import { ProductPrimaryFocus } from "@/components/product/product-primary-focus";
 import { PersonaAiSynthesis } from "@/components/dx/persona-ai-synthesis";
 import { MissionControlNoProjectBanner } from "@/components/dx/mission-control-empty";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
@@ -19,11 +20,12 @@ import {
   PRODUCT_DAY_ONE_SUBTITLE,
   resolveProductDashboardMode,
 } from "@/lib/product-dashboard-mode";
-import { PERSONA_REVIEW_LABELS, filterReviewsByProject } from "@/lib/approval/persona-reviews";
-import { NextUpStrip } from "@/components/dx/next-up-strip";
-import { buildMissionNextUpItems } from "@/lib/mission-next-up";
+import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
-import { buildProductRoadmapSynthesis } from "@/lib/product-roadmap-kpis";
+import {
+  buildProductRoadmapSynthesis,
+  buildProductRoadmapSubtitle,
+} from "@/lib/product-roadmap-kpis";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +80,7 @@ export default async function ProductMissionControlPage({
 
   const productAccent = getMissionPersonaAccent("product");
   const isLive = data.dataSources.roadmapRice === "live";
+  const showRiceTab = isLive && data.topFeatures.length > 0;
 
   const roadmapSummary = buildProductRoadmapSynthesis({
     projectName: data.primaryProject?.name,
@@ -89,15 +92,9 @@ export default async function ProductMissionControlPage({
     fallbackSummary: data.aiSummary,
   });
 
-  const nextUpItems = buildMissionNextUpItems({
-    personaId: "product",
-    primaryProject: data.primaryProject,
-    hasProjects: data.projects.length > 0,
-    pendingReviews,
-    guidedTaskTitle: data.guidedTasks[0]?.title,
-    guidedTaskHref: data.primaryProject
-      ? `/project/${data.primaryProject.id}/product`
-      : undefined,
+  const steadyStateSubtitle = buildProductRoadmapSubtitle({
+    nowCount: data.roadmap.now.length,
+    pendingReviewCount: projectPendingReviews.length,
   });
 
   const dashboard = (
@@ -110,15 +107,20 @@ export default async function ProductMissionControlPage({
         />
       }
       kpiStrip={<ProductRoadmapKpiStrip data={data} projectId={projectId} />}
-      roadmapKanban={
-        <ProductRoadmapKanban
-          roadmap={data.roadmap}
-          usesFallback={!isLive}
-          projectId={projectId}
+      primaryFocus={
+        <ProductPrimaryFocus
+          showRiceTab={showRiceTab}
+          roadmapKanban={
+            <ProductRoadmapKanban
+              roadmap={data.roadmap}
+              usesFallback={!isLive}
+              projectId={projectId}
+            />
+          }
+          riceBacklog={
+            <ProductRiceBacklogTable features={data.topFeatures} usesFallback={!isLive} />
+          }
         />
-      }
-      riceBacklog={
-        <ProductRiceBacklogTable features={data.topFeatures} usesFallback={!isLive} />
       }
     />
   );
@@ -129,7 +131,8 @@ export default async function ProductMissionControlPage({
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
-        subtitle: serverProductMode === "day-one" ? PRODUCT_DAY_ONE_SUBTITLE : undefined,
+        subtitle:
+          serverProductMode === "day-one" ? PRODUCT_DAY_ONE_SUBTITLE : steadyStateSubtitle,
       }}
     >
       <ProductMissionShell
@@ -139,45 +142,42 @@ export default async function ProductMissionControlPage({
         roadmapItemCount={roadmapItemCount}
         summary={bootstrapSummary}
       >
-        <div className="space-y-4 p-6 md:p-8">
-        {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
-        <MissionBootstrapBanner
-          personaId="product"
-          projectId={data.primaryProject?.id}
-          showFallback={!isLive}
-        />
-        <NextUpStrip
-          items={nextUpItems}
-          personaLabel={PERSONA_REVIEW_LABELS.product}
-          personaId="product"
-        />
-        {data.projects.length > 1 && data.primaryProject ? (
-          <div className="flex flex-wrap gap-2">
-            {data.projects.slice(0, 8).map((p) => (
-              <Link
-                key={p.id}
-                href={`/workspace/product?project=${p.id}`}
-                className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3 py-1 text-xs font-medium ${
-                  p.id === data.primaryProject?.id
-                    ? ""
-                    : "border-[#E4E4DC] text-[#6B6B64]"
-                }`}
-                style={
-                  p.id === data.primaryProject?.id
-                    ? {
-                        borderColor: productAccent.primary,
-                        backgroundColor: productAccent.bg,
-                        color: productAccent.text,
-                      }
-                    : undefined
-                }
-              >
-                {p.name}
-              </Link>
-            ))}
-          </div>
-        ) : null}
-        {dashboard}
+        <div className="space-y-6 p-6 md:p-8">
+          {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="Product" /> : null}
+          {!hasBootstrapSummary ? (
+            <MissionBootstrapBanner
+              personaId="product"
+              projectId={data.primaryProject?.id}
+              showFallback={!isLive}
+            />
+          ) : null}
+          {data.projects.length > 1 && data.primaryProject ? (
+            <div className="flex flex-wrap gap-2">
+              {data.projects.slice(0, 8).map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/workspace/product?project=${p.id}`}
+                  className={`inline-flex min-h-9 touch-manipulation items-center rounded-full border px-3 py-1 text-xs font-medium ${
+                    p.id === data.primaryProject?.id
+                      ? ""
+                      : "border-[#E4E4DC] text-[#6B6B64]"
+                  }`}
+                  style={
+                    p.id === data.primaryProject?.id
+                      ? {
+                          borderColor: productAccent.primary,
+                          backgroundColor: productAccent.bg,
+                          color: productAccent.text,
+                        }
+                      : undefined
+                  }
+                >
+                  {p.name}
+                </Link>
+              ))}
+            </div>
+          ) : null}
+          {dashboard}
         </div>
       </ProductMissionShell>
     </MissionDashboardChrome>
