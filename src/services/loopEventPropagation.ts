@@ -171,12 +171,149 @@ export function decisionChangeToImpactDrafts(input: {
   return [{ targetRole: "pm", message: `Decision updated: ${input.title}`, tone: "updated" }];
 }
 
+export function businessCaseUploadToImpactDrafts(input: {
+  projectName: string;
+  extractionStatus: "none" | "pending" | "queued" | "complete";
+  baInviteGenerated?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const analysisQueued = input.extractionStatus === "queued";
+  const drafts: DeliveryImpactEventDraft[] = [
+    {
+      targetRole: "pm",
+      message: analysisQueued
+        ? `Business case uploaded — ${input.projectName} in AI Review Queue`
+        : `Business case uploaded — ${input.projectName}`,
+      tone: analysisQueued ? "waiting" : "updated",
+    },
+    {
+      targetRole: "founder",
+      message: `Business case received for ${input.projectName}`,
+      tone: "updated",
+    },
+  ];
+
+  if (input.baInviteGenerated) {
+    drafts.push(
+      {
+        targetRole: "pm",
+        message: "BA invite link ready — share to onboard requirements lead",
+        tone: "waiting",
+      },
+      {
+        targetRole: "ba",
+        message: `${input.projectName} needs a BA — join link is active`,
+        tone: "ready",
+      },
+    );
+  } else {
+    drafts.push({
+      targetRole: "ba",
+      message: `${input.projectName} business case uploaded — awaiting BA assignment`,
+      tone: "waiting",
+    });
+  }
+
+  return drafts;
+}
+
+export function workspaceMemberJoinedToImpactDrafts(input: {
+  role: string;
+  projectName: string;
+  memberName?: string | null;
+  bootstrapSeeded?: boolean;
+}): DeliveryImpactEventDraft[] {
+  const who = input.memberName?.trim() || input.role.replace(/_/g, " ");
+
+  switch (input.role) {
+    case "ba": {
+      const drafts: DeliveryImpactEventDraft[] = [
+        { targetRole: "pm", message: `${who} joined ${input.projectName} as BA`, tone: "updated" },
+        { targetRole: "scrum", message: `BA onboarded for ${input.projectName}`, tone: "updated" },
+      ];
+      if (input.bootstrapSeeded) {
+        drafts.push(
+          {
+            targetRole: "ba",
+            message: "Requirements workspace seeded from business case",
+            tone: "ready",
+          },
+          {
+            targetRole: "engineer",
+            message: "Requirements extraction starting — stories may follow",
+            tone: "waiting",
+          },
+        );
+      }
+      return drafts;
+    }
+    case "engineer":
+      return [
+        { targetRole: "pm", message: `${who} joined as engineer on ${input.projectName}`, tone: "updated" },
+        { targetRole: "scrum", message: "Engineering capacity added to sprint planning", tone: "updated" },
+      ];
+    case "qa":
+      return [
+        { targetRole: "pm", message: `${who} joined as QA on ${input.projectName}`, tone: "updated" },
+        { targetRole: "engineer", message: "QA joined — test coverage review incoming", tone: "waiting" },
+      ];
+    case "scrum_master":
+      return [
+        { targetRole: "pm", message: `${who} joined as Scrum Master on ${input.projectName}`, tone: "updated" },
+        { targetRole: "scrum", message: "Sprint cadence owner is active on the project", tone: "ready" },
+      ];
+    default:
+      return [
+        { targetRole: "pm", message: `${who} joined ${input.projectName}`, tone: "updated" },
+      ];
+  }
+}
+
 export function artifactReviewChangeToImpactDrafts(input: {
   entityType: string;
   title: string;
   decision: "approved" | "rejected";
+  source?: string;
 }): DeliveryImpactEventDraft[] {
   const label = input.title.trim() || "Artifact";
+
+  if (input.source === "business_case_upload") {
+    if (input.decision === "rejected") {
+      return [
+        {
+          targetRole: "pm",
+          message: "Business case analysis rejected — revise and re-upload",
+          tone: "updated",
+        },
+        {
+          targetRole: "ba",
+          message: "Business case review blocked — PM must re-submit",
+          tone: "waiting",
+        },
+      ];
+    }
+    return [
+      {
+        targetRole: "pm",
+        message: "Business case analysis approved — proceed to BA onboarding",
+        tone: "updated",
+      },
+      {
+        targetRole: "ba",
+        message: "Approved business case ready for requirements extraction",
+        tone: "ready",
+      },
+      {
+        targetRole: "founder",
+        message: "Business case cleared for delivery",
+        tone: "updated",
+      },
+      {
+        targetRole: "scrum",
+        message: "Delivery scope confirmed from approved business case",
+        tone: "updated",
+      },
+    ];
+  }
 
   if (input.decision === "rejected") {
     return [

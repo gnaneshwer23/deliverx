@@ -15,6 +15,10 @@ import { createBrainDocument } from "@/services/brainDocumentService";
 import { saveBusinessCaseReview } from "@/services/businessCaseReview";
 import { generateInviteToken } from "@/services/inviteTokenService";
 import { listProjectWorkspaceMembersByRole } from "@/services/workspaceMemberService";
+import {
+  businessCaseUploadToImpactDrafts,
+  emitLoopPropagation,
+} from "@/services/loopEventPropagation";
 
 export type BusinessCaseExtractionStatus = "none" | "pending" | "queued" | "complete";
 
@@ -232,6 +236,18 @@ export async function uploadProjectBusinessCase(input: {
   }
 
   refreshProjectDashboards(input.projectId);
+
+  void emitLoopPropagation({
+    projectId: input.projectId,
+    actionType: "business_case_upload",
+    entityType: "charter",
+    drafts: businessCaseUploadToImpactDrafts({
+      projectName: input.projectName,
+      extractionStatus,
+      baInviteGenerated: Boolean(baInviteUrl),
+    }),
+    syncNarrativeThreads: false,
+  }).catch(() => 0);
 
   const status = await getProjectBusinessCaseStatus(input.projectId);
   return {

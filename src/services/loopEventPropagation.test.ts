@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   artifactReviewChangeToImpactDrafts,
+  businessCaseUploadToImpactDrafts,
   changeRequestChangeToImpactDrafts,
   clarificationChangeToImpactDrafts,
   decisionChangeToImpactDrafts,
@@ -13,6 +14,7 @@ import {
   shouldSeedNarrativeDemoThreads,
   storyChangeToImpactDrafts,
   taskChangeToImpactDrafts,
+  workspaceMemberJoinedToImpactDrafts,
   workstreamChangeToImpactDrafts,
 } from "@/services/loopEventPropagation";
 
@@ -128,6 +130,36 @@ describe("loopEventPropagation", () => {
     });
     expect(approved.some((d) => d.targetRole === "engineer")).toBe(true);
     expect(rejected.some((d) => d.targetRole === "pm")).toBe(true);
+  });
+
+  it("builds business case upload and BA join impact drafts", () => {
+    const upload = businessCaseUploadToImpactDrafts({
+      projectName: "Payments Revamp",
+      extractionStatus: "queued",
+      baInviteGenerated: true,
+    });
+    expect(upload.some((d) => d.targetRole === "pm" && d.tone === "waiting")).toBe(true);
+    expect(upload.some((d) => d.targetRole === "ba" && d.tone === "ready")).toBe(true);
+
+    const joined = workspaceMemberJoinedToImpactDrafts({
+      role: "ba",
+      projectName: "Payments Revamp",
+      memberName: "Alex Chen",
+      bootstrapSeeded: true,
+    });
+    expect(joined.some((d) => d.targetRole === "pm" && d.message.includes("Alex Chen"))).toBe(true);
+    expect(joined.some((d) => d.targetRole === "ba" && d.tone === "ready")).toBe(true);
+  });
+
+  it("builds business case analysis approve impact drafts", () => {
+    const approved = artifactReviewChangeToImpactDrafts({
+      entityType: "structure_bundle",
+      title: "Business case analysis — AI Review Queue",
+      decision: "approved",
+      source: "business_case_upload",
+    });
+    expect(approved.some((d) => d.targetRole === "pm")).toBe(true);
+    expect(approved.some((d) => d.targetRole === "ba" && d.tone === "ready")).toBe(true);
   });
 
   it("builds RAID, story, workstream, milestone, and change impact drafts", () => {
