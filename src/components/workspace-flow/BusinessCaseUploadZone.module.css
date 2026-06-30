@@ -1,0 +1,51 @@
+.uploadZone {
+  position: relative;
+  overflow: hidden;
+}
+
+.uploadZoneActive {
+  border-color: #1c4a2e;
+  background: #eef5f1;
+}
+
+.scanLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(61, 150, 96, 0.4) 20%,
+    #3d9660 50%,
+    rgba(61, 150, 96, 0.4) 80%,
+    transparent 100%
+  );
+  animation: scanDown 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scanDown {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 2px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanLine {
+    animation: none;
+    top: 50%;
+    opacity: 0.6;
+  }
+}

@@ -117,12 +117,58 @@ export async function acceptInviteToken(token: string): Promise<AcceptInviteResu
 
   return {
     member,
-    redirectPath: resolveRoleHomePath(validation.role),
+    redirectPath: buildInviteAcceptRedirectPath({
+      role: validation.role,
+      projectId: validation.projectId,
+    }),
     projectId: validation.projectId,
     projectName: validation.projectName,
     role: validation.role,
     viewMode: validation.viewMode,
   };
+}
+
+function buildInviteAcceptRedirectPath(input: {
+  role: string;
+  projectId: string;
+}): string {
+  const base = resolveRoleHomePath(input.role);
+  const params = new URLSearchParams({ project: input.projectId, welcome: "1" });
+  if (input.role === "ba") params.set("flow", "review");
+  return `${base}?${params.toString()}`;
+}
+
+export async function listProjectWorkspaceMembers(
+  projectId: string,
+): Promise<ProjectWorkspaceMember[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("workspace_members")
+    .select("id, organisation_id, user_id, project_id, role, view_mode, invited_by, joined_at, users(name, email)")
+    .eq("project_id", projectId)
+    .order("joined_at", { ascending: true });
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => {
+    const usersRaw = row.users as
+      | { name: string | null; email: string | null }
+      | { name: string | null; email: string | null }[]
+      | null;
+    const users = Array.isArray(usersRaw) ? usersRaw[0] ?? null : usersRaw;
+    return {
+      id: row.id as string,
+      organisation_id: row.organisation_id as string,
+      user_id: row.user_id as string,
+      project_id: row.project_id as string,
+      role: row.role as string,
+      view_mode: row.view_mode as InviteViewMode,
+      invited_by: row.invited_by as string | null,
+      joined_at: row.joined_at as string,
+      user_name: users?.name ?? null,
+      user_email: users?.email ?? null,
+    };
+  });
 }
 
 export type ProjectWorkspaceMember = WorkspaceMemberRow & {

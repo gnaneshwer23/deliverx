@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { SignupForm } from "@/app/(auth)/signup/signup-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { buildJoinReturnPath, formatInviteRoleLabel } from "@/lib/invite-role-labels";
@@ -24,6 +24,13 @@ type InviteError = {
   message?: string;
 };
 
+type JoinWelcome = {
+  projectId: string;
+  projectName: string;
+  role: string;
+  redirectPath: string;
+};
+
 export function JoinClient({ authenticated }: { authenticated: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,6 +44,7 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
   const [acceptError, setAcceptError] = useState<string | null>(null);
   const [accepting, setAccepting] = useState(false);
   const [loading, setLoading] = useState(() => Boolean(token));
+  const [welcome, setWelcome] = useState<JoinWelcome | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -86,13 +94,20 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
         ok?: boolean;
         error?: string;
         redirectPath?: string;
+        projectId?: string;
+        projectName?: string;
+        role?: string;
       };
       if (!res.ok || !data.ok || !data.redirectPath) {
         setAcceptError(data.error ?? "Could not accept invite.");
         return;
       }
-      router.push(data.redirectPath);
-      router.refresh();
+      setWelcome({
+        projectId: data.projectId ?? preview?.projectId ?? "",
+        projectName: data.projectName ?? preview?.projectName ?? "Project workspace",
+        role: data.role ?? preview?.role ?? "team_member",
+        redirectPath: data.redirectPath,
+      });
     } catch {
       setAcceptError("Could not accept invite. Try again.");
     } finally {
@@ -127,6 +142,43 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
               <Link href="/" className="mt-6 inline-flex text-sm font-medium text-[#1C4A2E] hover:underline">
                 Back to DeliverX
               </Link>
+            </div>
+          ) : welcome ? (
+            <div className={`${dxClass.cardPad} space-y-6`}>
+              <div className="text-center">
+                <CheckCircle2 size={36} className="mx-auto text-[#1A6B3A]" aria-hidden />
+                <h1 className={`${dxClass.display} mt-4 text-2xl text-[#0D0D0B]`}>
+                  Welcome to DeliverX
+                </h1>
+                <p className="mt-2 text-sm text-[#6B6B64]">
+                  You&apos;re connected to your project workspace.
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-[#C6DDD0] bg-[#EEF5F1] px-4 py-4">
+                <p className={dxClass.capsAcc}>Connected workspace</p>
+                <p className={`${dxClass.display} mt-2 text-xl text-[#0D0D0B]`}>
+                  {welcome.projectName}
+                </p>
+                <p className="mt-1 text-sm text-[#6B6B64]">
+                  Role:{" "}
+                  <span className="font-medium text-[#2C2C28]">
+                    {formatInviteRoleLabel(welcome.role)}
+                  </span>
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  router.push(welcome.redirectPath);
+                  router.refresh();
+                }}
+                className={`${dxClass.btnPrimary} w-full`}
+              >
+                Open your workspace
+                <ArrowRight size={14} aria-hidden />
+              </button>
             </div>
           ) : preview ? (
             <div className={`${dxClass.cardPad} space-y-6`}>
