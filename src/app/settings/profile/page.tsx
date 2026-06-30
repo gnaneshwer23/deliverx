@@ -8,6 +8,7 @@ import { isEmailConfigured } from "@/lib/email/resend";
 import { getOrgNotificationSettings } from "@/services/notificationService";
 import { isOrgAdmin } from "@/lib/org-admin";
 import { hasDeveloperAccess } from "@/lib/developer-access";
+import { HelmCopilotSection } from "@/components/copilot/helm-copilot-section";
 import { dxClass } from "@/lib/dx-theme";
 
 export default async function ProfileSettingsPage() {
@@ -72,6 +73,8 @@ export default async function ProfileSettingsPage() {
             Workspace settings and integrations are managed by your PM or executive sponsor.
           </p>
         ) : null}
+
+        <HelmCopilotSection />
       </div>
     </>
   );

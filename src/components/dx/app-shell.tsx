@@ -477,7 +477,7 @@ function AppShellLayout({
           />
         </>
       ) : null}
-      <AiDrawer projects={assistantProjects} />
+      <AiDrawer projects={assistantProjects} userRole={userRole} />
       {children}
     </>
   );

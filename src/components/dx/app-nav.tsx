@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { Brain, Cpu, Menu, Plus, X } from "lucide-react";
+import { Brain, Compass, Menu, Plus, X } from "lucide-react";
+import { HELM_NAME } from "@/config/helm-copilot";
 import { useAiDrawer } from "@/components/dx/ai-drawer-context";
 import { DxLogo } from "@/components/dx/dx-logo";
 import { UserMenu } from "@/components/dx/user-menu";
@@ -110,7 +111,7 @@ export function AppNav({
           onClick={toggleDrawer}
           className={`${dxClass.btnSm} hidden sm:inline-flex`}
         >
-          <Cpu size={12} /> AI Assistant
+          <Compass size={12} /> Ask {HELM_NAME}
         </button>
         <Link
           href="/workspace/assistant"
