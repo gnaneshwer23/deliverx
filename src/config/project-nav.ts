@@ -9,6 +9,8 @@ export type ProjectNavSection = {
 };
 
 /** Static project routes (segment appended to /project/[id]/). */
+export const READ_ONLY_PROJECT_SEGMENTS = new Set(["", "reports", "decisions", "raid"]);
+
 export const projectNavSections: ProjectNavSection[] = [
   {
     label: "Business analysis",

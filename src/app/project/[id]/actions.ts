@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getProjectAccess } from "@/lib/project-access";
 import { onProjectClose } from "@/services/memory";
 
 export type ExtractResult =
@@ -17,10 +18,29 @@ export type ProjectStatus =
 
 export type StatusResult = { ok: true } | { ok: false; error: string };
 
+async function assertProjectWrite(projectId: string, userId: string): Promise<StatusResult | null> {
+  const access = await getProjectAccess(userId, projectId);
+  if (!access.canWrite) {
+    return {
+      ok: false,
+      error: "Read-only access — sponsors cannot modify this workspace.",
+    };
+  }
+  return null;
+}
+
 export async function extractInsightsAction(
   projectId: string,
 ): Promise<ExtractResult> {
   try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { ok: false, error: "Not authenticated" };
+    const blocked = await assertProjectWrite(projectId, user.id);
+    if (blocked) return blocked;
+
     const { insights, playbook, skipped } = await onProjectClose(projectId, {
       force: true,
     });
@@ -50,6 +70,9 @@ export async function updateProjectStatusAction(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Not authenticated" };
+
+  const blocked = await assertProjectWrite(projectId, user.id);
+  if (blocked) return blocked;
 
   const { data: project } = await supabase
     .from("projects")

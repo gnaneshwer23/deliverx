@@ -52,7 +52,9 @@ export function PmBusinessCaseFlowPanel({
   const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
   const [brief, setBrief] = useState("");
+  const [baEmail, setBaEmail] = useState("");
   const [baInviteUrl, setBaInviteUrl] = useState<string | null>(null);
+  const [emailStatus, setEmailStatus] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [progressStage, setProgressStage] = useState<UploadProgressStage>("idle");
@@ -128,20 +130,37 @@ export function PmBusinessCaseFlowPanel({
 
   function generateBaInvite() {
     setError(null);
+    setEmailStatus(null);
+    const email = baEmail.trim().toLowerCase();
     startTransition(async () => {
       try {
         const res = await fetch("/api/invites/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projectId, role: "ba" }),
+          body: JSON.stringify({ projectId, role: "ba", email: email || undefined }),
         });
-        const data = (await res.json()) as { ok?: boolean; joinUrl?: string; error?: string };
+        const data = (await res.json()) as {
+          ok?: boolean;
+          joinUrl?: string;
+          emailSent?: boolean;
+          emailReason?: string;
+          error?: string;
+        };
         if (!res.ok || !data.ok || !data.joinUrl) {
           setError(data.error ?? "Could not generate BA invite.");
           return;
         }
         setBaInviteUrl(data.joinUrl);
         setStatus((prev) => ({ ...prev, baInviteActive: true }));
+        if (email) {
+          setEmailStatus(
+            data.emailSent
+              ? `Invite emailed to ${email}`
+              : data.emailReason
+                ? `Link created — email not sent (${data.emailReason})`
+                : "Link created — email not configured",
+          );
+        }
       } catch {
         setError("Could not generate BA invite.");
       }
@@ -234,6 +253,14 @@ export function PmBusinessCaseFlowPanel({
                   <p className="text-sm text-[#6B6B64]">
                     Upload a business case to auto-generate a BA invite, or create one manually.
                   </p>
+                  <input
+                    type="email"
+                    placeholder="BA email (optional)"
+                    value={baEmail}
+                    onChange={(e) => setBaEmail(e.target.value)}
+                    className={`${dxClass.input} text-xs`}
+                    aria-label="BA invite email"
+                  />
                   <button
                     type="button"
                     disabled={isPending || !status.hasBusinessCase}
@@ -245,8 +272,11 @@ export function PmBusinessCaseFlowPanel({
                     ) : (
                       <UserPlus size={12} aria-hidden />
                     )}
-                    Generate BA invite link
+                    {baEmail.trim() ? "Send BA invite" : "Generate BA invite link"}
                   </button>
+                  {emailStatus ? (
+                    <p className="text-xs text-[#6B6B64]">{emailStatus}</p>
+                  ) : null}
                 </div>
               )}
             </section>
