@@ -22,6 +22,11 @@ import {
 import { queueProposals } from "./proposedActions";
 import type { StructuredProposal } from "./proposedActionEngine";
 import { createClient } from "@/lib/supabase/server";
+import {
+  enrichProposalsWithAssigneeIds,
+  type MemberForAssignee,
+} from "@/lib/meetings/speaker-assignee";
+import { listProjectWorkspaceMembers } from "./workspaceMemberService";
 
 export type SpeakerSegment = {
   speaker: string;
@@ -38,6 +43,8 @@ export type MeetingIntelPipelineInput = {
   /** Use stub extraction when AI is unavailable or explicitly requested. */
   mode?: "auto" | "ai" | "stub";
   queueProposals?: boolean;
+  /** Label appended when transcript is merged into meeting notes. */
+  transcriptSourceLabel?: string;
 };
 
 export type MeetingIntelPipelineResult = {
@@ -173,6 +180,20 @@ async function resolveProjectName(projectId: string): Promise<string | undefined
   return data?.name ? String(data.name) : undefined;
 }
 
+async function resolveProjectMembers(projectId: string): Promise<MemberForAssignee[]> {
+  try {
+    const members = await listProjectWorkspaceMembers(projectId);
+    return members.map((m) => ({
+      user_id: m.user_id,
+      user_name: m.user_name,
+      user_email: m.user_email,
+      role: m.role,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function runMeetingIntelPipeline(
   input: MeetingIntelPipelineInput,
 ): Promise<MeetingIntelPipelineResult> {
@@ -181,9 +202,13 @@ export async function runMeetingIntelPipeline(
 
   const segments = parseSpeakerSegments(transcript);
   const ceremonyType = input.ceremonyType ?? "general";
+  const notesLabel = input.transcriptSourceLabel?.trim() || "Ingest";
   const useStub =
     input.mode === "stub" || (input.mode !== "ai" && !isOpenAiConfigured());
-  const projectName = await resolveProjectName(input.projectId);
+  const [projectName, projectMembers] = await Promise.all([
+    resolveProjectName(input.projectId),
+    resolveProjectMembers(input.projectId),
+  ]);
 
   let meetingId = input.meetingId;
   if (meetingId) {
@@ -194,7 +219,7 @@ export async function runMeetingIntelPipeline(
     await updateMeeting(meetingId, {
       transcript,
       notes: existing.notes?.trim()
-        ? `${existing.notes.trim()}\n\n--- Ingest ---\n${transcript}`
+        ? `${existing.notes.trim()}\n\n--- ${notesLabel} ---\n${transcript}`
         : transcript,
       status: "completed",
     });
@@ -224,7 +249,8 @@ export async function runMeetingIntelPipeline(
   let queuedProposals = 0;
   if (input.queueProposals !== false) {
     const base = intelligenceResultToProposals(extraction, input.title, ceremonyType);
-    const proposals = enrichProposalsWithSpeakerRoles(base, segments);
+    const withRoles = enrichProposalsWithSpeakerRoles(base, segments);
+    const proposals = enrichProposalsWithAssigneeIds(withRoles, segments, projectMembers);
     const queued = await queueProposals({
       projectId: input.projectId,
       source: "meeting",

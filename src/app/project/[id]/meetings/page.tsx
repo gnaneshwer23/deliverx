@@ -17,6 +17,7 @@ import { MeetingForm } from "./meeting-form";
 import { MeetingAiPanel } from "./meeting-ai-panel";
 import { MeetingRecallPanel } from "@/components/meetings/meeting-recall-panel";
 import { MeetingTranscriptIngest } from "@/components/meetings/meeting-transcript-ingest";
+import { isRecallConfigured } from "@/lib/integrations/recall";
 
 type Params = Promise<{ id: string }>;
 type Search = Promise<{ page?: string; ceremony?: string }>;
@@ -67,6 +68,7 @@ export default async function ProjectMeetingsPage({
     })),
   ]);
   const pages = totalPages(total, DEFAULT_PAGE_SIZE);
+  const recallConfigured = isRecallConfigured();
 
   function buildHref(nextPage: number) {
     return nextPage > 0 ? `/project/${id}/meetings?page=${nextPage}` : `/project/${id}/meetings`;
@@ -136,6 +138,7 @@ export default async function ProjectMeetingsPage({
                       recallBotId={m.recall_bot_id}
                       syncStatus={m.sync_status}
                       recordingUrl={m.recording_url}
+                      recallConfigured={recallConfigured}
                     />
                     <MeetingTranscriptIngest
                       projectId={id}
