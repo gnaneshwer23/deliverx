@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { SignupForm } from "@/app/(auth)/signup/signup-form";
 import { DxCaps } from "@/components/dx/dx-logo";
@@ -31,42 +31,46 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
   const view = searchParams.get("view");
 
   const [preview, setPreview] = useState<InvitePreview | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(() =>
+    token ? null : "This invite link is missing a token.",
+  );
   const [acceptError, setAcceptError] = useState<string | null>(null);
   const [accepting, setAccepting] = useState(false);
-  const [loading, setLoading] = useState(Boolean(token));
-
-  const loadPreview = useCallback(async () => {
-    if (!token) {
-      setLoadError("This invite link is missing a token.");
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    setLoadError(null);
-    try {
-      const res = await fetch(`/api/invites/validate?token=${encodeURIComponent(token)}`);
-      const data = (await res.json()) as InvitePreview | InviteError & { message?: string };
-      if (!res.ok || !("ok" in data) || !data.ok) {
-        setLoadError(
-          ("message" in data && data.message) ||
-            "This invite link is not valid — ask your Project Manager for a new one.",
-        );
-        setPreview(null);
-        return;
-      }
-      setPreview(data);
-    } catch {
-      setLoadError("Could not validate invite. Check your connection and try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+  const [loading, setLoading] = useState(() => Boolean(token));
 
   useEffect(() => {
-    void loadPreview();
-  }, [loadPreview]);
+    if (!token) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/invites/validate?token=${encodeURIComponent(token)}`);
+        const data = (await res.json()) as InvitePreview | InviteError & { message?: string };
+        if (cancelled) return;
+        if (!res.ok || !("ok" in data) || !data.ok) {
+          setLoadError(
+            ("message" in data && data.message) ||
+              "This invite link is not valid — ask your Project Manager for a new one.",
+          );
+          setPreview(null);
+          return;
+        }
+        setPreview(data);
+        setLoadError(null);
+      } catch {
+        if (!cancelled) {
+          setLoadError("Could not validate invite. Check your connection and try again.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
 
   async function acceptInvite() {
     if (!token) return;
