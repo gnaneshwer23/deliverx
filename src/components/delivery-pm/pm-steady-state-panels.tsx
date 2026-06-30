@@ -39,7 +39,7 @@ import {
   PmSeverityBar,
   PmTabProgressDot,
 } from "@/components/delivery-pm/pm-viz-primitives";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { StakeholderActionRow } from "@/services/deliveryPmEngine";
 import type { TaskWithMeta } from "@/services/delivery";

@@ -8,7 +8,7 @@ import {
   ARTIFACT_ENTITY_LABELS,
   REVIEW_STATUS_LABELS,
 } from "@/lib/approval/constants";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type {
   BusinessCaseStructuredAnalysis,
   StructuredCategory,

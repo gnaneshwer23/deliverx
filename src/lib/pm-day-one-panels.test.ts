@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import {
   buildPmDayOneKpis,

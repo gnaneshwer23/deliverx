@@ -2,7 +2,7 @@
  * Build Next up signals from mission dashboard page data.
  */
 
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import { buildNextUpItems, type NextUpItem, type NextUpSignals } from "@/lib/next-up-items";
 

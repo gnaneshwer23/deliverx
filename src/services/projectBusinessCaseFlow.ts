@@ -15,7 +15,7 @@ import { createBrainDocument } from "@/services/brainDocumentService";
 import { saveBusinessCaseReview } from "@/services/businessCaseReview";
 import { generateInviteToken } from "@/services/inviteTokenService";
 import { listProjectWorkspaceMembersByRole } from "@/services/workspaceMemberService";
-import { buildBusinessCaseReviewPayload } from "@/services/businessCaseStructuredAnalysis";
+import { buildBusinessCaseReviewPayload } from "@/lib/businessCaseStructuredAnalysis.shared";
 import {
   businessCaseUploadToImpactDrafts,
   emitLoopPropagation,

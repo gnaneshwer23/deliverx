@@ -1,6 +1,6 @@
 import { HONEST_KPI_EMPTY } from "@/lib/honest-kpi";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
-import type { BusinessCaseStructuredAnalysis } from "@/services/businessCaseStructuredAnalysis";
+import type { BusinessCaseStructuredAnalysis } from "@/lib/businessCaseStructuredAnalysis.shared";
 
 export type ExtractionSummaryCounts = {
   requirements: number | null;

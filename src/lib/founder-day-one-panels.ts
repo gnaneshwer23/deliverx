@@ -1,6 +1,6 @@
 import type { ArtifactEntityType } from "@/lib/approval/constants";
 import { extractReviewConfidence } from "@/lib/pm-day-one-panels";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { FounderMissionControl } from "@/services/founderDashboard";
 import type { FounderPortfolioRow } from "@/services/founderEngine";
 

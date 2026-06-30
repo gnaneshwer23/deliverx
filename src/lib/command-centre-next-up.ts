@@ -2,7 +2,7 @@
  * K3 — Command Centre next-up strip (deferred from K1).
  */
 
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import type { NextUpItem } from "@/lib/next-up-items";

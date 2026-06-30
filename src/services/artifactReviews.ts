@@ -2,47 +2,30 @@
  * Universal artifact approval — AI outputs require human sign-off.
  */
 
+import "server-only";
+
 import { createClient } from "@/lib/supabase/server";
 import { throwIfMissingTable } from "@/lib/db-errors";
 import type {
   ArtifactEntityType,
   ArtifactReviewStatus,
 } from "@/lib/approval/constants";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import { filterPendingReviewsForPersona } from "@/lib/approval/persona-reviews";
+import { categoriesReadyToApply } from "@/lib/businessCaseStructuredAnalysis.shared";
+import type { BusinessCaseStructuredAnalysis } from "@/lib/businessCaseStructuredAnalysis.shared";
 import { logAuditEvent } from "./auditEvents";
 import { applyProjectStructure } from "./applyProjectStructure";
 import type { ProjectStructureDraft } from "./aiProjectStructuring";
-import {
-  applyBusinessCaseWorkspace,
-  type BusinessCaseStructuredAnalysis,
-  categoriesReadyToApply,
-} from "./businessCaseStructuredAnalysis";
+import { applyBusinessCaseWorkspace } from "./businessCaseStructuredAnalysis";
 import {
   artifactReviewChangeToImpactDrafts,
   businessCaseWorkspaceToImpactDrafts,
   emitLoopPropagation,
 } from "./loopEventPropagation";
 
-export type ArtifactReviewRow = {
-  id: string;
-  organisation_id: string;
-  project_id: string;
-  entity_type: ArtifactEntityType;
-  entity_id: string | null;
-  entity_ids: string[];
-  title: string;
-  summary: string;
-  payload: Record<string, unknown>;
-  status: ArtifactReviewStatus;
-  source: string;
-  reviewer_notes: string | null;
-  decided_by: string | null;
-  decided_at: string | null;
-  created_by: string | null;
-  created_at: string;
-  updated_at: string;
-};
+export type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 
 async function getOrgContext() {
   const supabase = await createClient();

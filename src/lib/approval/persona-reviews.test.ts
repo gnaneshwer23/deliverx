@@ -3,7 +3,7 @@ import {
   countPendingReviewsByPersonaMap,
   filterReviewsByProject,
 } from "./persona-reviews";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 
 function mockReview(
   entityType: ArtifactReviewRow["entity_type"],

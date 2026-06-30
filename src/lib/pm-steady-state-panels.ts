@@ -1,7 +1,7 @@
 import type { PmDayOneKpi } from "@/lib/pm-day-one-panels";
 import { buildPmControlRoomKpis } from "@/lib/pm-control-room-kpis";
 import type { TaskWithMeta } from "@/services/delivery";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import { governanceTabHref } from "@/lib/governance-tabs";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { SprintScope } from "@/lib/sprint-metrics";

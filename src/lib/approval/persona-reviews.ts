@@ -1,5 +1,5 @@
 import type { ArtifactEntityType } from "@/lib/approval/constants";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 
 export const PERSONA_ARTIFACT_ENTITY_TYPES: Record<MissionPersonaId, ArtifactEntityType[]> = {

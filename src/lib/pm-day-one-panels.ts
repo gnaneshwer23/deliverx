@@ -6,7 +6,7 @@ import {
   teamJoinPct,
 } from "@/lib/pm-viz-helpers";
 import { formatHonestKpi } from "@/lib/honest-kpi";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { PmMissionControl } from "@/services/deliveryPmDashboard";
 import type { ProjectBootstrapSummary } from "@/services/projectBootstrap";
 

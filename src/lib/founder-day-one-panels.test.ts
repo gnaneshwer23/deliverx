@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ArtifactReviewRow } from "@/services/artifactReviews";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { FounderPortfolioRow } from "@/services/founderEngine";
 import {
   FOUNDER_DAY_ONE_PANEL_IDS,

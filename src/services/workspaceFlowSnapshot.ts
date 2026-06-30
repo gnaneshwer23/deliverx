@@ -4,7 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
-import { buildStructuredAnalysisFromReview } from "@/services/businessCaseStructuredAnalysis";
+import { buildStructuredAnalysisFromReview } from "@/lib/businessCaseStructuredAnalysis.shared";
 import { getRequirementStats } from "@/services/baRequirements";
 import {
   getProjectBusinessCaseStatus,
