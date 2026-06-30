@@ -19,6 +19,7 @@ type HelmCopilotPanelProps = {
   projects: Array<{ id: string; name: string }>;
   defaultProjectId?: string | null;
   compact?: boolean;
+  embedded?: boolean;
   showContextBar?: boolean;
 };
 
@@ -27,6 +28,7 @@ export function HelmCopilotPanel({
   projects,
   defaultProjectId,
   compact = false,
+  embedded = false,
   showContextBar = true,
 }: HelmCopilotPanelProps) {
   const initialProjectId = defaultProjectId ?? projects[0]?.id ?? "";
@@ -102,11 +104,15 @@ export function HelmCopilotPanel({
   const contextLabel =
     projectName ?? (projects.length ? "Select a project" : "No projects in scope");
 
+  const shellClass = embedded
+    ? "min-h-[360px] max-h-[520px] rounded-xl shadow-sm"
+    : compact
+      ? "h-full"
+      : "min-h-[420px] rounded-xl shadow-sm";
+
   return (
     <div
-      className={`flex min-h-0 flex-col overflow-hidden border border-[#E4E4DC] bg-white ${
-        compact ? "h-full" : "min-h-[420px] rounded-xl shadow-sm"
-      }`}
+      className={`flex min-h-0 flex-col overflow-hidden border border-[#E4E4DC] bg-white ${shellClass}`}
     >
       <div className="flex shrink-0 items-center justify-between border-b border-[#E4E4DC] bg-[#F7F7F2] px-4 py-3">
         <div className="flex items-center gap-2">
@@ -140,7 +146,9 @@ export function HelmCopilotPanel({
 
       <div
         ref={scrollRef}
-        className={`flex-1 space-y-4 overflow-y-auto ${compact ? "px-4 py-4" : "px-5 py-5"}`}
+        className={`flex-1 space-y-4 overflow-y-auto ${
+          compact || embedded ? "px-4 py-4" : "px-5 py-5"
+        }`}
       >
         <AiConfigBanner />
         {messages.map((m, i) => (
@@ -179,7 +187,11 @@ export function HelmCopilotPanel({
         {error ? <p className="text-sm text-[#C0392B]">{error}</p> : null}
       </div>
 
-      <div className={`shrink-0 border-t border-[#E4E4DC] bg-white ${compact ? "p-3" : "p-4"}`}>
+      <div
+        className={`shrink-0 border-t border-[#E4E4DC] bg-white ${
+          compact || embedded ? "p-3" : "p-4"
+        }`}
+      >
         <div className="mb-2 flex flex-wrap gap-1">
           {quickChips.map((chip) => (
             <button
@@ -197,7 +209,7 @@ export function HelmCopilotPanel({
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            rows={compact ? 2 : 2}
+            rows={compact || embedded ? 2 : 2}
             placeholder={
               projects.length
                 ? `Ask ${HELM_NAME} about ${contextLabel}…`

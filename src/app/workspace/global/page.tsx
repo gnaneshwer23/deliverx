@@ -2,7 +2,7 @@ import { Globe2 } from "lucide-react";
 import { runGlobalLoop } from "@/services/global";
 import { GlobalInsightsPanel } from "@/components/global/global-insights-panel";
 import { GlobalBenchmarkPanel } from "@/components/global/global-benchmark-panel";
-import { StrategicCopilotPanel } from "@/components/global/strategic-copilot-panel";
+import { HelmCopilotSection } from "@/components/copilot/helm-copilot-section";
 import { EvolutionMapPanel } from "@/components/global/evolution-map-panel";
 import { GlobalGraphPanel } from "@/components/global/global-graph-panel";
 import {
@@ -68,7 +68,7 @@ export default async function GlobalIntelligencePage() {
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <StrategicCopilotPanel />
+        <HelmCopilotSection personaId="founder" embedded />
         <LocalizedRecsPanel recommendations={snapshot.localizedRecommendations} />
       </div>
 

@@ -28,6 +28,7 @@ import { FounderDecisionCentre } from "@/components/founder/founder-decision-cen
 import { FounderDeliveryPatternsCard } from "@/components/founder/founder-delivery-patterns-card";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
 import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner";
+import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
 
@@ -199,6 +200,7 @@ export default async function FounderMissionControlPage({
             />
           ) : null}
           <FounderMissionPanelSwitch dayOne={dayOneBoardMemo} steadyState={steadyStateBoardMemo} />
+          <MissionHelmCopilotSlot personaId="founder" projectId={projectId} />
         </div>
       </FounderMissionShell>
     </MissionDashboardChrome>

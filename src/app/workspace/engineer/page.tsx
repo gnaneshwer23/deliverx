@@ -27,6 +27,7 @@ import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildEngineerShippingSynthesis } from "@/lib/engineer-shipping-kpis";
+import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 
 export const dynamic = "force-dynamic";
 
@@ -194,6 +195,7 @@ export default async function EngineerMissionControlPage({
             </div>
           ) : null}
           {dashboard}
+          <MissionHelmCopilotSlot personaId="engineer" projectId={data.primaryProject?.id} />
         </div>
       </EngineerMissionShell>
     </MissionDashboardChrome>
