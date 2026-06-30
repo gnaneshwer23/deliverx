@@ -14,11 +14,11 @@ import type {
   StructuredCategory,
   StructuredCategoryDecision,
   StructuredCategoryId,
-} from "@/services/businessCaseStructuredAnalysis";
+} from "@/lib/businessCaseStructuredAnalysis.shared";
 import {
   allCategoriesResolved,
   categoriesReadyToApply,
-} from "@/services/businessCaseStructuredAnalysis";
+} from "@/lib/businessCaseStructuredAnalysis.shared";
 
 function parseStructuredAnalysis(
   payload: Record<string, unknown>,
