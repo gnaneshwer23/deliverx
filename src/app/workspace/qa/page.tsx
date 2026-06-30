@@ -21,6 +21,7 @@ import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildQaReleaseSynthesis } from "@/lib/qa-release-kpis";
+import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 
 export const dynamic = "force-dynamic";
 
@@ -167,6 +168,7 @@ export default async function QaMissionControlPage({
             </div>
           ) : null}
           {dashboard}
+          <MissionHelmCopilotSlot personaId="qa" projectId={data.primaryProject?.id} />
         </div>
       </QaMissionShell>
     </MissionDashboardChrome>

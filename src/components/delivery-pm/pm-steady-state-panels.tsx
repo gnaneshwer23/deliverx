@@ -698,12 +698,15 @@ export function PmControlRoomLayout({
   capacityGovernanceRow: ReactNode;
 }) {
   return (
-    <div className="space-y-6" data-layout="pm-control-room">
-      {aiSummary}
-      {kpiStrip}
-      {milestoneRaidRow}
-      {teamNeedsFeed}
-      {capacityGovernanceRow}
+    <div className="space-y-5 md:space-y-6" data-layout="pm-control-room">
+      <section className="dx-mission-section">{aiSummary}</section>
+      <section className="dx-mission-section">
+        <h2 className={`${dxClass.caps} mb-3`}>Project metrics</h2>
+        {kpiStrip}
+      </section>
+      <section className="dx-mission-section">{milestoneRaidRow}</section>
+      <section className="dx-mission-section">{teamNeedsFeed}</section>
+      <section className="dx-mission-section">{capacityGovernanceRow}</section>
     </div>
   );
 }

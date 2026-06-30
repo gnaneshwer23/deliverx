@@ -5,26 +5,37 @@ import type { MissionPersonaId } from "@/lib/mission-nav";
 import type { NextUpItem } from "@/lib/next-up-items";
 import { dxClass } from "@/lib/dx-theme";
 
-const TONE_STYLES: Record<NextUpItem["tone"], { border: string; icon: string; label: string }> = {
+const TONE_STYLES: Record<
+  NextUpItem["tone"],
+  { accent: string; bg: string; icon: string; label: string; dot: string }
+> = {
   amber: {
-    border: "border-l-[#B7620A]",
+    accent: "#B7620A",
+    bg: "#FEF6EC",
     icon: "text-[#B7620A]",
     label: "text-[#B7620A]",
+    dot: "bg-[#B7620A]",
   },
   green: {
-    border: "border-l-[#1C4A2E]",
+    accent: "#1C4A2E",
+    bg: "#EEF5F1",
     icon: "text-[#1C4A2E]",
     label: "text-[#1C4A2E]",
+    dot: "bg-[#1C4A2E]",
   },
   blue: {
-    border: "border-l-[#2563EB]",
-    icon: "text-[#2563EB]",
-    label: "text-[#2563EB]",
+    accent: "#1A3F6B",
+    bg: "#EDF2F9",
+    icon: "text-[#1A3F6B]",
+    label: "text-[#1A3F6B]",
+    dot: "bg-[#1A3F6B]",
   },
   slate: {
-    border: "border-l-[#6B6B64]",
-    icon: "text-[#6B6B64]",
-    label: "text-[#6B6B64]",
+    accent: "#6B7280",
+    bg: "#F3F4F6",
+    icon: "text-[#6B7280]",
+    label: "text-[#2C2C28]",
+    dot: "bg-[#6B7280]",
   },
 };
 
@@ -44,43 +55,59 @@ export function NextUpStrip({
 
   return (
     <section
-      className={`${dxClass.card} border border-[#E4E4DC] bg-[#FAFAF7] p-3 md:p-4`}
+      className={`${dxClass.card} overflow-hidden p-0`}
       data-testid="next-up-strip"
       aria-label="Next up"
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
+      <div className="border-b border-[var(--dx-rul2)] px-4 py-3 md:px-5">
         <p
-          className="text-[10px] font-semibold uppercase tracking-wide text-[#6B6B64]"
-          style={accent ? { borderLeft: `3px solid ${accent.primary}`, paddingLeft: "0.5rem" } : undefined}
+          className={`${dxClass.caps} flex items-center gap-2`}
+          style={accent ? { color: accent.primary } : undefined}
         >
+          {accent ? (
+            <span
+              className="size-2 shrink-0 rounded-full"
+              style={{ backgroundColor: accent.primary }}
+              aria-hidden
+            />
+          ) : null}
           Next up
           {personaLabel ? (
             <>
-              {" · "}
-              <span style={accent ? { color: accent.primary } : undefined}>{personaLabel}</span>
+              <span className="text-[var(--dx-fnt)]">·</span>
+              <span style={accent ? { color: accent.text } : undefined}>{personaLabel}</span>
             </>
           ) : null}
         </p>
       </div>
-      <ul className="divide-y divide-[#ECECE4]">
+      <ul className="flex flex-col gap-2 p-3 md:gap-2.5 md:p-4">
         {items.map((item) => {
           const tone = TONE_STYLES[item.tone];
           return (
             <li key={item.id}>
               <Link
                 href={item.href}
-                className={`group flex min-h-9 touch-manipulation items-start gap-2 border-l-2 py-2 pl-3 pr-1 transition-colors hover:bg-[#F3F3EE] ${tone.border}`}
+                className="group flex min-h-11 touch-manipulation items-center gap-3 rounded-[var(--dx-radius-md)] border border-[var(--dx-rul)]/80 bg-white px-3 py-2.5 shadow-[var(--dx-shadow-sm)] transition hover:border-[var(--dx-acr)] hover:shadow-[var(--dx-shadow-card)] md:px-4 md:py-3"
               >
-                <CircleDot size={14} className={`mt-0.5 shrink-0 ${tone.icon}`} aria-hidden />
+                <span
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: tone.bg }}
+                  aria-hidden
+                >
+                  <CircleDot size={16} className={tone.icon} />
+                </span>
                 <span className="min-w-0 flex-1">
-                  <span className={`block text-sm font-medium ${tone.label}`}>{item.label}</span>
+                  <span className="flex items-center gap-2">
+                    <span className={`size-1.5 shrink-0 rounded-full ${tone.dot}`} aria-hidden />
+                    <span className={`block truncate text-sm font-medium ${tone.label}`}>{item.label}</span>
+                  </span>
                   {item.detail ? (
-                    <span className="mt-0.5 block truncate text-xs text-[#6B6B64]">{item.detail}</span>
+                    <span className="mt-0.5 block truncate text-xs text-[var(--dx-mut)]">{item.detail}</span>
                   ) : null}
                 </span>
                 <ArrowRight
-                  size={14}
-                  className="mt-1 shrink-0 text-[#A8A89E] transition-transform group-hover:translate-x-0.5"
+                  size={16}
+                  className="shrink-0 text-[var(--dx-fnt)] transition-transform group-hover:translate-x-0.5 group-hover:text-[var(--dx-acc)]"
                   aria-hidden
                 />
               </Link>

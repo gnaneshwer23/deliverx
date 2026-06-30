@@ -25,6 +25,7 @@ import { buildBaHandoffSynthesis } from "@/lib/ba-handoff-kpis";
 import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
 import { getRequirementStats } from "@/services/baRequirements";
 import { BaWorkspaceFlowShell } from "@/components/workspace-flow/ba-workspace-flow-shell";
+import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
 import { Suspense } from "react";
 
@@ -175,6 +176,7 @@ export default async function BaMissionControlPage({
           ) : (
             dashboard
           )}
+          <MissionHelmCopilotSlot personaId="ba" projectId={projectId} />
         </div>
       </BaMissionShell>
     </MissionDashboardChrome>

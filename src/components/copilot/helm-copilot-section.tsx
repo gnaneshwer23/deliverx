@@ -8,10 +8,13 @@ export async function HelmCopilotSection({
   projectId,
   personaId: personaIdOverride,
   compact,
+  embedded,
 }: {
   projectId?: string | null;
   personaId?: MissionPersonaId;
   compact?: boolean;
+  /** Mission-control page embed — compact chat with fixed height. */
+  embedded?: boolean;
 }) {
   const supabase = await createClient();
   const { data: profile } = await supabase.from("users").select("role").maybeSingle();
@@ -20,6 +23,19 @@ export async function HelmCopilotSection({
 
   const projectRows = await listProjectsForCurrentUser();
   const projects = projectRows.map((p) => ({ id: p.id, name: p.name }));
+
+  if (embedded) {
+    return (
+      <section className="mt-6">
+        <HelmCopilotPanel
+          personaId={personaId}
+          projects={projects}
+          defaultProjectId={projectId}
+          embedded
+        />
+      </section>
+    );
+  }
 
   if (compact) {
     return (

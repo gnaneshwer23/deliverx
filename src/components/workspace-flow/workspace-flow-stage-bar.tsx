@@ -25,7 +25,7 @@ export function WorkspaceFlowStageBar({
           <li key={step.id} className="flex min-w-0 flex-1 items-center">
             <div className="flex min-w-0 items-center gap-2">
               <span
-                className={`flex size-7 shrink-0 items-center justify-center rounded-full border-[1.5px] font-[family-name:var(--font-dx-mono)] text-[9px] font-semibold ${
+                className={`flex size-8 shrink-0 items-center justify-center rounded-full border-[1.5px] font-[family-name:var(--font-dx-mono)] text-[10px] font-semibold min-[720px]:size-7 min-[720px]:text-[9px] ${
                   step.status === "complete"
                     ? "border-[#1C4A2E] bg-[#1C4A2E] text-white"
                     : step.status === "current"

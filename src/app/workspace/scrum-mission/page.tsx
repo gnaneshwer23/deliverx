@@ -29,6 +29,7 @@ import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import {
   buildScrumHealthSynthesis,
 } from "@/lib/scrum-health-kpis";
+import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 
 export const dynamic = "force-dynamic";
 
@@ -196,6 +197,7 @@ export default async function ScrumMissionControlPage({
           </div>
         ) : null}
         {dashboard}
+        <MissionHelmCopilotSlot personaId="scrum" projectId={data.primaryProject?.id} />
         </div>
       </ScrumMissionShell>
     </MissionDashboardChrome>

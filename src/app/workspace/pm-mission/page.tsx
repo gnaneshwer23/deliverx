@@ -66,6 +66,7 @@ import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-ca
 import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
 import { PmRoleInviteSection } from "@/components/workspace-flow/pm-role-invite-section";
 import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-review-panel";
+import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
 
 export const dynamic = "force-dynamic";
@@ -372,6 +373,7 @@ export default async function PmMissionControlPage({
               bootstrapSummary={bootstrapSummary}
             />
           ) : null}
+          <MissionHelmCopilotSlot personaId="pm-mission" projectId={projectId} />
         </div>
       </PmMissionShell>
     </MissionDashboardChrome>

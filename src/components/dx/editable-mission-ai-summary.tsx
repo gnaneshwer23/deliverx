@@ -16,14 +16,16 @@ export function EditableMissionAiSummary({
   compact?: boolean;
 }) {
   return (
-    <div className={`rounded-xl border border-[#B8D8D8] bg-[#EDF7F7]/60 ${compact ? "p-4" : "p-5"}`}>
+    <div
+      className={`rounded-[var(--dx-radius-lg)] border border-[var(--dx-acr)] bg-gradient-to-br from-[var(--dx-acb)] to-white shadow-[var(--dx-shadow-sm)] ${compact ? "p-4" : "p-5"}`}
+    >
       {icon ? (
-        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1A5C5C]">
+        <div className="mb-2 flex items-center gap-2 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-[var(--dx-acc)]">
           <Sparkles size={14} aria-hidden />
           {title}
         </div>
       ) : (
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#1A5C5C]">{title}</p>
+        <p className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-[var(--dx-acc)]">{title}</p>
       )}
       <InlineEditableText
         fieldKey={aiSummaryFieldKey()}
