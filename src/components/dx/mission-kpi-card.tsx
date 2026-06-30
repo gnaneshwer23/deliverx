@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Minus, TrendingDown, TrendingUp, TriangleAlert } from "lucide-react";
+import { MissionProgressRing } from "@/components/dx/mission-progress-ring";
 import { dxClass } from "@/lib/dx-theme";
 
 export type MissionKpiTone =
@@ -142,25 +143,35 @@ export function MissionKpiCard({
           </span>
         ) : null}
       </div>
-      <div className="flex items-end justify-between gap-1.5">
+      <div className="flex items-end justify-between gap-2">
         <p className={`${dxClass.display} ${valueClass} leading-none tabular-nums ${VALUE_COLOR[tone]}`}>
           {value}
         </p>
-        {delta && DeltaIcon ? (
-          <span
-            className={`mb-0.5 inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] leading-tight ${DELTA_STYLE[delta.direction]}`}
-          >
-            <DeltaIcon size={9} strokeWidth={2} aria-hidden />
-            {delta.value}
-          </span>
-        ) : null}
+        <div className="flex shrink-0 items-center gap-1.5">
+          {progressPct != null ? (
+            <MissionProgressRing
+              pct={progressPct}
+              tone={tone}
+              size={36}
+              label={`${clampPct(progressPct)}%`}
+            />
+          ) : null}
+          {delta && DeltaIcon ? (
+            <span
+              className={`mb-0.5 inline-flex items-center gap-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] leading-tight ${DELTA_STYLE[delta.direction]}`}
+            >
+              <DeltaIcon size={9} strokeWidth={2} aria-hidden />
+              {delta.value}
+            </span>
+          ) : null}
+        </div>
       </div>
       {hint ? (
         <p className="mt-1 font-[family-name:var(--font-dx-mono)] text-[7px] leading-snug text-[var(--dx-mut)]">{hint}</p>
       ) : null}
       {barWidth ? (
         <div
-          className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-[var(--dx-rul2)]"
+          className="mt-2.5 hidden h-1.5 overflow-hidden rounded-full bg-[var(--dx-rul2)] lg:block"
           role="progressbar"
           aria-valuenow={clampPct(progressPct!)}
           aria-valuemin={0}
@@ -184,10 +195,16 @@ export function MissionKpiGrid({
 }) {
   const gridClass =
     layout === "wide"
-      ? "flex snap-x snap-mandatory gap-2.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0 xl:grid-cols-5 [&>*]:min-w-[42%] [&>*]:shrink-0 [&>*]:snap-start lg:[&>*]:min-w-0 lg:[&>*]:shrink"
+      ? "flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] lg:grid lg:grid-cols-4 lg:gap-2.5 lg:overflow-visible lg:pb-0 xl:grid-cols-5 [&>*]:min-w-[44%] [&>*]:shrink-0 [&>*]:snap-start sm:[&>*]:min-w-[38%] lg:[&>*]:min-w-0 lg:[&>*]:shrink"
       : layout === "mission"
-        ? "grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-7"
-        : "grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-4";
+        ? "grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-7"
+        : "grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-4";
 
-  return <div className={`${gridClass} ${className}`}>{children}</div>;
+  const grid = <div className={`${gridClass} ${className}`}>{children}</div>;
+
+  if (layout === "wide") {
+    return <div className="dx-kpi-scroll-wrap">{grid}</div>;
+  }
+
+  return grid;
 }
