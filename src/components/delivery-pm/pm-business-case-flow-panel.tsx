@@ -41,6 +41,7 @@ export function PmBusinessCaseFlowPanel({
   extractionCounts,
   requirementsExtracted = 0,
   storiesReady = 0,
+  elevated = false,
 }: {
   projectId: string;
   projectName: string;
@@ -48,6 +49,7 @@ export function PmBusinessCaseFlowPanel({
   extractionCounts?: ExtractionSummaryCounts;
   requirementsExtracted?: number;
   storiesReady?: number;
+  elevated?: boolean;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
@@ -172,13 +174,21 @@ export function PmBusinessCaseFlowPanel({
   }
 
   return (
-    <div className="space-y-4" data-panel="pm-business-case-flow">
+    <div
+      className={`space-y-4 ${elevated ? "rounded-2xl ring-2 ring-[#1C4A2E]/15" : ""}`}
+      data-panel="pm-business-case-flow"
+      data-elevated={elevated ? "true" : undefined}
+    >
       <WorkspaceFlowStageBar stage={stage} />
 
       <div className={`${dxClass.card} overflow-hidden p-0`}>
         <DxWidgetHeader
-          title="Upload business case"
-          subtitle="PM-first flow — AI extracts signals, BA invite generated automatically"
+          title={elevated ? "Start here — upload your brief" : "Upload business case"}
+          subtitle={
+            elevated
+              ? "Upload brief → invite BA → review in AI Queue — your PM onboarding path"
+              : "PM-first flow — AI extracts signals, BA invite generated automatically"
+          }
         />
 
         <div className="space-y-5 px-5 py-5 md:px-6">

@@ -81,7 +81,7 @@ export const dynamic = "force-dynamic";
 export default async function PmMissionControlPage({
   searchParams,
 }: {
-  searchParams: Promise<{ project?: string; meeting?: string }>;
+  searchParams: Promise<{ project?: string; meeting?: string; onboard?: string }>;
 }) {
   const supabase = await createClient();
   const { data: profile } = await supabase
@@ -95,6 +95,7 @@ export default async function PmMissionControlPage({
 
   const params = await searchParams;
   const meetingReviewMode = isMeetingReviewDeepLink(params.meeting);
+  const onboardMode = params.onboard === "1";
   const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop] =
     await Promise.all([
       getPmMissionControl(params.project),
@@ -315,13 +316,30 @@ export default async function PmMissionControlPage({
     />
   );
 
+  const businessCaseFlowPanel =
+    data.primaryProject && businessCaseStatus ? (
+      <PmBusinessCaseFlowPanel
+        projectId={data.primaryProject.id}
+        projectName={data.primaryProject.name}
+        initialStatus={businessCaseStatus}
+        extractionCounts={flowSnapshot?.counts}
+        requirementsExtracted={requirementStats?.extracted ?? 0}
+        storiesReady={requirementStats?.storiesReady ?? 0}
+        elevated={onboardMode}
+      />
+    ) : null;
+
   return (
     <MissionDashboardChrome
       personaId="pm-mission"
       header={{
         userName: data.userName,
         primaryProject: data.primaryProject,
-        subtitle: serverPmMode === "day-one" ? PM_DAY_ONE_SUBTITLE : steadyStateSubtitle,
+        subtitle: onboardMode
+          ? "Upload brief → invite BA → review in AI Queue"
+          : serverPmMode === "day-one"
+            ? PM_DAY_ONE_SUBTITLE
+            : steadyStateSubtitle,
       }}
       headerActions={
         <PmMissionHeaderActions
@@ -341,13 +359,24 @@ export default async function PmMissionControlPage({
         teamJoinedCount={bootstrapSummary?.structure?.stakeholders}
       >
         <div className={dxClass.workspaceContent}>
+          {onboardMode && businessCaseFlowPanel ? (
+            <div className="mb-4">{businessCaseFlowPanel}</div>
+          ) : null}
           {data.projects.length === 0 ? <MissionControlNoProjectBanner persona="PM" /> : null}
-          <MissionBootstrapBanner
-            personaId="pm-mission"
-            projectId={data.primaryProject?.id}
-            showFallback={data.dataSources.deliveryPlan === "fallback"}
-          />
-          <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} personaId="pm-mission" />
+          {!onboardMode ? (
+            <>
+              <MissionBootstrapBanner
+                personaId="pm-mission"
+                projectId={data.primaryProject?.id}
+                showFallback={data.dataSources.deliveryPlan === "fallback"}
+              />
+              <NextUpStrip
+                items={nextUpItems}
+                personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]}
+                personaId="pm-mission"
+              />
+            </>
+          ) : null}
           {elevateInviteSection && inviteRoleRows && data.primaryProject ? (
             <div className="mb-4">
               <PmRoleInviteSection
@@ -372,7 +401,7 @@ export default async function PmMissionControlPage({
               selectedProjectId={data.primaryProject.id}
             />
           ) : null}
-          {data.primaryProject && businessCaseStatus ? (
+          {data.primaryProject && businessCaseStatus && !onboardMode ? (
             <>
               <PmBaHandoffBanner
                 projectId={data.primaryProject.id}
@@ -387,29 +416,26 @@ export default async function PmMissionControlPage({
                   aiSummary={flowSnapshot.aiSummary}
                 />
               ) : null}
-              <PmBusinessCaseFlowPanel
-                projectId={data.primaryProject.id}
-                projectName={data.primaryProject.name}
-                initialStatus={businessCaseStatus}
-                extractionCounts={flowSnapshot?.counts}
-                requirementsExtracted={requirementStats?.extracted ?? 0}
-                storiesReady={requirementStats?.storiesReady ?? 0}
-              />
+              {businessCaseFlowPanel}
               {inviteRoleRows && !elevateInviteSection ? (
                 <PmRoleInviteSection projectId={data.primaryProject.id} rows={inviteRoleRows} />
               ) : null}
             </>
           ) : null}
-          <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />
-          {data.guidedTasks.length > 0 ? (
-            <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
-          ) : null}
-          {serverPmMode === "day-one" ? (
-            <PmTeamRosterPanel
-              members={orgMembers}
-              pendingInvites={pendingInvites}
-              bootstrapSummary={bootstrapSummary}
-            />
+          {!onboardMode ? (
+            <>
+              <PmMissionPanelSwitch dayOne={dayOnePanels} steadyState={steadyStatePanels} />
+              {data.guidedTasks.length > 0 ? (
+                <DeliveryPmGuidedTasks tasks={data.guidedTasks} />
+              ) : null}
+              {serverPmMode === "day-one" ? (
+                <PmTeamRosterPanel
+                  members={orgMembers}
+                  pendingInvites={pendingInvites}
+                  bootstrapSummary={bootstrapSummary}
+                />
+              ) : null}
+            </>
           ) : null}
           <MissionHelmCopilotSlot personaId="pm-mission" projectId={projectId} />
         </div>

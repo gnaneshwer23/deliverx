@@ -30,7 +30,7 @@ export function MarketingOnboardingSection() {
               Your role. Your <em>workspace.</em>
             </>
           }
-          subtitle="Select your role and DeliverX generates a tailored workspace in under 60 seconds — guided onboarding, role-specific KPIs, and AI agents calibrated to how you work."
+          subtitle="Honest paths per role: Sponsor GO gate on business case · PM uploads brief on Mission Control · BA joins via PM invite link. Select a role to see the real steps."
         />
 
         <div className="mt-8 flex flex-wrap gap-2">

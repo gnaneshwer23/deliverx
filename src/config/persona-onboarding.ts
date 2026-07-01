@@ -80,13 +80,13 @@ export const OB_CONFIG: Record<RoleId, OnboardingRoleData> = {
       },
       {
         "n": "4",
-        "title": "Review AI outputs",
-        "desc": "Portfolio overview, decision centre, investment intelligence, runway forecast."
+        "title": "GO gate review",
+        "desc": "Accept, edit, or reject the AI business case recommendation. Conditional GO requires acknowledging gaps before the project proceeds."
       },
       {
         "n": "5",
         "title": "Start delivering",
-        "desc": "Open your Command Centre — 4 pending decisions and live portfolio health waiting."
+        "desc": "Open Command Centre after GO — portfolio health, decisions, and runway from approved outputs only."
       }
     ],
     "outputs": [
@@ -132,31 +132,31 @@ export const OB_CONFIG: Record<RoleId, OnboardingRoleData> = {
     "steps": [
       {
         "n": "1",
-        "title": "Project details",
-        "desc": "Name, delivery method (Agile/Waterfall/Hybrid), target go-live, and budget.",
+        "title": "Open PM Mission Control",
+        "desc": "Skip the cosmetic wizard — land on mission control with the workspace stage bar.",
         "done": true
       },
       {
         "n": "2",
         "title": "Upload business case or brief",
-        "desc": "SOW, PRD, or a description. AI extracts workstreams, milestones, and risks.",
+        "desc": "Paste or upload on Mission Control. AI extracts workstreams, milestones, and risks into the Review Queue.",
         "done": true
       },
       {
         "n": "3",
-        "title": "AI workspace generation",
-        "desc": "RAID log, 12 milestones, stakeholder map, and delivery timeline — all in under 60 seconds.",
+        "title": "Invite your BA",
+        "desc": "Generate a join link from the same panel. Your BA lands in a workspace built from this brief.",
         "active": true
       },
       {
         "n": "4",
-        "title": "Review and accept outputs",
-        "desc": "Accept, edit, or reject each item. Nothing is applied without your confirmation."
+        "title": "Review in AI Queue",
+        "desc": "Accept, edit, or reject each extraction. Nothing is applied without your confirmation."
       },
       {
         "n": "5",
-        "title": "Invite your team",
-        "desc": "Send role-specific invitations. Each team member gets their personalised dashboard."
+        "title": "Team delivery",
+        "desc": "Invite remaining roles. Each persona dashboard updates from the same signal graph."
       }
     ],
     "outputs": [
@@ -202,14 +202,14 @@ export const OB_CONFIG: Record<RoleId, OnboardingRoleData> = {
     "steps": [
       {
         "n": "1",
-        "title": "Project context",
-        "desc": "Project name, type, key stakeholders, and requirements deadline.",
+        "title": "Open your join link",
+        "desc": "PM shares a project invite from Mission Control — you land in a BA workspace seeded from their brief.",
         "done": true
       },
       {
         "n": "2",
-        "title": "Upload project documents",
-        "desc": "Business case, PRD, emails, meeting notes, or existing requirements.",
+        "title": "Review project context",
+        "desc": "Business case, stakeholders, and scope pulled from the PM upload — no duplicate document entry.",
         "done": true
       },
       {
