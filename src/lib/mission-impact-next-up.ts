@@ -42,10 +42,10 @@ function impactEventHref(
   if (msg.includes("ai review queue") || msg.includes("business case uploaded")) {
     return `/workspace/proposals?persona=${personaId}${projectQs}`;
   }
-  if (msg.includes("ba invite") || msg.includes("join link")) {
+  if (msg.includes("ba invite") || msg.includes("join link") || msg.includes("role invite")) {
     return projectId
-      ? `/workspace/pm-mission?project=${projectId}#ba-invite`
-      : "/workspace/pm-mission#ba-invite";
+      ? `/workspace/pm-mission?project=${projectId}#pm-role-invites`
+      : "/workspace/pm-mission#pm-role-invites";
   }
   if (msg.includes(" joined ") && msg.includes(" as ba")) {
     return projectId ? `/workspace/ba?project=${projectId}` : "/workspace/ba";

@@ -430,3 +430,34 @@ export async function listActiveProjectInviteLinks(
 
   return [...byRole.values()];
 }
+
+export type GeneratedRoleInviteLink = {
+  role: PersonaHomeRole | "team_member";
+  joinUrl: string;
+  inviteId: string;
+  expiresAt: string;
+};
+
+export async function generateAllRoleInviteLinks(input: {
+  projectId: string;
+  roles: Array<PersonaHomeRole | "team_member">;
+}): Promise<GeneratedRoleInviteLink[]> {
+  const results: GeneratedRoleInviteLink[] = [];
+
+  for (const role of input.roles) {
+    const viewMode = role === "executive" ? "read_only" : undefined;
+    const generated = await generateInviteToken({
+      projectId: input.projectId,
+      role,
+      viewMode,
+    });
+    results.push({
+      role,
+      joinUrl: generated.joinUrl,
+      inviteId: generated.invite.id,
+      expiresAt: generated.invite.expires_at,
+    });
+  }
+
+  return results;
+}

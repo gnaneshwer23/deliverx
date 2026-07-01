@@ -31,6 +31,7 @@ export type NextUpSignals = {
   impediments?: { count: number; topTitle?: string };
   criticalDefects?: number;
   guidedTask?: { title: string; href?: string };
+  pendingRoleInvites?: { count: number; needsLinkCount: number };
 };
 
 type PersonaNextUpConfig = {
@@ -62,7 +63,7 @@ const PERSONA_NEXT_UP: Record<MissionPersonaId, PersonaNextUpConfig> = {
     ],
   },
   "pm-mission": {
-    signalOrder: ["blockedTasks", "openDecisions", "pendingReviews", "openClarifications"],
+    signalOrder: ["blockedTasks", "pendingRoleInvites", "openDecisions", "pendingReviews", "openClarifications"],
     fallbacks: [
       {
         id: "pm-delivery",
@@ -195,6 +196,31 @@ function signalToItems(
   const items: NextUpItem[] = [];
   const proposalsHref = PROPOSALS(personaId);
 
+  if (signals.pendingRoleInvites && signals.pendingRoleInvites.count > 0) {
+    const { count, needsLinkCount } = signals.pendingRoleInvites;
+    const label =
+      needsLinkCount === count
+        ? count === 1
+          ? "Generate role invite link"
+          : `${count} roles need invite links`
+        : count === 1
+          ? "1 teammate not joined"
+          : `${count} teammates not joined`;
+    items.push({
+      id: "pending-role-invites",
+      label,
+      detail:
+        needsLinkCount > 0
+          ? "Share join links so each role lands in their mission workspace."
+          : "Links are active — waiting for teammates to accept.",
+      href: projectId
+        ? `/workspace/pm-mission?project=${projectId}#pm-role-invites`
+        : "/workspace/pm-mission#pm-role-invites",
+      tone: "amber",
+      priority: 18,
+    });
+  }
+
   if (signals.pendingReviews && signals.pendingReviews.count > 0) {
     const { count, topTitle, topEntityType } = signals.pendingReviews;
     const entityLabel = topEntityType ? ARTIFACT_ENTITY_LABELS[topEntityType] : "AI output";
@@ -304,6 +330,7 @@ function sortByPersonaPriority(
 
   const idToSignal: Record<string, SortableSignal | undefined> = {
     "pending-reviews": "pendingReviews",
+    "pending-role-invites": "pendingRoleInvites",
     clarifications: "openClarifications",
     "blocked-tasks": "blockedTasks",
     "open-decisions": "openDecisions",

@@ -24,6 +24,21 @@ describe("next-up-items", () => {
     expect(items[1]?.id).toBe("open-decisions");
   });
 
+  it("surfaces pending role invites for PM mission control", () => {
+    const items = buildNextUpItems(
+      "pm-mission",
+      {
+        hasProject: true,
+        pendingRoleInvites: { count: 4, needsLinkCount: 4 },
+      },
+      "proj-1",
+    );
+
+    expect(items[0]?.id).toBe("pending-role-invites");
+    expect(items[0]?.label).toContain("4 roles need invite links");
+    expect(items[0]?.href).toBe("/workspace/pm-mission?project=proj-1#pm-role-invites");
+  });
+
   it("shows impediments first for Scrum", () => {
     const items = buildNextUpItems("scrum", {
       hasProject: true,

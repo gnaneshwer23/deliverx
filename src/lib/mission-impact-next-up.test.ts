@@ -56,7 +56,7 @@ describe("mission-impact-next-up", () => {
       "proj-1",
     );
 
-    expect(items[0]?.href).toBe("/workspace/pm-mission?project=proj-1#ba-invite");
+    expect(items[0]?.href).toBe("/workspace/pm-mission?project=proj-1#pm-role-invites");
   });
 
   it("merges impact items ahead of existing next up without duplicates", () => {
@@ -74,7 +74,7 @@ describe("mission-impact-next-up", () => {
         {
           id: "impact-1",
           label: "BA invite link ready — share to onboard requirements lead",
-          href: "/workspace/pm-mission?project=proj-1#ba-invite",
+          href: "/workspace/pm-mission?project=proj-1#pm-role-invites",
           tone: "amber",
           priority: 5,
         },
