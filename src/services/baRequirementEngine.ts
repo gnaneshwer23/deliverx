@@ -32,6 +32,16 @@ export type ClarificationRow = {
   due_date: string | null;
 };
 
+export type ClarificationGapRow = {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  gap_type: string;
+  priority: string;
+  requirement_id: string | null;
+};
+
 export type StoryRow = {
   id: string;
   story_code: string;

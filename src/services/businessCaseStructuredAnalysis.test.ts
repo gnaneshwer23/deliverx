@@ -4,6 +4,7 @@ import {
   allCategoriesResolved,
   applyBusinessCaseWorkspace,
   buildBusinessCaseReviewPayload,
+  buildClarificationGapSeedRows,
   buildStructuredAnalysisFromReview,
   categoriesReadyToApply,
   structuredAnalysisToProjectDraft,
@@ -121,5 +122,12 @@ describe("category review decisions", () => {
 describe("applyBusinessCaseWorkspace", () => {
   it("is exported for approval-gated workspace bootstrap", () => {
     expect(typeof applyBusinessCaseWorkspace).toBe("function");
+  });
+});
+
+describe("buildClarificationGapSeedRows", () => {
+  it("maps BC review gaps into seed rows", () => {
+    const rows = buildClarificationGapSeedRows(SAMPLE_REVIEW);
+    expect(rows.some((r) => r.title.includes("Integration API"))).toBe(true);
   });
 });

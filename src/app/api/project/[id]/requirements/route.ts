@@ -3,6 +3,7 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import {
   buildTraceabilityMatrix,
   getRequirementStats,
+  listClarificationGaps,
   listClarifications,
   listRequirements,
   listUserStories,
@@ -16,11 +17,12 @@ export async function GET(
     const { id } = await ctx.params;
     await requireProjectAccess(id);
 
-    const [requirements, stories, clarifications, stats, matrix] =
+    const [requirements, stories, clarifications, gaps, stats, matrix] =
       await Promise.all([
         listRequirements(id),
         listUserStories(id),
         listClarifications(id),
+        listClarificationGaps(id),
         getRequirementStats(id),
         buildTraceabilityMatrix(id),
       ]);
@@ -29,6 +31,7 @@ export async function GET(
       requirements,
       stories,
       clarifications,
+      gaps,
       stats,
       matrix,
     });

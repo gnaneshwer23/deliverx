@@ -368,6 +368,59 @@ export function acceptedCategoryIds(
     .map((c) => c.id);
 }
 
+export type ClarificationGapSeedRow = {
+  title: string;
+  description: string;
+  gapType: "gap" | "missing_info" | "clarification";
+  structuredItemId?: string;
+  priority?: string;
+};
+
+/** Pure seed rows for clarification_gaps from BC review (testable without DB). */
+export function buildClarificationGapSeedRows(
+  review: BusinessCaseReview,
+): ClarificationGapSeedRow[] {
+  const rows: ClarificationGapSeedRow[] = [];
+
+  review.gaps.slice(0, 8).forEach((gap, index) => {
+    rows.push({
+      title: gap,
+      description: "Gap identified during business case review.",
+      gapType: "gap",
+      structuredItemId: `gap-${index + 1}`,
+      priority: "high",
+    });
+  });
+
+  review.missingInformation.slice(0, 6).forEach((info, index) => {
+    rows.push({
+      title: info,
+      description: "Missing information flagged in business case analysis.",
+      gapType: "missing_info",
+      structuredItemId: `missing-${index + 1}`,
+      priority: "medium",
+    });
+  });
+
+  review.clarificationQuestions.slice(0, 6).forEach((question, index) => {
+    rows.push({
+      title: question,
+      description: "Clarification needed before requirements can be finalised.",
+      gapType: "clarification",
+      structuredItemId: `clarify-${index + 1}`,
+      priority: "high",
+    });
+  });
+
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    const key = row.title.trim().toLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export function structuredAnalysisCounts(
   analysis: BusinessCaseStructuredAnalysis | null | undefined,
 ): {
