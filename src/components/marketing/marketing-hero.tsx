@@ -41,8 +41,8 @@ export function MarketingHero() {
               <em className="italic text-[#3D9660]">Delivery happens.</em>
             </h1>
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.7] text-[var(--mkt-text2)]">
-              AI surfaces risks, drafts reports, and flags blockers. Nothing applies until the team
-              approves. Seven roles, one live picture.
+              Upload brief → invite BA → review in AI Queue. AI surfaces risks and drafts reports —
+              nothing applies until your team approves. Seven roles, one live picture.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg">

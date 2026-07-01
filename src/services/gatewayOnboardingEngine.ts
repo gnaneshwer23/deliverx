@@ -204,6 +204,8 @@ export function gatewayStepToProjectFormStep(
   }
 }
 
+export const PM_ONBOARD_MISSION_PATH = "/workspace/pm-mission?onboard=1";
+
 export function resolveGatewayRedirect(input: {
   hasOrg: boolean;
   hasRole: boolean;
@@ -215,6 +217,18 @@ export function resolveGatewayRedirect(input: {
   if (!input.gatewayStep || input.gatewayStep === "complete") return null;
 
   const role = input.role ?? null;
+
+  if (role === "pm") {
+    if (
+      input.gatewayStep === "project" ||
+      input.gatewayStep === "business_case" ||
+      input.gatewayStep === "ai_review"
+    ) {
+      return PM_ONBOARD_MISSION_PATH;
+    }
+    if (input.gatewayStep === "team") return "/onboarding/complete";
+    return null;
+  }
 
   if (role && role !== "executive") {
     if (role === "team_member") return null;
@@ -243,6 +257,7 @@ export function resolveGatewayRedirect(input: {
 
 export function getPostRoleSelectRedirect(role: string): string {
   if (role === "executive") return "/project/new";
+  if (role === "pm") return PM_ONBOARD_MISSION_PATH;
   if (role === "team_member") return "/onboarding/complete";
   return "/onboarding/persona";
 }
@@ -315,6 +330,17 @@ export function simulatePersonaOnboardingPath(input: {
       missionHref: "/workspace/dashboard",
       skippedGoGate: false,
       error: "Persona onboarding path is for delivery personas only",
+    };
+  }
+
+  if (role === "pm") {
+    steps.push("workspace");
+    return {
+      ok: true,
+      steps,
+      role,
+      missionHref: PM_ONBOARD_MISSION_PATH,
+      skippedGoGate: true,
     };
   }
 

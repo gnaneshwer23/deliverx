@@ -131,8 +131,35 @@ describe("gatewayOnboardingEngine", () => {
 
   it("selects post-role redirect by persona", () => {
     expect(getPostRoleSelectRedirect("executive")).toBe("/project/new");
+    expect(getPostRoleSelectRedirect("pm")).toBe("/workspace/pm-mission?onboard=1");
     expect(getPostRoleSelectRedirect("ba")).toBe("/onboarding/persona");
     expect(getPostRoleSelectRedirect("team_member")).toBe("/onboarding/complete");
+  });
+
+  it("routes PM through mission control instead of persona wizard", () => {
+    expect(
+      resolveGatewayRedirect({
+        hasOrg: true,
+        hasRole: true,
+        gatewayStep: "project",
+        role: "pm",
+      }),
+    ).toBe("/workspace/pm-mission?onboard=1");
+    expect(
+      resolveGatewayRedirect({
+        hasOrg: true,
+        hasRole: true,
+        gatewayStep: "business_case",
+        role: "pm",
+      }),
+    ).toBe("/workspace/pm-mission?onboard=1");
+  });
+
+  it("simulates PM onboarding without persona wizard", () => {
+    const result = simulatePersonaOnboardingPath({ role: "pm" });
+    expect(result.ok).toBe(true);
+    expect(result.steps).toEqual(["role_select", "workspace"]);
+    expect(result.missionHref).toBe("/workspace/pm-mission?onboard=1");
   });
 
   it("assigns initial gateway step by role", () => {

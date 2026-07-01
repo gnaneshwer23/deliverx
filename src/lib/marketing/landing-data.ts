@@ -5,6 +5,10 @@ import {
   type OnboardingRoleData,
   type OnboardingStep,
 } from "@/config/persona-onboarding";
+import {
+  WORKSPACE_FLOW_STEPS,
+  type WorkspaceFlowStepId,
+} from "@/lib/workspace-flow-stages";
 
 export type RoleId = MarketingRoleId;
 
@@ -749,39 +753,28 @@ export type DeliveryStage = {
   detail: string;
 };
 
-/** End-to-end delivery pipeline steps shown in the workflow section. */
-export const DELIVERY_STAGES: readonly DeliveryStage[] = [
-  {
-    code: "01",
-    label: "Brief",
-    detail:
-      "Upload business case, charter, or plain text. Delivery Brain extracts scope, timeline, team, and objectives. You review the draft before anything enters the workspace.",
-  },
-  {
-    code: "02",
-    label: "Structure",
-    detail:
-      "AI proposes workstreams, milestones, and initial RAID. Nothing is applied until you accept, edit, or reject each item in the AI Review Queue.",
-  },
-  {
-    code: "03",
-    label: "Deliver",
-    detail:
-      "Each role gets a personalised dashboard. PM tracks milestones and risks, Engineer sees stories and PRs, QA monitors release readiness. One signal updates all seven roles instantly.",
-  },
-  {
-    code: "04",
-    label: "Govern",
-    detail:
-      "Decisions, changes, and risks in one place. AI drafts weekly status from live data. You review and publish. Nothing reaches stakeholders without your sign-off.",
-  },
-  {
-    code: "05",
-    label: "Close",
-    detail:
-      "You confirm closure. AI generates a retrospective and delivery playbook from project patterns. Lessons are stored in Organisational Memory for future projects.",
-  },
-] as const;
+/** Marketing copy keyed to `WORKSPACE_FLOW_STEPS` — same PM-first path as mission control. */
+const DELIVERY_STAGE_DETAILS: Record<WorkspaceFlowStepId, string> = {
+  upload:
+    "Upload business case, charter, or plain text on PM Mission Control. Delivery Brain extracts scope, timeline, team, and objectives.",
+  extract:
+    "AI proposes workstreams, milestones, and initial RAID. Nothing is applied until you accept, edit, or reject each item in the AI Review Queue.",
+  invite_ba:
+    "Generate a BA join link from the business case flow. Your analyst lands in a workspace built from the same brief — no duplicate setup.",
+  ba_review:
+    "BA reviews extracted requirements and closes gaps. Approved stories and traceability feed engineering and QA from one signal graph.",
+  delivery:
+    "Each role gets a personalised dashboard. One blocker update propagates to PM, Engineer, QA, and Sponsor instantly.",
+};
+
+/** End-to-end delivery pipeline — labels aligned with `WORKSPACE_FLOW_STEPS`. */
+export const DELIVERY_STAGES: readonly DeliveryStage[] = WORKSPACE_FLOW_STEPS.map(
+  (step, index) => ({
+    code: String(index + 1).padStart(2, "0"),
+    label: step.short,
+    detail: DELIVERY_STAGE_DETAILS[step.id],
+  }),
+);
 
 export type PilotQuote = {
   /** Set to true when a real pilot customer quote is approved for publication. */

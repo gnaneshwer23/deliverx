@@ -14,7 +14,7 @@ export default async function ProjectNewLayout({ children }: { children: ReactNo
   if (!profile?.organisation_id) redirect("/onboarding/organisation");
   if (!profile?.role) redirect("/onboarding/role");
 
-  if (!usesSponsorGateway(profile.role) && !isSponsorGatewayComplete(profile, gatewayStep)) {
+  if (!usesSponsorGateway(profile.role) && profile.role !== "pm" && !isSponsorGatewayComplete(profile, gatewayStep)) {
     redirect("/onboarding/persona");
   }
 
@@ -25,7 +25,7 @@ export default async function ProjectNewLayout({ children }: { children: ReactNo
       gatewayStep,
       role: profile.role,
     });
-    if (redirectPath && redirectPath !== "/project/new") {
+    if (redirectPath && redirectPath !== "/project/new" && profile.role !== "pm") {
       redirect(redirectPath);
     }
   }

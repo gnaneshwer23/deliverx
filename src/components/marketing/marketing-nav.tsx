@@ -9,6 +9,7 @@ import { MarketingContainer } from "@/components/marketing/marketing-layout";
 export const NAV_LINKS = [
   { href: "#platform", label: "Platform" },
   { href: "#workflow", label: "Pipeline" },
+  { href: "#onboarding", label: "Onboarding" },
   { href: "#proof", label: "Why DeliverX" },
   { href: "#pricing", label: "Pricing" },
 ] as const;
