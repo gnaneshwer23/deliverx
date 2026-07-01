@@ -77,14 +77,14 @@ import { resolveWorkspaceFlowStageFromSnapshot } from "@/lib/workspace-flow-stag
 import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-review-panel";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
-import { isMeetingReviewDeepLink } from "@/lib/meeting-flow";
+import { isMeetingReviewDeepLink, pmMeetingReviewUrl } from "@/lib/meeting-flow";
 
 export const dynamic = "force-dynamic";
 
 export default async function PmMissionControlPage({
   searchParams,
 }: {
-  searchParams: Promise<{ project?: string; meeting?: string; onboard?: string }>;
+  searchParams: Promise<{ project?: string; meeting?: string; meetingId?: string; onboard?: string }>;
 }) {
   const supabase = await createClient();
   const { data: profile } = await supabase
@@ -97,7 +97,6 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
-  const meetingReviewMode = isMeetingReviewDeepLink(params.meeting);
   const onboardMode = params.onboard === "1";
   const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop, orgProfile] =
     await Promise.all([
@@ -112,6 +111,17 @@ export default async function PmMissionControlPage({
     ]);
 
   const projectId = data.primaryProject?.id;
+
+  if (isMeetingReviewDeepLink(params.meeting) && projectId) {
+    const meetingId =
+      params.meetingId ??
+      (await listPendingMeetingProposals(projectId, 1).catch(() => []))[0]?.source_id ??
+      undefined;
+    if (meetingId) {
+      redirect(pmMeetingReviewUrl(projectId, meetingId));
+    }
+  }
+
   const projectTasks = projectId
     ? await listOrgTasks({ projectId, limit: 200 }).catch(() => [])
     : [];
@@ -411,11 +421,7 @@ export default async function PmMissionControlPage({
           ) : null}
           {projectId && meetingProposals.length > 0 ? (
             <div className="mb-4">
-              <MeetingIntelReviewPanel
-                projectId={projectId}
-                proposals={meetingProposals}
-                highlightReview={meetingReviewMode}
-              />
+              <MeetingIntelReviewPanel projectId={projectId} proposals={meetingProposals} />
             </div>
           ) : null}
           {data.primaryProject ? (
