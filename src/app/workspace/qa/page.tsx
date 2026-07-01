@@ -22,6 +22,7 @@ import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildQaReleaseSynthesis } from "@/lib/qa-release-kpis";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
+import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -138,6 +139,7 @@ export default async function QaMissionControlPage({
             personaLabel={PERSONA_REVIEW_LABELS.qa}
             personaId="qa"
           />
+          <PersonaStandupTasks projectId={projectId} />
           <MissionBootstrapBanner
             personaId="qa"
             projectId={data.primaryProject?.id}

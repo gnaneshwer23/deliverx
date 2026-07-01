@@ -30,6 +30,7 @@ import {
   buildScrumHealthSynthesis,
 } from "@/lib/scrum-health-kpis";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
+import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -170,6 +171,7 @@ export default async function ScrumMissionControlPage({
           personaLabel={PERSONA_REVIEW_LABELS.scrum}
           personaId="scrum"
         />
+        <PersonaStandupTasks projectId={projectId} />
         {data.projects.length > 1 && data.primaryProject ? (
           <div className="flex flex-wrap gap-2">
             {data.projects.slice(0, 8).map((p) => (
