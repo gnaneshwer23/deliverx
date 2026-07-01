@@ -28,6 +28,19 @@ jobs:
         env:
           INVITE_JWT_SECRET: ci-invite-jwt-secret
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright 5-step smoke suite
+        run: npm run test:smoke
+        env:
+          INVITE_JWT_SECRET: ci-invite-jwt-secret
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ci-smoke-anon
+          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ci-smoke-service
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          E2E_MOCK_INVITES: "true"
+
       - name: Production build
         run: npm run build
         env:

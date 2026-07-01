@@ -5,8 +5,9 @@
  *
  * ```bash
  * npm run test:acceptance          # 17-step suite only
- * npm run test:e2e                 # all e2e/ tests (includes slice-a smoke)
- * npm test                         # full unit + e2e suite (542+ tests)
+ * npm run test:e2e:vitest          # Vitest integration harness in e2e/
+ * npm run test:e2e                 # Playwright 5-step browser smoke (see docs/E2E_SMOKE.md)
+ * npm test                         # full unit + Vitest e2e suite (542+ tests)
  * ```
  *
  * ## Coverage model
@@ -15,7 +16,7 @@
  * |--------------|-------------------------------|--------------------------------------------|
  * | Integration  | 1–15, 17 (+ 16 context)       | Pure engines, no DB/browser (CI-safe)      |
  * | Skipped      | 16 live chat                  | Requires OPENAI_API_KEY + Supabase auth    |
- * | Browser      | —                             | Playwright not configured; deferred        |
+ * | Browser      | 5 Playwright smoke specs      | Mock path in CI; live path with E2E_* env  |
  *
  * Steps 1–12 and 14–17 chain real service logic with stub AI where needed.
  * Live Supabase auth and browser flows are documented gaps — see step coverage
@@ -111,8 +112,9 @@ describe("H1: 17-step acceptance — live AI (optional)", () => {
 });
 
 describe("H1: browser E2E gate", () => {
-  it("documents Playwright browser smoke as deferred (not configured)", () => {
-    // package.json has no @playwright/test — browser path deferred until env gate added
-    expect(process.env.PLAYWRIGHT_BASE_URL).toBeUndefined();
+  it("documents Playwright 5-step smoke suite (e2e/smoke/)", () => {
+    expect(process.env.PLAYWRIGHT_BASE_URL ?? process.env.E2E_BASE_URL ?? "http://127.0.0.1:3000").toMatch(
+      /^https?:\/\//,
+    );
   });
 });

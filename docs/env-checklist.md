@@ -72,9 +72,24 @@ npm run build
 Run locally:
 
 ```bash
-npm test                              # all unit + e2e vitest specs
+npm test                              # all unit + Vitest e2e specs
 npm test -- e2e/slice-a-production-smoke.test.ts
+npm run test:e2e                      # Playwright 5-step browser smoke (see E2E_SMOKE.md)
 ```
+
+---
+
+## Playwright smoke (`e2e/smoke/`)
+
+| Spec | Mock path (CI) | Live path |
+|------|:--------------:|:---------:|
+| Auth login | ✅ | `E2E_TEST_EMAIL`, `E2E_TEST_PASSWORD` |
+| Invite join | ✅ (mock validate API) | PM credentials |
+| BA requirements | ✅ (auth gate) | BA credentials + `E2E_TEST_PROJECT_ID` |
+| Standup flow | ✅ (auth gate) | PM credentials + project id |
+| Sponsor read-only | ✅ (mock invite + auth gate) | Executive credentials |
+
+See [E2E_SMOKE.md](./E2E_SMOKE.md) for full variable list.
 
 ---
 
@@ -84,10 +99,10 @@ After env is set: **Settings → Setup audit**, or `GET /api/setup/diagnostics` 
 
 ---
 
-## Still manual (not covered by Slice A)
+## Still manual (not covered by Slice A / Playwright mock smoke)
 
 - Supabase migrations **0060–0063** on prod (`jibmyxaldetyycmtlxet`) — verified 2026-07-01; re-check via [OPS_ENV_RUNBOOK.md](./OPS_ENV_RUNBOOK.md) if schema drift suspected
-- Browser login (Supabase OAuth / email) on `/join` and workspace routes
+- Live browser login with real Supabase test accounts (Playwright live paths — see [E2E_SMOKE.md](./E2E_SMOKE.md))
 - Live `POST /api/invites/generate` and `POST /api/invites/accept` against Supabase
 - Live `POST /api/project/[id]/meetings/ingest` with authenticated PM session
 - Live `POST /api/ai/helm` chat when `OPENAI_API_KEY` is set

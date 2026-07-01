@@ -149,7 +149,10 @@ export function MeetingTranscriptIngest({
   const loading = pasteLoading || audioLoading;
 
   return (
-    <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50/80 p-3">
+    <div
+      className="mt-3 rounded-lg border border-slate-200 bg-slate-50/80 p-3"
+      data-testid="meeting-transcript-ingest"
+    >
       <p className="text-xs font-semibold uppercase text-slate-400">Quick ingest (no Recall)</p>
       <p className="mt-1 text-[11px] text-slate-500">
         Upload a recording or paste transcript lines with speakers (Engineer: …) to extract

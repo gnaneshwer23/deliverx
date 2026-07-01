@@ -15,7 +15,7 @@ export function LoginForm({ next }: { next?: string }) {
 
   return (
     <>
-      <form action={formAction} className="flex flex-col gap-3.5">
+      <form action={formAction} className="flex flex-col gap-3.5" data-testid="login-form">
         {next ? <input type="hidden" name="next" value={next} /> : null}
 
         <label className="block">

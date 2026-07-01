@@ -87,7 +87,7 @@ export function MeetingReviewPage({
   }
 
   return (
-    <main className="p-6">
+    <main className="p-6" data-testid="meeting-review-page">
       <Link
         href={`/project/${projectId}/meetings`}
         className="text-sm font-medium text-[#1C4A2E] hover:underline"

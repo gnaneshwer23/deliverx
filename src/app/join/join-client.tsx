@@ -202,7 +202,7 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
               </button>
             </div>
           ) : preview ? (
-            <div className={`${dxClass.cardPad} space-y-6`}>
+            <div className={`${dxClass.cardPad} space-y-6`} data-testid="join-invite-preview">
               <div>
                 <DxCaps className="text-[#1C4A2E]">Project invite</DxCaps>
                 <h1 className={`${dxClass.display} mt-2 text-2xl text-[#0D0D0B]`}>
@@ -216,7 +216,10 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
                   {isSponsorInvite ? " with read-only sponsor visibility" : ""}.
                 </p>
                 {isSponsorInvite ? (
-                  <div className="mt-4 rounded-md border border-[#C6DDD0] bg-[#FAFAF7] px-3 py-3 text-sm text-[#2C2C28]">
+                  <div
+                    className="mt-4 rounded-md border border-[#C6DDD0] bg-[#FAFAF7] px-3 py-3 text-sm text-[#2C2C28]"
+                    data-testid="sponsor-readonly-notice"
+                  >
                     <p className="font-medium text-[#1C4A2E]">What sponsors see</p>
                     <ul className="mt-2 list-inside list-disc space-y-1 text-[#6B6B64]">
                       <li>Programme health, budget signals, and open risks</li>
