@@ -3,6 +3,7 @@ import {
   listOrgTasks,
   countOrgTasks,
   listOrgProjects,
+  listUserMeetingSourcedTasks,
   type TaskStatus,
 } from "@/services/delivery";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
@@ -15,6 +16,12 @@ import {
   totalPages,
 } from "@/components/shared/pagination";
 import { TaskKanban, TaskViewToggle } from "@/components/tasks/task-kanban";
+import { StandupTasksSection } from "@/components/tasks/standup-tasks-section";
+import {
+  filterByStandupSourceQuery,
+  partitionStandupFromKanban,
+  selectStandupBatchTasks,
+} from "@/lib/standup-tasks";
 import { dxClass } from "@/lib/dx-theme";
 import {
   Table,
@@ -27,7 +34,13 @@ import {
 
 export const dynamic = "force-dynamic";
 
-type Search = Promise<{ project?: string; status?: string; page?: string; view?: string }>;
+type Search = Promise<{
+  project?: string;
+  status?: string;
+  page?: string;
+  view?: string;
+  source?: string;
+}>;
 
 const STATUSES: Array<{ value: TaskStatus | "all"; label: string }> = [
   { value: "all", label: "All" },
@@ -43,24 +56,35 @@ export default async function WorkspaceTasksPage({
 }: {
   searchParams: Search;
 }) {
-  const { project: projectId, status: statusFilter, page: pageRaw, view: viewRaw } =
-    await searchParams;
+  const {
+    project: projectId,
+    status: statusFilter,
+    page: pageRaw,
+    view: viewRaw,
+    source: sourceFilter,
+  } = await searchParams;
   const view = viewRaw === "kanban" ? "kanban" : "table";
+  const standupSourceActive = sourceFilter === "standup";
   const page = parsePageParam(pageRaw);
   const status =
     statusFilter && statusFilter !== "all" ? (statusFilter as TaskStatus) : undefined;
 
   const projects = await listOrgProjects();
-  const tasks = await listOrgTasks(
+  const [tasks, myMeetingTasks] = await Promise.all([
+    listOrgTasks(
+      view === "kanban"
+        ? { projectId: projectId || undefined, status, limit: 200 }
+        : {
+            projectId: projectId || undefined,
+            status,
+            page,
+            pageSize: DEFAULT_PAGE_SIZE,
+          },
+    ),
     view === "kanban"
-      ? { projectId: projectId || undefined, status, limit: 200 }
-      : {
-          projectId: projectId || undefined,
-          status,
-          page,
-          pageSize: DEFAULT_PAGE_SIZE,
-        },
-  );
+      ? listUserMeetingSourcedTasks({ projectId: projectId || undefined }).catch(() => [])
+      : Promise.resolve([]),
+  ]);
   const total =
     view === "kanban"
       ? tasks.length
@@ -68,20 +92,32 @@ export default async function WorkspaceTasksPage({
 
   const pages = totalPages(total, DEFAULT_PAGE_SIZE);
 
+  const standupBatch =
+    view === "kanban" ? selectStandupBatchTasks(myMeetingTasks) : [];
+  const { kanbanTasks } =
+    view === "kanban" ? partitionStandupFromKanban(tasks, standupBatch) : { kanbanTasks: tasks };
+  const filteredKanbanTasks = filterByStandupSourceQuery(
+    standupSourceActive ? myMeetingTasks : kanbanTasks,
+    standupSourceActive ? "standup" : undefined,
+  );
+
   function buildHref(next: {
     project?: string;
     status?: string;
     page?: number;
     view?: "table" | "kanban";
+    source?: string;
   }) {
     const params = new URLSearchParams();
     const p = "project" in next ? next.project : projectId;
     const s = "status" in next ? next.status : statusFilter;
     const pg = "page" in next ? next.page : page;
     const v = "view" in next ? next.view : view;
+    const src = "source" in next ? next.source : sourceFilter;
     if (v) params.set("view", v);
     if (p) params.set("project", p);
     if (s && s !== "all") params.set("status", s);
+    if (src === "standup") params.set("source", "standup");
     if (pg && pg > 0 && v !== "kanban") params.set("page", String(pg));
     const q = params.toString();
     return q ? `/workspace/tasks?${q}` : "/workspace/tasks";
@@ -91,7 +127,33 @@ export default async function WorkspaceTasksPage({
     <>
       <DxPageHeader breadcrumb="DeliverX · Workspace" title="Tasks" titleEm="inbox" />
       <div className="p-6 md:p-8">
-        <TaskViewToggle view={view} projectId={projectId} statusFilter={statusFilter} />
+        <TaskViewToggle
+          view={view}
+          projectId={projectId}
+          statusFilter={statusFilter}
+          sourceFilter={sourceFilter}
+        />
+
+        {view === "kanban" ? (
+          <div className="mb-4 flex flex-wrap gap-2">
+            <Link
+              href={buildHref({ source: undefined, page: 0, view: "kanban" })}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${
+                !standupSourceActive ? dxClass.filterActive : dxClass.filterInactive
+              }`}
+            >
+              All tasks
+            </Link>
+            <Link
+              href={buildHref({ source: "standup", page: 0, view: "kanban" })}
+              className={`rounded-full px-3 py-1 text-xs font-medium ${
+                standupSourceActive ? dxClass.filterActive : dxClass.filterInactive
+              }`}
+            >
+              From standup
+            </Link>
+          </div>
+        ) : null}
 
         <div className="mb-4 flex flex-wrap gap-2">
           <Link
@@ -142,15 +204,29 @@ export default async function WorkspaceTasksPage({
           </div>
         ) : null}
 
-        {tasks.length === 0 ? (
+        {view === "kanban" && !standupSourceActive ? (
+          <StandupTasksSection tasks={standupBatch} />
+        ) : null}
+
+        {view === "kanban" && standupSourceActive ? (
+          <StandupTasksSection tasks={filteredKanbanTasks} highlightOnly />
+        ) : null}
+
+        {tasks.length === 0 && !(view === "kanban" && standupSourceActive) ? (
           <EmptyState
-            title="No tasks found"
-            description="Create tasks from a project page to see them here."
-            actionLabel="View projects"
-            actionHref="/workspace/projects"
+            title={standupSourceActive ? "No standup tasks found" : "No tasks found"}
+            description={
+              standupSourceActive
+                ? "Standup action items appear here after the PM approves meeting extractions."
+                : "Create tasks from a project page to see them here."
+            }
+            actionLabel={standupSourceActive ? "View all tasks" : "View projects"}
+            actionHref={standupSourceActive ? buildHref({ source: undefined, view: "kanban" }) : "/workspace/projects"}
           />
         ) : view === "kanban" ? (
-          <TaskKanban tasks={tasks} />
+          standupSourceActive ? null : (
+            <TaskKanban tasks={filteredKanbanTasks} />
+          )
         ) : (
           <div className={`${dxClass.card} overflow-hidden`}>
             <Table>

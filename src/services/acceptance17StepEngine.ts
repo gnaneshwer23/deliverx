@@ -44,6 +44,7 @@ import {
   requirementChangeToImpactDrafts,
   workspaceMemberJoinedToImpactDrafts,
 } from "./loopEventPropagation";
+import { selectStandupBatchTasks } from "@/lib/standup-tasks";
 
 export const DEMO_PROJECT_ID = "22222222-2222-4222-8222-222222222222";
 export const DEMO_PROJECT_NAME = "Patient Portal Modernisation";
@@ -413,12 +414,29 @@ export function runAcceptance17StepFlow(input?: {
         : "engineer",
   });
   const rolesWithTasks = new Set(appliedSignals.map((s) => s.targetRole));
+  const standupWorkspaceTasks = selectStandupBatchTasks([
+    {
+      id: "task-standup-1",
+      title: taskProposal.title,
+      project_id: DEMO_PROJECT_ID,
+      status: "todo",
+      source: "meeting",
+      source_id: "meeting-standup-1",
+      created_at: new Date().toISOString(),
+      meeting_ceremony_type: "standup",
+      meeting_scheduled_at: new Date().toISOString(),
+    },
+  ]);
   steps.push({
     step: 13,
     id: "team_standup_tasks",
     label: ACCEPTANCE_STEP_DEFINITIONS[12].label,
-    ok: rolesWithTasks.has("engineer") && rolesWithTasks.has("scrum"),
-    detail: `Standup tasks propagated to: ${[...rolesWithTasks].join(", ")}`,
+    ok:
+      rolesWithTasks.has("engineer") &&
+      rolesWithTasks.has("scrum") &&
+      standupWorkspaceTasks.length === 1 &&
+      standupWorkspaceTasks[0]?.source === "meeting",
+    detail: `Standup tasks propagated to: ${[...rolesWithTasks].join(", ")} · workspace batch ${standupWorkspaceTasks.length}`,
     coverage: "integration",
   });
 
