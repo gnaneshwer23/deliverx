@@ -8,7 +8,6 @@ import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import type { MeetingSummaryResult } from "@/services/aiGovernance";
 import { saveMeetingSummaryAction, type ActionState } from "../ai/actions";
 import { MeetingAlignmentPreview } from "@/components/alignment/meeting-alignment-preview";
-import { MeetingAudioUpload } from "@/components/meetings/meeting-audio-upload";
 import { MeetingCeremonyBadge } from "@/components/meetings/meeting-ceremony";
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 
@@ -107,7 +106,6 @@ export function MeetingAiPanel({
         <MeetingCeremonyBadge type={ceremonyType} />
         <span className="text-[10px] text-slate-400">Ceremony-aware extraction</span>
       </div>
-      <MeetingAudioUpload projectId={projectId} meetingId={meetingId} />
       {!draft ? (
         <>
           <button
