@@ -88,3 +88,8 @@ Required env vars for the full path: Supabase keys, `OPENAI_API_KEY`. Optional: 
 2. For **Preview** deployments, copy Production vars using the checklist in [docs/PREVIEW_ENV_PARITY.md](docs/PREVIEW_ENV_PARITY.md) — Preview currently has only `open_api_key`; Supabase and `NEXT_PUBLIC_APP_URL` are required for auth and data.
 3. After env changes, redeploy. Confirm **Settings → Setup audit** shows no missing required keys.
 4. Sprint history and prod SHA: [docs/BUILD_REPORT.md](docs/BUILD_REPORT.md).
+
+## Docs & team alignment
+
+- **[Complete Cursor Implementation Prompt](docs/CURSOR_IMPLEMENTATION.md)** — product spec, schema, API routes, 17 acceptance criteria, and H1–H7 gap list for AI-assisted builds
+- Prototype reference: [docs/prototypes/deliverx-complete-workflow.html](docs/prototypes/deliverx-complete-workflow.html)
