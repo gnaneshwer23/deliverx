@@ -29,6 +29,7 @@ type JoinWelcome = {
   projectName: string;
   role: string;
   redirectPath: string;
+  readOnly: boolean;
 };
 
 export function JoinClient({ authenticated }: { authenticated: boolean }) {
@@ -97,6 +98,7 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
         projectId?: string;
         projectName?: string;
         role?: string;
+        viewMode?: string;
       };
       if (!res.ok || !data.ok || !data.redirectPath) {
         setAcceptError(data.error ?? "Could not accept invite.");
@@ -107,6 +109,11 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
         projectName: data.projectName ?? preview?.projectName ?? "Project workspace",
         role: data.role ?? preview?.role ?? "team_member",
         redirectPath: data.redirectPath,
+        readOnly:
+          preview?.viewMode === "read_only" ||
+          data.viewMode === "read_only" ||
+          data.role === "executive" ||
+          preview?.role === "executive",
       });
     } catch {
       setAcceptError("Could not accept invite. Try again.");
@@ -119,6 +126,11 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
     ? `/login?next=${encodeURIComponent(buildJoinReturnPath(token, view))}`
     : "/login";
   const signupJoinToken = token || undefined;
+
+  const isSponsorInvite =
+    preview?.viewMode === "read_only" ||
+    preview?.role === "executive" ||
+    view === "sponsor";
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--dx-page)] text-[#0D0D0B]">
@@ -166,6 +178,15 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
                     {formatInviteRoleLabel(welcome.role)}
                   </span>
                 </p>
+                {welcome.readOnly ? (
+                  <div className="mt-4 rounded-md border border-[#C6DDD0] bg-white px-3 py-3 text-left text-sm text-[#2C2C28]">
+                    <p className="font-medium text-[#1C4A2E]">Read-only sponsor visibility</p>
+                    <p className="mt-1 text-[#6B6B64]">
+                      You can review programme health, decisions, RAID, and reports — but cannot
+                      edit delivery artefacts or approve proposals on behalf of the team.
+                    </p>
+                  </div>
+                ) : null}
               </div>
 
               <button
@@ -192,8 +213,18 @@ export function JoinClient({ authenticated }: { authenticated: boolean }) {
                   <span className="font-medium text-[#2C2C28]">
                     {formatInviteRoleLabel(preview.role)}
                   </span>
-                  {preview.viewMode === "read_only" ? " (read-only sponsor view)" : ""}.
+                  {isSponsorInvite ? " with read-only sponsor visibility" : ""}.
                 </p>
+                {isSponsorInvite ? (
+                  <div className="mt-4 rounded-md border border-[#C6DDD0] bg-[#FAFAF7] px-3 py-3 text-sm text-[#2C2C28]">
+                    <p className="font-medium text-[#1C4A2E]">What sponsors see</p>
+                    <ul className="mt-2 list-inside list-disc space-y-1 text-[#6B6B64]">
+                      <li>Programme health, budget signals, and open risks</li>
+                      <li>Pending decisions and governance reports</li>
+                      <li>Ask Helm for executive summaries — no write access</li>
+                    </ul>
+                  </div>
+                ) : null}
                 <p className="mt-1 text-xs text-[#9CA3AF]">
                   Expires {new Date(preview.expiresAt).toLocaleDateString()}
                 </p>

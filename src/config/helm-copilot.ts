@@ -29,9 +29,10 @@ export function dbRoleToImpactRole(role: string | null | undefined): DeliveryImp
 
 export const HELM_QUICK_CHIPS: Record<MissionPersonaId, string[]> = {
   founder: [
-    "Portfolio health summary",
-    "Top risks across projects",
-    "Pending decisions for me",
+    "What is blocking go-live?",
+    "Are we on budget?",
+    "Last standup?",
+    "Team on track?",
   ],
   "pm-mission": [
     "What's blocking delivery?",

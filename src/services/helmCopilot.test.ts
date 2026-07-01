@@ -46,6 +46,15 @@ describe("helm-copilot config", () => {
     }
   });
 
+  it("founder quick chips match S9 executive prompts", () => {
+    expect(HELM_QUICK_CHIPS.founder).toEqual([
+      "What is blocking go-live?",
+      "Are we on budget?",
+      "Last standup?",
+      "Team on track?",
+    ]);
+  });
+
   it("welcome message is honest when no projects exist", () => {
     const msg = helmWelcomeMessage("engineer", false);
     expect(msg).toContain(HELM_NAME);
