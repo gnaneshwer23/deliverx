@@ -213,6 +213,62 @@ export async function listPendingMeetingProposals(
   return (data ?? []).map((row) => mapRow(row as Record<string, unknown>));
 }
 
+export async function listPendingMeetingProposalsForMeeting(
+  projectId: string,
+  meetingId: string,
+  limit = 50,
+): Promise<ProposedActionRow[]> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("proposed_actions")
+    .select("*")
+    .eq("project_id", projectId)
+    .eq("source", "meeting")
+    .eq("source_id", meetingId)
+    .eq("status", "pending")
+    .order("created_at", { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    throwIfMissingTable(error, "proposed_actions");
+    throw error;
+  }
+
+  return (data ?? []).map((row) => mapRow(row as Record<string, unknown>));
+}
+
+export async function patchPendingProposalFields(
+  id: string,
+  fields: { title?: string; summary?: string },
+): Promise<ProposedActionRow> {
+  const { supabase } = await getOrgContext();
+  const updates: Record<string, string> = {};
+
+  if (fields.title !== undefined) {
+    const title = fields.title.trim();
+    if (!title) throw new Error("Title is required");
+    updates.title = title;
+  }
+  if (fields.summary !== undefined) {
+    updates.summary = fields.summary.trim();
+  }
+
+  if (Object.keys(updates).length === 0) {
+    throw new Error("No fields to update");
+  }
+
+  const { data, error } = await supabase
+    .from("proposed_actions")
+    .update(updates)
+    .eq("id", id)
+    .eq("status", "pending")
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return mapRow(data as Record<string, unknown>);
+}
+
 export async function resolveProposal(
   id: string,
   status: "approved" | "rejected",

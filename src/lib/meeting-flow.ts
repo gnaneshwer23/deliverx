@@ -34,9 +34,15 @@ export function resolveMeetingFlowStage(currentStepId: MeetingFlowStepId): Meeti
   return { currentIndex: safeIndex, steps };
 }
 
+/** @deprecated Legacy anchor for embedded PM mission review panel. */
 export const MEETING_INTEL_REVIEW_ANCHOR = "meeting-intel-review";
 
-export function pmMeetingReviewUrl(projectId: string): string {
+export function pmMeetingReviewUrl(projectId: string, meetingId: string): string {
+  return `/project/${encodeURIComponent(projectId)}/meetings/${encodeURIComponent(meetingId)}/review`;
+}
+
+/** Legacy deep link used before H4 dedicated review page. */
+export function pmMeetingReviewLegacyUrl(projectId: string): string {
   return `/workspace/pm-mission?project=${encodeURIComponent(projectId)}&meeting=review#${MEETING_INTEL_REVIEW_ANCHOR}`;
 }
 

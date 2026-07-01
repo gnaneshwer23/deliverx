@@ -43,8 +43,8 @@ describe("meeting-flow helpers", () => {
   });
 
   it("builds PM review and tasks kanban deep links", () => {
-    expect(pmMeetingReviewUrl("abc-123")).toBe(
-      "/workspace/pm-mission?project=abc-123&meeting=review#meeting-intel-review",
+    expect(pmMeetingReviewUrl("abc-123", "meet-456")).toBe(
+      "/project/abc-123/meetings/meet-456/review",
     );
     expect(pmTasksKanbanUrl("abc-123")).toBe("/workspace/tasks?project=abc-123&view=kanban");
   });

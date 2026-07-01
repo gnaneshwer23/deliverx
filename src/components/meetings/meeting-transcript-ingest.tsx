@@ -15,6 +15,7 @@ type IngestResponse = {
   ok?: boolean;
   error?: string;
   code?: string;
+  meetingId?: string;
   queuedProposals?: number;
   speakerCount?: number;
   mode?: string;
@@ -61,7 +62,10 @@ export function MeetingTranscriptIngest({
     setTranscript("");
 
     if (shouldRedirectAfterMeetingIngest(queuedProposals)) {
-      router.push(pmMeetingReviewUrl(projectId));
+      const targetMeetingId = payload.meetingId ?? meetingId;
+      if (targetMeetingId) {
+        router.push(pmMeetingReviewUrl(projectId, targetMeetingId));
+      }
       return;
     }
 
