@@ -65,7 +65,7 @@ import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingMeetingProposals } from "@/services/proposedActions";
 import { getProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
 import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
-import { buildPmInviteRoleRows } from "@/lib/workspace-flow-invites";
+import { buildPmInviteRoleRows, shouldElevatePmInviteSection, summarizePmInviteRoleRows } from "@/lib/workspace-flow-invites";
 import { getRequirementStats } from "@/services/baRequirements";
 import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-case-flow-panel";
 import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
@@ -145,6 +145,8 @@ export default async function PmMissionControlPage({
   const reviewGroups = groupPendingReviewsByCategory(projectPendingReviews);
 
   const teamInvitesPending = pendingInvites.length;
+  const inviteSummary = inviteRoleRows ? summarizePmInviteRoleRows(inviteRoleRows) : null;
+  const elevateInviteSection = shouldElevatePmInviteSection(inviteRoleRows, teamInvitesPending);
   const teamJoinedCount =
     orgMembers.length || bootstrapSummary?.structure?.stakeholders || 1;
   const teamTotalCount = Math.max(teamJoinedCount + teamInvitesPending, teamJoinedCount);
@@ -206,6 +208,12 @@ export default async function PmMissionControlPage({
       guidedTaskTitle: data.guidedTasks[0]?.title,
       guidedTaskHref: data.primaryProject
         ? `/project/${data.primaryProject.id}/delivery`
+        : undefined,
+      pendingRoleInvites: inviteSummary?.unjoinedCount
+        ? {
+            count: inviteSummary.unjoinedCount,
+            needsLinkCount: inviteSummary.needsLinkCount,
+          }
         : undefined,
     }),
     impactEventsToNextUpItems(pmImpactEvents, "pm-mission", projectId),
@@ -338,6 +346,15 @@ export default async function PmMissionControlPage({
             showFallback={data.dataSources.deliveryPlan === "fallback"}
           />
           <NextUpStrip items={nextUpItems} personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]} personaId="pm-mission" />
+          {elevateInviteSection && inviteRoleRows && data.primaryProject ? (
+            <div className="mb-4">
+              <PmRoleInviteSection
+                projectId={data.primaryProject.id}
+                rows={inviteRoleRows}
+                elevated
+              />
+            </div>
+          ) : null}
           {projectId && meetingProposals.length > 0 ? (
             <div className="mb-4">
               <MeetingIntelReviewPanel projectId={projectId} proposals={meetingProposals} />
@@ -372,7 +389,7 @@ export default async function PmMissionControlPage({
                 requirementsExtracted={requirementStats?.extracted ?? 0}
                 storiesReady={requirementStats?.storiesReady ?? 0}
               />
-              {inviteRoleRows ? (
+              {inviteRoleRows && !elevateInviteSection ? (
                 <PmRoleInviteSection projectId={data.primaryProject.id} rows={inviteRoleRows} />
               ) : null}
             </>

@@ -21,6 +21,7 @@ export type MissionNextUpPageInput = {
   criticalDefects?: number;
   guidedTaskTitle?: string;
   guidedTaskHref?: string;
+  pendingRoleInvites?: { count: number; needsLinkCount: number };
 };
 
 export function missionNextUpSignals(input: MissionNextUpPageInput): NextUpSignals {
@@ -52,6 +53,7 @@ export function missionNextUpSignals(input: MissionNextUpPageInput): NextUpSigna
     guidedTask: input.guidedTaskTitle
       ? { title: input.guidedTaskTitle, href: input.guidedTaskHref }
       : undefined,
+    pendingRoleInvites: input.pendingRoleInvites,
   };
 }
 
