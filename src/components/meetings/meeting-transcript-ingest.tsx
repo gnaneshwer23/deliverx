@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
+import {
+  pmMeetingReviewUrl,
+  shouldRedirectAfterMeetingIngest,
+} from "@/lib/meeting-flow";
 
 export function MeetingTranscriptIngest({
   projectId,
@@ -55,10 +59,17 @@ export function MeetingTranscriptIngest({
         return;
       }
 
+      const queuedProposals = payload.queuedProposals ?? 0;
       setMessage(
-        `Processed ${payload.speakerCount ?? 0} speaker segment(s) (${payload.mode ?? "auto"}) — ${payload.queuedProposals ?? 0} proposal(s) queued for PM review.`,
+        `Processed ${payload.speakerCount ?? 0} speaker segment(s) (${payload.mode ?? "auto"}) — ${queuedProposals} proposal(s) queued for PM review.`,
       );
       setTranscript("");
+
+      if (shouldRedirectAfterMeetingIngest(queuedProposals)) {
+        router.push(pmMeetingReviewUrl(projectId));
+        return;
+      }
+
       router.refresh();
     } catch {
       setError("Network error. Try again.");
