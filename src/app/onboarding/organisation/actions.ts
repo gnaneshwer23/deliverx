@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { validateOrganisationFormInput } from "@/lib/onboarding/resolve-select-value";
+import { appendRoleToPath, parseSignupRoleParam } from "@/lib/marketing/role-signup";
 
 export type OrgState = { ok: boolean; error?: string };
 
@@ -59,5 +60,6 @@ export async function createOrganisationAction(
     return { ok: false, error: linkError.message };
   }
 
-  redirect("/onboarding/role");
+  const preselectedRole = parseSignupRoleParam(String(formData.get("preselected_role") ?? ""));
+  redirect(appendRoleToPath("/onboarding/role", preselectedRole));
 }

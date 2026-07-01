@@ -2,11 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { DbRole } from "@/config/persona-onboarding";
 import { createClient } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/auth-errors";
+import { appendRoleToPath } from "@/lib/marketing/role-signup";
 import { dxClass } from "@/lib/dx-theme";
 
-export function SignupForm({ invite, joinToken }: { invite?: string; joinToken?: string }) {
+export function SignupForm({
+  invite,
+  joinToken,
+  preselectedRole,
+}: {
+  invite?: string;
+  joinToken?: string;
+  preselectedRole?: DbRole | null;
+}) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -36,7 +46,7 @@ export function SignupForm({ invite, joinToken }: { invite?: string; joinToken?:
       ? `/join?token=${encodeURIComponent(joinToken)}`
       : invite
         ? `/invite/${encodeURIComponent(invite)}`
-        : "/onboarding/organisation";
+        : appendRoleToPath("/onboarding/organisation", preselectedRole);
 
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({

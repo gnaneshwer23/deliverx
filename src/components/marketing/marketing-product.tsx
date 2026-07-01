@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type CSSProperties } from "react";
 import {
   MarketingContainer,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
+import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { RolePreview } from "@/components/marketing/role-previews";
 import { trackRoleChipClick } from "@/lib/marketing/analytics";
 import {
@@ -14,6 +16,7 @@ import {
   ROLE_PILL_LABELS,
   type RoleId,
 } from "@/lib/marketing/landing-data";
+import { roleSignupLabel, signupHrefForRole } from "@/lib/marketing/role-signup";
 
 export function MarketingProductSection() {
   const [activeRole, setActiveRole] = useState<RoleId>("sponsor");
@@ -37,13 +40,18 @@ export function MarketingProductSection() {
             const d = ROLES[id];
             const isActive = id === activeRole;
             return (
-              <button
+              <Link
                 key={id}
-                type="button"
-                onClick={() => {
-                  const prev = activeRole;
-                  setActiveRole(id);
-                  if (id !== prev) trackRoleChipClick(id, "platform");
+                href={signupHrefForRole(id)}
+                onClick={(event) => {
+                  if (!event.metaKey && !event.ctrlKey && event.button === 0) {
+                    event.preventDefault();
+                    const prev = activeRole;
+                    setActiveRole(id);
+                    if (id !== prev) trackRoleChipClick(id, "platform");
+                    return;
+                  }
+                  trackRoleChipClick(id, "platform");
                 }}
                 className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition duration-200 ${
                   isActive
@@ -67,7 +75,7 @@ export function MarketingProductSection() {
                   {d.code}
                 </span>
                 {ROLE_PILL_LABELS[id]}
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -75,6 +83,15 @@ export function MarketingProductSection() {
         <div className="mt-4">
           <RolePreview roleId={activeRole} role={role} accentBorder={`${role.accent}55`} />
         </div>
+
+        <MarketingButtonLink
+          href={signupHrefForRole(activeRole)}
+          variant="primary"
+          className="mt-4"
+          onClick={() => trackRoleChipClick(activeRole, "platform")}
+        >
+          {roleSignupLabel(activeRole)} →
+        </MarketingButtonLink>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[

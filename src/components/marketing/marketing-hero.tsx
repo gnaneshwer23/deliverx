@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type CSSProperties } from "react";
 import { DashboardPreview } from "@/components/marketing/dashboard-preview";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
@@ -11,6 +12,7 @@ import {
   ROLE_PILL_LABELS,
   type RoleId,
 } from "@/lib/marketing/landing-data";
+import { roleMissionControlCta, signupHrefForRole } from "@/lib/marketing/role-signup";
 
 export function MarketingHero() {
   const [activeRole, setActiveRole] = useState<RoleId>("sponsor");
@@ -67,13 +69,18 @@ export function MarketingHero() {
                 const isActive = id === activeRole;
                 const isFirst = index === 0;
                 return (
-                  <button
+                  <Link
                     key={id}
-                    type="button"
-                    onClick={() => {
-                      const prev = activeRole;
-                      setActiveRole(id);
-                      if (id !== prev) trackRoleChipClick(id, "hero");
+                    href={signupHrefForRole(id)}
+                    onClick={(event) => {
+                      if (!event.metaKey && !event.ctrlKey && event.button === 0) {
+                        event.preventDefault();
+                        const prev = activeRole;
+                        setActiveRole(id);
+                        if (id !== prev) trackRoleChipClick(id, "hero");
+                        return;
+                      }
+                      trackRoleChipClick(id, "hero");
                     }}
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition duration-200 ${
                       isActive
@@ -97,11 +104,19 @@ export function MarketingHero() {
                       {d.code}
                     </span>
                     {ROLE_PILL_LABELS[id]}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
             <DashboardPreview role={role} roleId={activeRole} accentBorder={`${role.accent}55`} />
+            <MarketingButtonLink
+              href={signupHrefForRole(activeRole)}
+              variant="ghost"
+              className="mt-4 w-full justify-center sm:w-auto"
+              onClick={() => trackRoleChipClick(activeRole, "hero")}
+            >
+              {roleMissionControlCta(activeRole)}
+            </MarketingButtonLink>
           </div>
         </div>
       </MarketingContainer>

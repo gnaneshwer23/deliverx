@@ -2,14 +2,23 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SignupForm } from "./signup-form";
 import { DxCaps } from "@/components/dx/dx-logo";
+import { ROLE_PILL_LABELS } from "@/lib/marketing/landing-data";
+import {
+  appendRoleToPath,
+  dbRoleToMarketingRole,
+  parseSignupRoleParam,
+} from "@/lib/marketing/role-signup";
 import { dxClass } from "@/lib/dx-theme";
 import { createClient } from "@/lib/supabase/server";
 import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 
-type Search = Promise<{ invite?: string; join?: string }>;
+type Search = Promise<{ invite?: string; join?: string; role?: string }>;
 
 export default async function SignupPage({ searchParams }: { searchParams: Search }) {
-  const { invite, join } = await searchParams;
+  const { invite, join, role: roleParam } = await searchParams;
+  const preselectedRole = parseSignupRoleParam(roleParam);
+  const marketingRole = preselectedRole ? dbRoleToMarketingRole(preselectedRole) : null;
+  const preselectedLabel = marketingRole ? ROLE_PILL_LABELS[marketingRole] : null;
 
   const supabase = await createClient();
   const {
@@ -37,7 +46,14 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
         </div>
       ) : null}
 
-      <SignupForm invite={invite} joinToken={join} />
+      {preselectedLabel && !invite && !join ? (
+        <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
+          Starting as <span className="font-semibold">{preselectedLabel}</span> — we&apos;ll
+          pre-select your role after signup.
+        </div>
+      ) : null}
+
+      <SignupForm invite={invite} joinToken={join} preselectedRole={preselectedRole} />
 
       <p className="mt-5 text-center text-sm text-[#6B6B64]">
         Already have an account?{" "}
@@ -47,7 +63,9 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
               ? `/login?next=${encodeURIComponent(`/join?token=${encodeURIComponent(join)}`)}`
               : invite
                 ? `/login?next=${encodeURIComponent(`/invite/${invite}`)}`
-                : "/login"
+                : preselectedRole
+                  ? `/login?next=${encodeURIComponent(appendRoleToPath("/onboarding/organisation", preselectedRole))}`
+                  : "/login"
           }
           className="font-medium text-[#1C4A2E] hover:underline"
         >
