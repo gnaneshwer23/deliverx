@@ -70,6 +70,7 @@ export function BaRequirementsRegisterPanel({
       className={`${dxClass.card} overflow-hidden border-t-2 p-0`}
       style={{ borderTopColor: baAccent.primary }}
       data-panel="ba-requirements-register"
+      data-testid="ba-requirements-panel"
     >
       <div className="flex items-center justify-between border-b border-[#E4E4DC] px-6 py-4">
         <div>
