@@ -90,6 +90,12 @@ export function getEnvDiagnostics(): EnvDiagnostics {
       hint: "Optional — default gpt-4o-mini",
     },
     {
+      key: "INVITE_JWT_SECRET",
+      ok: isEnvSet("INVITE_JWT_SECRET"),
+      required: false,
+      hint: "Vercel Production — explicit secret for invite JWTs (do not rely on CRON_SECRET fallback)",
+    },
+    {
       key: "CRON_SECRET",
       ok: isEnvSet("CRON_SECRET"),
       required: false,
@@ -143,6 +149,11 @@ export function getEnvDiagnostics(): EnvDiagnostics {
   }
   if (supabaseMissing.length) {
     hints.push("Fix Supabase variables or login and database calls will fail.");
+  }
+  if (!isEnvSet("INVITE_JWT_SECRET") && isEnvSet("CRON_SECRET")) {
+    hints.push(
+      "Set INVITE_JWT_SECRET explicitly in Production — invite JWTs currently could share CRON_SECRET via fallback.",
+    );
   }
   if (!isEnvSet("RESEND_API_KEY")) {
     hints.push(
