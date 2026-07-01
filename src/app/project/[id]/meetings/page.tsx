@@ -17,6 +17,7 @@ import { MeetingForm } from "./meeting-form";
 import { MeetingAiPanel } from "./meeting-ai-panel";
 import { MeetingRecallPanel } from "@/components/meetings/meeting-recall-panel";
 import { MeetingTranscriptIngest } from "@/components/meetings/meeting-transcript-ingest";
+import { MeetingFlowBreadcrumb } from "@/components/meetings/meeting-flow-breadcrumb";
 import { isRecallConfigured } from "@/lib/integrations/recall";
 
 type Params = Promise<{ id: string }>;
@@ -83,6 +84,8 @@ export default async function ProjectMeetingsPage({
       />
 
       <MeetingIntelligencePanel projectId={id} stats={intelligenceStats} />
+
+      <MeetingFlowBreadcrumb currentStep="transcript" className="mt-6" />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>

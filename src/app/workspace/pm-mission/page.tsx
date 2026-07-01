@@ -74,13 +74,14 @@ import { PmBaHandoffBanner } from "@/components/workspace-flow/pm-ba-handoff-ban
 import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-review-panel";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
+import { isMeetingReviewDeepLink } from "@/lib/meeting-flow";
 
 export const dynamic = "force-dynamic";
 
 export default async function PmMissionControlPage({
   searchParams,
 }: {
-  searchParams: Promise<{ project?: string }>;
+  searchParams: Promise<{ project?: string; meeting?: string }>;
 }) {
   const supabase = await createClient();
   const { data: profile } = await supabase
@@ -93,6 +94,7 @@ export default async function PmMissionControlPage({
   }
 
   const params = await searchParams;
+  const meetingReviewMode = isMeetingReviewDeepLink(params.meeting);
   const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop] =
     await Promise.all([
       getPmMissionControl(params.project),
@@ -357,7 +359,11 @@ export default async function PmMissionControlPage({
           ) : null}
           {projectId && meetingProposals.length > 0 ? (
             <div className="mb-4">
-              <MeetingIntelReviewPanel projectId={projectId} proposals={meetingProposals} />
+              <MeetingIntelReviewPanel
+                projectId={projectId}
+                proposals={meetingProposals}
+                highlightReview={meetingReviewMode}
+              />
             </div>
           ) : null}
           {data.primaryProject ? (
