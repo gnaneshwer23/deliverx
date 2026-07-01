@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { updateTaskStatusAction } from "@/app/project/[id]/delivery/actions";
 import {
@@ -26,12 +26,12 @@ export function StandupTasksSection({
   /** When true, section is shown only because ?source=standup is active */
   highlightOnly?: boolean;
 }) {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setTasks(initialTasks);
-  }, [initialTasks]);
+  const tasks = useMemo(
+    () => initialTasks.filter((task) => !dismissedIds.has(task.id)),
+    [initialTasks, dismissedIds],
+  );
 
   if (tasks.length === 0) {
     if (!highlightOnly) return null;
@@ -85,7 +85,7 @@ export function StandupTasksSection({
                       "done",
                     );
                     if (result.ok) {
-                      setTasks((current) => current.filter((t) => t.id !== task.id));
+                      setDismissedIds((current) => new Set(current).add(task.id));
                     }
                   });
                 }}
