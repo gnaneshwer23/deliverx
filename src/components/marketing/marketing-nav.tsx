@@ -10,6 +10,7 @@ export const NAV_LINKS = [
   { href: "#platform", label: "Platform" },
   { href: "#workflow", label: "Pipeline" },
   { href: "#onboarding", label: "Onboarding" },
+  { href: "#features-live", label: "What's live" },
   { href: "#proof", label: "Why DeliverX" },
   { href: "#pricing", label: "Pricing" },
 ] as const;
