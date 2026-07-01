@@ -16,6 +16,7 @@ import type { BusinessCaseStructuredAnalysis } from "@/lib/businessCaseStructure
 import { logAuditEvent } from "./auditEvents";
 import { applyProjectStructure } from "./applyProjectStructure";
 import type { ProjectStructureDraft } from "./aiProjectStructuring";
+import type { BusinessCaseReview } from "./aiBusinessCaseReview";
 import { applyBusinessCaseWorkspace } from "./businessCaseStructuredAnalysis";
 import {
   artifactReviewChangeToImpactDrafts,
@@ -272,10 +273,13 @@ async function applyStructureBundle(review: ArtifactReviewRow): Promise<Record<s
       typeof review.payload.projectName === "string" ? review.payload.projectName : "Project";
 
     if (structuredAnalysis && categoriesReadyToApply(structuredAnalysis)) {
+      const reviewPayload = review.payload.review as BusinessCaseReview | undefined;
       const applied = await applyBusinessCaseWorkspace(review.project_id, {
         draft,
         structuredAnalysis,
         projectName,
+        businessCaseReviewId: review.entity_id ?? undefined,
+        review: reviewPayload,
       });
       return applied as unknown as Record<string, unknown>;
     }

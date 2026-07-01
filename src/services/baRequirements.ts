@@ -4,6 +4,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type {
+  ClarificationGapRow,
   ClarificationRow,
   RequirementQuality,
   RequirementRow,
@@ -79,6 +80,18 @@ function mapClarification(row: Record<string, unknown>): ClarificationRow {
     stakeholder_role: (row.stakeholder_role as string | null) ?? null,
     blocks: (row.blocks as string | null) ?? null,
     due_date: (row.due_date as string | null) ?? null,
+  };
+}
+
+function mapClarificationGap(row: Record<string, unknown>): ClarificationGapRow {
+  return {
+    id: row.id as string,
+    title: row.title as string,
+    description: row.description as string,
+    status: row.status as string,
+    gap_type: row.gap_type as string,
+    priority: row.priority as string,
+    requirement_id: (row.requirement_id as string | null) ?? null,
   };
 }
 
@@ -193,6 +206,17 @@ export async function listClarifications(projectId: string): Promise<Clarificati
   return (data ?? []).map(mapClarification);
 }
 
+export async function listClarificationGaps(projectId: string): Promise<ClarificationGapRow[]> {
+  const { supabase } = await getOrgContext();
+  const { data, error } = await supabase
+    .from("clarification_gaps")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(mapClarificationGap);
+}
+
 export async function getRequirementStats(projectId: string) {
   const [requirements, stories, clarifications] = await Promise.all([
     listRequirements(projectId),
@@ -205,6 +229,9 @@ export async function getRequirementStats(projectId: string) {
     (r) => r.status === "pending_clarification",
   ).length;
   const openClarifications = clarifications.filter((c) => c.status === "open").length;
+  const openGaps = (await listClarificationGaps(projectId).catch(() => [])).filter(
+    (g) => g.status === "open",
+  ).length;
   const storiesReady = stories.filter((s) => s.status === "ready").length;
 
   const { supabase } = await getOrgContext();
@@ -221,7 +248,7 @@ export async function getRequirementStats(projectId: string) {
     extracted: requirements.length,
     approved,
     pendingClarification,
-    openClarifications,
+    openClarifications: openClarifications + openGaps,
     storiesReady,
     linkedTasks: linkedTasks ?? 0,
     stakeholderReviewsPending: clarifications.filter(
@@ -240,6 +267,8 @@ export async function bulkInsertRequirements(
     quality: Record<string, unknown>;
     flags?: string[];
     status?: string;
+    structuredItemId?: string;
+    businessCaseReviewId?: string;
   }>,
   options?: { requireApproval?: boolean },
 ): Promise<{ count: number; ids: string[] }> {
@@ -267,6 +296,8 @@ export async function bulkInsertRequirements(
       source: "ai_extraction",
       ai_generated: requireApproval,
       review_status: requireApproval ? "needs_review" : "draft",
+      structured_item_id: item.structuredItemId ?? null,
+      business_case_review_id: item.businessCaseReviewId ?? null,
     };
   });
 
@@ -326,6 +357,38 @@ export async function bulkInsertClarifications(
     }).catch(() => 0);
   }
 
+  return rows.length;
+}
+
+export async function bulkInsertClarificationGaps(
+  projectId: string,
+  items: Array<{
+    title: string;
+    description: string;
+    gapType?: "gap" | "missing_info" | "clarification";
+    priority?: string;
+    structuredItemId?: string;
+    businessCaseReviewId?: string;
+    requirementId?: string;
+  }>,
+): Promise<number> {
+  const { supabase, orgId } = await getOrgContext();
+  const rows = items.map((item) => ({
+    organisation_id: orgId,
+    project_id: projectId,
+    requirement_id: item.requirementId ?? null,
+    business_case_review_id: item.businessCaseReviewId ?? null,
+    structured_item_id: item.structuredItemId ?? null,
+    title: item.title,
+    description: item.description,
+    gap_type: item.gapType ?? "gap",
+    priority: item.priority ?? "medium",
+    status: "open",
+    source: "business_case_analysis",
+  }));
+  if (rows.length === 0) return 0;
+  const { error } = await supabase.from("clarification_gaps").insert(rows);
+  if (error) throw error;
   return rows.length;
 }
 
@@ -436,6 +499,47 @@ export async function updateRequirementStatus(
   }
 
   return { ok: true };
+}
+
+export async function updateRequirement(
+  requirementId: string,
+  patch: {
+    status?: string;
+    title?: string;
+    description?: string;
+  },
+): Promise<{ ok: true; requirement: RequirementRow } | { ok: false; error: string }> {
+  if (patch.status) {
+    const statusResult = await updateRequirementStatus(requirementId, patch.status);
+    if (!statusResult.ok) return statusResult;
+  }
+
+  if (patch.title === undefined && patch.description === undefined) {
+    const { supabase } = await getOrgContext();
+    const { data } = await supabase
+      .from("requirements")
+      .select("*")
+      .eq("id", requirementId)
+      .maybeSingle();
+    if (!data) return { ok: false, error: "Requirement not found" };
+    return { ok: true, requirement: mapRequirement(data) };
+  }
+
+  const { supabase } = await getOrgContext();
+  const updates: Record<string, string> = {};
+  if (patch.title !== undefined) updates.title = patch.title;
+  if (patch.description !== undefined) updates.description = patch.description;
+
+  const { data, error } = await supabase
+    .from("requirements")
+    .update(updates)
+    .eq("id", requirementId)
+    .select("*")
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return { ok: false, error: "Requirement not found" };
+  return { ok: true, requirement: mapRequirement(data) };
 }
 
 export async function answerClarification(
