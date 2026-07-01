@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "vitest run e2e/",
+    "test:acceptance": "vitest run e2e/acceptance-17-step.test.ts",
     "test:watch": "vitest"
   },
   "dependencies": {
