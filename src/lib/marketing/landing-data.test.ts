@@ -1,0 +1,25 @@
+import { describe, expect, it } from "vitest";
+import { COMING_SOON, LIVE_FEATURES, PILOT_QUOTE } from "@/lib/marketing/landing-data";
+
+describe("landing-data G5", () => {
+  it("lists six live features with title and description", () => {
+    expect(LIVE_FEATURES).toHaveLength(6);
+    for (const feature of LIVE_FEATURES) {
+      expect(feature.title.trim().length).toBeGreaterThan(0);
+      expect(feature.description.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("lists three coming-soon items", () => {
+    expect(COMING_SOON).toHaveLength(3);
+    for (const item of COMING_SOON) {
+      expect(item.title.trim().length).toBeGreaterThan(0);
+      expect(item.description.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("keeps pilot quote disabled until approved", () => {
+    expect(PILOT_QUOTE.enabled).toBe(false);
+    expect(PILOT_QUOTE.quote.trim()).toBe("");
+  });
+});

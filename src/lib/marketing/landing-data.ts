@@ -785,6 +785,69 @@ export type PilotQuote = {
   org: string;
 };
 
+export type LiveFeature = {
+  title: string;
+  description: string;
+};
+
+export type ComingSoonFeature = {
+  title: string;
+  description: string;
+};
+
+/** Shipped capabilities — honest list aligned with main (F1–F5, Helm, Whisper, G1–G4). */
+export const LIVE_FEATURES: readonly LiveFeature[] = [
+  {
+    title: "PM business case upload + AI review",
+    description:
+      "Upload a business case or charter on PM Mission Control. Delivery Brain extracts scope, milestones, and RAID — every proposal lands in the AI Review Queue for your approval.",
+  },
+  {
+    title: "Role invite links + /join bootstrap",
+    description:
+      "Generate role-specific invite links from your workspace. Teammates sign up via /join and land in a workspace seeded from the same business case.",
+  },
+  {
+    title: "AI Review Queue",
+    description:
+      "Review, edit, or reject AI proposals in one queue at /workspace/proposals. Nothing is applied until a human approves it.",
+  },
+  {
+    title: "Ask Helm on mission pages",
+    description:
+      "Ask Helm — your delivery copilot — on every persona mission-control page. Context-aware answers grounded in your project data.",
+  },
+  {
+    title: "Meeting paste + Whisper audio",
+    description:
+      "Paste meeting notes or upload audio for Whisper transcription. Extract action items and feed them into your delivery signal graph.",
+  },
+  {
+    title: "Live delivery signals",
+    description:
+      "PM Command Centre surfaces live delivery signals — blockers, risks, and sprint health — propagated from one connected signal graph.",
+  },
+] as const;
+
+/** Roadmap items — flagged honestly; not yet production-ready. */
+export const COMING_SOON: readonly ComingSoonFeature[] = [
+  {
+    title: "Auto email reliability",
+    description:
+      "Automated stakeholder updates and email digests with delivery-grade reliability.",
+  },
+  {
+    title: "Full doc PDF export",
+    description:
+      "Export full project documentation as a structured PDF pack.",
+  },
+  {
+    title: "Day-in-the-life simulation",
+    description:
+      "Interactive day-in-the-life walkthrough for each delivery role.",
+  },
+] as const;
+
 /** Pilot social proof — hidden until a real quote is approved (enabled: true). */
 export const PILOT_QUOTE: PilotQuote = {
   enabled: false,
