@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Check, Loader2, X } from "lucide-react";
@@ -15,10 +15,12 @@ export function ArtifactReviewsPanel({
   reviews,
   showProject = true,
   emptyMessage = "No AI artifacts pending review.",
+  highlightReviewId,
 }: {
   reviews: (ArtifactReviewRow & { project_name?: string })[];
   showProject?: boolean;
   emptyMessage?: string;
+  highlightReviewId?: string | null;
 }) {
   if (reviews.length === 0) {
     return (
@@ -27,13 +29,47 @@ export function ArtifactReviewsPanel({
   }
 
   return (
+    <ArtifactReviewsList
+      reviews={reviews}
+      showProject={showProject}
+      highlightReviewId={highlightReviewId}
+    />
+  );
+}
+
+function ArtifactReviewsList({
+  reviews,
+  showProject,
+  highlightReviewId,
+}: {
+  reviews: (ArtifactReviewRow & { project_name?: string })[];
+  showProject?: boolean;
+  highlightReviewId?: string | null;
+}) {
+  useEffect(() => {
+    if (!highlightReviewId) return;
+    const el = document.getElementById(`review-${highlightReviewId}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightReviewId]);
+
+  return (
     <ul className="space-y-3">
       {reviews.map((review) =>
         review.source === "business_case_upload" &&
         review.payload?.structuredAnalysis != null ? (
-          <BusinessCaseArtifactReviewItem key={review.id} review={review} showProject={showProject} />
+          <BusinessCaseArtifactReviewItem
+            key={review.id}
+            review={review}
+            showProject={showProject}
+            highlighted={review.id === highlightReviewId}
+          />
         ) : (
-          <ArtifactReviewRowItem key={review.id} review={review} showProject={showProject} />
+          <ArtifactReviewRowItem
+            key={review.id}
+            review={review}
+            showProject={showProject}
+            highlighted={review.id === highlightReviewId}
+          />
         ),
       )}
     </ul>
@@ -43,9 +79,11 @@ export function ArtifactReviewsPanel({
 function ArtifactReviewRowItem({
   review,
   showProject,
+  highlighted = false,
 }: {
   review: ArtifactReviewRow & { project_name?: string };
   showProject?: boolean;
+  highlighted?: boolean;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +111,12 @@ function ArtifactReviewRowItem({
   }
 
   return (
-    <li className="rounded-lg border border-[#C6DDD0] bg-[#EEF5F1] p-4">
+    <li
+      id={`review-${review.id}`}
+      className={`rounded-lg border bg-[#EEF5F1] p-4 ${
+        highlighted ? "border-[#1C4A2E] ring-2 ring-[#C6DDD0]" : "border-[#C6DDD0]"
+      }`}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-[#1C4A2E]">

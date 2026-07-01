@@ -121,6 +121,10 @@ export function PmBusinessCaseFlowPanel({
         setBrief("");
         setProgressStage("success");
         router.refresh();
+
+        if (data.status.extractionStatus === "queued" && data.status.pendingReviewId) {
+          router.push(proposalsHref(projectId, data.status.pendingReviewId));
+        }
       } catch {
         setError("Upload failed. Try again.");
         setProgressStage("idle");
@@ -210,7 +214,10 @@ export function PmBusinessCaseFlowPanel({
               )}
             </section>
 
-            <section className="rounded-lg border border-[var(--dx-rul)] bg-[var(--dx-bas)] p-4">
+            <section
+              id="ba-invite"
+              className="rounded-lg border border-[var(--dx-rul)] bg-[var(--dx-bas)] p-4"
+            >
               <p className={dxClass.panelTitle}>BA workspace</p>
               {status.baMember ? (
                 <div className="mt-2 space-y-2">

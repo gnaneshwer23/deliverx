@@ -56,6 +56,11 @@ import {
 } from "@/lib/approval/persona-reviews";
 import { NextUpStrip } from "@/components/dx/next-up-strip";
 import { buildMissionNextUpItems } from "@/lib/mission-next-up";
+import {
+  impactEventsToNextUpItems,
+  mergeImpactIntoMissionNextUp,
+} from "@/lib/mission-impact-next-up";
+import { listProjectImpactEvents } from "@/services/deliveryImpact";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingMeetingProposals } from "@/services/proposedActions";
 import { getProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
@@ -65,6 +70,7 @@ import { getRequirementStats } from "@/services/baRequirements";
 import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-case-flow-panel";
 import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
 import { PmRoleInviteSection } from "@/components/workspace-flow/pm-role-invite-section";
+import { PmBaHandoffBanner } from "@/components/workspace-flow/pm-ba-handoff-banner";
 import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-review-panel";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
@@ -112,6 +118,7 @@ export default async function PmMissionControlPage({
   let inviteRoleRows = null;
   let requirementStats = null;
   let meetingProposals: Awaited<ReturnType<typeof listPendingMeetingProposals>> = [];
+  let pmImpactEvents: Awaited<ReturnType<typeof listProjectImpactEvents>> = [];
 
   if (projectId) {
     const bootstrap = await getProjectBootstrapStatus(projectId).catch(() => null);
@@ -119,13 +126,14 @@ export default async function PmMissionControlPage({
       bootstrapSummary = bootstrap.summary;
       hasBootstrapSummary = true;
     }
-    [businessCaseStatus, flowSnapshot, inviteRoleRows, requirementStats, meetingProposals] =
+    [businessCaseStatus, flowSnapshot, inviteRoleRows, requirementStats, meetingProposals, pmImpactEvents] =
       await Promise.all([
       getProjectBusinessCaseStatus(projectId).catch(() => null),
       getWorkspaceFlowSnapshot(projectId).catch(() => null),
       buildPmInviteRoleRows(projectId).catch(() => null),
       getRequirementStats(projectId).catch(() => null),
       listPendingMeetingProposals(projectId, 8).catch(() => []),
+      listProjectImpactEvents(projectId, 12).catch(() => []),
     ]);
   }
 
@@ -186,19 +194,22 @@ export default async function PmMissionControlPage({
     fallbackSummary: data.aiSummary,
   });
 
-  const nextUpItems = buildMissionNextUpItems({
-    personaId: "pm-mission",
-    primaryProject: data.primaryProject,
-    hasProjects: data.projects.length > 0,
-    pendingReviews,
-    openDecisions: data.overview.openDecisions,
-    decisionTitle: data.decisions.find((d) => d.status === "proposed")?.title,
-    blockedTasks: data.overview.blockedDependencies,
-    guidedTaskTitle: data.guidedTasks[0]?.title,
-    guidedTaskHref: data.primaryProject
-      ? `/project/${data.primaryProject.id}/delivery`
-      : undefined,
-  });
+  const nextUpItems = mergeImpactIntoMissionNextUp(
+    buildMissionNextUpItems({
+      personaId: "pm-mission",
+      primaryProject: data.primaryProject,
+      hasProjects: data.projects.length > 0,
+      pendingReviews,
+      openDecisions: data.overview.openDecisions,
+      decisionTitle: data.decisions.find((d) => d.status === "proposed")?.title,
+      blockedTasks: data.overview.blockedDependencies,
+      guidedTaskTitle: data.guidedTasks[0]?.title,
+      guidedTaskHref: data.primaryProject
+        ? `/project/${data.primaryProject.id}/delivery`
+        : undefined,
+    }),
+    impactEventsToNextUpItems(pmImpactEvents, "pm-mission", projectId),
+  );
 
   const aiSummaryLine = (
     <DeliveryPmAiSummary
@@ -340,6 +351,10 @@ export default async function PmMissionControlPage({
           ) : null}
           {data.primaryProject && businessCaseStatus ? (
             <>
+              <PmBaHandoffBanner
+                projectId={data.primaryProject.id}
+                status={businessCaseStatus}
+              />
               {flowSnapshot ? (
                 <PmBusinessCaseSummaryCard
                   projectId={data.primaryProject.id}
