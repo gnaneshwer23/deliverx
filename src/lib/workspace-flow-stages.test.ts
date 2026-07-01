@@ -3,6 +3,21 @@ import { resolveWorkspaceFlowStage } from "@/lib/workspace-flow-stages";
 import { buildExtractionCounts, formatExtractionCount } from "@/lib/workspace-flow-extraction";
 
 describe("resolveWorkspaceFlowStage", () => {
+  it("starts at upload when no business case exists", () => {
+    const stage = resolveWorkspaceFlowStage({
+      hasBusinessCase: false,
+      extractionStatus: "none",
+      baInviteActive: false,
+      baJoined: false,
+      requirementsExtracted: 0,
+      storiesReady: 0,
+    });
+    expect(stage.completedThrough).toBe(-1);
+    expect(stage.currentIndex).toBe(0);
+    expect(stage.steps[0]?.label).toBe("Upload business case");
+    expect(stage.steps[0]?.status).toBe("current");
+  });
+
   it("marks only upload complete when business case exists but nothing else", () => {
     const stage = resolveWorkspaceFlowStage({
       hasBusinessCase: true,
