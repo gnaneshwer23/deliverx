@@ -24,6 +24,7 @@ export function BaWorkspaceFlowShell({
   const searchParams = useSearchParams();
   const showReview =
     searchParams.get("flow") === "review" || searchParams.get("welcome") === "1";
+  const isWelcome = searchParams.get("welcome") === "1";
   const [reviewDismissed, setReviewDismissed] = useState(false);
 
   const stage = resolveWorkspaceFlowStage({
@@ -61,6 +62,7 @@ export function BaWorkspaceFlowShell({
           nothingAppliedYet={snapshot.nothingAppliedYet}
           aiSummary={snapshot.aiSummary}
           pendingReviewId={snapshot.pendingReviewId}
+          isWelcome={isWelcome}
           onContinue={dismissReview}
         />
       ) : null}

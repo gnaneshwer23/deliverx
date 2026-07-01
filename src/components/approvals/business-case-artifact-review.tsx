@@ -31,9 +31,11 @@ function parseStructuredAnalysis(
 export function BusinessCaseArtifactReviewItem({
   review,
   showProject = true,
+  highlighted = false,
 }: {
   review: ArtifactReviewRow & { project_name?: string };
   showProject?: boolean;
+  highlighted?: boolean;
 }) {
   const router = useRouter();
   const initial = parseStructuredAnalysis(review.payload);
@@ -155,7 +157,12 @@ export function BusinessCaseArtifactReviewItem({
   }
 
   return (
-    <li className="rounded-lg border border-[#C6DDD0] bg-[#EEF5F1] p-4">
+    <li
+      id={`review-${review.id}`}
+      className={`rounded-lg border bg-[#EEF5F1] p-4 ${
+        highlighted ? "border-[#1C4A2E] ring-2 ring-[#C6DDD0]" : "border-[#C6DDD0]"
+      }`}
+    >
       <div className="space-y-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-[#1C4A2E]">

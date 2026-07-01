@@ -13,7 +13,11 @@ import { queueArtifactReview } from "@/services/artifactReviews";
 import { upsertCharter, getActiveCharter } from "@/services/charter";
 import { createBrainDocument } from "@/services/brainDocumentService";
 import { saveBusinessCaseReview } from "@/services/businessCaseReview";
-import { generateInviteToken } from "@/services/inviteTokenService";
+import {
+  buildJoinUrlFromInviteRow,
+  generateInviteToken,
+  type InviteViewMode,
+} from "@/services/inviteTokenService";
 import { listProjectWorkspaceMembersByRole } from "@/services/workspaceMemberService";
 import { buildBusinessCaseReviewPayload } from "@/lib/businessCaseStructuredAnalysis.shared";
 import {
@@ -109,7 +113,7 @@ async function findActiveBaInvite(projectId: string) {
   const now = new Date().toISOString();
   const { data } = await supabase
     .from("invite_tokens")
-    .select("id, role, expires_at, revoked_at, created_at")
+    .select("id, project_id, role, invited_by, view_mode, expires_at, revoked_at, created_at")
     .eq("project_id", projectId)
     .eq("role", "ba")
     .is("revoked_at", null)
@@ -118,7 +122,40 @@ async function findActiveBaInvite(projectId: string) {
     .limit(1)
     .maybeSingle();
 
-  return data as { id: string; expires_at: string } | null;
+  if (!data) return null;
+
+  const { data: project } = await supabase
+    .from("projects")
+    .select("name")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  let invitedByName = "Project Manager";
+  if (data.invited_by) {
+    const { data: inviter } = await supabase
+      .from("users")
+      .select("name")
+      .eq("id", data.invited_by as string)
+      .maybeSingle();
+    invitedByName = (inviter?.name as string | null) ?? invitedByName;
+  }
+
+  const joinUrl = await buildJoinUrlFromInviteRow({
+    id: data.id as string,
+    project_id: data.project_id as string,
+    role: data.role as string,
+    invited_by: data.invited_by as string | null,
+    view_mode: data.view_mode as InviteViewMode,
+    expires_at: data.expires_at as string,
+    projects: project ? { name: project.name as string } : null,
+    users: { name: invitedByName },
+  });
+
+  return {
+    id: data.id as string,
+    expires_at: data.expires_at as string,
+    joinUrl,
+  };
 }
 
 export async function getProjectBusinessCaseStatus(
@@ -152,7 +189,7 @@ export async function getProjectBusinessCaseStatus(
         }
       : null,
     baInviteActive: Boolean(activeInvite),
-    baInviteJoinUrl: null,
+    baInviteJoinUrl: activeInvite?.joinUrl ?? null,
     baInviteExpiresAt: activeInvite?.expires_at ?? null,
   };
 }

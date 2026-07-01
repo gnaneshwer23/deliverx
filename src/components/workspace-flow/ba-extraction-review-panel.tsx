@@ -49,6 +49,7 @@ export function BaExtractionReviewPanel({
   nothingAppliedYet,
   aiSummary,
   pendingReviewId,
+  isWelcome = false,
   onContinue,
 }: {
   projectId: string;
@@ -57,6 +58,7 @@ export function BaExtractionReviewPanel({
   nothingAppliedYet: boolean;
   aiSummary: string | null;
   pendingReviewId: string | null;
+  isWelcome?: boolean;
   onContinue?: () => void;
 }) {
   const proposalsHref = pendingReviewId
@@ -71,6 +73,13 @@ export function BaExtractionReviewPanel({
       />
 
       <div className="space-y-5 px-5 py-5 md:px-6">
+        {isWelcome ? (
+          <div className="rounded-lg border border-[#C6DDD0] bg-[#EEF5F1] px-4 py-3 text-sm text-[#1C4A2E]">
+            <strong>Welcome to your BA workspace.</strong> Your PM uploaded a business case — review
+            AI-extracted requirements below, then open the AI Review Queue to apply accepted items.
+          </div>
+        ) : null}
+
         {aiSummary ? (
           <p className="rounded-lg border border-[#C6DDD0] bg-[#EEF5F1] px-4 py-3 text-sm leading-relaxed text-[#2C2C28]">
             {aiSummary}

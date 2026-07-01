@@ -36,11 +36,12 @@ function parsePersona(value?: string): ProposalsPersonaTab {
 export default async function ProposalsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ persona?: string; project?: string }>;
+  searchParams: Promise<{ persona?: string; project?: string; review?: string }>;
 }) {
   const params = await searchParams;
   const persona = parsePersona(params.persona);
   const projectId = params.project ?? null;
+  const highlightReviewId = params.review ?? null;
 
   const [proposals, artifactReviews, impactEvents, projects] = await Promise.all([
     listPendingProposals(50),
@@ -117,6 +118,7 @@ export default async function ProposalsPage({
           <div className="mt-4">
             <ArtifactReviewsPanel
               reviews={filteredReviews}
+              highlightReviewId={highlightReviewId}
               emptyMessage={
                 persona === "all"
                   ? "No AI artifacts pending review."
