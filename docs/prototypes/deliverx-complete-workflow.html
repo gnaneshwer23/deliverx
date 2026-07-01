@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeliverX — AI Delivery Operating System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+:root{
+  --ink:#0D0D0B;--ink2:#1A1A17;--ink3:#2C2C28;
+  --mut:#6B6B64;--fnt:#A8A89E;
+  --rul:#E4E4DC;--rul2:#F0F0E8;
+  --srf:#F7F7F2;--bas:#FAFAF5;--wht:#FFFFFF;
+  --acc:#1C4A2E;--acm:#2D7048;--acl:#3D9660;
+  --acb:#EEF5F1;--acr:#C6DDD0;
+  --red:#C0392B;--rdb:#FDF1F0;
+  --amb:#B7620A;--abb:#FEF6EC;
+  --grn:#1A6B3A;--gnb:#EDF7F1;
+  --blu:#1A3F6B;--blb:#EDF2F9;
+  --fd:"DM Serif Display",Georgia,serif;
+  --fu:"Outfit",-apple-system,sans-serif;
+  --fm:"DM Mono","Courier New",monospace;
+  --navh:60px;--sbw:220px;
+  --sh-sm:0 1px 4px rgba(13,13,11,.07);
+  --sh-md:0 4px 20px rgba(13,13,11,.09);
+  --sh-lg:0 8px 40px rgba(13,13,11,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--fu);color:var(--ink);background:var(--bas);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:var(--fu)}
+input,textarea,select{font-family:var(--fu)}
+/* ── Typography helpers ── */
+.dp{font-family:var(--fd)}
+.mn{font-family:var(--fm)}
+.caps{font-family:var(--fm);font-size:.625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+/* ── Routing ── */
+.scr{display:none!important}
+.scr.on{display:flex!important;flex-direction:column;min-height:100vh}
+.pg{display:none!important}
+.pg.on{display:flex!important;flex:1;overflow:hidden;height:calc(100vh - var(--navh))}
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;font-family:var(--fm);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid transparent;transition:all .15s;white-space:nowrap}
+.btn-p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn-p:hover{background:var(--acm)}
+.btn-g{background:transparent;color:var(--ink);border-color:var(--rul)}
+.btn-g:hover{border-color:var(--ink)}
+.btn-d{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm{padding:7px 14px;font-size:.5625rem}
+.btn-xs{padding:4px 10px;font-size:.5rem;letter-spacing:.1em}
+/* ── Badges ── */
+.bd{display:inline-flex;align-items:center;gap:4px;font-family:var(--fm);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border:1px solid}
+.bd::before{content:attr(data-dot);display:none}
+.bd[data-dot]::before{display:block;width:5px;height:5px;border-radius:50%;background:currentColor;content:""}
+.bd-g{color:var(--grn);border-color:var(--grn);background:var(--gnb)}
+.bd-r{color:var(--red);border-color:var(--red);background:var(--rdb)}
+.bd-a{color:var(--amb);border-color:var(--amb);background:var(--abb)}
+.bd-b{color:var(--blu);border-color:var(--blu);background:var(--blb)}
+.bd-k{color:var(--mut);border-color:var(--rul);background:var(--srf)}
+.bd-c{color:var(--acc);border-color:var(--acr);background:var(--acb)}
+.bd-w{color:#fff;border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
+/* ── Inputs ── */
+.iw{display:flex;flex-direction:column;gap:5px}
+.il{font-family:var(--fm);font-size:.5625rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+.ii{width:100%;padding:9px 13px;border:1.5px solid var(--rul);background:var(--wht);color:var(--ink);font-size:.9375rem;outline:none;transition:border-color .15s;font-family:var(--fu)}
+.ii:focus{border-color:var(--acc)}
+.ii.ta{resize:vertical;min-height:80px}
+.ii.sl{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B64' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+/* ── Cards ── */
+.cd{background:var(--wht);border:1px solid var(--rul)}
+.cdp{padding:22px}
+.cdf{padding:0;overflow:hidden}
+/* ── Table ── */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);padding:9px 15px;border-bottom:2px solid var(--rul);text-align:left;background:var(--srf);white-space:nowrap}
+td{padding:12px 15px;border-bottom:1px solid var(--rul2);font-size:.875rem;color:var(--ink3);vertical-align:middle}
+tr:hover td{background:var(--srf)}
+tr:last-child td{border-bottom:none}
+/* ── Stats ── */
+.sr{display:grid;gap:10px;margin-bottom:20px}
+.sr4{grid-template-columns:repeat(4,1fr)}
+.sr3{grid-template-columns:repeat(3,1fr)}
+.sr6{grid-template-columns:repeat(6,1fr)}
+.sc{background:var(--wht);border:1px solid var(--rul);padding:18px}
+.sv{font-family:var(--fd);font-size:2rem;line-height:1;margin-bottom:3px}
+.sv.g{color:var(--grn)}.sv.a{color:var(--amb)}.sv.r{color:var(--red)}.sv.b{color:var(--blu)}
+.sl2{font-family:var(--fm);font-size:.45rem;letter-spacing:.14em;text-transform:uppercase;color:var(--fnt);margin-bottom:6px}
+.sd{font-family:var(--fm);font-size:.5rem;color:var(--mut)}
+.sbar{height:3px;background:var(--rul2);margin-top:8px;overflow:hidden}
+.sbf{height:100%}
+.sbf.g{background:var(--grn)}.sbf.a{background:var(--amb)}.sbf.r{background:var(--red)}.sbf.b{background:var(--acc)}
+/* ── Layout helpers ── */
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+.two-eq{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.three-col{display:grid;grid-template-columns:1fr 1fr 280px;gap:18px;align-items:start}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.sh-t{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:6px}
+.sh-a{font-family:var(--fm);font-size:.5rem;color:var(--acc);cursor:pointer;letter-spacing:.06em}
+.sh-a:hover{color:var(--acm)}
+/* ── Tabs ── */
+.tabs{display:flex;border-bottom:1px solid var(--rul);margin-bottom:18px}
+.tab{padding:9px 18px;font-family:var(--fm);font-size:.5625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+.tab:hover{color:var(--ink)}
+.tp{display:none}.tp.on{display:block}
+/* ── Animations ── */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes sl-r{from{transform:translateX(100%)}to{transform:none}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.fi{animation:fi .25s ease both}
+/* ── Modals ── */
+.mo{position:fixed;inset:0;background:rgba(13,13,11,.45);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.mo.on{display:flex}
+.mp{background:var(--wht);border:1px solid var(--rul);padding:36px;width:100%;max-width:520px;animation:fi .2s ease both}
+.mp.wide{max-width:680px}
+.mt{font-family:var(--fd);font-size:1.375rem;color:var(--ink);margin-bottom:5px}
+.ms{font-size:.9375rem;color:var(--mut);margin-bottom:26px;font-weight:300}
+.ma{display:flex;justify-content:flex-end;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid var(--rul)}
+/* ── Signal cards ── */
+.sig{border:1px solid var(--rul);border-left:3px solid;background:var(--wht);padding:13px 15px;margin-bottom:7px}
+.sig.h{border-left-color:var(--red);background:rgba(192,57,43,.02)}
+.sig.m{border-left-color:var(--amb);background:rgba(183,98,10,.02)}
+.sig.i{border-left-color:var(--blu);background:rgba(26,63,107,.02)}
+.sig.ok{border-left-color:var(--grn);background:rgba(26,107,58,.02)}
+.sig-top{display:flex;gap:10px;margin-bottom:8px}
+.sig-meta{flex:1}
+.sig-proj{font-family:var(--fm);font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);margin-bottom:2px}
+.sig-txt{font-size:.875rem;color:var(--ink3);line-height:1.45}
+.sig-time{font-family:var(--fm);font-size:.45rem;color:var(--fnt);white-space:nowrap;flex-shrink:0}
+.sig-bot{display:flex;gap:6px;align-items:center}
+.sig-act{padding:4px 10px;font-family:var(--fm);font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;background:var(--acc);color:#fff;border:none;transition:background .15s}
+.sig-act:hover{background:var(--acm)}
+.sig-dis{padding:4px 9px;font-family:var(--fm);font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:var(--fnt);border:1px solid var(--rul);transition:all .15s}
+.sig-dis:hover{color:var(--mut)}
+/* ── Project cards ── */
+.pc{background:var(--wht);border:1px solid var(--rul);border-top:3px solid;padding:18px;cursor:pointer;transition:all .15s}
+.pc:hover{box-shadow:var(--sh-md)}
+.pc.g{border-top-color:var(--grn)}
+.pc.a{border-top-color:var(--amb)}
+.pc.r{border-top-color:var(--red)}
+.pc-typ{font-family:var(--fm);font-size:.45rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fnt);margin-bottom:3px}
+.pc-nm{font-size:.9375rem;font-weight:600;color:var(--ink);margin-bottom:3px;line-height:1.3}
+.pc-ph{font-family:var(--fm);font-size:.45rem;color:var(--mut);margin-bottom:12px}
+.pc-mx{display:flex;justify-content:space-between;margin-bottom:8px}
+.pc-mv{font-family:var(--fm);font-size:.9375rem;font-weight:500}
+.pc-ml{font-family:var(--fm);font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt)}
+.pc-bar{height:3px;background:var(--rul2);overflow:hidden;margin-bottom:10px}
+.pc-bf{height:100%}
+.pc-ft{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--rul2)}
+/* ── Milestone items ── */
+.mi{display:grid;grid-template-columns:1fr 44px 66px;align-items:center;gap:8px;padding:9px 13px;background:var(--wht);border:1px solid var(--rul);border-left:3px solid;margin-bottom:5px;cursor:pointer;transition:background .12s}
+.mi:hover{background:var(--srf)}
+.mi.g{border-left-color:var(--grn)}.mi.a{border-left-color:var(--amb)}.mi.r{border-left-color:var(--red)}
+.mi-nm{font-size:.875rem;font-weight:500;color:var(--ink);line-height:1.25;margin-bottom:1px}
+.mi-pr{font-family:var(--fm);font-size:.45rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt)}
+.mi-d{font-family:var(--fm);font-size:.6rem;color:var(--mut);text-align:right}
+.mi-c{font-family:var(--fm);font-size:.75rem;font-weight:500;text-align:right}
+.mi-c.g{color:var(--grn)}.mi-c.a{color:var(--amb)}.mi-c.r{color:var(--red)}
+/* ── Activity ── */
+.act-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--rul2)}
+.act-item:last-child{border-bottom:none}
+.av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.6875rem;color:#fff}
+.act-b{flex:1}
+.act-t{font-size:.8125rem;color:var(--ink3);line-height:1.4;margin-bottom:2px}
+.act-m{display:flex;gap:8px;align-items:center;font-family:var(--fm);font-size:.45rem;color:var(--fnt)}
+.act-p{color:var(--acc)}
+/* ── Page chrome ── */
+.ph{padding:22px 32px;border-bottom:1px solid var(--rul);background:var(--wht);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pb{font-family:var(--fm);font-size:.45rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fnt);margin-bottom:4px}
+.ptitle{font-family:var(--fd);font-size:1.5rem;letter-spacing:-.01em;color:var(--ink)}
+.ptitle em{color:var(--acc);font-style:italic}
+.pa{display:flex;gap:7px;align-items:center}
+/* ── App content ── */
+.ac{margin-left:var(--sbw);margin-top:var(--navh);flex:1;overflow-y:auto;background:var(--bas)}
+.aci{padding:28px 32px;max-width:1200px}
+/* ── Decision cards ── */
+.dc{background:var(--wht);border:1px solid var(--rul);padding:15px 18px;margin-bottom:6px;cursor:pointer;transition:background .12s}
+.dc:hover{background:var(--srf)}
+.dc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:5px}
+.dc-ti{font-size:.9375rem;font-weight:500;color:var(--ink);line-height:1.3}
+.dc-re{font-size:.8125rem;color:var(--mut);line-height:1.5;margin-bottom:5px}
+.dc-me{display:flex;gap:12px;font-family:var(--fm);font-size:.45rem;color:var(--fnt)}
+.dc-im{font-family:var(--fm);font-size:.5625rem;color:var(--acc);margin-top:4px}
+/* ── Kanban ── */
+.kb{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rul);height:100%;overflow:hidden}
+.kc{background:var(--srf);display:flex;flex-direction:column;overflow:hidden}
+.kch{padding:11px 14px;border-bottom:1px solid var(--rul);background:var(--wht);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.kcn{font-family:var(--fm);font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:6px}
+.kci{width:7px;height:7px;border-radius:50%}
+.kci.ns{background:var(--fnt)}.kci.ip{background:var(--blu)}.kci.ir{background:var(--amb)}.kci.dn{background:var(--grn)}.kci.bl{background:var(--red)}
+.kcc{font-family:var(--fm);font-size:.45rem;color:var(--fnt)}
+.ki{padding:10px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:7px}
+.tk{background:var(--wht);border:1px solid var(--rul);padding:13px;cursor:pointer;transition:all .15s}
+.tk:hover{border-color:var(--acr);box-shadow:0 2px 8px rgba(13,13,11,.06)}
+.tk.bl{border-left:3px solid var(--red)}
+.tk-ti{font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:5px;line-height:1.35}
+.tk-pr{font-family:var(--fm);font-size:.45rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);margin-bottom:7px}
+.tk-bl{font-size:.75rem;color:var(--red);padding:6px 8px;background:var(--rdb);margin-bottom:6px;line-height:1.4}
+.tk-ft{display:flex;align-items:center;justify-content:space-between}
+.tk-due{font-family:var(--fm);font-size:.45rem;color:var(--mut)}
+.tk-due.ov{color:var(--red)}
+/* ── AI chat ── */
+.msg{display:flex;gap:9px;margin-bottom:16px;animation:fi .25s ease both}
+.msg.u{flex-direction:row-reverse}
+.msg-av{width:27px;height:27px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:.6875rem;color:#fff}
+.msg.ai .msg-av{background:var(--acc)}
+.msg.u .msg-av{background:var(--ink)}
+.msg-b{max-width:78%}
+.bub{padding:11px 15px;font-size:.875rem;line-height:1.65;color:var(--ink3);font-weight:300;white-space:pre-wrap}
+.msg.ai .bub{background:var(--wht);border:1px solid var(--rul)}
+.msg.u .bub{background:var(--acc);color:#fff;border:1px solid var(--acc)}
+.msg.sys .bub{background:var(--acb);border:1px solid var(--acr);border-left:3px solid var(--acc);color:var(--acc);font-family:var(--fm);font-size:.6rem;letter-spacing:.04em}
+.msg-t{font-family:var(--fm);font-size:.4rem;color:var(--fnt);margin-top:3px;padding:0 2px}
+.msg.u .msg-t{text-align:right}
+.typ{display:flex;gap:3px;align-items:center;padding:11px 15px;background:var(--wht);border:1px solid var(--rul)}
+.td{width:5px;height:5px;background:var(--acc);border-radius:50%}
+.td:nth-child(1){animation:bounce .9s 0s ease-in-out infinite}
+.td:nth-child(2){animation:bounce .9s .18s ease-in-out infinite}
+.td:nth-child(3){animation:bounce .9s .36s ease-in-out infinite}
+/* ── Chip ── */
+.chip{padding:4px 10px;font-family:var(--fm);font-size:.45rem;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);background:var(--acb);border:1px solid var(--acr);cursor:pointer;transition:all .15s}
+.chip:hover{background:var(--acc);color:#fff}
+/* ── Progress bars ── */
+.pb-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.pb-l{font-size:.8125rem;color:var(--ink3);width:120px;flex-shrink:0}
+.pb-b{flex:1;height:5px;background:var(--rul2);overflow:hidden}
+.pb-f{height:100%}
+.pb-v{font-family:var(--fm);font-size:.5rem;font-weight:500;width:32px;text-align:right;flex-shrink:0}
+/* ── Health ring (pure SVG) ── */
+.ring-wrap{display:flex;align-items:center;gap:14px}
+.ring{position:relative;width:60px;height:60px;flex-shrink:0}
+.ring svg{transform:rotate(-90deg)}
+.ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.75rem;font-weight:500;color:var(--acc)}
+.ring-info{flex:1}
+.ring-title{font-size:.875rem;font-weight:600;color:var(--ink);margin-bottom:3px}
+.ring-sub{font-family:var(--fm);font-size:.45rem;color:var(--fnt)}
+.ring-tr{font-family:var(--fm);font-size:.45rem;color:var(--grn);margin-top:2px}
+/* ── AI Drawer ── */
+.drawer{position:fixed;top:var(--navh);right:0;bottom:0;width:340px;background:var(--wht);border-left:1px solid var(--rul);display:flex;flex-direction:column;z-index:200;transform:translateX(100%);transition:transform .25s ease}
+.drawer.on{transform:none;box-shadow:-6px 0 28px rgba(13,13,11,.09)}
+/* ── Workspace layout ── */
+.ws-mem{width:210px;border-right:1px solid var(--rul);background:var(--wht);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ws-th{padding:12px 14px;border-top:2px solid var(--acc);margin-top:6px}
+.ws-tl{font-family:var(--fm);font-size:.45rem;letter-spacing:.16em;text-transform:uppercase;color:var(--fnt);margin-bottom:2px}
+.ws-tn{font-size:.8125rem;font-weight:500;color:var(--ink);line-height:1.3}
+.ws-tm{font-family:var(--fm);font-size:.45rem;color:var(--fnt)}
+.ws-th.on{background:var(--acb);border-top-color:var(--acc)}
+.ws-th.on .ws-tn{color:var(--acc)}
+.ws-chat{display:flex;flex-direction:column;flex:1;background:var(--bas);overflow:hidden}
+.ws-msgs{flex:1;overflow-y:auto;padding:20px 24px}
+.ws-inp{padding:14px 18px;border-top:1px solid var(--rul);background:var(--wht);flex-shrink:0}
+.ws-right{width:290px;border-left:1px solid var(--rul);background:var(--wht);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.ws-rb{flex:1;overflow-y:auto;padding:12px}
+/* ── Onboarding ── */
+.ob-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;background:var(--bas)}
+.ob-card{background:var(--wht);border:1px solid var(--rul);padding:48px;width:100%;max-width:600px}
+.ob-card.wide{max-width:860px}
+.ob-sl{font-family:var(--fm);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+.ob-h{font-family:var(--fd);font-size:1.75rem;line-height:1.1;color:var(--ink);margin-bottom:7px}
+.ob-s{font-size:.9375rem;color:var(--mut);margin-bottom:30px;font-weight:300;line-height:1.65}
+.ob-ac{display:flex;align-items:center;justify-content:space-between;margin-top:30px;padding-top:24px;border-top:1px solid var(--rul)}
+/* ── AI output review ── */
+.air{border:1px solid var(--acr);background:var(--acb);margin-top:20px}
+.air-h{padding:10px 16px;border-bottom:1px solid var(--acr);display:flex;align-items:center;gap:7px}
+.air-b{padding:14px 16px}
+.air-item{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--acr)}
+.air-item:last-child{border-bottom:none}
+.air-t{font-size:.875rem;color:var(--ink3);line-height:1.4;flex:1}
+.air-btns{display:flex;gap:5px;flex-shrink:0}
+/* ── Invite section ── */
+.inv-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border:1px solid var(--rul);background:var(--srf);margin-bottom:8px}
+.inv-nm{font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:2px}
+.inv-d{font-family:var(--fm);font-size:.45rem;color:var(--fnt)}
+/* ── RAID ── */
+.raid-tab{padding:8px 18px;font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s}
+.raid-tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+/* ── Report card ── */
+.rc{background:var(--wht);border:1px solid var(--rul);overflow:hidden;margin-bottom:14px}
+.rc-h{padding:15px 20px;border-bottom:1px solid var(--rul2);display:flex;align-items:center;justify-content:space-between;background:var(--srf)}
+.rc-t{font-size:.9375rem;font-weight:600;color:var(--ink)}
+.rc-b{padding:20px;font-size:.875rem;color:var(--ink3);line-height:1.75}
+.rc-s{margin-bottom:14px}
+.rc-sl{font-family:var(--fm);font-size:.45rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-bottom:5px}
+.rc-st{font-size:.875rem;color:var(--ink3);line-height:1.65}
+/* ── Landing specific ── */
+.lnav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--navh);border-bottom:1px solid var(--rul);background:rgba(250,250,245,.95);backdrop-filter:blur(12px);display:flex;align-items:center;padding:0 44px;gap:36px}
+.logo{display:flex;align-items:center;gap:11px}
+.lm{width:31px;height:31px;border:1.5px solid var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ln{font-family:var(--fd);font-size:1.1875rem;letter-spacing:-.01em}
+.ltag{font-family:var(--fm);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acr);padding:2px 6px;background:var(--acb)}
+/* ── APP NAV ── */
+.appnav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--navh);border-bottom:1px solid var(--rul);background:var(--wht);display:flex;align-items:center;padding:0 18px;gap:12px;display:none}
+.appnav.on{display:flex}
+.ans{display:flex;flex:1;max-width:340px;position:relative}
+.ans input{width:100%;padding:7px 12px 7px 32px;border:1px solid var(--rul);background:var(--srf);font-size:.8125rem;color:var(--ink);outline:none;transition:border-color .15s}
+.ans input:focus{border-color:var(--acc)}
+.ans-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--fnt)}
+.anr{display:flex;align-items:center;gap:7px;margin-left:auto}
+.nb{position:relative}
+.nbadge{position:absolute;top:-3px;right:-3px;width:13px;height:13px;background:var(--red);border-radius:50%;border:2px solid var(--wht);font-family:var(--fm);font-size:.4rem;color:#fff;display:flex;align-items:center;justify-content:center}
+.uav{width:29px;height:29px;border-radius:50%;background:var(--ink);font-family:var(--fd);font-size:.8125rem;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+/* ── APP SIDEBAR ── */
+.appsb{position:fixed;top:var(--navh);bottom:0;left:0;width:var(--sbw);border-right:1px solid var(--rul);background:var(--wht);display:none;flex-direction:column;overflow-y:auto;z-index:50}
+.appsb.on{display:flex}
+.sbs{padding:14px 0}
+.sbl{font-family:var(--fm);font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fnt);padding:0 14px;margin-bottom:3px}
+.sbi{display:flex;align-items:center;gap:9px;padding:7px 14px;font-size:.8125rem;color:var(--mut);cursor:pointer;border-left:2px solid transparent;transition:all .1s}
+.sbi:hover{background:var(--srf);color:var(--ink)}
+.sbi.on{background:var(--acb);color:var(--acc);border-left-color:var(--acc)}
+.sbi-ic{width:15px;height:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.65}
+.sbi.on .sbi-ic{opacity:1}
+.sbi-l{font-size:.8125rem}
+.sb-bot{margin-top:auto;border-top:1px solid var(--rul);padding:10px 0}
+/* ── Forms ── */
+.ff{display:flex;flex-direction:column;gap:14px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fdiv{height:1px;background:var(--rul);margin:4px 0}
+.fsub{width:100%;padding:12px;background:var(--acc);color:#fff;font-family:var(--fm);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;border:none;transition:all .15s;margin-top:6px}
+.fsub:hover{background:var(--acm)}
+/* ── Auth specific ── */
+.auth-grid{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden}
+.auth-l{background:var(--ink);padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.auth-bg{position:absolute;top:-30%;right:-20%;width:80%;padding-bottom:80%;border-radius:50%;background:radial-gradient(circle,rgba(28,74,46,.45) 0%,transparent 70%);pointer-events:none}
+.auth-r{padding:56px;display:flex;align-items:center;justify-content:center;background:var(--bas)}
+.auth-form{width:100%;max-width:388px}
+.auth-tabs{display:flex;border-bottom:1px solid var(--rul);margin-bottom:32px}
+.atab{padding:9px 0;margin-right:24px;font-family:var(--fm);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;background:none}
+.atab.on{color:var(--ink);border-bottom-color:var(--acc)}
+.atab:hover{color:var(--ink)}
+.apanel{display:none}.apanel.on{display:block}
+.auth-h{font-family:var(--fd);font-size:1.625rem;color:var(--ink);margin-bottom:5px}
+.auth-s{font-size:.9375rem;color:var(--mut);margin-bottom:28px;font-weight:300}
+/* ── Spinners ── */
+.spin{width:36px;height:36px;border:2px solid var(--rul);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+</style>
+</head>
+<body>
+
+<!-- ═══ INLINE ICON SYSTEM (Lucide-style SVGs) ═══ -->
+<svg style="display:none">
+  <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></symbol>
+  <symbol id="ic-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></symbol>
+  <symbol id="ic-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></symbol>
+  <symbol id="ic-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></symbol>
+  <symbol id="ic-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></symbol>
+  <symbol id="ic-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+  <symbol id="ic-bar" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="ic-git" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7M6 9v12"/></symbol>
+  <symbol id="ic-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></symbol>
+  <symbol id="ic-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></symbol>
+  <symbol id="ic-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="ic-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+  <symbol id="ic-arrow-r" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="ic-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="ic-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="ic-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+  <symbol id="ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="ic-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="ic-chevron-d" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="ic-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+</svg>
+
+<!-- ═══════════════════════════════════
+     APP NAV + SIDEBAR (shared chrome)
+═══════════════════════════════════ -->
+<nav class="appnav" id="appnav">
+  <div class="logo" onclick="nav('ws')" style="cursor:pointer;padding-right:14px;border-right:1px solid var(--rul);margin-right:4px">
+    <div class="lm"><svg width="11" height="11" stroke="var(--acc)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cpu"/></svg></div>
+    <span class="ln">DeliverX</span>
+  </div>
+  <div class="ans">
+    <span class="ans-ic"><svg width="12" height="12" stroke="var(--fnt)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-search"/></svg></span>
+    <input type="search" placeholder="Search projects, tasks, docs..." id="gsearch">
+  </div>
+  <div class="anr">
+    <button class="btn btn-g btn-sm nb" onclick="toggleDrawer()">
+      <svg width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-bell"/></svg> Alerts<span class="nbadge">3</span>
+    </button>
+    <div style="width:1px;height:20px;background:var(--rul)"></div>
+    <button class="btn btn-p btn-sm" onclick="toggleDrawer()"><svg width="12" height="12" stroke="#fff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cpu"/></svg> AI Assistant</button>
+    <div style="width:1px;height:20px;background:var(--rul)"></div>
+    <div class="uav" title="Gnaneshwer" onclick="toggleDropdown()">G</div>
+    <div id="user-dd" style="display:none;position:absolute;top:52px;right:12px;background:var(--wht);border:1px solid var(--rul);min-width:160px;z-index:999;box-shadow:var(--sh-md)">
+      <div style="padding:6px 0">
+        <div style="padding:7px 14px;font-size:.8125rem;color:var(--mut);border-bottom:1px solid var(--rul2)">Gnaneshwer<br><span style="font-size:.75rem;color:var(--fnt)">Project Manager</span></div>
+        <button onclick="nav('dash')" style="width:100%;text-align:left;padding:8px 14px;font-size:.8125rem;color:var(--ink3);cursor:pointer;display:flex;align-items:center;gap:8px"><svg width="12" height="12" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-settings"/></svg> Settings</button>
+        <button onclick="goPublic()" style="width:100%;text-align:left;padding:8px 14px;font-size:.8125rem;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:8px"><svg width="12" height="12" stroke="var(--red)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-log-out"/></svg> Sign Out</button>
+      </div>
+    </div>
+    <button class="btn btn-g btn-sm" onclick="goPublic()" style="font-size:.5rem">Exit</button>
+  </div>
+</nav>
+
+<aside class="appsb" id="appsb">
+  <div class="sbs">
+    <div class="sbl">Core</div>
+    <div class="sbi" id="n-ws"   onclick="nav('ws')">  <span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-cpu"/></svg></span><span class="sbi-l">AI Workspace</span></div>
+    <div class="sbi" id="n-dash" onclick="nav('dash')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-dash"/></svg></span><span class="sbi-l">Command Centre</span></div>
+  </div>
+  <div class="sbs">
+    <div class="sbl">Workspace</div>
+    <div class="sbi" id="n-proj" onclick="nav('proj')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-folder"/></svg></span><span class="sbi-l">Projects</span></div>
+    <div class="sbi" id="n-task" onclick="nav('task')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-check"/></svg></span><span class="sbi-l">Tasks</span></div>
+    <div class="sbi" id="n-team" onclick="nav('team')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-users"/></svg></span><span class="sbi-l">Team</span></div>
+  </div>
+  <div class="sbs">
+    <div class="sbl">Intelligence</div>
+    <div class="sbi" id="n-meet" onclick="nav('meet')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-msg"/></svg></span><span class="sbi-l">Meetings</span></div>
+    <div class="sbi" id="n-docs" onclick="nav('docs')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-file"/></svg></span><span class="sbi-l">Documents</span></div>
+    <div class="sbi" id="n-rep"  onclick="nav('rep')"> <span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-bar"/></svg></span><span class="sbi-l">Reports</span></div>
+  </div>
+  <div class="sbs">
+    <div class="sbl">Governance</div>
+    <div class="sbi" id="n-raid" onclick="nav('raid')"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-shield"/></svg></span><span class="sbi-l">RAID Log</span></div>
+    <div class="sbi" id="n-dec"  onclick="nav('dec')"> <span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-git"/></svg></span><span class="sbi-l">Decisions</span></div>
+    <div class="sbi" id="n-cr"   onclick="nav('cr')">  <span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-refresh"/></svg></span><span class="sbi-l">Change Requests</span></div>
+  </div>
+  <div class="sb-bot">
+    <div class="sbi" onclick="goPublic()"><span class="sbi-ic"><svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-log-out"/></svg></span><span class="sbi-l" style="font-size:.75rem;color:var(--fnt)">Back to Site</span></div>
+  </div>
+</aside>
+
+<!-- AI Drawer -->
+<div class="drawer" id="drawer">
+  <div style="padding:13px 16px;border-bottom:1px solid var(--rul);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--wht)">
+    <div style="display:flex;align-items:center;gap:7px">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse 2s ease-in-out infinite"></div>
+      <span class="caps" style="color:var(--acc)">DeliverX AI</span>
+    </div>
+    <button onclick="toggleDrawer()" style="color:var(--fnt);display:flex;align-items:center;gap:4px;font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase"><svg width="12" height="12" stroke="var(--fnt)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-x"/></svg> Close</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:14px" id="drawer-msgs">
+    <div class="msg ai">
+      <div class="msg-av">D</div>
+      <div class="msg-b"><div class="bub">Good morning. Portfolio confidence is at 84% — up 3% this week. You have 3 high-priority signals. What would you like to analyse?</div><div class="msg-t">09:14</div></div>
+    </div>
+  </div>
+  <div style="padding:10px;border-top:1px solid var(--rul);flex-shrink:0">
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
+      <button class="chip" onclick="dquick('Generate RAID log')">RAID</button>
+      <button class="chip" onclick="dquick('Sprint health report')">Sprint</button>
+      <button class="chip" onclick="dquick('Risk summary')">Risks</button>
+      <button class="chip" onclick="dquick('Exec summary')">Exec</button>
+    </div>
+    <div style="display:flex;gap:7px">
+      <input class="ii" id="dinput" placeholder="Ask about your projects..." style="flex:1;padding:8px 12px" onkeydown="if(event.key==='Enter')dsend()">
+      <button class="btn btn-p btn-sm" onclick="dsend()"><svg width="11" height="11" stroke="#fff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-send"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN: LANDING
+═══════════════════════════════════ -->
+<div id="s-land" class="scr on">
+
+<!-- Nav -->
+<nav class="lnav">
+  <div class="logo">
+    <div class="lm"><svg width="12" height="12" stroke="var(--acc)" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1 6h10M6 1v10M2 2l8 8M10 2L2 10"/></svg></div>
+    <span class="ln">DeliverX</span>
+    <span class="ltag">OS</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:28px;margin-left:auto">
+    <a class="caps" href="#how" style="color:var(--mut);transition:color .15s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--mut)'">How It Works</a>
+    <a class="caps" href="#feat" style="color:var(--mut);transition:color .15s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--mut)'">Features</a>
+    <a class="caps" href="#price" style="color:var(--mut);transition:color .15s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--mut)'">Pricing</a>
+    <button class="btn btn-g btn-sm" onclick="show('s-auth')">Sign In</button>
+    <button class="btn btn-p btn-sm" onclick="show('s-auth')">Start Free Trial</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section style="min-height:100vh;display:flex;align-items:center;padding:120px 44px 80px;position:relative;overflow:hidden">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(var(--rul) 1px,transparent 1px),linear-gradient(90deg,var(--rul) 1px,transparent 1px);background-size:68px 68px;opacity:.35;pointer-events:none"></div>
+  <div style="max-width:1280px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center">
+    <!-- Left -->
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <div style="width:24px;height:1px;background:var(--acc)"></div>
+        <span class="caps" style="color:var(--acc)">AI-Native Delivery Operating System</span>
+      </div>
+      <h1 style="font-family:var(--fd);font-size:clamp(2.75rem,5vw,4.375rem);line-height:1.02;letter-spacing:-.02em;margin-bottom:22px">
+        Deliver Projects<br>Like an <em style="color:var(--acc);font-style:italic">Intelligent</em><br>Organisation.
+      </h1>
+      <p style="font-size:1.0625rem;color:var(--mut);line-height:1.75;max-width:430px;margin-bottom:36px;font-weight:300">Upload your business case, invite your team, and the AI monitors every workstream — surfacing risks before they escalate and writing reports automatically.</p>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:40px">
+        <button class="btn btn-p" onclick="show('s-auth')">Start Free Trial</button>
+        <button class="btn btn-g" onclick="goApp('dash')">Explore Dashboard</button>
+      </div>
+      <div style="display:flex;gap:20px;align-items:center;font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt)">
+        <span>No credit card</span>
+        <span style="width:1px;height:10px;background:var(--rul)"></span>
+        <span>15 min setup</span>
+        <span style="width:1px;height:10px;background:var(--rul)"></span>
+        <span>GDPR compliant</span>
+      </div>
+    </div>
+    <!-- Hero card -->
+    <div>
+      <div class="cd" style="box-shadow:var(--sh-lg)">
+        <div style="padding:13px 18px;border-bottom:1px solid var(--rul2);display:flex;align-items:center;justify-content:space-between">
+          <span class="caps">PM Command Centre</span>
+          <span style="display:flex;align-items:center;gap:5px;font-family:var(--fm);font-size:.5rem;color:var(--grn)"><span style="width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 2s ease-in-out infinite"></span>Live</span>
+        </div>
+        <div style="padding:18px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+            <div style="padding:13px;background:var(--srf);border:1px solid var(--rul2)"><div style="font-family:var(--fd);font-size:1.75rem;color:var(--grn);line-height:1">84%</div><div class="caps" style="font-size:.45rem;margin-top:2px">Confidence</div></div>
+            <div style="padding:13px;background:var(--srf);border:1px solid var(--rul2)"><div style="font-family:var(--fd);font-size:1.75rem;color:var(--amb);line-height:1">3</div><div class="caps" style="font-size:.45rem;margin-top:2px">At Risk</div></div>
+            <div style="padding:13px;background:var(--srf);border:1px solid var(--rul2)"><div style="font-family:var(--fd);font-size:1.75rem;color:var(--red);line-height:1">4</div><div class="caps" style="font-size:.45rem;margin-top:2px">Blocked</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="padding:9px 11px;border-left:2.5px solid var(--red);background:rgba(192,57,43,.03);display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:.8125rem;color:var(--ink3)">NHS EHR scope increased 34%. Finance approval outstanding 12 days.</span><span class="bd bd-r" style="font-size:.45rem">High</span></div>
+            <div style="padding:9px 11px;border-left:2.5px solid var(--amb);background:rgba(183,98,10,.03);display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:.8125rem;color:var(--ink3)">Sprint velocity down 22% — QA bottleneck detected.</span><span class="bd bd-a" style="font-size:.45rem">Med</span></div>
+            <div style="padding:9px 11px;border-left:2.5px solid var(--grn);background:rgba(26,107,58,.03);display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:.8125rem;color:var(--ink3)">Architecture sign-off received. Phase 2 can proceed.</span><span class="bd bd-g" style="font-size:.45rem">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section style="padding:90px 44px;background:var(--ink)">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="caps" style="color:var(--acl);margin-bottom:14px">The Problem</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(2rem,3.5vw,3.25rem);line-height:1.05;color:#fff;margin-bottom:14px">Project teams use 12 tools.<br>None of them <em style="color:var(--acl);font-style:italic">talk to each other.</em></h2>
+    <p style="font-size:1rem;color:rgba(255,255,255,.4);max-width:520px;margin-bottom:56px;font-weight:300;line-height:1.75">PMs spend 40% of their week chasing status. Risks are spotted 3 weeks late. Lessons are never captured. The same failures repeat on every project.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.06)">
+      <div style="padding:34px;background:var(--ink)"><div style="font-family:var(--fd);font-size:3.5rem;color:rgba(255,255,255,.05);line-height:1;margin-bottom:10px">40%</div><div style="font-size:.9375rem;font-weight:600;color:#fff;margin-bottom:7px">PM time wasted on admin</div><div style="font-size:.875rem;color:rgba(255,255,255,.38);line-height:1.65;font-weight:300">Status chasing, report writing, and meeting scheduling take up nearly half a PM's week. That time should be spent on delivery.</div></div>
+      <div style="padding:34px;background:var(--ink)"><div style="font-family:var(--fd);font-size:3.5rem;color:rgba(255,255,255,.05);line-height:1;margin-bottom:10px">3wk</div><div style="font-size:.9375rem;font-weight:600;color:#fff;margin-bottom:7px">Average risk escalation lag</div><div style="font-size:.875rem;color:rgba(255,255,255,.38);line-height:1.65;font-weight:300">Risks visible in early standup notes go unlogged for weeks. AI extraction reduces the lag to the same day.</div></div>
+      <div style="padding:34px;background:var(--ink)"><div style="font-family:var(--fd);font-size:3.5rem;color:rgba(255,255,255,.05);line-height:1;margin-bottom:10px">97%</div><div style="font-size:.9375rem;font-weight:600;color:#fff;margin-bottom:7px">Lessons never reused</div><div style="font-size:.875rem;color:rgba(255,255,255,.38);line-height:1.65;font-weight:300">Most lessons learned reports are filed and never read. DeliverX's Organisational Memory makes every closed project searchable.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how" style="padding:90px 44px;background:var(--bas)">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="caps" style="color:var(--acc);margin-bottom:12px">How It Works</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(2rem,3vw,2.875rem);line-height:1.05;letter-spacing:-.01em;color:var(--ink);margin-bottom:52px">From business case to <em style="color:var(--acc);font-style:italic">closed project</em> — one workspace.</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rul)">
+      <div style="padding:34px 26px;border-right:1px solid var(--rul);position:relative"><div style="font-family:var(--fd);font-size:3rem;color:var(--rul2);line-height:1;margin-bottom:18px">01</div><div style="font-size:.9375rem;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.3">Upload your business case</div><div style="font-size:.8125rem;color:var(--mut);line-height:1.65;font-weight:300">Upload a PDF, Word doc, or describe your project to the AI. DeliverX generates your full project structure in under 60 seconds.</div><div style="position:absolute;top:34px;right:-12px;width:24px;height:24px;background:var(--wht);border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;z-index:1;font-size:.75rem;color:var(--acc)">›</div></div>
+      <div style="padding:34px 26px;border-right:1px solid var(--rul);position:relative"><div style="font-family:var(--fd);font-size:3rem;color:var(--rul2);line-height:1;margin-bottom:18px">02</div><div style="font-size:.9375rem;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.3">Invite your team</div><div style="font-size:.8125rem;color:var(--mut);line-height:1.65;font-weight:300">Generate invite links per role. Team members join in under 3 minutes and immediately see their tasks sorted by priority.</div><div style="position:absolute;top:34px;right:-12px;width:24px;height:24px;background:var(--wht);border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;z-index:1;font-size:.75rem;color:var(--acc)">›</div></div>
+      <div style="padding:34px 26px;border-right:1px solid var(--rul);position:relative"><div style="font-family:var(--fd);font-size:3rem;color:var(--rul2);line-height:1;margin-bottom:18px">03</div><div style="font-size:.9375rem;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.3">Execute with AI monitoring</div><div style="font-size:.8125rem;color:var(--mut);line-height:1.65;font-weight:300">Team submits daily standups in 90 seconds. AI monitors velocity, extracts risks, and alerts you before problems escalate.</div><div style="position:absolute;top:34px;right:-12px;width:24px;height:24px;background:var(--wht);border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;z-index:1;font-size:.75rem;color:var(--acc)">›</div></div>
+      <div style="padding:34px 26px"><div style="font-family:var(--fd);font-size:3rem;color:var(--rul2);line-height:1;margin-bottom:18px">04</div><div style="font-size:.9375rem;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.3">Close and learn</div><div style="font-size:.8125rem;color:var(--mut);line-height:1.65;font-weight:300">AI generates the closure report and lessons learned automatically. Every insight stored in Organisational Memory for future projects.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="feat" style="padding:90px 44px;background:var(--srf)">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="caps" style="color:var(--acc);margin-bottom:12px">Features</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(2rem,3vw,2.875rem);line-height:1.05;color:var(--ink);margin-bottom:52px">Built for delivery, not <em style="color:var(--acc);font-style:italic">task management.</em></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rul)">
+      <div style="padding:42px;background:var(--bas)"><div class="caps" style="color:var(--acc);margin-bottom:11px">AI Intelligence Layer</div><h3 style="font-family:var(--fd);font-size:1.375rem;line-height:1.15;color:var(--ink);margin-bottom:11px">Risks surface before they escalate</h3><p style="font-size:.9375rem;color:var(--mut);line-height:1.7;margin-bottom:18px;font-weight:300">AI reads every standup, meeting log, and task update. It flags risk language, detects velocity drops, and monitors milestone confidence — without you asking.</p><ul style="list-style:none;display:flex;flex-direction:column;gap:6px"><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>RAID log auto-populated from standups</li><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Milestone confidence updated daily</li><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>5 alert types with PM review queue</li></ul></div>
+      <div style="padding:42px;background:var(--acc)"><div class="caps" style="color:var(--acl);margin-bottom:11px">Reporting Engine</div><h3 style="font-family:var(--fd);font-size:1.375rem;line-height:1.15;color:#fff;margin-bottom:11px">Status reports that write themselves</h3><p style="font-size:.9375rem;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:18px;font-weight:300">Weekly status report generated every Monday. Executive summary auto-sent to your sponsor. RAID log exported as a formatted document.</p><ul style="list-style:none;display:flex;flex-direction:column;gap:6px"><li style="font-size:.875rem;color:rgba(255,255,255,.75);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acl)"></span>Weekly report — every Monday at 07:00</li><li style="font-size:.875rem;color:rgba(255,255,255,.75);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acl)"></span>5-line executive summary to sponsor</li><li style="font-size:.875rem;color:rgba(255,255,255,.75);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acl)"></span>AI citations on every generated output</li></ul></div>
+      <div style="padding:42px;background:var(--bas)"><div class="caps" style="color:var(--acc);margin-bottom:11px">Meeting Intelligence</div><h3 style="font-family:var(--fd);font-size:1.375rem;line-height:1.15;color:var(--ink);margin-bottom:11px">Meetings become operational records</h3><p style="font-size:.9375rem;color:var(--mut);line-height:1.7;margin-bottom:18px;font-weight:300">Paste your meeting notes. AI extracts decisions, actions, risks, and scope changes. You review each item — they flow into the project automatically.</p><ul style="list-style:none;display:flex;flex-direction:column;gap:6px"><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Decision Register auto-population</li><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Action items with suggested owners</li><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Change request creation from meeting output</li></ul></div>
+      <div style="padding:42px;background:var(--bas)"><div class="caps" style="color:var(--acc);margin-bottom:11px">Organisational Memory</div><h3 style="font-family:var(--fd);font-size:1.375rem;line-height:1.15;color:var(--ink);margin-bottom:11px">Every project makes the next one smarter</h3><p style="font-size:.9375rem;color:var(--mut);line-height:1.7;margin-bottom:18px;font-weight:300">Lessons learned, risk patterns, and delivery benchmarks stored permanently. Future projects start with the intelligence from every project you have ever run.</p><ul style="list-style:none;display:flex;flex-direction:column;gap:6px"><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Searchable lessons learned library</li><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Risk patterns detected across projects</li><li style="font-size:.875rem;color:var(--ink3);padding-left:16px;position:relative;line-height:1.45"><span style="position:absolute;left:0;top:9px;width:6px;height:1px;background:var(--acc)"></span>Delivery playbooks enriched automatically</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="price" style="padding:90px 44px;background:var(--wht);border-top:1px solid var(--rul)">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="caps" style="color:var(--acc);margin-bottom:12px">Pricing</div>
+    <h2 style="font-family:var(--fd);font-size:clamp(2rem,3vw,2.875rem);line-height:1.05;color:var(--ink);margin-bottom:52px">One price. <em style="color:var(--acc);font-style:italic">No hidden complexity.</em></h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rul)">
+      <div style="padding:38px;background:var(--wht)"><div class="caps" style="color:var(--mut);margin-bottom:9px">Starter</div><div style="font-family:var(--fd);font-size:1.5rem;color:var(--ink);margin-bottom:3px">Solo PM</div><div style="font-family:var(--fm);font-size:2rem;font-weight:500;color:var(--ink);letter-spacing:-.02em">£49</div><div class="caps" style="font-size:.45rem;color:var(--fnt);margin-bottom:24px">per month</div><div style="height:1px;background:var(--rul);margin-bottom:20px"></div><ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:28px"><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>3 active projects</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>Up to 10 team members</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>AI document analysis</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>Standup intelligence</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>Weekly status reports</li></ul><button class="btn btn-g" style="width:100%;justify-content:center" onclick="show('s-auth')">Start Free Trial</button></div>
+      <div style="padding:38px;background:var(--acc)"><div class="caps" style="color:var(--acl);margin-bottom:9px">Professional</div><div style="font-family:var(--fd);font-size:1.5rem;color:#fff;margin-bottom:3px">Delivery Teams</div><div style="font-family:var(--fm);font-size:2rem;font-weight:500;color:#fff;letter-spacing:-.02em">£149</div><div class="caps" style="font-size:.45rem;color:rgba(255,255,255,.4);margin-bottom:24px">per month</div><div style="height:1px;background:rgba(255,255,255,.15);margin-bottom:20px"></div><ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:28px"><li style="display:flex;gap:8px;font-size:.875rem;color:rgba(255,255,255,.75)"><span style="width:10px;height:1px;background:var(--acl);margin-top:9px;flex-shrink:0"></span>Unlimited projects</li><li style="display:flex;gap:8px;font-size:.875rem;color:rgba(255,255,255,.75)"><span style="width:10px;height:1px;background:var(--acl);margin-top:9px;flex-shrink:0"></span>Unlimited team members</li><li style="display:flex;gap:8px;font-size:.875rem;color:rgba(255,255,255,.75)"><span style="width:10px;height:1px;background:var(--acl);margin-top:9px;flex-shrink:0"></span>Meeting intelligence</li><li style="display:flex;gap:8px;font-size:.875rem;color:rgba(255,255,255,.75)"><span style="width:10px;height:1px;background:var(--acl);margin-top:9px;flex-shrink:0"></span>Decision Register</li><li style="display:flex;gap:8px;font-size:.875rem;color:rgba(255,255,255,.75)"><span style="width:10px;height=1px;background:var(--acl);margin-top:9px;flex-shrink:0"></span>Organisational Memory</li><li style="display:flex;gap:8px;font-size:.875rem;color:rgba(255,255,255,.75)"><span style="width:10px;height:1px;background:var(--acl);margin-top:9px;flex-shrink:0"></span>Delivery playbooks (3)</li></ul><button class="btn" style="width:100%;justify-content:center;background:#fff;color:var(--acc);border-color:#fff" onclick="show('s-auth')">Start Free Trial</button></div>
+      <div style="padding:38px;background:var(--wht)"><div class="caps" style="color:var(--mut);margin-bottom:9px">Enterprise</div><div style="font-family:var(--fd);font-size:1.5rem;color:var(--ink);margin-bottom:3px">PMO & Programmes</div><div style="font-family:var(--fm);font-size:2rem;font-weight:500;color:var(--ink);letter-spacing:-.02em">Custom</div><div class="caps" style="font-size:.45rem;color:var(--fnt);margin-bottom:24px">contact for pricing</div><div style="height:1px;background:var(--rul);margin-bottom:20px"></div><ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:28px"><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>All Professional features</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>Programme layer</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>Portfolio dashboard</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>SSO / SAML</li><li style="display:flex;gap:8px;font-size:.875rem;color:var(--ink3)"><span style="width:10px;height:1px;background:var(--acc);margin-top:9px;flex-shrink:0"></span>Dedicated success manager</li></ul><button class="btn btn-g" style="width:100%;justify-content:center">Contact Sales</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:100px 44px;background:var(--ink);text-align:center">
+  <div class="caps" style="color:var(--acl);margin-bottom:14px">Get Started Today</div>
+  <h2 style="font-family:var(--fd);font-size:clamp(2.5rem,5vw,4rem);line-height:1.0;color:#fff;margin-bottom:12px">Ready to deliver like an<br><em style="color:var(--acl);font-style:italic">intelligent</em> organisation?</h2>
+  <p style="font-size:1rem;color:rgba(255,255,255,.4);margin-bottom:40px;font-weight:300">30-day free trial. No credit card. Setup in 15 minutes.</p>
+  <div style="display:flex;justify-content:center;gap:12px">
+    <button style="padding:13px 30px;background:#fff;color:var(--acc);font-family:var(--fm);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;transition:all .15s" onclick="show('s-auth')">Start Free Trial</button>
+    <button style="padding:12px 24px;background:transparent;color:#fff;font-family:var(--fm);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.25);cursor:pointer;transition:all .15s" onclick="goApp('dash')">Explore Dashboard</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="padding:28px 44px;background:var(--ink2);border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
+  <span class="caps" style="font-size:.45rem;color:rgba(255,255,255,.2)">© 2026 DeliverX Ltd. All rights reserved.</span>
+  <div style="display:flex;gap:22px">
+    <a class="caps" href="#" style="font-size:.45rem;color:rgba(255,255,255,.25)">Privacy</a>
+    <a class="caps" href="#" style="font-size:.45rem;color:rgba(255,255,255,.25)">Terms</a>
+    <a class="caps" href="#" style="font-size:.45rem;color:rgba(255,255,255,.25)">Security</a>
+  </div>
+</footer>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN: AUTH
+═══════════════════════════════════ -->
+<div id="s-auth" class="scr">
+  <div class="auth-grid" style="flex:1">
+    <!-- Left brand panel -->
+    <div class="auth-l">
+      <div class="auth-bg"></div>
+      <div style="position:relative;z-index:1">
+        <div class="logo" onclick="show('s-land')" style="cursor:pointer;margin-bottom:52px">
+          <div class="lm"><svg width="11" height="11" stroke="var(--acl)" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1 5.5h9M5.5 1v9M2 2l7 7M9 2L2 9"/></svg></div>
+          <span class="ln" style="color:#fff">DeliverX</span>
+          <span class="ltag">OS</span>
+        </div>
+        <h2 style="font-family:var(--fd);font-size:clamp(1.75rem,3vw,2.5rem);line-height:1.1;color:#fff;margin-bottom:14px">The workspace where<br>delivery becomes<br><em style="color:var(--acl);font-style:italic">intelligent.</em></h2>
+        <p style="font-size:1rem;color:rgba(255,255,255,.4);font-weight:300;max-width:320px;line-height:1.7">From business case to lessons learned — one workspace, AI watching everything.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:44px">
+          <div style="padding:18px;border:1px solid rgba(255,255,255,.08)"><div style="font-family:var(--fd);font-size:1.875rem;color:#fff;line-height:1;margin-bottom:3px">15min</div><div class="caps" style="font-size:.45rem;color:rgba(255,255,255,.3)">Setup time</div></div>
+          <div style="padding:18px;border:1px solid rgba(255,255,255,.08)"><div style="font-family:var(--fd);font-size:1.875rem;color:#fff;line-height:1;margin-bottom:3px">40%</div><div class="caps" style="font-size:.45rem;color:rgba(255,255,255,.3)">Less admin</div></div>
+          <div style="padding:18px;border:1px solid rgba(255,255,255,.08)"><div style="font-family:var(--fd);font-size:1.875rem;color:#fff;line-height:1;margin-bottom:3px">3x</div><div class="caps" style="font-size:.45rem;color:rgba(255,255,255,.3)">Faster reports</div></div>
+          <div style="padding:18px;border:1px solid rgba(255,255,255,.08)"><div style="font-family:var(--fd);font-size:1.875rem;color:#fff;line-height:1;margin-bottom:3px">97%</div><div class="caps" style="font-size:.45rem;color:rgba(255,255,255,.3)">Lessons retained</div></div>
+        </div>
+      </div>
+      <div class="caps" style="font-size:.45rem;color:rgba(255,255,255,.15);position:relative;z-index:1">DeliverX © 2026 — GDPR Compliant — EU Data Residency</div>
+    </div>
+    <!-- Right form panel -->
+    <div class="auth-r">
+      <div class="auth-form">
+        <div class="auth-tabs">
+          <button class="atab on" id="at-reg" onclick="authTab('reg')">Create Account</button>
+          <button class="atab" id="at-log" onclick="authTab('log')">Sign In</button>
+        </div>
+        <!-- Register -->
+        <div id="ap-reg" class="apanel on">
+          <h2 class="auth-h">Create your workspace</h2>
+          <p class="auth-s">30-day free trial. No credit card needed.</p>
+          <div class="ff">
+            <div class="fr">
+              <div class="iw"><label class="il">First Name</label><input class="ii" placeholder="Alex" type="text"></div>
+              <div class="iw"><label class="il">Last Name</label><input class="ii" placeholder="Chen" type="text"></div>
+            </div>
+            <div class="iw"><label class="il">Work Email</label><input class="ii" placeholder="alex@company.com" type="email"></div>
+            <div class="iw"><label class="il">Company Name</label><input class="ii" placeholder="NHS Digital" type="text"></div>
+            <div class="iw"><label class="il">Password</label><input class="ii" placeholder="Minimum 8 characters" type="password"></div>
+            <div class="fdiv"></div>
+            <div class="iw">
+              <label class="il">I am</label>
+              <select class="ii sl" id="reg-role">
+                <option value="pm">Setting up a project (Project Manager)</option>
+                <option value="contributor">Joining a project (Team Member)</option>
+                <option value="executive">Viewing portfolio (Executive)</option>
+              </select>
+            </div>
+            <button class="fsub" onclick="doRegister()">Create Account →</button>
+          </div>
+          <p style="margin-top:18px;text-align:center;font-size:.875rem;color:var(--mut)">Already have an account? <a onclick="authTab('log')" style="color:var(--acc);font-weight:500;cursor:pointer">Sign in</a></p>
+        </div>
+        <!-- Login -->
+        <div id="ap-log" class="apanel">
+          <h2 class="auth-h">Welcome back</h2>
+          <p class="auth-s">Sign in to your DeliverX workspace.</p>
+          <div class="ff">
+            <div class="iw"><label class="il">Email</label><input class="ii" placeholder="alex@company.com" type="email"></div>
+            <div class="iw"><label class="il">Password</label><input class="ii" placeholder="Your password" type="password"></div>
+            <button class="fsub" onclick="goApp('ws')">Sign In →</button>
+          </div>
+          <p style="margin-top:18px;text-align:center;font-size:.875rem;color:var(--mut)">No account? <a onclick="authTab('reg')" style="color:var(--acc);font-weight:500;cursor:pointer">Create one</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN: ONBOARDING
+═══════════════════════════════════ -->
+<div id="s-ob" class="scr">
+  <!-- Header -->
+  <div style="height:var(--navh);border-bottom:1px solid var(--rul);display:flex;align-items:center;padding:0 44px;justify-content:space-between;background:var(--wht);flex-shrink:0">
+    <div class="logo">
+      <div class="lm"><svg width="11" height="11" stroke="var(--acc)" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1 5.5h9M5.5 1v9M2 2l7 7M9 2L2 9"/></svg></div>
+      <span class="ln">DeliverX</span>
+    </div>
+    <!-- Step indicator -->
+    <div style="display:flex;align-items:center;gap:0" id="ob-steps">
+      <div class="ob-stp done" data-s="1"><span class="ob-sn">✓</span><span>Account</span></div>
+      <div class="ob-stp on" data-s="2"><span class="ob-sn">2</span><span>Project</span></div>
+      <div class="ob-stp" data-s="3"><span class="ob-sn">3</span><span>Business Case</span></div>
+      <div class="ob-stp" data-s="4"><span class="ob-sn">4</span><span>AI Review</span></div>
+      <div class="ob-stp" data-s="5"><span class="ob-sn">5</span><span>Team</span></div>
+    </div>
+    <button class="btn btn-g btn-sm" onclick="goApp('ws')">Skip to workspace</button>
+  </div>
+  <style>
+  .ob-stp{display:flex;align-items:center;gap:7px;padding:0 18px;font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);position:relative}
+  .ob-stp:not(:last-child)::after{content:"›";position:absolute;right:-4px;color:var(--rul);font-size:.75rem}
+  .ob-stp.on{color:var(--acc)}.ob-stp.done{color:var(--mut)}
+  .ob-sn{width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.45rem;flex-shrink:0}
+  .ob-stp.done .ob-sn{background:var(--acc);border-color:var(--acc);color:#fff}
+  </style>
+
+  <!-- Step containers -->
+  <div id="ob-2" class="ob-wrap">
+    <div class="ob-card">
+      <div class="ob-sl">Step 2 of 5</div>
+      <h2 class="ob-h">Tell us about your project</h2>
+      <p class="ob-s">You can add more detail later. Just the basics to get started.</p>
+      <div class="ff">
+        <div class="iw"><label class="il">Project Name</label><input class="ii" placeholder="NHS Digital Transformation Programme" id="ob-pname"></div>
+        <div class="iw"><label class="il">Project Goal</label><textarea class="ii ta" placeholder="What does success look like? Describe in 1-3 sentences." rows="3" id="ob-pgoal"></textarea></div>
+        <div class="fr">
+          <div class="iw"><label class="il">Project Type</label><select class="ii sl"><option>Agile</option><option>Waterfall</option><option>Hybrid</option><option>Programme</option></select></div>
+          <div class="iw"><label class="il">Target End Date</label><input class="ii" type="date"></div>
+        </div>
+        <div class="iw"><label class="il">Delivery Playbook (Optional)</label><select class="ii sl"><option value="">None — start blank</option><option>Software Development</option><option>NHS / Healthcare Rollout</option><option>Consulting Engagement</option><option>ERP Implementation</option></select></div>
+      </div>
+      <div class="ob-ac">
+        <button style="font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);background:none;border:none;cursor:pointer" onclick="show('s-auth')">← Back</button>
+        <button class="btn btn-p" onclick="obStep(3)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ob-3" class="ob-wrap" style="display:none">
+    <div class="ob-card wide">
+      <div class="ob-sl">Step 3 of 5</div>
+      <h2 class="ob-h">Upload your business case</h2>
+      <p class="ob-s">Upload a document or describe your project to the AI. We'll generate your project structure automatically.</p>
+      <div class="tabs">
+        <button class="tab on" onclick="swTab('bc',0,this)">Upload Document</button>
+        <button class="tab" onclick="swTab('bc',1,this)">Describe to AI</button>
+      </div>
+      <div id="bc-0" class="tp on">
+        <div style="border:2px dashed var(--rul);padding:44px 28px;text-align:center;background:var(--srf)">
+          <div class="caps" style="color:var(--fnt);margin-bottom:6px">PDF · Word · PowerPoint · Max 20MB</div>
+          <div style="font-size:.875rem;color:var(--mut);margin-bottom:18px;font-weight:300">Drag your business case here, or click to browse</div>
+          <button class="btn btn-g btn-sm">Browse Files</button>
+        </div>
+      </div>
+      <div id="bc-1" class="tp">
+        <div class="iw"><label class="il">Describe Your Project</label><textarea class="ii ta" style="min-height:110px" placeholder="We are delivering a £20M NHS transformation across 12 hospitals, 24 months, 4 regional workstreams with full governance..."></textarea></div>
+      </div>
+      <div class="ob-ac">
+        <button style="font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);background:none;border:none;cursor:pointer" onclick="obStep(2)">← Back</button>
+        <button class="btn btn-p" onclick="obStep('proc')">Analyse with AI →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ob-proc" class="ob-wrap" style="display:none">
+    <div class="ob-card" style="text-align:center">
+      <div class="ob-sl">AI Processing</div>
+      <h2 class="ob-h">Analysing your project</h2>
+      <div style="padding:32px 0">
+        <div class="spin" style="margin:0 auto 18px"></div>
+        <div class="caps" style="color:var(--mut)">Extracting workstreams, milestones, risks...</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;text-align:left;margin-top:8px" id="proc-steps">
+        <div style="font-size:.8125rem;color:var(--acc);display:flex;align-items:center;gap:8px"><span class="caps" style="font-size:.45rem;color:var(--acc)">✓</span> Reading document structure</div>
+        <div style="font-size:.8125rem;color:var(--mut);display:flex;align-items:center;gap:8px" id="proc-2"><div class="spin" style="width:12px;height:12px;border-width:1.5px;flex-shrink:0"></div> Identifying workstreams and milestones</div>
+        <div style="font-size:.8125rem;color:var(--fnt);display:flex;align-items:center;gap:8px" id="proc-3"><span>○</span> Generating RAID log and risk register</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ob-4" class="ob-wrap" style="display:none">
+    <div class="ob-card wide">
+      <div class="ob-sl">Step 4 of 5 — AI Output Review</div>
+      <h2 class="ob-h">Review your project structure</h2>
+      <p class="ob-s">Accept, edit, or reject each item. Nothing is applied without your confirmation.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div>
+          <div class="caps" style="color:var(--mut);margin-bottom:9px">Workstreams Detected</div>
+          <div class="air">
+            <div class="air-h"><div style="width:6px;height:6px;border-radius:50%;background:var(--acc)"></div><span class="caps" style="color:var(--acc)">4 workstreams generated</span></div>
+            <div class="air-b">
+              <div class="air-item"><span class="air-t"><strong>North Region Delivery</strong> — Hospital transformation across 3 sites</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--grn);border-color:var(--grn);background:var(--gnb)">Accept</button><button class="btn-xs btn" style="color:var(--red);border-color:var(--red);background:transparent" onclick="this.closest('.air-item').style.opacity='.3'">Reject</button></div></div>
+              <div class="air-item"><span class="air-t"><strong>Digital Integration</strong> — EHR migration and system integration</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--grn);border-color:var(--grn);background:var(--gnb)">Accept</button><button class="btn-xs btn" style="color:var(--red);border-color:var(--red);background:transparent" onclick="this.closest('.air-item').style.opacity='.3'">Reject</button></div></div>
+              <div class="air-item"><span class="air-t"><strong>Governance &amp; Change</strong> — Stakeholder management and approvals</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--grn);border-color:var(--grn);background:var(--gnb)">Accept</button><button class="btn-xs btn" style="color:var(--red);border-color:var(--red);background:transparent" onclick="this.closest('.air-item').style.opacity='.3'">Reject</button></div></div>
+              <div class="air-item"><span class="air-t"><strong>Training &amp; Adoption</strong> — Clinical staff onboarding programme</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--grn);border-color:var(--grn);background:var(--gnb)">Accept</button><button class="btn-xs btn" style="color:var(--red);border-color:var(--red);background:transparent" onclick="this.closest('.air-item').style.opacity='.3'">Reject</button></div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="caps" style="color:var(--mut);margin-bottom:9px">Risks Detected</div>
+          <div class="air">
+            <div class="air-h"><div style="width:6px;height:6px;border-radius:50%;background:var(--red)"></div><span class="caps" style="color:var(--acc)">5 risks identified</span></div>
+            <div class="air-b">
+              <div class="air-item"><span class="air-t"><span class="bd bd-r" style="margin-right:6px">High</span> NHS procurement cycle — 14+ week lead time</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--acc);border-color:var(--acc);background:var(--acb)">Add to RAID</button></div></div>
+              <div class="air-item"><span class="air-t"><span class="bd bd-a" style="margin-right:6px">Med</span> Clinical system downtime during cutover</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--acc);border-color:var(--acc);background:var(--acb)">Add to RAID</button></div></div>
+              <div class="air-item"><span class="air-t"><span class="bd bd-a" style="margin-right:6px">Med</span> Change resistance from clinical staff</span><div class="air-btns"><button class="btn-xs btn" style="color:var(--acc);border-color:var(--acc);background:var(--acb)">Add to RAID</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ob-ac">
+        <button style="font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);background:none;border:none;cursor:pointer" onclick="obStep(3)">← Back</button>
+        <button class="btn btn-p" onclick="obStep(5)">Confirm Structure →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ob-5" class="ob-wrap" style="display:none">
+    <div class="ob-card">
+      <div class="ob-sl">Step 5 of 5</div>
+      <h2 class="ob-h">Invite your team</h2>
+      <p class="ob-s">Generate invite links per role. Links are valid for 7 days and reusable.</p>
+      <div style="margin-bottom:22px">
+        <div class="inv-row">
+          <div><div class="inv-nm">Contributor Link</div><div class="inv-d">Team members who update tasks and submit standups</div></div>
+          <button class="btn btn-g btn-sm" onclick="this.textContent='deliverx.io/join/abc123... (copied)';this.style.color='var(--grn)'">Generate Link</button>
+        </div>
+        <div class="inv-row">
+          <div><div class="inv-nm">Executive Link</div><div class="inv-d">Read-only access to portfolio view and executive summaries</div></div>
+          <button class="btn btn-g btn-sm" onclick="this.textContent='deliverx.io/join/xyz789... (copied)';this.style.color='var(--grn)'">Generate Link</button>
+        </div>
+      </div>
+      <div class="ob-ac">
+        <button style="font-family:var(--fm);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fnt);background:none;border:none;cursor:pointer" onclick="goApp('ws')">Skip for now</button>
+        <button class="btn btn-p" onclick="goApp('ws')">Launch Workspace →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     APP CONTAINER
+═══════════════════════════════════ -->
+<div id="s-app" class="scr" style="padding-top:var(--navh)">
+  <div style="display:flex;flex:1;overflow:hidden;height:calc(100vh - var(--navh))">
+
+  <!-- ── AI WORKSPACE ── -->
+  <div id="pg-ws" class="pg" style="flex:1;overflow:hidden">
+    <div style="display:grid;grid-template-columns:210px 1fr 285px;height:100%">
+      <!-- Memory panel -->
+      <div class="ws-mem">
+        <div style="padding:11px 13px;border-bottom:1px solid var(--rul);flex-shrink:0">
+          <div class="caps" style="margin-bottom:8px">AI Workspaces</div>
+          <button class="btn btn-p btn-sm" style="width:100%;justify-content:center;font-size:.5rem">+ New Workspace</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:6px">
+          <div class="caps" style="padding:6px 8px;font-size:.4rem">Recent</div>
+          <div class="ws-th on" onclick="wsSetActive(this,'NHS £20M Transformation')">
+            <div class="ws-tl">Programme</div>
+            <div class="ws-tn">NHS £20M Transformation</div>
+            <div class="ws-tm">Today</div>
+          </div>
+          <div class="ws-th" onclick="wsSetActive(this,'Product Platform v2')">
+            <div class="ws-tl">Project</div>
+            <div class="ws-tn">Product Platform v2</div>
+            <div class="ws-tm">Yesterday</div>
+          </div>
+          <div class="ws-th" onclick="wsSetActive(this,'Data Migration Programme')">
+            <div class="ws-tl">Programme</div>
+            <div class="ws-tn">Data Migration Programme</div>
+            <div class="ws-tm">May 17</div>
+          </div>
+          <div class="caps" style="padding:6px 8px;font-size:.4rem;margin-top:8px">Archived</div>
+          <div class="ws-th" onclick="wsSetActive(this,'HSBC Consulting')">
+            <div class="ws-tl">Project</div>
+            <div class="ws-tn">HSBC Consulting</div>
+            <div class="ws-tm">May 10</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--rul);padding:8px 7px;flex-shrink:0">
+          <div class="caps" style="padding:4px 6px;font-size:.4rem;margin-bottom:3px">Generated</div>
+          <div style="padding:6px;cursor:pointer;display:flex;gap:7px;align-items:center;transition:background .1s" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background=''"><div style="width:18px;height:18px;border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--srf)">R</div><span style="font-size:.75rem;color:var(--mut)">RAID Log v1</span></div>
+          <div style="padding:6px;cursor:pointer;display:flex;gap:7px;align-items:center;transition:background .1s" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background=''"><div style="width:18px;height:18px;border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--srf)">C</div><span style="font-size:.75rem;color:var(--mut)">Programme Charter</span></div>
+          <div style="padding:6px;cursor:pointer;display:flex;gap:7px;align-items:center;transition:background .1s" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background=''"><div style="width:18px;height:18px;border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--srf)">S</div><span style="font-size:.75rem;color:var(--mut)">Stakeholder Map</span></div>
+        </div>
+      </div>
+
+      <!-- Chat panel -->
+      <div class="ws-chat">
+        <div style="padding:11px 18px;border-bottom:1px solid var(--rul);background:var(--wht);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse 2s ease-in-out infinite"></div>
+            <span class="caps" style="color:var(--mut)">AI Delivery Architect</span>
+          </div>
+          <span id="ws-context" class="caps" style="font-size:.45rem;color:var(--acc)">NHS £20M Transformation — Active context</span>
+        </div>
+        <div class="ws-msgs" id="ws-msgs">
+          <div class="msg sys"><div class="msg-b"><div class="bub" style="display:flex;align-items:center;gap:12px"><span style="font-size:1.1rem">◈</span><span>AI Delivery Workspace ready. Describe any programme, project, or transformation — I will generate the complete operational architecture.</span></div></div></div>
+          <div class="msg u fi"><div class="msg-av">G</div><div class="msg-b"><div class="bub">We are delivering a £20M NHS transformation programme across 12 hospitals. 24 months, 4 regional workstreams, full governance required.</div><div class="msg-t">09:15</div></div></div>
+          <div class="msg ai fi"><div class="msg-av">D</div><div class="msg-b"><div class="bub">Understood. Generating your complete operational architecture for a £20M NHS transformation.
+
+Building:
+— 4 regional delivery workstreams with leads
+— Programme governance framework (3-tier)
+— RAID log with 14 pre-identified risks
+— 47-stakeholder map across 3 layers
+— 24-month milestone plan with confidence scores
+— 6 role-based dashboards
+
+All artefacts are live in your workspace. Review them in the panel or accept to publish.</div><div class="msg-t">09:15</div></div></div>
+        </div>
+        <div class="ws-inp">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
+            <button class="chip" onclick="wssend('Generate RAID log with all detected risks')">Generate RAID</button>
+            <button class="chip" onclick="wssend('Update milestone confidence scores')">Update milestones</button>
+            <button class="chip" onclick="wssend('Create full stakeholder map')">Stakeholder map</button>
+            <button class="chip" onclick="wssend('Generate governance framework')">Governance</button>
+            <button class="chip" onclick="wssend('Write executive summary report')">Exec report</button>
+          </div>
+          <div style="display:flex;gap:8px">
+            <textarea id="ws-input" class="ii ta" rows="2" style="flex:1;min-height:0;resize:none;padding:9px 12px" placeholder="Describe your programme or ask about your project..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();wssend()}"></textarea>
+            <button class="btn btn-p btn-sm" onclick="wssend()" style="align-self:flex-end">Send →</button>
+          </div>
+          <div class="caps" style="font-size:.4rem;margin-top:5px;color:var(--fnt)">Enter to send · AI has full programme context · All outputs require PM review before applying</div>
+        </div>
+      </div>
+
+      <!-- Right system panel -->
+      <div class="ws-right">
+        <div class="tabs" style="margin:0;border-bottom:1px solid var(--rul);padding:0 4px">
+          <button class="tab on" onclick="wsTab('sys',this)">System</button>
+          <button class="tab" onclick="wsTab('art',this)">Artefacts</button>
+          <button class="tab" onclick="wsTab('rsk',this)">Risks</button>
+        </div>
+        <div class="ws-rb">
+          <div id="wst-sys">
+            <div class="caps" style="margin-bottom:8px;margin-top:4px">Workstreams</div>
+            <div style="border:1px solid var(--rul);border-left:3px solid var(--acm);padding:9px 11px;margin-bottom:5px"><div style="font-size:.8125rem;font-weight:500;margin-bottom:2px">North Region</div><div style="display:flex;justify-content:space-between"><span class="caps" style="font-size:.4rem;color:var(--fnt)">Sarah J.</span><span style="font-family:var(--fm);font-size:.625rem;color:var(--grn);font-weight:500">87%</span></div></div>
+            <div style="border:1px solid var(--rul);border-left:3px solid var(--red);padding:9px 11px;margin-bottom:5px"><div style="font-size:.8125rem;font-weight:500;margin-bottom:2px">South Region</div><div style="display:flex;justify-content:space-between"><span class="caps" style="font-size:.4rem;color:var(--fnt)">Marcus T.</span><span style="font-family:var(--fm);font-size:.625rem;color:var(--red);font-weight:500">64%</span></div></div>
+            <div style="border:1px solid var(--rul);border-left:3px solid var(--grn);padding:9px 11px;margin-bottom:5px"><div style="font-size:.8125rem;font-weight:500;margin-bottom:2px">Digital Integration</div><div style="display:flex;justify-content:space-between"><span class="caps" style="font-size:.4rem;color:var(--fnt)">Priya L.</span><span style="font-family:var(--fm);font-size:.625rem;color:var(--grn);font-weight:500">91%</span></div></div>
+            <div style="border:1px solid var(--rul);border-left:3px solid var(--amb);padding:9px 11px;margin-bottom:12px"><div style="font-size:.8125rem;font-weight:500;margin-bottom:2px">Governance & Change</div><div style="display:flex;justify-content:space-between"><span class="caps" style="font-size:.4rem;color:var(--fnt)">Kate C.</span><span style="font-family:var(--fm);font-size:.625rem;color:var(--amb);font-weight:500">72%</span></div></div>
+            <div class="caps" style="margin-bottom:7px">Milestones</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--rul2);margin-bottom:4px;background:var(--srf)"><div><div style="font-size:.8125rem">Discovery Complete</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">Jun 2026</div></div><span style="font-family:var(--fm);font-size:.625rem;color:var(--grn);font-weight:500">94%</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--rul2);margin-bottom:4px;background:var(--srf)"><div><div style="font-size:.8125rem">Architecture Sign-off</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">Aug 2026</div></div><span style="font-family:var(--fm);font-size:.625rem;color:var(--amb);font-weight:500">76%</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--rul2);margin-bottom:4px;background:var(--srf)"><div><div style="font-size:.8125rem">Phase 1 Go-Live</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">Nov 2026</div></div><span style="font-family:var(--fm);font-size:.625rem;color:var(--amb);font-weight:500">68%</span></div>
+          </div>
+          <div id="wst-art" style="display:none">
+            <div class="caps" style="margin-bottom:8px;margin-top:4px">Generated Artefacts</div>
+            <div style="padding:9px 10px;border:1px solid var(--rul);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background=''"><div style="display:flex;gap:8px;align-items:center"><div style="width:18px;height:18px;border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--srf)">R</div><div><div style="font-size:.8125rem;font-weight:500">RAID Log</div><span class="bd bd-g" style="font-size:.4rem">Generated</span></div></div></div>
+            <div style="padding:9px 10px;border:1px solid var(--rul);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background=''"><div style="display:flex;gap:8px;align-items:center"><div style="width:18px;height:18px;border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--srf)">C</div><div><div style="font-size:.8125rem;font-weight:500">Programme Charter</div><span class="bd bd-g" style="font-size:.4rem">Generated</span></div></div></div>
+            <div style="padding:9px 10px;border:1px solid var(--rul);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background=''"><div style="display:flex;gap:8px;align-items:center"><div style="width:18px;height:18px;border:1px solid var(--rul);display:flex;align-items:center;justify-content:center;font-size:.6rem;background:var(--srf)">S</div><div><div style="font-size:.8125rem;font-weight:500">Stakeholder Map</div><span class="bd bd-a" style="font-size:.4rem">Draft</span></div></div></div>
+          </div>
+          <div id="wst-rsk" style="display:none">
+            <div class="caps" style="margin-bottom:8px;margin-top:4px">AI-Identified Risks</div>
+            <div style="padding:9px 11px;border:1px solid var(--rul);border-left:3px solid var(--red);background:rgba(192,57,43,.02);margin-bottom:5px"><div style="font-size:.8125rem;color:var(--ink3);margin-bottom:4px;line-height:1.4">NHS procurement cycle — 14+ week lead time may delay Phase 1</div><span class="bd bd-r">High</span></div>
+            <div style="padding:9px 11px;border:1px solid var(--rul);border-left:3px solid var(--red);background:rgba(192,57,43,.02);margin-bottom:5px"><div style="font-size:.8125rem;color:var(--ink3);margin-bottom:4px;line-height:1.4">Clinical system downtime risk during EHR cutover</div><span class="bd bd-r">High</span></div>
+            <div style="padding:9px 11px;border:1px solid var(--rul);border-left:3px solid var(--amb);background:rgba(183,98,10,.02);margin-bottom:10px"><div style="font-size:.8125rem;color:var(--ink3);margin-bottom:4px;line-height:1.4">Change resistance from clinical staff</div><span class="bd bd-a">Med</span></div>
+            <button class="btn btn-p btn-sm" style="width:100%;justify-content:center;font-size:.5rem" onclick="nav('raid')">Add All to RAID Log →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /workspace -->
+
+  <!-- ── COMMAND CENTRE ── -->
+  <div id="pg-dash" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph">
+        <div>
+          <div class="pb">DeliverX OS · Command Centre</div>
+          <h1 class="ptitle">Good morning, Gnaneshwer. <em>3 signals need attention.</em></h1>
+        </div>
+        <div class="pa">
+          <span class="bd bd-g" data-dot="">All Systems Operational</span>
+          <button class="btn btn-g btn-sm">Tue 20 May 2026</button>
+        </div>
+      </div>
+      <div class="aci">
+        <!-- KPIs -->
+        <div class="sr sr6">
+          <div class="sc"><div class="sl2">My Projects</div><div class="sv b">6</div><div class="sd">+1 this month</div><div class="sbar"><div class="sbf b" style="width:60%"></div></div></div>
+          <div class="sc"><div class="sl2">Delivery Confidence</div><div class="sv g">84%</div><div class="sd">↑ 3% week-on-week</div><div class="sbar"><div class="sbf g" style="width:84%"></div></div></div>
+          <div class="sc"><div class="sl2">Blocked Tasks</div><div class="sv r">4</div><div class="sd">↑ 2 since yesterday</div><div class="sbar"><div class="sbf r" style="width:40%"></div></div></div>
+          <div class="sc"><div class="sl2">Active Risks</div><div class="sv a">7</div><div class="sd">3 require action</div><div class="sbar"><div class="sbf a" style="width:70%"></div></div></div>
+          <div class="sc"><div class="sl2">Milestones / Week</div><div class="sv">3</div><div class="sd">Next: UAT in 2 days</div><div class="sbar"><div class="sbf b" style="width:30%"></div></div></div>
+          <div class="sc"><div class="sl2">Team Utilisation</div><div class="sv a">78%</div><div class="sd">↓ 4% — check Alpha</div><div class="sbar"><div class="sbf a" style="width:78%"></div></div></div>
+        </div>
+        <!-- 3-col grid -->
+        <div class="three-col">
+          <!-- AI Feed -->
+          <div>
+            <div class="sh">
+              <span class="sh-t"><span style="width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse 2s ease-in-out infinite;display:inline-block"></span>AI Intelligence Feed</span>
+              <div style="display:flex;gap:0">
+                <button class="raid-tab on" onclick="filterFeed('all',this)">All</button>
+                <button class="raid-tab" onclick="filterFeed('h',this)">High</button>
+                <button class="raid-tab" onclick="filterFeed('m',this)">Med</button>
+              </div>
+            </div>
+            <div id="feed">
+              <div class="sig h" data-sev="h"><div class="sig-top"><div class="sig-meta"><div class="sig-proj">NHS EHR Programme</div><div class="sig-txt">Scope increased 34% since baseline. Finance approval outstanding 12 days. Q3 milestone slip risk: 68%.</div></div><span class="sig-time">4m</span></div><div class="sig-bot"><span class="bd bd-r">High</span><button class="sig-act" onclick="nav('cr')">Escalate to Board</button><button class="sig-dis" onclick="this.closest('.sig').style.display='none'">Dismiss</button></div></div>
+              <div class="sig h" data-sev="h"><div class="sig-top"><div class="sig-meta"><div class="sig-proj">Product Platform v2</div><div class="sig-txt">Sprint velocity down 22% over 3 sprints. QA bottleneck. Trajectory misses June launch by 2 weeks.</div></div><span class="sig-time">11m</span></div><div class="sig-bot"><span class="bd bd-r">High</span><button class="sig-act" onclick="nav('task')">View Sprint</button><button class="sig-dis" onclick="this.closest('.sig').style.display='none'">Dismiss</button></div></div>
+              <div class="sig m" data-sev="m"><div class="sig-top"><div class="sig-meta"><div class="sig-proj">Data Migration</div><div class="sig-txt">Infrastructure vendor dependency unresolved since Week 3. Escalation overdue 5 days.</div></div><span class="sig-time">28m</span></div><div class="sig-bot"><span class="bd bd-a">Med</span><button class="sig-act">Assign Action</button><button class="sig-dis" onclick="this.closest('.sig').style.display='none'">Dismiss</button></div></div>
+              <div class="sig i" data-sev="i"><div class="sig-top"><div class="sig-meta"><div class="sig-proj">HSBC Consulting</div><div class="sig-txt">Governance pack ready. 4 decisions require steering group approval before Thursday.</div></div><span class="sig-time">45m</span></div><div class="sig-bot"><span class="bd bd-b">Info</span><button class="sig-act" onclick="nav('dec')">Review Pack</button><button class="sig-dis" onclick="this.closest('.sig').style.display='none'">Dismiss</button></div></div>
+            </div>
+            <!-- Quick actions -->
+            <div style="margin-top:14px">
+              <div class="sh"><span class="sh-t">Quick Actions</span></div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px">
+                <button onclick="openModal('m-newproj')" style="padding:9px;border:1px solid var(--rul);background:var(--wht);font-size:.75rem;color:var(--mut);cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--rul)'">New Project</button>
+                <button onclick="nav('raid')" style="padding:9px;border:1px solid var(--rul);background:var(--wht);font-size:.75rem;color:var(--mut);cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--rul)'">Add Risk</button>
+                <button onclick="nav('rep')" style="padding:9px;border:1px solid var(--rul);background:var(--wht);font-size:.75rem;color:var(--mut);cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--rul)'">Gen Report</button>
+                <button onclick="nav('team')" style="padding:9px;border:1px solid var(--rul);background:var(--wht);font-size:.75rem;color:var(--mut);cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--rul)'">Invite Team</button>
+                <button onclick="nav('meet')" style="padding:9px;border:1px solid var(--rul);background:var(--wht);font-size:.75rem;color:var(--mut);cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--rul)'">Log Meeting</button>
+                <button onclick="nav('rep')" style="padding:9px;border:1px solid var(--rul);background:var(--wht);font-size:.75rem;color:var(--mut);cursor:pointer;transition:all .12s" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='var(--rul)'">Exec Report</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Portfolio + Activity -->
+          <div>
+            <div class="sh"><span class="sh-t">Portfolio Health</span><span class="sh-a" onclick="nav('proj')">View all →</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px">
+              <div class="pc g" onclick="nav('proj')"><div class="pc-typ">Programme</div><div class="pc-nm">NHS Digital</div><div class="pc-ph">18 members</div><div class="pc-mx"><div><div class="pc-mv g">87%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv" style="color:var(--mut)">94%</div><div class="pc-ml">Budget</div></div></div><div class="pc-bar"><div class="pc-bf g" style="width:87%"></div></div></div>
+              <div class="pc r" onclick="nav('proj')"><div class="pc-typ">Project</div><div class="pc-nm">Platform v2</div><div class="pc-ph">9 members</div><div class="pc-mx"><div><div class="pc-mv a">72%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv" style="color:var(--mut)">88%</div><div class="pc-ml">Budget</div></div></div><div class="pc-bar"><div class="pc-bf a" style="width:72%"></div></div></div>
+              <div class="pc r" onclick="nav('proj')"><div class="pc-typ">Programme</div><div class="pc-nm">Data Migration</div><div class="pc-ph">12 members</div><div class="pc-mx"><div><div class="pc-mv r">61%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv a">76%</div><div class="pc-ml">Budget</div></div></div><div class="pc-bar"><div class="pc-bf r" style="width:61%"></div></div></div>
+              <div class="pc g" onclick="nav('proj')"><div class="pc-typ">Project</div><div class="pc-nm">HSBC Consult</div><div class="pc-ph">7 members</div><div class="pc-mx"><div><div class="pc-mv g">91%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv g">100%</div><div class="pc-ml">Budget</div></div></div><div class="pc-bar"><div class="pc-bf g" style="width:91%"></div></div></div>
+            </div>
+            <div class="sh"><span class="sh-t">Live Activity</span></div>
+            <div class="cd cdf">
+              <div style="padding:4px 12px">
+                <div class="act-item"><div class="av" style="background:#2D7048">S</div><div class="act-b"><div class="act-t">Sarah J. updated milestone — UAT pushed to May 28</div><div class="act-m"><span>2m ago</span><span class="act-p">NHS EHR</span></div></div></div>
+                <div class="act-item"><div class="av" style="background:#1A3F6B">M</div><div class="act-b"><div class="act-t">Marcus T. escalated vendor dependency to programme level</div><div class="act-m"><span>9m ago</span><span class="act-p">Data Migration</span></div></div></div>
+                <div class="act-item"><div class="av" style="background:var(--acc)">D</div><div class="act-b"><div class="act-t">AI detected sprint velocity anomaly — report drafted</div><div class="act-m"><span>11m ago</span><span class="act-p">Platform v2</span></div></div></div>
+                <div class="act-item"><div class="av" style="background:#8B6914">K</div><div class="act-b"><div class="act-t">Kate C. submitted governance pack for steering review</div><div class="act-m"><span>32m ago</span><span class="act-p">HSBC</span></div></div></div>
+                <div class="act-item"><div class="av" style="background:#1A6B3A">R</div><div class="act-b"><div class="act-t">Raj B. completed retrospective — 6 lessons captured</div><div class="act-m"><span>1h ago</span><span class="act-p">Agile Transform</span></div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right rail -->
+          <div>
+            <div class="sh"><span class="sh-t">Upcoming Milestones</span></div>
+            <div style="margin-bottom:16px">
+              <div class="mi a" onclick="nav('proj')"><div><div class="mi-nm">UAT Sign-off</div><div class="mi-pr">NHS EHR</div></div><div class="mi-d">2d</div><div class="mi-c a">71%</div></div>
+              <div class="mi g" onclick="nav('proj')"><div><div class="mi-nm">Executive Review</div><div class="mi-pr">Platform v2</div></div><div class="mi-d">5d</div><div class="mi-c g">92%</div></div>
+              <div class="mi r" onclick="nav('proj')"><div><div class="mi-nm">Vendor Integration</div><div class="mi-pr">Data Migration</div></div><div class="mi-d">7d</div><div class="mi-c r">58%</div></div>
+              <div class="mi g" onclick="nav('proj')"><div><div class="mi-nm">Arch Approval</div><div class="mi-pr">HSBC</div></div><div class="mi-d">9d</div><div class="mi-c g">88%</div></div>
+            </div>
+            <!-- Health ring -->
+            <div class="cd cdp" style="margin-bottom:14px">
+              <div class="sh"><span class="sh-t">Portfolio Score</span></div>
+              <div class="ring-wrap" style="margin-bottom:14px">
+                <div class="ring">
+                  <svg width="60" height="60" viewBox="0 0 60 60">
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--rul)" stroke-width="5"/>
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--acm)" stroke-width="5" stroke-dasharray="127 151" stroke-dashoffset="38" stroke-linecap="square"/>
+                  </svg>
+                  <div class="ring-val">84%</div>
+                </div>
+                <div class="ring-info"><div class="ring-title">Portfolio Health</div><div class="ring-sub">4 at-risk · 2 critical</div><div class="ring-tr">↑ +4% vs last week</div></div>
+              </div>
+              <div class="pb-row"><span class="pb-l" style="font-size:.75rem;width:70px">Planning</span><div class="pb-b"><div class="pb-f" style="width:95%;background:var(--grn)"></div></div><span class="pb-v" style="color:var(--grn)">95%</span></div>
+              <div class="pb-row"><span class="pb-l" style="font-size:.75rem;width:70px">Build</span><div class="pb-b"><div class="pb-f" style="width:82%;background:var(--acm)"></div></div><span class="pb-v" style="color:var(--acc)">82%</span></div>
+              <div class="pb-row"><span class="pb-l" style="font-size:.75rem;width:70px">Governance</span><div class="pb-b"><div class="pb-f" style="width:76%;background:var(--amb)"></div></div><span class="pb-v" style="color:var(--amb)">76%</span></div>
+              <div class="pb-row"><span class="pb-l" style="font-size:.75rem;width:70px">Launch Risk</span><div class="pb-b"><div class="pb-f" style="width:61%;background:var(--red)"></div></div><span class="pb-v" style="color:var(--red)">61%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /dashboard -->
+
+  <!-- ── PROJECTS ── -->
+  <div id="pg-proj" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Projects</div><h1 class="ptitle">Projects &amp; Programmes</h1></div><div class="pa"><button class="btn btn-g btn-sm">List</button><button class="btn btn-g btn-sm">Timeline</button><button class="btn btn-p btn-sm" onclick="openModal('m-newproj')">+ New Project</button></div></div>
+      <div class="aci">
+        <div class="sr sr4">
+          <div class="sc"><div class="sl2">Total Projects</div><div class="sv">6</div></div>
+          <div class="sc"><div class="sl2">On Track</div><div class="sv g">4</div></div>
+          <div class="sc"><div class="sl2">At Risk</div><div class="sv r">2</div></div>
+          <div class="sc"><div class="sl2">Avg Confidence</div><div class="sv a">77%</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          <div class="pc g" onclick="nav('task')"><div class="pc-typ">Programme · Build</div><div class="pc-nm">NHS Digital Transformation</div><div class="pc-ph">18 members · Apr 2026</div><div class="pc-mx"><div><div class="pc-mv g">87%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv" style="color:var(--mut)">94%</div><div class="pc-ml">Budget</div></div><div><div class="pc-mv" style="color:var(--amb)">2</div><div class="pc-ml">Risks</div></div></div><div class="pc-bar"><div class="pc-bf g" style="width:87%"></div></div><div class="pc-ft"><span class="bd bd-g" data-dot="">On Track</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">18 members</span></div></div>
+          <div class="pc a" onclick="nav('task')"><div class="pc-typ">Project · Sprint 4</div><div class="pc-nm">Product Platform v2</div><div class="pc-ph">9 members · Mar 2026</div><div class="pc-mx"><div><div class="pc-mv a">72%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv" style="color:var(--mut)">88%</div><div class="pc-ml">Budget</div></div><div><div class="pc-mv r">4</div><div class="pc-ml">Risks</div></div></div><div class="pc-bar"><div class="pc-bf a" style="width:72%"></div></div><div class="pc-ft"><span class="bd bd-a" data-dot="">Watch</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">9 members</span></div></div>
+          <div class="pc r" onclick="nav('task')"><div class="pc-typ">Programme · Planning</div><div class="pc-nm">Data Migration Programme</div><div class="pc-ph">12 members · May 2026</div><div class="pc-mx"><div><div class="pc-mv r">61%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv a">76%</div><div class="pc-ml">Budget</div></div><div><div class="pc-mv r">6</div><div class="pc-ml">Risks</div></div></div><div class="pc-bar"><div class="pc-bf r" style="width:61%"></div></div><div class="pc-ft"><span class="bd bd-r" data-dot="">At Risk</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">12 members</span></div></div>
+          <div class="pc g" onclick="nav('task')"><div class="pc-typ">Project · Governance</div><div class="pc-nm">HSBC Consulting</div><div class="pc-ph">7 members · Apr 2026</div><div class="pc-mx"><div><div class="pc-mv g">91%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv g">100%</div><div class="pc-ml">Budget</div></div><div><div class="pc-mv" style="color:var(--mut)">1</div><div class="pc-ml">Risks</div></div></div><div class="pc-bar"><div class="pc-bf g" style="width:91%"></div></div><div class="pc-ft"><span class="bd bd-g" data-dot="">On Track</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">7 members</span></div></div>
+          <div class="pc g"><div class="pc-typ">Project · Sprint 2</div><div class="pc-nm">Agile Transformation</div><div class="pc-ph">14 members · May 2026</div><div class="pc-mx"><div><div class="pc-mv g">83%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv g">91%</div><div class="pc-ml">Budget</div></div><div><div class="pc-mv a">3</div><div class="pc-ml">Risks</div></div></div><div class="pc-bar"><div class="pc-bf g" style="width:83%"></div></div><div class="pc-ft"><span class="bd bd-g" data-dot="">On Track</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">14 members</span></div></div>
+          <div class="pc a"><div class="pc-typ">Project · Discovery</div><div class="pc-nm">Infrastructure Modernisation</div><div class="pc-ph">6 members · May 2026</div><div class="pc-mx"><div><div class="pc-mv a">68%</div><div class="pc-ml">Health</div></div><div><div class="pc-mv a">82%</div><div class="pc-ml">Budget</div></div><div><div class="pc-mv a">2</div><div class="pc-ml">Risks</div></div></div><div class="pc-bar"><div class="pc-bf a" style="width:68%"></div></div><div class="pc-ft"><span class="bd bd-a" data-dot="">Watch</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">6 members</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TASKS KANBAN ── -->
+  <div id="pg-task" class="pg" style="flex:1;flex-direction:column;overflow:hidden">
+    <div class="ph" style="flex-shrink:0"><div><div class="pb">DeliverX OS · Execution</div><h1 class="ptitle">Task Execution Centre</h1></div><div class="pa"><select class="ii sl btn-sm" style="width:auto;padding:6px 30px 6px 10px;font-size:.75rem"><option>All Projects</option><option>NHS EHR</option><option>Platform v2</option></select><button class="btn btn-p btn-sm">+ New Task</button></div></div>
+    <div style="flex:1;overflow:hidden">
+      <div class="kb">
+        <div class="kc"><div class="kch"><span class="kcn"><span class="kci ns"></span>Not Started</span><span class="kcc">4</span></div><div class="ki">
+          <div class="tk"><div class="tk-ti">Requirements gathering — NHS Phase 2</div><div class="tk-pr">NHS EHR</div><div class="tk-ft"><span class="bd bd-r">High</span><span class="tk-due">Due Jun 1</span></div></div>
+          <div class="tk"><div class="tk-ti">Stakeholder interview sessions</div><div class="tk-pr">NHS EHR</div><div class="tk-ft"><span class="bd bd-a">Med</span><span class="tk-due">Due Jun 3</span></div></div>
+          <div class="tk"><div class="tk-ti">Architecture review — cloud platform</div><div class="tk-pr">Data Migration</div><div class="tk-ft"><span class="bd bd-r">High</span><span class="tk-due">Due Jun 2</span></div></div>
+          <div class="tk"><div class="tk-ti">Risk assessment report</div><div class="tk-pr">Platform v2</div><div class="tk-ft"><span class="bd bd-a">Med</span><span class="tk-due">Due Jun 4</span></div></div>
+        </div></div>
+        <div class="kc"><div class="kch"><span class="kcn"><span class="kci ip"></span>In Progress</span><span class="kcc">3</span></div><div class="ki">
+          <div class="tk bl"><div class="tk-ti">API design and specification</div><div class="tk-pr">Platform v2</div><div class="tk-bl">Blocked: Waiting on vendor API documentation from external supplier</div><div class="tk-ft"><span class="bd bd-r">High</span><span class="tk-due ov">Overdue 2d</span></div></div>
+          <div class="tk"><div class="tk-ti">Database schema v2 design</div><div class="tk-pr">Data Migration</div><div class="tk-ft"><span class="bd bd-r">High</span><span class="tk-due">Due May 24</span></div></div>
+          <div class="tk"><div class="tk-ti">Authentication implementation</div><div class="tk-pr">Platform v2</div><div class="tk-ft"><span class="bd bd-a">Med</span><span class="tk-due">Due May 26</span></div></div>
+        </div></div>
+        <div class="kc"><div class="kch"><span class="kcn"><span class="kci ir"></span>In Review</span><span class="kcc">2</span></div><div class="ki">
+          <div class="tk"><div class="tk-ti">UI component library — base set</div><div class="tk-pr">Platform v2</div><div class="tk-ft"><span class="bd bd-k">Low</span><span class="tk-due">Due May 22</span></div></div>
+          <div class="tk"><div class="tk-ti">Integration test suite</div><div class="tk-pr">NHS EHR</div><div class="tk-ft"><span class="bd bd-k">Low</span><span class="tk-due">Due May 23</span></div></div>
+        </div></div>
+        <div class="kc"><div class="kch"><span class="kcn"><span class="kci dn"></span>Done</span><span class="kcc">3</span></div><div class="ki">
+          <div class="tk" style="opacity:.65"><div class="tk-ti">Project workspace setup</div><div class="tk-pr">Agile Transform</div><div class="tk-ft"><span class="bd bd-k">Med</span><span class="tk-due" style="color:var(--grn)">Completed</span></div></div>
+          <div class="tk" style="opacity:.65"><div class="tk-ti">Team onboarding — all members</div><div class="tk-pr">HSBC</div><div class="tk-ft"><span class="bd bd-k">Low</span><span class="tk-due" style="color:var(--grn)">Completed</span></div></div>
+          <div class="tk" style="opacity:.65"><div class="tk-ti">Discovery workshop — week 1</div><div class="tk-pr">NHS EHR</div><div class="tk-ft"><span class="bd bd-r">High</span><span class="tk-due" style="color:var(--grn)">Completed</span></div></div>
+        </div></div>
+        <div class="kc"><div class="kch"><span class="kcn"><span class="kci bl"></span>Blocked</span><span class="kcc">1</span></div><div class="ki">
+          <div class="tk bl"><div class="tk-ti">API design and specification</div><div class="tk-pr">Platform v2</div><div class="tk-bl">Vendor API docs outstanding — escalated to Marcus</div><div class="tk-ft"><span class="bd bd-r">High</span><span class="tk-due ov">Overdue 2d</span></div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TEAM ── -->
+  <div id="pg-team" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Team</div><h1 class="ptitle">Team Management</h1></div><div class="pa"><button class="btn btn-p btn-sm" onclick="openModal('m-invite')">+ Invite Member</button></div></div>
+      <div class="aci">
+        <div class="sr sr4">
+          <div class="sc"><div class="sl2">Total Members</div><div class="sv">24</div></div>
+          <div class="sc"><div class="sl2">Active Today</div><div class="sv g">18</div></div>
+          <div class="sc"><div class="sl2">Pending Invites</div><div class="sv a">3</div></div>
+          <div class="sc"><div class="sl2">Avg Utilisation</div><div class="sv a">78%</div></div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="sh"><span class="sh-t">Team Members</span></div>
+            <div class="cd cdf"><div class="tw"><table>
+              <thead><tr><th>Name</th><th>Role</th><th>Project</th><th>Last Active</th><th>Utilisation</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><div style="font-weight:500">Sarah Johnson</div><div style="font-size:.75rem;color:var(--fnt)">sarah@nhs.uk</div></td><td><span class="bd bd-c">PM</span></td><td>NHS EHR</td><td>2m ago</td><td><div style="display:flex;align-items:center;gap:7px"><div style="width:60px;height:4px;background:var(--rul2);overflow:hidden"><div style="width:94%;height:100%;background:var(--red)"></div></div><span class="caps" style="font-size:.4rem">94%</span></div></td><td><span class="bd bd-r">Overloaded</span></td></tr>
+                <tr><td><div style="font-weight:500">Marcus Thompson</div><div style="font-size:.75rem;color:var(--fnt)">marcus@co.com</div></td><td><span class="bd bd-k">Dev</span></td><td>Data Migration</td><td>9m ago</td><td><div style="display:flex;align-items:center;gap:7px"><div style="width:60px;height:4px;background:var(--rul2);overflow:hidden"><div style="width:74%;height:100%;background:var(--grn)"></div></div><span class="caps" style="font-size:.4rem">74%</span></div></td><td><span class="bd bd-g">Balanced</span></td></tr>
+                <tr><td><div style="font-weight:500">Priya Lakshmi</div><div style="font-size:.75rem;color:var(--fnt)">priya@co.com</div></td><td><span class="bd bd-k">Dev</span></td><td>Platform v2</td><td>11m ago</td><td><div style="display:flex;align-items:center;gap:7px"><div style="width:60px;height:4px;background:var(--rul2);overflow:hidden"><div style="width:88%;height:100%;background:var(--amb)"></div></div><span class="caps" style="font-size:.4rem">88%</span></div></td><td><span class="bd bd-a">High Load</span></td></tr>
+                <tr><td><div style="font-weight:500">Kate Chen</div><div style="font-size:.75rem;color:var(--fnt)">kate@hsbc.com</div></td><td><span class="bd bd-k">BA</span></td><td>HSBC</td><td>32m ago</td><td><div style="display:flex;align-items:center;gap:7px"><div style="width:60px;height:4px;background:var(--rul2);overflow:hidden"><div style="width:68%;height:100%;background:var(--grn)"></div></div><span class="caps" style="font-size:.4rem">68%</span></div></td><td><span class="bd bd-g">Available</span></td></tr>
+                <tr><td><div style="font-weight:500">Raj Bhattacharya</div><div style="font-size:.75rem;color:var(--fnt)">raj@co.com</div></td><td><span class="bd bd-k">QA</span></td><td>Agile</td><td>1h ago</td><td><div style="display:flex;align-items:center;gap:7px"><div style="width:60px;height:4px;background:var(--rul2);overflow:hidden"><div style="width:82%;height:100%;background:var(--amb)"></div></div><span class="caps" style="font-size:.4rem">82%</span></div></td><td><span class="bd bd-a">High Load</span></td></tr>
+              </tbody>
+            </table></div></div>
+          </div>
+          <div>
+            <div class="sh"><span class="sh-t">Pending Invites</span></div>
+            <div class="cd cdp" style="margin-bottom:14px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--srf);border:1px solid var(--rul)"><div><div style="font-size:.875rem;font-weight:500">Contributor Link</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">NHS EHR · Expires May 27</div></div><div style="display:flex;gap:5px"><button class="btn btn-g btn-xs">Copy</button><button class="btn btn-g btn-xs">Renew</button></div></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--srf);border:1px solid var(--rul)"><div><div style="font-size:.875rem;font-weight:500">Executive Link</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">All Projects · Expires May 25</div></div><div style="display:flex;gap:5px"><button class="btn btn-g btn-xs">Copy</button><button class="btn btn-g btn-xs">Renew</button></div></div>
+              </div>
+            </div>
+            <div class="sh"><span class="sh-t">Generate New Invite</span></div>
+            <div class="cd cdp">
+              <div class="ff" style="gap:10px">
+                <div class="iw"><label class="il">Role</label><select class="ii sl"><option>Contributor</option><option>Executive</option></select></div>
+                <div class="iw"><label class="il">Project</label><select class="ii sl"><option>NHS EHR</option><option>Platform v2</option><option>All Projects</option></select></div>
+                <button class="btn btn-p" style="width:100%;justify-content:center">Generate Invite Link</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MEETINGS ── -->
+  <div id="pg-meet" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Intelligence</div><h1 class="ptitle">Meeting Intelligence</h1></div><div class="pa"><button class="btn btn-p btn-sm" onclick="openModal('m-meeting')">+ Add Meeting Notes</button></div></div>
+      <div class="aci">
+        <div style="background:var(--acb);border:1px solid var(--acr);padding:10px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px">
+          <span class="caps" style="color:var(--acc)">AI Meeting Flow</span>
+          <div style="display:flex;align-items:center;gap:0;font-family:var(--fm);font-size:.45rem;color:var(--mut)">
+            <span style="padding:3px 9px;background:var(--acc);color:#fff">Meeting</span>
+            <span style="color:var(--acc);padding:0 3px">›</span>
+            <span style="padding:3px 9px;border:1px solid var(--acr)">Transcript</span>
+            <span style="color:var(--acc);padding:0 3px">›</span>
+            <span style="padding:3px 9px;border:1px solid var(--acr)">AI Analysis</span>
+            <span style="color:var(--acc);padding:0 3px">›</span>
+            <span style="padding:3px 9px;border:1px solid var(--acr)">Actions + Decisions</span>
+            <span style="color:var(--acc);padding:0 3px">›</span>
+            <span style="padding:3px 9px;border:1px solid var(--acr)">Project Updated</span>
+          </div>
+        </div>
+        <div class="sh"><span class="sh-t">Meeting Log</span></div>
+        <div class="cd cdf"><div class="tw"><table>
+          <thead><tr><th>Meeting Title</th><th>Date</th><th>Type</th><th>Attendees</th><th>Project</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr style="cursor:pointer" onclick="openModal('m-msum')"><td><div style="font-weight:500">Portfolio Steering Committee</div></td><td class="caps" style="font-size:.75rem">Tue 20 May, 10:00</td><td><span class="bd bd-c">Governance</span></td><td>8</td><td>All Projects</td><td><span class="bd bd-b">Upcoming</span></td></tr>
+            <tr style="cursor:pointer" onclick="openModal('m-msum')"><td><div style="font-weight:500">NHS EHR Sprint Review</div></td><td class="caps" style="font-size:.75rem">Tue 20 May, 14:00</td><td><span class="bd bd-k">Sprint</span></td><td>12</td><td>NHS EHR</td><td><span class="bd bd-b">Upcoming</span></td></tr>
+            <tr style="cursor:pointer" onclick="openModal('m-msum')"><td><div style="font-weight:500">Architecture Design Session</div></td><td class="caps" style="font-size:.75rem">Mon 18 May, 11:00</td><td><span class="bd bd-k">Workshop</span></td><td>6</td><td>Data Migration</td><td><span class="bd bd-g">Summarised</span></td></tr>
+            <tr style="cursor:pointer" onclick="openModal('m-msum')"><td><div style="font-weight:500">Risk Escalation — Finance</div></td><td class="caps" style="font-size:.75rem">Mon 18 May, 15:00</td><td><span class="bd bd-r">Escalation</span></td><td>5</td><td>NHS EHR</td><td><span class="bd bd-g">Summarised</span></td></tr>
+          </tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DOCUMENTS ── -->
+  <div id="pg-docs" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Intelligence</div><h1 class="ptitle">Document Intelligence</h1></div><div class="pa"><button class="btn btn-p btn-sm">+ Upload Document</button></div></div>
+      <div class="aci">
+        <div class="sh"><span class="sh-t">AI Document Generator</span></div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:22px">
+          <div style="padding:14px;border:1px solid var(--rul);border-top:2px solid var(--red);background:var(--wht);cursor:pointer;text-align:center" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background='var(--wht)'"><div class="caps" style="font-size:.45rem;color:var(--red);margin-bottom:5px">RAID</div><div style="font-size:.8125rem;font-weight:500">RAID Log</div></div>
+          <div style="padding:14px;border:1px solid var(--rul);border-top:2px solid var(--blu);background:var(--wht);cursor:pointer;text-align:center" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background='var(--wht)'"><div class="caps" style="font-size:.45rem;color:var(--blu);margin-bottom:5px">BRD</div><div style="font-size:.8125rem;font-weight:500">Requirements</div></div>
+          <div style="padding:14px;border:1px solid var(--rul);border-top:2px solid var(--acc);background:var(--wht);cursor:pointer;text-align:center" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background='var(--wht)'"><div class="caps" style="font-size:.45rem;color:var(--acc);margin-bottom:5px">PRD</div><div style="font-size:.8125rem;font-weight:500">Product Req.</div></div>
+          <div style="padding:14px;border:1px solid var(--rul);border-top:2px solid var(--grn);background:var(--wht);cursor:pointer;text-align:center" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background='var(--wht)'"><div class="caps" style="font-size:.45rem;color:var(--grn);margin-bottom:5px">Status</div><div style="font-size:.8125rem;font-weight:500">Status Report</div></div>
+          <div style="padding:14px;border:1px solid var(--rul);border-top:2px solid var(--amb);background:var(--wht);cursor:pointer;text-align:center" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background='var(--wht)'"><div class="caps" style="font-size:.45rem;color:var(--amb);margin-bottom:5px">Retro</div><div style="font-size:.8125rem;font-weight:500">Retrospective</div></div>
+          <div style="padding:14px;border:1px solid var(--rul);border-top:2px solid #8B4513;background:var(--wht);cursor:pointer;text-align:center" onmouseover="this.style.background='var(--srf)'" onmouseout="this.style.background='var(--wht)'"><div class="caps" style="font-size:.45rem;color:#8B4513;margin-bottom:5px">Gov</div><div style="font-size:.8125rem;font-weight:500">Gov Pack</div></div>
+        </div>
+        <div class="sh"><span class="sh-t">Document Library</span></div>
+        <div class="cd cdf"><div class="tw"><table>
+          <thead><tr><th>Document Name</th><th>Type</th><th>Project</th><th>Last Updated</th><th>Version</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><div style="font-weight:500">NHS EHR — RAID Log</div></td><td><span class="bd bd-r">RAID</span></td><td>NHS EHR</td><td>Today</td><td class="caps" style="font-size:.75rem">v1.4</td><td><span class="bd bd-c">Active</span></td></tr>
+            <tr><td><div style="font-weight:500">Product Platform v2 — PRD</div></td><td><span class="bd bd-b">PRD</span></td><td>Platform v2</td><td>2d ago</td><td class="caps" style="font-size:.75rem">v2.1</td><td><span class="bd bd-a">In Review</span></td></tr>
+            <tr><td><div style="font-weight:500">Portfolio Executive Summary</div></td><td><span class="bd bd-g">Report</span></td><td>All Projects</td><td>Today</td><td class="caps" style="font-size:.75rem">v1.0</td><td><span class="bd bd-k">Draft</span></td></tr>
+            <tr><td><div style="font-weight:500">HSBC Governance Pack — Week 8</div></td><td><span class="bd bd-k">Gov</span></td><td>HSBC</td><td>1d ago</td><td class="caps" style="font-size:.75rem">v1.0</td><td><span class="bd bd-g">Final</span></td></tr>
+          </tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REPORTS ── -->
+  <div id="pg-rep" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Intelligence</div><h1 class="ptitle">AI-Generated Reports</h1></div><div class="pa"><button class="btn btn-p btn-sm">Generate Report</button></div></div>
+      <div class="aci">
+        <div class="rc">
+          <div class="rc-h"><div><div class="rc-t">Weekly Status Report — Week ending 20 May 2026</div><div class="caps" style="font-size:.4rem;color:var(--fnt);margin-top:2px">AI Generated · Draft · Pending PM Review</div></div><div style="display:flex;gap:7px"><span class="bd bd-k">Draft</span><button class="btn btn-g btn-xs">Edit</button><button class="btn btn-p btn-xs">Publish</button></div></div>
+          <div class="rc-b">
+            <div class="rc-s"><div class="rc-sl">Executive Summary</div><div class="rc-st">Portfolio delivery confidence stands at 84% this week, up 4% from last week. Four of six active projects are on track. NHS EHR and Data Migration require immediate PM attention. Three milestones are due this week.</div></div>
+            <div class="rc-s"><div class="rc-sl">Project RAG Status</div>
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between;padding:7px 11px;border-left:3px solid var(--grn);background:var(--gnb)"><span style="font-size:.875rem">NHS Digital Transformation</span><span class="bd bd-g">On Track — 87%</span></div>
+                <div style="display:flex;justify-content:space-between;padding:7px 11px;border-left:3px solid var(--amb);background:var(--abb)"><span style="font-size:.875rem">Product Platform v2</span><span class="bd bd-a">Watch — 72%</span></div>
+                <div style="display:flex;justify-content:space-between;padding:7px 11px;border-left:3px solid var(--red);background:var(--rdb)"><span style="font-size:.875rem">Data Migration Programme</span><span class="bd bd-r">At Risk — 61%</span></div>
+                <div style="display:flex;justify-content:space-between;padding:7px 11px;border-left:3px solid var(--grn);background:var(--gnb)"><span style="font-size:.875rem">HSBC Consulting</span><span class="bd bd-g">On Track — 91%</span></div>
+              </div>
+            </div>
+            <div class="rc-s"><div class="rc-sl">Key Risks This Week</div><div class="rc-st">NHS EHR scope has increased 34% — change board required. Data Migration vendor dependency unresolved for 5 days. Product Platform sprint velocity declining — QA resourcing review needed.</div></div>
+            <div class="rc-s"><div class="rc-sl">AI Citation</div><div class="rc-st" style="color:var(--fnt);font-style:italic">Based on 18 standup notes, 4 meeting summaries, 7 task status changes, and 3 RAID updates in the period 13–20 May 2026.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RAID ── -->
+  <div id="pg-raid" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Governance</div><h1 class="ptitle">RAID Log</h1></div><div class="pa"><button class="btn btn-g btn-sm">Export RAID</button><button class="btn btn-p btn-sm">+ Add Item</button></div></div>
+      <div class="aci">
+        <div class="sr sr4">
+          <div class="sc"><div class="sl2">Open Risks</div><div class="sv r">7</div></div>
+          <div class="sc"><div class="sl2">Assumptions</div><div class="sv a">4</div></div>
+          <div class="sc"><div class="sl2">Open Issues</div><div class="sv r">3</div></div>
+          <div class="sc"><div class="sl2">Dependencies</div><div class="sv b">8</div></div>
+        </div>
+        <div style="display:flex;border-bottom:1px solid var(--rul);margin-bottom:16px">
+          <button class="raid-tab on">All (22)</button>
+          <button class="raid-tab">Risks (7)</button>
+          <button class="raid-tab">Assumptions (4)</button>
+          <button class="raid-tab">Issues (3)</button>
+          <button class="raid-tab">Dependencies (8)</button>
+        </div>
+        <div class="cd cdf"><div class="tw"><table>
+          <thead><tr><th>ID</th><th>Type</th><th>Description</th><th>Severity</th><th>Owner</th><th>Status</th><th>Project</th></tr></thead>
+          <tbody>
+            <tr><td class="caps" style="font-size:.75rem">R-001</td><td><span class="bd bd-r">Risk</span></td><td>NHS procurement cycle — 14+ week lead time</td><td><span class="bd bd-r">High</span></td><td>Sarah J.</td><td><span class="bd bd-c">Open</span></td><td>NHS EHR</td></tr>
+            <tr><td class="caps" style="font-size:.75rem">R-002</td><td><span class="bd bd-r">Risk</span></td><td>Scope creep — Finance workstream +34%</td><td><span class="bd bd-r">High</span></td><td>PM</td><td><span class="bd bd-c">Open</span></td><td>NHS EHR</td></tr>
+            <tr><td class="caps" style="font-size:.75rem">I-001</td><td><span class="bd bd-a">Issue</span></td><td>QA resourcing — 2 engineers below capacity</td><td><span class="bd bd-a">Med</span></td><td>PMO</td><td><span class="bd bd-r">Escalated</span></td><td>Platform v2</td></tr>
+            <tr><td class="caps" style="font-size:.75rem">D-001</td><td><span class="bd bd-b">Dependency</span></td><td>NHS EHR Phase 2 requires Data Migration complete</td><td><span class="bd bd-a">Med</span></td><td>Marcus T.</td><td><span class="bd bd-c">Monitoring</span></td><td>NHS EHR</td></tr>
+            <tr><td class="caps" style="font-size:.75rem">A-001</td><td><span class="bd bd-g">Assumption</span></td><td>Finance approval within 5 business days</td><td><span class="bd bd-k">Low</span></td><td>Kate C.</td><td><span class="bd bd-k">Open</span></td><td>NHS EHR</td></tr>
+            <tr><td class="caps" style="font-size:.75rem">R-003</td><td><span class="bd bd-r">Risk</span></td><td>Vendor API not ready — blocking Sprint 4</td><td><span class="bd bd-a">Med</span></td><td>Dev Lead</td><td><span class="bd bd-c">Open</span></td><td>Platform v2</td></tr>
+          </tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DECISIONS ── -->
+  <div id="pg-dec" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Governance</div><h1 class="ptitle">Decision Register</h1></div><div class="pa"><button class="btn btn-p btn-sm">+ Log Decision</button></div></div>
+      <div class="aci">
+        <div class="sr sr3">
+          <div class="sc"><div class="sl2">Open Decisions</div><div class="sv a">4</div></div>
+          <div class="sc"><div class="sl2">Made This Week</div><div class="sv g">3</div></div>
+          <div class="sc"><div class="sl2">Reversed</div><div class="sv">1</div></div>
+        </div>
+        <div class="dc"><div class="dc-top"><div class="dc-ti">Delay UAT by 2 weeks — vendor API incomplete</div><div style="display:flex;gap:7px"><span class="bd bd-r">High Impact</span><span class="bd bd-a">Open</span></div></div><div class="dc-re">Vendor has not delivered the required API specification. Engineering cannot proceed with integration testing.</div><div class="dc-me"><span>Owner: Sarah J.</span><span>May 18, 2026</span><span>Linked: UAT milestone, R-003</span></div><div class="dc-im">Impact: Go-live confidence drops to 68%. Phase 2 start delayed 14 days.</div></div>
+        <div class="dc"><div class="dc-top"><div class="dc-ti">Accept AWS over Azure — cost saving £24K/yr</div><div style="display:flex;gap:7px"><span class="bd bd-a">Med Impact</span><span class="bd bd-g">Made</span></div></div><div class="dc-re">Technical analysis shows AWS provides equivalent capability at 22% lower cost. Migration path well-documented.</div><div class="dc-me"><span>Owner: Tech Lead</span><span>May 15, 2026</span><span>Linked: Architecture workstream</span></div><div class="dc-im">Impact: Cost saving confirmed. No timeline impact. Architecture doc updated.</div></div>
+        <div class="dc"><div class="dc-top"><div class="dc-ti">Pause Infrastructure Modernisation — redeploy engineers to NHS EHR</div><div style="display:flex;gap:7px"><span class="bd bd-r">High Impact</span><span class="bd bd-g">Made</span></div></div><div class="dc-re">NHS EHR delivery is at risk. Two engineers temporarily redeployed from Infrastructure project.</div><div class="dc-me"><span>Owner: PMO</span><span>May 14, 2026</span><span>Linked: Both projects</span></div><div class="dc-im">Impact: Infrastructure Phase 1 delayed 4 weeks. NHS EHR velocity expected to recover to 90%.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHANGE REQUESTS ── -->
+  <div id="pg-cr" class="pg" style="flex:1">
+    <div class="ac">
+      <div class="ph"><div><div class="pb">DeliverX OS · Governance</div><h1 class="ptitle">Change Requests</h1></div><div class="pa"><button class="btn btn-p btn-sm">+ Raise Change Request</button></div></div>
+      <div class="aci">
+        <div class="sr sr4">
+          <div class="sc"><div class="sl2">Open Requests</div><div class="sv a">3</div></div>
+          <div class="sc"><div class="sl2">Total Timeline Impact</div><div class="sv r">+28d</div></div>
+          <div class="sc"><div class="sl2">Approved</div><div class="sv g">2</div></div>
+          <div class="sc"><div class="sl2">Rejected</div><div class="sv">1</div></div>
+        </div>
+        <div class="cd cdf"><div class="tw"><table>
+          <thead><tr><th>Change Title</th><th>Type</th><th>Raised By</th><th>Timeline Impact</th><th>Cost</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><div style="font-weight:500">Finance Workstream Scope Increase</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">NHS EHR · Raised May 16</div></td><td><span class="bd bd-r">Scope</span></td><td>Sarah J.</td><td class="caps" style="font-size:.75rem;color:var(--red)">+14 days</td><td class="caps" style="font-size:.75rem;color:var(--amb)">£18,000</td><td><span class="bd bd-a">Pending</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-p btn-xs">Approve</button><button class="btn btn-xs btn" style="color:var(--red);border-color:var(--red)">Reject</button></div></td></tr>
+            <tr><td><div style="font-weight:500">Add Stripe Payment Integration</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">Platform v2 · Raised May 17</div></td><td><span class="bd bd-b">Scope</span></td><td>Product Team</td><td class="caps" style="font-size:.75rem;color:var(--red)">+14 days</td><td class="caps" style="font-size:.75rem;color:var(--amb)">£8,000</td><td><span class="bd bd-a">In Review</span></td><td><div style="display:flex;gap:5px"><button class="btn btn-p btn-xs">Approve</button><button class="btn btn-xs btn" style="color:var(--red);border-color:var(--red)">Reject</button></div></td></tr>
+            <tr style="opacity:.6"><td><div style="font-weight:500">Extend Pilot to 3 Additional Sites</div><div class="caps" style="font-size:.4rem;color:var(--fnt)">NHS EHR · Raised May 12</div></td><td><span class="bd bd-r">Scope</span></td><td>Client</td><td class="caps" style="font-size:.75rem">+28 days</td><td class="caps" style="font-size:.75rem">£45,000</td><td><span class="bd bd-r">Rejected</span></td><td><span class="caps" style="font-size:.4rem;color:var(--fnt)">Out of budget scope</span></td></tr>
+          </tbody>
+        </table></div></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /app pages flex container -->
+</div><!-- /s-app -->
+
+<!-- ═══════════════════════════════════
+     MODALS
+═══════════════════════════════════ -->
+<div class="mo" id="m-newproj" onclick="if(event.target===this)closeModal('m-newproj')">
+  <div class="mp">
+    <div class="mt">Create New Project</div>
+    <div class="ms">Fill in the basics — add the full business case on the next screen.</div>
+    <div class="ff">
+      <div class="iw"><label class="il">Project Name</label><input class="ii" placeholder="Project name" type="text"></div>
+      <div class="iw"><label class="il">Goal</label><textarea class="ii ta" rows="2" placeholder="What does success look like?"></textarea></div>
+      <div class="fr">
+        <div class="iw"><label class="il">Type</label><select class="ii sl"><option>Agile</option><option>Waterfall</option><option>Hybrid</option></select></div>
+        <div class="iw"><label class="il">Target End Date</label><input class="ii" type="date"></div>
+      </div>
+    </div>
+    <div class="ma">
+      <button class="btn btn-g btn-sm" onclick="closeModal('m-newproj')">Cancel</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('m-newproj');show('s-ob')">Continue to Setup →</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="m-invite" onclick="if(event.target===this)closeModal('m-invite')">
+  <div class="mp">
+    <div class="mt">Invite Team Member</div>
+    <div class="ms">Generate a link to share. Recipients join without you needing their email address upfront.</div>
+    <div class="ff">
+      <div class="iw"><label class="il">Role</label><select class="ii sl"><option>Contributor</option><option>Executive (read-only)</option></select></div>
+      <div class="iw"><label class="il">Project</label><select class="ii sl"><option>NHS EHR</option><option>Platform v2</option><option>All Projects</option></select></div>
+    </div>
+    <div style="margin-top:14px;padding:11px;background:var(--srf);border:1px solid var(--rul)" class="caps" style="font-size:.75rem;color:var(--mut)">
+      Link will appear here after generation. Valid for 7 days.
+    </div>
+    <div class="ma">
+      <button class="btn btn-g btn-sm" onclick="closeModal('m-invite')">Cancel</button>
+      <button class="btn btn-p btn-sm" onclick="this.textContent='deliverx.io/join/gx9k2m (copied)';this.style.background='var(--grn)'">Generate Link</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="m-meeting" onclick="if(event.target===this)closeModal('m-meeting')">
+  <div class="mp wide">
+    <div class="mt">Add Meeting Notes</div>
+    <div class="ms">Paste your notes. AI will extract decisions, actions, risks, and change implications.</div>
+    <div class="ff">
+      <div class="fr">
+        <div class="iw"><label class="il">Meeting Title</label><input class="ii" placeholder="Sprint review, steering committee..." type="text"></div>
+        <div class="iw"><label class="il">Date</label><input class="ii" type="date"></div>
+      </div>
+      <div class="iw"><label class="il">Attendees</label><input class="ii" placeholder="Sarah, Marcus, Kate, PMO lead..."></div>
+      <div class="iw"><label class="il">Meeting Notes</label><textarea class="ii ta" rows="7" placeholder="Paste your meeting notes here. The more detail, the more the AI can extract..."></textarea></div>
+    </div>
+    <div class="ma">
+      <button class="btn btn-g btn-sm" onclick="closeModal('m-meeting')">Cancel</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('m-meeting')">Analyse with AI →</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="m-msum" onclick="if(event.target===this)closeModal('m-msum')">
+  <div class="mp wide">
+    <div class="mt">Architecture Design Session</div>
+    <div class="caps" style="font-size:.45rem;color:var(--fnt);margin-bottom:18px">Mon 18 May 2026 · 6 attendees · Data Migration</div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <div class="caps" style="color:var(--grn);margin-bottom:7px">Decisions Made</div>
+        <div style="padding:8px 11px;background:var(--acb);border:1px solid var(--acr);border-left:3px solid var(--acc);font-size:.875rem;margin-bottom:5px">Adopt event-driven architecture for migration layer</div>
+        <div style="padding:8px 11px;background:var(--acb);border:1px solid var(--acr);border-left:3px solid var(--acc);font-size:.875rem">PostgreSQL as primary store, Redis for caching</div>
+      </div>
+      <div>
+        <div class="caps" style="color:var(--amb);margin-bottom:7px">Action Items</div>
+        <div style="display:grid;grid-template-columns:1fr 80px 66px;gap:7px;align-items:center;padding:8px 11px;border:1px solid var(--rul);font-size:.875rem;margin-bottom:5px"><span>Finalise vendor contract</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">Marcus T.</span><span class="bd bd-a">May 22</span></div>
+        <div style="display:grid;grid-template-columns:1fr 80px 66px;gap:7px;align-items:center;padding:8px 11px;border:1px solid var(--rul);font-size:.875rem"><span>Update architecture diagram</span><span class="caps" style="font-size:.4rem;color:var(--fnt)">Dev Team</span><span class="bd bd-a">May 20</span></div>
+      </div>
+      <div>
+        <div class="caps" style="color:var(--red);margin-bottom:7px">Risks Flagged</div>
+        <div style="padding:8px 11px;background:var(--rdb);border:1px solid var(--red);border-left:3px solid var(--red);font-size:.875rem">External vendor dependency unresolved — may block Phase 2 start</div>
+      </div>
+    </div>
+    <div class="ma">
+      <button class="btn btn-g btn-sm" onclick="closeModal('m-msum')">Close</button>
+      <button class="btn btn-p btn-sm" onclick="closeModal('m-msum')">Push Actions to Tasks →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     JAVASCRIPT — Router + AI + Logic
+═══════════════════════════════════ -->
+<script>
+// ── CONSTANTS ─────────────────────────────────────────────────────
+const WS_RESPONSES = {
+  'generate raid': `RAID log generated for NHS Transformation.\n\n14 risks identified across 4 workstreams:\n— HIGH: NHS procurement (14+ week lead time)\n— HIGH: Clinical system downtime risk\n— MED: Change resistance from staff (3 items)\n— MED: Interoperability with legacy HL7 v2\n\nAll items added to RAID log with severity and suggested owners. Ready for PM review.`,
+  'update milestone': `Milestone confidence updated:\n\n— Discovery Complete: 94% (↑2%)\n— Architecture Sign-off: 76% (unchanged)\n— Phase 1 Go-Live: 68% (↓3% — vendor risk)\n\nAlerts sent for milestones below 70% threshold. Go-Live requires attention.`,
+  'stakeholder': `Stakeholder map generated:\n\n47 stakeholders across 3 layers:\n— Executive (8): CEO, CMO, 6 Regional Directors\n— Programme (18): PMs, Workstream Leads\n— Operational (21): Clinical leads, IT contacts\n\nMap exported to Documents. Communication plan drafted for each layer.`,
+  'governance': `Governance framework configured:\n\n— Programme Board: Monthly (Executive layer)\n— Delivery Committee: Fortnightly (Programme layer)\n— Risk Forum: Weekly (PM + Workstream leads)\n— Change Advisory Board: On-demand\n\nAll approval flows live. First meeting scheduled for next Monday.`,
+  'executive': `Executive report generated:\n\nPortfolio confidence: 84% (↑4% WoW)\nPhase 1 on track. South Region requires attention.\n4 decisions pending steering group approval.\n\nFormatted board pack ready. Send to steering committee?`,
+  'default': `Processing your request across full programme context...\n\nAnalysing workstreams, dependencies, risks, decisions and stakeholder data to generate the appropriate operational output.\n\nResult will be added to your workspace artefacts for PM review.`
+};
+
+const DRAWER_RESPONSES = {
+  'raid': `RAID log across all active projects:\n\n12 Risks (3 High, 6 Med, 3 Low)\n8 Assumptions with owners assigned\n5 Issues flagged for resolution\n14 Dependencies mapped\n\nFull RAID log created in Documents section.`,
+  'sprint': `Sprint health analysis:\n\nTeam Alpha: 78% velocity (was 94% last sprint)\nTeam Beta: 91% velocity (stable)\n3 active blockers — Auth dependency critical\n\nRecommend: move 3 tasks from Alpha to Beta. Forecast: 82% sprint completion probability.`,
+  'risk': `Portfolio risk summary:\n\nHIGH: NHS EHR scope creep (+34%)\nHIGH: Q3 resource gap (4 engineers needed)\nMED: Governance approval delay — Finance\nMED: Vendor dependency unresolved\n\nMitigation plans drafted for all HIGH risks.`,
+  'exec': `Executive summary generated:\n\n• Portfolio confidence: 84% (↑4% WoW)\n• 2 projects at risk: NHS EHR, Data Migration\n• 4 on track, 3 milestones due this week\n\nFormatted and ready to send to board.`,
+  'default': `Processing your request against all project context...`
+};
+
+// ── ROUTER ────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('on'); window.scrollTo(0,0); }
+  // Show/hide app chrome
+  const isApp = id === 's-app';
+  document.getElementById('appnav').classList.toggle('on', isApp);
+  document.getElementById('appsb').classList.toggle('on', isApp);
+  if (id === 's-auth' || id === 's-land' || id === 's-ob') {
+    document.getElementById('appnav').classList.remove('on');
+    document.getElementById('appsb').classList.remove('on');
+  }
+}
+
+function nav(page) {
+  show('s-app');
+  // Hide all pages
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  const el = document.getElementById('pg-' + page);
+  if (el) el.classList.add('on');
+  // Update sidebar active
+  document.querySelectorAll('.sbi').forEach(i => i.classList.remove('on'));
+  const sbi = document.getElementById('n-' + page);
+  if (sbi) sbi.classList.add('on');
+  // Close drawer if open
+  document.getElementById('drawer').classList.remove('on');
+  window.scrollTo(0,0);
+}
+
+function goApp(page) { nav(page); }
+function goPublic() { show('s-land'); }
+
+// ── AUTH ──────────────────────────────────────────────────────────
+function authTab(tab) {
+  document.querySelectorAll('.atab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.apanel').forEach(p => p.classList.remove('on'));
+  document.getElementById('at-' + tab).classList.add('on');
+  document.getElementById('ap-' + tab).classList.add('on');
+}
+
+function doRegister() {
+  const role = document.getElementById('reg-role').value;
+  if (role === 'pm') { show('s-ob'); }
+  else { goApp('ws'); }
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────────
+function obStep(step) {
+  // Hide all ob steps
+  ['ob-2','ob-3','ob-proc','ob-4','ob-5'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Show target
+  const target = document.getElementById('ob-' + step);
+  if (target) target.style.display = 'flex';
+  // Update step indicator
+  const steps = document.querySelectorAll('.ob-stp');
+  const stepNum = step === 'proc' ? 3 : (typeof step === 'number' ? step : 3);
+  steps.forEach(s => {
+    s.classList.remove('on','done');
+    const n = parseInt(s.dataset.s);
+    if (n < stepNum) s.classList.add('done');
+    else if (n === stepNum) s.classList.add('on');
+  });
+  // Auto-advance from processing
+  if (step === 'proc') {
+    setTimeout(() => {
+      obStep(4);
+    }, 2600);
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────────────────
+function swTab(grp, idx, btn) {
+  const panels = document.querySelectorAll('[id^="' + grp + '-"]');
+  panels.forEach(p => p.classList.remove('on'));
+  if (panels[idx]) panels[idx].classList.add('on');
+  if (btn) {
+    btn.closest('.tabs').querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  }
+}
+
+// ── WORKSPACE ─────────────────────────────────────────────────────
+function wsTab(tab, btn) {
+  ['sys','art','rsk'].forEach(t => {
+    const el = document.getElementById('wst-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.ws-right .tab').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+}
+
+function wsSetActive(el, name) {
+  document.querySelectorAll('.ws-th').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ws-context').textContent = name + ' — Active context';
+}
+
+function wssend(text) {
+  const input = document.getElementById('ws-input');
+  const msg = text || input.value.trim();
+  if (!msg) return;
+  if (!text) input.value = '';
+  appendWsMsg('u', msg);
+  const msgs = document.getElementById('ws-msgs');
+  // Typing indicator
+  const typdiv = document.createElement('div');
+  typdiv.className = 'msg ai';
+  typdiv.innerHTML = '<div class="msg-av">D</div><div class="msg-b"><div class="typ"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
+  msgs.appendChild(typdiv);
+  msgs.scrollTop = msgs.scrollHeight;
+  const key = Object.keys(WS_RESPONSES).find(k => msg.toLowerCase().includes(k)) || 'default';
+  setTimeout(() => {
+    msgs.removeChild(typdiv);
+    appendWsMsg('ai', WS_RESPONSES[key]);
+  }, 1400);
+}
+
+function appendWsMsg(role, text) {
+  const msgs = document.getElementById('ws-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role + ' fi';
+  const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  div.innerHTML = `<div class="msg-av">${role==='ai'?'D':'G'}</div><div class="msg-b"><div class="bub">${text.replace(/\n/g,'<br>')}</div><div class="msg-t">${now}</div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── AI DRAWER ─────────────────────────────────────────────────────
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('on');
+}
+
+function dquick(text) {
+  document.getElementById('dinput').value = text;
+  dsend();
+}
+
+function dsend() {
+  const input = document.getElementById('dinput');
+  const text = input.value.trim();
+  if (!text) return;
+  appendDMsg('u', text);
+  input.value = '';
+  const key = Object.keys(DRAWER_RESPONSES).find(k => text.toLowerCase().includes(k)) || 'default';
+  setTimeout(() => appendDMsg('ai', DRAWER_RESPONSES[key]), 1200);
+}
+
+function appendDMsg(role, text) {
+  const msgs = document.getElementById('drawer-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role + ' fi';
+  const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  div.innerHTML = `<div class="msg-av">${role==='ai'?'D':'G'}</div><div class="msg-b"><div class="bub">${text.replace(/\n/g,'<br>')}</div><div class="msg-t">${now}</div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── MODALS ────────────────────────────────────────────────────────
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('on');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('on');
+}
+
+// ── FEED FILTER ───────────────────────────────────────────────────
+function filterFeed(level, btn) {
+  document.querySelectorAll('#feed .sig').forEach(s => {
+    s.style.display = (level === 'all' || s.dataset.sev === level) ? '' : 'none';
+  });
+  document.querySelectorAll('.raid-tab').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+}
+
+// ── DROPDOWN ──────────────────────────────────────────────────────
+function toggleDropdown() {
+  const dd = document.getElementById('user-dd');
+  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.uav') && !e.target.closest('#user-dd')) {
+    const dd = document.getElementById('user-dd');
+    if (dd) dd.style.display = 'none';
+  }
+});
+
+// ── INIT ──────────────────────────────────────────────────────────
+// Anchor links scroll smooth
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+console.log('%cDeliverX OS loaded — all 14 pages connected.\n\nnavigating: show("s-land") | show("s-auth") | show("s-ob") | goApp("ws"/"dash"/"proj"/"task"/"team"/"meet"/"docs"/"rep"/"raid"/"dec"/"cr")', 'color:#1C4A2E;font-weight:bold;font-size:11px');
+</script>
+</body>
+</html>
