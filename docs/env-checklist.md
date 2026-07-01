@@ -14,7 +14,7 @@ For full variable descriptions see [API_KEYS.md](./API_KEYS.md). For Vercel Prev
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | ✅ (placeholder) | Client Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | ✅ (placeholder) | Server admin, invite validation DB lookup |
 | `NEXT_PUBLIC_APP_URL` | ✅ | ✅ | Auth redirects, `/join?token=` links |
-| `OPENAI_API_KEY` | ✅ for live AI | Optional (placeholder in build) | Assistant, Helm, BC review, meeting extraction, **Brain ingest classification** |
+| `OPENAI_API_KEY` | ✅ for live AI | Optional (placeholder in build) | Assistant, Helm, BC review, meeting extraction, **Whisper audio upload** (≤25 MB on `/project/[id]/meetings`), **Brain ingest classification** |
 | `INVITE_JWT_SECRET` | ✅ | Optional | Signs project invite JWTs (7-day). Falls back to `CRON_SECRET` in dev |
 
 Quick local check:
@@ -34,7 +34,7 @@ node scripts/check-env.mjs
 | `OPENAI_MODEL` | Override default `gpt-4o-mini` |
 | `CRON_SECRET` | Vercel cron routes (`/api/twin/snapshot`, loops, notifications) |
 | `RESEND_API_KEY` + `EMAIL_FROM` | Report publish emails; **project invite emails** (`/api/invites/generate` with `email`) |
-| `RECALL_API_KEY`, `RECALL_REGION`, `RECALL_WEBHOOK_SECRET` | Recall.ai meeting bot on `/project/[id]/meetings` — bot join, transcript sync, webhook auto-ingest. Without `RECALL_API_KEY`, use **Quick ingest** (paste transcript). `RECALL_REGION` defaults to `us-east-1`. `RECALL_WEBHOOK_SECRET` verifies `/api/integrations/recall/webhook` (requires `NEXT_PUBLIC_APP_URL`). |
+| `RECALL_API_KEY`, `RECALL_REGION`, `RECALL_WEBHOOK_SECRET` | Recall.ai meeting bot on `/project/[id]/meetings` — bot join, transcript sync, webhook auto-ingest. Without `RECALL_API_KEY`, use **Quick ingest** (Whisper audio upload or paste transcript; audio needs `OPENAI_API_KEY`). `RECALL_REGION` defaults to `us-east-1`. `RECALL_WEBHOOK_SECRET` verifies `/api/integrations/recall/webhook` (requires `NEXT_PUBLIC_APP_URL`). |
 | `MINIMAX_API_KEY`, `ANTHROPIC_API_KEY` | Legacy AI fallbacks |
 | `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS` | Analytics on Preview deploys |
 

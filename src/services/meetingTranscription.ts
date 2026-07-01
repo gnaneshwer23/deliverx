@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMeeting, updateMeeting } from "@/services/governance";
 
 const BUCKET = "meeting-recordings";
-const MAX_BYTES = 50 * 1024 * 1024;
+const MAX_BYTES = 25 * 1024 * 1024;
 
 const ALLOWED_TYPES = new Set([
   "audio/mpeg",
@@ -22,7 +22,7 @@ export async function transcribeMeetingRecording(input: {
   file: File;
 }): Promise<{ transcript: string; recordingPath: string }> {
   if (input.file.size > MAX_BYTES) {
-    throw new Error("Recording must be under 50 MB.");
+    throw new Error("Recording must be under 25 MB.");
   }
   if (input.file.type && !ALLOWED_TYPES.has(input.file.type)) {
     throw new Error("Unsupported file type. Use MP3, M4A, WAV, WebM, or MP4.");
