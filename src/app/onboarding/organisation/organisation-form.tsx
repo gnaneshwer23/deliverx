@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import type { DbRole } from "@/config/persona-onboarding";
 import { createOrganisationAction, type OrgState } from "./actions";
 import { SelectWithOther } from "@/components/dx/select-with-other";
 import { dxClass } from "@/lib/dx-theme";
@@ -29,11 +30,14 @@ const deliveryTypes = [
   "Other",
 ];
 
-export function OrganisationForm() {
+export function OrganisationForm({ preselectedRole }: { preselectedRole?: DbRole | null }) {
   const [state, formAction, pending] = useActionState(createOrganisationAction, initial);
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
+      {preselectedRole ? (
+        <input type="hidden" name="preselected_role" value={preselectedRole} />
+      ) : null}
       <Field
         label="Organisation name"
         name="name"

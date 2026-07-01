@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import type { DbRole } from "@/config/persona-onboarding";
 import { setRoleAction, type RoleState } from "./actions";
 import { dxClass } from "@/lib/dx-theme";
 
@@ -49,9 +50,9 @@ const roles = [
   },
 ] as const;
 
-export function RoleForm() {
+export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
   const [state, formAction, pending] = useActionState(setRoleAction, initial);
-  const [selected, setSelected] = useState<string>("pm");
+  const [selected, setSelected] = useState<string>(initialRole);
 
   return (
     <form action={formAction} className="flex flex-col gap-3.5">
