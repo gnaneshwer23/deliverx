@@ -325,6 +325,8 @@ export function buildBusinessCaseReviewPayload(input: {
   briefExcerpt: string;
   projectName: string;
   extractionStatus: string;
+  industryKey?: string;
+  industryLabel?: string;
 }): Record<string, unknown> {
   const structuredAnalysis = buildStructuredAnalysisFromReview(
     input.review,
@@ -338,6 +340,8 @@ export function buildBusinessCaseReviewPayload(input: {
     score: input.review.score,
     briefExcerpt: input.briefExcerpt,
     projectName: input.projectName,
+    industryKey: input.industryKey,
+    industryLabel: input.industryLabel,
     structuredAnalysis,
     draft,
     review: input.review,

@@ -9,6 +9,7 @@ import {
   reviewBusinessCase,
   type BusinessCaseReview,
 } from "@/services/aiBusinessCaseReview";
+import { getCurrentOrganisationProfile } from "@/services/organisationProfile";
 import { queueArtifactReview } from "@/services/artifactReviews";
 import { upsertCharter, getActiveCharter } from "@/services/charter";
 import { createBrainDocument } from "@/services/brainDocumentService";
@@ -20,6 +21,7 @@ import {
 } from "@/services/inviteTokenService";
 import { listProjectWorkspaceMembersByRole } from "@/services/workspaceMemberService";
 import { buildBusinessCaseReviewPayload } from "@/lib/businessCaseStructuredAnalysis.shared";
+import { buildBusinessCaseIndustryContext } from "@/lib/ai/prompts/business-case-industry";
 import {
   businessCaseUploadToImpactDrafts,
   emitLoopPropagation,
@@ -201,9 +203,13 @@ async function queueBusinessCaseExtraction(input: {
 }): Promise<{ reviewId: string; extractionStatus: BusinessCaseExtractionStatus }> {
   let review: BusinessCaseReview | null = null;
   let aiConfigured = true;
+  const orgProfile = await getCurrentOrganisationProfile();
 
   try {
-    review = await reviewBusinessCase(input.content);
+    review = await reviewBusinessCase(input.content, {
+      industry: orgProfile.industry,
+      deliveryType: orgProfile.deliveryType,
+    });
   } catch (err) {
     if (err instanceof AiConfigError) {
       aiConfigured = false;
@@ -226,12 +232,18 @@ async function queueBusinessCaseExtraction(input: {
   }
 
   const briefExcerpt = excerpt(input.content, 500) ?? "";
+  const industryContext = buildBusinessCaseIndustryContext({
+    industry: orgProfile.industry,
+    deliveryType: orgProfile.deliveryType,
+  });
   const payload = review
     ? buildBusinessCaseReviewPayload({
         review,
         briefExcerpt,
         projectName: input.projectName,
         extractionStatus,
+        industryKey: industryContext.key,
+        industryLabel: orgProfile.industry ?? industryContext.label,
       })
     : {
         extractionStatus,

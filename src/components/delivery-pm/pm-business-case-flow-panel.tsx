@@ -14,6 +14,11 @@ import { dxClass } from "@/lib/dx-theme";
 import { resolveWorkspaceFlowStage } from "@/lib/workspace-flow-stages";
 import type { ProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
 import type { ExtractionSummaryCounts } from "@/lib/workspace-flow-extraction";
+import type { OrganisationIndustryInput } from "@/lib/ai/prompts/business-case-industry";
+import {
+  businessCaseUploadCopy,
+  resolveBusinessCaseIndustryKey,
+} from "@/lib/ai/prompts/business-case-industry";
 
 function proposalsHref(projectId: string, reviewId?: string | null): string {
   const params = new URLSearchParams({ persona: "pm-mission", project: projectId });
@@ -42,6 +47,7 @@ export function PmBusinessCaseFlowPanel({
   requirementsExtracted = 0,
   storiesReady = 0,
   elevated = false,
+  orgContext,
 }: {
   projectId: string;
   projectName: string;
@@ -50,6 +56,7 @@ export function PmBusinessCaseFlowPanel({
   requirementsExtracted?: number;
   storiesReady?: number;
   elevated?: boolean;
+  orgContext?: OrganisationIndustryInput;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
@@ -63,6 +70,9 @@ export function PmBusinessCaseFlowPanel({
   const [isPending, startTransition] = useTransition();
 
   const effectiveInviteUrl = baInviteUrl ?? status.baInviteJoinUrl;
+  const orgInput = orgContext ?? {};
+  const uploadCopy = businessCaseUploadCopy(orgInput);
+  const industryKey = resolveBusinessCaseIndustryKey(orgInput);
 
   const stage = useMemo(
     () =>
@@ -186,8 +196,10 @@ export function PmBusinessCaseFlowPanel({
           title={elevated ? "Start here — upload your brief" : "Upload business case"}
           subtitle={
             elevated
-              ? "Upload brief → invite BA → review in AI Queue — your PM onboarding path"
-              : "PM-first flow — AI extracts signals, BA invite generated automatically"
+              ? `${uploadCopy.industryLabel} brief → invite BA → review in AI Queue — your PM onboarding path`
+              : industryKey !== "enterprise"
+                ? `${uploadCopy.industryLabel} — AI extracts sector-aware requirements and RAID patterns`
+                : "PM-first flow — AI extracts signals, BA invite generated automatically"
           }
         />
 
@@ -330,6 +342,7 @@ export function PmBusinessCaseFlowPanel({
             disabled={isPending}
             progressStage={progressStage}
             error={error}
+            orgContext={orgContext}
           />
         </div>
       </div>

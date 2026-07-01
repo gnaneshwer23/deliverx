@@ -3,6 +3,7 @@ import {
   businessCaseReviewPrompt,
   businessCaseReviewSystem,
 } from "@/lib/ai/prompts/business-case-review";
+import type { OrganisationIndustryInput } from "@/lib/ai/prompts/business-case-industry";
 import type { BusinessCaseRecommendation } from "@/lib/business-case/constants";
 
 export type { BusinessCaseRecommendation } from "@/lib/business-case/constants";
@@ -181,10 +182,13 @@ function normalizeReview(raw: RawReview): BusinessCaseReview {
   };
 }
 
-export async function reviewBusinessCase(content: string): Promise<BusinessCaseReview> {
+export async function reviewBusinessCase(
+  content: string,
+  orgContext?: OrganisationIndustryInput,
+): Promise<BusinessCaseReview> {
   const raw = await generateJSON<RawReview>({
     system: businessCaseReviewSystem,
-    prompt: businessCaseReviewPrompt(content),
+    prompt: businessCaseReviewPrompt(content, orgContext),
     maxTokens: 4096,
   });
 
