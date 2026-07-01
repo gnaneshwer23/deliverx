@@ -111,6 +111,7 @@ export function requirementChangeToImpactDrafts(input: {
   if (input.statusAfter === "approved") {
     return [
       { targetRole: "ba", message: `${input.reqCode} approved — ${input.title}`, tone: "updated" },
+      { targetRole: "pm", message: `${input.reqCode} approved by BA — ${input.title}`, tone: "updated" },
       { targetRole: "engineer", message: `${input.reqCode} ready for implementation`, tone: "ready" },
       { targetRole: "qa", message: `Update test coverage for ${input.reqCode}`, tone: "waiting" },
     ];
