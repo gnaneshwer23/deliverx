@@ -7,5 +7,6 @@ describe("phaseHHealth", () => {
     expect(checks.every((c) => c.ok)).toBe(true);
     expect(checks.filter((c) => c.sprint === "H2").length).toBeGreaterThanOrEqual(4);
     expect(checks.filter((c) => c.sprint === "H3").length).toBeGreaterThanOrEqual(4);
+    expect(checks.filter((c) => c.sprint === "H5").length).toBeGreaterThanOrEqual(4);
   });
 });

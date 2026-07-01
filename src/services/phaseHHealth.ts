@@ -46,6 +46,29 @@ const H2_PATHS = [
   "src/services/loopEventPropagation.test.ts",
 ];
 
+const H5_PATHS = [
+  "supabase/migrations/0063_tasks_realtime.sql",
+  "src/components/intelligence/workspace-live-refresh.tsx",
+  "src/hooks/use-realtime-table-refresh.test.ts",
+];
+
+function workspaceLiveRefreshWired(): boolean {
+  const layoutPath = join(process.cwd(), "src/app/workspace/layout.tsx");
+  if (!existsSync(layoutPath)) return false;
+  const content = readFileSync(layoutPath, "utf8");
+  return (
+    content.includes("WorkspaceLiveRefresh") &&
+    content.includes("@/components/intelligence/workspace-live-refresh")
+  );
+}
+
+function hookSupportsInsertAndUpdate(): boolean {
+  const hookPath = join(process.cwd(), "src/hooks/use-realtime-table-refresh.ts");
+  if (!existsSync(hookPath)) return false;
+  const content = readFileSync(hookPath, "utf8");
+  return content.includes('"UPDATE"') && content.includes("RealtimeTableRefreshOptions");
+}
+
 const H3_PATHS = [
   "supabase/migrations/0057_collaborative_loop_snapshots.sql",
   "src/services/agentOrchestrationImpact.ts",
@@ -210,6 +233,40 @@ export function runPhaseHSmokeTests(): PhaseHSmokeCheck[] {
     sprint: "H3",
     ok: h3FilesOk,
     detail: `${H3_PATHS.length} H3 artifacts`,
+  });
+
+  const tasksMigrationOk = existsSync(
+    join(process.cwd(), "supabase/migrations/0063_tasks_realtime.sql"),
+  );
+  checks.push({
+    feature: "Tasks realtime migration",
+    sprint: "H5",
+    ok: tasksMigrationOk,
+    detail: "0063_tasks_realtime.sql",
+  });
+
+  const workspaceRefreshOk = workspaceLiveRefreshWired();
+  checks.push({
+    feature: "Workspace live refresh wiring",
+    sprint: "H5",
+    ok: workspaceRefreshOk,
+    detail: "WorkspaceLiveRefresh on /workspace layout",
+  });
+
+  const hookEventsOk = hookSupportsInsertAndUpdate();
+  checks.push({
+    feature: "Realtime hook INSERT + UPDATE",
+    sprint: "H5",
+    ok: hookEventsOk,
+    detail: "useRealtimeTableRefresh events option",
+  });
+
+  const h5FilesOk = H5_PATHS.every((p) => existsSync(join(process.cwd(), p)));
+  checks.push({
+    feature: "H5 realtime module",
+    sprint: "H5",
+    ok: h5FilesOk,
+    detail: `${H5_PATHS.length} H5 artifacts`,
   });
 
   return checks;

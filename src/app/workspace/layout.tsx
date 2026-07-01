@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/dx/app-shell";
-import { DeliveryImpactLiveRefresh } from "@/components/intelligence/delivery-impact-live-refresh";
+import { WorkspaceLiveRefresh } from "@/components/intelligence/workspace-live-refresh";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
@@ -55,11 +55,11 @@ export default async function WorkspaceLayout({
         alerts={alerts}
         alertCount={alertCount}
       >
-        <DeliveryImpactLiveRefresh>
+        <WorkspaceLiveRefresh>
           <main className={workspaceMainOffsetClass}>
             {children}
           </main>
-        </DeliveryImpactLiveRefresh>
+        </WorkspaceLiveRefresh>
       </AppShell>
     </div>
   );

@@ -47,7 +47,7 @@ const I5_C_PATHS = [
 const LOOP_PATHS = [
   "src/services/collaborativeLoopPropagation.ts",
   "src/services/collaborativeLoopPropagation.test.ts",
-  "src/components/intelligence/delivery-impact-live-refresh.tsx",
+  "src/components/intelligence/workspace-live-refresh.tsx",
 ];
 
 function missionPagesUsePersonaChrome(): boolean {
@@ -105,13 +105,13 @@ function observabilityWiredInRootLayout(): boolean {
   );
 }
 
-function deliveryImpactLiveRefreshWired(): boolean {
+function workspaceLiveRefreshWired(): boolean {
   const layoutPath = join(process.cwd(), "src/app/workspace/layout.tsx");
   if (!existsSync(layoutPath)) return false;
   const content = readFileSync(layoutPath, "utf8");
   return (
-    content.includes("DeliveryImpactLiveRefresh") &&
-    content.includes("@/components/intelligence/delivery-impact-live-refresh")
+    content.includes("WorkspaceLiveRefresh") &&
+    content.includes("@/components/intelligence/workspace-live-refresh")
   );
 }
 
@@ -182,12 +182,12 @@ export function runPhaseISmokeTests(): PhaseISmokeCheck[] {
     detail: `${propagation.threadCount} threads → ${propagation.rolesReached} roles`,
   });
 
-  const liveRefreshOk = deliveryImpactLiveRefreshWired();
+  const liveRefreshOk = workspaceLiveRefreshWired();
   checks.push({
-    feature: "Delivery impact live refresh wiring",
+    feature: "Workspace live refresh wiring",
     sprint: "Loop",
     ok: liveRefreshOk,
-    detail: "DeliveryImpactLiveRefresh on /workspace layout",
+    detail: "WorkspaceLiveRefresh on /workspace layout",
   });
 
   const observability = getObservabilityDiagnostics();
