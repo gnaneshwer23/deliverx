@@ -23,7 +23,8 @@ import { FounderProjectChip } from "@/components/founder/founder-project-chip";
 import { FounderGetOrientedCard } from "@/components/founder/founder-day-one-panels";
 import { FounderBoardMemoLayout } from "@/components/founder/founder-board-memo-layout";
 import { FounderNarrativeSummary } from "@/components/founder/founder-narrative-summary";
-import { FounderStrategicKpiStrip } from "@/components/founder/founder-strategic-kpi-strip";
+import { FounderExecutiveKpiStrip } from "@/components/founder/founder-executive-kpi-strip";
+import { FounderLiveSignalsPanel } from "@/components/founder/founder-live-signals-panel";
 import { FounderDecisionCentre } from "@/components/founder/founder-decision-centre";
 import { FounderDeliveryPatternsCard } from "@/components/founder/founder-delivery-patterns-card";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
@@ -31,6 +32,7 @@ import { MissionBootstrapBanner } from "@/components/dx/mission-bootstrap-banner
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
+import { listOrgImpactEvents } from "@/services/deliveryImpact";
 
 export const dynamic = "force-dynamic";
 
@@ -55,10 +57,11 @@ export default async function FounderMissionControlPage({
   }
 
   const params = await searchParams;
-  const [data, , pendingReviewsRaw] = await Promise.all([
+  const [data, , pendingReviewsRaw, impactEventsRaw] = await Promise.all([
     getFounderMissionControl(params.project),
     getFounderContext().catch(() => null),
     listPendingArtifactReviewsForPersona("founder").catch(() => []),
+    listOrgImpactEvents({ limit: 20, projectId: params.project }).catch(() => []),
   ]);
 
   const projectId = data.primaryProject?.id;
@@ -127,15 +130,15 @@ export default async function FounderMissionControlPage({
   const dayOneBoardMemo = (
     <FounderBoardMemoLayout
       narrativeSummary={<FounderNarrativeSummary summary={boardMemoNarrative} />}
-      strategicKpis={
-        <FounderStrategicKpiStrip data={data} pendingDecisionsCount={pendingDecisionsCount} />
-      }
+      strategicKpis={<FounderExecutiveKpiStrip data={data} />}
       decisionCentre={
-        <FounderDecisionCentre
-          items={dayOneDecisionItems}
-          projectId={projectId}
-          dataSource={data.dataSources.decisions}
-        />
+        dayOneDecisionItems.length > 0 ? (
+          <FounderDecisionCentre
+            items={dayOneDecisionItems}
+            projectId={projectId}
+            dataSource={data.dataSources.decisions}
+          />
+        ) : null
       }
       footer={<FounderGetOrientedCard projectId={projectId} />}
     />
@@ -144,15 +147,15 @@ export default async function FounderMissionControlPage({
   const steadyStateBoardMemo = (
     <FounderBoardMemoLayout
       narrativeSummary={<FounderNarrativeSummary summary={boardMemoNarrative} />}
-      strategicKpis={
-        <FounderStrategicKpiStrip data={data} pendingDecisionsCount={pendingDecisionsCount} />
-      }
+      strategicKpis={<FounderExecutiveKpiStrip data={data} />}
       decisionCentre={
-        <FounderDecisionCentre
-          items={steadyStateDecisionItems}
-          projectId={projectId}
-          dataSource={data.dataSources.decisions}
-        />
+        steadyStateDecisionItems.length > 0 ? (
+          <FounderDecisionCentre
+            items={steadyStateDecisionItems}
+            projectId={projectId}
+            dataSource={data.dataSources.decisions}
+          />
+        ) : null
       }
       deliveryPatterns={<FounderDeliveryPatternsCard insight={deliveryPatternInsight} />}
     />
@@ -200,6 +203,7 @@ export default async function FounderMissionControlPage({
             />
           ) : null}
           <FounderMissionPanelSwitch dayOne={dayOneBoardMemo} steadyState={steadyStateBoardMemo} />
+          <FounderLiveSignalsPanel events={impactEventsRaw} projectId={projectId} />
           <MissionHelmCopilotSlot personaId="founder" projectId={projectId} />
         </div>
       </FounderMissionShell>
