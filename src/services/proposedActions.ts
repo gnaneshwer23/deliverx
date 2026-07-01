@@ -340,6 +340,9 @@ async function executeProposal(
         description: p.description ? String(p.description) : undefined,
         priority: (p.priority as "low" | "medium" | "high" | "critical") ?? "medium",
         assigneeId,
+        source: proposal.source === "meeting" ? "meeting" : undefined,
+        sourceId:
+          proposal.source === "meeting" && proposal.source_id ? proposal.source_id : undefined,
       });
       return {
         entityType: "task",

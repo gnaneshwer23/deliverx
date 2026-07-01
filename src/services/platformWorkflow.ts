@@ -52,6 +52,11 @@ async function executeProposalForOrg(proposal: ProposedActionRow): Promise<Recor
       if (projectError) throw projectError;
       if (!project) throw new Error("Project not found");
 
+      const assigneeId =
+        typeof p.assigneeId === "string" && p.assigneeId.trim()
+          ? p.assigneeId.trim()
+          : null;
+
       const { data, error } = await admin
         .from("tasks")
         .insert({
@@ -61,6 +66,9 @@ async function executeProposalForOrg(proposal: ProposedActionRow): Promise<Recor
           description: p.description ? String(p.description).trim() : null,
           status: "todo",
           priority: (p.priority as string) ?? "medium",
+          assignee_id: assigneeId,
+          source: proposal.source === "meeting" ? "meeting" : null,
+          source_id: proposal.source === "meeting" ? proposal.source_id : null,
         })
         .select("id, title, priority")
         .single();

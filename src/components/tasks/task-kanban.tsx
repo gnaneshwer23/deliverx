@@ -35,6 +35,9 @@ export type KanbanTask = {
   status: TaskStatus;
   priority: string;
   due_date: string | null;
+  source?: string | null;
+  source_id?: string | null;
+  meeting_ceremony_type?: string | null;
 };
 
 function KanbanCard({ task, isDragging }: { task: KanbanTask; isDragging?: boolean }) {
@@ -200,16 +203,19 @@ export function TaskViewToggle({
   view,
   projectId,
   statusFilter,
+  sourceFilter,
 }: {
   view: "table" | "kanban";
   projectId?: string;
   statusFilter?: string;
+  sourceFilter?: string;
 }) {
   function href(nextView: "table" | "kanban") {
     const params = new URLSearchParams();
     params.set("view", nextView);
     if (projectId) params.set("project", projectId);
     if (statusFilter && statusFilter !== "all") params.set("status", statusFilter);
+    if (sourceFilter === "standup") params.set("source", "standup");
     return `/workspace/tasks?${params.toString()}`;
   }
 

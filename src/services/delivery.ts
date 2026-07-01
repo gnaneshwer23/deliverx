@@ -23,6 +23,8 @@ export type WorkstreamRow = {
   updated_at: string;
 };
 
+export type TaskSource = "meeting";
+
 export type TaskRow = {
   id: string;
   organisation_id: string;
@@ -37,6 +39,8 @@ export type TaskRow = {
   blocked_reason: string | null;
   completed_at: string | null;
   created_by: string | null;
+  source: TaskSource | null;
+  source_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -271,6 +275,8 @@ export async function createTask(input: {
   assigneeId?: string;
   dueDate?: string;
   blockedReason?: string;
+  source?: TaskSource;
+  sourceId?: string;
 }): Promise<TaskRow> {
   const { supabase, orgId, userId } = await getOrgContext();
   await assertProjectInOrg(supabase, orgId, input.projectId);
@@ -299,6 +305,8 @@ export async function createTask(input: {
       due_date: input.dueDate ?? null,
       blocked_reason: input.blockedReason?.trim() || null,
       created_by: userId,
+      source: input.source ?? null,
+      source_id: input.sourceId ?? null,
     })
     .select("*")
     .single();
@@ -416,7 +424,34 @@ export async function countTasksByProject(projectId: string) {
 export type TaskWithMeta = TaskRow & {
   project_name: string;
   workstream_name: string | null;
+  meeting_title: string | null;
+  meeting_ceremony_type: string | null;
+  meeting_scheduled_at: string | null;
+  meeting_has_transcript: boolean;
 };
+
+type TaskQueryRow = TaskRow & {
+  projects: { name: string };
+  workstreams: { name: string } | null;
+  meetings: {
+    title: string;
+    ceremony_type: string;
+    scheduled_at: string | null;
+    transcript: string | null;
+  } | null;
+};
+
+function mapTaskWithMeta(row: TaskQueryRow): TaskWithMeta {
+  return {
+    ...row,
+    project_name: row.projects.name,
+    workstream_name: row.workstreams?.name ?? null,
+    meeting_title: row.meetings?.title ?? null,
+    meeting_ceremony_type: row.meetings?.ceremony_type ?? null,
+    meeting_scheduled_at: row.meetings?.scheduled_at ?? null,
+    meeting_has_transcript: Boolean(row.meetings?.transcript?.trim()),
+  };
+}
 
 export type OrgDeliveryStats = {
   tasksInProgress: number;
@@ -460,7 +495,9 @@ export async function listOrgTasks(
 
   let q = supabase
     .from("tasks")
-    .select("*, projects!inner(name), workstreams(name)")
+    .select(
+      "*, projects!inner(name), workstreams(name), meetings:source_id(title, ceremony_type, scheduled_at, transcript)",
+    )
     .order("updated_at", { ascending: false });
 
   if (opts.projectId) q = q.eq("project_id", opts.projectId);
@@ -478,17 +515,31 @@ export async function listOrgTasks(
   const { data, error } = await q;
   if (error) throw error;
 
-  return (data ?? []).map((row) => {
-    const r = row as TaskRow & {
-      projects: { name: string };
-      workstreams: { name: string } | null;
-    };
-    return {
-      ...r,
-      project_name: r.projects.name,
-      workstream_name: r.workstreams?.name ?? null,
-    };
-  });
+  return (data ?? []).map((row) => mapTaskWithMeta(row as TaskQueryRow));
+}
+
+export async function listUserMeetingSourcedTasks(opts: {
+  projectId?: string;
+  includeDone?: boolean;
+} = {}): Promise<TaskWithMeta[]> {
+  const { supabase, userId } = await getOrgContext();
+
+  let q = supabase
+    .from("tasks")
+    .select(
+      "*, projects!inner(name), workstreams(name), meetings:source_id(title, ceremony_type, scheduled_at, transcript)",
+    )
+    .eq("source", "meeting")
+    .eq("assignee_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (opts.projectId) q = q.eq("project_id", opts.projectId);
+  if (!opts.includeDone) q = q.neq("status", "done");
+
+  const { data, error } = await q;
+  if (error) throw error;
+
+  return (data ?? []).map((row) => mapTaskWithMeta(row as TaskQueryRow));
 }
 
 export async function countOrgTasks(opts: {
