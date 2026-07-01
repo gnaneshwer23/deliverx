@@ -20,6 +20,7 @@ Then fill in each value below.
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same page → **anon public** key | Client-side Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | Same page → **service_role** key (keep secret) | Server admin ops, global intelligence network writes |
 | `NEXT_PUBLIC_APP_URL` | Your app URL, e.g. `http://localhost:3000` or `https://www.deliverx.dev` | Auth redirects, invite links |
+| `INVITE_JWT_SECRET` | Generate with `openssl rand -base64 32` — set in Vercel **Production** (and Preview) | Signs project invite JWT links (7-day). Local dev may fall back to `CRON_SECRET`; **do not rely on fallback in deployed environments** |
 | **`OPENAI_API_KEY`** | [OpenAI Platform](https://platform.openai.com/api-keys) | **All text AI** (assistant, reviews, structure, discovery chat), Whisper transcription, charter embeddings |
 
 | Variable | Where to get it | Used for |
@@ -46,8 +47,9 @@ OpenAI is checked **first** when `OPENAI_API_KEY` is set.
 | Variable | Where to set | Used for |
 |----------|--------------|----------|
 | `CRON_SECRET` | Vercel env vars — any long random string you generate | Secures `GET /api/twin/snapshot` (daily twin snapshot, see `vercel.json`) |
+| `INVITE_JWT_SECRET` | Vercel **Production** + **Preview** — separate from `CRON_SECRET` | Signs project invite JWTs (`/join?token=`, `/api/invites/*`) |
 
-Local dev does **not** need `CRON_SECRET` unless you test the cron route manually.
+Local dev does **not** need `CRON_SECRET` unless you test the cron route manually. Set `INVITE_JWT_SECRET` explicitly before testing invite flows in staging/production.
 
 ---
 

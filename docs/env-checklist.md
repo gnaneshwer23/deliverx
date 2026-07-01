@@ -2,7 +2,7 @@
 
 Use this checklist before running DeliverX locally, opening a PR preview, or interpreting **Slice A** smoke tests (`e2e/slice-a-production-smoke.test.ts`).
 
-For full variable descriptions see [API_KEYS.md](./API_KEYS.md). For Vercel Preview parity see [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md).
+For full variable descriptions see [API_KEYS.md](./API_KEYS.md). For Vercel Preview parity see [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md). For production ops see [OPS_ENV_RUNBOOK.md](./OPS_ENV_RUNBOOK.md).
 
 ---
 
@@ -15,7 +15,7 @@ For full variable descriptions see [API_KEYS.md](./API_KEYS.md). For Vercel Prev
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | ✅ (placeholder) | Server admin, invite validation DB lookup |
 | `NEXT_PUBLIC_APP_URL` | ✅ | ✅ | Auth redirects, `/join?token=` links |
 | `OPENAI_API_KEY` | ✅ for live AI | Optional (placeholder in build) | Assistant, Helm, BC review, meeting extraction, **Whisper audio upload** (≤25 MB on `/project/[id]/meetings`), **Brain ingest classification** |
-| `INVITE_JWT_SECRET` | ✅ | Optional | Signs project invite JWTs (7-day). Falls back to `CRON_SECRET` in dev |
+| `INVITE_JWT_SECRET` | ✅ | ✅ (CI) | Signs project invite JWTs (7-day). **Required explicitly on Vercel Production** — local dev may fall back to `CRON_SECRET` |
 
 Quick local check:
 
@@ -23,6 +23,7 @@ Quick local check:
 cp .env.example .env.local
 # fill values, then:
 node scripts/check-env.mjs
+node scripts/check-env.mjs --production   # stricter — no INVITE_JWT_SECRET fallback
 ```
 
 ---
@@ -44,7 +45,15 @@ node scripts/check-env.mjs
 
 1. [Vercel → deliverx → Settings → Environment Variables](https://vercel.com/dashboard)
 2. Set required rows for **Production** and **Preview** (see [PREVIEW_ENV_PARITY.md](./PREVIEW_ENV_PARITY.md))
-3. Redeploy after changes
+3. **`INVITE_JWT_SECRET`** — set on Production (and Preview when testing invites); do not rely on `CRON_SECRET` fallback in deployed environments
+4. Redeploy after changes
+
+### Supabase auth URLs (Production)
+
+In [Supabase → Auth → URL Configuration](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/url-configuration):
+
+- **Site URL:** `https://www.deliverx.dev`
+- **Redirect allowlist:** `https://www.deliverx.dev/auth/callback`, plus preview/local callbacks as needed (see [OPS_ENV_RUNBOOK.md](./OPS_ENV_RUNBOOK.md))
 
 ```bash
 vercel env pull .env.local   # never commit the pulled file
@@ -77,7 +86,7 @@ After env is set: **Settings → Setup audit**, or `GET /api/setup/diagnostics` 
 
 ## Still manual (not covered by Slice A)
 
-- Apply Supabase migration `0060_brain_storage.sql` for Brain ingest uploads (`/brain/ingest`)
+- Supabase migrations **0060–0063** on prod (`jibmyxaldetyycmtlxet`) — verified 2026-07-01; re-check via [OPS_ENV_RUNBOOK.md](./OPS_ENV_RUNBOOK.md) if schema drift suspected
 - Browser login (Supabase OAuth / email) on `/join` and workspace routes
 - Live `POST /api/invites/generate` and `POST /api/invites/accept` against Supabase
 - Live `POST /api/project/[id]/meetings/ingest` with authenticated PM session
