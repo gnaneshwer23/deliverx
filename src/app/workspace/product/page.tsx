@@ -27,6 +27,7 @@ import {
   buildProductRoadmapSubtitle,
 } from "@/lib/product-roadmap-kpis";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
+import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -178,6 +179,7 @@ export default async function ProductMissionControlPage({
               ))}
             </div>
           ) : null}
+          <PersonaStandupTasks projectId={projectId} />
           {dashboard}
           <MissionHelmCopilotSlot personaId="product" projectId={data.primaryProject?.id} />
         </div>

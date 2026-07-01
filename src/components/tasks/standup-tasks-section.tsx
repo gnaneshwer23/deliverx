@@ -18,13 +18,18 @@ export type StandupTaskCard = StandupTaskRecord & {
   due_date: string | null;
 };
 
+const COMPACT_MAX_TASKS = 3;
+
 export function StandupTasksSection({
   tasks: initialTasks,
   highlightOnly = false,
+  compact = false,
 }: {
   tasks: StandupTaskCard[];
   /** When true, section is shown only because ?source=standup is active */
   highlightOnly?: boolean;
+  /** Tighter layout for dense persona mission dashboards */
+  compact?: boolean;
 }) {
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
   const [isPending, startTransition] = useTransition();
@@ -32,15 +37,19 @@ export function StandupTasksSection({
     () => initialTasks.filter((task) => !dismissedIds.has(task.id)),
     [initialTasks, dismissedIds],
   );
+  const visibleTasks = compact ? tasks.slice(0, COMPACT_MAX_TASKS) : tasks;
+  const hiddenCount = compact ? Math.max(0, tasks.length - visibleTasks.length) : 0;
 
   if (tasks.length === 0) {
     if (!highlightOnly) return null;
     return (
       <section
-        className={`${dxClass.card} mb-6 border-l-4 border-[#1C4A2E] p-5`}
+        className={`${dxClass.card} ${compact ? "mb-4 p-4" : "mb-6 p-5"} border-l-4 border-[#1C4A2E]`}
         data-testid="standup-tasks-empty"
       >
-        <h2 className="font-[family-name:var(--font-dx-display)] text-lg text-[#0D0D0B]">
+        <h2
+          className={`font-[family-name:var(--font-dx-display)] text-[#0D0D0B] ${compact ? "text-base" : "text-lg"}`}
+        >
           From today&apos;s standup
         </h2>
         <p className="mt-2 text-sm text-[#6B6B64]">
@@ -53,22 +62,24 @@ export function StandupTasksSection({
 
   return (
     <section
-      className={`${dxClass.card} mb-6 border-l-4 border-[#1C4A2E] p-5 ${isPending ? "opacity-90" : ""}`}
+      className={`${dxClass.card} ${compact ? "mb-4 p-4" : "mb-6 p-5"} border-l-4 border-[#1C4A2E] ${isPending ? "opacity-90" : ""}`}
       data-testid="standup-tasks-section"
     >
-      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-[family-name:var(--font-dx-display)] text-lg text-[#0D0D0B]">
+      <div className={`flex flex-wrap items-baseline justify-between gap-2 ${compact ? "mb-3" : "mb-4"}`}>
+        <h2
+          className={`font-[family-name:var(--font-dx-display)] text-[#0D0D0B] ${compact ? "text-base" : "text-lg"}`}
+        >
           From today&apos;s standup
         </h2>
         <span className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-[#6B6B64]">
           {tasks.length} task{tasks.length === 1 ? "" : "s"}
         </span>
       </div>
-      <ul className="space-y-3">
-        {tasks.map((task) => (
+      <ul className={compact ? "space-y-2" : "space-y-3"}>
+        {visibleTasks.map((task) => (
           <li
             key={task.id}
-            className="border border-[#E4E4DC] bg-[#F7F7F2] p-4"
+            className={`border border-[#E4E4DC] bg-[#F7F7F2] ${compact ? "p-3" : "p-4"}`}
             data-testid={`standup-task-${task.id}`}
           >
             <p className="text-sm font-medium text-[#0D0D0B]">{task.title}</p>
@@ -103,6 +114,16 @@ export function StandupTasksSection({
           </li>
         ))}
       </ul>
+      {hiddenCount > 0 ? (
+        <p className="mt-3">
+          <Link
+            href="/workspace/tasks?view=kanban"
+            className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-wider text-[#1C4A2E] hover:underline"
+          >
+            View {hiddenCount} more in Tasks
+          </Link>
+        </p>
+      ) : null}
     </section>
   );
 }

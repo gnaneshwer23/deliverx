@@ -28,6 +28,7 @@ import { BaWorkspaceFlowShell } from "@/components/workspace-flow/ba-workspace-f
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
 import { Suspense } from "react";
+import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -155,6 +156,7 @@ export default async function BaMissionControlPage({
             personaLabel={PERSONA_REVIEW_LABELS.ba}
             personaId="ba"
           />
+          <PersonaStandupTasks projectId={projectId} />
           {data.projects.length > 1 && data.primaryProject ? (
             <ProjectPicker
               projects={data.projects}

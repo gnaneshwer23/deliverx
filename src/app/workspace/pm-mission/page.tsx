@@ -78,6 +78,7 @@ import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-rev
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
 import { isMeetingReviewDeepLink, pmMeetingReviewUrl } from "@/lib/meeting-flow";
+import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -408,6 +409,7 @@ export default async function PmMissionControlPage({
                 personaLabel={PERSONA_REVIEW_LABELS["pm-mission"]}
                 personaId="pm-mission"
               />
+              <PersonaStandupTasks projectId={projectId} />
             </>
           ) : null}
           {elevateInviteSection && inviteRoleRows && data.primaryProject ? (

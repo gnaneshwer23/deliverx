@@ -28,6 +28,7 @@ import { buildMissionNextUpItems } from "@/lib/mission-next-up";
 import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildEngineerShippingSynthesis } from "@/lib/engineer-shipping-kpis";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
+import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 
 export const dynamic = "force-dynamic";
 
@@ -168,6 +169,7 @@ export default async function EngineerMissionControlPage({
             personaLabel={PERSONA_REVIEW_LABELS.engineer}
             personaId="engineer"
           />
+          <PersonaStandupTasks projectId={projectId} />
           {data.projects.length > 1 && data.primaryProject ? (
             <div className="flex flex-wrap gap-2">
               {data.projects.slice(0, 8).map((p) => (
