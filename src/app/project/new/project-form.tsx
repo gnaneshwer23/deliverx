@@ -357,7 +357,7 @@ export function ProjectForm({
   if (step === "brief") {
     const uploadCopy = businessCaseUploadCopy({
       industry: orgIndustry,
-      deliveryType: orgDeliveryType ?? deliveryType || undefined,
+      deliveryType: orgDeliveryType ?? (deliveryType || undefined),
     });
 
     return (
