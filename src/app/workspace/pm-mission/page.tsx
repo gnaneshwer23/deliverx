@@ -72,6 +72,8 @@ import { PmBusinessCaseFlowPanel } from "@/components/delivery-pm/pm-business-ca
 import { PmBusinessCaseSummaryCard } from "@/components/workspace-flow/pm-business-case-summary-card";
 import { PmRoleInviteSection } from "@/components/workspace-flow/pm-role-invite-section";
 import { PmBaHandoffBanner } from "@/components/workspace-flow/pm-ba-handoff-banner";
+import { PmFirstLoginStageBarSlot } from "@/components/workspace-flow/pm-first-login-stage-bar-slot";
+import { resolveWorkspaceFlowStageFromSnapshot } from "@/lib/workspace-flow-stage-from-snapshot";
 import { MeetingIntelReviewPanel } from "@/components/meetings/meeting-intel-review-panel";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { dxClass } from "@/lib/dx-theme";
@@ -318,6 +320,13 @@ export default async function PmMissionControlPage({
     />
   );
 
+  const showFirstLoginStageBar =
+    Boolean(projectId) && (onboardMode || serverPmMode === "day-one");
+  const firstLoginStage = resolveWorkspaceFlowStageFromSnapshot(flowSnapshot, {
+    requirementsExtracted: requirementStats?.extracted ?? 0,
+    storiesReady: requirementStats?.storiesReady ?? 0,
+  });
+
   const businessCaseFlowPanel =
     data.primaryProject && businessCaseStatus ? (
       <PmBusinessCaseFlowPanel
@@ -332,6 +341,7 @@ export default async function PmMissionControlPage({
           industry: orgProfile.industry,
           deliveryType: orgProfile.deliveryType,
         }}
+        hideStageBar={showFirstLoginStageBar}
       />
     ) : null;
 
@@ -365,6 +375,13 @@ export default async function PmMissionControlPage({
         teamJoinedCount={bootstrapSummary?.structure?.stakeholders}
       >
         <div className={dxClass.workspaceContent}>
+          {showFirstLoginStageBar && projectId ? (
+            <PmFirstLoginStageBarSlot
+              projectId={projectId}
+              stage={firstLoginStage}
+              onboardMode={onboardMode}
+            />
+          ) : null}
           {onboardMode && businessCaseFlowPanel ? (
             <div className="mb-4">{businessCaseFlowPanel}</div>
           ) : null}

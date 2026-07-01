@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { BaExtractionReviewPanel } from "@/components/workspace-flow/ba-extraction-review-panel";
-import { WorkspaceFlowStageBar } from "@/components/workspace-flow/workspace-flow-stage-bar";
-import { resolveWorkspaceFlowStage } from "@/lib/workspace-flow-stages";
+import { FirstLoginFlowStageBar } from "@/components/workspace-flow/first-login-flow-stage-bar";
+import { resolveWorkspaceFlowStageFromSnapshot } from "@/lib/workspace-flow-stage-from-snapshot";
 import type { WorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
 
 export function BaWorkspaceFlowShell({
@@ -22,19 +22,13 @@ export function BaWorkspaceFlowShell({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const showReview =
-    searchParams.get("flow") === "review" || searchParams.get("welcome") === "1";
+  const flowReview = searchParams.get("flow") === "review";
   const isWelcome = searchParams.get("welcome") === "1";
+  const showFirstLoginStageBar = isWelcome && flowReview;
+  const showReview = flowReview || isWelcome;
   const [reviewDismissed, setReviewDismissed] = useState(false);
 
-  const stage = resolveWorkspaceFlowStage({
-    hasBusinessCase: snapshot.businessCase.hasBusinessCase,
-    extractionStatus: snapshot.businessCase.extractionStatus,
-    baInviteActive: snapshot.businessCase.baInviteActive,
-    baJoined: Boolean(snapshot.businessCase.baMember),
-    requirementsExtracted: snapshot.counts.requirements ?? 0,
-    storiesReady,
-  });
+  const stage = resolveWorkspaceFlowStageFromSnapshot(snapshot, { storiesReady });
 
   const shouldShowReview =
     showReview &&
@@ -53,7 +47,9 @@ export function BaWorkspaceFlowShell({
 
   return (
     <div className="space-y-6">
-      <WorkspaceFlowStageBar stage={stage} />
+      {showFirstLoginStageBar ? (
+        <FirstLoginFlowStageBar projectId={projectId} stage={stage} prominent />
+      ) : null}
       {shouldShowReview ? (
         <BaExtractionReviewPanel
           projectId={projectId}

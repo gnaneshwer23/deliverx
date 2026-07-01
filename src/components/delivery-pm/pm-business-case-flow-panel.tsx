@@ -48,6 +48,7 @@ export function PmBusinessCaseFlowPanel({
   storiesReady = 0,
   elevated = false,
   orgContext,
+  hideStageBar = false,
 }: {
   projectId: string;
   projectName: string;
@@ -57,6 +58,7 @@ export function PmBusinessCaseFlowPanel({
   storiesReady?: number;
   elevated?: boolean;
   orgContext?: OrganisationIndustryInput;
+  hideStageBar?: boolean;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
@@ -189,7 +191,7 @@ export function PmBusinessCaseFlowPanel({
       data-panel="pm-business-case-flow"
       data-elevated={elevated ? "true" : undefined}
     >
-      <WorkspaceFlowStageBar stage={stage} />
+      {hideStageBar ? null : <WorkspaceFlowStageBar stage={stage} />}
 
       <div className={`${dxClass.card} overflow-hidden p-0`}>
         <DxWidgetHeader
