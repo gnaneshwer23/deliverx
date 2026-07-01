@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { listPlaybooks, type PlaybookRow } from "@/services/memory";
+import { getCurrentOrganisationProfile } from "@/services/organisationProfile";
 import { AiConfigBanner } from "@/components/ai/ai-config-banner";
 import { ProjectForm } from "./project-form";
 import { dxClass } from "@/lib/dx-theme";
@@ -14,7 +15,10 @@ export default async function NewProjectPage({
 }) {
   const { playbook: selectedId, mode } = await searchParams;
   const initialMode = mode === "chat" ? "chat" : "form";
-  const playbooks = await safeListPlaybooks();
+  const [playbooks, orgProfile] = await Promise.all([
+    safeListPlaybooks(),
+    getCurrentOrganisationProfile().catch(() => ({ industry: null, deliveryType: null })),
+  ]);
   const selected = playbooks.find((p) => p.id === selectedId) ?? null;
 
   return (
@@ -84,8 +88,10 @@ export default async function NewProjectPage({
         <AiConfigBanner />
         <ProjectForm
           playbookId={selected?.id}
-          deliveryTypeDefault={selected?.delivery_type ?? undefined}
+          deliveryTypeDefault={selected?.delivery_type ?? orgProfile.deliveryType ?? undefined}
           initialMode={initialMode}
+          orgIndustry={orgProfile.industry}
+          orgDeliveryType={orgProfile.deliveryType}
         />
       </div>
     </div>

@@ -64,6 +64,7 @@ import { listProjectImpactEvents } from "@/services/deliveryImpact";
 import { getCollaborativeLoopSnapshot } from "@/services/collaborativeLoop";
 import { listPendingMeetingProposals } from "@/services/proposedActions";
 import { getProjectBusinessCaseStatus } from "@/services/projectBusinessCaseFlow";
+import { getCurrentOrganisationProfile } from "@/services/organisationProfile";
 import { getWorkspaceFlowSnapshot } from "@/services/workspaceFlowSnapshot";
 import { buildPmInviteRoleRows, shouldElevatePmInviteSection, summarizePmInviteRoleRows } from "@/lib/workspace-flow-invites";
 import { getRequirementStats } from "@/services/baRequirements";
@@ -96,7 +97,7 @@ export default async function PmMissionControlPage({
   const params = await searchParams;
   const meetingReviewMode = isMeetingReviewDeepLink(params.meeting);
   const onboardMode = params.onboard === "1";
-  const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop] =
+  const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop, orgProfile] =
     await Promise.all([
       getPmMissionControl(params.project),
       listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
@@ -105,6 +106,7 @@ export default async function PmMissionControlPage({
       getOrgGovernanceStats().catch(() => ({ openChanges: 0, pendingDecisions: 0, openRisks: 0, openIssues: 0 })),
       listOrgChangeRequests({ status: ["draft", "submitted"], limit: 20 }).catch(() => []),
       getCollaborativeLoopSnapshot("pm", params.project).catch(() => null),
+      getCurrentOrganisationProfile().catch(() => ({ industry: null, deliveryType: null })),
     ]);
 
   const projectId = data.primaryProject?.id;
@@ -326,6 +328,10 @@ export default async function PmMissionControlPage({
         requirementsExtracted={requirementStats?.extracted ?? 0}
         storiesReady={requirementStats?.storiesReady ?? 0}
         elevated={onboardMode}
+        orgContext={{
+          industry: orgProfile.industry,
+          deliveryType: orgProfile.deliveryType,
+        }}
       />
     ) : null;
 

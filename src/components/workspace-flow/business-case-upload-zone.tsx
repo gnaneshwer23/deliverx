@@ -2,6 +2,10 @@
 
 import { useCallback, useRef, useState } from "react";
 import { FileText, Loader2, Sparkles, Upload } from "lucide-react";
+import {
+  businessCaseUploadCopy,
+  type OrganisationIndustryInput,
+} from "@/lib/ai/prompts/business-case-industry";
 import { dxClass } from "@/lib/dx-theme";
 import styles from "./BusinessCaseUploadZone.module.css";
 
@@ -14,6 +18,7 @@ export function BusinessCaseUploadZone({
   disabled,
   progressStage,
   error,
+  orgContext,
 }: {
   brief: string;
   onBriefChange: (value: string) => void;
@@ -21,10 +26,12 @@ export function BusinessCaseUploadZone({
   disabled?: boolean;
   progressStage: UploadProgressStage;
   error?: string | null;
+  orgContext?: OrganisationIndustryInput;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [extracting, setExtracting] = useState(false);
+  const copy = businessCaseUploadCopy(orgContext ?? {});
 
   const busy = disabled || extracting || progressStage === "uploading";
 
@@ -94,9 +101,10 @@ export function BusinessCaseUploadZone({
         {showScan ? <span className={styles.scanLine} aria-hidden /> : null}
         <Upload size={28} className="text-[#1C4A2E]" aria-hidden />
         <p className={`${dxClass.display} mt-3 text-lg text-[#0D0D0B]`}>
-          {extracting ? "Extracting document…" : "Drop your business case here"}
+          {extracting ? "Extracting document…" : copy.headline}
         </p>
-        <p className="mt-1 text-sm text-[#6B6B64]">PDF, DOCX, TXT, MD, or CSV</p>
+        <p className="mt-1 text-sm text-[#6B6B64]">{copy.helper}</p>
+        <p className="mt-0.5 text-xs text-[#A8A89E]">PDF, DOCX, TXT, MD, or CSV</p>
         <input
           ref={inputRef}
           type="file"
@@ -117,7 +125,7 @@ export function BusinessCaseUploadZone({
           value={brief}
           onChange={(e) => onBriefChange(e.target.value)}
           rows={6}
-          placeholder="Paste scope, budget, stakeholders, and success criteria…"
+          placeholder={copy.placeholder}
           className={`${dxClass.input} mt-2 resize-y`}
           disabled={busy}
         />
@@ -125,8 +133,7 @@ export function BusinessCaseUploadZone({
 
       <p className="flex items-start gap-2 rounded-lg border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2.5 text-xs leading-relaxed text-[#1C4A2E]">
         <FileText size={14} className="mt-0.5 shrink-0" aria-hidden />
-        Works with any business case format — AI extracts requirements, gaps, and risks into the
-        Review Queue. Nothing is applied until you approve it.
+        {copy.tip}
       </p>
 
       {error ? (

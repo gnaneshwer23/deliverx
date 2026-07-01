@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { Loader2, Sparkles, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { AiStatusBanner } from "@/components/ai/ai-status-banner";
+import { businessCaseUploadCopy } from "@/lib/ai/prompts/business-case-industry";
 import { aiErrorMessage, postAi } from "@/lib/ai/client-fetch";
 import { dxClass } from "@/lib/dx-theme";
 import type { BusinessCaseReview } from "@/services/aiBusinessCaseReview";
@@ -49,10 +50,14 @@ export function ProjectForm({
   playbookId,
   deliveryTypeDefault,
   initialMode = "form",
+  orgIndustry,
+  orgDeliveryType,
 }: {
   playbookId?: string;
   deliveryTypeDefault?: string;
   initialMode?: InputMode;
+  orgIndustry?: string | null;
+  orgDeliveryType?: string | null;
 }) {
   const [state, formAction, pending] = useActionState(createProjectDraftAction, initial);
   const errorSeen = useRef("");
@@ -350,6 +355,11 @@ export function ProjectForm({
   }
 
   if (step === "brief") {
+    const uploadCopy = businessCaseUploadCopy({
+      industry: orgIndustry,
+      deliveryType: orgDeliveryType ?? deliveryType || undefined,
+    });
+
     return (
       <div className="space-y-5">
         <ProjectCreationStepper current="brief" />
@@ -380,9 +390,7 @@ export function ProjectForm({
           <ProjectDiscoveryChat onComplete={onChatDiscoveryComplete} />
         ) : (
           <>
-        <p className="text-sm text-[#6B6B64]">
-          Paste or upload your business case. AI will review readiness and pre-fill project details.
-        </p>
+        <p className="text-sm text-[#6B6B64]">{uploadCopy.helper}</p>
 
         <label className="block">
           <span className={dxClass.label}>Business case / brief</span>
@@ -390,7 +398,7 @@ export function ProjectForm({
             value={brief}
             onChange={(e) => setBrief(e.target.value)}
             rows={8}
-            placeholder="Paste scope, budget, stakeholders, success criteria, constraints…"
+            placeholder={uploadCopy.placeholder}
             className={`${dxClass.input} mt-1.5 resize-y`}
           />
         </label>
