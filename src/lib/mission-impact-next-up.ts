@@ -4,6 +4,7 @@
 
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import type { NextUpItem, NextUpTone } from "@/lib/next-up-items";
+import { buildImpactEventHref } from "@/lib/signal-deeplinks";
 import type { DeliveryImpactEventRow } from "@/services/deliveryImpact";
 import type { DeliveryImpactRole, DeliveryImpactTone } from "@/services/deliveryImpactEngine";
 
@@ -31,34 +32,6 @@ function toneFromImpact(tone: DeliveryImpactTone): NextUpTone {
   }
 }
 
-function impactEventHref(
-  event: DeliveryImpactEventRow,
-  personaId: MissionPersonaId,
-  projectId?: string,
-): string {
-  const msg = event.message.toLowerCase();
-  const projectQs = projectId ? `&project=${projectId}` : "";
-
-  if (msg.includes("ai review queue") || msg.includes("business case uploaded")) {
-    return `/workspace/proposals?persona=${personaId}${projectQs}`;
-  }
-  if (msg.includes("ba invite") || msg.includes("join link") || msg.includes("role invite")) {
-    return projectId
-      ? `/workspace/pm-mission?project=${projectId}#pm-role-invites`
-      : "/workspace/pm-mission#pm-role-invites";
-  }
-  if (msg.includes(" joined ") && msg.includes(" as ba")) {
-    return projectId ? `/workspace/ba?project=${projectId}` : "/workspace/ba";
-  }
-  if (msg.includes("workspace created") || msg.includes("business case approved")) {
-    return projectId ? `/workspace/pm-mission?project=${projectId}` : "/workspace/pm-mission";
-  }
-
-  return projectId
-    ? `/workspace/pm-mission?project=${projectId}`
-    : `/workspace/${personaId === "pm-mission" ? "pm-mission" : personaId}`;
-}
-
 export function impactEventsToNextUpItems(
   events: DeliveryImpactEventRow[],
   personaId: MissionPersonaId,
@@ -81,7 +54,10 @@ export function impactEventsToNextUpItems(
     .map((event, index) => ({
       id: `impact-${event.id}`,
       label: event.message,
-      href: impactEventHref(event, personaId, projectId ?? event.project_id),
+      href: buildImpactEventHref({
+        ...event,
+        project_id: projectId ?? event.project_id,
+      }),
       tone: toneFromImpact(event.tone),
       priority: 5 + index,
     }));

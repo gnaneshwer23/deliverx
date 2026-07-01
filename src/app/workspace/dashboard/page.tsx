@@ -38,6 +38,7 @@ import { DeliveryCoachPanel } from "@/components/dashboard/delivery-coach-panel"
 import { DeliveryForecastStrip } from "@/components/dashboard/delivery-forecast-strip";
 import { ApprovalCentrePanel } from "@/components/approvals/approval-centre-panel";
 import { CommandCentreImpactFeed } from "@/components/dashboard/command-centre-impact-feed";
+import { MissionWorkspaceOverview } from "@/components/dashboard/mission-workspace-overview";
 import { CommandCentreAgentFeed } from "@/components/dashboard/command-centre-agent-feed";
 import { PmTeamNeedsFeed } from "@/components/delivery-pm/pm-team-needs-feed";
 import { IntelligenceLoopPanel } from "@/components/intelligence/intelligence-loop-panel";
@@ -60,6 +61,7 @@ import {
   buildCommandCentreKpis,
 } from "@/lib/command-centre-kpis";
 import { buildPmTeamNeedsFeed } from "@/lib/pm-team-needs-feed";
+import { countImpactSignalsByPersona } from "@/lib/signal-deeplinks";
 import { governanceTabHref } from "@/lib/governance-tabs";
 import { getDbRoleDisplayLabel } from "@/config/mission-persona-meta";
 import { listPendingProposals } from "@/services/proposedActions";
@@ -133,7 +135,7 @@ export default async function DashboardPage({
 
   const persona = roleToMissionPersona(data.userRole);
 
-  const [pendingProposals, pendingArtifactReviews, personaPendingReviews, approvalCounts, impactEvents, agentEvents, intelligenceLoop, feedProjects, collaborativeLoop] =
+  const [pendingProposals, pendingArtifactReviews, personaPendingReviews, approvalCounts, impactEvents, overviewImpactEvents, agentEvents, intelligenceLoop, feedProjects, collaborativeLoop] =
     await Promise.all([
     listPendingProposals(3).catch(() => []),
     listPendingArtifactReviews(3).catch(() => []),
@@ -145,6 +147,7 @@ export default async function DashboardPage({
       targetRole: feedRole,
       projectId: feedProject,
     }).catch(() => []),
+    listOrgImpactEvents({ limit: 40, projectId: feedProject }).catch(() => []),
     listAgentActivityFeed(12).catch(() => []),
     getIntelligenceLoopSnapshot().catch(() => null),
     listOrgProjects().catch(() => []),
@@ -222,6 +225,7 @@ export default async function DashboardPage({
 
   const coordinationSnapshot = await runEnterpriseCoordinationLoop().catch(() => null);
   const deliveryPatternInsight = pickPmDeliveryPatternInsight(coordinationSnapshot);
+  const missionSignalCounts = countImpactSignalsByPersona(overviewImpactEvents);
 
   return (
     <CommandCentreDashboardChrome
@@ -254,6 +258,19 @@ export default async function DashboardPage({
       <div className="mb-6">
         <QuickActionsBar role={data.userRole} />
       </div>
+
+      <DashboardPanelShell
+        panelId="mission-workspaces"
+        title="Mission workspaces"
+        subtitle="Jump to persona mission control with live signal counts"
+        className="mb-6"
+        card
+      >
+        <MissionWorkspaceOverview
+          signalCounts={missionSignalCounts}
+          projectId={feedProject ?? topProject?.id}
+        />
+      </DashboardPanelShell>
 
       {persona && personaPendingReviews.length > 0 ? (
         <div className="mb-6">
