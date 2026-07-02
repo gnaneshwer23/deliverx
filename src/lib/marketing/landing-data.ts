@@ -873,22 +873,48 @@ export const PILOT_QUOTE: PilotQuote = {
   org: "",
 };
 
+/** Pilot platform metrics — honest product facts, not industry survey statistics. */
 export const PROOF_STATS = [
   {
-    "n": "40%",
-    "label": "PM time on admin",
-    "desc": "Status chasing and report writing consume nearly half the week. Work that should happen automatically from the tools the team already uses."
+    n: "7",
+    label: "Persona workspaces",
+    desc: "Sponsor, PM, BA, PO, Engineer, QA, and Scrum Master — each with a mission-control layout matched to how that role works, not a shared generic board.",
   },
   {
-    "n": "3wk",
-    "label": "Risk escalation lag",
-    "desc": "Issues flagged in standups go unlogged until they are urgent. By the time they reach the Sponsor, the mitigation window has closed."
+    n: "1",
+    label: "AI Review Queue",
+    desc: "Every AI proposal — workspace updates, extracted requirements, meeting actions — lands in one approval queue. Nothing applies until a human accepts, edits, or rejects it.",
   },
   {
-    "n": "97%",
-    "label": "Lessons lost",
-    "desc": "Closure reports sit in folders. The knowledge that could prevent the next project from making the same mistakes never reaches the people who need it."
-  }
+    n: "≤10s",
+    label: "Signal propagation",
+    desc: "After PM approval, delivery impact events reach relevant persona dashboards in seconds during pilot testing — not batch overnight sync.",
+  },
+] as const;
+
+export type QuickStartStep = {
+  step: string;
+  label: string;
+  detail: string;
+};
+
+/** Above-the-fold path — mirrors the PM-first workspace flow. */
+export const QUICK_START_STEPS: readonly QuickStartStep[] = [
+  {
+    step: "01",
+    label: "Upload business case",
+    detail: "PM Mission Control extracts scope, milestones, and RAID into the Review Queue.",
+  },
+  {
+    step: "02",
+    label: "Invite your team",
+    detail: "Generate role-specific /join links — BA, Engineer, QA land in the same workspace.",
+  },
+  {
+    step: "03",
+    label: "Approve & deliver",
+    detail: "Accept AI proposals in the Review Queue; signals propagate across persona views.",
+  },
 ] as const;
 
 export const PRICING_TIERS = [
@@ -992,7 +1018,7 @@ export const TICKER_CAPABILITIES = [
   "Delivery Brain",
   "AI Review Queue",
   "Brief ingestion",
-  "Connected team sync",
+  "Delivery signal graph",
   "RAID tracking",
   "Meeting intelligence",
   "Decision register",
