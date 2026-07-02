@@ -785,59 +785,97 @@ export type PilotQuote = {
   org: string;
 };
 
+export type LiveFeatureCategory = "onboarding" | "ai-meetings" | "visibility";
+
 export type LiveFeature = {
   title: string;
   description: string;
+  category: LiveFeatureCategory;
+};
+
+export type LiveFeatureCategoryMeta = {
+  label: string;
+  summary: string;
+  accent: string;
+};
+
+export const LIVE_FEATURE_CATEGORIES: Record<LiveFeatureCategory, LiveFeatureCategoryMeta> = {
+  onboarding: {
+    label: "Team onboarding",
+    summary: "Bootstrap workspaces and bring teammates in with role-specific paths.",
+    accent: "#3D9660",
+  },
+  "ai-meetings": {
+    label: "AI & meetings",
+    summary: "Approval-gated AI, Helm copilot, and meeting intelligence on main today.",
+    accent: "#1C4A2E",
+  },
+  visibility: {
+    label: "Visibility",
+    summary: "Cross-role signals and dual navigation surfaces for org-wide delivery.",
+    accent: "#60A5FA",
+  },
 };
 
 export type ComingSoonFeature = {
   title: string;
   description: string;
+  priorityLabel: string;
+  priorityTone: BadgeTone;
 };
 
 /** Shipped capabilities — honest list aligned with main (F1–F5, Helm, Whisper, G1–G4). */
 export const LIVE_FEATURES: readonly LiveFeature[] = [
   {
+    category: "onboarding",
     title: "PM business case upload + AI review",
     description:
       "Upload a business case or charter on PM Mission Control. Delivery Brain extracts scope, milestones, and RAID — every proposal lands in the AI Review Queue for your approval.",
   },
   {
+    category: "onboarding",
     title: "Role invite links + /join bootstrap",
     description:
       "Generate role-specific invite links from your workspace. Teammates sign up via /join and land in a workspace seeded from the same business case.",
   },
   {
+    category: "ai-meetings",
     title: "AI Review Queue",
     description:
       "Review, edit, or reject AI proposals in one queue at /workspace/proposals. Nothing is applied until a human approves it.",
   },
   {
+    category: "ai-meetings",
     title: "Ask Helm on mission pages",
     description:
       "Ask Helm — your delivery copilot — on every persona mission-control page. Context-aware answers grounded in your project data.",
   },
   {
+    category: "ai-meetings",
     title: "Meeting paste + Whisper audio",
     description:
       "Paste meeting notes or upload audio for Whisper transcription. Extract action items and feed them into your delivery signal graph.",
   },
   {
-    title: "Delivery signals across roles",
-    description:
-      "PM Command Centre surfaces blockers, risks, and sprint health — propagated across persona dashboards after approval via delivery impact events.",
-  },
-  {
+    category: "ai-meetings",
     title: "Dedicated meeting review page",
     description:
       "Paste or transcribe meeting notes, then review extracted actions on a dedicated meeting page before they feed into your delivery signal graph.",
   },
   {
+    category: "ai-meetings",
     title: "Standup tasks on persona missions",
     description:
       "Standup intelligence surfaces on each persona mission-control page — action items scoped to how that role works.",
   },
   {
+    category: "visibility",
+    title: "Delivery signals across roles",
+    description:
+      "PM Command Centre surfaces blockers, risks, and sprint health — propagated across persona dashboards after approval via delivery impact events.",
+  },
+  {
+    category: "visibility",
     title: "Dual workspace surfaces",
     description:
       "Organisation-wide tools at /workspace/* plus project-scoped views at /project/[id]/* — same signal graph, two navigation contexts.",
@@ -850,16 +888,22 @@ export const COMING_SOON: readonly ComingSoonFeature[] = [
     title: "Auto email reliability",
     description:
       "Automated stakeholder updates and email digests with delivery-grade reliability.",
+    priorityLabel: "High priority",
+    priorityTone: "badge-a",
   },
   {
     title: "Full doc PDF export",
     description:
       "Export full project documentation as a structured PDF pack.",
+    priorityLabel: "In design",
+    priorityTone: "badge-g",
   },
   {
     title: "Day-in-the-life simulation",
     description:
       "Interactive day-in-the-life walkthrough for each delivery role.",
+    priorityLabel: "Exploring",
+    priorityTone: "badge-n",
   },
 ] as const;
 
