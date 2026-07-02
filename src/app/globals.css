@@ -535,3 +535,90 @@
 .mkt-role-chip-pulse {
   animation: mkt-role-chip-pulse 1.25s ease-in-out 2;
 }
+
+/* Marketing platform — preview depth */
+.marketing-platform-preview {
+  transform: perspective(1200px) rotateX(1deg);
+  transform-origin: center top;
+}
+
+/* Marketing workflow — horizontal stepper pulse */
+.marketing-workflow-stepper-pulse {
+  animation: mkt-stepper-pulse 8s ease-in-out infinite;
+}
+
+@keyframes mkt-stepper-pulse {
+  0% {
+    left: 5%;
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 95%;
+    opacity: 0.4;
+  }
+}
+
+/* Marketing workflow — signal graph */
+.marketing-signal-edge {
+  animation: mkt-signal-dash 6s linear infinite;
+}
+
+.marketing-signal-hub-pulse {
+  animation: mkt-hub-pulse 3s ease-in-out infinite;
+}
+
+.marketing-signal-particle {
+  offset-rotate: 0deg;
+  animation: mkt-signal-travel 3s ease-in-out infinite;
+}
+
+@keyframes mkt-signal-dash {
+  to {
+    stroke-dashoffset: -6;
+  }
+}
+
+@keyframes mkt-hub-pulse {
+  0%,
+  100% {
+    r: 7;
+    opacity: 0.4;
+  }
+  50% {
+    r: 8.5;
+    opacity: 0.15;
+  }
+}
+
+@keyframes mkt-signal-travel {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-platform-preview {
+    transform: none;
+  }
+
+  .marketing-workflow-stepper-pulse,
+  .marketing-signal-edge,
+  .marketing-signal-hub-pulse,
+  .marketing-signal-particle {
+    animation: none;
+  }
+}
