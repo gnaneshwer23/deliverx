@@ -3,49 +3,35 @@ import {
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
-import { ROLE_ORDER, ROLES } from "@/lib/marketing/landing-data";
+import { ROLES } from "@/lib/marketing/landing-data";
 
-function SignalHubVisual() {
+function ActivityFeedVisual() {
+  const items = [
+    { code: "PM", tone: ROLES.pm.accent, text: "Approved vendor delay escalation", time: "2m ago" },
+    { code: "BA", tone: ROLES.ba.accent, text: "REQ-089 gap flagged for review", time: "14m ago" },
+    { code: "QA", tone: ROLES.qa.accent, text: "Release gate moved to amber", time: "1h ago" },
+  ];
   return (
-    <div className="relative mt-4 flex h-full min-h-[140px] items-center justify-center" aria-hidden>
-      <svg viewBox="0 0 280 120" className="h-full w-full max-w-[320px]">
-        <defs>
-          <linearGradient id="hub-line" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(110,231,183,0.2)" />
-            <stop offset="50%" stopColor="rgba(110,231,183,0.7)" />
-            <stop offset="100%" stopColor="rgba(110,231,183,0.2)" />
-          </linearGradient>
-        </defs>
-        {ROLE_ORDER.map((id, i) => {
-          const angle = (i / ROLE_ORDER.length) * Math.PI * 2 - Math.PI / 2;
-          const cx = 140 + Math.cos(angle) * 52;
-          const cy = 60 + Math.sin(angle) * 40;
-          const role = ROLES[id];
-          return (
-            <g key={id}>
-              <line x1="140" y1="60" x2={cx} y2={cy} stroke="url(#hub-line)" strokeWidth="1" strokeDasharray="3 4" />
-              <circle cx={cx} cy={cy} r="14" fill="rgba(255,255,255,0.06)" stroke={role.accent} strokeWidth="0.8" />
-              <text
-                x={cx}
-                y={cy + 3}
-                textAnchor="middle"
-                className="fill-white font-[family-name:var(--font-mkt-mono)] text-[7px] font-semibold"
-              >
-                {role.code}
-              </text>
-            </g>
-          );
-        })}
-        <circle cx="140" cy="60" r="18" fill="rgba(61,150,96,0.25)" stroke="#3D9660" strokeWidth="1.2" />
-        <text
-          x="140"
-          y="64"
-          textAnchor="middle"
-          className="fill-[#6EE7B7] font-[family-name:var(--font-mkt-mono)] text-[8px] font-semibold"
+    <div className="mt-4 space-y-2" aria-hidden>
+      {items.map((item) => (
+        <div
+          key={item.text}
+          className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5"
         >
-          DX
-        </text>
-      </svg>
+          <span
+            className="flex size-7 shrink-0 items-center justify-center rounded-md font-[family-name:var(--font-mkt-mono)] text-[0.55rem] font-semibold text-white"
+            style={{ background: `${item.tone}33`, color: item.tone }}
+          >
+            {item.code}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[0.6875rem] text-white/70">{item.text}</p>
+          </div>
+          <span className="shrink-0 font-[family-name:var(--font-mkt-mono)] text-[0.55rem] text-white/35">
+            {item.time}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -118,7 +104,7 @@ const FOUNDATION_CARDS = [
     title: "Unified delivery hub",
     desc: "Team progress, blockers, and approvals in one signal graph — no chasing updates across tools.",
     span: "md:col-span-2",
-    visual: <SignalHubVisual />,
+    visual: <ActivityFeedVisual />,
   },
   {
     title: "Real requirements & traceability",
@@ -157,7 +143,7 @@ export function MarketingFoundationSection() {
 
       <MarketingContainer className="relative">
         <MarketingSectionIntro
-          label="One workspace"
+          label="Connected delivery"
           title={
             <>
               Stop chasing updates. <em>Start seeing delivery.</em>

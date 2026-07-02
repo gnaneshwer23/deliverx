@@ -1,21 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
 import {
   MarketingContainer,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
-import { RolePreview } from "@/components/marketing/role-previews";
-import { trackRoleChipClick } from "@/lib/marketing/analytics";
-import {
-  ROLE_ORDER,
-  ROLES,
-  ROLE_PILL_LABELS,
-  type RoleId,
-} from "@/lib/marketing/landing-data";
+import { ROLE_ORDER, ROLES, ROLE_PILL_LABELS } from "@/lib/marketing/landing-data";
 import { MarketingRoleCarousel } from "@/components/marketing/marketing-role-carousel";
 import { roleSignupLabel, signupHrefForRole } from "@/lib/marketing/role-signup";
 
@@ -63,9 +53,6 @@ const CAPABILITIES = [
 ] as const;
 
 export function MarketingProductSection() {
-  const [activeRole, setActiveRole] = useState<RoleId>("sponsor");
-  const role = ROLES[activeRole];
-
   return (
     <MarketingSection id="platform" tone="white">
       <MarketingContainer>
@@ -73,96 +60,56 @@ export function MarketingProductSection() {
           label="Platform overview"
           title={
             <>
-              One workspace. <em>Seven perspectives.</em>
+              Seven perspectives. <em>One platform.</em>
             </>
           }
-          subtitle="Every role gets a tailored dashboard with a layout built for how they work — not the same KPI grid with different labels. After PM approval, signals propagate across all seven views."
+          subtitle="Scroll through tailored dashboards for each delivery role — layouts built for how they work, not the same KPI grid with different labels."
         />
-
-        {/* Bento: vertical role rail + large preview */}
-        <div className="mt-10 grid gap-4 lg:grid-cols-[220px_1fr] lg:gap-6">
-          <nav
-            className="flex flex-row gap-1.5 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0"
-            aria-label="Role dashboards"
-          >
-            {ROLE_ORDER.map((id) => {
-              const d = ROLES[id];
-              const isActive = id === activeRole;
-              return (
-                <Link
-                  key={id}
-                  href={signupHrefForRole(id)}
-                  onClick={(event) => {
-                    if (!event.metaKey && !event.ctrlKey && event.button === 0) {
-                      event.preventDefault();
-                      const prev = activeRole;
-                      setActiveRole(id);
-                      if (id !== prev) trackRoleChipClick(id, "platform");
-                      return;
-                    }
-                    trackRoleChipClick(id, "platform");
-                  }}
-                  className={`group flex shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition duration-200 lg:w-full lg:px-4 lg:py-3 ${
-                    isActive
-                      ? "border-[#1C4A2E] bg-[#1C4A2E] text-white shadow-[0_8px_32px_-8px_rgba(28,74,46,0.35)]"
-                      : "border-[var(--mkt-border)] bg-[var(--mkt-s1)] hover:border-[var(--mkt-border-l)] hover:bg-white hover:shadow-[var(--dx-shadow-sm)] mkt-card-lift"
-                  }`}
-                >
-                  <span
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-lg font-[family-name:var(--font-mkt-mono)] text-[0.65rem] font-semibold transition ${
-                      isActive ? "bg-white/15 text-white" : ""
-                    }`}
-                    style={
-                      !isActive
-                        ? ({ background: d.accentBg, color: d.accent } as CSSProperties)
-                        : undefined
-                    }
-                  >
-                    {d.code}
-                  </span>
-                  <span className="min-w-0 hidden sm:block lg:block">
-                    <span
-                      className={`block text-[0.8125rem] font-semibold leading-tight ${
-                        isActive ? "text-white" : "text-[var(--mkt-text1)]"
-                      }`}
-                    >
-                      {ROLE_PILL_LABELS[id]}
-                    </span>
-                    <span
-                      className={`mt-0.5 block truncate text-[0.625rem] ${
-                        isActive ? "text-white/70" : "text-[var(--mkt-text3)]"
-                      }`}
-                    >
-                      {d.kpis[0].val} · {d.kpis[0].label}
-                    </span>
-                  </span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="relative min-w-0">
-            <div
-              className="pointer-events-none absolute -inset-3 rounded-3xl bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(61,150,96,0.08)_0%,transparent_70%)]"
-              aria-hidden
-            />
-            <div className="marketing-platform-preview relative shadow-[0_32px_80px_-24px_rgba(28,74,46,0.18)]">
-              <RolePreview roleId={activeRole} role={role} accentBorder={`${role.accent}55`} />
-            </div>
-            <MarketingButtonLink
-              href={signupHrefForRole(activeRole)}
-              variant="primary"
-              className="mt-5"
-              onClick={() => trackRoleChipClick(activeRole, "platform")}
-            >
-              {roleSignupLabel(activeRole)} →
-            </MarketingButtonLink>
-          </div>
-        </div>
 
         <MarketingRoleCarousel />
 
-        {/* Capability bento grid */}
+        <p className="mt-4 text-center text-xs text-[var(--mkt-text3)]">
+          Want to interact with a dashboard?{" "}
+          <Link href="#hero" className="font-medium text-[var(--mkt-green-l)] hover:underline">
+            Pick your role in the hero
+          </Link>
+          .
+        </p>
+
+        <div className="mt-8 grid grid-cols-2 gap-3 min-[901px]:grid-cols-4 min-[1200px]:grid-cols-7">
+          {ROLE_ORDER.map((id) => {
+            const role = ROLES[id];
+            const headlineKpi = role.kpis[0];
+            return (
+              <Link
+                key={id}
+                href={signupHrefForRole(id)}
+                className="group flex flex-col rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] p-3 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.12)] min-[1200px]:p-4"
+              >
+                <span
+                  className="mb-2.5 flex size-9 items-center justify-center self-start rounded-lg font-[family-name:var(--font-mkt-mono)] text-[0.65rem] font-semibold"
+                  style={{ background: role.accentBg, color: role.accent }}
+                >
+                  {role.code}
+                </span>
+                <p className="text-[0.8125rem] font-semibold leading-tight text-[var(--mkt-text1)]">
+                  {ROLE_PILL_LABELS[id]}
+                </p>
+                <p className="mt-1 line-clamp-2 text-[0.6875rem] leading-snug text-[var(--mkt-text3)]">
+                  {role.tagline}
+                </p>
+                <p className="mt-auto pt-3 font-[family-name:var(--font-mkt-mono)] text-[0.625rem] text-[var(--mkt-text3)]">
+                  <span className="font-semibold text-[var(--mkt-text2)]">{headlineKpi.val}</span>{" "}
+                  {headlineKpi.label}
+                </p>
+                <span className="mt-2 text-[0.6875rem] font-medium text-[var(--mkt-green-l)] opacity-0 transition group-hover:opacity-100">
+                  {roleSignupLabel(id)} →
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+
         <div className="mt-16 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">
           {CAPABILITIES.map((item, i) => (
             <div
@@ -203,6 +150,10 @@ export function MarketingProductSection() {
             </div>
           ))}
         </div>
+
+        <MarketingButtonLink href="/signup" variant="primary" className="mt-8">
+          Start free trial →
+        </MarketingButtonLink>
       </MarketingContainer>
     </MarketingSection>
   );

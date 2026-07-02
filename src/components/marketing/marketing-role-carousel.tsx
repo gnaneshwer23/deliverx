@@ -10,7 +10,7 @@ export function MarketingRoleCarousel() {
   const slides = [...CAROUSEL_ROLES, ...CAROUSEL_ROLES];
 
   return (
-    <div className="relative mt-12 overflow-hidden">
+    <div className="relative mt-10 overflow-hidden">
       <div className="mb-5 flex items-end justify-between gap-4 px-5 md:px-10 lg:px-12">
         <div>
           <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
