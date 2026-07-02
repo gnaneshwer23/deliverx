@@ -112,7 +112,7 @@ export default async function PmMissionControlPage({
     }
   }
 
-  let projectQuery = params.project;
+  const projectQuery = params.project;
   if (
     onboardMode &&
     onboardUser &&
