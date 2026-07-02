@@ -746,4 +746,65 @@
   .marketing-page a[class*="hover:-translate"] {
     transform: none !important;
   }
+
+  .marketing-role-carousel-track {
+    animation: none !important;
+  }
+}
+
+/* Marketing — role dashboard carousel */
+@keyframes mkt-role-carousel-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marketing-role-carousel-mask {
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.marketing-role-carousel-track {
+  animation: mkt-role-carousel-scroll 45s linear infinite;
+}
+
+.marketing-role-carousel-mask:hover .marketing-role-carousel-track {
+  animation-play-state: paused;
+}
+
+/* Marketing — workflow diagram */
+.mkt-workflow-ai-box {
+  background:
+    linear-gradient(rgba(13, 13, 11, 0.92), rgba(13, 13, 11, 0.92)) padding-box,
+    linear-gradient(135deg, rgba(167, 139, 250, 0.7), rgba(61, 150, 96, 0.5), rgba(96, 165, 250, 0.4))
+      border-box;
+  border: 1px solid transparent;
+  box-shadow: 0 0 32px -8px rgba(167, 139, 250, 0.25);
+}
+
+.marketing-workflow-hex {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.marketing-workflow-hex[data-type="trigger"] {
+  background: rgba(110, 231, 183, 0.12);
+}
+
+.marketing-workflow-hex[data-type="ai"] {
+  background: rgba(167, 139, 250, 0.15);
+}
+
+.marketing-workflow-hex[data-type="branch"] {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.marketing-workflow-hex[data-type="human"] {
+  background: rgba(96, 165, 250, 0.12);
+}
+
+.marketing-workflow-hex[data-type="outcome"] {
+  background: rgba(61, 150, 96, 0.18);
 }

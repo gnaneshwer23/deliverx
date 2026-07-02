@@ -6,6 +6,7 @@ import {
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
+import { WorkflowDiagram } from "@/components/marketing/marketing-workflow-diagram";
 import {
   DELIVERY_STAGES,
   ROLES,
@@ -205,8 +206,10 @@ export function MarketingWorkflowSection() {
           className="[&_em]:text-[#6EE7B7] [&_h2]:text-white [&_p]:text-white/65 [&_header>p]:text-white/45"
         />
 
+        <WorkflowDiagram />
+
         {/* Horizontal pipeline stepper */}
-        <div className="mt-12">
+        <div className="mt-16">
           <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-white/40">
             End-to-end flow
           </p>
