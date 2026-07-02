@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { SignupForm } from "./signup-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { ROLE_PILL_LABELS } from "@/lib/marketing/landing-data";
@@ -9,8 +8,6 @@ import {
   parseSignupRoleParam,
 } from "@/lib/marketing/role-signup";
 import { dxClass } from "@/lib/dx-theme";
-import { createClient } from "@/lib/supabase/server";
-import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 
 type Search = Promise<{ invite?: string; join?: string; role?: string }>;
 
@@ -19,19 +16,6 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
   const preselectedRole = parseSignupRoleParam(roleParam);
   const marketingRole = preselectedRole ? dbRoleToMarketingRole(preselectedRole) : null;
   const preselectedLabel = marketingRole ? ROLE_PILL_LABELS[marketingRole] : null;
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    redirect(
-      await resolveAuthenticatedPath(
-        supabase,
-        join ? `/join?token=${encodeURIComponent(join)}` : invite ? `/invite/${invite}` : null,
-      ),
-    );
-  }
 
   return (
     <div className="w-full max-w-[388px]">

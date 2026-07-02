@@ -1,10 +1,7 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { LoginForm } from "./login-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
-import { createClient } from "@/lib/supabase/server";
-import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 
 type Search = Promise<{ next?: string; reset?: string; error?: string }>;
 
@@ -14,14 +11,6 @@ export default async function LoginPage({
   searchParams: Search;
 }) {
   const { next, reset, error } = await searchParams;
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    redirect(await resolveAuthenticatedPath(supabase, next));
-  }
 
   return (
     <div className="w-full max-w-[388px]">

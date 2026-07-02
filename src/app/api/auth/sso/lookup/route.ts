@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
   try {
     const match = await findSsoForEmail(email);
     if (!match) {
-      return NextResponse.json({ ssoAvailable: false });
+      return NextResponse.json({ ssoAvailable: false }, {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      });
     }
 
     return NextResponse.json({
@@ -20,6 +24,10 @@ export async function GET(request: NextRequest) {
       domain: match.domain,
       idpName: match.idpName,
       ssoRequired: match.ssoRequired,
+    }, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+      },
     });
   } catch {
     return NextResponse.json({ ssoAvailable: false });

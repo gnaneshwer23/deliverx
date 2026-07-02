@@ -10,6 +10,10 @@ export function formatAuthError(message: string): string {
     return "Incorrect email or password.";
   }
 
+  if (lower.includes("timed out") || lower.includes("timeout")) {
+    return "Sign-in is taking too long. Check your connection and try again.";
+  }
+
   if (
     lower.includes("email logins are disabled") ||
     lower.includes("email_provider_disabled")

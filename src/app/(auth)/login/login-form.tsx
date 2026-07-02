@@ -1,10 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useActionState, useState } from "react";
 import { dxClass } from "@/lib/dx-theme";
-import { SsoLoginPanel } from "@/components/auth/sso-login-panel";
 import { loginAction, type LoginState } from "./actions";
+
+const SsoLoginPanel = dynamic(
+  () =>
+    import("@/components/auth/sso-login-panel").then((mod) => ({
+      default: mod.SsoLoginPanel,
+    })),
+  { ssr: false },
+);
 
 const initial: LoginState = { ok: false };
 
@@ -17,6 +25,7 @@ export function LoginForm({ next }: { next?: string }) {
     <>
       <form action={formAction} className="flex flex-col gap-3.5" data-testid="login-form">
         {next ? <input type="hidden" name="next" value={next} /> : null}
+        {ssoRequired ? <input type="hidden" name="ssoRequired" value="1" /> : null}
 
         <label className="block">
           <span className={dxClass.label}>Email</span>
