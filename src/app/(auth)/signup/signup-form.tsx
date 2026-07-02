@@ -23,6 +23,7 @@ export function SignupForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
     setError(null);
     setPending(true);
 

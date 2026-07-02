@@ -10,12 +10,19 @@ import {
 } from "@/lib/auth/route-guards";
 import { hasSupabaseAuthCookie } from "@/lib/supabase/auth-cookies";
 
+const MARKETING_PUBLIC_PATHS = ["/", "/privacy", "/terms"];
+
+function isMarketingPublicPath(pathname: string): boolean {
+  return MARKETING_PUBLIC_PATHS.includes(pathname);
+}
+
 export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
+  const pathname = request.nextUrl.pathname;
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-pathname", request.nextUrl.pathname);
+  requestHeaders.set("x-pathname", pathname);
   requestHeaders.set("x-search", request.nextUrl.search);
 
   const passThrough = (response: NextResponse) => {
@@ -29,13 +36,16 @@ export async function updateSession(request: NextRequest) {
     return passThrough(NextResponse.next({ request: { headers: requestHeaders } }));
   }
 
-  // Anonymous visitors on public auth pages skip a Supabase round-trip.
-  if (!hasSupabaseAuthCookie(request) && isAuthEntryPath(request.nextUrl.pathname)) {
+  // Anonymous visitors on marketing/auth entry pages skip a Supabase round-trip.
+  if (
+    !hasSupabaseAuthCookie(request) &&
+    (isMarketingPublicPath(pathname) || isAuthEntryPath(pathname))
+  ) {
     return passThrough(NextResponse.next({ request: { headers: requestHeaders } }));
   }
 
   // Protect onboarding routes — preserve ?role= and other query params in login redirect.
-  if (!hasSupabaseAuthCookie(request) && isOnboardingPath(request.nextUrl.pathname)) {
+  if (!hasSupabaseAuthCookie(request) && isOnboardingPath(pathname)) {
     return NextResponse.redirect(
       new URL(buildLoginRedirectPath(requestPathWithSearch(request)), request.url),
     );
@@ -71,7 +81,7 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (user && isAuthEntryPath(request.nextUrl.pathname)) {
+    if (user && isAuthEntryPath(pathname)) {
       const next =
         request.nextUrl.searchParams.get("next") ?? resolveSignupOnboardingNext(request);
       const dest = await resolveAuthenticatedPath(supabase, next, user.id);

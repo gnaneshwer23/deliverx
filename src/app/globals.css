@@ -624,6 +624,11 @@
 }
 
 /* Marketing landing — Monday-style polish utilities */
+.marketing-page main > section:not(#hero):not(#quick-start) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
+}
+
 .mkt-hero-mesh {
   background-image:
     radial-gradient(ellipse 90% 70% at 10% 0%, rgba(61, 150, 96, 0.14), transparent 55%),
