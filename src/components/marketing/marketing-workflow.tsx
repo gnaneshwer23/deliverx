@@ -65,10 +65,7 @@ export function MarketingWorkflowSection() {
   const stage = DELIVERY_STAGES[activeStage];
 
   return (
-    <MarketingSection
-      id="workflow"
-      className="relative overflow-hidden bg-[#0D0D0B] !py-14 md:!py-20"
-    >
+    <MarketingSection id="workflow" tone="dark" className="relative">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(61,150,96,0.15)_0%,transparent_60%)]"
         aria-hidden

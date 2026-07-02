@@ -6,7 +6,7 @@ export function MarketingQuickStartStrip() {
     <section
       id="quick-start"
       aria-label="Three steps to start"
-      className="border-y border-[var(--mkt-border)] bg-[var(--mkt-s2)] py-6 md:py-8"
+      className="border-y border-[var(--mkt-border)] bg-[var(--mkt-s2)] py-8 md:py-10"
     >
       <MarketingContainer>
         <p className="mb-5 text-center font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">

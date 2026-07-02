@@ -112,7 +112,7 @@ export function MarketingNav() {
         }`}
       >
         <MarketingLogo />
-        <nav className="hidden items-center gap-0.5 md:flex" aria-label="Primary">
+        <nav className="mx-auto hidden items-center gap-0.5 md:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}

@@ -15,6 +15,15 @@ const variants: Record<BtnVariant, string> = {
   ctaOutline: `${base} rounded-[10px] border border-white/30 bg-transparent px-7 py-[13px] text-[0.9375rem] text-white hover:border-white/50 hover:bg-white/8`,
 };
 
+function isNativeHref(href: string) {
+  return (
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:") ||
+    href.startsWith("http://") ||
+    href.startsWith("https://")
+  );
+}
+
 export function MarketingButtonLink({
   href,
   variant = "primary",
@@ -22,8 +31,21 @@ export function MarketingButtonLink({
   children,
   ...props
 }: ComponentProps<typeof Link> & { variant?: BtnVariant; children: ReactNode }) {
+  const classes = `${variants[variant]} ${className}`;
+
+  if (typeof href === "string" && isNativeHref(href)) {
+    const { prefetch: _prefetch, ...anchorProps } = props as ComponentProps<"a"> & {
+      prefetch?: boolean;
+    };
+    return (
+      <a href={href} className={classes} {...anchorProps}>
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <Link href={href} className={`${variants[variant]} ${className}`} {...props}>
+    <Link href={href} className={classes} {...props}>
       {children}
     </Link>
   );

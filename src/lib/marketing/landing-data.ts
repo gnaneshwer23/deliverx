@@ -952,7 +952,7 @@ export const QUICK_START_STEPS: readonly QuickStartStep[] = [
   {
     step: "02",
     label: "Invite your team",
-    detail: "Generate role-specific /join links — BA, Engineer, QA land in the same workspace.",
+    detail: "Generate role-specific /join links — BA, Engineer, and QA land in the same workspace.",
   },
   {
     step: "03",
@@ -1016,7 +1016,7 @@ export const PRICING_TIERS = [
       "Dedicated success manager"
     ],
     "cta": "Contact sales",
-    "ctaHref": "/signup",
+    "ctaHref": "mailto:hello@deliverx.dev?subject=DeliverX%20Enterprise%20enquiry",
     "featured": false,
     "ghost": true,
     "customPrice": true

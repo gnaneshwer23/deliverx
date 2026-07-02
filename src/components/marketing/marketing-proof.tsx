@@ -17,7 +17,7 @@ export function MarketingProofSection() {
               Built on <em>delivery reality.</em>
             </>
           }
-          subtitle="Platform capabilities from the current pilot — not industry survey statistics. Example dashboards elsewhere on this page use NHS EHR programme data."
+          subtitle="Platform capabilities from the current pilot — not industry survey statistics. Example dashboards on this page use NHS EHR programme data."
         />
         <div className="mt-8 grid gap-4 max-[900px]:grid-cols-1 min-[901px]:grid-cols-3">
           {PROOF_STATS.map((stat) => (

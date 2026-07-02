@@ -4,7 +4,7 @@ import { mkt, mktCssVars } from "@/lib/marketing/landing-theme";
 export function MarketingPageShell({ children }: { children: ReactNode }) {
   return (
     <div
-      className="marketing-page min-h-screen bg-[var(--mkt-ink)] text-[var(--mkt-text1)] antialiased"
+      className="marketing-page min-h-screen overflow-x-clip bg-[var(--mkt-ink)] text-[var(--mkt-text1)] antialiased"
       style={mktCssVars as CSSProperties}
     >
       <a
@@ -40,6 +40,7 @@ export type MarketingSectionTone =
   | "white"
   | "green-tint"
   | "muted"
+  | "dark"
   | "none";
 
 const SECTION_TONE_CLASS: Record<MarketingSectionTone, string> = {
@@ -48,6 +49,7 @@ const SECTION_TONE_CLASS: Record<MarketingSectionTone, string> = {
   "green-tint":
     "bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] border-y border-[rgba(28,74,46,0.08)]",
   muted: "bg-[var(--mkt-s2)] border-y border-[var(--mkt-border)]",
+  dark: "bg-[#0D0D0B] text-white overflow-hidden",
   none: "",
 };
 
@@ -65,7 +67,7 @@ export function MarketingSection({
   return (
     <section
       id={id}
-      className={`scroll-mt-[var(--mkt-navh)] py-12 md:py-[clamp(48px,7vw,80px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
+      className={`scroll-mt-[var(--mkt-navh)] py-14 md:py-[clamp(56px,7vw,88px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </section>

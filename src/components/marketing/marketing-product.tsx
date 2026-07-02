@@ -60,7 +60,7 @@ export function MarketingProductSection() {
               Approval-gated AI. <em>Role-ready views.</em>
             </>
           }
-          subtitle="Requirements register, meeting intel, RAID, and persona mission controls — shipped on main today. Pick a role in the hero to preview an example dashboard."
+          subtitle="Requirements register, meeting intel, RAID, and persona mission controls — live on main today. Choose a role in the hero to preview an example dashboard."
         />
 
         <div className="mt-10 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">
@@ -104,8 +104,8 @@ export function MarketingProductSection() {
           ))}
         </div>
 
-        <MarketingButtonLink href="/signup" variant="primary" className="mt-8">
-          Start free trial →
+        <MarketingButtonLink href="/signup" variant="primary" className="mt-10">
+          Start free trial
         </MarketingButtonLink>
       </MarketingContainer>
     </MarketingSection>

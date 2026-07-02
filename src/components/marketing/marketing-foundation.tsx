@@ -133,10 +133,7 @@ const FOUNDATION_CARDS = [
 
 export function MarketingFoundationSection() {
   return (
-    <MarketingSection
-      id="foundation"
-      className="relative overflow-hidden bg-[#0D0D0B] !py-14 md:!py-20"
-    >
+    <MarketingSection id="foundation" tone="dark" className="relative">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_20%,rgba(61,150,96,0.12)_0%,transparent_60%)]"
         aria-hidden
@@ -154,7 +151,7 @@ export function MarketingFoundationSection() {
               Stop chasing updates. <em>Start seeing delivery.</em>
             </>
           }
-          subtitle="Progress, contributions, blockers, and approvals — monitored in one place. No Slack threads, no Jira dashboards, no email chains to reconcile."
+          subtitle="Progress, blockers, and approvals in one place — without Slack threads, Jira dashboards, or email chains to reconcile."
           className="[&_em]:text-[#6EE7B7] [&_h2]:text-white [&_p]:text-white/65 [&_header>p]:text-white/45"
         />
 

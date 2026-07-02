@@ -21,7 +21,7 @@ export function MarketingHero() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-[var(--mkt-ink)] pt-[calc(var(--mkt-navh)+40px)] pb-10"
+      className="relative flex min-h-0 flex-col justify-center overflow-hidden bg-[var(--mkt-ink)] pt-[calc(var(--mkt-navh)+32px)] pb-12 md:pb-14 lg:min-h-[calc(100svh-var(--mkt-navh))] lg:pb-10"
     >
       <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
       <div
@@ -52,9 +52,9 @@ export function MarketingHero() {
               <em className="italic text-[#3D9660]">Delivery happens.</em>
             </h1>
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.65] text-[var(--mkt-text2)]">
-              Teams lose hours reconciling Slack, Jira, and decks that never agree — DeliverX connects{" "}
+              Teams lose hours reconciling Slack, Jira, and decks that never align. DeliverX connects{" "}
               <span className="font-medium text-[var(--mkt-green)]">seven delivery roles</span> in one
-              signal graph where AI drafts updates and your team approves before anything applies.
+              signal graph — AI drafts updates; your team approves before anything applies.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg" className="mkt-card-lift">
@@ -64,18 +64,18 @@ export function MarketingHero() {
                 href="#onboarding"
                 className="text-sm font-medium text-[var(--mkt-text2)] underline-offset-4 transition hover:text-[var(--mkt-green-l)] hover:underline"
               >
-                See how to start
+                Explore role onboarding
               </a>
             </div>
             <TrustChecklist
               pills
-              items={["No credit card", "15-minute setup", "GDPR ready"]}
+              items={["No credit card", "15-minute setup", "GDPR-ready"]}
             />
           </div>
 
-          <div className="flex flex-col gap-0 max-[900px]:order-first">
+          <div className="flex min-w-0 flex-col gap-0 max-[900px]:order-first">
             <p className="mb-2.5 text-xs font-medium text-[var(--mkt-text3)]">
-              Pick your role · example dashboard preview →
+              Choose your role · example dashboard preview
             </p>
             <div className="mb-4 flex flex-wrap gap-1.5">
               {ROLE_ORDER.map((id, index) => {
@@ -122,7 +122,7 @@ export function MarketingHero() {
                 );
               })}
             </div>
-            <div className="mkt-hero-float rounded-2xl shadow-[0_32px_80px_-24px_rgba(28,74,46,0.22)]">
+            <div className="mkt-hero-float min-w-0 rounded-2xl shadow-[0_32px_80px_-24px_rgba(28,74,46,0.22)]">
               <DashboardPreview role={role} roleId={activeRole} accentBorder={`${role.accent}55`} />
             </div>
             <MarketingButtonLink
