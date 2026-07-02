@@ -38,10 +38,10 @@ export function MarketingPricingSection() {
           label="Pricing"
           title={
             <>
-              Simple plans. <em>Serious delivery.</em>
+              Pricing <em>coming soon.</em>
             </>
           }
-          subtitle="30-day free trial on all plans. No credit card required."
+          subtitle="Start free today — no credit card required. Paid plans will launch once billing is live."
         />
 
         <div className="mt-8 grid gap-4 max-[900px]:grid-cols-1 min-[901px]:grid-cols-3">

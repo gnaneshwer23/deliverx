@@ -32,7 +32,7 @@ export function MarketingProductSection() {
               One workspace. <em>Seven perspectives.</em>
             </>
           }
-          subtitle="Every role gets a tailored dashboard with a layout built for how they work — not the same KPI grid with different labels. One signal updates all seven views instantly."
+          subtitle="Every role gets a tailored dashboard with a layout built for how they work — not the same KPI grid with different labels. After PM approval, signals propagate across all seven views."
         />
 
         <div className="mt-6 flex flex-wrap gap-1.5">
@@ -105,7 +105,7 @@ export function MarketingProductSection() {
             },
             {
               title: "Connected team sync",
-              desc: "One signal updates every relevant dashboard, from BA gap to Sponsor escalation.",
+              desc: "Approved delivery impact events propagate to every relevant dashboard — from BA gaps to Sponsor escalation.",
             },
           ].map((item) => (
             <div

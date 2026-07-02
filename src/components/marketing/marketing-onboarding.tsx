@@ -30,7 +30,7 @@ export function MarketingOnboardingSection() {
               Your role. Your <em>workspace.</em>
             </>
           }
-          subtitle="Honest paths per role: Sponsor GO gate on business case · PM uploads brief on Mission Control · BA joins via PM invite link. Select a role to see the real steps."
+          subtitle="Honest paths per role: Sponsor starts at /project/new (business case GO gate) · PM uploads brief at /workspace/pm-mission?onboard=1 · BA joins via PM invite link. Select a role to see the real steps."
         />
 
         <div className="mt-8 flex flex-wrap gap-2">
