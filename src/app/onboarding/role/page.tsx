@@ -11,7 +11,7 @@ type Search = Promise<{ role?: string }>;
 export default async function RolePage({ searchParams }: { searchParams: Search }) {
   const { role: roleParam } = await searchParams;
   const preselectedRole = parseSignupRoleParam(roleParam);
-  const { profile, gatewayStep } = await getOnboardingProfile();
+  const { profile, gatewayStep, draftProjectId } = await getOnboardingProfile();
 
   if (isSponsorGatewayComplete(profile, gatewayStep)) {
     redirect(resolveRoleHomePath(profile?.role));
@@ -25,6 +25,7 @@ export default async function RolePage({ searchParams }: { searchParams: Search 
       hasRole: true,
       gatewayStep,
       role: profile.role,
+      draftProjectId,
     });
     redirect(next ?? getPostRoleSelectRedirect(profile.role));
   }

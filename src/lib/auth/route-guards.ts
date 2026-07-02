@@ -41,3 +41,22 @@ export function resolveSignupOnboardingNext(request: Pick<NextRequest, "nextUrl"
 export function requestPathWithSearch(request: Pick<NextRequest, "nextUrl">): string {
   return `${request.nextUrl.pathname}${request.nextUrl.search}`;
 }
+
+/** True when the user is already on (or past) the gateway redirect destination. */
+export function isGatewayRedirectDestination(currentPath: string, redirectPath: string): boolean {
+  if (currentPath === redirectPath) return true;
+
+  try {
+    const current = new URL(currentPath, "http://local");
+    const target = new URL(redirectPath, "http://local");
+    if (current.pathname !== target.pathname) return false;
+
+    for (const [key, value] of target.searchParams.entries()) {
+      if (current.searchParams.get(key) !== value) return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}

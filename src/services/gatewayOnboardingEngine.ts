@@ -204,13 +204,24 @@ export function gatewayStepToProjectFormStep(
   }
 }
 
-export const PM_ONBOARD_MISSION_PATH = "/workspace/pm-mission?onboard=1";
+export function buildPmOnboardMissionPath(
+  projectId?: string | null,
+  onboardError?: string | null,
+): string {
+  const params = new URLSearchParams({ onboard: "1" });
+  if (projectId) params.set("project", projectId);
+  if (onboardError) params.set("onboard_error", onboardError);
+  return `/workspace/pm-mission?${params.toString()}`;
+}
+
+export const PM_ONBOARD_MISSION_PATH = buildPmOnboardMissionPath();
 
 export function resolveGatewayRedirect(input: {
   hasOrg: boolean;
   hasRole: boolean;
   gatewayStep: GatewayStep | null;
   role?: string | null;
+  draftProjectId?: string | null;
 }): string | null {
   if (!input.hasOrg) return "/onboarding/organisation";
   if (!input.hasRole) return "/onboarding/role";
@@ -224,7 +235,7 @@ export function resolveGatewayRedirect(input: {
       input.gatewayStep === "business_case" ||
       input.gatewayStep === "ai_review"
     ) {
-      return PM_ONBOARD_MISSION_PATH;
+      return buildPmOnboardMissionPath(input.draftProjectId);
     }
     if (input.gatewayStep === "team") return "/onboarding/complete";
     return null;
@@ -255,9 +266,9 @@ export function resolveGatewayRedirect(input: {
   return null;
 }
 
-export function getPostRoleSelectRedirect(role: string): string {
+export function getPostRoleSelectRedirect(role: string, projectId?: string | null): string {
   if (role === "executive") return "/project/new";
-  if (role === "pm") return PM_ONBOARD_MISSION_PATH;
+  if (role === "pm") return buildPmOnboardMissionPath(projectId);
   if (role === "team_member") return "/onboarding/complete";
   return "/onboarding/persona";
 }

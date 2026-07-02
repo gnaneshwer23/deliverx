@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { upsertGatewaySession } from "@/services/gatewayOnboarding";
 import {
+  buildPmOnboardMissionPath,
   getInitialGatewayStepForRole,
   getPostRoleSelectRedirect,
 } from "@/services/gatewayOnboardingEngine";
@@ -45,18 +46,39 @@ export async function setRoleAction(
 
   if (error) return { ok: false, error: error.message };
 
+  const step = getInitialGatewayStepForRole(role);
+  let pmProjectId: string | null = null;
+  let pmProjectError: string | null = null;
+
+  if (role === "pm") {
+    const ensured = await ensurePmOnboardProject(user.id, profile.organisation_id);
+    if (ensured.ok) {
+      pmProjectId = ensured.projectId;
+    } else {
+      pmProjectError = ensured.error;
+    }
+  }
+
   try {
-    const step = getInitialGatewayStepForRole(role);
     if (role === "team_member") {
       await upsertGatewaySession({ step: "complete", complete: true });
     } else if (role === "pm") {
-      await ensurePmOnboardProject(user.id, profile.organisation_id);
-      await upsertGatewaySession({ step });
+      await upsertGatewaySession({
+        step,
+        draftProjectId: pmProjectId,
+      });
     } else {
       await upsertGatewaySession({ step });
     }
-  } catch {
-    /* optional until migration applied */
+  } catch (gatewayError) {
+    if (role === "pm" && pmProjectError) {
+      redirect(buildPmOnboardMissionPath(null, pmProjectError));
+    }
+    console.error("[setRoleAction] gateway session update failed:", gatewayError);
+  }
+
+  if (role === "pm") {
+    redirect(buildPmOnboardMissionPath(pmProjectId, pmProjectError));
   }
 
   redirect(getPostRoleSelectRedirect(role));

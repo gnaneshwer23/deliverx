@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildLoginRedirectPath,
   isAuthEntryPath,
+  isGatewayRedirectDestination,
   isOnboardingPath,
   resolveSignupOnboardingNext,
 } from "@/lib/auth/route-guards";
@@ -35,5 +36,15 @@ describe("route-guards", () => {
       "/onboarding/organisation?role=executive",
     );
     expect(resolveSignupOnboardingNext(mockRequest("/signup"))).toBeNull();
+  });
+
+  it("treats pm-mission onboard URLs with extra params as already at destination", () => {
+    const target = "/workspace/pm-mission?onboard=1";
+    expect(isGatewayRedirectDestination("/workspace/pm-mission?onboard=1", target)).toBe(true);
+    expect(
+      isGatewayRedirectDestination("/workspace/pm-mission?onboard=1&project=abc", target),
+    ).toBe(true);
+    expect(isGatewayRedirectDestination("/workspace/pm-mission", target)).toBe(false);
+    expect(isGatewayRedirectDestination("/workspace/pm-mission?onboard=0", target)).toBe(false);
   });
 });

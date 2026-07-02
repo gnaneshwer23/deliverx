@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { getPmMissionControl } from "@/services/deliveryPmDashboard";
 import { MissionDashboardChrome } from "@/components/dx/mission-dashboard-chrome";
@@ -81,13 +82,15 @@ import { isMeetingReviewDeepLink, pmMeetingReviewUrl } from "@/lib/meeting-flow"
 import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
 import { getOnboardingProfile } from "@/lib/auth/onboarding";
 import { ensurePmOnboardProject } from "@/services/pmOnboardProject";
+import { buildPmOnboardMissionPath } from "@/services/gatewayOnboardingEngine";
+import { PmOnboardErrorToast } from "@/components/delivery-pm/pm-onboard-error-toast";
 
 export const dynamic = "force-dynamic";
 
 export default async function PmMissionControlPage({
   searchParams,
 }: {
-  searchParams: Promise<{ project?: string; meeting?: string; meetingId?: string; onboard?: string }>;
+  searchParams: Promise<{ project?: string; meeting?: string; meetingId?: string; onboard?: string; onboard_error?: string }>;
 }) {
   const supabase = await createClient();
   const { data: profile } = await supabase
@@ -117,15 +120,17 @@ export default async function PmMissionControlPage({
     onboardMode &&
     onboardUser &&
     onboardProfile?.organisation_id &&
-    !projectQuery
+    !projectQuery &&
+    !params.onboard_error
   ) {
-    const ensuredProjectId = await ensurePmOnboardProject(
+    const ensured = await ensurePmOnboardProject(
       onboardUser.id,
       onboardProfile.organisation_id,
-    ).catch(() => null);
-    if (ensuredProjectId) {
-      redirect(`/workspace/pm-mission?onboard=1&project=${encodeURIComponent(ensuredProjectId)}`);
+    );
+    if (ensured.ok) {
+      redirect(buildPmOnboardMissionPath(ensured.projectId));
     }
+    redirect(buildPmOnboardMissionPath(null, ensured.error));
   }
 
   const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop, orgProfile] =
@@ -386,7 +391,11 @@ export default async function PmMissionControlPage({
     ) : null;
 
   return (
-    <MissionDashboardChrome
+    <>
+      <Suspense fallback={null}>
+        <PmOnboardErrorToast />
+      </Suspense>
+      <MissionDashboardChrome
       personaId="pm-mission"
       header={{
         userName: data.userName,
@@ -501,5 +510,6 @@ export default async function PmMissionControlPage({
         </div>
       </PmMissionShell>
     </MissionDashboardChrome>
+    </>
   );
 }
