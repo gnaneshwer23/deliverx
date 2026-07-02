@@ -32,7 +32,7 @@ function ExcludedIcon() {
 
 export function MarketingPricingSection() {
   return (
-    <MarketingSection id="pricing">
+    <MarketingSection id="pricing" tone="cream">
       <MarketingContainer>
         <MarketingSectionIntro
           label="Pricing"
@@ -48,14 +48,12 @@ export function MarketingPricingSection() {
           {(PRICING_TIERS as readonly PricingTier[]).map((tier) => (
             <div
               key={tier.tier}
-              className={`relative rounded-2xl border bg-[var(--mkt-s1)] p-8 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)] ${
-                tier.featured
-                  ? "border-[var(--mkt-green-l)] shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)]"
-                  : "border-[var(--mkt-border)]"
+              className={`mkt-card mkt-card-lift relative p-8 ${
+                tier.featured ? "mkt-card-gradient shadow-[0_0_0_1px_rgba(61,150,96,.18),0_12px_40px_rgba(61,150,96,.12)]" : ""
               }`}
             >
               {tier.badge ? (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--mkt-green-l)] px-3.5 py-0.5 text-[0.6875rem] font-semibold text-white whitespace-nowrap">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--mkt-green-l)] px-3.5 py-0.5 text-[0.6875rem] font-semibold text-white whitespace-nowrap shadow-[0_4px_12px_rgba(61,150,96,0.35)]">
                   {tier.badge}
                 </span>
               ) : null}

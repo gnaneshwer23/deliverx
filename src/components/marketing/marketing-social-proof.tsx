@@ -8,11 +8,11 @@ export function MarketingSocialProofSection() {
   }
 
   return (
-    <MarketingSection id="social-proof" className="bg-[var(--mkt-ink)]">
+    <MarketingSection id="social-proof" tone="white">
       <MarketingContainer>
-        <figure className="marketing-social-proof-quote mx-auto max-w-3xl border-l-4 border-[var(--mkt-green-l)] bg-[var(--mkt-s1)] px-8 py-8 md:px-10 md:py-10">
+        <figure className="marketing-social-proof-quote mkt-card mkt-card-gradient mx-auto max-w-3xl border-l-4 border-[var(--mkt-green-l)] px-8 py-8 md:px-10 md:py-10">
           <blockquote
-            className={`${mktClass.serif} text-[clamp(1.125rem,2vw,1.375rem)] leading-[1.55] tracking-[-0.01em] text-[var(--mkt-text1)]`}
+            className={`${mktClass.serif} text-[clamp(1.25rem,2.2vw,1.5rem)] leading-[1.55] tracking-[-0.015em] text-[var(--mkt-text1)]`}
           >
             &ldquo;{PILOT_QUOTE.quote}&rdquo;
           </blockquote>

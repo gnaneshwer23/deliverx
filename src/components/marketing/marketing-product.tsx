@@ -66,7 +66,7 @@ export function MarketingProductSection() {
   const role = ROLES[activeRole];
 
   return (
-    <MarketingSection id="platform" className="border-y border-[var(--mkt-border)] bg-[var(--mkt-s1)]">
+    <MarketingSection id="platform" tone="white">
       <MarketingContainer>
         <MarketingSectionIntro
           label="Platform overview"
@@ -104,7 +104,7 @@ export function MarketingProductSection() {
                   className={`group flex shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition duration-200 lg:w-full lg:px-4 lg:py-3 ${
                     isActive
                       ? "border-[#1C4A2E] bg-[#1C4A2E] text-white shadow-[0_8px_32px_-8px_rgba(28,74,46,0.35)]"
-                      : "border-[var(--mkt-border)] bg-[var(--mkt-s2)] hover:border-[var(--mkt-border-l)] hover:bg-white"
+                      : "border-[var(--mkt-border)] bg-[var(--mkt-s1)] hover:border-[var(--mkt-border-l)] hover:bg-white hover:shadow-[var(--dx-shadow-sm)] mkt-card-lift"
                   }`}
                 >
                   <span
@@ -164,8 +164,8 @@ export function MarketingProductSection() {
           {CAPABILITIES.map((item, i) => (
             <div
               key={item.title}
-              className={`group relative overflow-hidden rounded-2xl border border-[var(--mkt-border)] p-5 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_16px_48px_-24px_rgba(28,74,46,0.15)] md:p-6 ${item.span} ${
-                i === 0 ? "bg-gradient-to-br from-[#EEF5F1] to-[var(--mkt-s1)]" : "bg-[var(--mkt-s2)]"
+              className={`mkt-card mkt-card-lift group relative overflow-hidden p-5 md:p-6 ${item.span} ${
+                i === 0 ? "bg-gradient-to-br from-[#EEF5F1] to-[var(--mkt-s1)]" : ""
               }`}
             >
               <div

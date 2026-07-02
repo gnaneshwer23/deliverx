@@ -1,7 +1,7 @@
 import { DeliverXTicker } from "@/components/marketing/deliverx-ticker";
 import { MarketingCtaSection } from "@/components/marketing/marketing-cta";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
-import { MarketingDivider, MarketingPageShell } from "@/components/marketing/marketing-layout";
+import { MarketingPageShell } from "@/components/marketing/marketing-layout";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingPricingSection } from "@/components/marketing/marketing-pricing";
@@ -20,16 +20,11 @@ export default function LandingPage() {
         <MarketingHero />
         <DeliverXTicker />
         <MarketingProductSection />
-        <MarketingDivider />
         <MarketingWorkflowSection />
-        <MarketingDivider />
         <MarketingOnboardingSection />
-        <MarketingDivider />
         <MarketingWhatWorksSection />
-        <MarketingDivider />
         <MarketingProofSection />
         <MarketingSocialProofSection />
-        <MarketingDivider />
         <MarketingPricingSection />
         <MarketingCtaSection />
       </main>
