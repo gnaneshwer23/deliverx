@@ -16,6 +16,7 @@ import {
   ROLE_PILL_LABELS,
   type RoleId,
 } from "@/lib/marketing/landing-data";
+import { MarketingRoleCarousel } from "@/components/marketing/marketing-role-carousel";
 import { roleSignupLabel, signupHrefForRole } from "@/lib/marketing/role-signup";
 
 const CAPABILITIES = [
@@ -159,8 +160,10 @@ export function MarketingProductSection() {
           </div>
         </div>
 
+        <MarketingRoleCarousel />
+
         {/* Capability bento grid */}
-        <div className="mt-12 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">
+        <div className="mt-16 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">
           {CAPABILITIES.map((item, i) => (
             <div
               key={item.title}
