@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { COMING_SOON, LIVE_FEATURES, PILOT_QUOTE } from "@/lib/marketing/landing-data";
 
 describe("landing-data G5", () => {
-  it("lists six live features with title and description", () => {
-    expect(LIVE_FEATURES).toHaveLength(6);
+  it("lists nine live features with title and description", () => {
+    expect(LIVE_FEATURES).toHaveLength(9);
     for (const feature of LIVE_FEATURES) {
       expect(feature.title.trim().length).toBeGreaterThan(0);
       expect(feature.description.trim().length).toBeGreaterThan(0);

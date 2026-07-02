@@ -764,7 +764,7 @@ const DELIVERY_STAGE_DETAILS: Record<WorkspaceFlowStepId, string> = {
   ba_review:
     "BA reviews extracted requirements and closes gaps. Approved stories and traceability feed engineering and QA from one signal graph.",
   delivery:
-    "Each role gets a personalised dashboard. One blocker update propagates to PM, Engineer, QA, and Sponsor instantly.",
+    "Each role gets a personalised dashboard. After PM approval, delivery impact events propagate across PM, Engineer, QA, and Sponsor views.",
 };
 
 /** End-to-end delivery pipeline — labels aligned with `WORKSPACE_FLOW_STEPS`. */
@@ -823,9 +823,24 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
       "Paste meeting notes or upload audio for Whisper transcription. Extract action items and feed them into your delivery signal graph.",
   },
   {
-    title: "Live delivery signals",
+    title: "Delivery signals across roles",
     description:
-      "PM Command Centre surfaces live delivery signals — blockers, risks, and sprint health — propagated from one connected signal graph.",
+      "PM Command Centre surfaces blockers, risks, and sprint health — propagated across persona dashboards after approval via delivery impact events.",
+  },
+  {
+    title: "Dedicated meeting review page",
+    description:
+      "Paste or transcribe meeting notes, then review extracted actions on a dedicated meeting page before they feed into your delivery signal graph.",
+  },
+  {
+    title: "Standup tasks on persona missions",
+    description:
+      "Standup intelligence surfaces on each persona mission-control page — action items scoped to how that role works.",
+  },
+  {
+    title: "Dual workspace surfaces",
+    description:
+      "Organisation-wide tools at /workspace/* plus project-scoped views at /project/[id]/* — same signal graph, two navigation contexts.",
   },
 ] as const;
 
@@ -878,45 +893,16 @@ export const PROOF_STATS = [
 
 export const PRICING_TIERS = [
   {
-    "tier": "Starter",
-    "name": "Solo PM",
-    "price": "49",
-    "period": "/ month",
-    "desc": "For individual project managers running up to 3 active projects.",
+    "tier": "Early access",
+    "name": "Free trial",
+    "price": "Coming soon",
+    "period": "",
+    "desc": "Full platform during early access — all seven role dashboards, AI Review Queue, and connected delivery signals.",
     "features": [
-      "1 personalised PM dashboard",
-      "3 active projects",
-      "Up to 10 team members",
-      "AI document analysis",
-      "Standup intelligence",
-      "Weekly status reports"
-    ],
-    "excludedFeatures": [
-      "Sponsor dashboard",
-      "Business Analyst dashboard",
-      "Product Manager dashboard",
-      "Engineer dashboard",
-      "QA dashboard",
-      "Scrum Master dashboard",
-      "Connected team sync"
-    ],
-    "upgradeNudge": "Need all 7 role dashboards and team sync? Upgrade to Professional.",
-    "cta": "Start free trial",
-    "ctaHref": "/signup",
-    "featured": false,
-    "ghost": true
-  },
-  {
-    "tier": "Professional",
-    "name": "Delivery teams",
-    "price": "149",
-    "period": "/ month",
-    "desc": "For teams with multiple roles. All 7 role dashboards and connected team sync.",
-    "features": [
-      "Unlimited projects",
       "All 7 role dashboards",
-      "Team sync with live updates across roles",
+      "AI document analysis + Review Queue",
       "Meeting intelligence",
+      "Standup tasks on persona missions",
       "Decision register",
       "Organisational memory"
     ],
@@ -924,8 +910,27 @@ export const PRICING_TIERS = [
     "cta": "Start free trial",
     "ctaHref": "/signup",
     "featured": true,
-    "badge": "Most popular",
-    "ghost": false
+    "badge": "Available now",
+    "ghost": false,
+    "customPrice": true
+  },
+  {
+    "tier": "Teams",
+    "name": "Delivery teams",
+    "price": "Coming soon",
+    "period": "",
+    "desc": "Paid plans for delivery teams — pricing finalised once billing is live.",
+    "features": [
+      "Everything in early access",
+      "Unlimited projects",
+      "Priority support",
+      "Advanced portfolio views"
+    ],
+    "cta": "Start free trial",
+    "ctaHref": "/signup",
+    "featured": false,
+    "ghost": true,
+    "customPrice": true
   },
   {
     "tier": "Enterprise",
@@ -934,7 +939,7 @@ export const PRICING_TIERS = [
     "period": "",
     "desc": "For PMOs running cross-project portfolios with SSO and dedicated success.",
     "features": [
-      "All Professional features",
+      "All team features",
       "Programme layer",
       "Portfolio dashboard",
       "SSO / SAML",

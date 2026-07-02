@@ -45,21 +45,17 @@ export function MarketingWorkflowSection() {
               Seven roles. <em>One signal graph.</em>
             </>
           }
-          subtitle="The Delivery Brain connects every persona dashboard. Signals propagate in real time. Every AI proposal lands in the Review Queue until a human approves it."
+          subtitle="The Delivery Brain connects every persona dashboard. After PM approval, signals propagate across roles via delivery impact events. Every AI proposal lands in the Review Queue until a human approves it."
         />
 
         <div className="mt-10">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]">
-              Persona sync · live
+              Example workflow
             </p>
-            <div className="marketing-workflow-hub inline-flex items-center gap-2 rounded-full border border-[rgba(61,150,96,0.35)] bg-[rgba(61,150,96,0.08)] px-3.5 py-1.5 backdrop-blur-md">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--mkt-green-l)] opacity-60" />
-                <span className="relative inline-flex size-2 rounded-full bg-[var(--mkt-green-l)]" />
-              </span>
-              <span className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--mkt-green-l)]">
-                Delivery Brain active
+            <div className="marketing-workflow-hub inline-flex items-center gap-2 rounded-full border border-[var(--mkt-border)] bg-[rgba(255,255,255,0.55)] px-3.5 py-1.5 backdrop-blur-md">
+              <span className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--mkt-text3)]">
+                Illustrative signal flow
               </span>
             </div>
           </div>
@@ -140,7 +136,7 @@ export function MarketingWorkflowSection() {
                           isActive ? "text-[var(--mkt-green-l)]" : "text-[var(--mkt-text3)]"
                         }`}
                       >
-                        {isActive ? "active" : "synced"}
+                        {isActive ? "selected" : "example"}
                       </span>
                     </button>
                   </li>
@@ -224,7 +220,7 @@ export function MarketingWorkflowSection() {
 
       <MarketingContainer className="relative py-8 md:py-10">
         <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
-          Live signal threads
+          Example signal threads
         </p>
         <div className="grid gap-4 md:grid-cols-3">
           {THREAD_CALLOUTS.map((thread) => (

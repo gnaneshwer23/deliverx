@@ -44,7 +44,14 @@ export function MarketingHero() {
             </h1>
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.7] text-[var(--mkt-text2)]">
               Upload brief → invite BA → review in AI Queue. AI surfaces risks and drafts reports —
-              nothing applies until your team approves. Seven roles, one live picture.
+              nothing applies until your team approves. Seven roles, one connected picture.
+            </p>
+            <p className="mb-6 max-w-[480px] text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
+              <strong className="font-medium text-[var(--mkt-text2)]">Sponsor?</strong> Start at{" "}
+              <code className="rounded bg-[var(--mkt-s2)] px-1 py-0.5 text-[0.75rem]">/project/new</code>{" "}
+              — business case GO gate.{" "}
+              <strong className="font-medium text-[var(--mkt-text2)]">PM?</strong> Upload your brief at{" "}
+              <code className="rounded bg-[var(--mkt-s2)] px-1 py-0.5 text-[0.75rem]">/workspace/pm-mission?onboard=1</code>.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg">
@@ -61,7 +68,7 @@ export function MarketingHero() {
 
           <div className="flex flex-col gap-0 max-[900px]:order-first">
             <p className="mb-2.5 text-xs font-medium text-[var(--mkt-text3)]">
-              Pick your role · see your dashboard →
+              Pick your role · example dashboard preview →
             </p>
             <div className="mb-4 flex flex-wrap gap-1.5">
               {ROLE_ORDER.map((id, index) => {
