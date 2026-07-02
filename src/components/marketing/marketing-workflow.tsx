@@ -19,122 +19,6 @@ const THREAD_DOT: Record<string, string> = {
   green: "#3D9660",
 };
 
-/** Signal graph nodes — fixed positions for SVG illustration (not interactive cards). */
-const SIGNAL_NODES = [
-  { id: "pm", x: 50, y: 50, hub: true },
-  { id: "sponsor", x: 18, y: 22 },
-  { id: "ba", x: 82, y: 18 },
-  { id: "po", x: 88, y: 52 },
-  { id: "eng", x: 72, y: 82 },
-  { id: "qa", x: 28, y: 82 },
-  { id: "sm", x: 12, y: 52 },
-] as const;
-
-const SIGNAL_EDGES: [string, string][] = [
-  ["pm", "sponsor"],
-  ["pm", "ba"],
-  ["pm", "po"],
-  ["pm", "eng"],
-  ["pm", "qa"],
-  ["pm", "sm"],
-  ["ba", "eng"],
-  ["eng", "qa"],
-  ["qa", "sponsor"],
-];
-
-function SignalGraphIllustration() {
-  const nodeMap = Object.fromEntries(SIGNAL_NODES.map((n) => [n.id, n]));
-
-  return (
-    <div
-      className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[rgba(13,13,11,0.4)] p-4 md:aspect-auto md:min-h-[320px] md:p-6"
-      aria-hidden
-    >
-      <p className="mb-4 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-white/50">
-        Signal graph · after PM approval
-      </p>
-      <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="signal-edge" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(61,150,96,0.2)" />
-            <stop offset="50%" stopColor="rgba(61,150,96,0.7)" />
-            <stop offset="100%" stopColor="rgba(61,150,96,0.2)" />
-          </linearGradient>
-          <filter id="signal-glow">
-            <feGaussianBlur stdDeviation="0.8" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        {SIGNAL_EDGES.map(([from, to], i) => {
-          const a = nodeMap[from];
-          const b = nodeMap[to];
-          return (
-            <line
-              key={`${from}-${to}`}
-              x1={a.x}
-              y1={a.y}
-              x2={b.x}
-              y2={b.y}
-              stroke="url(#signal-edge)"
-              strokeWidth="0.35"
-              strokeDasharray="1.2 1.8"
-              className="marketing-signal-edge"
-              style={{ animationDelay: `${i * 0.4}s` }}
-            />
-          );
-        })}
-
-        {SIGNAL_NODES.map((node) => {
-          const role = ROLES[node.id as keyof typeof ROLES];
-          const isHub = "hub" in node && node.hub;
-          const r = isHub ? 5.5 : 4;
-          return (
-            <g key={node.id} filter={isHub ? "url(#signal-glow)" : undefined}>
-              {isHub ? (
-                <circle cx={node.x} cy={node.y} r={7} fill="rgba(61,150,96,0.15)" className="marketing-signal-hub-pulse" />
-              ) : null}
-              <circle
-                cx={node.x}
-                cy={node.y}
-                r={r}
-                fill={isHub ? "#3D9660" : "rgba(255,255,255,0.08)"}
-                stroke={isHub ? "#3D9660" : role.accent}
-                strokeWidth={isHub ? 0.6 : 0.4}
-              />
-              <text
-                x={node.x}
-                y={node.y + 0.8}
-                textAnchor="middle"
-                className="fill-white font-[family-name:var(--font-mkt-mono)] text-[2.8px] font-semibold"
-                style={{ fontSize: isHub ? "3.2px" : "2.8px" }}
-              >
-                {role.code}
-              </text>
-            </g>
-          );
-        })}
-
-        <circle r="1.2" fill="#6EE7B7" className="marketing-signal-particle" style={{ offsetPath: "path('M50 50 L18 22')" }} />
-        <circle r="1.2" fill="#6EE7B7" className="marketing-signal-particle" style={{ offsetPath: "path('M50 50 L82 18')", animationDelay: "1.2s" }} />
-        <circle r="1.2" fill="#6EE7B7" className="marketing-signal-particle" style={{ offsetPath: "path('M50 50 L72 82')", animationDelay: "2.4s" }} />
-      </svg>
-
-      <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 md:bottom-6 md:left-6">
-        <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-[family-name:var(--font-mkt-mono)] text-[9px] uppercase tracking-[0.1em] text-white/60">
-          Delivery Brain hub
-        </span>
-        <span className="rounded-full border border-[rgba(61,150,96,0.3)] bg-[rgba(61,150,96,0.12)] px-2.5 py-1 font-[family-name:var(--font-mkt-mono)] text-[9px] uppercase tracking-[0.1em] text-[#6EE7B7]">
-          Live propagation
-        </span>
-      </div>
-    </div>
-  );
-}
-
 function ReviewQueueMock() {
   const pm = ROLES.pm;
   return (
@@ -199,10 +83,10 @@ export function MarketingWorkflowSection() {
           label="Delivery pipeline"
           title={
             <>
-              Seven roles. <em>One signal graph.</em>
+              From trigger to <em>team sync.</em>
             </>
           }
-          subtitle="The Delivery Brain connects every persona dashboard. After PM approval, signals propagate across roles via delivery impact events. Every AI proposal lands in the Review Queue until a human approves it."
+          subtitle="The Delivery Brain connects every persona dashboard. After PM approval, signals propagate across roles via delivery impact events."
           className="[&_em]:text-[#6EE7B7] [&_h2]:text-white [&_p]:text-white/65 [&_header>p]:text-white/45"
         />
 
@@ -301,9 +185,7 @@ export function MarketingWorkflowSection() {
           </div>
         </div>
 
-        {/* Signal graph + Review Queue — distinct from platform bento */}
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
-          <SignalGraphIllustration />
+        <div className="mt-12 mx-auto max-w-xl">
           <ReviewQueueMock />
         </div>
       </MarketingContainer>
