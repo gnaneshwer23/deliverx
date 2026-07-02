@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import {
   MarketingContainer,
   MarketingSection,
@@ -8,10 +8,8 @@ import {
 } from "@/components/marketing/marketing-layout";
 import {
   DELIVERY_STAGES,
-  ROLE_ORDER,
   ROLES,
   THREAD_CALLOUTS,
-  type RoleId,
 } from "@/lib/marketing/landing-data";
 
 const THREAD_DOT: Record<string, string> = {
@@ -20,20 +18,178 @@ const THREAD_DOT: Record<string, string> = {
   green: "#3D9660",
 };
 
-export function MarketingWorkflowSection() {
-  const [activeRole, setActiveRole] = useState<RoleId>("pm");
-  const active = ROLES[activeRole];
+/** Signal graph nodes — fixed positions for SVG illustration (not interactive cards). */
+const SIGNAL_NODES = [
+  { id: "pm", x: 50, y: 50, hub: true },
+  { id: "sponsor", x: 18, y: 22 },
+  { id: "ba", x: 82, y: 18 },
+  { id: "po", x: 88, y: 52 },
+  { id: "eng", x: 72, y: 82 },
+  { id: "qa", x: 28, y: 82 },
+  { id: "sm", x: 12, y: 52 },
+] as const;
+
+const SIGNAL_EDGES: [string, string][] = [
+  ["pm", "sponsor"],
+  ["pm", "ba"],
+  ["pm", "po"],
+  ["pm", "eng"],
+  ["pm", "qa"],
+  ["pm", "sm"],
+  ["ba", "eng"],
+  ["eng", "qa"],
+  ["qa", "sponsor"],
+];
+
+function SignalGraphIllustration() {
+  const nodeMap = Object.fromEntries(SIGNAL_NODES.map((n) => [n.id, n]));
 
   return (
-    <MarketingSection id="workflow" className="relative overflow-hidden !pb-0">
-      <div className="marketing-workflow-mesh pointer-events-none absolute inset-0" aria-hidden />
-      <div className="marketing-workflow-grid pointer-events-none absolute inset-0" aria-hidden />
+    <div
+      className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[rgba(13,13,11,0.4)] p-4 md:aspect-auto md:min-h-[320px] md:p-6"
+      aria-hidden
+    >
+      <p className="mb-4 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-white/50">
+        Signal graph · after PM approval
+      </p>
+      <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="signal-edge" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(61,150,96,0.2)" />
+            <stop offset="50%" stopColor="rgba(61,150,96,0.7)" />
+            <stop offset="100%" stopColor="rgba(61,150,96,0.2)" />
+          </linearGradient>
+          <filter id="signal-glow">
+            <feGaussianBlur stdDeviation="0.8" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {SIGNAL_EDGES.map(([from, to], i) => {
+          const a = nodeMap[from];
+          const b = nodeMap[to];
+          return (
+            <line
+              key={`${from}-${to}`}
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke="url(#signal-edge)"
+              strokeWidth="0.35"
+              strokeDasharray="1.2 1.8"
+              className="marketing-signal-edge"
+              style={{ animationDelay: `${i * 0.4}s` }}
+            />
+          );
+        })}
+
+        {SIGNAL_NODES.map((node) => {
+          const role = ROLES[node.id as keyof typeof ROLES];
+          const isHub = "hub" in node && node.hub;
+          const r = isHub ? 5.5 : 4;
+          return (
+            <g key={node.id} filter={isHub ? "url(#signal-glow)" : undefined}>
+              {isHub ? (
+                <circle cx={node.x} cy={node.y} r={7} fill="rgba(61,150,96,0.15)" className="marketing-signal-hub-pulse" />
+              ) : null}
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={r}
+                fill={isHub ? "#3D9660" : "rgba(255,255,255,0.08)"}
+                stroke={isHub ? "#3D9660" : role.accent}
+                strokeWidth={isHub ? 0.6 : 0.4}
+              />
+              <text
+                x={node.x}
+                y={node.y + 0.8}
+                textAnchor="middle"
+                className="fill-white font-[family-name:var(--font-mkt-mono)] text-[2.8px] font-semibold"
+                style={{ fontSize: isHub ? "3.2px" : "2.8px" }}
+              >
+                {role.code}
+              </text>
+            </g>
+          );
+        })}
+
+        <circle r="1.2" fill="#6EE7B7" className="marketing-signal-particle" style={{ offsetPath: "path('M50 50 L18 22')" }} />
+        <circle r="1.2" fill="#6EE7B7" className="marketing-signal-particle" style={{ offsetPath: "path('M50 50 L82 18')", animationDelay: "1.2s" }} />
+        <circle r="1.2" fill="#6EE7B7" className="marketing-signal-particle" style={{ offsetPath: "path('M50 50 L72 82')", animationDelay: "2.4s" }} />
+      </svg>
+
+      <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 md:bottom-6 md:left-6">
+        <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-[family-name:var(--font-mkt-mono)] text-[9px] uppercase tracking-[0.1em] text-white/60">
+          Delivery Brain hub
+        </span>
+        <span className="rounded-full border border-[rgba(61,150,96,0.3)] bg-[rgba(61,150,96,0.12)] px-2.5 py-1 font-[family-name:var(--font-mkt-mono)] text-[9px] uppercase tracking-[0.1em] text-[#6EE7B7]">
+          Live propagation
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ReviewQueueMock() {
+  const pm = ROLES.pm;
+  return (
+    <div className="rounded-2xl border border-[var(--mkt-border)] bg-white p-5 shadow-[0_24px_64px_-32px_rgba(28,74,46,0.2)] md:p-6">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
+          AI Review Queue
+        </p>
+        <span className="rounded-full bg-[rgba(96,165,250,0.12)] px-2.5 py-0.5 font-[family-name:var(--font-mkt-mono)] text-[9px] font-semibold uppercase tracking-[0.08em] text-[#60A5FA]">
+          PM view
+        </span>
+      </div>
+      <p className="mb-4 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
+        Every AI proposal lands here. Nothing applies until a human approves it.
+      </p>
+      <div className="space-y-2.5">
+        {pm.loopItems.slice(0, 4).map((item) => (
+          <div
+            key={`${item.name}-${item.status}`}
+            className="flex items-center gap-3 rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] px-3 py-2.5"
+          >
+            <span
+              className="flex size-7 shrink-0 items-center justify-center rounded-md font-[family-name:var(--font-mkt-mono)] text-[0.6rem] font-semibold"
+              style={{ background: item.bg, color: item.color }}
+            >
+              {item.code}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[0.8125rem] font-medium text-[var(--mkt-text1)]">{item.name}</p>
+              <p className="truncate text-[0.6875rem] text-[var(--mkt-text3)]">{item.status}</p>
+            </div>
+            <span className="shrink-0 rounded-md bg-white px-2 py-0.5 text-[0.625rem] font-medium text-[var(--mkt-text2)]">
+              {item.badge}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function MarketingWorkflowSection() {
+  const [activeStage, setActiveStage] = useState(0);
+  const stage = DELIVERY_STAGES[activeStage];
+
+  return (
+    <MarketingSection
+      id="workflow"
+      className="relative overflow-hidden bg-[#0D0D0B] !py-14 md:!py-20"
+    >
       <div
-        className="pointer-events-none absolute left-1/2 top-[18%] size-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(61,150,96,0.18)_0%,transparent_68%)] blur-3xl"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(61,150,96,0.15)_0%,transparent_60%)]"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute right-[8%] top-[42%] size-[280px] rounded-full bg-[radial-gradient(circle,rgba(147,197,253,0.12)_0%,transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:48px_48px]"
         aria-hidden
       />
 
@@ -46,97 +202,54 @@ export function MarketingWorkflowSection() {
             </>
           }
           subtitle="The Delivery Brain connects every persona dashboard. After PM approval, signals propagate across roles via delivery impact events. Every AI proposal lands in the Review Queue until a human approves it."
+          className="[&_em]:text-[#6EE7B7] [&_h2]:text-white [&_p]:text-white/65 [&_header>p]:text-white/45"
         />
 
-        <div className="mt-10">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]">
-              Example workflow
-            </p>
-            <div className="marketing-workflow-hub inline-flex items-center gap-2 rounded-full border border-[var(--mkt-border)] bg-[rgba(255,255,255,0.55)] px-3.5 py-1.5 backdrop-blur-md">
-              <span className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--mkt-text3)]">
-                Illustrative signal flow
-              </span>
-            </div>
-          </div>
+        {/* Horizontal pipeline stepper */}
+        <div className="mt-12">
+          <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-white/40">
+            End-to-end flow
+          </p>
 
-          <div
-            className="marketing-workflow-stage relative overflow-hidden rounded-2xl border border-[var(--mkt-border)] bg-[rgba(255,255,255,0.55)] p-5 shadow-[0_24px_80px_-40px_rgba(28,74,46,0.25)] backdrop-blur-xl md:p-8"
-            aria-label="Connected delivery personas"
-          >
-            <svg
-              className="pointer-events-none absolute inset-x-6 top-[3.4rem] hidden h-8 w-[calc(100%-3rem)] min-[901px]:block"
-              viewBox="0 0 1000 32"
-              preserveAspectRatio="none"
+          <div className="relative hidden md:block">
+            <div
+              className="absolute left-[5%] right-[5%] top-[1.75rem] h-px bg-gradient-to-r from-transparent via-[rgba(61,150,96,0.5)] to-transparent"
               aria-hidden
-            >
-              <defs>
-                <linearGradient id="mkt-flow-line" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(61,150,96,0.15)" />
-                  <stop offset="50%" stopColor="rgba(61,150,96,0.55)" />
-                  <stop offset="100%" stopColor="rgba(61,150,96,0.15)" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M0 16 H1000"
-                fill="none"
-                stroke="url(#mkt-flow-line)"
-                strokeWidth="1.5"
-                strokeDasharray="6 8"
-                className="marketing-workflow-line"
-              />
-              <circle
-                r="4"
-                fill="var(--mkt-green-l)"
-                className="marketing-workflow-pulse-dot"
-                style={{ offsetPath: "path('M0 16 H1000')" }}
-              />
-            </svg>
-
-            <ol className="marketing-workflow-nodes relative grid grid-cols-2 gap-3 min-[601px]:grid-cols-4 min-[901px]:grid-cols-7 min-[901px]:gap-2">
-              {ROLE_ORDER.map((id) => {
-                const role = ROLES[id];
-                const isActive = id === activeRole;
+            />
+            <div
+              className="marketing-workflow-stepper-pulse absolute left-[5%] top-[calc(1.75rem-3px)] size-1.5 rounded-full bg-[#6EE7B7] shadow-[0_0_12px_#6EE7B7]"
+              aria-hidden
+            />
+            <ol className="relative grid grid-cols-5 gap-2">
+              {DELIVERY_STAGES.map((s, i) => {
+                const isActive = i === activeStage;
+                const isPast = i < activeStage;
                 return (
-                  <li key={id} className="relative">
+                  <li key={s.code}>
                     <button
                       type="button"
-                      onClick={() => setActiveRole(id)}
-                      className={`marketing-workflow-node group flex w-full flex-col items-center rounded-xl border px-2 py-4 text-center transition duration-300 ${
-                        isActive
-                          ? "border-[var(--node-accent)] bg-[var(--node-accent-bg)] shadow-[0_0_0_1px_var(--node-accent),0_12px_32px_-12px_var(--node-accent)]"
-                          : "border-[var(--mkt-border)] bg-[rgba(255,255,255,0.65)] hover:border-[var(--mkt-border-l)]"
+                      onClick={() => setActiveStage(i)}
+                      className={`group flex w-full flex-col items-center text-center transition duration-300 ${
+                        isActive ? "opacity-100" : "opacity-60 hover:opacity-85"
                       }`}
-                      style={
-                        {
-                          "--node-accent": role.accent,
-                          "--node-accent-bg": role.accentBg,
-                        } as CSSProperties
-                      }
                     >
                       <span
-                        className={`mb-2.5 flex size-10 items-center justify-center rounded-lg font-[family-name:var(--font-mkt-mono)] text-xs font-semibold transition ${
-                          isActive ? "text-white" : "text-[var(--mkt-text2)]"
+                        className={`relative z-[1] flex size-14 items-center justify-center rounded-2xl border font-[family-name:var(--font-mkt-mono)] text-xs font-semibold transition duration-300 ${
+                          isActive
+                            ? "border-[#3D9660] bg-[#3D9660] text-white shadow-[0_0_32px_-4px_rgba(61,150,96,0.6)]"
+                            : isPast
+                              ? "border-[rgba(61,150,96,0.4)] bg-[rgba(61,150,96,0.15)] text-[#6EE7B7]"
+                              : "border-white/10 bg-white/5 text-white/50"
                         }`}
-                        style={{
-                          background: isActive ? role.accent : "var(--mkt-s2)",
-                          boxShadow: isActive ? `0 8px 24px -8px ${role.accent}88` : undefined,
-                        }}
                       >
-                        {role.code}
-                      </span>
-                      <span className="text-[0.8125rem] font-semibold leading-tight text-[var(--mkt-text1)]">
-                        {role.name.split(" / ")[0]}
-                      </span>
-                      <span className="mt-1 line-clamp-2 text-[0.625rem] leading-snug text-[var(--mkt-text3)]">
-                        {role.tagline}
+                        {s.code}
                       </span>
                       <span
-                        className={`mt-2 font-[family-name:var(--font-mkt-mono)] text-[9px] uppercase tracking-[0.1em] ${
-                          isActive ? "text-[var(--mkt-green-l)]" : "text-[var(--mkt-text3)]"
+                        className={`mt-3 text-[0.8125rem] font-semibold leading-tight ${
+                          isActive ? "text-white" : "text-white/70"
                         }`}
                       >
-                        {isActive ? "selected" : "example"}
+                        {s.label}
                       </span>
                     </button>
                   </li>
@@ -145,88 +258,63 @@ export function MarketingWorkflowSection() {
             </ol>
           </div>
 
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_1.2fr]">
-            <div className="marketing-workflow-glass rounded-2xl border border-[var(--mkt-border)] p-5 md:p-6">
-              <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
-                End-to-end flow
-              </p>
-              <ol className="mt-4 space-y-0">
-                {DELIVERY_STAGES.map((stage, i) => (
-                  <li
-                    key={stage.code}
-                    className="relative flex gap-4 border-b border-[var(--mkt-border)] py-4 last:border-b-0"
-                  >
-                    {i < DELIVERY_STAGES.length - 1 ? (
-                      <span
-                        className="absolute left-[1.125rem] top-[2.85rem] h-[calc(100%-0.25rem)] w-px bg-gradient-to-b from-[var(--mkt-green-l)] to-transparent opacity-40"
-                        aria-hidden
-                      />
-                    ) : null}
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[rgba(61,150,96,0.25)] bg-[rgba(61,150,96,0.08)] font-[family-name:var(--font-mkt-mono)] text-[10px] font-semibold text-[var(--mkt-green-l)]">
-                      {stage.code}
-                    </span>
-                    <div className="min-w-0 pt-0.5">
-                      <p className="text-sm font-semibold text-[var(--mkt-text1)]">{stage.label}</p>
-                      <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
-                        {stage.detail}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-
-            <div
-              className="marketing-workflow-glass rounded-2xl border p-5 md:p-6"
-              style={{ borderColor: `${active.accent}44` }}
-            >
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
-                  AI Review Queue
-                </p>
-                <span
-                  className="rounded-full px-2.5 py-0.5 font-[family-name:var(--font-mkt-mono)] text-[9px] font-semibold uppercase tracking-[0.08em]"
-                  style={{ background: active.accentBg, color: active.accent }}
-                >
-                  {active.code} view
-                </span>
-              </div>
-              <div className="space-y-2.5">
-                {active.loopItems.slice(0, 4).map((item) => (
-                  <div
-                    key={`${item.name}-${item.status}`}
-                    className="flex items-center gap-3 rounded-xl border border-[var(--mkt-border)] bg-[rgba(255,255,255,0.7)] px-3 py-2.5"
+          {/* Mobile: vertical stepper */}
+          <ol className="space-y-0 md:hidden">
+            {DELIVERY_STAGES.map((s, i) => {
+              const isActive = i === activeStage;
+              return (
+                <li key={s.code}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveStage(i)}
+                    className={`flex w-full items-center gap-4 border-b border-white/8 py-4 text-left transition ${
+                      isActive ? "opacity-100" : "opacity-55"
+                    }`}
                   >
                     <span
-                      className="flex size-7 shrink-0 items-center justify-center rounded-md font-[family-name:var(--font-mkt-mono)] text-[0.6rem] font-semibold"
-                      style={{ background: item.bg, color: item.color }}
+                      className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-[family-name:var(--font-mkt-mono)] text-[10px] font-semibold ${
+                        isActive
+                          ? "bg-[#3D9660] text-white"
+                          : "border border-white/10 bg-white/5 text-white/50"
+                      }`}
                     >
-                      {item.code}
+                      {s.code}
                     </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[0.8125rem] font-medium text-[var(--mkt-text1)]">{item.name}</p>
-                      <p className="truncate text-[0.6875rem] text-[var(--mkt-text3)]">{item.status}</p>
-                    </div>
-                    <span className="shrink-0 rounded-md bg-[var(--mkt-s2)] px-2 py-0.5 text-[0.625rem] font-medium text-[var(--mkt-text2)]">
-                      {item.badge}
+                    <span className={`text-sm font-semibold ${isActive ? "text-white" : "text-white/70"}`}>
+                      {s.label}
                     </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* Active stage detail */}
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm md:p-6">
+            <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.12em] text-[#6EE7B7]">
+              Step {stage.code} · {stage.label}
+            </p>
+            <p className="mt-2 max-w-3xl text-[0.9375rem] leading-relaxed text-white/75">{stage.detail}</p>
           </div>
+        </div>
+
+        {/* Signal graph + Review Queue — distinct from platform bento */}
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+          <SignalGraphIllustration />
+          <ReviewQueueMock />
         </div>
       </MarketingContainer>
 
-      <MarketingContainer className="relative py-8 md:py-10">
-        <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
+      {/* Signal threads — light cards on dark section footer */}
+      <MarketingContainer className="relative mt-12 md:mt-16">
+        <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-white/40">
           Example signal threads
         </p>
         <div className="grid gap-4 md:grid-cols-3">
           {THREAD_CALLOUTS.map((thread) => (
             <article
               key={thread.title}
-              className="marketing-workflow-glass rounded-xl border border-[var(--mkt-border)] p-6 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_16px_48px_-32px_rgba(28,74,46,0.2)]"
+              className="rounded-xl border border-white/10 bg-white/[0.04] p-6 transition hover:border-white/20 hover:bg-white/[0.06]"
             >
               <div className="mb-3 flex items-center gap-2">
                 <span
@@ -234,14 +322,12 @@ export function MarketingWorkflowSection() {
                   style={{ background: THREAD_DOT[thread.tone], color: THREAD_DOT[thread.tone] }}
                   aria-hidden
                 />
-                <span className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--mkt-text3)]">
+                <span className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.1em] text-white/40">
                   Signal thread
                 </span>
               </div>
-              <h3 className="mb-2 text-[0.9375rem] font-semibold text-[var(--mkt-text1)]">
-                {thread.title}
-              </h3>
-              <p className="text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">{thread.body}</p>
+              <h3 className="mb-2 text-[0.9375rem] font-semibold text-white">{thread.title}</h3>
+              <p className="text-[0.8125rem] leading-relaxed text-white/60">{thread.body}</p>
             </article>
           ))}
         </div>
