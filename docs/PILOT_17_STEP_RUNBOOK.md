@@ -3,7 +3,8 @@
 Manual checklist for proving DeliverX end-to-end before a pilot. Derived from the [17 acceptance criteria](./CURSOR_IMPLEMENTATION.md#17-acceptance-criteria--scorecard) and mirrored by:
 
 - **Vitest harness:** `npm run test:acceptance` (`e2e/acceptance-17-step.test.ts`)
-- **Browser smoke:** `npm run test:e2e` ([E2E_SMOKE.md](./E2E_SMOKE.md))
+- **Browser smoke:** `npm run test:smoke` ([E2E_SMOKE.md](./E2E_SMOKE.md))
+- **Browser acceptance (17 AC):** `npm run test:e2e:acceptance` ([E2E.md](./E2E.md))
 
 Use a real Supabase project, seeded org, and test accounts. Record pass/fail and screenshots for each step.
 
@@ -42,17 +43,14 @@ Use a real Supabase project, seeded org, and test accounts. Record pass/fail and
 
 ---
 
-## Playwright smoke mapping
+## Playwright mapping
 
-The 5 browser smoke specs cover the highest-risk pilot paths:
+| Layer | Specs | Steps covered |
+|-------|-------|---------------|
+| Smoke (5) | `e2e/smoke/01`–`05` | Auth, invites, BA reqs, standup, sponsor |
+| Acceptance (17) | `e2e/acceptance/ac-01`–`ac-17` | All criteria 1:1 — see [E2E.md](./E2E.md) |
 
-1. **Auth** → steps 4, 9 (login / role home)
-2. **Invite join** → steps 3, 4, 8, 14
-3. **BA requirements** → steps 5, 6
-4. **Standup flow** → steps 10, 11, 12
-5. **Sponsor read-only** → steps 14, 15
-
-Run automated smoke first, then complete this runbook for full pilot sign-off.
+Run automated browser tests first, then complete this runbook for full pilot sign-off.
 
 ---
 

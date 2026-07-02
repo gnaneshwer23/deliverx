@@ -25,14 +25,19 @@ export function DeliveryImpactFeed({
   emptyMessage?: string;
 }) {
   if (events.length === 0) {
-    return <FeedCardList emptyMessage={emptyMessage} isEmpty />;
+    return (
+      <div data-testid="delivery-impact-feed">
+        <FeedCardList emptyMessage={emptyMessage} isEmpty />
+      </div>
+    );
   }
 
   return (
-    <FeedCardList
-      title={title}
-      icon={<RefreshCw size={14} className="text-[#1C4A2E]" />}
-    >
+    <div data-testid="delivery-impact-feed">
+      <FeedCardList
+        title={title}
+        icon={<RefreshCw size={14} className="text-[#1C4A2E]" />}
+      >
       {events.map((event) => {
         const actionHref = buildImpactEventHref(event);
         const actionLabel = impactEventActionLabel(event);
@@ -72,6 +77,7 @@ export function DeliveryImpactFeed({
           />
         );
       })}
-    </FeedCardList>
+      </FeedCardList>
+    </div>
   );
 }

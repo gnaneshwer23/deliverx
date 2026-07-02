@@ -112,7 +112,7 @@ describe("H1: 17-step acceptance — live AI (optional)", () => {
 });
 
 describe("H1: browser E2E gate", () => {
-  it("documents Playwright 5-step smoke suite (e2e/smoke/)", () => {
+  it("documents Playwright browser suites (smoke + 17-AC acceptance)", () => {
     expect(process.env.PLAYWRIGHT_BASE_URL ?? process.env.E2E_BASE_URL ?? "http://127.0.0.1:3000").toMatch(
       /^https?:\/\//,
     );

@@ -27,6 +27,20 @@ export const MOCK_SPONSOR_INVITE: MockInvitePreview = {
   invitedByName: "Jordan Chen",
 };
 
+export const MOCK_ENGINEER_INVITE: MockInvitePreview = {
+  ...MOCK_BA_INVITE,
+  role: "engineer",
+};
+
+export const MOCK_ROLE_INVITE_TOKENS = {
+  ba: "mock-ba-invite-token",
+  engineer: "mock-engineer-invite-token",
+  qa: "mock-qa-invite-token",
+  product_manager: "mock-product-invite-token",
+  scrum_master: "mock-scrum-invite-token",
+  executive: "mock-sponsor-invite-token",
+} as const;
+
 export async function mockInviteValidate(
   page: Page,
   preview: MockInvitePreview = MOCK_BA_INVITE,
