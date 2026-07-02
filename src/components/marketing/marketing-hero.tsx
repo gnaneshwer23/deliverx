@@ -43,22 +43,15 @@ export function MarketingHero() {
               <em className="italic text-[#3D9660]">Delivery happens.</em>
             </h1>
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.7] text-[var(--mkt-text2)]">
-              Upload brief → invite BA → review in AI Queue. AI surfaces risks and drafts reports —
-              nothing applies until your team approves. Seven roles, one connected picture.
-            </p>
-            <p className="mb-6 max-w-[480px] text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
-              <strong className="font-medium text-[var(--mkt-text2)]">Sponsor?</strong> Start at{" "}
-              <code className="rounded bg-[var(--mkt-s2)] px-1 py-0.5 text-[0.75rem]">/project/new</code>{" "}
-              — business case GO gate.{" "}
-              <strong className="font-medium text-[var(--mkt-text2)]">PM?</strong> Upload your brief at{" "}
-              <code className="rounded bg-[var(--mkt-s2)] px-1 py-0.5 text-[0.75rem]">/workspace/pm-mission?onboard=1</code>.
+              DeliverX connects seven delivery roles in one signal graph. AI surfaces risks and drafts
+              reports — nothing applies until your team approves in the Review Queue.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg">
                 Start free trial
               </MarketingButtonLink>
-              <MarketingButtonLink href="#platform" variant="ghostLg">
-                See the platform
+              <MarketingButtonLink href="#onboarding" variant="ghostLg">
+                See how to start
               </MarketingButtonLink>
             </div>
             <TrustChecklist
