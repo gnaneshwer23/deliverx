@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test e2e/smoke e2e/acceptance",
     "test:smoke": "playwright test e2e/smoke",
+    "test:e2e:acceptance": "playwright test e2e/acceptance",
     "test:e2e:vitest": "vitest run e2e/",
     "test:acceptance": "vitest run e2e/acceptance-17-step.test.ts",
     "test:watch": "vitest"

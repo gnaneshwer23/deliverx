@@ -113,6 +113,7 @@ export function HelmCopilotPanel({
   return (
     <div
       className={`flex min-h-0 flex-col overflow-hidden border border-[#E4E4DC] bg-white ${shellClass}`}
+      data-testid="helm-copilot-panel"
     >
       <div className="flex shrink-0 items-center justify-between border-b border-[#E4E4DC] bg-[#F7F7F2] px-4 py-3">
         <div className="flex items-center gap-2">

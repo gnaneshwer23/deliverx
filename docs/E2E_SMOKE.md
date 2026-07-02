@@ -1,5 +1,7 @@
 # E2E smoke — Playwright 5-step suite
 
+> **Full docs:** See [E2E.md](./E2E.md) for the 17-AC acceptance suite, AC mapping table, and combined commands.
+
 Browser smoke tests for DeliverX pilot readiness (**E2E-SMOKE-5**). Complements the Vitest integration harness in `e2e/acceptance-17-step.test.ts`.
 
 For the full manual 17-step pilot checklist, see [PILOT_17_STEP_RUNBOOK.md](./PILOT_17_STEP_RUNBOOK.md).

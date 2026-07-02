@@ -22,7 +22,7 @@ export default async function NewProjectPage({
   const selected = playbooks.find((p) => p.id === selectedId) ?? null;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10 md:py-14">
+    <div className="mx-auto max-w-2xl px-6 py-10 md:py-14" data-testid="project-new-page">
       <h1 className={`${dxClass.display} text-2xl md:text-3xl`}>Name your first delivery project</h1>
       <p className="mt-2 text-[15px] font-light text-[#6B7280]">
         Sponsors and delivery leads: capture your initiative, submit a Brief v2 business case, and

@@ -24,7 +24,8 @@ export function BaHandoffKpiStrip({
   });
 
   return (
-    <MissionKpiGrid layout="wide" className="ba-handoff-kpis">
+    <div data-testid="ba-handoff-kpis">
+      <MissionKpiGrid layout="wide" className="ba-handoff-kpis">
       {kpis.map((kpi) => {
         const card = (
           <MissionKpiCard
@@ -49,6 +50,7 @@ export function BaHandoffKpiStrip({
           <div key={kpi.label}>{card}</div>
         );
       })}
-    </MissionKpiGrid>
+      </MissionKpiGrid>
+    </div>
   );
 }

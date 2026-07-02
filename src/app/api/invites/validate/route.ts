@@ -9,14 +9,22 @@ export async function GET(req: Request) {
   }
 
   if (process.env.E2E_MOCK_INVITES === "true" && token.startsWith("mock-")) {
-    const sponsor = token.includes("sponsor");
+    const mockRoles: Record<string, { role: string; viewMode: "full" | "read_only" }> = {
+      "mock-ba-invite-token": { role: "ba", viewMode: "full" },
+      "mock-sponsor-invite-token": { role: "executive", viewMode: "read_only" },
+      "mock-engineer-invite-token": { role: "engineer", viewMode: "full" },
+      "mock-qa-invite-token": { role: "qa", viewMode: "full" },
+      "mock-product-invite-token": { role: "product_manager", viewMode: "full" },
+      "mock-scrum-invite-token": { role: "scrum_master", viewMode: "full" },
+    };
+    const mapped = mockRoles[token] ?? { role: "ba", viewMode: "full" as const };
     return NextResponse.json({
       ok: true,
       projectId: "22222222-2222-4222-8222-222222222222",
       projectName: "Patient Portal Modernisation",
-      role: sponsor ? "executive" : "ba",
+      role: mapped.role,
       invitedByName: "Jordan Chen",
-      viewMode: sponsor ? "read_only" : "full",
+      viewMode: mapped.viewMode,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     });
   }
