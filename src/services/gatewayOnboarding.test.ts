@@ -16,6 +16,7 @@ import {
   resolveOnboardingFlowKind,
   runGatewayOnboardingEngineSmokeTest,
   simulatePersonaOnboardingPath,
+  buildPmOnboardMissionPath,
   SPONSOR_GATEWAY_STEP_COUNT,
 } from "./gatewayOnboardingEngine";
 
@@ -151,8 +152,17 @@ describe("gatewayOnboardingEngine", () => {
         hasRole: true,
         gatewayStep: "business_case",
         role: "pm",
+        draftProjectId: "proj-1",
       }),
-    ).toBe("/workspace/pm-mission?onboard=1");
+    ).toBe("/workspace/pm-mission?onboard=1&project=proj-1");
+  });
+
+  it("builds pm onboard mission paths with optional project and error", () => {
+    expect(buildPmOnboardMissionPath()).toBe("/workspace/pm-mission?onboard=1");
+    expect(buildPmOnboardMissionPath("proj-1")).toBe("/workspace/pm-mission?onboard=1&project=proj-1");
+    expect(buildPmOnboardMissionPath(null, "RLS blocked")).toBe(
+      "/workspace/pm-mission?onboard=1&onboard_error=RLS+blocked",
+    );
   });
 
   it("simulates PM onboarding without persona wizard", () => {

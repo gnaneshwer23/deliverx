@@ -5,13 +5,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { upsertGatewaySession } from "@/services/gatewayOnboarding";
 
+export type EnsurePmProjectResult =
+  | { ok: true; projectId: string }
+  | { ok: false; error: string };
+
 export async function ensurePmOnboardProject(
   userId: string,
   organisationId: string,
-): Promise<string | null> {
+): Promise<EnsurePmProjectResult> {
   const supabase = await createClient();
 
-  const { data: existing } = await supabase
+  const { data: existing, error: existingError } = await supabase
     .from("projects")
     .select("id")
     .eq("organisation_id", organisationId)
@@ -19,7 +23,11 @@ export async function ensurePmOnboardProject(
     .limit(1)
     .maybeSingle();
 
-  if (existing?.id) return String(existing.id);
+  if (existingError) {
+    return { ok: false, error: existingError.message };
+  }
+
+  if (existing?.id) return { ok: true, projectId: String(existing.id) };
 
   const { data: org } = await supabase
     .from("organisations")
@@ -40,7 +48,12 @@ export async function ensurePmOnboardProject(
     .select("id")
     .single();
 
-  if (error || !created) return null;
+  if (error || !created) {
+    return {
+      ok: false,
+      error: error?.message ?? "Could not create your workspace project. Try again or contact support.",
+    };
+  }
 
   const projectId = String(created.id);
 
@@ -53,5 +66,5 @@ export async function ensurePmOnboardProject(
     /* gateway_sessions optional in some envs */
   }
 
-  return projectId;
+  return { ok: true, projectId };
 }

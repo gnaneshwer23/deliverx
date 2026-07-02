@@ -48,11 +48,11 @@ describe("ensurePmOnboardProject", () => {
 
   it("returns existing project id when org already has one", async () => {
     chainable(null);
-    mockMaybeSingle.mockResolvedValueOnce({ data: { id: "proj-existing" } });
+    mockMaybeSingle.mockResolvedValueOnce({ data: { id: "proj-existing" }, error: null });
 
-    const id = await ensurePmOnboardProject("user-1", "org-1");
+    const result = await ensurePmOnboardProject("user-1", "org-1");
 
-    expect(id).toBe("proj-existing");
+    expect(result).toEqual({ ok: true, projectId: "proj-existing" });
     expect(mockInsert).not.toHaveBeenCalled();
     expect(upsertGatewaySession).not.toHaveBeenCalled();
   });
@@ -60,13 +60,13 @@ describe("ensurePmOnboardProject", () => {
   it("creates a starter project and updates gateway session", async () => {
     chainable(null);
     mockMaybeSingle
-      .mockResolvedValueOnce({ data: null })
-      .mockResolvedValueOnce({ data: { name: "Acme Delivery" } });
+      .mockResolvedValueOnce({ data: null, error: null })
+      .mockResolvedValueOnce({ data: { name: "Acme Delivery" }, error: null });
     mockSingle.mockResolvedValueOnce({ data: { id: "proj-new" }, error: null });
 
-    const id = await ensurePmOnboardProject("user-1", "org-1");
+    const result = await ensurePmOnboardProject("user-1", "org-1");
 
-    expect(id).toBe("proj-new");
+    expect(result).toEqual({ ok: true, projectId: "proj-new" });
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({
         organisation_id: "org-1",
@@ -79,5 +79,17 @@ describe("ensurePmOnboardProject", () => {
       step: "project",
       draftProjectId: "proj-new",
     });
+  });
+
+  it("returns an error when project insert fails", async () => {
+    chainable(null);
+    mockMaybeSingle
+      .mockResolvedValueOnce({ data: null, error: null })
+      .mockResolvedValueOnce({ data: { name: "Acme Delivery" }, error: null });
+    mockSingle.mockResolvedValueOnce({ data: null, error: { message: "RLS blocked insert" } });
+
+    const result = await ensurePmOnboardProject("user-1", "org-1");
+
+    expect(result).toEqual({ ok: false, error: "RLS blocked insert" });
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import type { DbRole } from "@/config/persona-onboarding";
 import { setRoleAction, type RoleState } from "./actions";
@@ -52,23 +52,25 @@ const roles = [
 ] as const;
 
 export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
-  const [state, formAction, pending] = useActionState(setRoleAction, initial);
+  const [state, formAction, actionPending] = useActionState(setRoleAction, initial);
   const [selected, setSelected] = useState<string>(initialRole);
   const [advancingRole, setAdvancingRole] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const isBusy = pending || advancingRole !== null;
+  const [submitPending, startSubmit] = useTransition();
+  const isBusy = actionPending || submitPending || advancingRole !== null;
 
   function selectRole(role: string) {
     if (isBusy) return;
     setSelected(role);
     setAdvancingRole(role);
-    requestAnimationFrame(() => {
-      formRef.current?.requestSubmit();
+    const formData = new FormData();
+    formData.set("role", role);
+    startSubmit(() => {
+      formAction(formData);
     });
   }
 
   return (
-    <form ref={formRef} action={formAction} className="flex flex-col gap-3.5">
+    <form action={formAction} className="flex flex-col gap-3.5">
       <input type="hidden" name="role" value={selected} />
 
       <div className="flex flex-col gap-2.5">

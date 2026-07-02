@@ -50,16 +50,20 @@ export async function getOnboardingProfile() {
     .maybeSingle();
 
   let gatewayStep: GatewayStep | null = null;
+  let draftProjectId: string | null = null;
   try {
     const session = await getGatewaySession();
     gatewayStep = session?.step ?? null;
+    draftProjectId = session?.draftProjectId ?? null;
   } catch {
     gatewayStep = null;
+    draftProjectId = null;
   }
 
   return {
     user,
     profile: (profile as OnboardingProfile | null) ?? null,
     gatewayStep,
+    draftProjectId,
   };
 }

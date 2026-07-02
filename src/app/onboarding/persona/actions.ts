@@ -37,10 +37,10 @@ export async function completePersonaOnboardingAction(
   const projectId = await ensurePmOnboardProject(user.id, profile.organisation_id);
 
   try {
-    if (projectId) {
+    if (projectId.ok) {
       await upsertGatewaySession({
         step: "complete",
-        draftProjectId: projectId,
+        draftProjectId: projectId.projectId,
         complete: true,
       });
     } else {
