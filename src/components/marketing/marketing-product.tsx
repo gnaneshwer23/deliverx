@@ -1,27 +1,18 @@
-"use client";
-
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
 import {
   MarketingContainer,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
-import { RolePreview } from "@/components/marketing/role-previews";
-import { trackRoleChipClick } from "@/lib/marketing/analytics";
 import {
   ROLE_ORDER,
   ROLES,
   ROLE_PILL_LABELS,
-  type RoleId,
 } from "@/lib/marketing/landing-data";
 import { roleSignupLabel, signupHrefForRole } from "@/lib/marketing/role-signup";
 
 export function MarketingProductSection() {
-  const [activeRole, setActiveRole] = useState<RoleId>("sponsor");
-  const role = ROLES[activeRole];
-
   return (
     <MarketingSection id="platform" className="border-y border-[var(--mkt-border)] bg-[var(--mkt-s1)]">
       <MarketingContainer>
@@ -32,68 +23,48 @@ export function MarketingProductSection() {
               One workspace. <em>Seven perspectives.</em>
             </>
           }
-          subtitle="Every role gets a tailored dashboard with a layout built for how they work — not the same KPI grid with different labels. After PM approval, signals propagate across all seven views."
+          subtitle="Every role gets a tailored dashboard with a layout built for how they work — not the same KPI grid with different labels. Compare what each persona sees at a glance."
         />
 
-        <div className="mt-6 flex flex-wrap gap-1.5">
+        <div className="mt-8 grid grid-cols-2 gap-3 min-[901px]:grid-cols-4 min-[1200px]:grid-cols-7">
           {ROLE_ORDER.map((id) => {
-            const d = ROLES[id];
-            const isActive = id === activeRole;
+            const role = ROLES[id];
+            const headlineKpi = role.kpis[0];
             return (
               <Link
                 key={id}
                 href={signupHrefForRole(id)}
-                onClick={(event) => {
-                  if (!event.metaKey && !event.ctrlKey && event.button === 0) {
-                    event.preventDefault();
-                    const prev = activeRole;
-                    setActiveRole(id);
-                    if (id !== prev) trackRoleChipClick(id, "platform");
-                    return;
-                  }
-                  trackRoleChipClick(id, "platform");
-                }}
-                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition duration-200 ${
-                  isActive
-                    ? "border-[#1C4A2E] bg-[#1C4A2E] text-white ring-2 ring-[rgba(61,150,96,0.2)]"
-                    : "border-[var(--mkt-border)] bg-[var(--mkt-s2)] text-[var(--mkt-text3)] hover:border-[var(--mkt-border-l)] hover:text-[var(--mkt-text2)]"
-                }`}
-                style={
-                  isActive
-                    ? ({
-                        "--pill-accent": d.accent,
-                        "--pill-accent-bg": d.accentBg,
-                      } as CSSProperties)
-                    : undefined
-                }
+                className="group flex flex-col rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] p-3 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.12)] min-[1200px]:p-4"
               >
                 <span
-                  className={`flex size-4 items-center justify-center rounded font-[family-name:var(--font-mkt-mono)] text-[0.55rem] font-semibold leading-none ${
-                    isActive ? "bg-white/15 text-white" : ""
-                  }`}
+                  className="mb-2.5 flex size-9 items-center justify-center self-start rounded-lg font-[family-name:var(--font-mkt-mono)] text-[0.65rem] font-semibold"
+                  style={{ background: role.accentBg, color: role.accent }}
                 >
-                  {d.code}
+                  {role.code}
                 </span>
-                {ROLE_PILL_LABELS[id]}
+                <p className="text-[0.8125rem] font-semibold leading-tight text-[var(--mkt-text1)]">
+                  {ROLE_PILL_LABELS[id]}
+                </p>
+                <p className="mt-1 line-clamp-2 text-[0.6875rem] leading-snug text-[var(--mkt-text3)]">
+                  {role.tagline}
+                </p>
+                <p className="mt-auto pt-3 font-[family-name:var(--font-mkt-mono)] text-[0.625rem] text-[var(--mkt-text3)]">
+                  <span className="font-semibold text-[var(--mkt-text2)]">{headlineKpi.val}</span>{" "}
+                  {headlineKpi.label}
+                </p>
+                <span className="mt-2 text-[0.6875rem] font-medium text-[var(--mkt-green-l)] opacity-0 transition group-hover:opacity-100">
+                  {roleSignupLabel(id)} →
+                </span>
               </Link>
             );
           })}
         </div>
 
-        <div className="mt-4">
-          <RolePreview roleId={activeRole} role={role} accentBorder={`${role.accent}55`} />
-        </div>
+        <p className="mt-4 text-center text-xs text-[var(--mkt-text3)]">
+          Want a full example dashboard? Pick your role in the hero above.
+        </p>
 
-        <MarketingButtonLink
-          href={signupHrefForRole(activeRole)}
-          variant="primary"
-          className="mt-4"
-          onClick={() => trackRoleChipClick(activeRole, "platform")}
-        >
-          {roleSignupLabel(activeRole)} →
-        </MarketingButtonLink>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
           {[
             {
               title: "Role-specific layouts",
@@ -117,6 +88,10 @@ export function MarketingProductSection() {
             </div>
           ))}
         </div>
+
+        <MarketingButtonLink href="/signup" variant="primary" className="mt-8">
+          Start free trial →
+        </MarketingButtonLink>
       </MarketingContainer>
     </MarketingSection>
   );
