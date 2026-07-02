@@ -1,10 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState, type ComponentProps, type MouseEvent, type ReactNode } from "react";
 
 type BtnVariant = "primary" | "ghost" | "primaryLg" | "ghostLg" | "ctaLight" | "ctaOutline";
 
 const base =
-  "inline-flex items-center justify-center gap-1.5 rounded-xl text-[0.8125rem] font-medium whitespace-nowrap transition duration-200";
+  "inline-flex items-center justify-center gap-1.5 rounded-xl text-[0.8125rem] font-medium whitespace-nowrap transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-70";
 
 const variants: Record<BtnVariant, string> = {
   primary: `${base} border border-[var(--mkt-green-m,#2D7048)] bg-[var(--mkt-green-l)] px-[18px] py-2 text-white hover:bg-[#2D7048] hover:shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)] hover:-translate-y-px`,
@@ -15,6 +18,8 @@ const variants: Record<BtnVariant, string> = {
   ctaOutline: `${base} rounded-[10px] border border-white/30 bg-transparent px-7 py-[13px] text-[0.9375rem] text-white hover:border-white/50 hover:bg-white/8`,
 };
 
+const HOVER_PREFETCH_PATHS = new Set(["/signup", "/login"]);
+
 function isNativeHref(href: string) {
   return (
     href.startsWith("mailto:") ||
@@ -24,28 +29,81 @@ function isNativeHref(href: string) {
   );
 }
 
+function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
+  return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+}
+
 export function MarketingButtonLink({
   href,
   variant = "primary",
   className = "",
   children,
+  onClick,
+  onMouseEnter,
   ...props
 }: ComponentProps<typeof Link> & { variant?: BtnVariant; children: ReactNode }) {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
   const classes = `${variants[variant]} ${className}`;
+
+  const prefetchOnHover = useCallback(() => {
+    if (typeof href === "string" && HOVER_PREFETCH_PATHS.has(href)) {
+      void router.prefetch(href);
+    }
+  }, [href, router]);
+
+  const handleMouseEnter = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      prefetchOnHover();
+      onMouseEnter?.(event);
+    },
+    [onMouseEnter, prefetchOnHover],
+  );
+
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      if (pending) {
+        event.preventDefault();
+        return;
+      }
+      if (!isModifiedClick(event)) {
+        setPending(true);
+      }
+      onClick?.(event);
+    },
+    [onClick, pending],
+  );
 
   if (typeof href === "string" && isNativeHref(href)) {
     const { prefetch: _prefetch, ...anchorProps } = props as ComponentProps<"a"> & {
       prefetch?: boolean;
     };
     return (
-      <a href={href} className={classes} {...anchorProps}>
+      <a
+        href={href}
+        className={classes}
+        aria-busy={pending || undefined}
+        aria-disabled={pending || undefined}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        {...anchorProps}
+      >
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={classes} {...props}>
+    <Link
+      href={href}
+      prefetch={false}
+      className={classes}
+      aria-busy={pending || undefined}
+      aria-disabled={pending || undefined}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      {...props}
+    >
       {children}
     </Link>
   );

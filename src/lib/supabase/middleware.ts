@@ -4,11 +4,16 @@ import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 import { hasSupabaseAuthCookie } from "@/lib/supabase/auth-cookies";
 
 const AUTH_ENTRY_PATHS = ["/login", "/signup"];
+const MARKETING_PUBLIC_PATHS = ["/", "/privacy", "/terms"];
 
 function isAuthEntryPath(pathname: string): boolean {
   return AUTH_ENTRY_PATHS.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
+}
+
+function isMarketingPublicPath(pathname: string): boolean {
+  return MARKETING_PUBLIC_PATHS.includes(pathname);
 }
 
 export async function updateSession(request: NextRequest) {
@@ -19,8 +24,13 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.next({ request });
   }
 
-  // Anonymous visitors on public auth pages skip a Supabase round-trip.
-  if (!hasSupabaseAuthCookie(request) && isAuthEntryPath(request.nextUrl.pathname)) {
+  const pathname = request.nextUrl.pathname;
+
+  // Anonymous visitors on marketing/auth entry pages skip a Supabase round-trip.
+  if (
+    !hasSupabaseAuthCookie(request) &&
+    (isMarketingPublicPath(pathname) || isAuthEntryPath(pathname))
+  ) {
     return NextResponse.next({ request });
   }
 
@@ -54,7 +64,7 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (user && isAuthEntryPath(request.nextUrl.pathname)) {
+    if (user && isAuthEntryPath(pathname)) {
       const next = request.nextUrl.searchParams.get("next");
       const dest = await resolveAuthenticatedPath(supabase, next, user.id);
       return NextResponse.redirect(new URL(dest, request.url));
