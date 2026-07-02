@@ -21,7 +21,7 @@ export function MarketingOnboardingSection() {
   const ob = OB_DATA[activeRole];
 
   return (
-    <MarketingSection id="onboarding">
+    <MarketingSection id="onboarding" tone="green-tint">
       <MarketingContainer>
         <MarketingSectionIntro
           label="Personalised from day one"
@@ -42,10 +42,10 @@ export function MarketingOnboardingSection() {
                 key={id}
                 type="button"
                 onClick={() => setActiveRole(id)}
-                className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition ${
+                className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition duration-200 ${
                   isActive
-                    ? "border-[var(--tab-accent)] bg-[var(--tab-accent-bg)] text-[var(--tab-accent)]"
-                    : "border-[var(--mkt-border)] bg-[var(--mkt-s2)] text-[var(--mkt-text3)] hover:text-[var(--mkt-text2)]"
+                    ? "border-[var(--tab-accent)] bg-[var(--tab-accent-bg)] text-[var(--tab-accent)] shadow-[0_4px_16px_-4px_rgba(28,74,46,0.15)]"
+                    : "border-[var(--mkt-border)] bg-[var(--mkt-s1)] text-[var(--mkt-text3)] hover:border-[var(--mkt-border-l)] hover:text-[var(--mkt-text2)] hover:shadow-[var(--dx-shadow-sm)]"
                 }`}
                 style={
                   isActive
@@ -65,31 +65,31 @@ export function MarketingOnboardingSection() {
           })}
         </div>
 
-        <div className="mt-6 grid gap-6 rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-5 md:grid-cols-2 md:gap-8 md:p-6">
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
-              Onboarding steps — {role.name}
+        <div className="mt-6 grid gap-6 md:grid-cols-2 md:gap-8">
+          <div className="mkt-card mkt-card-gradient p-5 md:p-6">
+            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
+              Get started path — {role.name}
             </p>
-            <ol className="space-y-0">
+            <ol className="mkt-onboarding-path space-y-0 pl-1">
               {ob.steps.map((step) => (
                 <li
                   key={step.n}
-                  className={`flex gap-4 border-b border-[var(--mkt-border)] py-4 last:border-b-0 ${
-                    step.active ? "opacity-100" : step.done ? "opacity-90" : "opacity-70"
+                  className={`relative flex gap-4 py-4 pl-8 first:pt-0 last:pb-0 ${
+                    step.active ? "opacity-100" : step.done ? "opacity-90" : "opacity-75"
                   }`}
                 >
                   <span
-                    className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                    className={`absolute left-0 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold shadow-[var(--dx-shadow-sm)] ${
                       step.active
-                        ? "bg-[var(--mkt-green-l)] text-white"
+                        ? "bg-[var(--mkt-green-l)] text-white ring-4 ring-[rgba(61,150,96,0.15)]"
                         : step.done
                           ? "bg-[rgba(61,150,96,.15)] text-[var(--mkt-green-l)]"
-                          : "bg-[var(--mkt-s3)] text-[var(--mkt-text3)]"
+                          : "border border-[var(--mkt-border)] bg-[var(--mkt-s1)] text-[var(--mkt-text3)]"
                     }`}
                   >
                     {step.n}
                   </span>
-                  <div>
+                  <div className="min-w-0 flex-1 rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-4 transition duration-200 hover:border-[var(--mkt-border-l)] hover:shadow-[var(--dx-shadow-sm)]">
                     <p className="text-sm font-semibold text-[var(--mkt-text1)]">{step.title}</p>
                     <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
                       {step.desc}
@@ -100,15 +100,15 @@ export function MarketingOnboardingSection() {
             </ol>
           </div>
 
-          <div className="rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] p-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
+          <div className="mkt-card mkt-card-lift p-5 md:p-6">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
               AI outputs preview
             </p>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {ob.outputs.map((output) => (
                 <div
                   key={output.title}
-                  className="flex items-start gap-3 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-3"
+                  className="flex items-start gap-3 rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] p-3 transition duration-200 hover:border-[var(--mkt-border-l)] hover:shadow-[var(--dx-shadow-sm)]"
                 >
                   <span
                     className="flex size-8 shrink-0 items-center justify-center rounded-lg font-[family-name:var(--font-mkt-mono)] text-[0.6rem] font-semibold"

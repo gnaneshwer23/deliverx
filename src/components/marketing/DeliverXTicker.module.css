@@ -16,9 +16,9 @@
 .band {
   width: 100%;
   overflow: hidden;
-  background-color: #0A0E14;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: #0D0D0B;
+  border-top: 1px solid rgba(61, 150, 96, 0.12);
+  border-bottom: 1px solid rgba(61, 150, 96, 0.12);
   padding: 0;
   user-select: none;
   position: relative;
@@ -38,12 +38,12 @@
 
 .band::before {
   left: 0;
-  background: linear-gradient(to right, #0A0E14 0%, transparent 100%);
+  background: linear-gradient(to right, #0D0D0B 0%, transparent 100%);
 }
 
 .band::after {
   right: 0;
-  background: linear-gradient(to left, #0A0E14 0%, transparent 100%);
+  background: linear-gradient(to left, #0D0D0B 0%, transparent 100%);
 }
 
 /* ─── Each row ───────────────────────────────────────────────────────────── */

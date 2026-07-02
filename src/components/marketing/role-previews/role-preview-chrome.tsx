@@ -13,7 +13,7 @@ export function RolePreviewChrome({
 }) {
   return (
     <div
-      className="overflow-hidden rounded-2xl border bg-[var(--mkt-s1)] shadow-[0_12px_40px_rgba(15,23,42,0.08)] transition duration-400"
+      className="mkt-card overflow-hidden shadow-[0_12px_40px_rgba(15,23,42,0.08)] transition duration-400"
       style={{ borderColor: accentBorder ?? `${role.accent}55` }}
       role="img"
       aria-label={`Example ${role.title} dashboard preview`}

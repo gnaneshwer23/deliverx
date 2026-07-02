@@ -35,19 +35,37 @@ export function MarketingContainer({
   );
 }
 
+export type MarketingSectionTone =
+  | "cream"
+  | "white"
+  | "green-tint"
+  | "muted"
+  | "none";
+
+const SECTION_TONE_CLASS: Record<MarketingSectionTone, string> = {
+  cream: "bg-[var(--mkt-ink)]",
+  white: "bg-[var(--mkt-s1)] border-y border-[var(--mkt-border)]",
+  "green-tint":
+    "bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] border-y border-[rgba(28,74,46,0.08)]",
+  muted: "bg-[var(--mkt-s2)] border-y border-[var(--mkt-border)]",
+  none: "",
+};
+
 export function MarketingSection({
   id,
   children,
   className = "",
+  tone = "none",
 }: {
   id?: string;
   children: ReactNode;
   className?: string;
+  tone?: MarketingSectionTone;
 }) {
   return (
     <section
       id={id}
-      className={`scroll-mt-[var(--mkt-navh)] py-12 md:py-[clamp(48px,7vw,80px)] ${className}`}
+      className={`scroll-mt-[var(--mkt-navh)] py-12 md:py-[clamp(48px,7vw,80px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </section>
@@ -70,11 +88,11 @@ export function MarketingSectionIntro({
       <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
         {label}
       </p>
-      <h2 className="mt-3 font-[family-name:var(--font-dx-display)] text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.08] tracking-[-0.02em] text-[var(--mkt-text1)] [&_em]:not-italic [&_em]:text-[var(--mkt-green-l)]">
+      <h2 className="mt-3 font-[family-name:var(--font-dx-display)] text-[clamp(1.875rem,4.5vw,3rem)] leading-[1.06] tracking-[-0.025em] text-[var(--mkt-text1)] [&_em]:not-italic [&_em]:text-[var(--mkt-green-l)]">
         {title}
       </h2>
       {subtitle ? (
-        <p className="mt-3 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
+        <p className="mt-4 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.65] text-[var(--mkt-text2)]">
           {subtitle}
         </p>
       ) : null}
@@ -86,20 +104,50 @@ export function MarketingDivider() {
   return <div className="h-px w-full bg-[var(--mkt-border)]" aria-hidden />;
 }
 
-export function TrustChecklist({ items, light }: { items: string[]; light?: boolean }) {
+function TrustCheckIcon({ light }: { light?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`size-3 shrink-0 fill-none stroke-2 [stroke-linecap:round] ${light ? "stroke-white/75" : "stroke-[var(--mkt-green-l)]"}`}
+      aria-hidden
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+export function TrustChecklist({
+  items,
+  light,
+  pills,
+}: {
+  items: string[];
+  light?: boolean;
+  pills?: boolean;
+}) {
+  if (pills) {
+    return (
+      <ul className="flex flex-wrap items-center gap-2">
+        {items.map((item) => (
+          <li
+            key={item}
+            className={`mkt-trust-pill ${light ? "!border-white/20 !bg-white/10 !text-white/85" : ""}`}
+          >
+            <TrustCheckIcon light={light} />
+            {item}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
   return (
     <ul
       className={`flex flex-wrap items-center gap-5 text-xs ${light ? "text-white/60" : "text-[var(--mkt-text3)]"}`}
     >
       {items.map((item) => (
         <li key={item} className="flex items-center gap-1.5">
-          <svg
-            viewBox="0 0 24 24"
-            className={`size-3 fill-none stroke-2 [stroke-linecap:round] ${light ? "stroke-white/75" : "stroke-[var(--mkt-green-l)]"}`}
-            aria-hidden
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
+          <TrustCheckIcon light={light} />
           {item}
         </li>
       ))}
