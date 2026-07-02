@@ -7,6 +7,7 @@ import {
   getInitialGatewayStepForRole,
   getPostRoleSelectRedirect,
 } from "@/services/gatewayOnboardingEngine";
+import { ensurePmOnboardProject } from "@/services/pmOnboardProject";
 
 export type RoleState = { ok: boolean; error?: string };
 
@@ -27,6 +28,16 @@ export async function setRoleAction(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "You must be signed in." };
 
+  const { data: profile } = await supabase
+    .from("users")
+    .select("organisation_id")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!profile?.organisation_id) {
+    redirect("/onboarding/organisation");
+  }
+
   const { error } = await supabase
     .from("users")
     .update({ role: role as "pm" | "team_member" | "executive" | "ba" | "product_manager" | "engineer" | "scrum_master" | "qa" })
@@ -38,6 +49,9 @@ export async function setRoleAction(
     const step = getInitialGatewayStepForRole(role);
     if (role === "team_member") {
       await upsertGatewaySession({ step: "complete", complete: true });
+    } else if (role === "pm") {
+      await ensurePmOnboardProject(user.id, profile.organisation_id);
+      await upsertGatewaySession({ step });
     } else {
       await upsertGatewaySession({ step });
     }
