@@ -733,6 +733,52 @@
   transform: scale(1.06);
 }
 
+.mkt-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(61, 150, 96, 0.22);
+  background: rgba(61, 150, 96, 0.08);
+  padding: 0.2rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--mkt-green-l);
+  white-space: nowrap;
+}
+
+.mkt-live-stat {
+  border-radius: 1rem;
+  border: 1px solid var(--mkt-border);
+  background: linear-gradient(135deg, rgba(61, 150, 96, 0.06), var(--mkt-s1));
+  padding: 1rem 1.25rem;
+  box-shadow: var(--dx-shadow-sm);
+}
+
+.mkt-roadmap-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.mkt-roadmap-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 100% 0%, rgba(61, 150, 96, 0.08), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(28, 74, 46, 0.05), transparent 50%);
+  pointer-events: none;
+}
+
+.mkt-roadmap-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mkt-roadmap-item:hover {
+  transform: translateY(-1px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mkt-hero-float,
   .mkt-hero-float:hover,
@@ -741,6 +787,10 @@
   .mkt-feature-row:hover .mkt-feature-icon {
     transform: none;
     transition: none;
+  }
+
+  .mkt-roadmap-item:hover {
+    transform: none;
   }
 
   .marketing-page a[class*="hover:-translate"] {
