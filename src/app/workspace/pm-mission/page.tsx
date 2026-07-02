@@ -79,6 +79,8 @@ import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilo
 import { dxClass } from "@/lib/dx-theme";
 import { isMeetingReviewDeepLink, pmMeetingReviewUrl } from "@/lib/meeting-flow";
 import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
+import { getOnboardingProfile } from "@/lib/auth/onboarding";
+import { ensurePmOnboardProject } from "@/services/pmOnboardProject";
 
 export const dynamic = "force-dynamic";
 
@@ -99,6 +101,33 @@ export default async function PmMissionControlPage({
 
   const params = await searchParams;
   const onboardMode = params.onboard === "1";
+
+  const { user: onboardUser, profile: onboardProfile } = await getOnboardingProfile();
+  if (onboardMode) {
+    if (!onboardProfile?.organisation_id) {
+      redirect("/onboarding/organisation");
+    }
+    if (!onboardProfile.role) {
+      redirect("/onboarding/role");
+    }
+  }
+
+  let projectQuery = params.project;
+  if (
+    onboardMode &&
+    onboardUser &&
+    onboardProfile?.organisation_id &&
+    !projectQuery
+  ) {
+    const ensuredProjectId = await ensurePmOnboardProject(
+      onboardUser.id,
+      onboardProfile.organisation_id,
+    ).catch(() => null);
+    if (ensuredProjectId) {
+      redirect(`/workspace/pm-mission?onboard=1&project=${encodeURIComponent(ensuredProjectId)}`);
+    }
+  }
+
   const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop, orgProfile] =
     await Promise.all([
       getPmMissionControl(params.project),

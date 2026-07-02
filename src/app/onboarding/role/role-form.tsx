@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 import type { DbRole } from "@/config/persona-onboarding";
 import { setRoleAction, type RoleState } from "./actions";
 import { dxClass } from "@/lib/dx-theme";
@@ -53,20 +54,34 @@ const roles = [
 export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
   const [state, formAction, pending] = useActionState(setRoleAction, initial);
   const [selected, setSelected] = useState<string>(initialRole);
+  const [advancingRole, setAdvancingRole] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const isBusy = pending || advancingRole !== null;
+
+  function selectRole(role: string) {
+    if (isBusy) return;
+    setSelected(role);
+    setAdvancingRole(role);
+    requestAnimationFrame(() => {
+      formRef.current?.requestSubmit();
+    });
+  }
 
   return (
-    <form action={formAction} className="flex flex-col gap-3.5">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-3.5">
       <input type="hidden" name="role" value={selected} />
 
       <div className="flex flex-col gap-2.5">
         {roles.map((r) => {
           const active = selected === r.value;
+          const loading = advancingRole === r.value && isBusy;
           return (
             <button
               type="button"
               key={r.value}
-              onClick={() => setSelected(r.value)}
-              className={`flex w-full items-start gap-3 border p-4 text-left transition ${
+              disabled={isBusy}
+              onClick={() => selectRole(r.value)}
+              className={`flex w-full items-start gap-3 border p-4 text-left transition disabled:cursor-wait disabled:opacity-70 ${
                 active
                   ? "border-[#1C4A2E] bg-[#EEF5F1] ring-1 ring-[#C6DDD0]"
                   : "border-[#E4E4DC] bg-white hover:border-[#A8A89E]"
@@ -80,11 +95,20 @@ export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
                     : "border-[#E4E4DC] bg-white"
                 }`}
               >
-                {active ? "✓" : null}
+                {loading ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : active ? (
+                  "✓"
+                ) : null}
               </span>
-              <span>
+              <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold text-[#0D0D0B]">{r.title}</span>
                 <span className="block text-xs text-[#6B6B64]">{r.desc}</span>
+                {loading ? (
+                  <span className="mt-1 block text-xs font-medium text-[#1C4A2E]">
+                    Setting up your workspace…
+                  </span>
+                ) : null}
               </span>
             </button>
           );
@@ -97,8 +121,15 @@ export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
         </p>
       ) : null}
 
-      <button type="submit" disabled={pending} className={`${dxClass.btnPrimary} w-full`}>
-        {pending ? "Saving…" : "Continue →"}
+      <button type="submit" disabled={isBusy} className={`${dxClass.btnPrimary} w-full`}>
+        {isBusy ? (
+          <>
+            <Loader2 size={14} className="animate-spin" aria-hidden />
+            Setting up your workspace…
+          </>
+        ) : (
+          "Continue →"
+        )}
       </button>
     </form>
   );
