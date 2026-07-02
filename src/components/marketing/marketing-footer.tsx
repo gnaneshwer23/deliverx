@@ -16,6 +16,7 @@ const FOOTER_COLUMNS = [
       { href: "/#foundation", label: "Workspace" },
       { href: "/#workflow", label: "How it works" },
       { href: "/#onboarding", label: "Get started" },
+      { href: "/#features-live", label: "What's live" },
       { href: "/#pricing", label: "Pricing" },
       { href: "/login", label: "Sign in" },
     ],
@@ -138,7 +139,7 @@ export function MarketingFooter() {
             © 2026 DeliverX Ltd. All rights reserved.
           </p>
           <TrustChecklist
-            items={["GDPR-ready infrastructure", "EU data practices", "Human approval on AI changes"]}
+            items={["GDPR-ready infrastructure", "EU data residency practices", "Human approval on AI changes"]}
           />
         </div>
       </MarketingContainer>

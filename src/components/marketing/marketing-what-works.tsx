@@ -114,7 +114,7 @@ export function MarketingWhatWorksSection() {
                 Shipped and <em>in production.</em>
               </>
             }
-            subtitle="No vapourware. These are the capabilities live on main today — the same paths you get when you start a free trial."
+            subtitle="No vapourware. These capabilities are live on main today — the same paths you follow when you start a free trial."
           />
           <div className="mkt-live-stat shrink-0 lg:mb-1">
             <p className="font-[family-name:var(--font-dx-display)] text-3xl leading-none tracking-tight text-[var(--mkt-green-l)]">

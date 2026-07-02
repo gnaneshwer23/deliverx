@@ -13,7 +13,7 @@ export function MarketingCtaSection() {
       />
       <MarketingContainer className="relative">
         <p className="mb-4 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-white/50">
-          Built for people and agents
+          Start delivering with confidence
         </p>
         <h2 className="font-[family-name:var(--font-dx-display)] text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.04] tracking-[-0.03em] text-white [&_em]:not-italic [&_em]:text-[#6EE7B7]">
           Ready to run delivery with <em>shared intelligence?</em>
@@ -35,7 +35,7 @@ export function MarketingCtaSection() {
             pills
             items={[
               "GDPR-ready infrastructure",
-              "EU data practices",
+              "EU data residency practices",
               "Human approval on every AI change",
             ]}
           />

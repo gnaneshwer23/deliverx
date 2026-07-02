@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import { MarketingBadge } from "@/components/marketing/marketing-badge";
+import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import {
   MarketingContainer,
   MarketingSection,
@@ -14,6 +15,7 @@ import {
   ROLE_PILL_LABELS,
   type RoleId,
 } from "@/lib/marketing/landing-data";
+import { roleSignupLabel, signupHrefForRole } from "@/lib/marketing/role-signup";
 
 export function MarketingOnboardingSection() {
   const [activeRole, setActiveRole] = useState<RoleId>("sponsor");
@@ -30,7 +32,7 @@ export function MarketingOnboardingSection() {
               Your role. Your <em>workspace.</em>
             </>
           }
-          subtitle="Honest paths per role: Sponsor starts at /project/new (business case GO gate) · PM uploads brief at /workspace/pm-mission?onboard=1 · BA joins via PM invite link. Select a role to see the real steps."
+          subtitle="Honest paths per role: Sponsor starts at /project/new (business case GO gate) · PM uploads a brief at /workspace/pm-mission?onboard=1 · BA joins via a PM invite link. Select a role to see the real steps."
         />
 
         <div className="mt-8 flex flex-wrap gap-2">
@@ -127,6 +129,19 @@ export function MarketingOnboardingSection() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <MarketingButtonLink
+            href={signupHrefForRole(activeRole)}
+            variant="primary"
+            className="mkt-card-lift"
+          >
+            {roleSignupLabel(activeRole)} →
+          </MarketingButtonLink>
+          <MarketingButtonLink href="/login" variant="ghost">
+            Sign in
+          </MarketingButtonLink>
         </div>
       </MarketingContainer>
     </MarketingSection>
