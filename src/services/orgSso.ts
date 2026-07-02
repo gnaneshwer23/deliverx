@@ -2,6 +2,7 @@
  * Organisation SSO settings — domain routing for Supabase SAML sign-in.
  */
 
+import { getCachedSsoLookup, setCachedSsoLookup } from "@/lib/auth/sso-lookup-cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { throwIfMissingTable } from "@/lib/db-errors";
@@ -108,6 +109,9 @@ export async function findSsoForEmail(email: string): Promise<SsoLookupResult | 
   const domain = parseEmailDomain(email);
   if (!domain) return null;
 
+  const cached = getCachedSsoLookup(domain);
+  if (cached !== undefined) return cached;
+
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("org_sso_settings")
@@ -118,11 +122,16 @@ export async function findSsoForEmail(email: string): Promise<SsoLookupResult | 
     .maybeSingle();
 
   throwIfMissingTable(error, "org_sso_settings");
-  if (error || !data) return null;
+  if (error || !data) {
+    setCachedSsoLookup(domain, null);
+    return null;
+  }
 
-  return {
+  const result: SsoLookupResult = {
     domain,
     idpName: data.idp_name ? String(data.idp_name) : null,
     ssoRequired: Boolean(data.sso_required),
   };
+  setCachedSsoLookup(domain, result);
+  return result;
 }
