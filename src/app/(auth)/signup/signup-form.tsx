@@ -49,11 +49,17 @@ export function SignupForm({
         ? `/invite/${encodeURIComponent(invite)}`
         : appendRoleToPath("/onboarding/organisation", preselectedRole);
 
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    callbackUrl.searchParams.set("next", next);
+
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: {
+        data: { name },
+        emailRedirectTo: callbackUrl.toString(),
+      },
     });
 
     if (signUpError) {
@@ -63,12 +69,16 @@ export function SignupForm({
     }
 
     if (data.session) {
-      router.push(next);
-      router.refresh();
+      // Full navigation ensures auth cookies reach the server before onboarding layout runs.
+      window.location.assign(next);
       return;
     }
 
-    router.push(`/login?next=${encodeURIComponent(next)}`);
+    const loginParams = new URLSearchParams();
+    loginParams.set("next", next);
+    loginParams.set("checkEmail", "1");
+    router.push(`/login?${loginParams.toString()}`);
+    router.refresh();
   }
 
   return (

@@ -21,6 +21,10 @@ export function formatAuthError(message: string): string {
     return "Email sign-in is turned off in Supabase. Enable it under Authentication → Sign In / Providers → Email.";
   }
 
+  if (lower.includes("user already registered")) {
+    return "An account with this email already exists. Sign in instead, or reset your password.";
+  }
+
   if (lower.includes("email not confirmed")) {
     return "Email confirmation is enabled in Supabase. Turn off “Confirm email” under Authentication → Providers → Email, or confirm your email first.";
   }

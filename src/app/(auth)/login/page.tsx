@@ -3,14 +3,14 @@ import { LoginForm } from "./login-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
 
-type Search = Promise<{ next?: string; reset?: string; error?: string }>;
+type Search = Promise<{ next?: string; reset?: string; error?: string; checkEmail?: string }>;
 
 export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Search;
 }) {
-  const { next, reset, error } = await searchParams;
+  const { next, reset, error, checkEmail } = await searchParams;
 
   return (
     <div className="w-full max-w-[388px]">
@@ -22,6 +22,13 @@ export default async function LoginPage({
       {reset ? (
         <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-sm text-[#1C4A2E]">
           Password updated. Sign in with your new password.
+        </div>
+      ) : null}
+
+      {checkEmail ? (
+        <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-sm text-[#1C4A2E]">
+          Check your email for a confirmation link. After confirming, sign in below to continue
+          your personalised onboarding.
         </div>
       ) : null}
 
