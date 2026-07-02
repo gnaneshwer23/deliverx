@@ -6,11 +6,10 @@ import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingLogo } from "@/components/marketing/marketing-logo";
 
 export const NAV_LINKS = [
-  { href: "#platform", label: "Platform" },
-  { href: "#workflow", label: "Pipeline" },
-  { href: "#onboarding", label: "Onboarding" },
+  { href: "#foundation", label: "Workspace" },
+  { href: "#workflow", label: "How it works" },
+  { href: "#onboarding", label: "Get started" },
   { href: "#features-live", label: "What's live" },
-  { href: "#proof", label: "Why DeliverX" },
   { href: "#pricing", label: "Pricing" },
 ] as const;
 

@@ -13,8 +13,9 @@ const FOOTER_COLUMNS = [
   {
     title: "Product",
     links: [
-      { href: "/#workflow", label: "Pipeline" },
-      { href: "/#platform", label: "Platform" },
+      { href: "/#foundation", label: "Workspace" },
+      { href: "/#workflow", label: "How it works" },
+      { href: "/#onboarding", label: "Get started" },
       { href: "/#pricing", label: "Pricing" },
       { href: "/login", label: "Sign in" },
     ],

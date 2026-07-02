@@ -81,7 +81,11 @@ function MeetingIntelVisual() {
 
 function SponsorVisual() {
   return (
-    <div className="mt-4 grid grid-cols-2 gap-2" aria-hidden>
+    <div className="mt-4" aria-hidden>
+      <p className="mb-2 font-[family-name:var(--font-mkt-mono)] text-[0.55rem] uppercase tracking-wide text-white/35">
+        Example sponsor tiles
+      </p>
+      <div className="grid grid-cols-2 gap-2">
       {[
         { label: "Delivery conf.", val: "84%", tone: "#3D9660" },
         { label: "Open blockers", val: "2", tone: "#FBBF24" },
@@ -95,6 +99,7 @@ function SponsorVisual() {
           </p>
         </div>
       ))}
+      </div>
     </div>
   );
 }
@@ -143,7 +148,7 @@ export function MarketingFoundationSection() {
 
       <MarketingContainer className="relative">
         <MarketingSectionIntro
-          label="Connected delivery"
+          label="One workspace"
           title={
             <>
               Stop chasing updates. <em>Start seeing delivery.</em>

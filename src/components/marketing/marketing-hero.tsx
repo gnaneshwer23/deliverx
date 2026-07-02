@@ -52,18 +52,20 @@ export function MarketingHero() {
               <em className="italic text-[#3D9660]">Delivery happens.</em>
             </h1>
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.65] text-[var(--mkt-text2)]">
-              DeliverX connects{" "}
+              Teams lose hours reconciling Slack, Jira, and decks that never agree — DeliverX connects{" "}
               <span className="font-medium text-[var(--mkt-green)]">seven delivery roles</span> in one
-              signal graph. AI surfaces risks and drafts reports — nothing applies until your team
-              approves in the Review Queue.
+              signal graph where AI drafts updates and your team approves before anything applies.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg" className="mkt-card-lift">
                 Start free trial
               </MarketingButtonLink>
-              <MarketingButtonLink href="#onboarding" variant="ghostLg">
+              <a
+                href="#onboarding"
+                className="text-sm font-medium text-[var(--mkt-text2)] underline-offset-4 transition hover:text-[var(--mkt-green-l)] hover:underline"
+              >
                 See how to start
-              </MarketingButtonLink>
+              </a>
             </div>
             <TrustChecklist
               pills

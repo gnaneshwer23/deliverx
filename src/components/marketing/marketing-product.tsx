@@ -1,18 +1,15 @@
-import Link from "next/link";
 import {
   MarketingContainer,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
-import { ROLE_ORDER, ROLES, ROLE_PILL_LABELS } from "@/lib/marketing/landing-data";
-import { MarketingRoleCarousel } from "@/components/marketing/marketing-role-carousel";
-import { roleSignupLabel, signupHrefForRole } from "@/lib/marketing/role-signup";
+import { ROLE_ORDER, ROLES } from "@/lib/marketing/landing-data";
 
 const CAPABILITIES = [
   {
     title: "Role-specific layouts",
-    desc: "Founder sees a board memo. Engineer sees stories and PRs. QA sees release readiness. Each layout matches how that role actually works.",
+    desc: "Founder sees portfolio health. Engineer sees stories and PRs. QA sees release readiness. Each layout matches how that role actually works.",
     span: "md:col-span-2 md:row-span-2",
     accent: "#1C4A2E",
     icon: (
@@ -37,8 +34,8 @@ const CAPABILITIES = [
     ),
   },
   {
-    title: "Connected team sync",
-    desc: "Approved delivery impact events propagate to every relevant dashboard — from BA gaps to Sponsor escalation.",
+    title: "Delivery signal graph",
+    desc: "After PM approval, delivery impact events propagate to every relevant dashboard — from BA gaps to Sponsor escalation.",
     span: "",
     accent: "#60A5FA",
     icon: (
@@ -57,60 +54,16 @@ export function MarketingProductSection() {
     <MarketingSection id="platform" tone="white">
       <MarketingContainer>
         <MarketingSectionIntro
-          label="Platform overview"
+          label="Platform capabilities"
           title={
             <>
-              Seven perspectives. <em>One platform.</em>
+              Approval-gated AI. <em>Role-ready views.</em>
             </>
           }
-          subtitle="Scroll through tailored dashboards for each delivery role — layouts built for how they work, not the same KPI grid with different labels."
+          subtitle="Requirements register, meeting intel, RAID, and persona mission controls — shipped on main today. Pick a role in the hero to preview an example dashboard."
         />
 
-        <MarketingRoleCarousel />
-
-        <p className="mt-4 text-center text-xs text-[var(--mkt-text3)]">
-          Want to interact with a dashboard?{" "}
-          <Link href="#hero" className="font-medium text-[var(--mkt-green-l)] hover:underline">
-            Pick your role in the hero
-          </Link>
-          .
-        </p>
-
-        <div className="mt-8 grid grid-cols-2 gap-3 min-[901px]:grid-cols-4 min-[1200px]:grid-cols-7">
-          {ROLE_ORDER.map((id) => {
-            const role = ROLES[id];
-            const headlineKpi = role.kpis[0];
-            return (
-              <Link
-                key={id}
-                href={signupHrefForRole(id)}
-                className="group flex flex-col rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s2)] p-3 transition hover:border-[var(--mkt-border-l)] hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.12)] min-[1200px]:p-4"
-              >
-                <span
-                  className="mb-2.5 flex size-9 items-center justify-center self-start rounded-lg font-[family-name:var(--font-mkt-mono)] text-[0.65rem] font-semibold"
-                  style={{ background: role.accentBg, color: role.accent }}
-                >
-                  {role.code}
-                </span>
-                <p className="text-[0.8125rem] font-semibold leading-tight text-[var(--mkt-text1)]">
-                  {ROLE_PILL_LABELS[id]}
-                </p>
-                <p className="mt-1 line-clamp-2 text-[0.6875rem] leading-snug text-[var(--mkt-text3)]">
-                  {role.tagline}
-                </p>
-                <p className="mt-auto pt-3 font-[family-name:var(--font-mkt-mono)] text-[0.625rem] text-[var(--mkt-text3)]">
-                  <span className="font-semibold text-[var(--mkt-text2)]">{headlineKpi.val}</span>{" "}
-                  {headlineKpi.label}
-                </p>
-                <span className="mt-2 text-[0.6875rem] font-medium text-[var(--mkt-green-l)] opacity-0 transition group-hover:opacity-100">
-                  {roleSignupLabel(id)} →
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="mt-16 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">
+        <div className="mt-10 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">
           {CAPABILITIES.map((item, i) => (
             <div
               key={item.title}
