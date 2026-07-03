@@ -84,8 +84,24 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
 
   const projects = await listProjectsForCurrentUser().catch(() => []);
   const active = projects.filter((p) => p.status === "active");
-  const primary =
+  let primary =
     active.find((p) => p.id === projectId) ?? active[0] ?? projects[0] ?? null;
+
+  if (!primary && projectId) {
+    const { data: directProject } = await supabase
+      .from("projects")
+      .select("id, name, status, delivery_type, programme_id")
+      .eq("id", projectId)
+      .maybeSingle();
+    if (directProject) {
+      primary = directProject as (typeof projects)[number];
+    }
+  }
+
+  const allProjects =
+    primary && projectId && !projects.some((p) => p.id === primary!.id)
+      ? [...projects, primary]
+      : projects;
 
   let aiSummary =
     "Run AI delivery analysis or connect your project charter to populate PM Mission Control.";
@@ -296,7 +312,7 @@ export async function getPmMissionControl(projectId?: string): Promise<PmMission
   return {
     userName: profile?.name ?? user?.email ?? null,
     primaryProject: primary ? { id: primary.id, name: primary.name } : null,
-    projects: projects.map((p) => ({
+    projects: allProjects.map((p) => ({
       id: p.id,
       name: p.name,
       status: p.status ?? "active",

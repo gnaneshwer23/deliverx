@@ -27,7 +27,7 @@ export default async function RolePage({ searchParams }: { searchParams: Search 
       role: profile.role,
       draftProjectId,
     });
-    redirect(next ?? getPostRoleSelectRedirect(profile.role));
+    redirect(next ?? getPostRoleSelectRedirect(profile.role, draftProjectId));
   }
 
   return (
