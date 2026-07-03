@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 import { DxCaps, DxLogo } from "@/components/dx/dx-logo";
 import { DxStepper } from "@/components/dx/dx-stepper";
 import { buildLoginRedirectPath } from "@/lib/auth/route-guards";
 import { getOnboardingProfile } from "@/lib/auth/onboarding";
+import { getRequestPathFromHeaders } from "@/lib/auth/request-path";
 import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 export default async function OnboardingLayout({
   children,
@@ -14,10 +16,7 @@ export default async function OnboardingLayout({
   const { user, profile } = await getOnboardingProfile();
 
   if (!user) {
-    const headerList = await headers();
-    const pathname = headerList.get("x-pathname");
-    const search = headerList.get("x-search") ?? "";
-    const nextPath = pathname ? `${pathname}${search}` : "/onboarding/organisation";
+    const nextPath = (await getRequestPathFromHeaders()) ?? "/onboarding/organisation";
     redirect(buildLoginRedirectPath(nextPath));
   }
 

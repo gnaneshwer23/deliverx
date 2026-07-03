@@ -1,18 +1,23 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   getOnboardingProfile,
   isAccountSetupComplete,
   isSponsorGatewayComplete,
 } from "@/lib/auth/onboarding";
+import { getRequestPathFromHeaders } from "@/lib/auth/request-path";
 import { isGatewayRedirectDestination } from "@/lib/auth/route-guards";
 import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
 
 async function redirectIfNotAtGatewayDestination(redirectPath: string) {
-  const headerList = await headers();
-  const pathname = headerList.get("x-pathname") ?? "";
-  const search = headerList.get("x-search") ?? "";
-  const currentPath = `${pathname}${search}`;
+  const currentPath = await getRequestPathFromHeaders();
+
+  if (!currentPath) {
+    // Proxy path headers are sometimes missing on Vercel. Re-redirecting here
+    // strips ?project= from PM onboard URLs and breaks the upload panel.
+    if (redirectPath.startsWith("/workspace/pm-mission")) return;
+    redirect(redirectPath);
+    return;
+  }
 
   if (!isGatewayRedirectDestination(currentPath, redirectPath)) {
     redirect(redirectPath);

@@ -10,6 +10,8 @@ import { listPendingArtifactReviews } from "@/services/artifactReviews";
 import { countPendingReviewsByPersonaMap } from "@/lib/approval/persona-reviews";
 import { workspaceMainOffsetClass } from "@/lib/responsive-layout";
 
+export const dynamic = "force-dynamic";
+
 export default async function WorkspaceLayout({
   children,
 }: {

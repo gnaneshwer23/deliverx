@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { DbRole } from "@/config/persona-onboarding";
 import { setRoleAction, type RoleState } from "./actions";
@@ -54,19 +54,14 @@ const roles = [
 export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
   const [state, formAction, actionPending] = useActionState(setRoleAction, initial);
   const [selected, setSelected] = useState<string>(initialRole);
-  const [advancingRole, setAdvancingRole] = useState<string | null>(null);
-  const [submitPending, startSubmit] = useTransition();
-  const isBusy = actionPending || submitPending || advancingRole !== null;
+  const isBusy = actionPending;
 
   function selectRole(role: string) {
     if (isBusy) return;
     setSelected(role);
-    setAdvancingRole(role);
     const formData = new FormData();
     formData.set("role", role);
-    startSubmit(() => {
-      formAction(formData);
-    });
+    formAction(formData);
   }
 
   return (
@@ -76,7 +71,7 @@ export function RoleForm({ initialRole = "pm" }: { initialRole?: DbRole }) {
       <div className="flex flex-col gap-2.5">
         {roles.map((r) => {
           const active = selected === r.value;
-          const loading = advancingRole === r.value && isBusy;
+          const loading = actionPending && selected === r.value;
           return (
             <button
               type="button"
