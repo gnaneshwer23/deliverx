@@ -66,7 +66,7 @@ export function postSignupPath(options: {
     const params = new URLSearchParams();
     if (intent) params.set("intent", intent);
     const qs = params.toString();
-    return qs ? `/start/launchpad?${qs}` : "/start/launchpad";
+    return qs ? `/launchpad/app?${qs}` : "/launchpad/app";
   }
 
   if (product === "bundle") {

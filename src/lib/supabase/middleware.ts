@@ -4,6 +4,7 @@ import { resolveAuthenticatedPath } from "@/lib/auth/redirect";
 import {
   buildLoginRedirectPath,
   isAuthEntryPath,
+  isLaunchpadAppPath,
   isOnboardingPath,
   isXperienceAppPath,
   requestPathWithSearch,
@@ -45,10 +46,12 @@ export async function updateSession(request: NextRequest) {
     return passThrough(NextResponse.next({ request: { headers: requestHeaders } }));
   }
 
-  // Protect onboarding + Xperience app routes — preserve query params in login redirect.
+  // Protect onboarding + suite app routes — preserve query params in login redirect.
   if (
     !hasSupabaseAuthCookie(request) &&
-    (isOnboardingPath(pathname) || isXperienceAppPath(pathname))
+    (isOnboardingPath(pathname) ||
+      isXperienceAppPath(pathname) ||
+      isLaunchpadAppPath(pathname))
   ) {
     return NextResponse.redirect(
       new URL(buildLoginRedirectPath(requestPathWithSearch(request)), request.url),

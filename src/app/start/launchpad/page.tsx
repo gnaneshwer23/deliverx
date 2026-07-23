@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import {
   MarketingContainer,
   MarketingSection,
 } from "@/components/marketing/marketing-layout";
+import { LAUNCHPAD_APP_PATH } from "@/lib/launchpad/auth";
 import { mktClass } from "@/lib/marketing/landing-theme";
+import { createClient } from "@/lib/supabase/server";
+
 export const metadata: Metadata = {
   title: "Welcome to Launchpad | DeliverX",
-  description: "Your Launchpad account is ready. Explore open roles and grow your Career Record.",
+  description: "Your Launchpad account is ready. Continue into career readiness.",
 };
 
 type Search = Promise<{ intent?: string }>;
@@ -17,8 +21,21 @@ export default async function StartLaunchpadPage({
 }: {
   searchParams: Search;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { intent } = await searchParams;
+  if (user) {
+    const qs = intent ? `?intent=${encodeURIComponent(intent)}` : "";
+    redirect(`${LAUNCHPAD_APP_PATH}${qs}`);
+  }
+
   const exploringRoles = intent === "roles";
+  const loginNext = exploringRoles
+    ? `${LAUNCHPAD_APP_PATH}?intent=roles`
+    : LAUNCHPAD_APP_PATH;
 
   return (
     <main id="main-content">
@@ -31,23 +48,27 @@ export default async function StartLaunchpadPage({
           <h1
             className={`mt-4 text-[clamp(2rem,5vw,3rem)] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
           >
-            {exploringRoles ? "Open roles are next." : "Your account is ready."}
+            Sign in to enter Launchpad.
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
             {exploringRoles
-              ? "You’re signed up for Launchpad — Advance Your Career (£250 · 3 months). Career readiness tools are next."
-              : "You’re signed up for Launchpad — Advance Your Career (£250 · 3 months). Complete payment when prompted to unlock access."}
+              ? "Your account is ready for Launchpad — Advance Your Career. Continue to assessment, Career Twin and interview prep."
+              : "Your account is ready for Launchpad — Advance Your Career. Continue to onboarding and your career readiness workspace."}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <MarketingButtonLink href="/launchpad#pricing" variant="primaryLg">
-              {exploringRoles ? "Explore pricing & roles" : "Continue to Launchpad"}
+            <MarketingButtonLink
+              href={`/login?next=${encodeURIComponent(loginNext)}&product=launchpad`}
+              variant="primaryLg"
+            >
+              Continue to Launchpad
             </MarketingButtonLink>
             <MarketingButtonLink href="/launchpad" variant="ghostLg">
               Back to Launchpad
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">
-            Open-roles workspace is the next build step — your account and intent are saved.
+            {/* TODO(payment): Stripe £250 checkout / entitlement gate */}
+            Payment entitlement can be added later — access is open for this build.
           </p>
         </MarketingContainer>
       </MarketingSection>

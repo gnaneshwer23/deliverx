@@ -31,15 +31,17 @@ export default function StartBundlePage() {
             for 12 months. Complete payment when prompted to unlock full access.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <MarketingButtonLink href="/pricing#bundle" variant="primaryLg">
-              Review bundle details
-            </MarketingButtonLink>
-            <MarketingButtonLink href="/xperience" variant="ghostLg">
+            <MarketingButtonLink href="/xperience/app" variant="primaryLg">
               Start with Xperience
+            </MarketingButtonLink>
+            <MarketingButtonLink href="/launchpad/app" variant="ghostLg">
+              Or open Launchpad
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">
-            Checkout is the next build step — your account and bundle intent are saved.
+            {/* TODO(payment): Stripe £800 checkout / entitlement gate */}
+            Choose a stage to enter now — checkout can be wired later. Team Co-pilot remains
+            available from organisation onboarding when you&apos;re in role.
           </p>
         </MarketingContainer>
       </MarketingSection>
