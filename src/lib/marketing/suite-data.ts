@@ -25,7 +25,7 @@ export const PRODUCT_NAV = [
 export const SITE_NAV = {
   products: PRODUCT_LINKS,
   links: [
-    { href: "/solutions", label: "Solutions" },
+    { href: "/#journey", label: "How it works" },
     { href: "/pricing", label: "Pricing" },
     { href: "/resources", label: "Resources" },
     { href: "/about", label: "About" },

@@ -1,0 +1,752 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Briefcase,
+  Compass,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
+import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
+import {
+  MarketingContainer,
+  MarketingSection,
+  MarketingSectionIntro,
+} from "@/components/marketing/marketing-layout";
+import { MarketingReveal } from "@/components/marketing/marketing-reveal";
+import {
+  BUILT_FOR,
+  GUARANTEE,
+  HOME_FAQ,
+  HOME_PRICING,
+  HOME_PRODUCTS,
+  JOURNEY_NODES,
+  OUTCOMES,
+  OUTPUTS,
+  PLATFORM_TABS,
+  PROBLEM,
+  DEMO_STORIES,
+  AI_COLLEAGUES,
+  AI_COLLEAGUE_BEHAVIOURS,
+  EXPERIENCE_TIMELINE,
+  TEAM_COPILOT_PANELS,
+} from "@/lib/marketing/homepage-data";
+import { mktClass } from "@/lib/marketing/landing-theme";
+
+const PRODUCT_ICONS: Record<string, LucideIcon> = {
+  xperience: Briefcase,
+  launchpad: Compass,
+  "team-copilot": Users,
+};
+
+const ACCENT_CLASS = {
+  purple: {
+    icon: "text-[var(--mkt-accent-purple)] bg-[rgba(91,33,182,0.08)]",
+    ring: "group-hover:border-[rgba(91,33,182,0.28)]",
+    link: "text-[var(--mkt-accent-purple)]",
+    num: "text-[var(--mkt-accent-purple)]",
+    dot: "bg-[var(--mkt-accent-purple)]",
+  },
+  green: {
+    icon: "text-[var(--mkt-green-l)] bg-[rgba(61,150,96,0.1)]",
+    ring: "group-hover:border-[rgba(61,150,96,0.28)]",
+    link: "text-[var(--mkt-green)]",
+    num: "text-[var(--mkt-green-l)]",
+    dot: "bg-[var(--mkt-green-l)]",
+  },
+  blue: {
+    icon: "text-[var(--mkt-accent-blue)] bg-[rgba(37,99,235,0.08)]",
+    ring: "group-hover:border-[rgba(37,99,235,0.28)]",
+    link: "text-[var(--mkt-accent-blue)]",
+    num: "text-[var(--mkt-accent-blue)]",
+    dot: "bg-[var(--mkt-accent-blue)]",
+  },
+} as const;
+
+export function HomeBuiltFor() {
+  return (
+    <section
+      id="built-for"
+      className="scroll-mt-[var(--mkt-navh)] border-y border-[var(--mkt-border)] bg-[var(--mkt-s2)] py-8 md:py-10"
+    >
+      <MarketingContainer className="!max-w-[1180px]">
+        <p className={`${mktClass.label} mb-4 text-center`}>Built for</p>
+        <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 md:gap-x-10">
+          {BUILT_FOR.map((item) => (
+            <li key={item} className="text-[0.8125rem] text-[var(--mkt-text2)]">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </MarketingContainer>
+    </section>
+  );
+}
+
+export function HomeProblem() {
+  return (
+    <MarketingSection id="problem" tone="white">
+      <MarketingContainer className="!max-w-[1180px]">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <MarketingReveal>
+            <p className={mktClass.label}>The gap</p>
+            <h2 className={`mt-3.5 ${mktClass.sectionTitle}`}>
+              {PROBLEM.headline}{" "}
+              <em className="not-italic text-[var(--mkt-green)]">{PROBLEM.emphasis}</em>
+            </h2>
+            <div className="mt-6 space-y-4">
+              {PROBLEM.body.map((p) => (
+                <p key={p.slice(0, 24)} className="text-[0.9375rem] leading-[1.75] text-[var(--mkt-text2)]">
+                  {p}
+                </p>
+              ))}
+            </div>
+          </MarketingReveal>
+
+          <MarketingReveal delay={0.08}>
+            <ol className="mkt-problem-flow relative mx-auto max-w-sm space-y-0">
+              {PROBLEM.flow.map((step, i) => (
+                <li key={step} className="relative flex gap-4 pb-8 last:pb-0">
+                  {i < PROBLEM.flow.length - 1 ? (
+                    <span className="mkt-problem-connector absolute left-[15px] top-8 bottom-0 w-px" aria-hidden />
+                  ) : null}
+                  <span className="relative z-[1] flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--mkt-border)] bg-[var(--mkt-s1)] text-[0.7rem] font-medium text-[var(--mkt-text2)]">
+                    {i + 1}
+                  </span>
+                  <div className="pt-1">
+                    <p className={`text-[1.125rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                      {step}
+                    </p>
+                    {i === 1 ? (
+                      <p className="mt-1 text-[0.75rem] text-[var(--mkt-green-l)]">Where DeliverX begins</p>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </MarketingReveal>
+        </div>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeProducts() {
+  return (
+    <MarketingSection id="products" tone="cream">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="Three products"
+            title={
+              <>
+                Three products. One <em>career journey.</em>
+              </>
+            }
+            subtitle="Everything you need to go from aspiring to achieving."
+          />
+        </MarketingReveal>
+
+        <div className="relative mt-14">
+          <div
+            className="mkt-product-flow pointer-events-none absolute left-[16%] right-[16%] top-[2.25rem] hidden h-px md:block"
+            aria-hidden
+          />
+          <ul className="grid gap-5 md:grid-cols-3 md:gap-6">
+            {HOME_PRODUCTS.map((product, index) => {
+              const Icon = PRODUCT_ICONS[product.id] ?? Briefcase;
+              const accent = ACCENT_CLASS[product.accent];
+              return (
+                <li key={product.id} className="relative">
+                  <MarketingReveal delay={index * 0.06}>
+                    <article
+                      className={`mkt-card mkt-card-lift group flex h-full flex-col p-7 md:p-8 ${accent.ring}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`flex size-10 items-center justify-center rounded-xl ${accent.icon}`}
+                        >
+                          <Icon className="size-4" strokeWidth={1.5} aria-hidden />
+                        </span>
+                        <span className={`${mktClass.mono} text-[0.7rem] ${accent.num}`}>
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <h3
+                        className={`mt-6 text-[clamp(1.25rem,2vw,1.5rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                      >
+                        {product.name}
+                      </h3>
+                      <p className="mt-1 text-[0.75rem] text-[var(--mkt-text3)]">{product.stage}</p>
+                      <p className="mt-4 flex-1 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
+                        {product.sentence}
+                      </p>
+                      <ul className="mt-5 space-y-1.5">
+                        {product.bullets.map((b) => (
+                          <li key={b} className="flex items-center gap-2 text-[0.8125rem] text-[var(--mkt-text2)]">
+                            <span className={`size-1 rounded-full ${accent.dot}`} />
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                      <Link
+                        href={product.href}
+                        className={`mt-7 text-[0.875rem] font-medium no-underline transition-transform duration-300 group-hover:translate-x-0.5 ${accent.link}`}
+                      >
+                        {product.cta} →
+                      </Link>
+                    </article>
+                  </MarketingReveal>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeJourney() {
+  const [active, setActive] = useState<string | null>(JOURNEY_NODES[1]?.id ?? null);
+
+  return (
+    <MarketingSection id="journey" tone="white">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="How it works"
+            title="Your interactive career journey"
+            subtitle="Hover a stage to see what happens — from discovery through to a real role."
+          />
+        </MarketingReveal>
+
+        <MarketingReveal delay={0.06}>
+          <div className="relative mt-12 overflow-x-auto pb-2">
+            <div className="mkt-journey-line absolute left-4 right-4 top-[18px] hidden h-px md:block" aria-hidden />
+            <ol className="flex min-w-[640px] gap-2 md:min-w-0 md:justify-between">
+              {JOURNEY_NODES.map((node) => {
+                const isActive = active === node.id;
+                return (
+                  <li key={node.id} className="relative flex min-w-0 flex-1 flex-col items-center px-1">
+                    <button
+                      type="button"
+                      onMouseEnter={() => setActive(node.id)}
+                      onFocus={() => setActive(node.id)}
+                      onClick={() => setActive(node.id)}
+                      className={`relative z-[1] flex size-9 items-center justify-center rounded-full border transition duration-200 ${
+                        isActive
+                          ? "border-[var(--mkt-green)] bg-[var(--mkt-green)] text-white shadow-[0_0_0_4px_rgba(61,150,96,0.15)]"
+                          : "border-[var(--mkt-border)] bg-[var(--mkt-s1)] text-[var(--mkt-text3)] hover:border-[var(--mkt-green-l)]"
+                      }`}
+                      aria-expanded={isActive}
+                    >
+                      <span className="size-1.5 rounded-full bg-current" />
+                    </button>
+                    <p
+                      className={`mt-3 text-center text-[0.7rem] leading-snug md:text-[0.75rem] ${
+                        isActive ? "font-medium text-[var(--mkt-text1)]" : "text-[var(--mkt-text3)]"
+                      }`}
+                    >
+                      {node.label}
+                    </p>
+                    <div
+                      className={`mt-2 max-w-[9.5rem] overflow-hidden text-center transition-all duration-300 ${
+                        isActive ? "max-h-24 opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <p className="text-[0.7rem] leading-relaxed text-[var(--mkt-text2)]">{node.detail}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </MarketingReveal>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomePlatformPreview() {
+  const [tab, setTab] = useState<(typeof PLATFORM_TABS)[number]["id"]>("experience");
+  const current = PLATFORM_TABS.find((t) => t.id === tab) ?? PLATFORM_TABS[0];
+
+  return (
+    <MarketingSection id="platform" tone="cream">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="Platform"
+            title="One hub across experience, career and delivery"
+            subtitle="Switch views — the same career intelligence, different lenses."
+          />
+        </MarketingReveal>
+
+        <MarketingReveal delay={0.05}>
+          <div
+            role="tablist"
+            aria-label="Platform preview"
+            className="mx-auto mt-10 flex w-fit flex-wrap justify-center gap-1 rounded-full border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-1"
+          >
+            {PLATFORM_TABS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                onClick={() => setTab(t.id)}
+                className={`rounded-full px-5 py-2 text-[0.8125rem] font-medium transition ${
+                  tab === t.id
+                    ? "bg-[var(--mkt-green)] text-white"
+                    : "text-[var(--mkt-text3)] hover:text-[var(--mkt-text1)]"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </MarketingReveal>
+
+        <MarketingReveal delay={0.08}>
+          <div className="mkt-card mt-8 overflow-hidden p-0">
+            <div className="border-b border-[var(--mkt-border)] bg-[var(--mkt-s2)]/50 px-6 py-4">
+              <p className={`text-[1.125rem] tracking-tight text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                {current.title}
+              </p>
+              <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text3)]">{current.caption}</p>
+            </div>
+            <div className="grid gap-4 p-5 md:grid-cols-3 md:p-6" key={tab}>
+              {tab === "experience" ? (
+                <>
+                  <MockPanel title="Active company" body="MediFlow · Product Manager · 72%" />
+                  <MockPanel title="Priorities" body="Retention, roadmap alignment, stakeholder update" />
+                  <MockPanel title="Artefacts" body="PRD · Sprint plan · Risk register" />
+                </>
+              ) : null}
+              {tab === "career" ? (
+                <>
+                  <MockPanel title="Career Score" body="87 · Excellent readiness" />
+                  <MockPanel title="Career Twin" body="Skills, stories and gaps updating live" />
+                  <MockPanel title="Interview prep" body="STAR stories from real project work" />
+                </>
+              ) : null}
+              {tab === "delivery" ? (
+                <>
+                  <MockPanel title="Sprint confidence" body="78% · 2 risks flagged" />
+                  <MockPanel title="Roadmap" body="Q3 releases with dependency graph" />
+                  <MockPanel title="Executive view" body="Health, blockers and decisions" />
+                </>
+              ) : null}
+            </div>
+          </div>
+        </MarketingReveal>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+function MockPanel({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-4">
+      <p className={`${mktClass.mono} text-[0.65rem] uppercase tracking-[0.12em] text-[var(--mkt-text3)]`}>
+        {title}
+      </p>
+      <p className="mt-2 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">{body}</p>
+      <div className="mt-4 h-16 rounded-lg bg-gradient-to-br from-[var(--mkt-s2)] to-[var(--mkt-mist)]" />
+    </div>
+  );
+}
+
+export function HomeOutputs() {
+  return (
+    <MarketingSection id="outputs" tone="white">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="What you'll build"
+            title="Professional artefacts employers recognise"
+            subtitle="Every challenge produces work you can show — not just certificates."
+          />
+        </MarketingReveal>
+        <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {OUTPUTS.map((item, i) => (
+            <li key={item}>
+              <MarketingReveal delay={(i % 5) * 0.03}>
+                <div className="mkt-card mkt-card-lift flex h-full items-center justify-center px-3 py-5 text-center">
+                  <p className="text-[0.8125rem] font-medium text-[var(--mkt-text1)]">{item}</p>
+                </div>
+              </MarketingReveal>
+            </li>
+          ))}
+        </ul>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeAiCompany() {
+  return (
+    <MarketingSection id="ai-company" tone="cream">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="AI Company"
+            title="Meet your AI colleagues"
+            subtitle="They remember, challenge, disagree and negotiate — so the work feels real."
+          />
+        </MarketingReveal>
+        <ul className="mt-12 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+          {AI_COLLEAGUES.map((colleague, i) => (
+            <li key={colleague.role}>
+              <MarketingReveal delay={(i % 3) * 0.04}>
+                <div className="mkt-card mkt-card-lift group relative h-full overflow-hidden p-5">
+                  <p className={`text-[1.05rem] tracking-tight text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                    {colleague.role}
+                  </p>
+                  <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text3)]">{colleague.focus}</p>
+                  <div className="mt-4 max-h-0 overflow-hidden opacity-0 transition-all duration-300 group-hover:max-h-40 group-hover:opacity-100 group-focus-within:max-h-40 group-focus-within:opacity-100">
+                    <ul className="space-y-1 border-t border-[var(--mkt-border)] pt-3">
+                      {AI_COLLEAGUE_BEHAVIOURS.map((b) => (
+                        <li key={b} className="text-[0.75rem] leading-relaxed text-[var(--mkt-text2)]">
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </MarketingReveal>
+            </li>
+          ))}
+        </ul>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeExperienceRecord() {
+  return (
+    <MarketingSection id="experience-record" tone="white">
+      <MarketingContainer className="!max-w-[1180px]">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <MarketingReveal>
+            <MarketingSectionIntro
+              label="Experience Record"
+              title="A living timeline that becomes your Career Twin"
+              subtitle="Every month compounds — discovery through performance review — into a continuous career record."
+            />
+          </MarketingReveal>
+          <MarketingReveal delay={0.06}>
+            <ol className="relative space-y-0">
+              <span className="mkt-record-line absolute left-[11px] top-3 bottom-3 w-px" aria-hidden />
+              {EXPERIENCE_TIMELINE.map((entry) => (
+                <li key={entry.month} className="relative flex gap-5 pb-8 last:pb-0">
+                  <span className="relative z-[1] mt-1.5 size-6 shrink-0 rounded-full border-2 border-[var(--mkt-green-l)] bg-[var(--mkt-s1)]" />
+                  <div className="mkt-card flex-1 p-5">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <p className={`${mktClass.mono} text-[0.7rem] text-[var(--mkt-green-l)]`}>
+                        {entry.month}
+                      </p>
+                      {"stars" in entry && entry.stars ? (
+                        <p className="text-[0.75rem] tracking-widest text-[var(--mkt-amber,#B7620A)]" aria-label={`${entry.stars} stars`}>
+                          {"★".repeat(entry.stars)}
+                        </p>
+                      ) : null}
+                    </div>
+                    <p className={`mt-1 text-[1.1rem] tracking-tight text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                      {entry.title}
+                    </p>
+                    <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text2)]">{entry.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </MarketingReveal>
+        </div>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeTeamCopilotPreview() {
+  return (
+    <MarketingSection id="team-copilot-preview" tone="dark" className="!bg-[#0B1220]">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <header className="mx-auto max-w-2xl text-center">
+            <p className={`${mktClass.label} !text-white/45`}>Team Co-pilot</p>
+            <h2
+              className={`mt-3.5 text-[clamp(1.875rem,4.2vw,2.875rem)] leading-[1.06] tracking-[-0.025em] text-white ${mktClass.serif}`}
+            >
+              Deliver products with confidence
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-[0.9375rem] font-light leading-relaxed text-white/60">
+              An enterprise delivery workspace for product teams — roadmap, risks, releases and
+              executive clarity in one place.
+            </p>
+          </header>
+        </MarketingReveal>
+
+        <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {TEAM_COPILOT_PANELS.map((panel, i) => (
+            <li key={panel.title}>
+              <MarketingReveal delay={(i % 4) * 0.04}>
+                <div className="h-full rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:border-white/20 hover:bg-white/[0.06]">
+                  <div className="mb-4 h-16 rounded-lg bg-gradient-to-br from-blue-500/20 via-transparent to-emerald-400/10" />
+                  <p className={`text-[1rem] tracking-tight text-white ${mktClass.serif}`}>{panel.title}</p>
+                  <p className="mt-2 text-[0.8125rem] leading-relaxed text-white/55">{panel.body}</p>
+                </div>
+              </MarketingReveal>
+            </li>
+          ))}
+        </ul>
+
+        <MarketingReveal delay={0.1}>
+          <div className="mt-10 text-center">
+            <MarketingButtonLink href="/team-copilot" variant="ctaLight">
+              Explore Team Co-pilot
+            </MarketingButtonLink>
+          </div>
+        </MarketingReveal>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeOutcomes() {
+  return (
+    <MarketingSection id="outcomes" tone="white">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="Outcomes"
+            title="After DeliverX you'll have"
+            subtitle="Capability you can demonstrate — not just knowledge you can recite."
+          />
+        </MarketingReveal>
+        <ul className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4">
+          {OUTCOMES.map((item, i) => (
+            <li key={item}>
+              <MarketingReveal delay={(i % 4) * 0.04}>
+                <div className="mkt-soft-panel-light flex h-full flex-col justify-center px-5 py-6 text-center">
+                  <p className={`text-[1.125rem] tracking-tight text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                    {item}
+                  </p>
+                </div>
+              </MarketingReveal>
+            </li>
+          ))}
+        </ul>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomePricing() {
+  return (
+    <MarketingSection id="pricing" tone="cream">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="Pricing"
+            title="Start at any stage — or take the full journey"
+            subtitle="Transparent pricing. Link through for full includes and ideal-for detail."
+          />
+        </MarketingReveal>
+
+        <ul className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {HOME_PRICING.map((tier, i) => (
+            <li key={tier.id}>
+              <MarketingReveal delay={i * 0.05}>
+                <article
+                  className={`flex h-full flex-col p-6 md:p-7 ${
+                    tier.featured ? "mkt-soft-panel-highlight" : "mkt-card"
+                  }`}
+                >
+                  {tier.featured ? (
+                    <p className={`${mktClass.label} !text-white/55`}>Most popular</p>
+                  ) : (
+                    <p className={mktClass.label}>{tier.stage}</p>
+                  )}
+                  <h3
+                    className={`mt-3 text-[1.35rem] tracking-[-0.025em] ${mktClass.serif} ${
+                      tier.featured ? "text-white" : "text-[var(--mkt-text1)]"
+                    }`}
+                  >
+                    {tier.name}
+                  </h3>
+                  <p
+                    className={`mt-2 flex-1 text-[0.8125rem] leading-relaxed ${
+                      tier.featured ? "text-white/70" : "text-[var(--mkt-text2)]"
+                    }`}
+                  >
+                    {tier.summary}
+                  </p>
+                  <p
+                    className={`mt-6 text-[clamp(1.75rem,3vw,2.25rem)] leading-none tracking-[-0.04em] ${mktClass.serif} ${
+                      tier.featured ? "text-white" : "text-[var(--mkt-text1)]"
+                    }`}
+                  >
+                    {tier.price}
+                  </p>
+                  <p className={`mt-1.5 text-[0.75rem] ${tier.featured ? "text-white/55" : "text-[var(--mkt-text3)]"}`}>
+                    {tier.cadence}
+                  </p>
+                  <div className="mt-6 flex flex-col gap-2">
+                    <MarketingButtonLink
+                      href={tier.ctaHref}
+                      variant={tier.featured ? "ctaLight" : "primary"}
+                      className="w-full justify-center"
+                    >
+                      Get started
+                    </MarketingButtonLink>
+                    <Link
+                      href={tier.href.startsWith("/") ? tier.href : "/pricing"}
+                      className={`text-center text-[0.75rem] no-underline underline-offset-4 hover:underline ${
+                        tier.featured ? "text-white/70" : "text-[var(--mkt-text3)]"
+                      }`}
+                    >
+                      Full details →
+                    </Link>
+                  </div>
+                </article>
+              </MarketingReveal>
+            </li>
+          ))}
+        </ul>
+
+        <MarketingReveal delay={0.1}>
+          <p className="mt-8 text-center text-[0.8125rem] text-[var(--mkt-text3)]">
+            See full includes on the{" "}
+            <Link href="/pricing" className="font-medium text-[var(--mkt-green)] no-underline hover:underline">
+              pricing page
+            </Link>
+            .
+          </p>
+        </MarketingReveal>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeGuarantee() {
+  return (
+    <MarketingSection id="guarantee" tone="dark" className="!py-24 md:!py-32">
+      <MarketingContainer className="!max-w-[900px] text-center">
+        <MarketingReveal>
+          <h2
+            className={`text-[clamp(2.5rem,8vw,4.5rem)] leading-[1.02] tracking-[-0.04em] text-white ${mktClass.serif}`}
+          >
+            {GUARANTEE.title}
+          </h2>
+          <p className="mx-auto mt-8 max-w-xl text-[1.0625rem] font-light leading-relaxed text-white/65">
+            {GUARANTEE.body}
+          </p>
+        </MarketingReveal>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeStories() {
+  return (
+    <MarketingSection id="stories" tone="white">
+      <MarketingContainer className="!max-w-[1180px]">
+        <MarketingReveal>
+          <MarketingSectionIntro
+            align="center"
+            label="Illustrative journeys"
+            title="How different people move through DeliverX"
+            subtitle="These are demo stories — example paths, not customer testimonials."
+          />
+        </MarketingReveal>
+        <ul className="mt-12 grid gap-4 md:grid-cols-2">
+          {DEMO_STORIES.map((story, i) => (
+            <li key={story.archetype}>
+              <MarketingReveal delay={i * 0.05}>
+                <article className="mkt-soft-panel-light h-full p-7 md:p-8">
+                  <p className={mktClass.label}>Example path</p>
+                  <h3
+                    className={`mt-3 text-[1.25rem] tracking-tight text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    {story.archetype}
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                    {story.journey}
+                  </p>
+                </article>
+              </MarketingReveal>
+            </li>
+          ))}
+        </ul>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeFaq() {
+  return (
+    <MarketingSection id="faq" tone="cream">
+      <MarketingContainer className="!max-w-[720px]">
+        <MarketingReveal>
+          <MarketingSectionIntro align="center" label="FAQ" title="Questions, answered clearly" />
+        </MarketingReveal>
+        <div className="mt-10 space-y-2">
+          {HOME_FAQ.map((item, i) => (
+            <MarketingReveal key={item.q} delay={i * 0.03}>
+              <details className="mkt-card group mkt-faq-item">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-[0.9375rem] font-medium text-[var(--mkt-text1)] marker:content-none [&::-webkit-details-marker]:hidden">
+                  {item.q}
+                  <span
+                    className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[var(--mkt-border)] text-[var(--mkt-text3)] transition group-open:rotate-45"
+                    aria-hidden
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="border-t border-[var(--mkt-border)] px-5 py-4 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
+                  {item.a}
+                </p>
+              </details>
+            </MarketingReveal>
+          ))}
+        </div>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}
+
+export function HomeFinalCta() {
+  return (
+    <MarketingSection tone="dark" className="mkt-cta-band !border-0">
+      <MarketingContainer className="relative z-10 text-center">
+        <MarketingReveal>
+          <h2
+            className={`text-[clamp(1.875rem,4.5vw,3rem)] tracking-[-0.03em] text-white ${mktClass.serif}`}
+          >
+            Ready to build your experience?
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
+            Start your journey today — experience, opportunity and delivery in one platform.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <MarketingButtonLink href="/signup" variant="ctaLight">
+              Start your journey
+            </MarketingButtonLink>
+            <MarketingButtonLink href="/pricing" variant="ctaOutline">
+              View pricing
+            </MarketingButtonLink>
+          </div>
+        </MarketingReveal>
+      </MarketingContainer>
+    </MarketingSection>
+  );
+}

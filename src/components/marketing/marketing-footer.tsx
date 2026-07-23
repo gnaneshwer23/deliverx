@@ -22,13 +22,14 @@ const FOOTER_COLUMNS = [
   {
     title: "Company",
     links: [
+      { href: "/#journey", label: "How it works" },
       { href: "/solutions", label: "Solutions" },
       { href: "/resources", label: "Resources" },
       { href: "/about", label: "About" },
       { href: "/pricing", label: "Pricing" },
       { href: "/pricing#bundle", label: "Complete Journey" },
-      { href: "/signup", label: "Start Free" },
-      { href: "/login", label: "Sign In" },
+      { href: "/signup", label: "Start your journey" },
+      { href: "/login", label: "Log in" },
     ],
   },
 ] as const;

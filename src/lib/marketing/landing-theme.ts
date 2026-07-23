@@ -21,6 +21,10 @@ export const mkt = {
   blue: "#1A3F6B",
   purple: "#5B21B6",
   teal: "#0F766E",
+  /** Product accents — use sparingly on cards / journey keywords */
+  accentPurple: "#7C3AED",
+  accentGreen: "#3D9660",
+  accentBlue: "#2563EB",
   navH: 64,
   maxW: 1120,
   /** Soft SaaS panels — high radius like premium landing reference */
@@ -77,6 +81,11 @@ export const mktCssVars = {
   "--mkt-green-bright": mkt.greenBright,
   "--mkt-cream": mkt.cream,
   "--mkt-mist": mkt.mist,
+  "--mkt-accent-purple": mkt.accentPurple,
+  "--mkt-accent-green": mkt.accentGreen,
+  "--mkt-accent-blue": mkt.accentBlue,
+  "--mkt-red": mkt.red,
+  "--mkt-amber": mkt.amber,
   "--mkt-stat-value": mktStat.value,
   "--mkt-stat-accent": mktStat.accent,
   "--mkt-stat-up": mktStat.up,

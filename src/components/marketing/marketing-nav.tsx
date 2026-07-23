@@ -172,7 +172,7 @@ function MobileNavDrawer({
             className="w-full justify-center"
             onClick={onClose}
           >
-            Sign In
+            Log in
           </MarketingButtonLink>
           <MarketingButtonLink
             href={primaryCta.href}
@@ -251,7 +251,7 @@ export function MarketingNav({
             <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
           </button>
           <MarketingButtonLink href="/login" variant="ghost" className="hidden sm:inline-flex">
-            Sign In
+            Log in
           </MarketingButtonLink>
           <MarketingButtonLink href={primaryCta.href} variant="primary">
             {primaryCta.label}

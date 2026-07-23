@@ -1060,3 +1060,117 @@
 .marketing-workflow-hex[data-type="outcome"] {
   background: rgba(61, 150, 96, 0.18);
 }
+
+/* Homepage — story scroll */
+.mkt-keyword-gradient {
+  background: linear-gradient(120deg, #2563eb 0%, #7c3aed 55%, #5b21b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.mkt-hub-progress {
+  width: 72%;
+  transform-origin: left center;
+  animation: mkt-hub-progress-fill 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
+.mkt-hub-journey-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mkt-border-l) 12%,
+    var(--mkt-accent-blue) 50%,
+    var(--mkt-border-l) 88%,
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: mkt-journey-shimmer 4.5s ease-in-out infinite;
+}
+
+.mkt-hub-pulse {
+  animation: mkt-hub-dot-pulse 2.4s ease-in-out infinite;
+}
+
+.mkt-hub-score {
+  background: conic-gradient(var(--mkt-green-l) 0 87%, var(--mkt-s3) 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+}
+
+.mkt-product-flow {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(122, 133, 126, 0.45) 0 4px,
+    transparent 4px 10px
+  );
+  opacity: 0.55;
+}
+
+.mkt-journey-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mkt-border-l) 8%,
+    var(--mkt-green-l) 50%,
+    var(--mkt-border-l) 92%,
+    transparent
+  );
+  background-size: 220% 100%;
+  animation: mkt-journey-shimmer 5s ease-in-out infinite;
+}
+
+.mkt-problem-connector,
+.mkt-record-line {
+  background: linear-gradient(to bottom, var(--mkt-green-l), rgba(61, 150, 96, 0.15));
+}
+
+.mkt-faq-item summary:focus-visible {
+  outline: 2px solid var(--mkt-green-l);
+  outline-offset: 2px;
+}
+
+@keyframes mkt-hub-progress-fill {
+  from {
+    transform: scaleX(0);
+    opacity: 0.5;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes mkt-journey-shimmer {
+  0%,
+  100% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0% 0;
+  }
+}
+
+@keyframes mkt-hub-dot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mkt-hub-progress,
+  .mkt-hub-journey-line,
+  .mkt-journey-line,
+  .mkt-hub-pulse {
+    animation: none;
+  }
+
+  .mkt-hub-progress {
+    transform: none;
+    opacity: 1;
+  }
+}
