@@ -128,7 +128,7 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
             <MarketingLogo />
             <p className="mt-4 max-w-xs text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
               <span className={`${mktClass.serif} text-[var(--mkt-text1)]`}>
-                Build experience. Launch your role. Deliver with your team.
+                Build the experience. Land the opportunity. Succeed in the role.
               </span>{" "}
               DeliverX Ltd — Xperience, Launchpad and Team Co-pilot.
             </p>

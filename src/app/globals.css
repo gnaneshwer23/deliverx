@@ -825,6 +825,16 @@
   animation: mkt-role-carousel-scroll 45s linear infinite;
 }
 
+/* Career suite — bundle emphasis panel */
+.mkt-bundle-panel {
+  box-shadow: 0 1px 0 rgba(28, 74, 46, 0.04), 0 18px 48px -24px rgba(28, 74, 46, 0.18);
+}
+
+.mkt-bundle-panel > article {
+  border-top: none;
+  padding-top: 0;
+}
+
 .marketing-role-carousel-mask:hover .marketing-role-carousel-track {
   animation-play-state: paused;
 }

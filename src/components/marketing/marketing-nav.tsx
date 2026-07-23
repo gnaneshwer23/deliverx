@@ -11,6 +11,7 @@ export const NAV_LINKS: readonly MarketingNavLink[] = [
   { href: "/xperience", label: "Xperience" },
   { href: "/launchpad", label: "Launchpad" },
   { href: "/team-copilot", label: "Team Co-pilot" },
+  { href: "/pricing", label: "Pricing" },
 ] as const;
 
 function MobileNavDrawer({
