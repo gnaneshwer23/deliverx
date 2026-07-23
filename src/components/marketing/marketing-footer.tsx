@@ -7,7 +7,7 @@ import { mktClass } from "@/lib/marketing/landing-theme";
 const GITHUB_REPO = "https://github.com/gnaneshwer23/deliverx";
 
 const FOOTER_LINK_CLASS =
-  "text-[0.8125rem] text-white/60 no-underline transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40";
+  "text-[0.8125rem] text-white/75 no-underline transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50";
 
 const FOOTER_COLUMNS = [
   {
@@ -86,35 +86,42 @@ function FooterColumn({
   links: readonly { href: string; label: string; external?: boolean }[];
 }) {
   return (
-    <div>
-      <p className={`${mktClass.label} !text-white/40`}>{title}</p>
+    <nav aria-label={title}>
+      <p className={`${mktClass.label} !text-white/55`}>{title}</p>
       <ul className="mt-4 flex flex-col gap-2.5">
         {links.map((link) => (
-          <li key={link.href}>
+          <li key={`${link.href}-${link.label}`}>
             <FooterLink {...link} />
           </li>
         ))}
       </ul>
-    </div>
+    </nav>
   );
 }
 
-export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta } = {}) {
+export function MarketingFooter({
+  cta = DEFAULT_FOOTER_CTA,
+}: {
+  /** Pass `null` to omit the CTA band (e.g. when the page already ends with a strong CTA). */
+  cta?: FooterCta | null;
+} = {}) {
   return (
     <footer className="overflow-hidden rounded-t-[2rem] bg-[var(--mkt-green)] text-white md:rounded-t-[2.5rem]">
-      <div className="border-b border-white/10 bg-[rgba(255,255,255,0.04)]">
-        <MarketingContainer className="flex flex-col items-start justify-between gap-5 py-10 md:flex-row md:items-center md:py-12">
-          <div className="max-w-md">
-            <p className={`${mktClass.serif} text-[1.35rem] tracking-[-0.02em] text-white`}>
-              {cta.title}
-            </p>
-            <p className="mt-2 text-[0.8125rem] leading-relaxed text-white/60">{cta.subtitle}</p>
-          </div>
-          <MarketingButtonLink href={cta.href} variant="ctaLight">
-            {cta.label}
-          </MarketingButtonLink>
-        </MarketingContainer>
-      </div>
+      {cta ? (
+        <div className="border-b border-white/10 bg-[rgba(255,255,255,0.04)]">
+          <MarketingContainer className="flex flex-col items-start justify-between gap-5 py-10 md:flex-row md:items-center md:py-12">
+            <div className="max-w-md">
+              <p className={`${mktClass.serif} text-[1.35rem] tracking-[-0.02em] text-white`}>
+                {cta.title}
+              </p>
+              <p className="mt-2 text-[0.8125rem] leading-relaxed text-white/70">{cta.subtitle}</p>
+            </div>
+            <MarketingButtonLink href={cta.href} variant="ctaLight">
+              {cta.label}
+            </MarketingButtonLink>
+          </MarketingContainer>
+        </div>
+      ) : null}
 
       <MarketingContainer className="py-12 md:py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.5fr)_repeat(2,minmax(0,1fr))] lg:gap-16">
@@ -125,7 +132,7 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
             >
               AI Product Experience Company
             </p>
-            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/50">
+            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/60">
               DeliverX Ltd — an AI-powered professional growth platform. Xperience, Launchpad and
               Team Co-pilot.
             </p>

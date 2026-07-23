@@ -59,14 +59,8 @@ export default function SuiteHomePage() {
         <HomeFinalCta />
       </main>
 
-      <MarketingFooter
-        cta={{
-          title: "Ready to build your experience?",
-          subtitle: "Start your journey — or explore pricing for every stage.",
-          href: "/signup",
-          label: "Start your journey",
-        }}
-      />
+      {/* Page already ends with HomeFinalCta — omit duplicate footer CTA band */}
+      <MarketingFooter cta={null} />
     </MarketingPageShell>
   );
 }
