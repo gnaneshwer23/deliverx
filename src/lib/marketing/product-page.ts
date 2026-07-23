@@ -7,6 +7,20 @@ export type ProductHowStep = {
   body: string;
 };
 
+export type ProductNarrativeSection = {
+  id: string;
+  label?: string;
+  title: string;
+  body: string;
+  items?: readonly string[];
+  tone?: "white" | "cream" | "green-tint";
+};
+
+export type ProductFaqItem = {
+  question: string;
+  answer: string;
+};
+
 export type ProductPageContent = {
   /** Current product path, e.g. /xperience */
   path: string;
@@ -14,30 +28,43 @@ export type ProductPageContent = {
   stage: string;
   brandEyebrow?: string;
   name: string;
-  /** Hero promise — outcome-led, one sentence */
+  /** Primary hero headline — outcome-led */
+  heroTitle: string;
+  /** Supporting sentence under the headline */
   promise: string;
   primaryCta: { href: string; label: string };
   /** Secondary hero CTA — typically See pricing or Bundle */
   secondaryCta?: { href: string; label: string };
-  problem: {
+  /** Editorial sections between hero and pricing */
+  sections: readonly ProductNarrativeSection[];
+  faq?: {
+    label?: string;
+    title?: string;
+    items: readonly ProductFaqItem[];
+  };
+  /** @deprecated Prefer sections — kept for gradual migration */
+  problem?: {
     label?: string;
     title: string;
     body: string;
   };
-  how: {
+  /** @deprecated Prefer sections */
+  how?: {
     label?: string;
     title: ReactNode;
     subtitle: string;
     steps: readonly ProductHowStep[];
   };
-  includes: {
+  /** @deprecated Prefer sections */
+  includes?: {
     label?: string;
     title: string;
     subtitle?: string;
     items: readonly string[];
     highlightCount?: number;
   };
-  idealFor: {
+  /** @deprecated Prefer sections */
+  idealFor?: {
     label?: string;
     title?: string;
     body: string;

@@ -7,11 +7,11 @@ const appUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: "DeliverX — Build the experience. Advance your career. Deliver with confidence.",
+  title: "DeliverX — AI Product Experience Company",
   description:
-    "DeliverX is the complete career intelligence platform: Xperience, Launchpad and Team Co-pilot. Build the experience → Land the opportunity → Succeed in the role.",
+    "DeliverX is an AI-powered professional growth platform that supports Product Managers from their first practical experience through to successful product delivery in real organisations.",
   openGraph: {
-    title: "DeliverX",
+    title: "DeliverX — AI Product Experience Company",
     description:
       "Build the experience → Land the opportunity → Succeed in the role. Xperience, Launchpad and Team Co-pilot.",
     type: "website",
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "DeliverX · Complete Career Intelligence Platform",
+        alt: "DeliverX · AI Product Experience Company",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "DeliverX — Build the experience. Advance your career.",
+    title: "DeliverX — AI Product Experience Company",
     description:
-      "Xperience, Launchpad and Team Co-pilot — build experience, land the opportunity, succeed in the role.",
+      "Xperience, Launchpad and Team Co-pilot — build the experience, land the opportunity, succeed in the role.",
     images: ["/opengraph-image"],
   },
 };

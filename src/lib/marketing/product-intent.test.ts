@@ -32,8 +32,8 @@ describe("postSignupPath", () => {
     expect(postSignupPath({ product: "launchpad", intent: "roles" })).toBe(
       "/launchpad/app?intent=roles",
     );
-    expect(postSignupPath({ product: "bundle" })).toBe("/start/bundle");
+    expect(postSignupPath({ product: "bundle" })).toBe("/hub");
     expect(postSignupPath({ product: "team-copilot" })).toBe("/onboarding/organisation");
-    expect(postSignupPath({})).toBe("/onboarding/organisation");
+    expect(postSignupPath({})).toBe("/hub");
   });
 });

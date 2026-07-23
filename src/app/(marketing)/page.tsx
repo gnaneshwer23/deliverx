@@ -17,33 +17,29 @@ import {
   CAREER_BUNDLE,
   CAREER_PROGRESSION_LINE,
   CAREER_STORY_LINE,
-  CAREER_TIERS,
+  COMPANY_MISSION,
+  COMPANY_POSITIONING,
 } from "@/lib/marketing/career-suite";
 import { mktClass } from "@/lib/marketing/landing-theme";
-import { PRODUCT_NAV, SUITE_LIFECYCLE, SUITE_PRODUCTS } from "@/lib/marketing/suite-data";
+import {
+  SUITE_DIFFERENCE,
+  SUITE_LIFECYCLE,
+  SUITE_PRODUCTS,
+} from "@/lib/marketing/suite-data";
 
 export const metadata: Metadata = {
-  title: "DeliverX — Build the experience. Advance your career. Deliver with confidence.",
-  description:
-    "DeliverX is the complete career intelligence platform: Xperience, Launchpad and Team Co-pilot. Build the experience → Land the opportunity → Succeed in the role.",
+  title: "DeliverX — AI Product Experience Company",
+  description: COMPANY_MISSION,
   openGraph: {
-    title: "DeliverX",
+    title: "DeliverX — AI Product Experience Company",
     description: CAREER_PROGRESSION_LINE,
   },
 };
 
-const FROM_PRICE = CAREER_TIERS.reduce(
-  (lowest, tier) => {
-    const n = Number.parseInt(tier.price.replace(/[^\d]/g, ""), 10);
-    return Number.isFinite(n) && n < lowest ? n : lowest;
-  },
-  Number.POSITIVE_INFINITY,
-);
-
 export default function SuiteHomePage() {
   return (
     <MarketingPageShell>
-      <MarketingNav links={PRODUCT_NAV} primaryCta={{ href: "/pricing", label: "View pricing" }} />
+      <MarketingNav primaryCta={{ href: "/signup", label: "Start Free" }} />
 
       <main id="main-content">
         {/* 1. Brand hero — DeliverX first, one composition */}
@@ -64,29 +60,32 @@ export default function SuiteHomePage() {
           <MarketingContainer className="relative z-[1]">
             <MarketingHeroMotion>
               <MarketingHeroItem>
+                <p className={mktClass.label}>{COMPANY_POSITIONING}</p>
+              </MarketingHeroItem>
+              <MarketingHeroItem>
                 <p
-                  className={`text-[clamp(3.5rem,10vw,6.5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  className={`mt-5 text-[clamp(3.5rem,10vw,6.5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                 >
                   DeliverX
                 </p>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <h1 className="mt-8 max-w-xl text-[clamp(1.25rem,2.6vw,1.625rem)] font-light leading-[1.45] tracking-[-0.015em] text-[var(--mkt-text1)]">
-                  {CAREER_PROGRESSION_LINE}
+                <h1 className="mt-8 max-w-2xl text-[clamp(1.35rem,2.8vw,1.75rem)] font-light leading-[1.4] tracking-[-0.015em] text-[var(--mkt-text1)]">
+                  The complete journey to becoming a successful Product Manager.
                 </h1>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
+                <p className="mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
                   {CAREER_STORY_LINE}
                 </p>
               </MarketingHeroItem>
               <MarketingHeroItem>
                 <div className="mt-11 flex flex-wrap items-center gap-3">
-                  <MarketingButtonLink href="#path" variant="primaryLg">
-                    Explore path
+                  <MarketingButtonLink href="#products" variant="primaryLg">
+                    Explore Products
                   </MarketingButtonLink>
-                  <MarketingButtonLink href="/pricing" variant="ghostLg">
-                    View pricing
+                  <MarketingButtonLink href="/signup" variant="ghostLg">
+                    Start Your Journey
                   </MarketingButtonLink>
                 </div>
               </MarketingHeroItem>
@@ -94,53 +93,16 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </section>
 
-        {/* 2. How the path works — editorial, not a dashboard */}
-        <MarketingSection id="path" tone="white">
+        {/* 2. Three products — editorial journey */}
+        <MarketingSection id="products" tone="white">
           <MarketingContainer>
             <MarketingReveal>
-              <p className={mktClass.label}>How the path works</p>
+              <p className={mktClass.label}>Three products. One career journey.</p>
               <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
-                Three stages. One continuous journey.
+                Build the experience → Land the opportunity → Succeed in the role.
               </p>
               <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                Build capability, land the opportunity, then succeed once you are in the role —
-                stage by stage, or as one bundle.
-              </p>
-            </MarketingReveal>
-
-            <MarketingReveal delay={0.08}>
-              <ol className="mkt-progression mt-14">
-                {SUITE_LIFECYCLE.map((step, index) => (
-                  <li key={step.name} className="mkt-progression-item">
-                    <span className={`${mktClass.mono} text-[0.75rem] text-[var(--mkt-green-l)]`}>
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <p
-                      className={`mt-4 text-[clamp(1.35rem,2.4vw,1.75rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                    >
-                      {step.line}
-                    </p>
-                    <p className="mt-2 text-[0.875rem] leading-relaxed text-[var(--mkt-text3)]">
-                      <span className="text-[var(--mkt-text2)]">{step.name}</span>
-                      <span className="mx-1.5 text-[var(--mkt-border-l)]" aria-hidden>
-                        ·
-                      </span>
-                      {step.outcome}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </MarketingReveal>
-          </MarketingContainer>
-        </MarketingSection>
-
-        {/* 3. Three products — short promise + link into full page */}
-        <MarketingSection id="products" tone="cream">
-          <MarketingContainer>
-            <MarketingReveal>
-              <p className={mktClass.label}>The products</p>
-              <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
-                Read each stage. Buy when you are ready.
+                Start at any stage — or move through the full path as one continuous journey.
               </p>
             </MarketingReveal>
 
@@ -181,59 +143,126 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* 4. Reference offer strip */}
+        {/* 3. Journey strip */}
+        <MarketingSection id="journey" tone="cream">
+          <MarketingContainer>
+            <MarketingReveal>
+              <p className={mktClass.label}>The journey</p>
+              <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
+                One progression. Three connected products.
+              </p>
+            </MarketingReveal>
+
+            <MarketingReveal delay={0.08}>
+              <ol className="mkt-progression mt-14">
+                {SUITE_LIFECYCLE.map((step, index) => (
+                  <li key={step.name} className="mkt-progression-item">
+                    <span className={`${mktClass.mono} text-[0.75rem] text-[var(--mkt-green-l)]`}>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <p
+                      className={`mt-4 text-[clamp(1.35rem,2.4vw,1.75rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                    >
+                      {step.line}
+                    </p>
+                    <p className="mt-2 text-[0.875rem] leading-relaxed text-[var(--mkt-text3)]">
+                      <span className="text-[var(--mkt-text2)]">{step.name}</span>
+                      <span className="mx-1.5 text-[var(--mkt-border-l)]" aria-hidden>
+                        ·
+                      </span>
+                      {step.outcome}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </MarketingReveal>
+          </MarketingContainer>
+        </MarketingSection>
+
+        {/* 4. The DeliverX Difference */}
+        <MarketingSection id="difference" tone="white">
+          <MarketingContainer>
+            <MarketingReveal>
+              <p className={mktClass.label}>The DeliverX Difference</p>
+              <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
+                Why the journey works as one platform.
+              </p>
+            </MarketingReveal>
+
+            <ul className="mt-14 grid gap-10 sm:grid-cols-2">
+              {SUITE_DIFFERENCE.map((point, index) => (
+                <li key={point.title}>
+                  <MarketingReveal delay={index * 0.05}>
+                    <p className={`${mktClass.mono} text-[0.75rem] text-[var(--mkt-green-l)]`}>
+                      {String(index + 1).padStart(2, "0")}
+                    </p>
+                    <h3
+                      className={`mt-3 text-[clamp(1.25rem,2vw,1.5rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                    >
+                      {point.title}
+                    </h3>
+                    <p className="mt-3 max-w-sm text-[0.9375rem] leading-[1.7] text-[var(--mkt-text2)]">
+                      {point.body}
+                    </p>
+                  </MarketingReveal>
+                </li>
+              ))}
+            </ul>
+          </MarketingContainer>
+        </MarketingSection>
+
+        {/* 5. Mission + Complete Journey offer */}
         <section
           id="offer"
           className="mkt-offer-strip scroll-mt-[var(--mkt-navh)] border-y border-[var(--mkt-border)] bg-[var(--mkt-s1)]"
         >
           <MarketingContainer>
             <MarketingReveal>
-              <Link
-                href="/pricing"
-                className="group flex flex-col items-start justify-between gap-4 py-10 no-underline sm:flex-row sm:items-center sm:py-12"
-              >
-                <div>
-                  <p className={mktClass.label}>Reference pricing</p>
-                  <p
-                    className={`mt-3 text-[clamp(1.35rem,2.8vw,1.75rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                  >
-                    From £{Number.isFinite(FROM_PRICE) ? FROM_PRICE : 250}
-                    <span className="mx-2.5 text-[var(--mkt-border-l)]" aria-hidden>
-                      ·
-                    </span>
-                    Bundle {CAREER_BUNDLE.price}
-                  </p>
-                  <p className="mt-2 text-[0.8125rem] text-[var(--mkt-text3)]">
-                    Individual stages or 12 months of the full path.
+              <div className="flex flex-col items-start justify-between gap-8 py-12 md:flex-row md:items-end md:py-14">
+                <div className="max-w-xl">
+                  <p className={mktClass.label}>Our mission</p>
+                  <p className="mt-4 text-[0.9375rem] leading-[1.75] text-[var(--mkt-text2)]">
+                    {COMPANY_MISSION}
                   </p>
                 </div>
-                <span className="text-[0.875rem] font-medium text-[var(--mkt-green)] transition-transform duration-300 group-hover:translate-x-1">
-                  View pricing →
-                </span>
-              </Link>
+                <Link
+                  href="/pricing#bundle"
+                  className="group shrink-0 no-underline"
+                >
+                  <p className={mktClass.label}>Recommended</p>
+                  <p
+                    className={`mt-2 text-[clamp(1.35rem,2.8vw,1.75rem)] tracking-[-0.02em] text-[var(--mkt-text1)] transition-colors group-hover:text-[var(--mkt-green)] ${mktClass.serif}`}
+                  >
+                    Complete Journey · {CAREER_BUNDLE.price}
+                  </p>
+                  <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text3)]">
+                    12 months across all three products →
+                  </p>
+                </Link>
+              </div>
             </MarketingReveal>
           </MarketingContainer>
         </section>
 
-        {/* 5. Soft final CTA */}
+        {/* 6. Soft final CTA */}
         <MarketingSection tone="dark" className="mkt-cta-band !border-0">
           <MarketingContainer className="relative z-10 text-center">
             <MarketingReveal>
               <h2
                 className={`text-[clamp(1.875rem,4vw,2.75rem)] tracking-[-0.025em] text-white ${mktClass.serif}`}
               >
-                Start when the path makes sense
+                Start your journey
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-                Explore a product page, then buy that stage — or take Xperience, Launchpad and Team
-                Co-pilot together in the Complete Bundle.
+                Explore the products, then buy a stage — or take Xperience, Launchpad and Team
+                Co-pilot together in the Complete Journey.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-                <MarketingButtonLink href="/pricing" variant="ctaLight">
-                  View pricing
+                <MarketingButtonLink href="/signup" variant="ctaLight">
+                  Start Your Journey
                 </MarketingButtonLink>
-                <MarketingButtonLink href="/pricing#bundle" variant="ctaOutline">
-                  See the bundle
+                <MarketingButtonLink href="/pricing" variant="ctaOutline">
+                  View pricing
                 </MarketingButtonLink>
               </div>
             </MarketingReveal>
@@ -243,11 +272,11 @@ export default function SuiteHomePage() {
 
       <MarketingFooter
         cta={{
-          title: "Start your career progression",
+          title: "Start your career journey",
           subtitle:
-            "Choose a stage, or get Xperience + Launchpad + Team Co-pilot in the Complete Bundle.",
-          href: "/pricing",
-          label: "View pricing",
+            "Choose a stage, or get Xperience + Launchpad + Team Co-pilot in the Complete Journey.",
+          href: "/signup",
+          label: "Start Free",
         }}
       />
     </MarketingPageShell>

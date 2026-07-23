@@ -3,12 +3,13 @@ import { ProductMarketingPage } from "@/components/marketing/product-marketing-p
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 
 export const metadata: Metadata = {
-  title: "Launchpad — Get career-ready | DeliverX",
+  title: "Launchpad — Turn your experience into opportunities | DeliverX",
   description:
-    "Turn experience into career opportunities with Career Twin, portfolio, mock interviews and readiness scoring. £250 for 3 months — Advance Your Career.",
+    "Turn experience into career opportunities with Career Twin, portfolio, mock interviews and salary insights. £250 for 3 months — Land the opportunity.",
   openGraph: {
-    title: "Launchpad — Advance Your Career | DeliverX",
-    description: "Get career-ready. £250 · 3 months access.",
+    title: "Launchpad — Land the opportunity | DeliverX",
+    description:
+      "Turn your experience into opportunities. £250 · 3 months access.",
   },
 };
 

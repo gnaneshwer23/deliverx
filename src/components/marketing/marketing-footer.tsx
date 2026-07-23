@@ -20,12 +20,15 @@ const FOOTER_COLUMNS = [
     ],
   },
   {
-    title: "Get started",
+    title: "Company",
     links: [
+      { href: "/solutions", label: "Solutions" },
+      { href: "/resources", label: "Resources" },
+      { href: "/about", label: "About" },
       { href: "/pricing", label: "Pricing" },
-      { href: "/pricing#bundle", label: "Complete Bundle" },
-      { href: "/signup", label: "Create account" },
-      { href: "/login", label: "Sign in" },
+      { href: "/pricing#bundle", label: "Complete Journey" },
+      { href: "/signup", label: "Start Free" },
+      { href: "/login", label: "Sign In" },
     ],
   },
 ] as const;
@@ -121,10 +124,11 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
             <p
               className={`mt-5 max-w-sm text-[1.05rem] leading-snug tracking-[-0.015em] text-[var(--mkt-text1)] ${mktClass.serif}`}
             >
-              Build the experience. Land the opportunity. Succeed in the role.
+              AI Product Experience Company
             </p>
-            <p className="mt-3 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
-              DeliverX Ltd — Xperience, Launchpad and Team Co-pilot.
+            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
+              DeliverX Ltd — an AI-powered professional growth platform. Xperience, Launchpad and
+              Team Co-pilot.
             </p>
             <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2" aria-label="Legal">
               {LEGAL_LINKS.map((link) => (

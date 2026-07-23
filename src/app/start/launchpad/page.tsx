@@ -52,8 +52,8 @@ export default async function StartLaunchpadPage({
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
             {exploringRoles
-              ? "Your account is ready for Launchpad — Advance Your Career. Continue to assessment, Career Twin and interview prep."
-              : "Your account is ready for Launchpad — Advance Your Career. Continue to onboarding and your career readiness workspace."}
+              ? "Your account is ready for Launchpad — Land the opportunity. Continue to assessment, Career Twin and interview prep."
+              : "Your account is ready for Launchpad — Land the opportunity. Continue to onboarding and your career readiness workspace."}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <MarketingButtonLink

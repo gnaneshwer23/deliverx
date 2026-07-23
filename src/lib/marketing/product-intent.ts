@@ -21,7 +21,7 @@ export function productDisplayName(product: SuiteProduct): string {
     case "team-copilot":
       return "Team Co-pilot";
     case "bundle":
-      return "Complete Career Bundle";
+      return "Complete Journey";
   }
 }
 
@@ -41,6 +41,11 @@ export function productMarketingPath(product: SuiteProduct): string {
 /**
  * Where to send the user after signup / email confirm.
  * Invite/join always win over product intent.
+ *
+ * Hub routing:
+ * - bundle / no product → /hub (ecosystem home)
+ * - xperience / launchpad → their apps
+ * - team-copilot → organisation onboarding (then workspace)
  */
 export function postSignupPath(options: {
   product?: SuiteProduct | null;
@@ -69,11 +74,15 @@ export function postSignupPath(options: {
     return qs ? `/launchpad/app?${qs}` : "/launchpad/app";
   }
 
-  if (product === "bundle") {
-    return "/start/bundle";
+  if (product === "team-copilot") {
+    return appendRoleToPath("/onboarding/organisation", preselectedRole ?? null);
   }
 
-  // team-copilot or default → existing workspace onboarding
+  // bundle or no strong product intent → DeliverX Hub
+  if (product === "bundle" || !product) {
+    return "/hub";
+  }
+
   return appendRoleToPath("/onboarding/organisation", preselectedRole ?? null);
 }
 
@@ -86,31 +95,34 @@ export function signupCopy(product: SuiteProduct | null): {
     case "xperience":
       return {
         title: "Create your Xperience account",
-        subtitle: "Build Experience — £500 for 3 months. We’ll issue login credentials after signup.",
+        subtitle:
+          "Build the experience — £500 for 3 months. We’ll issue login credentials after signup.",
         banner:
           "Starting Xperience — Build the experience employers expect (£500 · 3 months).",
       };
     case "launchpad":
       return {
         title: "Create your Launchpad account",
-        subtitle: "Advance Your Career — £250 for 3 months. We’ll issue login credentials after signup.",
+        subtitle:
+          "Land the opportunity — £250 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Launchpad — Get career-ready (£250 · 3 months).",
+          "Starting Launchpad — Turn your experience into opportunities (£250 · 3 months).",
       };
     case "team-copilot":
       return {
         title: "Create your Team Co-pilot account",
-        subtitle: "Deliver Products Together — £500 for 3 months. We’ll issue login credentials after signup.",
+        subtitle:
+          "Succeed in the role — £500 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Team Co-pilot — Deliver with confidence (£500 · 3 months).",
+          "Starting Team Co-pilot — Deliver products with confidence (£500 · 3 months).",
       };
     case "bundle":
       return {
         title: "Create your DeliverX account",
         subtitle:
-          "Complete Career Bundle — £800 for 12 months across Xperience, Launchpad and Team Co-pilot.",
+          "Complete Journey — £800 for 12 months across Xperience, Launchpad and Team Co-pilot.",
         banner:
-          "Starting the Complete Career Bundle — Experience. Career. Delivery. (£800 · 12 months).",
+          "Starting the Complete Journey — Experience. Opportunity. Delivery. (£800 · 12 months).",
       };
     default:
       return {

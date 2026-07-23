@@ -38,7 +38,7 @@ export default async function StartXperiencePage() {
             Sign in to enter Xperience.
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-            Your account is ready for Xperience — Build Experience. Continue to
+            Your account is ready for Xperience — Build the experience. Continue to
             onboarding and your MediFlow company workspace.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">

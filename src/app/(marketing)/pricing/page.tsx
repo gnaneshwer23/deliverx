@@ -26,78 +26,95 @@ import {
   type CareerTier,
 } from "@/lib/marketing/career-suite";
 import { mktClass } from "@/lib/marketing/landing-theme";
-import { PRODUCT_NAV } from "@/lib/marketing/suite-data";
 
 export const metadata: Metadata = {
-  title: "Pricing — Complete Career Intelligence Platform | DeliverX",
+  title: "Pricing — Complete Journey | DeliverX",
   description:
-    "Xperience £500, Launchpad £250, Team Co-pilot £500, or the Complete Career Bundle at £800 for 12 months. Build the experience → Land the opportunity → Succeed in the role.",
+    "Xperience £500, Launchpad £250, Team Co-pilot £500, or the Complete Journey at £800 for 12 months. Build the experience → Land the opportunity → Succeed in the role.",
   openGraph: {
     title: "DeliverX Pricing",
     description: CAREER_PROGRESSION_LINE,
   },
 };
 
-function TierCompact({ tier }: { tier: CareerTier }) {
+function ProgressionTable() {
+  const rows = [...CAREER_TIERS, CAREER_BUNDLE];
+
   return (
-    <article id={tier.id} className="mkt-tier-compact flex h-full flex-col">
-      <p className={`${mktClass.label} text-[var(--mkt-green)]`}>{tier.stage}</p>
-      <h2
-        className={`mt-3 text-[clamp(1.5rem,2.6vw,1.875rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-      >
-        {tier.productName}
-      </h2>
-      <p
-        className={`mt-5 text-[clamp(2.125rem,3.8vw,2.75rem)] leading-none tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-      >
-        {tier.price}
-      </p>
-      <p className="mt-2 text-sm text-[var(--mkt-text3)]">{tier.cadence}</p>
-      <p className="mt-5 flex-1 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
-        {tier.headline}
-      </p>
-      <p className="mt-3 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
-        {tier.summary}
-      </p>
-      <ul className="mt-6 space-y-2">
-        {tier.includes.slice(0, 4).map((item) => (
-          <li
-            key={item}
-            className="grid grid-cols-[auto_1fr] gap-2.5 text-[0.8125rem] text-[var(--mkt-text3)]"
-          >
-            <span className="mt-1.5 size-1 shrink-0 bg-[var(--mkt-green-l)]" aria-hidden />
-            {item}
-          </li>
-        ))}
-        {tier.includes.length > 4 ? (
-          <li className="pt-0.5 text-[0.75rem] text-[var(--mkt-text3)]">
-            +{tier.includes.length - 4} more on the product page
-          </li>
-        ) : null}
-      </ul>
-      <div className="mt-8 flex flex-col gap-3">
-        <MarketingButtonLink href={tier.ctaHref} variant="primary">
-          Buy {tier.productName}
-        </MarketingButtonLink>
-        {tier.href.startsWith("/") && !tier.href.includes("#") ? (
-          <Link
-            href={tier.href}
-            className="text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
-          >
-            Read the full page →
-          </Link>
-        ) : null}
-      </div>
-    </article>
+    <div className="mkt-pricing-table overflow-x-auto">
+      <table className="w-full min-w-[36rem] border-collapse text-left">
+        <thead>
+          <tr className="border-b border-[var(--mkt-border)]">
+            <th className={`${mktClass.label} pb-4 pr-6 font-medium`}>Plan</th>
+            <th className={`${mktClass.label} pb-4 pr-6 font-medium`}>Designed for</th>
+            <th className={`${mktClass.label} pb-4 font-medium`}>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((tier) => {
+            const isBundle = tier.id === "bundle";
+            return (
+              <tr
+                key={tier.id}
+                id={tier.id}
+                className={`border-b border-[var(--mkt-border)] align-top ${
+                  isBundle ? "bg-[rgba(61,150,96,0.04)]" : ""
+                }`}
+              >
+                <td className="py-6 pr-6">
+                  <p
+                    className={`text-[1.125rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    {tier.productName}
+                    {isBundle ? (
+                      <span className="ml-2 text-[0.6875rem] font-sans font-medium uppercase tracking-[0.12em] text-[var(--mkt-green)]">
+                        Recommended
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text3)]">{tier.stage}</p>
+                </td>
+                <td className="py-6 pr-6">
+                  <p className="max-w-sm text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
+                    {tier.designedFor}
+                  </p>
+                </td>
+                <td className="py-6">
+                  <p
+                    className={`text-[1.5rem] leading-none tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    {tier.price}
+                  </p>
+                  <p className="mt-1.5 text-[0.75rem] text-[var(--mkt-text3)]">{tier.cadence}</p>
+                  <div className="mt-4 flex flex-col gap-2">
+                    <MarketingButtonLink href={tier.ctaHref} variant="primary">
+                      {isBundle ? "Start Complete Journey" : `Buy ${tier.productName}`}
+                    </MarketingButtonLink>
+                    {tier.href.startsWith("/") && !tier.href.includes("#") ? (
+                      <Link
+                        href={tier.href}
+                        className="text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
+                      >
+                        Read the full page →
+                      </Link>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 function BundleBlock({ tier }: { tier: CareerTier }) {
   return (
-    <article id={tier.id}>
+    <article>
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
-          <p className={`${mktClass.label} text-[var(--mkt-green)]`}>{tier.stage}</p>
+          <p className={`${mktClass.label} text-[var(--mkt-green)]`}>Recommended</p>
           <h2
             className={`mt-3 text-[clamp(1.875rem,3.5vw,2.5rem)] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
           >
@@ -133,7 +150,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 
       <div className="mt-9 flex flex-wrap gap-3">
         <MarketingButtonLink href={tier.ctaHref} variant="primaryLg">
-          Buy the Complete Bundle
+          Start the Complete Journey
         </MarketingButtonLink>
         <MarketingButtonLink href="/#products" variant="ghostLg">
           Compare products
@@ -146,10 +163,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 export default function PricingPage() {
   return (
     <MarketingPageShell>
-      <MarketingNav
-        links={PRODUCT_NAV}
-        primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: "Get the bundle" }}
-      />
+      <MarketingNav primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: "Complete Journey" }} />
 
       <main id="main-content">
         <section
@@ -166,46 +180,42 @@ export default function PricingPage() {
                 <h1
                   className={`mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,3.75rem)] leading-[1.02] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                 >
-                  Clear pricing. Buy a stage — or the full path.
+                  Pricing that follows the journey.
                 </h1>
               </MarketingHeroItem>
               <MarketingHeroItem>
                 <p className="mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  Xperience £500 · Launchpad £250 · Team Co-pilot £500 — or the Complete Bundle at
-                  £800 for 12 months.
+                  Buy the stage you need — or take the Complete Journey at £800 for 12 months across
+                  Xperience, Launchpad and Team Co-pilot.
                 </p>
               </MarketingHeroItem>
             </MarketingHeroMotion>
           </MarketingContainer>
         </section>
 
-        {/* Three products — comparison + buy CTAs */}
         <MarketingSection tone="white">
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
-                label="Individual products"
-                title="Buy the stage you need"
-                subtitle="Each product stands alone. Start where you are — or continue through the full career path."
+                label="Progression"
+                title="Plan · Designed for · Price"
+                subtitle="Each product stands alone. The Complete Journey is the recommended path for the full career arc."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
-              <div className="mkt-tier-grid mt-14">
-                {CAREER_TIERS.map((tier) => (
-                  <TierCompact key={tier.id} tier={tier} />
-                ))}
+              <div className="mt-12">
+                <ProgressionTable />
               </div>
             </MarketingReveal>
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Featured Complete Bundle */}
         <MarketingSection id="bundle" tone="green-tint">
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
-                label="Complete Career Bundle"
-                title="Experience. Career. Delivery."
+                label="Complete Journey"
+                title="Experience. Opportunity. Delivery."
                 subtitle="Everything in Xperience, Launchpad and Team Co-pilot — with 12 months of continuous access."
               />
             </MarketingReveal>
@@ -217,7 +227,6 @@ export default function PricingPage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Promise / guarantee */}
         <MarketingSection id="promise" tone="white">
           <MarketingContainer className="max-w-2xl">
             <MarketingReveal>
@@ -273,11 +282,11 @@ export default function PricingPage() {
                 {CAREER_PROGRESSION_LINE}
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-                Buy one product — or take the Complete Career Bundle.
+                Buy one product — or take the Complete Journey.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href={CAREER_BUNDLE.ctaHref} variant="ctaLight">
-                  Buy the Complete Bundle
+                  Start the Complete Journey
                 </MarketingButtonLink>
                 <MarketingButtonLink href="#xperience" variant="ctaOutline">
                   Buy a single product
@@ -290,10 +299,10 @@ export default function PricingPage() {
 
       <MarketingFooter
         cta={{
-          title: "Start your career progression",
-          subtitle: "£800 Complete Bundle · or choose Xperience, Launchpad or Team Co-pilot.",
+          title: "Start your career journey",
+          subtitle: "£800 Complete Journey · or choose Xperience, Launchpad or Team Co-pilot.",
           href: CAREER_BUNDLE.ctaHref,
-          label: "Get the bundle",
+          label: "Complete Journey",
         }}
       />
     </MarketingPageShell>

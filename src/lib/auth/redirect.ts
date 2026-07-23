@@ -5,11 +5,14 @@ import {
   LAUNCHPAD_APP_PATH,
   LAUNCHPAD_START_PATH,
 } from "@/lib/launchpad/auth";
+import { parseSuiteProduct } from "@/lib/marketing/product-intent";
 import {
   isXperienceUser,
   XPERIENCE_APP_PATH,
   XPERIENCE_START_PATH,
 } from "@/lib/xperience/auth";
+
+const HUB_PATH = "/hub";
 
 function isSafeNext(next?: string | null): next is string {
   return Boolean(next && next.startsWith("/") && !next.startsWith("//"));
@@ -34,6 +37,24 @@ function isLaunchpadDestination(path: string): boolean {
   );
 }
 
+function suiteProductFromUser(user: User | null | undefined) {
+  if (!user) return null;
+  const meta = user.user_metadata as Record<string, unknown> | undefined;
+  return parseSuiteProduct(typeof meta?.product === "string" ? meta.product : null);
+}
+
+function isHubDestination(path: string): boolean {
+  return path === HUB_PATH || path.startsWith(`${HUB_PATH}/`) || path.startsWith(`${HUB_PATH}?`);
+}
+
+/**
+ * Post-login destination.
+ *
+ * - xperience / launchpad users → their apps (unless safeNext is another non-onboarding path)
+ * - bundle / no product intent → /hub
+ * - team-copilot (and users with org) → existing workspace / onboarding flow
+ * Deep links via `next` are preserved when safe.
+ */
 export async function resolveAuthenticatedPath(
   supabase: SupabaseClient,
   next?: string | null,
@@ -51,6 +72,13 @@ export async function resolveAuthenticatedPath(
   // Prefer session user for metadata; fall back when id was supplied explicitly.
   const sessionUser =
     user && (!userId || user.id === userId) ? user : (user as User | null);
+
+  const product = suiteProductFromUser(sessionUser);
+
+  // Explicit hub deep link
+  if (safeNext && isHubDestination(safeNext)) {
+    return HUB_PATH;
+  }
 
   // Xperience product users skip Team Co-pilot org onboarding.
   if (isXperienceUser(sessionUser)) {
@@ -83,6 +111,14 @@ export async function resolveAuthenticatedPath(
     return LAUNCHPAD_APP_PATH;
   }
 
+  // Bundle or no strong product intent → DeliverX Hub (unless deep-linked elsewhere)
+  if (product === "bundle" || !product) {
+    if (safeNext && !safeNext.startsWith("/onboarding") && !isAuthEntryLike(safeNext)) {
+      return safeNext;
+    }
+    return HUB_PATH;
+  }
+
   const { data: profile } = await supabase
     .from("users")
     .select("organisation_id, role")
@@ -96,4 +132,13 @@ export async function resolveAuthenticatedPath(
   if (safeNext) return safeNext;
 
   return resolveRoleHomePath(profile.role);
+}
+
+function isAuthEntryLike(path: string): boolean {
+  return (
+    path === "/login" ||
+    path.startsWith("/login?") ||
+    path === "/signup" ||
+    path.startsWith("/signup?")
+  );
 }

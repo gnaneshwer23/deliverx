@@ -3,11 +3,16 @@
  * Build the experience → Land the opportunity → Succeed in the role.
  */
 
+export const COMPANY_POSITIONING = "AI Product Experience Company";
+
+export const COMPANY_MISSION =
+  "DeliverX is an AI-powered professional growth platform that supports Product Managers from their first practical experience through to successful product delivery in real organisations.";
+
 export const CAREER_PROGRESSION_LINE =
   "Build the experience → Land the opportunity → Succeed in the role.";
 
 export const CAREER_STORY_LINE =
-  "Build the experience. Advance your career. Deliver with confidence.";
+  "DeliverX helps you gain practical experience, secure career opportunities and thrive in real product teams through three connected AI-powered products.";
 
 export const XPERIENCE_SIGNUP_HREF = "/signup?product=xperience";
 export const LAUNCHPAD_SIGNUP_HREF = "/signup?product=launchpad";
@@ -108,6 +113,7 @@ export type CareerTier = {
   id: CareerTierId;
   productName: string;
   stage: string;
+  designedFor: string;
   headline: string;
   price: string;
   cadence: string;
@@ -124,7 +130,8 @@ export const CAREER_TIERS: readonly CareerTier[] = [
   {
     id: "xperience",
     productName: "Xperience",
-    stage: "Build Experience",
+    stage: "Build the experience",
+    designedFor: "Aspiring Product Managers building practical experience",
     headline: "Build the experience employers expect",
     price: "£500",
     cadence: "3 Months Access",
@@ -133,15 +140,16 @@ export const CAREER_TIERS: readonly CareerTier[] = [
     idealFor:
       "Career switchers, graduates and aspiring Product Managers who want practical experience before applying for roles.",
     includes: XPERIENCE_INCLUDES,
-    cta: "Start Xperience",
+    cta: "Start Building Experience",
     ctaHref: XPERIENCE_SIGNUP_HREF,
     href: "/xperience",
   },
   {
     id: "launchpad",
     productName: "Launchpad",
-    stage: "Advance Your Career",
-    headline: "Get career-ready",
+    stage: "Land the opportunity",
+    designedFor: "Professionals ready to turn experience into interviews",
+    headline: "Turn your experience into opportunities",
     price: "£250",
     cadence: "3 Months Access",
     summary:
@@ -149,15 +157,16 @@ export const CAREER_TIERS: readonly CareerTier[] = [
     idealFor:
       "Professionals actively preparing for Product Management interviews and career transitions.",
     includes: LAUNCHPAD_INCLUDES,
-    cta: "Start Launchpad",
+    cta: "Start Your Career Journey",
     ctaHref: LAUNCHPAD_SIGNUP_HREF,
     href: "/launchpad",
   },
   {
     id: "team-copilot",
     productName: "Team Co-pilot",
-    stage: "Deliver Products Together",
-    headline: "Deliver with confidence",
+    stage: "Succeed in the role",
+    designedFor: "Product teams delivering in real organisations",
+    headline: "Deliver products with confidence",
     price: "£500",
     cadence: "3 Months Access",
     summary:
@@ -165,7 +174,7 @@ export const CAREER_TIERS: readonly CareerTier[] = [
     idealFor:
       "Product Managers, Delivery Managers, Project Managers, Business Analysts and cross-functional product teams.",
     includes: TEAM_COPILOT_INCLUDES,
-    cta: "Start Team Co-pilot",
+    cta: "Start Collaborating",
     ctaHref: TEAM_COPILOT_SIGNUP_HREF,
     href: "/team-copilot",
   },
@@ -173,17 +182,18 @@ export const CAREER_TIERS: readonly CareerTier[] = [
 
 export const CAREER_BUNDLE: CareerTier = {
   id: "bundle",
-  productName: "Complete Career Bundle",
-  stage: "Experience. Career. Delivery.",
+  productName: "Complete Journey",
+  stage: "The full path",
+  designedFor: "People who want experience, opportunity and delivery in one commitment",
   headline: "Everything in Xperience, Launchpad and Team Co-pilot",
   price: "£800",
   cadence: "12 Months Access",
   summary:
-    "The complete career intelligence platform — build experience, land the opportunity and succeed in the role with continuous access for a year.",
+    "The complete professional growth path — build experience, land the opportunity and succeed in the role with continuous access for a year.",
   idealFor:
     "People who want the full path: company experience, career readiness and delivery tools in one commitment.",
   includes: BUNDLE_INCLUDES,
-  cta: "Get the Complete Bundle",
+  cta: "Start the Complete Journey",
   ctaHref: BUNDLE_SIGNUP_HREF,
   href: "/pricing#bundle",
   featured: true,

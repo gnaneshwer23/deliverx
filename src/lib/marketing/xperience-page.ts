@@ -1,6 +1,5 @@
 import type { ProductPageContent } from "@/lib/marketing/product-page";
 import { BUNDLE_SIGNUP_HREF, careerTierById } from "@/lib/marketing/career-suite";
-import { XPERIENCE_JOURNEY } from "@/lib/marketing/xperience-data";
 
 const tier = careerTierById("xperience");
 
@@ -9,69 +8,113 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   stage: tier.stage,
   brandEyebrow: `DeliverX · ${tier.stage}`,
   name: "Xperience",
+  heroTitle: "Build the experience employers expect.",
   promise:
-    "Join an AI-powered company as a Product Manager — build real capability, not another certificate.",
+    "Join an AI-powered company as a Product Manager. Work real projects, make real trade-offs, and leave with judgement and an Experience Record — not another certificate.",
   primaryCta: {
     href: tier.ctaHref,
-    label: `Get access — ${tier.price}`,
+    label: "Start Building Experience",
   },
   secondaryCta: {
     href: "/pricing",
     label: "See pricing",
   },
-  problem: {
-    label: "Why it matters",
-    title: "Employers hire people who have done the work.",
-    body: "Job descriptions ask for product experience you cannot get from courses alone. Xperience puts you inside a living organisation — with customers, stakeholders, trade-offs and launches — so you leave with judgement and a portfolio of evidence, not slides.",
-  },
-  how: {
-    label: "How it works",
-    title: "Work inside the company. Evidence from the work.",
-    subtitle:
-      "You join a realistic organisation from day one. Capability is built through projects, decisions and conversations — then carried into Launchpad when you are ready to land the opportunity.",
-    steps: XPERIENCE_JOURNEY.map((item) => ({
-      step: item.step,
-      title: item.title,
-      body: item.body,
-    })),
-  },
-  includes: {
-    label: "What's included",
-    title: "A full company experience — not a course.",
-    subtitle:
-      "From discovery and strategy through delivery, coaching and portfolio output. Everything listed below is part of your 3-month access.",
-    items: tier.includes,
-    highlightCount: 8,
-  },
-  idealFor: {
-    label: "Ideal for",
-    title: "Who thrives in Xperience",
-    body: tier.idealFor,
+  sections: [
+    {
+      id: "why",
+      tone: "white",
+      label: "Why experience matters",
+      title: "Employers hire people who have done the work.",
+      body: "Job descriptions ask for product experience you cannot get from courses alone. Xperience puts you inside a living organisation — with customers, stakeholders, trade-offs and launches — so you leave with judgement and evidence, not slides.",
+    },
+    {
+      id: "company",
+      tone: "cream",
+      label: "Meet your AI company",
+      title: "A living organisation from day one.",
+      body: "You join a realistic company with product, customers, stakeholders and business pressure. Onboarding, role expectations and team dynamics mirror how modern product organisations actually work.",
+      items: [
+        "AI recruitment and onboarding into your company",
+        "Industry contexts across Healthcare, AI, FinTech, EdTech and SaaS",
+        "Stakeholders who push back, customers who change their minds, and launches that matter",
+      ],
+    },
+    {
+      id: "work",
+      tone: "white",
+      label: "The work you'll do",
+      title: "Operate as a Product Manager — end to end.",
+      body: "Capability grows through decisions, not lectures. You run discovery, strategy, delivery and launches with AI coaching that challenges your thinking while you stay accountable for the outcomes.",
+      items: [
+        "Customer discovery and stakeholder management",
+        "Product strategy, prioritisation and PRDs",
+        "Sprint planning, delivery management and launch simulations",
+        "Crisis and leadership scenarios with performance feedback",
+      ],
+    },
+    {
+      id: "record",
+      tone: "cream",
+      label: "Your Experience Record",
+      title: "Evidence you can take into interviews.",
+      body: "Every project, decision and conversation compounds into a professional record — portfolio artefacts, case studies and interview-ready proof of how you operate.",
+      items: [
+        "Professional portfolio and case study generation",
+        "Resume-ready evidence from real simulated work",
+        "Career intelligence that carries into Launchpad",
+      ],
+    },
+  ],
+  faq: {
+    label: "FAQ",
+    title: "Questions about Xperience",
+    items: [
+      {
+        question: "Is this a course or a simulation?",
+        answer:
+          "Neither in the usual sense. Xperience is a company experience — you work as a Product Manager inside an AI-powered organisation, with projects, stakeholders and outcomes that build a genuine Experience Record.",
+      },
+      {
+        question: "Do I need prior Product Management experience?",
+        answer:
+          "No. Xperience is designed for career switchers, graduates and aspiring Product Managers who need practical experience before applying. Coaching and feedback guide you as you work.",
+      },
+      {
+        question: "How does this connect to Launchpad and Team Co-pilot?",
+        answer:
+          "Xperience builds the experience. Launchpad helps you present it and land opportunities. Team Co-pilot supports you once you are delivering in a real organisation. You can buy stages alone or take the Complete Journey.",
+      },
+      {
+        question: "What do I get at the end of three months?",
+        answer:
+          "A portfolio of evidence, case studies and interview-ready stories from the work you completed — plus clearer judgement about how product teams actually operate.",
+      },
+    ],
   },
   pricing: {
-    label: "Xperience pricing",
+    label: "Pricing",
     title: tier.headline,
-    subtitle: `${tier.cadence} · Stage one of the DeliverX career progression.`,
+    subtitle: `${tier.cadence} · Stage one of the DeliverX journey.`,
     price: tier.price,
     cadence: tier.cadence,
     summary: tier.summary,
     cta: tier.cta,
     ctaHref: tier.ctaHref,
-    bundleLabel: "Or get the Complete Bundle",
+    bundleLabel: "Or get the Complete Journey",
     bundleHref: "/pricing#bundle",
   },
   finalCta: {
     title: "Ready to build the experience?",
     subtitle:
-      "Start Xperience now — or take the Complete Bundle and continue into Launchpad and Team Co-pilot.",
+      "Start Xperience now — or take the Complete Journey and continue into Launchpad and Team Co-pilot.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
-    secondaryLabel: "Get the Complete Bundle",
+    secondaryLabel: "Get the Complete Journey",
     secondaryHref: BUNDLE_SIGNUP_HREF,
   },
   footerCta: {
-    title: "Start Xperience",
-    subtitle: `${tier.price} · ${tier.cadence}. Or take the Complete Career Bundle.`,
+    title: "Start Building Experience",
+    subtitle: `${tier.price} · ${tier.cadence}. Or take the Complete Journey.`,
     href: tier.ctaHref,
     label: tier.cta,
   },

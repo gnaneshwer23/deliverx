@@ -1,6 +1,5 @@
 import type { ProductPageContent } from "@/lib/marketing/product-page";
 import { BUNDLE_SIGNUP_HREF, careerTierById } from "@/lib/marketing/career-suite";
-import { LAUNCHPAD_JOURNEY } from "@/lib/marketing/launchpad-data";
 
 const tier = careerTierById("launchpad");
 
@@ -9,69 +8,100 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
   stage: tier.stage,
   brandEyebrow: `DeliverX · ${tier.stage}`,
   name: "Launchpad",
+  heroTitle: "Turn your experience into opportunities.",
   promise:
-    "Turn experience into interviews — Career Twin, portfolio, mock interviews and a readiness score that shows you are ready.",
+    "Package your work, sharpen how you speak about it, and walk into interviews with clarity — Career Twin, portfolio, mock interviews and salary insights in one career system.",
   primaryCta: {
     href: tier.ctaHref,
-    label: `Get access — ${tier.price}`,
+    label: "Start Your Career Journey",
   },
   secondaryCta: {
     href: "/pricing",
     label: "See pricing",
   },
-  problem: {
-    label: "Why it matters",
-    title: "Experience only opens doors when you can present it.",
-    body: "Strong work still fails interviews when the CV is vague, stories are unstructured, or you cannot connect your skills to the role. Launchpad packages your evidence, sharpens how you speak about it, and prepares you to win the conversation.",
-  },
-  how: {
-    label: "How it works",
-    title: "Turn experience into opportunity.",
-    subtitle:
-      "Xperience builds the work record. Launchpad helps you present it, prepare for interviews and connect with opportunities that match your skills.",
-    steps: LAUNCHPAD_JOURNEY.map((item) => ({
-      step: item.step,
-      title: item.title,
-      body: item.body,
-    })),
-  },
-  includes: {
-    label: "What's included",
-    title: "Career readiness, end to end.",
-    subtitle:
-      "Assessment, packaging and interview prep in one programme — so you walk into opportunities with clarity and confidence.",
-    items: tier.includes,
-    highlightCount: 6,
-  },
-  idealFor: {
-    label: "Ideal for",
-    title: "Who thrives in Launchpad",
-    body: tier.idealFor,
-  },
+  sections: [
+    {
+      id: "assessment",
+      tone: "white",
+      label: "Career assessment",
+      title: "Know exactly where you stand.",
+      body: "Start with an AI career assessment that maps your skills, gaps and readiness — so you strengthen the right things before you apply, not after a rejection.",
+      items: [
+        "Skills gap analysis against Product Manager expectations",
+        "Personalised learning roadmap",
+        "Job readiness score you can track over time",
+      ],
+    },
+    {
+      id: "twin",
+      tone: "cream",
+      label: "Career Twin",
+      title: "A living profile of how you operate.",
+      body: "Your Career Twin captures strengths, stories and evidence from your experience — including work from Xperience — so career materials stay grounded in real capability.",
+    },
+    {
+      id: "cv",
+      tone: "white",
+      label: "CV optimisation",
+      title: "Make your experience readable to hiring managers.",
+      body: "Translate projects and decisions into a CV and LinkedIn presence that hiring managers can scan quickly — clear outcomes, relevant skills and language that matches the roles you want.",
+      items: [
+        "CV optimisation tuned for Product Management roles",
+        "LinkedIn profile enhancement",
+        "Personal branding guidance",
+      ],
+    },
+    {
+      id: "portfolio",
+      tone: "cream",
+      label: "Portfolio",
+      title: "Show the work, not just the claim.",
+      body: "Build a professional portfolio and case studies that demonstrate how you think — discovery, trade-offs, delivery and outcomes employers can trust.",
+    },
+    {
+      id: "interview",
+      tone: "white",
+      label: "Interview preparation",
+      title: "Win the conversation.",
+      body: "STAR stories, AI mock interviews and communication coaching prepare you to answer with structure and confidence — so experience turns into offers.",
+      items: [
+        "STAR interview story generation",
+        "AI mock interviews with performance analytics",
+        "Communication coaching for product conversations",
+      ],
+    },
+    {
+      id: "salary",
+      tone: "cream",
+      label: "Salary insights",
+      title: "Negotiate from a clearer baseline.",
+      body: "Salary insights and career recommendations help you target roles that fit your level — and walk into compensation conversations informed, not guessing.",
+    },
+  ],
   pricing: {
-    label: "Launchpad pricing",
+    label: "Pricing",
     title: tier.headline,
-    subtitle: `${tier.cadence} · Stage two of the DeliverX career progression.`,
+    subtitle: `${tier.cadence} · Stage two of the DeliverX journey.`,
     price: tier.price,
     cadence: tier.cadence,
     summary: tier.summary,
     cta: tier.cta,
     ctaHref: tier.ctaHref,
-    bundleLabel: "Or get the Complete Bundle",
+    bundleLabel: "Or get the Complete Journey",
     bundleHref: "/pricing#bundle",
   },
   finalCta: {
-    title: "Ready to get career-ready?",
+    title: "Ready to land the opportunity?",
     subtitle:
-      "Start Launchpad now — or take the Complete Bundle if you also need company experience and delivery tools.",
+      "Start Launchpad now — or take the Complete Journey if you also need company experience and delivery tools.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
-    secondaryLabel: "Get the Complete Bundle",
+    secondaryLabel: "Get the Complete Journey",
     secondaryHref: BUNDLE_SIGNUP_HREF,
   },
   footerCta: {
-    title: "Start Launchpad",
-    subtitle: `${tier.price} · ${tier.cadence}. Or take the Complete Career Bundle.`,
+    title: "Start Your Career Journey",
+    subtitle: `${tier.price} · ${tier.cadence}. Or take the Complete Journey.`,
     href: tier.ctaHref,
     label: tier.cta,
   },
