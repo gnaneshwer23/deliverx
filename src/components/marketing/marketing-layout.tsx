@@ -47,7 +47,7 @@ const SECTION_TONE_CLASS: Record<MarketingSectionTone, string> = {
   cream: "bg-[var(--mkt-cream)]",
   white: "bg-[var(--mkt-s1)]",
   "green-tint":
-    "bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-cream)] to-[var(--mkt-ink)]",
+    "bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-cream)] to-[var(--mkt-ink)]",
   muted: "bg-[var(--mkt-s2)]",
   dark: "bg-[#0D0D0B] text-white overflow-hidden",
   none: "",
@@ -67,7 +67,7 @@ export function MarketingSection({
   return (
     <section
       id={id}
-      className={`scroll-mt-[var(--mkt-navh)] py-16 md:py-[clamp(64px,8vw,104px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
+      className={`scroll-mt-[var(--mkt-navh)] py-20 md:py-[clamp(80px,10vw,128px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </section>
@@ -79,19 +79,24 @@ export function MarketingSectionIntro({
   title,
   subtitle,
   className = "",
+  align = "left",
 }: {
   label: string;
   title: ReactNode;
   subtitle?: string;
   className?: string;
+  align?: "left" | "center";
 }) {
+  const centered = align === "center";
   return (
-    <header className={`max-w-3xl ${className}`}>
+    <header className={`${centered ? "mx-auto max-w-2xl text-center" : "max-w-3xl"} ${className}`}>
       <p className={mktClass.label}>{label}</p>
       <h2 className={`mt-3.5 ${mktClass.sectionTitle} [&_em]:not-italic [&_em]:text-[var(--mkt-green)]`}>
         {title}
       </h2>
-      {subtitle ? <p className={mktClass.sectionSub}>{subtitle}</p> : null}
+      {subtitle ? (
+        <p className={`${mktClass.sectionSub} ${centered ? "mx-auto" : ""}`}>{subtitle}</p>
+      ) : null}
     </header>
   );
 }

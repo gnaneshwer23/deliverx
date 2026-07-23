@@ -31,28 +31,30 @@ export default function AboutPage() {
         >
           <MarketingContainer className="max-w-2xl">
             <MarketingReveal>
-              <p className={mktClass.label}>About</p>
-              <h1 className={`mt-4 ${mktClass.sectionTitle}`}>DeliverX</h1>
-              <p className="mt-3 text-[0.875rem] font-medium text-[var(--mkt-green)]">
-                {COMPANY_POSITIONING}
-              </p>
-              <p className="mt-6 text-[1.0625rem] leading-[1.75] text-[var(--mkt-text1)]">
-                {COMPANY_MISSION}
-              </p>
-              <p className="mt-5 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                We start with Product Managers — and keep room to expand the same growth model to
-                neighbouring professional roles over time.
-              </p>
-              <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
-                {CAREER_PROGRESSION_LINE}
-              </p>
-              <div className="mt-10 flex flex-wrap gap-3">
-                <MarketingButtonLink href="/#products" variant="primary">
-                  Explore Products
-                </MarketingButtonLink>
-                <MarketingButtonLink href="/pricing" variant="ghost">
-                  View pricing
-                </MarketingButtonLink>
+              <div className={`${mktClass.softPanelLight} p-8 md:p-10`}>
+                <p className={mktClass.label}>About</p>
+                <h1 className={`mt-4 ${mktClass.sectionTitle}`}>DeliverX</h1>
+                <p className="mt-3 text-[0.875rem] font-medium text-[var(--mkt-green)]">
+                  {COMPANY_POSITIONING}
+                </p>
+                <p className="mt-6 text-[1.0625rem] leading-[1.75] text-[var(--mkt-text1)]">
+                  {COMPANY_MISSION}
+                </p>
+                <p className="mt-5 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                  We start with Product Managers — and keep room to expand the same growth model to
+                  neighbouring professional roles over time.
+                </p>
+                <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
+                  {CAREER_PROGRESSION_LINE}
+                </p>
+                <div className="mt-10 flex flex-wrap gap-3">
+                  <MarketingButtonLink href="/#products" variant="primary">
+                    Explore Products
+                  </MarketingButtonLink>
+                  <MarketingButtonLink href="/pricing" variant="ghostLg">
+                    View pricing
+                  </MarketingButtonLink>
+                </div>
               </div>
             </MarketingReveal>
           </MarketingContainer>

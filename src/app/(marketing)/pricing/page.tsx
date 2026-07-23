@@ -37,122 +37,85 @@ export const metadata: Metadata = {
   },
 };
 
-function ProgressionTable() {
-  const rows = [...CAREER_TIERS, CAREER_BUNDLE];
-
+function TierCard({ tier }: { tier: CareerTier }) {
   return (
-    <div className="mkt-pricing-table overflow-x-auto">
-      <table className="w-full min-w-[36rem] border-collapse text-left">
-        <thead>
-          <tr className="border-b border-[var(--mkt-border)]">
-            <th className={`${mktClass.label} pb-4 pr-6 font-medium`}>Plan</th>
-            <th className={`${mktClass.label} pb-4 pr-6 font-medium`}>Designed for</th>
-            <th className={`${mktClass.label} pb-4 font-medium`}>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((tier) => {
-            const isBundle = tier.id === "bundle";
-            return (
-              <tr
-                key={tier.id}
-                id={tier.id}
-                className={`border-b border-[var(--mkt-border)] align-top ${
-                  isBundle ? "bg-[rgba(61,150,96,0.04)]" : ""
-                }`}
-              >
-                <td className="py-6 pr-6">
-                  <p
-                    className={`text-[1.125rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                  >
-                    {tier.productName}
-                    {isBundle ? (
-                      <span className="ml-2 text-[0.6875rem] font-sans font-medium uppercase tracking-[0.12em] text-[var(--mkt-green)]">
-                        Recommended
-                      </span>
-                    ) : null}
-                  </p>
-                  <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text3)]">{tier.stage}</p>
-                </td>
-                <td className="py-6 pr-6">
-                  <p className="max-w-sm text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
-                    {tier.designedFor}
-                  </p>
-                </td>
-                <td className="py-6">
-                  <p
-                    className={`text-[1.5rem] leading-none tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                  >
-                    {tier.price}
-                  </p>
-                  <p className="mt-1.5 text-[0.75rem] text-[var(--mkt-text3)]">{tier.cadence}</p>
-                  <div className="mt-4 flex flex-col gap-2">
-                    <MarketingButtonLink href={tier.ctaHref} variant="primary">
-                      {isBundle ? "Start Complete Journey" : `Buy ${tier.productName}`}
-                    </MarketingButtonLink>
-                    {tier.href.startsWith("/") && !tier.href.includes("#") ? (
-                      <Link
-                        href={tier.href}
-                        className="text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
-                      >
-                        Read the full page →
-                      </Link>
-                    ) : null}
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <article id={tier.id} className="mkt-pricing-tier flex h-full flex-col">
+      <p className={`${mktClass.label} text-[var(--mkt-green)]`}>{tier.stage}</p>
+      <h3
+        className={`mt-4 text-[clamp(1.35rem,2.4vw,1.625rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+      >
+        {tier.productName}
+      </h3>
+      <p className="mt-3 flex-1 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
+        {tier.designedFor}
+      </p>
+      <div className="mt-8">
+        <p
+          className={`text-[clamp(2rem,3.5vw,2.5rem)] leading-none tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+        >
+          {tier.price}
+        </p>
+        <p className="mt-2 text-[0.75rem] text-[var(--mkt-text3)]">{tier.cadence}</p>
+      </div>
+      <div className="mt-7 flex flex-col gap-3">
+        <MarketingButtonLink href={tier.ctaHref} variant="primary" className="w-full justify-center">
+          Buy {tier.productName}
+        </MarketingButtonLink>
+        {tier.href.startsWith("/") && !tier.href.includes("#") ? (
+          <Link
+            href={tier.href}
+            className="text-center text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
+          >
+            Read the full page →
+          </Link>
+        ) : null}
+      </div>
+    </article>
   );
 }
 
 function BundleBlock({ tier }: { tier: CareerTier }) {
   return (
-    <article>
+    <article className="mkt-bundle-panel">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
-          <p className={`${mktClass.label} text-[var(--mkt-green)]`}>Recommended</p>
+          <p className={`${mktClass.label} !text-white/55`}>Recommended</p>
           <h2
-            className={`mt-3 text-[clamp(1.875rem,3.5vw,2.5rem)] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            className={`mt-3 text-[clamp(1.875rem,3.5vw,2.5rem)] tracking-[-0.03em] text-white ${mktClass.serif}`}
           >
             {tier.productName}
           </h2>
           <p
-            className={`mt-5 max-w-lg text-[clamp(1.05rem,2vw,1.25rem)] font-light leading-relaxed text-[var(--mkt-text1)] ${mktClass.serif}`}
+            className={`mt-5 max-w-lg text-[clamp(1.05rem,2vw,1.25rem)] font-light leading-relaxed text-white/90 ${mktClass.serif}`}
           >
             {tier.headline}
           </p>
-          <p className="mt-3 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+          <p className="mt-3 max-w-lg text-[0.9375rem] leading-relaxed text-white/65">
             {tier.summary}
           </p>
         </div>
         <div className="text-left md:text-right">
           <p
-            className={`text-[clamp(2.75rem,5vw,3.75rem)] leading-none tracking-[-0.05em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            className={`text-[clamp(2.75rem,5vw,3.75rem)] leading-none tracking-[-0.05em] text-white ${mktClass.serif}`}
           >
             {tier.price}
           </p>
-          <p className="mt-2 text-sm text-[var(--mkt-text3)]">{tier.cadence}</p>
-          <p className="mt-1 text-[0.75rem] text-[var(--mkt-green)]">
-            Best value across the full path
-          </p>
+          <p className="mt-2 text-sm text-white/55">{tier.cadence}</p>
+          <p className="mt-1 text-[0.75rem] text-white/70">Best value across the full path</p>
         </div>
       </div>
 
       <div className="mt-10 max-w-3xl">
-        <MarketingIncludes items={tier.includes} highlightCount={8} />
+        <MarketingIncludes items={tier.includes} highlightCount={8} tone="dark" />
       </div>
 
-      <MarketingIdealFor>{tier.idealFor}</MarketingIdealFor>
+      <MarketingIdealFor tone="dark">{tier.idealFor}</MarketingIdealFor>
 
       <div className="mt-9 flex flex-wrap gap-3">
-        <MarketingButtonLink href={tier.ctaHref} variant="primaryLg">
+        <MarketingButtonLink href={tier.ctaHref} variant="ctaLight">
           Start the Complete Journey
         </MarketingButtonLink>
-        <MarketingButtonLink href="/#products" variant="ghostLg">
+        <MarketingButtonLink href="/#products" variant="ctaOutline">
           Compare products
         </MarketingButtonLink>
       </div>
@@ -168,27 +131,29 @@ export default function PricingPage() {
       <main id="main-content">
         <section
           id="hero"
-          className="relative overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+64px)] pb-16 md:pt-[calc(var(--mkt-navh)+88px)] md:pb-20"
+          className="relative overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+72px)] pb-20 md:pt-[calc(var(--mkt-navh)+96px)] md:pb-24"
         >
           <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
           <MarketingContainer className="relative z-[1]">
             <MarketingHeroMotion>
-              <MarketingHeroItem>
-                <p className={mktClass.label}>DeliverX · Pricing</p>
-              </MarketingHeroItem>
-              <MarketingHeroItem>
-                <h1
-                  className={`mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,3.75rem)] leading-[1.02] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                >
-                  Pricing that follows the journey.
-                </h1>
-              </MarketingHeroItem>
-              <MarketingHeroItem>
-                <p className="mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  Buy the stage you need — or take the Complete Journey at £800 for 12 months across
-                  Xperience, Launchpad and Team Co-pilot.
-                </p>
-              </MarketingHeroItem>
+              <div className="mx-auto max-w-2xl text-center">
+                <MarketingHeroItem>
+                  <p className={mktClass.label}>DeliverX · Pricing</p>
+                </MarketingHeroItem>
+                <MarketingHeroItem>
+                  <h1
+                    className={`mt-4 text-[clamp(2.5rem,6.5vw,3.75rem)] leading-[1.02] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    Pricing that follows the journey.
+                  </h1>
+                </MarketingHeroItem>
+                <MarketingHeroItem>
+                  <p className="mx-auto mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                    Buy the stage you need — or take the Complete Journey at £800 for 12 months across
+                    Xperience, Launchpad and Team Co-pilot.
+                  </p>
+                </MarketingHeroItem>
+              </div>
             </MarketingHeroMotion>
           </MarketingContainer>
         </section>
@@ -197,30 +162,34 @@ export default function PricingPage() {
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
+                align="center"
                 label="Progression"
-                title="Plan · Designed for · Price"
+                title="Choose a stage — or the full path."
                 subtitle="Each product stands alone. The Complete Journey is the recommended path for the full career arc."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
-              <div className="mt-12">
-                <ProgressionTable />
+              <div className="mt-14 grid gap-4 md:grid-cols-3 md:gap-5">
+                {CAREER_TIERS.map((tier) => (
+                  <TierCard key={tier.id} tier={tier} />
+                ))}
               </div>
             </MarketingReveal>
           </MarketingContainer>
         </MarketingSection>
 
-        <MarketingSection id="bundle" tone="green-tint">
+        <MarketingSection id="bundle" tone="cream">
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
+                align="center"
                 label="Complete Journey"
                 title="Experience. Opportunity. Delivery."
                 subtitle="Everything in Xperience, Launchpad and Team Co-pilot — with 12 months of continuous access."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
-              <div className="mkt-bundle-panel mt-12 border-t border-[rgba(28,74,46,0.12)] pt-10">
+              <div className="mt-12">
                 <BundleBlock tier={CAREER_BUNDLE} />
               </div>
             </MarketingReveal>
@@ -230,44 +199,46 @@ export default function PricingPage() {
         <MarketingSection id="promise" tone="white">
           <MarketingContainer className="max-w-2xl">
             <MarketingReveal>
-              <p className={mktClass.label}>Our promise</p>
-              <h2 className={`mt-4 ${mktClass.sectionTitle}`}>{CAREER_PROMISE.title}</h2>
-              <p className="mt-5 text-[0.9375rem] leading-[1.7] text-[var(--mkt-text2)]">
-                {CAREER_PROMISE.body}
-              </p>
-              <p className="mt-8 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                If you complete the programme, actively engage with the platform, and still do not
-                gain:
-              </p>
-              <ul className="mt-5 space-y-3">
-                {CAREER_PROMISE.outcomes.map((outcome) => (
-                  <li
-                    key={outcome}
-                    className="grid grid-cols-[auto_1fr] gap-3 text-[0.9375rem] text-[var(--mkt-text2)]"
+              <div className={`${mktClass.softPanelLight} p-8 md:p-10`}>
+                <p className={mktClass.label}>Our promise</p>
+                <h2 className={`mt-4 ${mktClass.sectionTitle}`}>{CAREER_PROMISE.title}</h2>
+                <p className="mt-5 text-[0.9375rem] leading-[1.7] text-[var(--mkt-text2)]">
+                  {CAREER_PROMISE.body}
+                </p>
+                <p className="mt-8 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                  If you complete the programme, actively engage with the platform, and still do not
+                  gain:
+                </p>
+                <ul className="mt-5 space-y-3">
+                  {CAREER_PROMISE.outcomes.map((outcome) => (
+                    <li
+                      key={outcome}
+                      className="grid grid-cols-[auto_1fr] gap-3 text-[0.9375rem] text-[var(--mkt-text2)]"
+                    >
+                      <span
+                        className="mt-[0.45rem] size-1 shrink-0 rounded-full bg-[var(--mkt-green-l)]"
+                        aria-hidden
+                      />
+                      {outcome}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-5 text-[0.9375rem] font-medium text-[var(--mkt-text1)]">
+                  we&apos;ll refund your money.
+                </p>
+                <div className="mt-12 border-t border-[var(--mkt-border)] pt-9">
+                  <h3
+                    className={`text-[1.35rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                   >
-                    <span
-                      className="mt-[0.45rem] size-1 shrink-0 bg-[var(--mkt-green-l)]"
-                      aria-hidden
-                    />
-                    {outcome}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-5 text-[0.9375rem] font-medium text-[var(--mkt-text1)]">
-                we&apos;ll refund your money.
-              </p>
-              <div className="mt-12 border-t border-[var(--mkt-border)] pt-9">
-                <h3
-                  className={`text-[1.35rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                >
-                  {CAREER_PROMISE.guaranteeTitle}
-                </h3>
-                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-[var(--mkt-text2)]">
-                  {CAREER_PROMISE.guaranteeBody}
-                </p>
-                <p className="mt-6 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
-                  {CAREER_PROMISE.disclaimer}
-                </p>
+                    {CAREER_PROMISE.guaranteeTitle}
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-[1.7] text-[var(--mkt-text2)]">
+                    {CAREER_PROMISE.guaranteeBody}
+                  </p>
+                  <p className="mt-6 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
+                    {CAREER_PROMISE.disclaimer}
+                  </p>
+                </div>
               </div>
             </MarketingReveal>
           </MarketingContainer>

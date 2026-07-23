@@ -67,21 +67,23 @@ export default function ResourcesPage() {
 
         <MarketingSection tone="white">
           <MarketingContainer>
-            <ul className="max-w-2xl divide-y divide-[var(--mkt-border)] border-t border-[var(--mkt-border)]">
-              {RESOURCES.map((item) => (
-                <li key={item.href} className="py-8">
-                  <MarketingReveal>
-                    <h2
-                      className={`text-[1.35rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                    >
-                      {item.title}
-                    </h2>
-                    <p className="mt-2 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                      {item.body}
-                    </p>
-                    <MarketingButtonLink href={item.href} variant="ghost" className="mt-4">
-                      {item.label}
-                    </MarketingButtonLink>
+            <ul className="grid gap-4 sm:grid-cols-2 md:gap-5">
+              {RESOURCES.map((item, index) => (
+                <li key={item.href}>
+                  <MarketingReveal delay={index * 0.04}>
+                    <div className={`${mktClass.softPanelLight} flex h-full flex-col p-7 md:p-8`}>
+                      <h2
+                        className={`text-[1.35rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                      >
+                        {item.title}
+                      </h2>
+                      <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                        {item.body}
+                      </p>
+                      <MarketingButtonLink href={item.href} variant="ghost" className="mt-6 self-start">
+                        {item.label}
+                      </MarketingButtonLink>
+                    </div>
                   </MarketingReveal>
                 </li>
               ))}

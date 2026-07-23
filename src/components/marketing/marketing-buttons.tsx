@@ -7,15 +7,15 @@ import { useCallback, useState, type ComponentProps, type MouseEvent, type React
 type BtnVariant = "primary" | "ghost" | "primaryLg" | "ghostLg" | "ctaLight" | "ctaOutline";
 
 const base =
-  "inline-flex items-center justify-center gap-1.5 rounded-lg text-[0.8125rem] font-medium whitespace-nowrap transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-70";
+  "inline-flex items-center justify-center gap-1.5 rounded-[var(--mkt-radius-btn)] text-[0.8125rem] font-medium whitespace-nowrap transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-70";
 
 const variants: Record<BtnVariant, string> = {
-  primary: `${base} border border-[var(--mkt-green)] bg-[var(--mkt-green)] px-[18px] py-2 text-white hover:bg-[var(--mkt-green-m)]`,
-  ghost: `${base} border border-transparent bg-transparent px-[14px] py-2 text-[var(--mkt-text2)] hover:text-[var(--mkt-text1)]`,
-  primaryLg: `${base} border border-[var(--mkt-green)] bg-[var(--mkt-green)] px-7 py-[13px] text-[0.9375rem] text-white hover:bg-[var(--mkt-green-m)]`,
-  ghostLg: `${base} border border-[var(--mkt-border-l)] bg-transparent px-7 py-[13px] text-[0.9375rem] text-[var(--mkt-text2)] hover:border-[var(--mkt-border-l)] hover:bg-[var(--mkt-s1)] hover:text-[var(--mkt-text1)]`,
-  ctaLight: `${base} border-none bg-white px-7 py-[13px] text-[0.9375rem] text-[var(--mkt-green)] hover:bg-white/92`,
-  ctaOutline: `${base} border border-white/25 bg-transparent px-7 py-[13px] text-[0.9375rem] text-white hover:border-white/45 hover:bg-white/[0.06]`,
+  primary: `${base} border border-[var(--mkt-green)] bg-[var(--mkt-green)] px-5 py-2.5 text-white shadow-[0_1px_2px_rgba(28,74,46,0.12)] hover:bg-[var(--mkt-green-m)]`,
+  ghost: `${base} border border-transparent bg-transparent px-4 py-2.5 text-[var(--mkt-text2)] hover:text-[var(--mkt-text1)]`,
+  primaryLg: `${base} border border-[var(--mkt-green)] bg-[var(--mkt-green)] px-8 py-[14px] text-[0.9375rem] text-white shadow-[0_1px_2px_rgba(28,74,46,0.12)] hover:bg-[var(--mkt-green-m)]`,
+  ghostLg: `${base} border border-[var(--mkt-border-l)] bg-[var(--mkt-s1)]/70 px-8 py-[14px] text-[0.9375rem] text-[var(--mkt-text2)] hover:border-[var(--mkt-border-l)] hover:bg-[var(--mkt-s1)] hover:text-[var(--mkt-text1)]`,
+  ctaLight: `${base} border-none bg-white px-8 py-[14px] text-[0.9375rem] text-[var(--mkt-green)] shadow-[0_1px_2px_rgba(13,13,11,0.06)] hover:bg-white/92`,
+  ctaOutline: `${base} border border-white/30 bg-transparent px-8 py-[14px] text-[0.9375rem] text-white hover:border-white/50 hover:bg-white/[0.06]`,
 };
 
 const HOVER_PREFETCH_PATHS = new Set([

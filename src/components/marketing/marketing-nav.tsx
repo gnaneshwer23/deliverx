@@ -60,7 +60,7 @@ function ProductsDropdown({
         <div
           id={menuId}
           role="menu"
-          className="absolute left-0 top-full z-30 mt-2 min-w-[240px] border border-[var(--mkt-border)] bg-[var(--mkt-s1)] py-2 shadow-[0_12px_40px_rgba(13,13,11,0.08)]"
+          className="absolute left-0 top-full z-30 mt-2 min-w-[260px] overflow-hidden rounded-[1.25rem] border border-[var(--mkt-border)] bg-[var(--mkt-s1)] py-2 shadow-[0_16px_48px_rgba(13,13,11,0.08)]"
         >
           {PRODUCT_LINKS.map((link) => (
             <a
@@ -218,8 +218,8 @@ export function MarketingNav({
       <header
         className={`fixed inset-x-0 top-0 z-[200] flex h-[var(--mkt-navh)] items-center border-b px-5 transition-[background-color,border-color,box-shadow] duration-300 md:px-10 lg:px-12 ${
           scrolled
-            ? "mkt-nav-scrolled border-[var(--mkt-border)] bg-[rgba(255,255,255,0.92)] backdrop-blur-xl"
-            : "border-transparent bg-[rgba(247,249,247,0.72)] backdrop-blur-md"
+            ? "mkt-nav-scrolled border-[var(--mkt-border)] bg-[rgba(255,255,255,0.9)] backdrop-blur-xl"
+            : "border-transparent bg-[rgba(246,248,246,0.65)] backdrop-blur-md"
         }`}
       >
         <MarketingLogo />

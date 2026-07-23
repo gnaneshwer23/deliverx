@@ -49,22 +49,44 @@ export default function SolutionsPage() {
 
         <MarketingSection tone="white">
           <MarketingContainer>
-            <ul className="max-w-2xl space-y-10">
-              {SUITE_PRODUCTS.map((product) => (
+            <ul className="grid gap-4 md:grid-cols-3 md:gap-5">
+              {SUITE_PRODUCTS.map((product, index) => (
                 <li key={product.id}>
-                  <MarketingReveal>
-                    <p className={`${mktClass.label} text-[var(--mkt-green)]`}>{product.stage}</p>
-                    <h2
-                      className={`mt-2 text-[clamp(1.5rem,3vw,2rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  <MarketingReveal delay={index * 0.05}>
+                    <div
+                      className={`flex h-full flex-col p-7 md:p-8 ${
+                        index === 1 ? mktClass.softPanelHighlight : mktClass.softPanel
+                      }`}
                     >
-                      {product.name}
-                    </h2>
-                    <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                      {product.promise}
-                    </p>
-                    <MarketingButtonLink href={product.href} variant="ghost" className="mt-4">
-                      Explore {product.name}
-                    </MarketingButtonLink>
+                      <p
+                        className={`${mktClass.label} ${
+                          index === 1 ? "!text-white/55" : "text-[var(--mkt-green)]"
+                        }`}
+                      >
+                        {product.stage}
+                      </p>
+                      <h2
+                        className={`mt-4 text-[clamp(1.35rem,2.5vw,1.625rem)] tracking-[-0.025em] ${mktClass.serif} ${
+                          index === 1 ? "text-white" : "text-[var(--mkt-text1)]"
+                        }`}
+                      >
+                        {product.name}
+                      </h2>
+                      <p
+                        className={`mt-3 flex-1 text-[0.9375rem] leading-relaxed ${
+                          index === 1 ? "text-white/70" : "text-[var(--mkt-text2)]"
+                        }`}
+                      >
+                        {product.promise}
+                      </p>
+                      <MarketingButtonLink
+                        href={product.href}
+                        variant={index === 1 ? "ctaLight" : "ghost"}
+                        className="mt-6 self-start"
+                      >
+                        Explore {product.name}
+                      </MarketingButtonLink>
+                    </div>
                   </MarketingReveal>
                 </li>
               ))}

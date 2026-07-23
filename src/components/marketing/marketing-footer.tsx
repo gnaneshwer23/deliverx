@@ -7,7 +7,7 @@ import { mktClass } from "@/lib/marketing/landing-theme";
 const GITHUB_REPO = "https://github.com/gnaneshwer23/deliverx";
 
 const FOOTER_LINK_CLASS =
-  "text-[0.8125rem] text-[var(--mkt-text2)] no-underline transition hover:text-[var(--mkt-green)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--mkt-green-l)]";
+  "text-[0.8125rem] text-white/60 no-underline transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40";
 
 const FOOTER_COLUMNS = [
   {
@@ -86,7 +86,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className={mktClass.label}>{title}</p>
+      <p className={`${mktClass.label} !text-white/40`}>{title}</p>
       <ul className="mt-4 flex flex-col gap-2.5">
         {links.map((link) => (
           <li key={link.href}>
@@ -100,18 +100,16 @@ function FooterColumn({
 
 export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta } = {}) {
   return (
-    <footer className="border-t border-[var(--mkt-border)] bg-[var(--mkt-s1)]">
-      <div className="border-b border-[var(--mkt-border)] bg-[var(--mkt-cream)]">
-        <MarketingContainer className="flex flex-col items-start justify-between gap-5 py-9 md:flex-row md:items-center md:py-11">
+    <footer className="overflow-hidden rounded-t-[2rem] bg-[var(--mkt-green)] text-white md:rounded-t-[2.5rem]">
+      <div className="border-b border-white/10 bg-[rgba(255,255,255,0.04)]">
+        <MarketingContainer className="flex flex-col items-start justify-between gap-5 py-10 md:flex-row md:items-center md:py-12">
           <div className="max-w-md">
-            <p className={`${mktClass.serif} text-[1.25rem] tracking-[-0.02em] text-[var(--mkt-text1)]`}>
+            <p className={`${mktClass.serif} text-[1.35rem] tracking-[-0.02em] text-white`}>
               {cta.title}
             </p>
-            <p className="mt-2 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
-              {cta.subtitle}
-            </p>
+            <p className="mt-2 text-[0.8125rem] leading-relaxed text-white/60">{cta.subtitle}</p>
           </div>
-          <MarketingButtonLink href={cta.href} variant="primary">
+          <MarketingButtonLink href={cta.href} variant="ctaLight">
             {cta.label}
           </MarketingButtonLink>
         </MarketingContainer>
@@ -120,13 +118,13 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
       <MarketingContainer className="py-12 md:py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.5fr)_repeat(2,minmax(0,1fr))] lg:gap-16">
           <div className="sm:col-span-2 lg:col-span-1">
-            <MarketingLogo />
+            <MarketingLogo light />
             <p
-              className={`mt-5 max-w-sm text-[1.05rem] leading-snug tracking-[-0.015em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+              className={`mt-5 max-w-sm text-[1.05rem] leading-snug tracking-[-0.015em] text-white ${mktClass.serif}`}
             >
               AI Product Experience Company
             </p>
-            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
+            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/50">
               DeliverX Ltd — an AI-powered professional growth platform. Xperience, Launchpad and
               Team Co-pilot.
             </p>
@@ -145,13 +143,12 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
         </div>
 
         <div
-          className="mt-12 flex flex-col gap-4 border-t border-[var(--mkt-border)] pt-8 md:flex-row md:items-center md:justify-between"
+          className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between"
           aria-label="Footer legal"
         >
-          <p className="text-xs text-[var(--mkt-text3)]">
-            © 2026 DeliverX Ltd. All rights reserved.
-          </p>
+          <p className="text-xs text-white/45">© 2026 DeliverX Ltd. All rights reserved.</p>
           <TrustChecklist
+            light
             items={[
               "GDPR-ready infrastructure",
               "EU data residency practices",

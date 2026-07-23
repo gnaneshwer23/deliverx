@@ -41,14 +41,14 @@ function NarrativeSection({
         </MarketingReveal>
         {section.items && section.items.length > 0 ? (
           <MarketingReveal delay={0.08}>
-            <ul className="mt-10 max-w-2xl space-y-3">
+            <ul className="mt-10 grid max-w-3xl gap-3 sm:grid-cols-2">
               {section.items.map((item) => (
                 <li
                   key={item}
-                  className="grid grid-cols-[auto_1fr] gap-3 text-[0.9375rem] leading-snug text-[var(--mkt-text1)]"
+                  className={`${mktClass.softPanelLight} grid grid-cols-[auto_1fr] gap-3 p-4 text-[0.9375rem] leading-snug text-[var(--mkt-text1)]`}
                 >
                   <span
-                    className="mt-[0.45rem] size-1 shrink-0 bg-[var(--mkt-green-l)]"
+                    className="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-[var(--mkt-green-l)]"
                     aria-hidden
                   />
                   {item}
@@ -85,11 +85,11 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       <main id="main-content">
         <section
           id="hero"
-          className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
+          className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
         >
           <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
           <div
-            className="pointer-events-none absolute -right-28 top-1/4 z-0 size-[420px] rounded-full bg-[radial-gradient(circle,rgba(61,150,96,0.1)_0%,transparent_70%)] blur-3xl"
+            className="pointer-events-none absolute left-1/2 top-0 z-0 h-[55%] w-[min(800px,100%)] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(61,150,96,0.1)_0%,transparent_70%)] blur-2xl"
             aria-hidden
           />
           <MarketingContainer className="relative z-[1]">
@@ -101,13 +101,13 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               </MarketingHeroItem>
               <MarketingHeroItem>
                 <p
-                  className={`mt-5 text-[clamp(1.75rem,4vw,2.5rem)] leading-[1.05] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  className={`mt-5 text-[clamp(2rem,4.5vw,3rem)] leading-[1.05] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                 >
                   {content.name}
                 </p>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <h1 className="mt-4 max-w-3xl text-[clamp(1.5rem,3.5vw,2.125rem)] font-light leading-[1.25] tracking-[-0.02em] text-[var(--mkt-text1)]">
+                <h1 className="mt-4 max-w-3xl text-[clamp(1.35rem,3vw,1.875rem)] font-medium leading-[1.3] tracking-[-0.02em] text-[var(--mkt-text1)]">
                   {content.heroTitle}
                 </h1>
               </MarketingHeroItem>
@@ -143,9 +143,9 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                   title={content.faq.title ?? "Frequently asked questions"}
                 />
               </MarketingReveal>
-              <ul className="mt-12 max-w-2xl divide-y divide-[var(--mkt-border)] border-t border-[var(--mkt-border)]">
+              <ul className="mt-12 max-w-2xl space-y-3">
                 {content.faq.items.map((item, index) => (
-                  <li key={item.question} className="py-7">
+                  <li key={item.question} className={`${mktClass.softPanelLight} p-6 md:p-7`}>
                     <MarketingReveal delay={index * 0.04}>
                       <h3
                         className={`text-[1.125rem] tracking-[-0.015em] text-[var(--mkt-text1)] ${mktClass.serif}`}
@@ -173,29 +173,44 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
-              <div className="mkt-product-price mt-14 max-w-xl">
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-                  <p
-                    className={`text-[clamp(2.75rem,5.5vw,3.5rem)] leading-none tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                  >
-                    {content.pricing.price}
+              <div className="mt-14 grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+                <div className={`${mktClass.softPanelLight} p-8 md:p-10`}>
+                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+                    <p
+                      className={`text-[clamp(2.75rem,5.5vw,3.5rem)] leading-none tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                    >
+                      {content.pricing.price}
+                    </p>
+                    <p className="text-sm text-[var(--mkt-text3)]">{content.pricing.cadence}</p>
+                  </div>
+                  <p className="mt-6 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                    {content.pricing.summary}
                   </p>
-                  <p className="text-sm text-[var(--mkt-text3)]">{content.pricing.cadence}</p>
+                  <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
+                    <MarketingButtonLink href={content.pricing.ctaHref} variant="primaryLg">
+                      {content.pricing.cta}
+                    </MarketingButtonLink>
+                  </div>
                 </div>
-                <p className="mt-6 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  {content.pricing.summary}
-                </p>
-                <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
-                  <MarketingButtonLink href={content.pricing.ctaHref} variant="primaryLg">
-                    {content.pricing.cta}
-                  </MarketingButtonLink>
-                  <Link
-                    href={bundleHref}
-                    className="text-[0.875rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
-                  >
-                    {bundleLabel} →
-                  </Link>
-                </div>
+                <Link
+                  href={bundleHref}
+                  className="mkt-soft-panel-highlight group flex flex-col justify-between p-8 no-underline md:p-10"
+                >
+                  <div>
+                    <p className={`${mktClass.label} !text-white/55`}>Recommended</p>
+                    <p
+                      className={`mt-4 text-[clamp(1.35rem,2.5vw,1.625rem)] tracking-[-0.02em] text-white ${mktClass.serif}`}
+                    >
+                      Complete Journey
+                    </p>
+                    <p className="mt-3 text-[0.875rem] leading-relaxed text-white/65">
+                      {bundleLabel}
+                    </p>
+                  </div>
+                  <span className="mt-8 text-[0.875rem] font-medium text-white transition-transform duration-300 group-hover:translate-x-1">
+                    View pricing →
+                  </span>
+                </Link>
               </div>
             </MarketingReveal>
           </MarketingContainer>

@@ -1,12 +1,12 @@
-/** Light marketing landing palette — aligned with DeliverX brand (dx-theme) */
+/** Light marketing landing palette — soft, airy DeliverX green system */
 export const mkt = {
-  ink: "#F7F9F7",
+  ink: "#F6F8F6",
   s1: "#FFFFFF",
-  s2: "#F1F4F2",
-  s3: "#E6EBE8",
+  s2: "#F0F3F1",
+  s3: "#E4EAE6",
   s4: "#D0D7D2",
-  border: "#E4E9E5",
-  borderL: "#D0D7D2",
+  border: "#E2E8E4",
+  borderL: "#CED6D1",
   text1: "#0D0D0B",
   text2: "#3F4A43",
   text3: "#7A857E",
@@ -14,14 +14,19 @@ export const mkt = {
   greenM: "#2D7048",
   greenL: "#3D9660",
   greenBright: "#3D9660",
-  cream: "#F3F6F3",
+  cream: "#F2F5F2",
+  mist: "#EAF1EC",
   red: "#C0392B",
   amber: "#B7620A",
   blue: "#1A3F6B",
   purple: "#5B21B6",
   teal: "#0F766E",
-  navH: 60,
+  navH: 64,
   maxW: 1120,
+  /** Soft SaaS panels — high radius like premium landing reference */
+  radiusPanel: "1.75rem",
+  radiusCard: "1.5rem",
+  radiusBtn: "9999px",
 } as const;
 
 /** WCAG-friendly stat/KPI colour on light surfaces */
@@ -39,11 +44,17 @@ export const mktClass = {
   sans: "font-[family-name:var(--font-mkt-sans)]",
   mono: "font-[family-name:var(--font-mkt-mono)]",
   label:
-    "font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]",
+    "font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-green-m)]",
   sectionTitle:
     "font-[family-name:var(--font-dx-display)] text-[clamp(1.875rem,4.2vw,2.875rem)] leading-[1.06] tracking-[-0.025em] text-[var(--mkt-text1)]",
   sectionSub:
     "mt-4 max-w-[36rem] text-[clamp(0.9375rem,1.4vw,1.0625rem)] font-light leading-[1.7] text-[var(--mkt-text2)]",
+  softPanel:
+    "rounded-[var(--mkt-radius-panel)] border border-[var(--mkt-border)] bg-[var(--mkt-s2)]",
+  softPanelLight:
+    "rounded-[var(--mkt-radius-panel)] border border-[var(--mkt-border)] bg-[var(--mkt-s1)]",
+  softPanelHighlight:
+    "rounded-[var(--mkt-radius-panel)] border border-transparent bg-[var(--mkt-green)] text-white",
   statNumber:
     "font-[family-name:var(--font-dx-display)] text-[clamp(2.5rem,4vw,3.5rem)] tracking-[-0.04em] text-[var(--mkt-stat-accent)]",
   kpiValue:
@@ -65,10 +76,14 @@ export const mktCssVars = {
   "--mkt-green-l": mkt.greenL,
   "--mkt-green-bright": mkt.greenBright,
   "--mkt-cream": mkt.cream,
+  "--mkt-mist": mkt.mist,
   "--mkt-stat-value": mktStat.value,
   "--mkt-stat-accent": mktStat.accent,
   "--mkt-stat-up": mktStat.up,
   "--mkt-stat-down": mktStat.down,
   "--mkt-stat-warn": mktStat.warn,
   "--mkt-navh": `${mkt.navH}px`,
+  "--mkt-radius-panel": mkt.radiusPanel,
+  "--mkt-radius-card": mkt.radiusCard,
+  "--mkt-radius-btn": mkt.radiusBtn,
 } as const;

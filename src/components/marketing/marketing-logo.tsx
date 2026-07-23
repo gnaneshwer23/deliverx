@@ -10,7 +10,13 @@ function normalizePath(path: string) {
   return path;
 }
 
-export function MarketingLogo({ href = "/" }: { href?: string }) {
+export function MarketingLogo({
+  href = "/",
+  light = false,
+}: {
+  href?: string;
+  light?: boolean;
+}) {
   const pathname = usePathname();
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -32,7 +38,9 @@ export function MarketingLogo({ href = "/" }: { href?: string }) {
       className="mr-auto flex items-center gap-2.5 no-underline"
     >
       <span
-        className="flex size-[30px] shrink-0 items-center justify-center rounded-[7px] bg-[var(--mkt-green)]"
+        className={`flex size-[30px] shrink-0 items-center justify-center rounded-[7px] ${
+          light ? "bg-white/15" : "bg-[var(--mkt-green)]"
+        }`}
         aria-hidden
       >
         <svg
@@ -42,7 +50,11 @@ export function MarketingLogo({ href = "/" }: { href?: string }) {
           <path d="M1 7h12M7 1v12M2 2l10 10M12 2L2 12" />
         </svg>
       </span>
-      <span className={`${mktClass.serif} text-lg tracking-[-0.01em] text-[var(--mkt-text1)]`}>
+      <span
+        className={`${mktClass.serif} text-lg tracking-[-0.01em] ${
+          light ? "text-white" : "text-[var(--mkt-text1)]"
+        }`}
+      >
         DeliverX
       </span>
     </Link>
