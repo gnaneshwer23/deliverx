@@ -16,6 +16,7 @@ export type ProductPriceTier = {
   ctaHref: string;
   featured?: boolean;
   cadence?: string;
+  idealFor?: string;
 };
 
 export type ProductPageContent = {
@@ -38,6 +39,7 @@ export type ProductPageContent = {
     subtitle: string;
     tiers: readonly ProductPriceTier[];
   };
+  idealFor?: string;
   finalCta: {
     title: string;
     subtitle: string;
@@ -56,6 +58,5 @@ export function productPageNav(currentPath: string) {
   return [
     { href: "/", label: "Home" },
     ...PRODUCT_NAV.filter((link) => link.href !== currentPath),
-    { href: "#pricing", label: "Pricing" },
   ] as const;
 }

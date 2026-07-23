@@ -35,7 +35,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
         >
           <MarketingContainer>
             <p className={mktClass.label}>
-              {content.brandEyebrow ?? "DeliverX · Product"}
+              {content.brandEyebrow ?? "DeliverX · Career progression"}
             </p>
             <h1
               className={`mt-4 max-w-3xl text-[clamp(2.5rem,7vw,4rem)] leading-[1.02] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
@@ -54,8 +54,8 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               <MarketingButtonLink href={content.primaryCta.href} variant="primaryLg">
                 {content.primaryCta.label}
               </MarketingButtonLink>
-              <MarketingButtonLink href="/" variant="ghostLg">
-                Back to DeliverX
+              <MarketingButtonLink href="/pricing" variant="ghostLg">
+                View full pricing
               </MarketingButtonLink>
             </div>
           </MarketingContainer>
@@ -96,7 +96,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               subtitle={content.pricing.subtitle}
             />
             <div
-              className={`mt-10 grid gap-8 ${multiTier ? "md:grid-cols-2" : "max-w-xl"}`}
+              className={`mt-10 grid gap-10 ${multiTier ? "md:grid-cols-2" : "max-w-3xl"}`}
             >
               {content.pricing.tiers.map((tier) => (
                 <div key={tier.name} className="border-t border-[var(--mkt-border)] pt-6">
@@ -110,7 +110,10 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                     <p className="mt-2 text-sm text-[var(--mkt-text3)]">{tier.cadence}</p>
                   ) : null}
                   <p className="mt-3 text-[0.9375rem] text-[var(--mkt-text2)]">{tier.summary}</p>
-                  <ul className="mt-4 space-y-2">
+                  <p className="mt-6 text-[0.75rem] font-medium uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
+                    What&apos;s included
+                  </p>
+                  <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                     {tier.features.map((feature) => (
                       <li
                         key={feature}
@@ -124,13 +127,23 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                       </li>
                     ))}
                   </ul>
-                  <MarketingButtonLink
-                    href={tier.ctaHref}
-                    variant={tier.featured || !multiTier ? "primaryLg" : "ghostLg"}
-                    className="mt-6"
-                  >
-                    {tier.cta}
-                  </MarketingButtonLink>
+                  {(tier.idealFor ?? content.idealFor) ? (
+                    <p className="mt-6 text-[0.875rem] leading-relaxed text-[var(--mkt-text3)]">
+                      <span className="font-medium text-[var(--mkt-text1)]">Ideal for </span>
+                      {tier.idealFor ?? content.idealFor}
+                    </p>
+                  ) : null}
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <MarketingButtonLink
+                      href={tier.ctaHref}
+                      variant={tier.featured || !multiTier ? "primaryLg" : "ghostLg"}
+                    >
+                      {tier.cta}
+                    </MarketingButtonLink>
+                    <MarketingButtonLink href="/pricing#bundle" variant="ghostLg">
+                      See bundle
+                    </MarketingButtonLink>
+                  </div>
                 </div>
               ))}
             </div>
@@ -152,8 +165,8 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               <MarketingButtonLink href={content.finalCta.ctaHref} variant="ctaLight">
                 {content.finalCta.ctaLabel}
               </MarketingButtonLink>
-              <MarketingButtonLink href="/login" variant="ctaOutline">
-                Sign in
+              <MarketingButtonLink href="/pricing" variant="ctaOutline">
+                Full pricing
               </MarketingButtonLink>
             </div>
           </MarketingContainer>

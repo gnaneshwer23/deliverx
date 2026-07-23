@@ -24,10 +24,12 @@ const HOVER_PREFETCH_PATHS = new Set([
   "/signup?product=xperience",
   "/signup?product=launchpad",
   "/signup?product=launchpad&intent=roles",
+  "/signup?product=team-copilot",
+  "/signup?product=bundle",
   "/xperience",
   "/launchpad",
   "/team-copilot",
-  "/signup?product=team-copilot",
+  "/pricing",
 ]);
 
 function isNativeHref(href: string) {

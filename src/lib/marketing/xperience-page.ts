@@ -1,26 +1,23 @@
 import type { ProductPageContent } from "@/lib/marketing/product-page";
-import {
-  XPERIENCE_INCLUDES,
-  XPERIENCE_JOURNEY,
-  XPERIENCE_PRICING,
-  XPERIENCE_SIGNUP_HREF,
-} from "@/lib/marketing/xperience-data";
+import { careerTierById } from "@/lib/marketing/career-suite";
+import { XPERIENCE_JOURNEY } from "@/lib/marketing/xperience-data";
+
+const tier = careerTierById("xperience");
 
 export const XPERIENCE_PAGE: ProductPageContent = {
   path: "/xperience",
-  brandEyebrow: "DeliverX · AI Experience Company",
+  brandEyebrow: "DeliverX · Build Experience",
   name: "Xperience",
-  promise: "Join a living company. Build professional capability.",
-  support:
-    "Xperience is an AI Experience Company — you work inside a persistent organisation with consequential decisions. Interview readiness can follow; it is not the product.",
+  promise: tier.headline,
+  support: tier.summary,
   primaryCta: {
-    href: XPERIENCE_SIGNUP_HREF,
-    label: `Get access — ${XPERIENCE_PRICING.price}`,
+    href: tier.ctaHref,
+    label: `${tier.cta} — ${tier.price}`,
   },
   how: {
     title: "Work inside the company. Evidence from the work.",
     subtitle:
-      "You are hired into an organisation — not enrolled in a programme. Responsibility comes first; proof accumulates from decisions you make.",
+      "You are given a realistic organisation from day one. Capability is built through projects, decisions and conversations — then carried into Launchpad when you are ready to land the opportunity.",
     steps: XPERIENCE_JOURNEY.map((item) => ({
       step: item.step,
       title: item.title,
@@ -28,31 +25,33 @@ export const XPERIENCE_PAGE: ProductPageContent = {
     })),
   },
   pricing: {
-    title: "One company experience",
-    subtitle: "Separate from Launchpad (roles & Career Record) and Team Co-pilot (team workspace).",
+    title: tier.headline,
+    subtitle: `${tier.cadence} · Part of the DeliverX career progression.`,
     tiers: [
       {
-        name: XPERIENCE_PRICING.name,
-        price: XPERIENCE_PRICING.price,
-        cadence: XPERIENCE_PRICING.cadence,
-        summary: XPERIENCE_PRICING.summary,
-        features: XPERIENCE_INCLUDES.slice(0, 5),
-        cta: XPERIENCE_PRICING.cta,
-        ctaHref: XPERIENCE_SIGNUP_HREF,
+        name: tier.productName,
+        price: tier.price,
+        cadence: tier.cadence,
+        summary: tier.summary,
+        features: tier.includes,
+        cta: tier.cta,
+        ctaHref: tier.ctaHref,
         featured: true,
+        idealFor: tier.idealFor,
       },
     ],
   },
+  idealFor: tier.idealFor,
   finalCta: {
-    title: "Ready to join the company?",
-    subtitle: "Create your account, complete payment, and receive login credentials.",
-    ctaLabel: "Get access",
-    ctaHref: XPERIENCE_SIGNUP_HREF,
+    title: "Ready to build the experience?",
+    subtitle: "Next: Launchpad helps you land the opportunity. Then Team Co-pilot helps you succeed in the role.",
+    ctaLabel: tier.cta,
+    ctaHref: tier.ctaHref,
   },
   footerCta: {
-    title: "Get Xperience access",
-    subtitle: `${XPERIENCE_PRICING.price} one-time. Login credentials after checkout.`,
-    href: XPERIENCE_SIGNUP_HREF,
-    label: "Get access",
+    title: "Start Xperience",
+    subtitle: `${tier.price} · ${tier.cadence}. Or see the Complete Career Bundle.`,
+    href: tier.ctaHref,
+    label: tier.cta,
   },
 };

@@ -25,8 +25,8 @@ export default function StartXperiencePage() {
             Your account is ready.
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-            You&apos;re signed up for Xperience — the AI Experience Company. Complete payment when
-            prompted to unlock company access and login credentials.
+            You&apos;re signed up for Xperience — Build Experience (£500 · 3 months). Complete
+            payment when prompted to unlock company access and login credentials.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <MarketingButtonLink href="/xperience#pricing" variant="primaryLg">

@@ -24,9 +24,9 @@ const FOOTER_COLUMNS = [
     title: "Get started",
     links: [
       { href: "/signup", label: "Create account" },
-      { href: "/team-copilot#pricing", label: "Team Co-pilot pricing" },
-      { href: "/launchpad#pricing", label: "Launchpad pricing" },
-      { href: "/xperience#pricing", label: "Xperience pricing" },
+      { href: "/pricing", label: "Full pricing" },
+      { href: "/pricing#bundle", label: "Complete Career Bundle" },
+      { href: "/pricing#promise", label: "Our promise" },
     ],
   },
   {

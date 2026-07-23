@@ -7,6 +7,7 @@ describe("parseSuiteProduct", () => {
     expect(parseSuiteProduct("launchpad")).toBe("launchpad");
     expect(parseSuiteProduct("team-copilot")).toBe("team-copilot");
     expect(parseSuiteProduct("team_copilot")).toBe("team-copilot");
+    expect(parseSuiteProduct("bundle")).toBe("bundle");
   });
 
   it("rejects unknown values", () => {
@@ -30,6 +31,7 @@ describe("postSignupPath", () => {
     expect(postSignupPath({ product: "launchpad", intent: "roles" })).toBe(
       "/start/launchpad?intent=roles",
     );
+    expect(postSignupPath({ product: "bundle" })).toBe("/start/bundle");
     expect(postSignupPath({ product: "team-copilot" })).toBe("/onboarding/organisation");
     expect(postSignupPath({})).toBe("/onboarding/organisation");
   });

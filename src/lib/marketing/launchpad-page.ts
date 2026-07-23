@@ -1,60 +1,57 @@
 import type { ProductPageContent } from "@/lib/marketing/product-page";
-import { LAUNCHPAD_PRICING, LAUNCHPAD_ROLES_HREF } from "@/lib/marketing/launchpad-data";
+import { careerTierById } from "@/lib/marketing/career-suite";
+import { LAUNCHPAD_JOURNEY } from "@/lib/marketing/launchpad-data";
+
+const tier = careerTierById("launchpad");
 
 export const LAUNCHPAD_PAGE: ProductPageContent = {
   path: "/launchpad",
-  brandEyebrow: "DeliverX · Roles & Career Record",
+  brandEyebrow: "DeliverX · Advance Your Career",
   name: "Launchpad",
-  promise: "Find the role. Grow a Career Record employers can trust.",
-  support:
-    "Launchpad is the entry to open roles and evidence packaging — browse opportunities, commit to a path, and turn work into a Career Record. Deep company work lives in Xperience.",
-  primaryCta: { href: LAUNCHPAD_ROLES_HREF, label: "Explore Open Roles" },
+  promise: tier.headline,
+  support: tier.summary,
+  primaryCta: {
+    href: tier.ctaHref,
+    label: `${tier.cta} — ${tier.price}`,
+  },
   how: {
-    title: "Roles first. Evidence that travels.",
+    title: "Turn experience into opportunity.",
     subtitle:
-      "Employers expect experience before they give the title. Launchpad is where you choose a role path and build a Career Record from authentic work — not a course certificate.",
-    steps: [
+      "Xperience builds the work record. Launchpad helps you present it, prepare for interviews and connect with opportunities that match your skills.",
+    steps: LAUNCHPAD_JOURNEY.map((item) => ({
+      step: item.step,
+      title: item.title,
+      body: item.body,
+    })),
+  },
+  pricing: {
+    title: tier.headline,
+    subtitle: `${tier.cadence} · Part of the DeliverX career progression.`,
+    tiers: [
       {
-        step: "01",
-        title: "Explore open roles",
-        body: "Browse company roles, meet stakeholders and understand the environment before you commit.",
-      },
-      {
-        step: "02",
-        title: "Enter with a clear path",
-        body: "Start free to preview, or take a defined role. Know what access you get before you pay.",
-      },
-      {
-        step: "03",
-        title: "Build your Career Record",
-        body: "Projects, decisions, artefacts and outcomes connect into evidence you can show employers — and carry into applications.",
+        name: tier.productName,
+        price: tier.price,
+        cadence: tier.cadence,
+        summary: tier.summary,
+        features: tier.includes,
+        cta: tier.cta,
+        ctaHref: tier.ctaHref,
+        featured: true,
+        idealFor: tier.idealFor,
       },
     ],
   },
-  pricing: {
-    title: "Start with a role path",
-    subtitle: "Separate from Xperience (company membership) and Team Co-pilot (team workspace).",
-    tiers: LAUNCHPAD_PRICING.map((tier) => ({
-      name: tier.name,
-      price: tier.price,
-      summary: tier.summary,
-      features: tier.features.slice(0, 5),
-      cta: tier.cta,
-      ctaHref: tier.ctaHref,
-      featured: tier.featured,
-      cadence: tier.cadence || undefined,
-    })),
-  },
+  idealFor: tier.idealFor,
   finalCta: {
-    title: "See which roles are open",
-    subtitle: "Explore opportunities, then build the Career Record that makes the next step obvious.",
-    ctaLabel: "Explore Open Roles",
-    ctaHref: LAUNCHPAD_ROLES_HREF,
+    title: "Ready to get career-ready?",
+    subtitle: "Build experience in Xperience first if you need it — then succeed in the role with Team Co-pilot.",
+    ctaLabel: tier.cta,
+    ctaHref: tier.ctaHref,
   },
   footerCta: {
-    title: "Explore open roles",
-    subtitle: "Free preview or Full Role Access from £49.",
-    href: LAUNCHPAD_ROLES_HREF,
-    label: "Explore Open Roles",
+    title: "Start Launchpad",
+    subtitle: `${tier.price} · ${tier.cadence}. Or see the Complete Career Bundle.`,
+    href: tier.ctaHref,
+    label: tier.cta,
   },
 };

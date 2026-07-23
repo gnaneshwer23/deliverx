@@ -1,13 +1,14 @@
 import { appendRoleToPath } from "@/lib/marketing/role-signup";
 import type { DbRole } from "@/config/persona-onboarding";
 
-export type SuiteProduct = "xperience" | "launchpad" | "team-copilot";
+export type SuiteProduct = "xperience" | "launchpad" | "team-copilot" | "bundle";
 
 export function parseSuiteProduct(raw: string | null | undefined): SuiteProduct | null {
   const value = raw?.toLowerCase().trim();
   if (value === "xperience") return "xperience";
   if (value === "launchpad") return "launchpad";
   if (value === "team-copilot" || value === "team_copilot") return "team-copilot";
+  if (value === "bundle" || value === "career-bundle" || value === "complete") return "bundle";
   return null;
 }
 
@@ -19,6 +20,8 @@ export function productDisplayName(product: SuiteProduct): string {
       return "Launchpad";
     case "team-copilot":
       return "Team Co-pilot";
+    case "bundle":
+      return "Complete Career Bundle";
   }
 }
 
@@ -30,6 +33,8 @@ export function productMarketingPath(product: SuiteProduct): string {
       return "/launchpad";
     case "team-copilot":
       return "/team-copilot";
+    case "bundle":
+      return "/pricing#bundle";
   }
 }
 
@@ -64,6 +69,10 @@ export function postSignupPath(options: {
     return qs ? `/start/launchpad?${qs}` : "/start/launchpad";
   }
 
+  if (product === "bundle") {
+    return "/start/bundle";
+  }
+
   // team-copilot or default → existing workspace onboarding
   return appendRoleToPath("/onboarding/organisation", preselectedRole ?? null);
 }
@@ -77,28 +86,36 @@ export function signupCopy(product: SuiteProduct | null): {
     case "xperience":
       return {
         title: "Create your Xperience account",
-        subtitle: "Pay once for company access. We’ll issue login credentials after signup.",
+        subtitle: "Build Experience — £500 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Xperience — AI Experience Company access (£49 one-time). Separate from Launchpad and Team Co-pilot.",
+          "Starting Xperience — Build the experience employers expect (£500 · 3 months).",
       };
     case "launchpad":
       return {
         title: "Create your Launchpad account",
-        subtitle: "Explore open roles or start free. We’ll issue login credentials after signup.",
+        subtitle: "Advance Your Career — £250 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Launchpad — open roles and Career Record (separate from Xperience company access and Team Co-pilot).",
+          "Starting Launchpad — Get career-ready (£250 · 3 months).",
       };
     case "team-copilot":
       return {
         title: "Create your Team Co-pilot account",
-        subtitle: "30-day free trial for the Team Co-pilot workspace. No credit card needed.",
+        subtitle: "Deliver Products Together — £500 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Team Co-pilot — delivery workspace for your real team (a DeliverX product).",
+          "Starting Team Co-pilot — Deliver with confidence (£500 · 3 months).",
+      };
+    case "bundle":
+      return {
+        title: "Create your DeliverX account",
+        subtitle:
+          "Complete Career Bundle — £800 for 12 months across Xperience, Launchpad and Team Co-pilot.",
+        banner:
+          "Starting the Complete Career Bundle — Experience. Career. Delivery. (£800 · 12 months).",
       };
     default:
       return {
-        title: "Create your workspace",
-        subtitle: "30-day free trial. No credit card needed.",
+        title: "Create your DeliverX account",
+        subtitle: "Build the experience → Land the opportunity → Succeed in the role.",
         banner: null,
       };
   }

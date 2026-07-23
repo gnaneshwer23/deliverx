@@ -3,13 +3,13 @@ import { ProductMarketingPage } from "@/components/marketing/product-marketing-p
 import { XPERIENCE_PAGE } from "@/lib/marketing/xperience-page";
 
 export const metadata: Metadata = {
-  title: "Xperience — AI Experience Company | DeliverX",
+  title: "Xperience — Build the experience employers expect | DeliverX",
   description:
-    "Join a living AI-powered company. Build professional capability through consequential work — not a course or interview-prep programme.",
+    "Join an AI-powered company and work as a Product Manager from day one. £500 for 3 months — Build Experience in the DeliverX career progression.",
   openGraph: {
-    title: "Xperience — Join a living company | DeliverX",
+    title: "Xperience — Build Experience | DeliverX",
     description:
-      "An AI Experience Company where people build capability by working inside persistent organisations.",
+      "Build the experience employers expect. £500 · 3 months access.",
   },
 };
 

@@ -35,8 +35,8 @@ export default async function StartLaunchpadPage({
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
             {exploringRoles
-              ? "You’re signed up for Launchpad. Role listings and company offers will land here — for now, continue from the product page."
-              : "You’re signed up for Launchpad. Start free preview or explore open roles when you’re ready."}
+              ? "You’re signed up for Launchpad — Advance Your Career (£250 · 3 months). Career readiness tools are next."
+              : "You’re signed up for Launchpad — Advance Your Career (£250 · 3 months). Complete payment when prompted to unlock access."}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <MarketingButtonLink href="/launchpad#pricing" variant="primaryLg">

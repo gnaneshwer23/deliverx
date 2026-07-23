@@ -3,13 +3,12 @@ import { ProductMarketingPage } from "@/components/marketing/product-marketing-p
 import { TEAM_COPILOT_PAGE } from "@/lib/marketing/team-copilot-data";
 
 export const metadata: Metadata = {
-  title: "Team Co-pilot — Delivery workspace for real teams | DeliverX",
+  title: "Team Co-pilot — Deliver with confidence | DeliverX",
   description:
-    "Team Co-pilot by DeliverX: delivery intelligence for every role. AI suggests. Humans decide. Start a 30-day free trial.",
+    "AI-powered Product Delivery Operating System for modern product teams. £500 for 3 months — Deliver Products Together.",
   openGraph: {
-    title: "Team Co-pilot — AI suggests. Humans decide. | DeliverX",
-    description:
-      "Shared delivery truth for real teams already in the job. 30-day free trial — separate from Xperience and Launchpad.",
+    title: "Team Co-pilot — Deliver Products Together | DeliverX",
+    description: "Deliver with confidence. £500 · 3 months access.",
   },
 };
 

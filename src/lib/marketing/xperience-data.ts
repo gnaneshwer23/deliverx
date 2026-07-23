@@ -1,40 +1,35 @@
-/** Marketing copy + pricing for the Xperience product page on DeliverX. */
+/** Xperience product marketing — re-exports career suite pricing. */
 
-export const XPERIENCE_SIGNUP_HREF = "/signup?product=xperience";
+export {
+  XPERIENCE_INCLUDES,
+  XPERIENCE_SIGNUP_HREF,
+  careerTierById,
+} from "@/lib/marketing/career-suite";
 
 export const XPERIENCE_JOURNEY = [
   {
     step: "01",
     title: "Join the company",
-    body: "Onboard into a living AI-powered organisation — not a course. You inherit a product, constraints and real stakeholders.",
+    body: "Onboard into a realistic organisation with a product, customers, stakeholders and business challenges.",
   },
   {
     step: "02",
-    title: "Carry the work",
-    body: "Make decisions with AI colleagues. Customers, engineering and leadership remember what you chose — and what happened next.",
+    title: "Work as a Product Manager",
+    body: "Run discovery, strategy, delivery and launches. Every decision and conversation builds capability.",
   },
   {
     step: "03",
-    title: "Prove how you operate",
-    body: "Leave with a record of decisions, artefacts and outcomes — evidence of professional capability, not a certificate.",
+    title: "Leave with evidence",
+    body: "Portfolio, resume material and interview-ready evidence — proof of how you operate, not a certificate.",
   },
-] as const;
-
-export const XPERIENCE_INCLUDES = [
-  "Access to an AI Experience Company",
-  "Associate Product Manager role to start",
-  "Living product environment with constraints",
-  "AI colleagues across leadership, eng and customers",
-  "Decisions with lasting consequences",
-  "Inspectable work record from what you shipped",
 ] as const;
 
 export const XPERIENCE_PRICING = {
   name: "Xperience",
-  price: "£49",
-  cadence: "One payment",
+  price: "£500",
+  cadence: "3 Months Access",
   summary:
-    "One professional company experience. Start as Associate Product Manager in a living AI-powered organisation.",
-  cta: "Get access",
-  ctaHref: XPERIENCE_SIGNUP_HREF,
+    "Join an AI-powered company and work as a Product Manager from day one.",
+  cta: "Start Xperience",
+  ctaHref: "/signup?product=xperience",
 } as const;
