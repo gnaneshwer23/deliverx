@@ -77,23 +77,23 @@ export function signupCopy(product: SuiteProduct | null): {
     case "xperience":
       return {
         title: "Create your Xperience account",
-        subtitle: "Pay once for access. We’ll issue login credentials after signup.",
+        subtitle: "Pay once for company access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Xperience — £49 one-time professional experience access (separate from Team Co-pilot pricing).",
+          "Starting Xperience — AI Experience Company access (£49 one-time). Separate from Launchpad and Team Co-pilot.",
       };
     case "launchpad":
       return {
         title: "Create your Launchpad account",
         subtitle: "Explore open roles or start free. We’ll issue login credentials after signup.",
         banner:
-          "Starting Launchpad — join an AI-powered company and build your Career Record (separate from Team Co-pilot pricing).",
+          "Starting Launchpad — open roles and Career Record (separate from Xperience company access and Team Co-pilot).",
       };
     case "team-copilot":
       return {
         title: "Create your Team Co-pilot account",
-        subtitle: "30-day free trial for Team Co-pilot. No credit card needed.",
+        subtitle: "30-day free trial for the Team Co-pilot workspace. No credit card needed.",
         banner:
-          "Starting Team Co-pilot — delivery intelligence for your real team (a DeliverX product).",
+          "Starting Team Co-pilot — delivery workspace for your real team (a DeliverX product).",
       };
     default:
       return {

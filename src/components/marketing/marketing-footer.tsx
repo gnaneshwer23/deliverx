@@ -47,10 +47,10 @@ type FooterCta = {
 };
 
 const DEFAULT_FOOTER_CTA: FooterCta = {
-  title: "Start your free trial",
-  subtitle: "30-day trial, no credit card. First project live in 15 minutes.",
-  href: "/signup",
-  label: "Start free trial",
+  title: "Start with DeliverX",
+  subtitle: "Xperience, Launchpad or Team Co-pilot — open a product for pricing, or create an account.",
+  href: "/#products",
+  label: "View products",
 };
 
 function FooterLink({
@@ -128,9 +128,9 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
             <MarketingLogo />
             <p className="mt-4 max-w-xs text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
               <span className={`${mktClass.serif} text-[var(--mkt-text1)]`}>
-                Build experience. Deliver with intelligence.
+                Build experience. Launch your role. Deliver with your team.
               </span>{" "}
-              DeliverX — Xperience, Launchpad and Team Co-pilot.
+              DeliverX Ltd — Xperience, Launchpad and Team Co-pilot.
             </p>
             <a
               href={GITHUB_REPO}

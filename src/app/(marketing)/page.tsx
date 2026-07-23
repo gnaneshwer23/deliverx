@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   title: "DeliverX — Build experience. Launch your role. Deliver with your team.",
   description:
     "DeliverX is the brand behind Xperience, Launchpad and Team Co-pilot. Build professional experience, launch into the role, then deliver with your team.",
+  openGraph: {
+    title: "DeliverX",
+    description:
+      "Three products. One brand. Xperience · Launchpad · Team Co-pilot.",
+  },
 };
 
 export default function SuiteHomePage() {

@@ -4,16 +4,17 @@ import { PRICING_TIERS } from "@/lib/marketing/landing-data";
 
 export const TEAM_COPILOT_PAGE: ProductPageContent = {
   path: "/team-copilot",
+  brandEyebrow: "DeliverX · Team workspace",
   name: "Team Co-pilot",
   promise: "AI suggests. Humans decide. Delivery happens.",
   support:
-    "Delivery intelligence for every role on the team — once you are in a real company and need the work to stay on track.",
+    "The workspace for real teams already in the job — shared delivery truth, role-aware intelligence and human approval on every AI change. Separate from Xperience and Launchpad.",
   primaryCta: { href: TEAM_COPILOT_SIGNUP_HREF, label: "Start free trial" },
   how: {
     label: "How it works",
     title: "Built for teams who already have the job",
     subtitle:
-      "Xperience and Launchpad build the professional. Team Co-pilot strengthens them at work.",
+      "Xperience builds capability. Launchpad opens the role path. Team Co-pilot runs delivery once you are on a real team.",
     steps: [
       {
         step: "01",
@@ -34,7 +35,7 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
   },
   pricing: {
     title: "Start with a free trial",
-    subtitle: "Team Co-pilot pricing is separate from Xperience and Launchpad.",
+    subtitle: "30-day trial for the Team Co-pilot workspace — separate from Xperience and Launchpad pricing.",
     tiers: PRICING_TIERS.slice(0, 2).map((tier, index) => ({
       name: tier.name,
       price: tier.price,

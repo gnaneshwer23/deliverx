@@ -3,13 +3,13 @@ import { ProductMarketingPage } from "@/components/marketing/product-marketing-p
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 
 export const metadata: Metadata = {
-  title: "Launchpad | Build Professional Experience Before You Are Hired | DeliverX",
+  title: "Launchpad — Open Roles & Career Record | DeliverX",
   description:
-    "Join an AI-powered company, manage realistic products, work with stakeholders and build evidence-backed professional experience.",
+    "Explore open roles and grow a Career Record employers can trust. Launchpad is the bridge from experience to opportunity — by DeliverX.",
   openGraph: {
-    title: "Your experience starts here.",
+    title: "Launchpad — Find the role. Grow your Career Record.",
     description:
-      "Launchpad gives you a company, a role, a team and the responsibility to deliver.",
+      "Browse open roles, commit to a path, and package evidence employers trust — separate from Xperience company membership.",
   },
 };
 

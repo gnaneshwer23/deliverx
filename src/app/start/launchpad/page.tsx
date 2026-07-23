@@ -7,7 +7,7 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 export const metadata: Metadata = {
   title: "Welcome to Launchpad | DeliverX",
-  description: "Your Launchpad account is ready. Explore open roles and start your company experience.",
+  description: "Your Launchpad account is ready. Explore open roles and grow your Career Record.",
 };
 
 type Search = Promise<{ intent?: string }>;

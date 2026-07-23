@@ -5,35 +5,36 @@ export const XPERIENCE_SIGNUP_HREF = "/signup?product=xperience";
 export const XPERIENCE_JOURNEY = [
   {
     step: "01",
-    title: "Enter the workplace",
-    body: "Apply into a realistic company simulation. Onboard like a new hire — not a student on a course.",
+    title: "Join the company",
+    body: "Onboard into a living AI-powered organisation — not a course. You inherit a product, constraints and real stakeholders.",
   },
   {
     step: "02",
-    title: "Do the work",
-    body: "Make decisions with AI colleagues, feel consequences, and produce artefacts that stand up to inspection.",
+    title: "Carry the work",
+    body: "Make decisions with AI colleagues. Customers, engineering and leadership remember what you chose — and what happened next.",
   },
   {
     step: "03",
-    title: "Leave with evidence",
-    body: "Finish with a portfolio of decisions, documents, and performance — proof of how you work, not a certificate.",
+    title: "Prove how you operate",
+    body: "Leave with a record of decisions, artefacts and outcomes — evidence of professional capability, not a certificate.",
   },
 ] as const;
 
 export const XPERIENCE_INCLUDES = [
-  "Associate Product Manager simulation",
-  "30 simulated working days",
-  "Role onboarding and working-style setup",
-  "AI workplace coach",
-  "Scenario decisions with consequences",
-  "Inspectable evidence portfolio",
+  "Access to an AI Experience Company",
+  "Associate Product Manager role to start",
+  "Living product environment with constraints",
+  "AI colleagues across leadership, eng and customers",
+  "Decisions with lasting consequences",
+  "Inspectable work record from what you shipped",
 ] as const;
 
 export const XPERIENCE_PRICING = {
   name: "Xperience",
   price: "£49",
   cadence: "One payment",
-  summary: "30 simulated working days. Start with the Associate Product Manager simulation.",
+  summary:
+    "One professional company experience. Start as Associate Product Manager in a living AI-powered organisation.",
   cta: "Get access",
   ctaHref: XPERIENCE_SIGNUP_HREF,
 } as const;
