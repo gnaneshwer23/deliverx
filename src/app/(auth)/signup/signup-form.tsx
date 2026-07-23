@@ -5,17 +5,24 @@ import { useRouter } from "next/navigation";
 import type { DbRole } from "@/config/persona-onboarding";
 import { createClient } from "@/lib/supabase/client";
 import { formatAuthError } from "@/lib/auth-errors";
-import { appendRoleToPath } from "@/lib/marketing/role-signup";
+import {
+  postSignupPath,
+  type SuiteProduct,
+} from "@/lib/marketing/product-intent";
 import { dxClass } from "@/lib/dx-theme";
 
 export function SignupForm({
   invite,
   joinToken,
   preselectedRole,
+  product,
+  intent,
 }: {
   invite?: string;
   joinToken?: string;
   preselectedRole?: DbRole | null;
+  product?: SuiteProduct | null;
+  intent?: string | null;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -43,11 +50,13 @@ export function SignupForm({
       return;
     }
 
-    const next = joinToken
-      ? `/join?token=${encodeURIComponent(joinToken)}`
-      : invite
-        ? `/invite/${encodeURIComponent(invite)}`
-        : appendRoleToPath("/onboarding/organisation", preselectedRole);
+    const next = postSignupPath({
+      product,
+      intent,
+      invite,
+      joinToken,
+      preselectedRole,
+    });
 
     const callbackUrl = new URL("/auth/callback", window.location.origin);
     callbackUrl.searchParams.set("next", next);
@@ -57,7 +66,11 @@ export function SignupForm({
       email,
       password,
       options: {
-        data: { name },
+        data: {
+          name,
+          ...(product ? { product } : {}),
+          ...(intent ? { product_intent: intent } : {}),
+        },
         emailRedirectTo: callbackUrl.toString(),
       },
     });
@@ -77,6 +90,7 @@ export function SignupForm({
     const loginParams = new URLSearchParams();
     loginParams.set("next", next);
     loginParams.set("checkEmail", "1");
+    if (product) loginParams.set("product", product);
     router.push(`/login?${loginParams.toString()}`);
     router.refresh();
   }
