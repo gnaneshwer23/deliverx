@@ -56,6 +56,9 @@ function TierCompact({ tier }: { tier: CareerTier }) {
       <p className="mt-5 flex-1 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">
         {tier.headline}
       </p>
+      <p className="mt-3 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
+        {tier.summary}
+      </p>
       <ul className="mt-6 space-y-2">
         {tier.includes.slice(0, 4).map((item) => (
           <li
@@ -74,14 +77,14 @@ function TierCompact({ tier }: { tier: CareerTier }) {
       </ul>
       <div className="mt-8 flex flex-col gap-3">
         <MarketingButtonLink href={tier.ctaHref} variant="primary">
-          {tier.cta}
+          Buy {tier.productName}
         </MarketingButtonLink>
         {tier.href.startsWith("/") && !tier.href.includes("#") ? (
           <Link
             href={tier.href}
             className="text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
           >
-            Learn more →
+            Read the full page →
           </Link>
         ) : null}
       </div>
@@ -130,7 +133,10 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 
       <div className="mt-9 flex flex-wrap gap-3">
         <MarketingButtonLink href={tier.ctaHref} variant="primaryLg">
-          {tier.cta}
+          Buy the Complete Bundle
+        </MarketingButtonLink>
+        <MarketingButtonLink href="/#products" variant="ghostLg">
+          Compare products
         </MarketingButtonLink>
       </div>
     </article>
@@ -160,27 +166,27 @@ export default function PricingPage() {
                 <h1
                   className={`mt-4 max-w-3xl text-[clamp(2.5rem,6.5vw,3.75rem)] leading-[1.02] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                 >
-                  The Complete Career Intelligence Platform
+                  Clear pricing. Buy a stage — or the full path.
                 </h1>
               </MarketingHeroItem>
               <MarketingHeroItem>
                 <p className="mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  Build professional experience, secure interviews, and succeed in your first
-                  Product Management role — stage by stage, or as one bundle.
+                  Xperience £500 · Launchpad £250 · Team Co-pilot £500 — or the Complete Bundle at
+                  £800 for 12 months.
                 </p>
               </MarketingHeroItem>
             </MarketingHeroMotion>
           </MarketingContainer>
         </section>
 
-        {/* Three stages — compact comparison */}
+        {/* Three products — comparison + buy CTAs */}
         <MarketingSection tone="white">
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
-                label="Individual stages"
-                title="Choose your stage"
-                subtitle="Start where you are — or continue through the full career path."
+                label="Individual products"
+                title="Buy the stage you need"
+                subtitle="Each product stands alone. Start where you are — or continue through the full career path."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -193,7 +199,7 @@ export default function PricingPage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Bundle — calm best-value emphasis */}
+        {/* Featured Complete Bundle */}
         <MarketingSection id="bundle" tone="green-tint">
           <MarketingContainer>
             <MarketingReveal>
@@ -211,7 +217,7 @@ export default function PricingPage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Promise — calm and trustworthy */}
+        {/* Promise / guarantee */}
         <MarketingSection id="promise" tone="white">
           <MarketingContainer className="max-w-2xl">
             <MarketingReveal>
@@ -267,14 +273,14 @@ export default function PricingPage() {
                 {CAREER_PROGRESSION_LINE}
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-                Start with one stage — or take the Complete Career Bundle.
+                Buy one product — or take the Complete Career Bundle.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href={CAREER_BUNDLE.ctaHref} variant="ctaLight">
-                  Get the Complete Bundle
+                  Buy the Complete Bundle
                 </MarketingButtonLink>
-                <MarketingButtonLink href="/signup" variant="ctaOutline">
-                  Create account
+                <MarketingButtonLink href="#xperience" variant="ctaOutline">
+                  Buy a single product
                 </MarketingButtonLink>
               </div>
             </MarketingReveal>

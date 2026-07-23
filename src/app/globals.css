@@ -666,6 +666,12 @@
   }
 }
 
+/* Home — reference offer strip */
+.mkt-offer-strip a:focus-visible {
+  outline: 2px solid var(--mkt-green-l);
+  outline-offset: 4px;
+}
+
 /* Home — editorial product rows */
 .mkt-product-row {
   transition: background-color 0.25s ease;

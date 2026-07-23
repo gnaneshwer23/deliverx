@@ -13,17 +13,17 @@ export const LAUNCHPAD_JOURNEY = [
   {
     step: "01",
     title: "Assess where you are",
-    body: "AI career assessment, Career Twin profile and skills gap analysis so you know what to strengthen.",
+    body: "Career Twin, skills gap analysis and a clear picture of what to strengthen before you apply.",
   },
   {
     step: "02",
     title: "Package your evidence",
-    body: "CV, LinkedIn, portfolio and case studies that present your experience professionally.",
+    body: "CV, LinkedIn, portfolio and case studies that make your experience readable to hiring managers.",
   },
   {
     step: "03",
     title: "Prepare to win the interview",
-    body: "STAR stories, mock interviews, communication coaching and a job readiness score.",
+    body: "STAR stories, mock interviews, communication coaching and a readiness score you can trust.",
   },
 ] as const;
 

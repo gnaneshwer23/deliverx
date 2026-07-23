@@ -10,17 +10,17 @@ export const XPERIENCE_JOURNEY = [
   {
     step: "01",
     title: "Join the company",
-    body: "Onboard into a realistic organisation with a product, customers, stakeholders and business challenges.",
+    body: "Onboard into a living organisation — product, customers, stakeholders and real business pressure from day one.",
   },
   {
     step: "02",
     title: "Work as a Product Manager",
-    body: "Run discovery, strategy, delivery and launches. Every decision and conversation builds capability.",
+    body: "Run discovery, strategy, delivery and launches. Judgement grows through decisions, not lectures.",
   },
   {
     step: "03",
     title: "Leave with evidence",
-    body: "Portfolio, resume material and interview-ready evidence — proof of how you operate, not a certificate.",
+    body: "Portfolio, case studies and interview-ready proof of how you operate — not another certificate.",
   },
 ] as const;
 

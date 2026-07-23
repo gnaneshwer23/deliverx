@@ -14,8 +14,10 @@ import {
   MarketingReveal,
 } from "@/components/marketing/marketing-reveal";
 import {
+  CAREER_BUNDLE,
   CAREER_PROGRESSION_LINE,
   CAREER_STORY_LINE,
+  CAREER_TIERS,
 } from "@/lib/marketing/career-suite";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { PRODUCT_NAV, SUITE_LIFECYCLE, SUITE_PRODUCTS } from "@/lib/marketing/suite-data";
@@ -30,13 +32,21 @@ export const metadata: Metadata = {
   },
 };
 
+const FROM_PRICE = CAREER_TIERS.reduce(
+  (lowest, tier) => {
+    const n = Number.parseInt(tier.price.replace(/[^\d]/g, ""), 10);
+    return Number.isFinite(n) && n < lowest ? n : lowest;
+  },
+  Number.POSITIVE_INFINITY,
+);
+
 export default function SuiteHomePage() {
   return (
     <MarketingPageShell>
       <MarketingNav links={PRODUCT_NAV} primaryCta={{ href: "/pricing", label: "View pricing" }} />
 
       <main id="main-content">
-        {/* Brand hero — DeliverX first, one composition */}
+        {/* 1. Brand hero — DeliverX first, one composition */}
         <section
           id="hero"
           className="relative flex min-h-[calc(100svh-var(--mkt-navh))] flex-col justify-center overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[var(--mkt-navh)] pb-24"
@@ -73,7 +83,7 @@ export default function SuiteHomePage() {
               <MarketingHeroItem>
                 <div className="mt-11 flex flex-wrap items-center gap-3">
                   <MarketingButtonLink href="#path" variant="primaryLg">
-                    See the path
+                    Explore path
                   </MarketingButtonLink>
                   <MarketingButtonLink href="/pricing" variant="ghostLg">
                     View pricing
@@ -84,13 +94,17 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </section>
 
-        {/* Progression path — editorial, not a card grid */}
+        {/* 2. How the path works — editorial, not a dashboard */}
         <MarketingSection id="path" tone="white">
           <MarketingContainer>
             <MarketingReveal>
-              <p className={mktClass.label}>Career progression</p>
+              <p className={mktClass.label}>How the path works</p>
               <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
-                Three stages. One continuous path.
+                Three stages. One continuous journey.
+              </p>
+              <p className="mt-4 max-w-md text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                Build capability, land the opportunity, then succeed once you are in the role —
+                stage by stage, or as one bundle.
               </p>
             </MarketingReveal>
 
@@ -120,13 +134,13 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Three stages — editorial product rows */}
+        {/* 3. Three products — short promise + link into full page */}
         <MarketingSection id="products" tone="cream">
           <MarketingContainer>
             <MarketingReveal>
-              <p className={mktClass.label}>The complete path</p>
+              <p className={mktClass.label}>The products</p>
               <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
-                One career journey. Three stages.
+                Read each stage. Buy when you are ready.
               </p>
             </MarketingReveal>
 
@@ -167,18 +181,52 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Closing CTA */}
+        {/* 4. Reference offer strip */}
+        <section
+          id="offer"
+          className="mkt-offer-strip scroll-mt-[var(--mkt-navh)] border-y border-[var(--mkt-border)] bg-[var(--mkt-s1)]"
+        >
+          <MarketingContainer>
+            <MarketingReveal>
+              <Link
+                href="/pricing"
+                className="group flex flex-col items-start justify-between gap-4 py-10 no-underline sm:flex-row sm:items-center sm:py-12"
+              >
+                <div>
+                  <p className={mktClass.label}>Reference pricing</p>
+                  <p
+                    className={`mt-3 text-[clamp(1.35rem,2.8vw,1.75rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    From £{Number.isFinite(FROM_PRICE) ? FROM_PRICE : 250}
+                    <span className="mx-2.5 text-[var(--mkt-border-l)]" aria-hidden>
+                      ·
+                    </span>
+                    Bundle {CAREER_BUNDLE.price}
+                  </p>
+                  <p className="mt-2 text-[0.8125rem] text-[var(--mkt-text3)]">
+                    Individual stages or 12 months of the full path.
+                  </p>
+                </div>
+                <span className="text-[0.875rem] font-medium text-[var(--mkt-green)] transition-transform duration-300 group-hover:translate-x-1">
+                  View pricing →
+                </span>
+              </Link>
+            </MarketingReveal>
+          </MarketingContainer>
+        </section>
+
+        {/* 5. Soft final CTA */}
         <MarketingSection tone="dark" className="mkt-cta-band !border-0">
           <MarketingContainer className="relative z-10 text-center">
             <MarketingReveal>
               <h2
                 className={`text-[clamp(1.875rem,4vw,2.75rem)] tracking-[-0.025em] text-white ${mktClass.serif}`}
               >
-                Start your career progression
+                Start when the path makes sense
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-                Choose a stage — or take Xperience, Launchpad and Team Co-pilot together in the
-                Complete Bundle.
+                Explore a product page, then buy that stage — or take Xperience, Launchpad and Team
+                Co-pilot together in the Complete Bundle.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href="/pricing" variant="ctaLight">

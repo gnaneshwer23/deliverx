@@ -9,17 +9,20 @@ const HIGHLIGHT_COUNT = 6;
 export function MarketingIncludes({
   items,
   highlightCount = HIGHLIGHT_COUNT,
+  hideLabel = false,
 }: {
   items: readonly string[];
   highlightCount?: number;
+  /** When the section intro already says “What’s included” */
+  hideLabel?: boolean;
 }) {
   const highlights = items.slice(0, highlightCount);
   const rest = items.slice(highlightCount);
 
   return (
     <div>
-      <p className={mktClass.label}>What&apos;s included</p>
-      <ul className="mt-4 space-y-3">
+      {hideLabel ? null : <p className={mktClass.label}>What&apos;s included</p>}
+      <ul className={`${hideLabel ? "mt-0" : "mt-4"} space-y-3`}>
         {highlights.map((feature) => (
           <li
             key={feature}

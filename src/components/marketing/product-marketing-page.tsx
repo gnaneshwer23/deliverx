@@ -1,9 +1,7 @@
+import Link from "next/link";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
-import {
-  MarketingIdealFor,
-  MarketingIncludes,
-} from "@/components/marketing/marketing-includes";
+import { MarketingIncludes } from "@/components/marketing/marketing-includes";
 import {
   MarketingContainer,
   MarketingPageShell,
@@ -24,7 +22,13 @@ import {
 
 export function ProductMarketingPage({ content }: { content: ProductPageContent }) {
   const nav = productPageNav(content.path);
-  const multiTier = content.pricing.tiers.length > 1;
+  const secondary = content.secondaryCta ?? { href: "/pricing", label: "See pricing" };
+  const bundleHref = content.pricing.bundleHref ?? "/pricing#bundle";
+  const bundleLabel = content.pricing.bundleLabel ?? "Or get the Complete Bundle";
+  const finalSecondary = {
+    href: content.finalCta.secondaryHref ?? "/pricing#bundle",
+    label: content.finalCta.secondaryLabel ?? "Get the Complete Bundle",
+  };
 
   return (
     <MarketingPageShell>
@@ -37,7 +41,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       />
 
       <main id="main-content">
-        {/* Hero — product name as brand signal; tight budget */}
+        {/* 1. Hero — product name + stage + promise + CTAs */}
         <section
           id="hero"
           className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
@@ -51,7 +55,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
             <MarketingHeroMotion>
               <MarketingHeroItem>
                 <p className={mktClass.label}>
-                  {content.brandEyebrow ?? "DeliverX · Career progression"}
+                  {content.brandEyebrow ?? `DeliverX · ${content.stage}`}
                 </p>
               </MarketingHeroItem>
               <MarketingHeroItem>
@@ -62,7 +66,12 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                 </h1>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <p className="mt-6 max-w-lg text-[clamp(1.125rem,2.2vw,1.375rem)] font-light leading-relaxed tracking-[-0.01em] text-[var(--mkt-text1)]">
+                <p className="mt-3 text-[0.8125rem] font-medium tracking-wide text-[var(--mkt-green)]">
+                  {content.stage}
+                </p>
+              </MarketingHeroItem>
+              <MarketingHeroItem>
+                <p className="mt-5 max-w-xl text-[clamp(1.125rem,2.2vw,1.375rem)] font-light leading-relaxed tracking-[-0.01em] text-[var(--mkt-text1)]">
                   {content.promise}
                 </p>
               </MarketingHeroItem>
@@ -71,8 +80,8 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                   <MarketingButtonLink href={content.primaryCta.href} variant="primaryLg">
                     {content.primaryCta.label}
                   </MarketingButtonLink>
-                  <MarketingButtonLink href="/pricing" variant="ghostLg">
-                    View full pricing
+                  <MarketingButtonLink href={secondary.href} variant="ghostLg">
+                    {secondary.label}
                   </MarketingButtonLink>
                 </div>
               </MarketingHeroItem>
@@ -80,8 +89,21 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
           </MarketingContainer>
         </section>
 
-        {/* How it works — denser editorial steps */}
-        <MarketingSection id="how" tone="white">
+        {/* 2. Problem / why it matters */}
+        <MarketingSection id="why" tone="white">
+          <MarketingContainer>
+            <MarketingReveal>
+              <MarketingSectionIntro
+                label={content.problem.label ?? "Why it matters"}
+                title={content.problem.title}
+                subtitle={content.problem.body}
+              />
+            </MarketingReveal>
+          </MarketingContainer>
+        </MarketingSection>
+
+        {/* 3. How it works */}
+        <MarketingSection id="how" tone="cream">
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
@@ -109,76 +131,88 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                 </li>
               ))}
             </ol>
-            {content.support ? (
-              <MarketingReveal delay={0.12}>
-                <p className="mt-14 max-w-2xl border-t border-[var(--mkt-border)] pt-8 text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
-                  {content.support}
-                </p>
-              </MarketingReveal>
-            ) : null}
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Pricing */}
-        <MarketingSection id="pricing" tone="cream">
+        {/* 4. What's included */}
+        <MarketingSection id="includes" tone="white">
           <MarketingContainer>
             <MarketingReveal>
               <MarketingSectionIntro
-                label="Pricing"
+                label={content.includes.label ?? "What's included"}
+                title={content.includes.title}
+                subtitle={content.includes.subtitle}
+              />
+            </MarketingReveal>
+            <MarketingReveal delay={0.08}>
+              <div className="mt-12 max-w-3xl">
+                <MarketingIncludes
+                  items={content.includes.items}
+                  highlightCount={content.includes.highlightCount}
+                  hideLabel
+                />
+              </div>
+            </MarketingReveal>
+          </MarketingContainer>
+        </MarketingSection>
+
+        {/* 5. Ideal for */}
+        <MarketingSection id="ideal-for" tone="cream">
+          <MarketingContainer>
+            <MarketingReveal>
+              <p className={mktClass.label}>{content.idealFor.label ?? "Ideal for"}</p>
+              {content.idealFor.title ? (
+                <h2 className={`mt-3.5 max-w-2xl ${mktClass.sectionTitle}`}>
+                  {content.idealFor.title}
+                </h2>
+              ) : null}
+              <p className="mt-5 max-w-2xl text-[1.0625rem] leading-[1.75] text-[var(--mkt-text2)]">
+                {content.idealFor.body}
+              </p>
+            </MarketingReveal>
+          </MarketingContainer>
+        </MarketingSection>
+
+        {/* 6. This product's pricing + bundle link */}
+        <MarketingSection id="pricing" tone="white">
+          <MarketingContainer>
+            <MarketingReveal>
+              <MarketingSectionIntro
+                label={content.pricing.label ?? "Pricing"}
                 title={content.pricing.title}
                 subtitle={content.pricing.subtitle}
               />
             </MarketingReveal>
-            <div
-              className={`mt-14 grid gap-14 ${multiTier ? "md:grid-cols-2 md:gap-16" : "max-w-2xl"}`}
-            >
-              {content.pricing.tiers.map((tier, index) => (
-                <MarketingReveal key={tier.name} delay={index * 0.06}>
-                  <div>
-                    <div className="flex flex-wrap items-baseline justify-between gap-3">
-                      <p className={mktClass.label}>{tier.name}</p>
-                      {tier.cadence ? (
-                        <p className="text-sm text-[var(--mkt-text3)]">{tier.cadence}</p>
-                      ) : null}
-                    </div>
-                    <p
-                      className={`mt-4 text-[clamp(2.5rem,5vw,3.25rem)] leading-none tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                    >
-                      {tier.price}
-                    </p>
-                    <p className="mt-5 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                      {tier.summary}
-                    </p>
-
-                    <div className="mt-9">
-                      <MarketingIncludes items={tier.features} />
-                    </div>
-
-                    {(tier.idealFor ?? content.idealFor) ? (
-                      <MarketingIdealFor>
-                        {tier.idealFor ?? content.idealFor!}
-                      </MarketingIdealFor>
-                    ) : null}
-
-                    <div className="mt-9 flex flex-wrap gap-3">
-                      <MarketingButtonLink
-                        href={tier.ctaHref}
-                        variant={tier.featured || !multiTier ? "primaryLg" : "ghostLg"}
-                      >
-                        {tier.cta}
-                      </MarketingButtonLink>
-                      <MarketingButtonLink href="/pricing#bundle" variant="ghostLg">
-                        See bundle
-                      </MarketingButtonLink>
-                    </div>
-                  </div>
-                </MarketingReveal>
-              ))}
-            </div>
+            <MarketingReveal delay={0.08}>
+              <div className="mkt-product-price mt-14 max-w-xl">
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+                  <p
+                    className={`text-[clamp(2.75rem,5.5vw,3.5rem)] leading-none tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    {content.pricing.price}
+                  </p>
+                  <p className="text-sm text-[var(--mkt-text3)]">{content.pricing.cadence}</p>
+                </div>
+                <p className="mt-6 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                  {content.pricing.summary}
+                </p>
+                <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <MarketingButtonLink href={content.pricing.ctaHref} variant="primaryLg">
+                    {content.pricing.cta}
+                  </MarketingButtonLink>
+                  <Link
+                    href={bundleHref}
+                    className="text-[0.875rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
+                  >
+                    {bundleLabel} →
+                  </Link>
+                </div>
+              </div>
+            </MarketingReveal>
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Final CTA */}
+        {/* 7. Final CTA */}
         <MarketingSection tone="dark" className="mkt-cta-band !border-0">
           <MarketingContainer className="relative z-10 text-center">
             <MarketingReveal>
@@ -194,8 +228,8 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                 <MarketingButtonLink href={content.finalCta.ctaHref} variant="ctaLight">
                   {content.finalCta.ctaLabel}
                 </MarketingButtonLink>
-                <MarketingButtonLink href="/pricing" variant="ctaOutline">
-                  Full pricing
+                <MarketingButtonLink href={finalSecondary.href} variant="ctaOutline">
+                  {finalSecondary.label}
                 </MarketingButtonLink>
               </div>
             </MarketingReveal>
