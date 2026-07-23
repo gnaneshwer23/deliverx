@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
-const ease = [0.16, 1, 0.3, 1] as const;
+const ease = [0.22, 1, 0.36, 1] as const;
 
 /** Soft scroll reveal for marketing sections — respects reduced motion. */
 export function MarketingReveal({
@@ -24,10 +24,10 @@ export function MarketingReveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-64px" }}
-      transition={{ duration: 0.6, delay, ease }}
+      viewport={{ once: true, margin: "-72px" }}
+      transition={{ duration: 0.55, delay, ease }}
     >
       {children}
     </motion.div>
@@ -55,7 +55,7 @@ export function MarketingHeroMotion({
       animate="visible"
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: 0.09, delayChildren: 0.04 } },
+        visible: { transition: { staggerChildren: 0.1, delayChildren: 0.06 } },
       }}
     >
       {children}
@@ -80,8 +80,8 @@ export function MarketingHeroItem({
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 18 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease } },
+        hidden: { opacity: 0, y: 16 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
       }}
     >
       {children}

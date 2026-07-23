@@ -623,7 +623,7 @@
   }
 }
 
-/* Marketing landing — Monday-style polish utilities */
+/* Marketing landing — editorial polish utilities */
 .marketing-page main > section:not(#hero):not(#quick-start) {
   content-visibility: auto;
   contain-intrinsic-size: auto 480px;
@@ -631,9 +631,113 @@
 
 .mkt-hero-mesh {
   background-image:
-    radial-gradient(ellipse 90% 70% at 10% 0%, rgba(61, 150, 96, 0.14), transparent 55%),
-    radial-gradient(ellipse 60% 50% at 90% 10%, rgba(28, 74, 46, 0.08), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 70% 90%, rgba(110, 231, 183, 0.06), transparent 55%);
+    radial-gradient(ellipse 90% 70% at 8% 0%, rgba(61, 150, 96, 0.12), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 92% 8%, rgba(28, 74, 46, 0.07), transparent 50%),
+    radial-gradient(ellipse 45% 35% at 65% 95%, rgba(61, 150, 96, 0.05), transparent 55%);
+}
+
+/* Home — progression path */
+.mkt-progression {
+  display: grid;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .mkt-progression {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.mkt-progression-item {
+  border-top: 1px solid var(--mkt-border);
+  padding: 1.75rem 0;
+}
+
+@media (min-width: 768px) {
+  .mkt-progression-item {
+    border-top: none;
+    border-left: 1px solid var(--mkt-border);
+    padding: 0.25rem 0 0.25rem 2rem;
+  }
+
+  .mkt-progression-item:first-child {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+/* Home — editorial product rows */
+.mkt-product-row {
+  transition: background-color 0.25s ease;
+}
+
+.mkt-product-row:hover {
+  background-color: rgba(61, 150, 96, 0.03);
+}
+
+.mkt-product-row:focus-visible {
+  outline: 2px solid var(--mkt-green-l);
+  outline-offset: 4px;
+}
+
+/* Product pages — how-it-works */
+.mkt-how-steps {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .mkt-how-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+}
+
+.mkt-how-step {
+  padding-top: 0;
+}
+
+@media (min-width: 768px) {
+  .mkt-how-step {
+    border-left: 1px solid var(--mkt-border);
+    padding: 0 0 0 2rem;
+  }
+
+  .mkt-how-step:first-child {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+/* Pricing — stage comparison */
+.mkt-tier-grid {
+  display: grid;
+  gap: 2.75rem;
+}
+
+@media (min-width: 768px) {
+  .mkt-tier-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+}
+
+.mkt-tier-compact {
+  border-top: 1px solid var(--mkt-border);
+  padding-top: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .mkt-tier-compact {
+    border-top: none;
+    border-left: 1px solid var(--mkt-border);
+    padding: 0.25rem 0 0.25rem 2rem;
+  }
+
+  .mkt-tier-compact:first-child {
+    border-left: none;
+    padding-left: 0;
+  }
 }
 
 .mkt-hero-float {
@@ -695,14 +799,14 @@
 }
 
 .mkt-nav-scrolled {
-  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 8px 32px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.05);
 }
 
 .mkt-cta-band {
   background:
-    radial-gradient(ellipse 80% 60% at 20% 100%, rgba(110, 231, 183, 0.18), transparent 55%),
-    radial-gradient(ellipse 60% 50% at 90% 0%, rgba(45, 112, 72, 0.25), transparent 50%),
-    linear-gradient(135deg, #1c4a2e 0%, #2d7048 48%, #1c4a2e 100%);
+    radial-gradient(ellipse 70% 55% at 15% 100%, rgba(110, 231, 183, 0.14), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 0%, rgba(45, 112, 72, 0.2), transparent 50%),
+    linear-gradient(160deg, #163a25 0%, #1c4a2e 45%, #245a38 100%);
 }
 
 .mkt-onboarding-path {
@@ -789,7 +893,8 @@
   .mkt-hero-float:hover,
   .mkt-card,
   .mkt-card-lift:hover,
-  .mkt-feature-row:hover .mkt-feature-icon {
+  .mkt-feature-row:hover .mkt-feature-icon,
+  .mkt-product-row {
     transform: none;
     transition: none;
   }
@@ -825,14 +930,9 @@
   animation: mkt-role-carousel-scroll 45s linear infinite;
 }
 
-/* Career suite — bundle emphasis panel */
+/* Career suite — calm bundle emphasis (no loud SaaS card) */
 .mkt-bundle-panel {
-  box-shadow: 0 1px 0 rgba(28, 74, 46, 0.04), 0 18px 48px -24px rgba(28, 74, 46, 0.18);
-}
-
-.mkt-bundle-panel > article {
-  border-top: none;
-  padding-top: 0;
+  background: transparent;
 }
 
 .marketing-role-carousel-mask:hover .marketing-role-carousel-track {

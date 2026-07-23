@@ -7,15 +7,15 @@ import { useCallback, useState, type ComponentProps, type MouseEvent, type React
 type BtnVariant = "primary" | "ghost" | "primaryLg" | "ghostLg" | "ctaLight" | "ctaOutline";
 
 const base =
-  "inline-flex items-center justify-center gap-1.5 rounded-xl text-[0.8125rem] font-medium whitespace-nowrap transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-70";
+  "inline-flex items-center justify-center gap-1.5 rounded-lg text-[0.8125rem] font-medium whitespace-nowrap transition duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-70";
 
 const variants: Record<BtnVariant, string> = {
-  primary: `${base} border border-[var(--mkt-green-m,#2D7048)] bg-[var(--mkt-green-l)] px-[18px] py-2 text-white hover:bg-[#2D7048] hover:shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)] hover:-translate-y-px`,
-  ghost: `${base} border border-[var(--mkt-border-l)] bg-transparent px-[18px] py-2 text-[var(--mkt-text2)] hover:border-[var(--mkt-border-l)] hover:bg-[var(--mkt-s3)] hover:text-[var(--mkt-text1)]`,
-  primaryLg: `${base} border border-[#2D7048] bg-[var(--mkt-green-l)] px-7 py-[13px] text-[0.9375rem] text-white hover:bg-[#2D7048] hover:shadow-[0_0_0_1px_rgba(61,150,96,.18),0_8px_32px_rgba(61,150,96,.12)] hover:-translate-y-0.5`,
-  ghostLg: `${base} border border-[var(--mkt-border-l)] bg-[var(--mkt-s1)] px-7 py-[13px] text-[0.9375rem] text-[var(--mkt-text2)] hover:border-[var(--mkt-border-l)] hover:bg-[var(--mkt-s3)] hover:text-[var(--mkt-text1)] hover:shadow-[var(--dx-shadow-sm)]`,
-  ctaLight: `${base} rounded-[10px] border-none bg-white px-7 py-[13px] text-[0.9375rem] text-[var(--mkt-green)] hover:bg-white/90 hover:shadow-[0_8px_24px_rgba(0,0,0,.2)] hover:-translate-y-0.5`,
-  ctaOutline: `${base} rounded-[10px] border border-white/30 bg-transparent px-7 py-[13px] text-[0.9375rem] text-white hover:border-white/50 hover:bg-white/8`,
+  primary: `${base} border border-[var(--mkt-green)] bg-[var(--mkt-green)] px-[18px] py-2 text-white hover:bg-[var(--mkt-green-m)]`,
+  ghost: `${base} border border-transparent bg-transparent px-[14px] py-2 text-[var(--mkt-text2)] hover:text-[var(--mkt-text1)]`,
+  primaryLg: `${base} border border-[var(--mkt-green)] bg-[var(--mkt-green)] px-7 py-[13px] text-[0.9375rem] text-white hover:bg-[var(--mkt-green-m)]`,
+  ghostLg: `${base} border border-[var(--mkt-border-l)] bg-transparent px-7 py-[13px] text-[0.9375rem] text-[var(--mkt-text2)] hover:border-[var(--mkt-border-l)] hover:bg-[var(--mkt-s1)] hover:text-[var(--mkt-text1)]`,
+  ctaLight: `${base} border-none bg-white px-7 py-[13px] text-[0.9375rem] text-[var(--mkt-green)] hover:bg-white/92`,
+  ctaOutline: `${base} border border-white/25 bg-transparent px-7 py-[13px] text-[0.9375rem] text-white hover:border-white/45 hover:bg-white/[0.06]`,
 };
 
 const HOVER_PREFETCH_PATHS = new Set([

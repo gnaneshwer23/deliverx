@@ -37,14 +37,14 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       />
 
       <main id="main-content">
-        {/* 1. Hero — product name as brand signal */}
+        {/* Hero — product name as brand signal; tight budget */}
         <section
           id="hero"
-          className="relative overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] pt-[calc(var(--mkt-navh)+56px)] pb-16 md:pt-[calc(var(--mkt-navh)+80px)] md:pb-20"
+          className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
         >
           <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
           <div
-            className="pointer-events-none absolute -right-24 top-1/3 z-0 size-[360px] rounded-full bg-[radial-gradient(circle,rgba(61,150,96,0.12)_0%,transparent_70%)] blur-3xl"
+            className="pointer-events-none absolute -right-28 top-1/4 z-0 size-[420px] rounded-full bg-[radial-gradient(circle,rgba(61,150,96,0.1)_0%,transparent_70%)] blur-3xl"
             aria-hidden
           />
           <MarketingContainer className="relative z-[1]">
@@ -56,30 +56,19 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               </MarketingHeroItem>
               <MarketingHeroItem>
                 <h1
-                  className={`mt-4 max-w-3xl text-[clamp(2.75rem,7.5vw,4.25rem)] leading-[1.0] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  className={`mt-5 max-w-3xl text-[clamp(3rem,9vw,5rem)] leading-[0.95] tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                 >
                   {content.name}
                 </h1>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <p className="mt-5 max-w-xl text-[clamp(1.125rem,2.2vw,1.35rem)] font-light leading-relaxed text-[var(--mkt-text1)]">
+                <p className="mt-6 max-w-lg text-[clamp(1.125rem,2.2vw,1.375rem)] font-light leading-relaxed tracking-[-0.01em] text-[var(--mkt-text1)]">
                   {content.promise}
                 </p>
               </MarketingHeroItem>
-              {content.support ? (
-                <MarketingHeroItem>
-                  <p className="mt-3 max-w-xl text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                    {content.support}
-                  </p>
-                </MarketingHeroItem>
-              ) : null}
               <MarketingHeroItem>
-                <div className="mt-9 flex flex-wrap gap-3">
-                  <MarketingButtonLink
-                    href={content.primaryCta.href}
-                    variant="primaryLg"
-                    className="mkt-card-lift"
-                  >
+                <div className="mt-10 flex flex-wrap gap-3">
+                  <MarketingButtonLink href={content.primaryCta.href} variant="primaryLg">
                     {content.primaryCta.label}
                   </MarketingButtonLink>
                   <MarketingButtonLink href="/pricing" variant="ghostLg">
@@ -91,7 +80,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
           </MarketingContainer>
         </section>
 
-        {/* 2. How it works */}
+        {/* How it works — denser editorial steps */}
         <MarketingSection id="how" tone="white">
           <MarketingContainer>
             <MarketingReveal>
@@ -101,30 +90,36 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                 subtitle={content.how.subtitle}
               />
             </MarketingReveal>
-            <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-0">
+            <ol className="mkt-how-steps mt-14">
               {content.how.steps.map((item, index) => (
-                <li
-                  key={item.step}
-                  className="md:border-l md:border-[var(--mkt-border)] md:px-8 md:first:border-l-0 md:first:pl-0"
-                >
+                <li key={item.step} className="mkt-how-step">
                   <MarketingReveal delay={index * 0.07}>
-                    <p className={`${mktClass.mono} text-[var(--mkt-green-l)]`}>{item.step}</p>
+                    <p className={`${mktClass.mono} text-[0.75rem] text-[var(--mkt-green-l)]`}>
+                      {item.step}
+                    </p>
                     <h3
-                      className={`mt-3 text-xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                      className={`mt-4 text-[clamp(1.25rem,2vw,1.5rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                     >
                       {item.title}
                     </h3>
-                    <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                    <p className="mt-3 max-w-sm text-[0.9375rem] leading-[1.7] text-[var(--mkt-text2)]">
                       {item.body}
                     </p>
                   </MarketingReveal>
                 </li>
               ))}
             </ol>
+            {content.support ? (
+              <MarketingReveal delay={0.12}>
+                <p className="mt-14 max-w-2xl border-t border-[var(--mkt-border)] pt-8 text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
+                  {content.support}
+                </p>
+              </MarketingReveal>
+            ) : null}
           </MarketingContainer>
         </MarketingSection>
 
-        {/* 3. Pricing */}
+        {/* Pricing */}
         <MarketingSection id="pricing" tone="cream">
           <MarketingContainer>
             <MarketingReveal>
@@ -135,11 +130,11 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
               />
             </MarketingReveal>
             <div
-              className={`mt-12 grid gap-12 ${multiTier ? "md:grid-cols-2" : "max-w-3xl"}`}
+              className={`mt-14 grid gap-14 ${multiTier ? "md:grid-cols-2 md:gap-16" : "max-w-2xl"}`}
             >
               {content.pricing.tiers.map((tier, index) => (
                 <MarketingReveal key={tier.name} delay={index * 0.06}>
-                  <div className="border-t border-[var(--mkt-border)] pt-8">
+                  <div>
                     <div className="flex flex-wrap items-baseline justify-between gap-3">
                       <p className={mktClass.label}>{tier.name}</p>
                       {tier.cadence ? (
@@ -147,15 +142,15 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                       ) : null}
                     </div>
                     <p
-                      className={`mt-3 text-[clamp(2.25rem,4.5vw,3rem)] leading-none tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                      className={`mt-4 text-[clamp(2.5rem,5vw,3.25rem)] leading-none tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                     >
                       {tier.price}
                     </p>
-                    <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                    <p className="mt-5 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
                       {tier.summary}
                     </p>
 
-                    <div className="mt-8">
+                    <div className="mt-9">
                       <MarketingIncludes items={tier.features} />
                     </div>
 
@@ -165,11 +160,10 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                       </MarketingIdealFor>
                     ) : null}
 
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className="mt-9 flex flex-wrap gap-3">
                       <MarketingButtonLink
                         href={tier.ctaHref}
                         variant={tier.featured || !multiTier ? "primaryLg" : "ghostLg"}
-                        className="mkt-card-lift"
                       >
                         {tier.cta}
                       </MarketingButtonLink>
@@ -184,19 +178,19 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
           </MarketingContainer>
         </MarketingSection>
 
-        {/* 4. Final CTA */}
+        {/* Final CTA */}
         <MarketingSection tone="dark" className="mkt-cta-band !border-0">
           <MarketingContainer className="relative z-10 text-center">
             <MarketingReveal>
               <h2
-                className={`text-[clamp(1.75rem,4vw,2.5rem)] tracking-[-0.02em] text-white ${mktClass.serif}`}
+                className={`text-[clamp(1.875rem,4vw,2.75rem)] tracking-[-0.025em] text-white ${mktClass.serif}`}
               >
                 {content.finalCta.title}
               </h2>
-              <p className="mx-auto mt-3 max-w-lg text-[0.9375rem] font-light leading-relaxed text-white/70">
+              <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
                 {content.finalCta.subtitle}
               </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href={content.finalCta.ctaHref} variant="ctaLight">
                   {content.finalCta.ctaLabel}
                 </MarketingButtonLink>

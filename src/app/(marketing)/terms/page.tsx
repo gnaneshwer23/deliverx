@@ -15,12 +15,12 @@ export default function TermsPage() {
   return (
     <MarketingPageShell>
       <MarketingNav />
-      <main id="main-content" className="pt-[calc(var(--mkt-navh)+48px)] pb-20">
+      <main id="main-content" className="pt-[calc(var(--mkt-navh)+64px)] pb-24">
         <MarketingContainer className="max-w-2xl">
-          <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
-            Legal
+          <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]">
+            DeliverX Ltd · Legal
           </p>
-          <h1 className="mt-3 font-[family-name:var(--font-dx-display)] text-3xl tracking-[-0.02em] text-[var(--mkt-text1)]">
+          <h1 className="mt-4 font-[family-name:var(--font-dx-display)] text-[clamp(2rem,4vw,2.75rem)] tracking-[-0.03em] text-[var(--mkt-text1)]">
             Terms of Service
           </h1>
           <p className="mt-6 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">

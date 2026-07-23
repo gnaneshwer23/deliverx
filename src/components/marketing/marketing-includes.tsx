@@ -18,14 +18,15 @@ export function MarketingIncludes({
 
   return (
     <div>
-      <p className="text-[0.75rem] font-medium uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
-        What&apos;s included
-      </p>
-      <ul className="mt-4 space-y-2.5">
+      <p className={mktClass.label}>What&apos;s included</p>
+      <ul className="mt-4 space-y-3">
         {highlights.map((feature) => (
-          <li key={feature} className="flex gap-2.5 text-[0.9375rem] text-[var(--mkt-text2)]">
+          <li
+            key={feature}
+            className="grid grid-cols-[auto_1fr] gap-3 text-[0.9375rem] leading-snug text-[var(--mkt-text1)]"
+          >
             <span
-              className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--mkt-green-l)]"
+              className="mt-[0.45rem] size-1 shrink-0 bg-[var(--mkt-green-l)]"
               aria-hidden
             />
             {feature}
@@ -33,9 +34,11 @@ export function MarketingIncludes({
         ))}
       </ul>
       {rest.length > 0 ? (
-        <div className="mt-6 border-t border-[var(--mkt-border)] pt-5">
-          <p className={`${mktClass.label} mb-3`}>Also included · {rest.length} more</p>
-          <ul className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
+        <div className="mt-7 border-t border-[var(--mkt-border)] pt-5">
+          <p className={`${mktClass.label} mb-3.5`}>
+            Also included · {rest.length} more
+          </p>
+          <ul className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
             {rest.map((feature) => (
               <li key={feature} className="text-[0.8125rem] leading-snug text-[var(--mkt-text3)]">
                 {feature}
@@ -50,9 +53,11 @@ export function MarketingIncludes({
 
 export function MarketingIdealFor({ children }: { children: string }) {
   return (
-    <p className="mt-6 border-l-2 border-[var(--mkt-green-l)] pl-4 text-[0.875rem] leading-relaxed text-[var(--mkt-text3)]">
-      <span className="font-medium text-[var(--mkt-text1)]">Ideal for </span>
-      {children}
-    </p>
+    <div className="mt-8 border-t border-[var(--mkt-border)] pt-6">
+      <p className={mktClass.label}>Ideal for</p>
+      <p className="mt-2.5 max-w-xl text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+        {children}
+      </p>
+    </div>
   );
 }

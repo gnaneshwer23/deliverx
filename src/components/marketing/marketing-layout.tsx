@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { mkt, mktCssVars } from "@/lib/marketing/landing-theme";
+import { mkt, mktClass, mktCssVars } from "@/lib/marketing/landing-theme";
 
 export function MarketingPageShell({ children }: { children: ReactNode }) {
   return (
@@ -27,7 +27,7 @@ export function MarketingContainer({
 }) {
   return (
     <div
-      className={`mx-auto w-full max-w-[${mkt.maxW}px] px-5 md:px-10 lg:px-12 ${className}`}
+      className={`mx-auto w-full px-5 md:px-10 lg:px-12 ${className}`}
       style={{ maxWidth: mkt.maxW }}
     >
       {children}
@@ -44,11 +44,11 @@ export type MarketingSectionTone =
   | "none";
 
 const SECTION_TONE_CLASS: Record<MarketingSectionTone, string> = {
-  cream: "bg-[var(--mkt-ink)]",
-  white: "bg-[var(--mkt-s1)] border-y border-[var(--mkt-border)]",
+  cream: "bg-[var(--mkt-cream)]",
+  white: "bg-[var(--mkt-s1)]",
   "green-tint":
-    "bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] border-y border-[rgba(28,74,46,0.08)]",
-  muted: "bg-[var(--mkt-s2)] border-y border-[var(--mkt-border)]",
+    "bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-cream)] to-[var(--mkt-ink)]",
+  muted: "bg-[var(--mkt-s2)]",
   dark: "bg-[#0D0D0B] text-white overflow-hidden",
   none: "",
 };
@@ -67,7 +67,7 @@ export function MarketingSection({
   return (
     <section
       id={id}
-      className={`scroll-mt-[var(--mkt-navh)] py-14 md:py-[clamp(56px,7vw,88px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
+      className={`scroll-mt-[var(--mkt-navh)] py-16 md:py-[clamp(64px,8vw,104px)] ${SECTION_TONE_CLASS[tone]} ${className}`}
     >
       {children}
     </section>
@@ -86,18 +86,12 @@ export function MarketingSectionIntro({
   className?: string;
 }) {
   return (
-    <header className={className}>
-      <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
-        {label}
-      </p>
-      <h2 className="mt-3 font-[family-name:var(--font-dx-display)] text-[clamp(1.875rem,4.5vw,3rem)] leading-[1.06] tracking-[-0.025em] text-[var(--mkt-text1)] [&_em]:not-italic [&_em]:text-[var(--mkt-green-l)]">
+    <header className={`max-w-3xl ${className}`}>
+      <p className={mktClass.label}>{label}</p>
+      <h2 className={`mt-3.5 ${mktClass.sectionTitle} [&_em]:not-italic [&_em]:text-[var(--mkt-green)]`}>
         {title}
       </h2>
-      {subtitle ? (
-        <p className="mt-4 max-w-2xl text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.65] text-[var(--mkt-text2)]">
-          {subtitle}
-        </p>
-      ) : null}
+      {subtitle ? <p className={mktClass.sectionSub}>{subtitle}</p> : null}
     </header>
   );
 }

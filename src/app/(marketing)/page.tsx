@@ -39,15 +39,15 @@ export default function SuiteHomePage() {
         {/* Brand hero — DeliverX first, one composition */}
         <section
           id="hero"
-          className="relative flex min-h-[calc(100svh-var(--mkt-navh))] flex-col justify-center overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] pt-[var(--mkt-navh)] pb-20"
+          className="relative flex min-h-[calc(100svh-var(--mkt-navh))] flex-col justify-center overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[var(--mkt-navh)] pb-24"
         >
           <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
           <div
-            className="pointer-events-none absolute -left-40 top-1/4 z-0 size-[480px] rounded-full bg-[radial-gradient(circle,rgba(61,150,96,0.14)_0%,transparent_70%)] blur-3xl"
+            className="pointer-events-none absolute -left-40 top-1/4 z-0 size-[520px] rounded-full bg-[radial-gradient(circle,rgba(61,150,96,0.12)_0%,transparent_70%)] blur-3xl"
             aria-hidden
           />
           <div
-            className="pointer-events-none absolute -right-28 bottom-1/5 z-0 size-[380px] rounded-full bg-[radial-gradient(circle,rgba(28,74,46,0.1)_0%,transparent_70%)] blur-3xl"
+            className="pointer-events-none absolute -right-32 bottom-[12%] z-0 size-[400px] rounded-full bg-[radial-gradient(circle,rgba(28,74,46,0.08)_0%,transparent_70%)] blur-3xl"
             aria-hidden
           />
 
@@ -55,13 +55,13 @@ export default function SuiteHomePage() {
             <MarketingHeroMotion>
               <MarketingHeroItem>
                 <p
-                  className={`text-[clamp(3.25rem,9vw,6rem)] leading-[0.92] tracking-[-0.045em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  className={`text-[clamp(3.5rem,10vw,6.5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                 >
                   DeliverX
                 </p>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <h1 className="mt-7 max-w-2xl text-[clamp(1.2rem,2.4vw,1.5rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
+                <h1 className="mt-8 max-w-xl text-[clamp(1.25rem,2.6vw,1.625rem)] font-light leading-[1.45] tracking-[-0.015em] text-[var(--mkt-text1)]">
                   {CAREER_PROGRESSION_LINE}
                 </h1>
               </MarketingHeroItem>
@@ -71,8 +71,8 @@ export default function SuiteHomePage() {
                 </p>
               </MarketingHeroItem>
               <MarketingHeroItem>
-                <div className="mt-10 flex flex-wrap items-center gap-3">
-                  <MarketingButtonLink href="#path" variant="primaryLg" className="mkt-card-lift">
+                <div className="mt-11 flex flex-wrap items-center gap-3">
+                  <MarketingButtonLink href="#path" variant="primaryLg">
                     See the path
                   </MarketingButtonLink>
                   <MarketingButtonLink href="/pricing" variant="ghostLg">
@@ -84,34 +84,33 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </section>
 
-        {/* Progression path — one job: show the three-stage arc */}
-        <MarketingSection id="path" tone="cream" className="!py-14 md:!py-16">
+        {/* Progression path — editorial, not a card grid */}
+        <MarketingSection id="path" tone="white">
           <MarketingContainer>
             <MarketingReveal>
               <p className={mktClass.label}>Career progression</p>
-              <p
-                className={`mt-3 max-w-xl text-[clamp(1.35rem,2.8vw,1.75rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-              >
+              <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
                 Three stages. One continuous path.
               </p>
             </MarketingReveal>
 
             <MarketingReveal delay={0.08}>
-              <ol className="mkt-progression mt-10 grid gap-0 md:grid-cols-3">
+              <ol className="mkt-progression mt-14">
                 {SUITE_LIFECYCLE.map((step, index) => (
-                  <li
-                    key={step.name}
-                    className="relative border-t border-[var(--mkt-border)] py-6 md:border-t-0 md:border-l md:border-[var(--mkt-border)] md:px-8 md:py-2 md:first:border-l-0 md:first:pl-0"
-                  >
-                    <span className={`${mktClass.mono} text-[var(--mkt-green-l)]`}>
+                  <li key={step.name} className="mkt-progression-item">
+                    <span className={`${mktClass.mono} text-[0.75rem] text-[var(--mkt-green-l)]`}>
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <p className="mt-3 text-[0.9375rem] font-medium text-[var(--mkt-text1)]">
+                    <p
+                      className={`mt-4 text-[clamp(1.35rem,2.4vw,1.75rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                    >
                       {step.line}
                     </p>
-                    <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
+                    <p className="mt-2 text-[0.875rem] leading-relaxed text-[var(--mkt-text3)]">
                       <span className="text-[var(--mkt-text2)]">{step.name}</span>
-                      {" · "}
+                      <span className="mx-1.5 text-[var(--mkt-border-l)]" aria-hidden>
+                        ·
+                      </span>
                       {step.outcome}
                     </p>
                   </li>
@@ -121,45 +120,43 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </MarketingSection>
 
-        {/* Three stages — one job: explore each product */}
-        <MarketingSection id="products" tone="white">
+        {/* Three stages — editorial product rows */}
+        <MarketingSection id="products" tone="cream">
           <MarketingContainer>
             <MarketingReveal>
               <p className={mktClass.label}>The complete path</p>
-              <p
-                className={`mt-3 max-w-xl text-[clamp(1.5rem,3vw,2.125rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-              >
+              <p className={`mt-3.5 max-w-lg ${mktClass.sectionTitle}`}>
                 One career journey. Three stages.
               </p>
             </MarketingReveal>
 
-            <ul className="mt-12 space-y-0">
+            <ul className="mt-14">
               {SUITE_PRODUCTS.map((product, index) => (
                 <li key={product.id}>
-                  <MarketingReveal delay={index * 0.06}>
+                  <MarketingReveal delay={index * 0.05}>
                     <Link
                       href={product.href}
-                      className="group grid gap-4 border-t border-[var(--mkt-border)] py-10 no-underline transition md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)_auto] md:items-end md:gap-10 md:py-12"
+                      className="mkt-product-row group grid gap-5 border-t border-[var(--mkt-border)] py-11 no-underline md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)_auto] md:items-end md:gap-12 md:py-14"
                     >
                       <div>
-                        <p className={`${mktClass.label} text-[var(--mkt-green-l)]`}>
+                        <p className={`${mktClass.label} text-[var(--mkt-green)]`}>
                           {String(index + 1).padStart(2, "0")} · {product.stage}
                         </p>
                         <h2
-                          className={`mt-3 text-[clamp(1.75rem,3.5vw,2.5rem)] tracking-[-0.025em] text-[var(--mkt-text1)] transition group-hover:text-[var(--mkt-green)] ${mktClass.serif}`}
+                          className={`mt-3 text-[clamp(1.875rem,3.8vw,2.75rem)] tracking-[-0.03em] text-[var(--mkt-text1)] transition-colors duration-300 group-hover:text-[var(--mkt-green)] ${mktClass.serif}`}
                         >
                           {product.name}
                         </h2>
                       </div>
-                      <div className="max-w-lg">
-                        <p className="text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                      <div className="max-w-md">
+                        <p className="text-[1rem] leading-relaxed text-[var(--mkt-text1)]">
                           {product.promise}
                         </p>
-                        <p className="mt-2 text-[0.8125rem] text-[var(--mkt-text3)]">
+                        <p className="mt-2.5 text-[0.8125rem] leading-relaxed text-[var(--mkt-text3)]">
                           {product.detail}
                         </p>
                       </div>
-                      <span className="text-[0.875rem] font-medium text-[var(--mkt-green)] underline-offset-4 transition group-hover:underline md:pb-1">
+                      <span className="text-[0.875rem] font-medium text-[var(--mkt-green)] transition-transform duration-300 group-hover:translate-x-1 md:pb-1">
                         {product.cta} →
                       </span>
                     </Link>
@@ -175,15 +172,15 @@ export default function SuiteHomePage() {
           <MarketingContainer className="relative z-10 text-center">
             <MarketingReveal>
               <h2
-                className={`text-[clamp(1.75rem,4vw,2.5rem)] tracking-[-0.02em] text-white ${mktClass.serif}`}
+                className={`text-[clamp(1.875rem,4vw,2.75rem)] tracking-[-0.025em] text-white ${mktClass.serif}`}
               >
                 Start your career progression
               </h2>
-              <p className="mx-auto mt-3 max-w-lg text-[0.9375rem] font-light leading-relaxed text-white/70">
+              <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
                 Choose a stage — or take Xperience, Launchpad and Team Co-pilot together in the
                 Complete Bundle.
               </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href="/pricing" variant="ctaLight">
                   View pricing
                 </MarketingButtonLink>
