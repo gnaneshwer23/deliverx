@@ -6,16 +6,15 @@ import {
   MarketingContainer,
   MarketingPageShell,
   MarketingSection,
-  MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { PRODUCT_NAV, SUITE_LIFECYCLE, SUITE_PRODUCTS } from "@/lib/marketing/suite-data";
 
 export const metadata: Metadata = {
-  title: "DeliverX — Build experience. Win the role. Deliver with intelligence.",
+  title: "DeliverX — Build experience. Launch your role. Deliver with your team.",
   description:
-    "DeliverX is the brand behind Xperience, Launchpad and Team Co-pilot — build professional experience, earn the role, then deliver with AI-assisted intelligence.",
+    "DeliverX is the brand behind Xperience, Launchpad and Team Co-pilot. Build professional experience, launch into the role, then deliver with your team.",
 };
 
 export default function SuiteHomePage() {
@@ -24,22 +23,21 @@ export default function SuiteHomePage() {
       <MarketingNav links={PRODUCT_NAV} primaryCta={{ href: "/signup", label: "Get started" }} />
 
       <main id="main-content">
-        <section className="relative overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:pt-[calc(var(--mkt-navh)+72px)] md:pb-24">
+        {/* Brand hero — DeliverX first, one composition */}
+        <section className="relative flex min-h-[calc(100svh-var(--mkt-navh))] flex-col justify-center overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] pt-[var(--mkt-navh)] pb-16">
           <MarketingContainer>
-            <p className={`${mktClass.label} text-[var(--mkt-green)]`}>DeliverX</p>
-            <h1
-              className={`mt-4 max-w-3xl text-[clamp(2.75rem,7vw,4.5rem)] leading-[1.02] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            <p
+              className={`text-[clamp(3rem,8vw,5.5rem)] leading-[0.95] tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}
             >
-              Build experience.
-              <br />
-              Win the role.
-              <br />
-              <em className="not-italic text-[var(--mkt-green-l)]">Deliver with intelligence.</em>
-            </h1>
-            <p className="mt-5 max-w-xl text-[clamp(1.0625rem,2vw,1.2rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
-              One brand. Three products — Xperience, Launchpad and Team Co-pilot.
+              DeliverX
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <h1 className="mt-6 max-w-2xl text-[clamp(1.25rem,2.5vw,1.5rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
+              Build experience. Launch your role. Deliver with your team.
+            </h1>
+            <p className="mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
+              Three products. One brand. Choose where you start.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="#products" variant="primaryLg">
                 Explore products
               </MarketingButtonLink>
@@ -50,33 +48,33 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </section>
 
+        {/* Three product links — detail lives on product pages */}
         <MarketingSection id="products" tone="white">
           <MarketingContainer>
-            <MarketingSectionIntro
-              label="Products"
-              title="Three ways in. One DeliverX brand."
-              subtitle="Each product has its own page, pricing and path. Start where you are."
-            />
-            <ul className="mt-12 grid gap-10 md:grid-cols-3">
-              {SUITE_PRODUCTS.map((product, index) => (
-                <li key={product.id} className="flex flex-col border-t border-[var(--mkt-border)] pt-6">
-                  <p className={`${mktClass.mono} text-[var(--mkt-green-l)]`}>
-                    {String(index + 1).padStart(2, "0")}
-                  </p>
-                  <h3
-                    className={`mt-3 text-2xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                  >
-                    {product.name}
-                  </h3>
-                  <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                    {product.promise}
-                  </p>
-                  <p className="mt-2 text-[0.8125rem] text-[var(--mkt-text3)]">{product.detail}</p>
+            <p className={mktClass.label}>Products</p>
+            <p
+              className={`mt-3 max-w-xl text-[clamp(1.5rem,3vw,2rem)] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            >
+              Xperience · Launchpad · Team Co-pilot
+            </p>
+            <ul className="mt-12 grid gap-0 border-t border-[var(--mkt-border)] md:grid-cols-3 md:divide-x md:divide-[var(--mkt-border)]">
+              {SUITE_PRODUCTS.map((product) => (
+                <li key={product.id} className="border-b border-[var(--mkt-border)] md:border-b-0">
                   <Link
                     href={product.href}
-                    className="mt-6 inline-flex text-[0.875rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 transition hover:underline"
+                    className="group flex h-full flex-col px-0 py-8 no-underline transition md:px-8 md:first:pl-0 md:last:pr-0"
                   >
-                    {product.cta} →
+                    <h2
+                      className={`text-2xl tracking-[-0.02em] text-[var(--mkt-text1)] transition group-hover:text-[var(--mkt-green)] ${mktClass.serif}`}
+                    >
+                      {product.name}
+                    </h2>
+                    <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                      {product.promise}
+                    </p>
+                    <span className="mt-6 text-[0.875rem] font-medium text-[var(--mkt-green)] underline-offset-4 group-hover:underline">
+                      {product.cta} →
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -84,58 +82,40 @@ export default function SuiteHomePage() {
           </MarketingContainer>
         </MarketingSection>
 
-        <MarketingSection tone="cream">
+        {/* Short path strip */}
+        <MarketingSection tone="cream" className="!py-12 md:!py-14">
           <MarketingContainer>
-            <MarketingSectionIntro
-              label="The path"
-              title="How the suite fits together"
-              subtitle="Build the professional. Earn the opportunity. Perform once hired."
-            />
-            <ol className="mt-12 grid gap-8 md:grid-cols-3">
+            <ol className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               {SUITE_LIFECYCLE.map((step, index) => (
-                <li key={step.name} className="flex items-start gap-4">
+                <li key={step.name} className="flex items-center gap-3 sm:flex-1">
                   <span className={`${mktClass.mono} shrink-0 text-[var(--mkt-green-l)]`}>
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <div>
-                    <p className={`text-xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                  <div className="min-w-0">
+                    <p className="text-[0.8125rem] font-medium text-[var(--mkt-text1)]">
                       {step.name}
                     </p>
-                    <p className="mt-1 text-[0.9375rem] text-[var(--mkt-text2)]">{step.line}</p>
+                    <p className="text-[0.8125rem] text-[var(--mkt-text3)]">{step.line}</p>
                   </div>
+                  {index < SUITE_LIFECYCLE.length - 1 ? (
+                    <span
+                      className="ml-auto hidden text-[var(--mkt-border-l)] sm:inline"
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  ) : null}
                 </li>
               ))}
             </ol>
-          </MarketingContainer>
-        </MarketingSection>
-
-        <MarketingSection tone="dark">
-          <MarketingContainer className="relative z-10 text-center">
-            <h2 className={`text-[clamp(1.75rem,4vw,2.5rem)] tracking-[-0.02em] text-white ${mktClass.serif}`}>
-              Start with the product that fits you
-            </h2>
-            <p className="mx-auto mt-3 max-w-md text-[0.9375rem] font-light text-white/70">
-              Or create an account and we&apos;ll guide you to the right path.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              {SUITE_PRODUCTS.map((product) => (
-                <MarketingButtonLink
-                  key={product.id}
-                  href={product.href}
-                  variant={product.id === "team-copilot" ? "ctaLight" : "ctaOutline"}
-                >
-                  {product.name}
-                </MarketingButtonLink>
-              ))}
-            </div>
           </MarketingContainer>
         </MarketingSection>
       </main>
 
       <MarketingFooter
         cta={{
-          title: "Ready when you are",
-          subtitle: "Xperience, Launchpad or Team Co-pilot — open a product page for details.",
+          title: "Start with DeliverX",
+          subtitle: "Open a product page for pricing and details — or create an account.",
           href: "#products",
           label: "View products",
         }}

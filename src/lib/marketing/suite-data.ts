@@ -35,8 +35,8 @@ export const SUITE_PRODUCTS = [
 
 export const SUITE_LIFECYCLE = [
   { name: "Xperience", line: "Build experience" },
-  { name: "Launchpad", line: "Win the role" },
-  { name: "Team Co-pilot", line: "Deliver at work" },
+  { name: "Launchpad", line: "Launch your role" },
+  { name: "Team Co-pilot", line: "Deliver with your team" },
 ] as const;
 
 export const TEAM_COPILOT_SIGNUP_HREF = "/signup?product=team-copilot";
