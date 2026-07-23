@@ -5,20 +5,26 @@ import { useEffect, useState } from "react";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingLogo } from "@/components/marketing/marketing-logo";
 
-export const NAV_LINKS = [
-  { href: "#foundation", label: "Workspace" },
-  { href: "#workflow", label: "How it works" },
-  { href: "#onboarding", label: "Get started" },
-  { href: "#features-live", label: "What's live" },
-  { href: "#pricing", label: "Pricing" },
+export type MarketingNavLink = { href: string; label: string };
+
+export const NAV_LINKS: readonly MarketingNavLink[] = [
+  { href: "/#foundation", label: "Workspace" },
+  { href: "/#workflow", label: "How it works" },
+  { href: "/xperience", label: "Xperience" },
+  { href: "/#features-live", label: "What's live" },
+  { href: "/#pricing", label: "Pricing" },
 ] as const;
 
 function MobileNavDrawer({
   open,
   onClose,
+  links,
+  primaryCta,
 }: {
   open: boolean;
   onClose: () => void;
+  links: readonly MarketingNavLink[];
+  primaryCta: { href: string; label: string };
 }) {
   useEffect(() => {
     if (!open) return;
@@ -57,8 +63,8 @@ function MobileNavDrawer({
         </div>
 
         <ul className="flex flex-col gap-1">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
+          {links.map((link) => (
+            <li key={`${link.href}-${link.label}`}>
               <a
                 href={link.href}
                 onClick={onClose}
@@ -80,12 +86,12 @@ function MobileNavDrawer({
             Sign in
           </MarketingButtonLink>
           <MarketingButtonLink
-            href="/signup"
+            href={primaryCta.href}
             variant="primary"
             className="w-full justify-center"
             onClick={onClose}
           >
-            Start free trial
+            {primaryCta.label}
           </MarketingButtonLink>
         </div>
       </nav>
@@ -93,7 +99,13 @@ function MobileNavDrawer({
   );
 }
 
-export function MarketingNav() {
+export function MarketingNav({
+  links = NAV_LINKS,
+  primaryCta = { href: "/signup", label: "Start free trial" },
+}: {
+  links?: readonly MarketingNavLink[];
+  primaryCta?: { href: string; label: string };
+} = {}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -113,9 +125,9 @@ export function MarketingNav() {
       >
         <MarketingLogo />
         <nav className="mx-auto hidden items-center gap-0.5 md:flex" aria-label="Primary">
-          {NAV_LINKS.map((link) => (
+          {links.map((link) => (
             <a
-              key={link.href}
+              key={`${link.href}-${link.label}`}
               href={link.href}
               className="rounded-lg px-3.5 py-1.5 text-[0.8125rem] text-[var(--mkt-text3)] no-underline transition hover:bg-[var(--mkt-s2)] hover:text-[var(--mkt-text1)]"
             >
@@ -141,12 +153,17 @@ export function MarketingNav() {
           <MarketingButtonLink href="/login" variant="ghost" className="hidden sm:inline-flex">
             Sign in
           </MarketingButtonLink>
-          <MarketingButtonLink href="/signup" variant="primary" className="mkt-card-lift">
-            Start free trial
+          <MarketingButtonLink href={primaryCta.href} variant="primary" className="mkt-card-lift">
+            {primaryCta.label}
           </MarketingButtonLink>
         </div>
       </header>
-      <MobileNavDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileNavDrawer
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        links={links}
+        primaryCta={primaryCta}
+      />
     </>
   );
 }

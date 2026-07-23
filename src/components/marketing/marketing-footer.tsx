@@ -11,28 +11,46 @@ const FOOTER_LINK_CLASS =
 
 const FOOTER_COLUMNS = [
   {
-    title: "Product",
+    title: "Products",
+    links: [
+      { href: "/", label: "DeliverX" },
+      { href: "/xperience", label: "Xperience" },
+      { href: "/#pricing", label: "DeliverX pricing" },
+      { href: "/login", label: "Sign in" },
+    ],
+  },
+  {
+    title: "Platform",
     links: [
       { href: "/#foundation", label: "Workspace" },
       { href: "/#workflow", label: "How it works" },
       { href: "/#onboarding", label: "Get started" },
       { href: "/#features-live", label: "What's live" },
-      { href: "/#pricing", label: "Pricing" },
-      { href: "/login", label: "Sign in" },
     ],
-  },
-  {
-    title: "Resources",
-    links: [{ href: GITHUB_REPO, label: "GitHub", external: true }],
   },
   {
     title: "Legal",
     links: [
       { href: "/privacy", label: "Privacy Policy" },
       { href: "/terms", label: "Terms of Service" },
+      { href: GITHUB_REPO, label: "GitHub", external: true },
     ],
   },
 ] as const;
+
+type FooterCta = {
+  title: string;
+  subtitle: string;
+  href: string;
+  label: string;
+};
+
+const DEFAULT_FOOTER_CTA: FooterCta = {
+  title: "Start your free trial",
+  subtitle: "30-day trial, no credit card. First project live in 15 minutes.",
+  href: "/signup",
+  label: "Start free trial",
+};
 
 function FooterLink({
   href,
@@ -84,21 +102,21 @@ function FooterColumn({
   );
 }
 
-export function MarketingFooter() {
+export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta } = {}) {
   return (
     <footer className="border-t border-[var(--mkt-border)] bg-[var(--mkt-s2)]">
       <div className="border-b border-[var(--mkt-border)] bg-gradient-to-r from-[#EEF5F1] to-[var(--mkt-s1)]">
         <MarketingContainer className="flex flex-col items-start justify-between gap-5 py-8 md:flex-row md:items-center md:py-10">
           <div className="max-w-md">
             <p className={`${mktClass.serif} text-xl tracking-[-0.02em] text-[var(--mkt-text1)]`}>
-              Start your free trial
+              {cta.title}
             </p>
             <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
-              30-day trial, no credit card. First project live in 15 minutes.
+              {cta.subtitle}
             </p>
           </div>
-          <MarketingButtonLink href="/signup" variant="primary" className="mkt-card-lift">
-            Start free trial
+          <MarketingButtonLink href={cta.href} variant="primary" className="mkt-card-lift">
+            {cta.label}
           </MarketingButtonLink>
         </MarketingContainer>
       </div>
@@ -109,9 +127,9 @@ export function MarketingFooter() {
             <MarketingLogo />
             <p className="mt-4 max-w-xs text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
               <span className={`${mktClass.serif} text-[var(--mkt-text1)]`}>
-                AI suggests. Humans decide.
+                Build experience. Deliver with intelligence.
               </span>{" "}
-              Delivery intelligence for every role on the team.
+              DeliverX platform — Xperience, Launchpad, and delivery workspace.
             </p>
             <a
               href={GITHUB_REPO}
