@@ -59,7 +59,7 @@ export function postSignupPath(options: {
   }
 
   if (product === "xperience") {
-    return "/start/xperience";
+    return "/xperience/app";
   }
 
   if (product === "launchpad") {

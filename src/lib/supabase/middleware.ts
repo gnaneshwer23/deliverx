@@ -5,6 +5,7 @@ import {
   buildLoginRedirectPath,
   isAuthEntryPath,
   isOnboardingPath,
+  isXperienceAppPath,
   requestPathWithSearch,
   resolveSignupOnboardingNext,
 } from "@/lib/auth/route-guards";
@@ -44,8 +45,11 @@ export async function updateSession(request: NextRequest) {
     return passThrough(NextResponse.next({ request: { headers: requestHeaders } }));
   }
 
-  // Protect onboarding routes — preserve ?role= and other query params in login redirect.
-  if (!hasSupabaseAuthCookie(request) && isOnboardingPath(pathname)) {
+  // Protect onboarding + Xperience app routes — preserve query params in login redirect.
+  if (
+    !hasSupabaseAuthCookie(request) &&
+    (isOnboardingPath(pathname) || isXperienceAppPath(pathname))
+  ) {
     return NextResponse.redirect(
       new URL(buildLoginRedirectPath(requestPathWithSearch(request)), request.url),
     );

@@ -3,6 +3,7 @@ import { appendRoleToPath, parseSignupRoleParam } from "@/lib/marketing/role-sig
 
 const AUTH_ENTRY_PATHS = ["/login", "/signup"];
 const ONBOARDING_PREFIX = "/onboarding";
+const XPERIENCE_APP_PREFIX = "/xperience/app";
 
 export function isAuthEntryPath(pathname: string): boolean {
   return AUTH_ENTRY_PATHS.some(
@@ -12,6 +13,13 @@ export function isAuthEntryPath(pathname: string): boolean {
 
 export function isOnboardingPath(pathname: string): boolean {
   return pathname === ONBOARDING_PREFIX || pathname.startsWith(`${ONBOARDING_PREFIX}/`);
+}
+
+export function isXperienceAppPath(pathname: string): boolean {
+  return (
+    pathname === XPERIENCE_APP_PREFIX ||
+    pathname.startsWith(`${XPERIENCE_APP_PREFIX}/`)
+  );
 }
 
 /** Preserve full path (including ?role=) when sending users to login. */

@@ -1,0 +1,17 @@
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { requireXperienceAuth } from "@/lib/xperience/require-auth";
+
+export const metadata: Metadata = {
+  title: "Xperience app | DeliverX",
+  description: "Build professional experience inside a simulated AI company.",
+};
+
+export default async function XperienceAppLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  await requireXperienceAuth();
+  return children;
+}
