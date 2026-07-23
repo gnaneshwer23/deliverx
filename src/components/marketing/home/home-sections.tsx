@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   Briefcase,
@@ -323,23 +323,213 @@ export function HomePlatformPreview() {
             <div className="grid gap-4 p-5 md:grid-cols-3 md:p-6" key={tab}>
               {tab === "experience" ? (
                 <>
-                  <MockPanel title="Active company" body="MediFlow · Product Manager · 72%" />
-                  <MockPanel title="Priorities" body="Retention, roadmap alignment, stakeholder update" />
-                  <MockPanel title="Artefacts" body="PRD · Sprint plan · Risk register" />
+                  <MockPanel title="Active company" body="MediFlow · Product Manager · 72%">
+                    <div className="space-y-2.5">
+                      <div className="flex flex-wrap gap-1.5">
+                        <MockChip>Day 18</MockChip>
+                        <MockChip tone="live">
+                          <span className="mkt-hub-pulse size-1.5 rounded-full bg-[var(--mkt-green-l)]" />
+                          Active
+                        </MockChip>
+                      </div>
+                      <div
+                        className="h-1.5 overflow-hidden rounded-full bg-[var(--mkt-s3)]"
+                        role="progressbar"
+                        aria-valuenow={72}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label="Company progress"
+                      >
+                        <div
+                          className="mkt-hub-progress h-full rounded-full bg-[var(--mkt-green-l)]"
+                          style={{ width: "72%" }}
+                        />
+                      </div>
+                      <p className={`${mktClass.mono} text-[0.65rem] text-[var(--mkt-text3)]`}>
+                        Month 3 of 6 · On track
+                      </p>
+                    </div>
+                  </MockPanel>
+                  <MockPanel title="Priorities" body="Retention, roadmap alignment, stakeholder update">
+                    <ul className="space-y-2">
+                      {PLATFORM_PRIORITIES.map((item) => (
+                        <li
+                          key={item.label}
+                          className="flex items-center gap-2 text-[0.75rem] text-[var(--mkt-text2)]"
+                        >
+                          <span
+                            className={`size-1.5 shrink-0 rounded-full ${
+                              item.tone === "risk"
+                                ? "bg-[var(--mkt-red)]"
+                                : item.tone === "focus"
+                                  ? "mkt-hub-pulse bg-[var(--mkt-accent-blue)]"
+                                  : "bg-[var(--mkt-green-l)]"
+                            }`}
+                            aria-hidden
+                          />
+                          <span className="min-w-0 truncate">{item.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </MockPanel>
+                  <MockPanel title="Artefacts" body="PRD · Sprint plan · Risk register">
+                    <ul className="space-y-1.5">
+                      {PLATFORM_ARTEFACTS.map((item) => (
+                        <li
+                          key={item.name}
+                          className="flex items-center justify-between gap-2 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 px-2.5 py-1.5"
+                        >
+                          <span className="truncate text-[0.75rem] font-medium text-[var(--mkt-text1)]">
+                            {item.name}
+                          </span>
+                          <span
+                            className={`${mktClass.mono} shrink-0 text-[0.6rem] uppercase tracking-[0.08em] ${
+                              item.status === "ready"
+                                ? "text-[var(--mkt-green-l)]"
+                                : "text-[var(--mkt-amber)]"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </MockPanel>
                 </>
               ) : null}
               {tab === "career" ? (
                 <>
-                  <MockPanel title="Career Score" body="87 · Excellent readiness" />
-                  <MockPanel title="Career Twin" body="Skills, stories and gaps updating live" />
-                  <MockPanel title="Interview prep" body="STAR stories from real project work" />
+                  <MockPanel title="Career Score" body="87 · Excellent readiness">
+                    <div className="flex items-center gap-3">
+                      <div className="relative flex size-12 shrink-0 items-center justify-center">
+                        <span className="mkt-hub-score absolute inset-0 rounded-full" aria-hidden />
+                        <span
+                          className={`relative text-[1.05rem] leading-none text-[var(--mkt-text1)] ${mktClass.serif}`}
+                        >
+                          87
+                        </span>
+                      </div>
+                      <div className="min-w-0 space-y-1.5">
+                        <MockChip tone="live">Excellent</MockChip>
+                        <p className="text-[0.7rem] text-[var(--mkt-text3)]">+4 this month</p>
+                      </div>
+                    </div>
+                  </MockPanel>
+                  <MockPanel title="Career Twin" body="Skills, stories and gaps updating live">
+                    <ul className="space-y-2">
+                      {CAREER_TWIN_SKILLS.map((skill) => (
+                        <li key={skill.label} className="space-y-1">
+                          <div className="flex items-center justify-between gap-2 text-[0.7rem]">
+                            <span className="truncate text-[var(--mkt-text2)]">{skill.label}</span>
+                            <span className={`${mktClass.mono} text-[var(--mkt-text3)]`}>
+                              {skill.pct}%
+                            </span>
+                          </div>
+                          <div className="h-1 overflow-hidden rounded-full bg-[var(--mkt-s3)]">
+                            <div
+                              className="mkt-hub-progress h-full rounded-full bg-[var(--mkt-green-l)]"
+                              style={{ width: `${skill.pct}%` }}
+                            />
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </MockPanel>
+                  <MockPanel title="Interview prep" body="STAR stories from real project work">
+                    <ul className="space-y-1.5">
+                      {INTERVIEW_STORIES.map((story) => (
+                        <li
+                          key={story.title}
+                          className="flex items-center justify-between gap-2 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 px-2.5 py-1.5"
+                        >
+                          <span className="truncate text-[0.75rem] text-[var(--mkt-text1)]">
+                            {story.title}
+                          </span>
+                          <MockChip>{story.tag}</MockChip>
+                        </li>
+                      ))}
+                    </ul>
+                  </MockPanel>
                 </>
               ) : null}
               {tab === "delivery" ? (
                 <>
-                  <MockPanel title="Sprint confidence" body="78% · 2 risks flagged" />
-                  <MockPanel title="Roadmap" body="Q3 releases with dependency graph" />
-                  <MockPanel title="Executive view" body="Health, blockers and decisions" />
+                  <MockPanel title="Sprint confidence" body="78% · 2 risks flagged">
+                    <div className="space-y-2.5">
+                      <div
+                        className="h-1.5 overflow-hidden rounded-full bg-[var(--mkt-s3)]"
+                        role="progressbar"
+                        aria-valuenow={78}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label="Sprint confidence"
+                      >
+                        <div
+                          className="mkt-hub-progress h-full rounded-full bg-[var(--mkt-green-l)]"
+                          style={{ width: "78%" }}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        <MockChip tone="warn">2 risks</MockChip>
+                        <MockChip>Day 7 / 14</MockChip>
+                      </div>
+                    </div>
+                  </MockPanel>
+                  <MockPanel title="Roadmap" body="Q3 releases with dependency graph">
+                    <ul className="space-y-2">
+                      {ROADMAP_MILESTONES.map((m, i) => (
+                        <li key={m.label} className="flex items-center gap-2.5 text-[0.75rem]">
+                          <span
+                            className={`size-2 shrink-0 rounded-full ${
+                              m.done
+                                ? "bg-[var(--mkt-green-l)]"
+                                : i === 1
+                                  ? "mkt-hub-pulse bg-[var(--mkt-accent-blue)]"
+                                  : "border border-[var(--mkt-border-l)] bg-[var(--mkt-s1)]"
+                            }`}
+                            aria-hidden
+                          />
+                          <span
+                            className={
+                              m.done ? "text-[var(--mkt-text3)] line-through" : "text-[var(--mkt-text2)]"
+                            }
+                          >
+                            {m.label}
+                          </span>
+                          <span className={`${mktClass.mono} ml-auto shrink-0 text-[0.6rem] text-[var(--mkt-text3)]`}>
+                            {m.when}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </MockPanel>
+                  <MockPanel title="Executive view" body="Health, blockers and decisions">
+                    <ul className="grid grid-cols-3 gap-1.5">
+                      {EXEC_HEALTH.map((item) => (
+                        <li
+                          key={item.label}
+                          className="rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 px-2 py-2 text-center"
+                        >
+                          <span
+                            className={`mx-auto mb-1.5 block size-1.5 rounded-full ${
+                              item.tone === "ok"
+                                ? "bg-[var(--mkt-green-l)]"
+                                : item.tone === "warn"
+                                  ? "bg-[var(--mkt-amber)]"
+                                  : "bg-[var(--mkt-red)]"
+                            }`}
+                            aria-hidden
+                          />
+                          <p className={`${mktClass.mono} text-[0.55rem] uppercase tracking-[0.1em] text-[var(--mkt-text3)]`}>
+                            {item.label}
+                          </p>
+                          <p className="mt-0.5 text-[0.7rem] font-medium text-[var(--mkt-text1)]">
+                            {item.value}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </MockPanel>
                 </>
               ) : null}
             </div>
@@ -350,14 +540,81 @@ export function HomePlatformPreview() {
   );
 }
 
-function MockPanel({ title, body }: { title: string; body: string }) {
+const PLATFORM_PRIORITIES = [
+  { label: "Retention dip — investigate", tone: "risk" as const },
+  { label: "Roadmap alignment", tone: "focus" as const },
+  { label: "Stakeholder update", tone: "ok" as const },
+];
+
+const PLATFORM_ARTEFACTS = [
+  { name: "PRD", status: "ready" as const },
+  { name: "Sprint plan", status: "ready" as const },
+  { name: "Risk register", status: "draft" as const },
+];
+
+const CAREER_TWIN_SKILLS = [
+  { label: "Product sense", pct: 88 },
+  { label: "Stakeholder mgmt", pct: 74 },
+  { label: "Delivery", pct: 81 },
+];
+
+const INTERVIEW_STORIES = [
+  { title: "Retention turnaround", tag: "Impact" },
+  { title: "Roadmap trade-off", tag: "Conflict" },
+  { title: "Sprint recovery", tag: "Ownership" },
+];
+
+const ROADMAP_MILESTONES = [
+  { label: "Beta launch", when: "Jul", done: true },
+  { label: "GA release", when: "Aug", done: false },
+  { label: "Enterprise pack", when: "Sep", done: false },
+];
+
+const EXEC_HEALTH = [
+  { label: "Health", value: "Green", tone: "ok" as const },
+  { label: "Blockers", value: "1", tone: "warn" as const },
+  { label: "Decisions", value: "3", tone: "ok" as const },
+];
+
+function MockChip({
+  children,
+  tone = "default",
+}: {
+  children: ReactNode;
+  tone?: "default" | "live" | "warn";
+}) {
+  const toneClass =
+    tone === "live"
+      ? "border-[rgba(61,150,96,0.25)] bg-[rgba(61,150,96,0.08)] text-[var(--mkt-green)]"
+      : tone === "warn"
+        ? "border-[rgba(183,98,10,0.28)] bg-[rgba(183,98,10,0.08)] text-[var(--mkt-amber)]"
+        : "border-[var(--mkt-border)] bg-[var(--mkt-s2)] text-[var(--mkt-text3)]";
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[0.65rem] font-medium ${toneClass}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+function MockPanel({
+  title,
+  body,
+  children,
+}: {
+  title: string;
+  body: string;
+  children: ReactNode;
+}) {
   return (
     <div className="rounded-xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-4">
       <p className={`${mktClass.mono} text-[0.65rem] uppercase tracking-[0.12em] text-[var(--mkt-text3)]`}>
         {title}
       </p>
       <p className="mt-2 text-[0.875rem] leading-relaxed text-[var(--mkt-text2)]">{body}</p>
-      <div className="mt-4 h-16 rounded-lg bg-gradient-to-br from-[var(--mkt-s2)] to-[var(--mkt-mist)]" />
+      <div className="mt-4">{children}</div>
     </div>
   );
 }
