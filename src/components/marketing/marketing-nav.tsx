@@ -10,7 +10,7 @@ export type MarketingNavLink = { href: string; label: string };
 export const NAV_LINKS: readonly MarketingNavLink[] = [
   { href: "/xperience", label: "Xperience" },
   { href: "/launchpad", label: "Launchpad" },
-  { href: "/deliverx", label: "DeliverX" },
+  { href: "/team-copilot", label: "Team Co-pilot" },
 ] as const;
 
 function MobileNavDrawer({

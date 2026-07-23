@@ -1,4 +1,10 @@
-/** Shared suite marketing — home + product deep-links. */
+/** Shared suite marketing — DeliverX brand + three products. */
+
+export const PRODUCT_NAV = [
+  { href: "/xperience", label: "Xperience" },
+  { href: "/launchpad", label: "Launchpad" },
+  { href: "/team-copilot", label: "Team Co-pilot" },
+] as const;
 
 export const SUITE_PRODUCTS = [
   {
@@ -18,17 +24,19 @@ export const SUITE_PRODUCTS = [
     cta: "Explore Launchpad",
   },
   {
-    id: "deliverx",
-    name: "DeliverX",
-    href: "/deliverx",
+    id: "team-copilot",
+    name: "Team Co-pilot",
+    href: "/team-copilot",
     promise: "Deliver with intelligence once you are in a real team.",
     detail: "AI suggests. Humans decide. Seven roles, one signal graph.",
-    cta: "Explore DeliverX",
+    cta: "Explore Team Co-pilot",
   },
 ] as const;
 
 export const SUITE_LIFECYCLE = [
   { name: "Xperience", line: "Build experience" },
   { name: "Launchpad", line: "Win the role" },
-  { name: "DeliverX", line: "Deliver at work" },
+  { name: "Team Co-pilot", line: "Deliver at work" },
 ] as const;
+
+export const TEAM_COPILOT_SIGNUP_HREF = "/signup?product=team-copilot";

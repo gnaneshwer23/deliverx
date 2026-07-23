@@ -10,24 +10,18 @@ import {
 } from "@/components/marketing/marketing-layout";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { mktClass } from "@/lib/marketing/landing-theme";
-import { SUITE_LIFECYCLE, SUITE_PRODUCTS } from "@/lib/marketing/suite-data";
+import { PRODUCT_NAV, SUITE_LIFECYCLE, SUITE_PRODUCTS } from "@/lib/marketing/suite-data";
 
 export const metadata: Metadata = {
   title: "DeliverX — Build experience. Win the role. Deliver with intelligence.",
   description:
-    "DeliverX is the platform behind Xperience, Launchpad and DeliverX workspace — build professional experience, earn the role, then deliver with AI-assisted intelligence.",
+    "DeliverX is the brand behind Xperience, Launchpad and Team Co-pilot — build professional experience, earn the role, then deliver with AI-assisted intelligence.",
 };
-
-const HOME_NAV = [
-  { href: "/xperience", label: "Xperience" },
-  { href: "/launchpad", label: "Launchpad" },
-  { href: "/deliverx", label: "DeliverX" },
-] as const;
 
 export default function SuiteHomePage() {
   return (
     <MarketingPageShell>
-      <MarketingNav links={HOME_NAV} primaryCta={{ href: "/signup", label: "Get started" }} />
+      <MarketingNav links={PRODUCT_NAV} primaryCta={{ href: "/signup", label: "Get started" }} />
 
       <main id="main-content">
         <section className="relative overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:pt-[calc(var(--mkt-navh)+72px)] md:pb-24">
@@ -43,8 +37,7 @@ export default function SuiteHomePage() {
               <em className="not-italic text-[var(--mkt-green-l)]">Deliver with intelligence.</em>
             </h1>
             <p className="mt-5 max-w-xl text-[clamp(1.0625rem,2vw,1.2rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
-              One platform. Three products. From your first professional experience to delivery
-              intelligence at work.
+              One brand. Three products — Xperience, Launchpad and Team Co-pilot.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="#products" variant="primaryLg">
@@ -61,7 +54,7 @@ export default function SuiteHomePage() {
           <MarketingContainer>
             <MarketingSectionIntro
               label="Products"
-              title="Three ways in. One platform."
+              title="Three ways in. One DeliverX brand."
               subtitle="Each product has its own page, pricing and path. Start where you are."
             />
             <ul className="mt-12 grid gap-10 md:grid-cols-3">
@@ -129,7 +122,7 @@ export default function SuiteHomePage() {
                 <MarketingButtonLink
                   key={product.id}
                   href={product.href}
-                  variant={product.id === "deliverx" ? "ctaLight" : "ctaOutline"}
+                  variant={product.id === "team-copilot" ? "ctaLight" : "ctaOutline"}
                 >
                   {product.name}
                 </MarketingButtonLink>
@@ -142,7 +135,7 @@ export default function SuiteHomePage() {
       <MarketingFooter
         cta={{
           title: "Ready when you are",
-          subtitle: "Xperience, Launchpad or DeliverX — pick a product page for pricing and details.",
+          subtitle: "Xperience, Launchpad or Team Co-pilot — open a product page for details.",
           href: "#products",
           label: "View products",
         }}

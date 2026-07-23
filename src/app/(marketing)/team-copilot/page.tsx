@@ -10,17 +10,17 @@ import {
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { PRICING_TIERS } from "@/lib/marketing/landing-data";
+import { PRODUCT_NAV, TEAM_COPILOT_SIGNUP_HREF } from "@/lib/marketing/suite-data";
 
 export const metadata: Metadata = {
-  title: "DeliverX — Delivery intelligence for every role",
+  title: "Team Co-pilot — Delivery intelligence for every role | DeliverX",
   description:
-    "AI suggests. Humans decide. DeliverX connects seven delivery roles in one signal graph so teams ship with clarity.",
+    "Team Co-pilot by DeliverX connects seven delivery roles in one signal graph. AI suggests. Humans decide. Delivery happens.",
 };
 
 const NAV = [
   { href: "/", label: "Home" },
-  { href: "/xperience", label: "Xperience" },
-  { href: "/launchpad", label: "Launchpad" },
+  ...PRODUCT_NAV.filter((link) => link.href !== "/team-copilot"),
   { href: "#pricing", label: "Pricing" },
 ] as const;
 
@@ -39,12 +39,15 @@ const PILLARS = [
   },
 ] as const;
 
-export default function DeliverXProductPage() {
+export default function TeamCopilotPage() {
   const featuredTiers = PRICING_TIERS.slice(0, 2);
 
   return (
     <MarketingPageShell>
-      <MarketingNav links={NAV} primaryCta={{ href: "/signup", label: "Start free trial" }} />
+      <MarketingNav
+        links={NAV}
+        primaryCta={{ href: TEAM_COPILOT_SIGNUP_HREF, label: "Start free trial" }}
+      />
 
       <main id="main-content">
         <MarketingSection
@@ -56,22 +59,18 @@ export default function DeliverXProductPage() {
             <h1
               className={`mt-4 max-w-3xl text-[clamp(2.5rem,7vw,4rem)] leading-[1.02] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
             >
-              AI suggests.
-              <br />
-              Humans decide.
-              <br />
-              <em className="not-italic text-[var(--mkt-green-l)]">Delivery happens.</em>
+              Team Co-pilot
             </h1>
             <p className="mt-4 max-w-xl text-[clamp(1.0625rem,2vw,1.2rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
-              Delivery intelligence for every role on the team — once you are in a real company and
-              need the work to stay on track.
+              AI suggests. Humans decide. Delivery happens. — delivery intelligence for every role
+              once you are in a real team.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <MarketingButtonLink href="/signup" variant="primaryLg">
+              <MarketingButtonLink href={TEAM_COPILOT_SIGNUP_HREF} variant="primaryLg">
                 Start free trial
               </MarketingButtonLink>
               <MarketingButtonLink href="/" variant="ghostLg">
-                Back to platform
+                Back to DeliverX
               </MarketingButtonLink>
             </div>
           </MarketingContainer>
@@ -80,9 +79,9 @@ export default function DeliverXProductPage() {
         <MarketingSection id="how" tone="white">
           <MarketingContainer>
             <MarketingSectionIntro
-              label="Why DeliverX"
+              label="Why Team Co-pilot"
               title="Built for teams who already have the job"
-              subtitle="Xperience and Launchpad build the professional. DeliverX strengthens them at work."
+              subtitle="Xperience and Launchpad build the professional. Team Co-pilot strengthens them at work."
             />
             <ul className="mt-10 grid gap-8 md:grid-cols-3">
               {PILLARS.map((pillar) => (
@@ -104,7 +103,7 @@ export default function DeliverXProductPage() {
             <MarketingSectionIntro
               label="Pricing"
               title="Start with a free trial"
-              subtitle="Workspace pricing is separate from Xperience and Launchpad."
+              subtitle="Team Co-pilot workspace pricing is separate from Xperience and Launchpad."
             />
             <div className="mt-10 grid gap-8 md:grid-cols-2">
               {featuredTiers.map((tier) => (
@@ -122,7 +121,9 @@ export default function DeliverXProductPage() {
                   </p>
                   <p className="mt-3 text-[0.9375rem] text-[var(--mkt-text2)]">{tier.desc}</p>
                   <MarketingButtonLink
-                    href={tier.ctaHref}
+                    href={
+                      tier.ctaHref === "/signup" ? TEAM_COPILOT_SIGNUP_HREF : tier.ctaHref
+                    }
                     variant="primaryLg"
                     className="mt-6"
                   >
@@ -137,9 +138,9 @@ export default function DeliverXProductPage() {
 
       <MarketingFooter
         cta={{
-          title: "Start your free trial",
+          title: "Start your Team Co-pilot trial",
           subtitle: "30-day trial, no credit card. First project live in 15 minutes.",
-          href: "/signup",
+          href: TEAM_COPILOT_SIGNUP_HREF,
           label: "Start free trial",
         }}
       />

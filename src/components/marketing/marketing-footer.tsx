@@ -13,10 +13,10 @@ const FOOTER_COLUMNS = [
   {
     title: "Products",
     links: [
-      { href: "/", label: "Platform home" },
+      { href: "/", label: "DeliverX home" },
       { href: "/xperience", label: "Xperience" },
       { href: "/launchpad", label: "Launchpad" },
-      { href: "/deliverx", label: "DeliverX" },
+      { href: "/team-copilot", label: "Team Co-pilot" },
       { href: "/login", label: "Sign in" },
     ],
   },
@@ -24,7 +24,7 @@ const FOOTER_COLUMNS = [
     title: "Get started",
     links: [
       { href: "/signup", label: "Create account" },
-      { href: "/deliverx#pricing", label: "DeliverX pricing" },
+      { href: "/team-copilot#pricing", label: "Team Co-pilot pricing" },
       { href: "/launchpad#pricing", label: "Launchpad pricing" },
       { href: "/xperience#pricing", label: "Xperience pricing" },
     ],
@@ -130,7 +130,7 @@ export function MarketingFooter({ cta = DEFAULT_FOOTER_CTA }: { cta?: FooterCta 
               <span className={`${mktClass.serif} text-[var(--mkt-text1)]`}>
                 Build experience. Deliver with intelligence.
               </span>{" "}
-              DeliverX platform — Xperience, Launchpad, and delivery workspace.
+              DeliverX — Xperience, Launchpad and Team Co-pilot.
             </p>
             <a
               href={GITHUB_REPO}

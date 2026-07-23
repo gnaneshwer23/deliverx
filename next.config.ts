@@ -6,6 +6,20 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
   serverExternalPackages: ["pdf-parse"],
+  async redirects() {
+    return [
+      {
+        source: "/deliverx",
+        destination: "/team-copilot",
+        permanent: true,
+      },
+      {
+        source: "/deliverx/:path*",
+        destination: "/team-copilot/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

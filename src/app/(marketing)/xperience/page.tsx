@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/launchpad", label: "Launchpad" },
-  { href: "/deliverx", label: "DeliverX" },
+  { href: "/team-copilot", label: "Team Co-pilot" },
   { href: "#pricing", label: "Pricing" },
 ] as const;
 
@@ -58,7 +58,7 @@ export default function XperiencePage() {
                 Get access — {XPERIENCE_PRICING.price}
               </MarketingButtonLink>
               <MarketingButtonLink href="/" variant="ghostLg">
-                Back to platform
+                Back to DeliverX
               </MarketingButtonLink>
             </div>
           </MarketingContainer>

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/xperience", label: "Xperience" },
-  { href: "/deliverx", label: "DeliverX" },
+  { href: "/team-copilot", label: "Team Co-pilot" },
   { href: "#pricing", label: "Pricing" },
 ] as const;
 
@@ -63,7 +63,7 @@ export default function LaunchpadPage() {
                 Explore Open Roles
               </MarketingButtonLink>
               <MarketingButtonLink href="/" variant="ghostLg">
-                Back to platform
+                Back to DeliverX
               </MarketingButtonLink>
             </div>
           </MarketingContainer>

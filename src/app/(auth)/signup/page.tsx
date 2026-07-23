@@ -18,9 +18,17 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
   const preselectedLabel = marketingRole ? ROLE_PILL_LABELS[marketingRole] : null;
   const productRaw = productParam?.toLowerCase();
   const product =
-    productRaw === "xperience" || productRaw === "launchpad" ? productRaw : null;
+    productRaw === "xperience" ||
+    productRaw === "launchpad" ||
+    productRaw === "team-copilot" ||
+    productRaw === "team_copilot"
+      ? productRaw === "team_copilot"
+        ? "team-copilot"
+        : productRaw
+      : null;
   const isXperience = product === "xperience";
   const isLaunchpad = product === "launchpad";
+  const isTeamCopilot = product === "team-copilot";
 
   return (
     <div className="w-full max-w-[388px]">
@@ -29,14 +37,18 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
           ? "Create your Launchpad account"
           : isXperience
             ? "Create your Xperience account"
-            : "Create your workspace"}
+            : isTeamCopilot
+              ? "Create your Team Co-pilot account"
+              : "Create your workspace"}
       </h1>
       <p className="mb-7 mt-1 text-[15px] font-light text-[#6B6B64]">
         {isLaunchpad
           ? "Explore open roles or start free. We’ll issue login credentials after signup."
           : isXperience
             ? "Pay once for access. We’ll issue login credentials after signup."
-            : "30-day free trial. No credit card needed."}
+            : isTeamCopilot
+              ? "30-day free trial for Team Co-pilot. No credit card needed."
+              : "30-day free trial. No credit card needed."}
       </p>
 
       {invite || join ? (
@@ -48,14 +60,21 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
       {isLaunchpad && !invite && !join ? (
         <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
           Starting <span className="font-semibold">Launchpad</span> — join an AI-powered company
-          and build your Career Record (separate from DeliverX workspace pricing).
+          and build your Career Record (separate from Team Co-pilot pricing).
         </div>
       ) : null}
 
       {isXperience && !invite && !join ? (
         <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
           Starting <span className="font-semibold">Xperience</span> — £49 one-time professional
-          simulation access (separate from DeliverX workspace pricing).
+          experience access (separate from Team Co-pilot pricing).
+        </div>
+      ) : null}
+
+      {isTeamCopilot && !invite && !join ? (
+        <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
+          Starting <span className="font-semibold">Team Co-pilot</span> — delivery intelligence
+          for your real team (a DeliverX product).
         </div>
       ) : null}
 
