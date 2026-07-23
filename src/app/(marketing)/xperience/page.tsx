@@ -17,51 +17,54 @@ import {
 } from "@/lib/marketing/xperience-data";
 
 export const metadata: Metadata = {
-  title: "Xperience — Build a career before you have one",
+  title: "Xperience — Your first product role starts here",
   description:
-    "Xperience is DeliverX’s professional simulation product. Enter a realistic workplace, do the work, and leave with inspectable evidence — then get login access after checkout.",
+    "Join a living AI-powered company, work with realistic teams, make consequential decisions and build evidence of how you perform.",
 };
 
-const XPERIENCE_NAV = [
-  { href: "#journey", label: "Journey" },
+const NAV = [
+  { href: "/", label: "Home" },
+  { href: "/launchpad", label: "Launchpad" },
+  { href: "/deliverx", label: "DeliverX" },
   { href: "#pricing", label: "Pricing" },
-  { href: "/", label: "DeliverX" },
 ] as const;
 
 export default function XperiencePage() {
   return (
     <MarketingPageShell>
       <MarketingNav
-        links={XPERIENCE_NAV}
+        links={NAV}
         primaryCta={{ href: XPERIENCE_SIGNUP_HREF, label: "Get access" }}
       />
 
       <main id="main-content">
-        <MarketingSection tone="green-tint" className="pt-[calc(var(--mkt-navh)+48px)] md:pt-[calc(var(--mkt-navh)+72px)]">
+        <MarketingSection
+          tone="green-tint"
+          className="pt-[calc(var(--mkt-navh)+48px)] md:pt-[calc(var(--mkt-navh)+72px)]"
+        >
           <MarketingContainer>
             <p className={mktClass.label}>DeliverX · Product</p>
-            <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-dx-display)] text-[clamp(2.5rem,7vw,4.25rem)] leading-[1.02] tracking-[-0.03em] text-[var(--mkt-text1)]">
+            <h1
+              className={`mt-4 max-w-3xl text-[clamp(2.5rem,7vw,4rem)] leading-[1.02] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            >
               Xperience
             </h1>
-            <p className="mt-5 max-w-xl text-[clamp(1.0625rem,2vw,1.25rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
-              Build a career before you have one. Work inside a realistic company simulation,
-              create evidence employers can inspect, then unlock access after payment.
+            <p className="mt-4 max-w-xl text-[clamp(1.0625rem,2vw,1.2rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
+              Your first product role starts here. Join an AI-powered company, inherit
+              responsibility and build a record of how you think and deliver.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <MarketingButtonLink href={XPERIENCE_SIGNUP_HREF} variant="primaryLg">
                 Get access — {XPERIENCE_PRICING.price}
               </MarketingButtonLink>
-              <MarketingButtonLink href="#pricing" variant="ghostLg">
-                View pricing
+              <MarketingButtonLink href="/" variant="ghostLg">
+                Back to platform
               </MarketingButtonLink>
             </div>
-            <p className="mt-4 text-sm text-[var(--mkt-text3)]">
-              Pay once · Receive login credentials · Start your simulation
-            </p>
           </MarketingContainer>
         </MarketingSection>
 
-        <MarketingSection id="journey" tone="white">
+        <MarketingSection id="how" tone="white">
           <MarketingContainer>
             <MarketingSectionIntro
               label="How it works"
@@ -70,16 +73,13 @@ export default function XperiencePage() {
                   Work, not learning. <em>Evidence</em>, not certificates.
                 </>
               }
-              subtitle="One journey from application to portfolio — designed to feel like employment, not a course."
+              subtitle="You join a company — not a course. Decisions have consequences. Evidence comes from the work."
             />
-            <ol className="mt-12 grid gap-6 md:grid-cols-3">
+            <ol className="mt-10 grid gap-8 md:grid-cols-3">
               {XPERIENCE_JOURNEY.map((item) => (
-                <li
-                  key={item.step}
-                  className="mkt-card rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-6"
-                >
+                <li key={item.step}>
                   <p className={`${mktClass.mono} text-[var(--mkt-green-l)]`}>{item.step}</p>
-                  <h3 className={`mt-3 text-xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                  <h3 className={`mt-2 text-xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
                     {item.title}
                   </h3>
                   <p className="mt-2 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
@@ -96,56 +96,25 @@ export default function XperiencePage() {
             <MarketingSectionIntro
               label="Pricing"
               title="One professional readiness experience"
-              subtitle="Separate from DeliverX workspace pricing. Pay for Xperience, then receive login credentials to start."
+              subtitle="Separate from DeliverX workspace pricing."
             />
-            <div className="mkt-card mt-10 max-w-2xl rounded-2xl border border-[var(--mkt-border)] bg-[var(--mkt-s1)] p-8 shadow-[var(--dx-shadow-sm)] md:p-10">
-              <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <p className={mktClass.label}>{XPERIENCE_PRICING.name}</p>
-                  <p className={`mt-3 text-[clamp(2.75rem,6vw,3.75rem)] leading-none tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
-                    {XPERIENCE_PRICING.price}
-                  </p>
-                  <p className="mt-3 text-[0.9375rem] text-[var(--mkt-text2)]">
-                    {XPERIENCE_PRICING.cadence}. {XPERIENCE_PRICING.summary}
-                  </p>
-                </div>
-                <MarketingButtonLink
-                  href={XPERIENCE_PRICING.ctaHref}
-                  variant="primaryLg"
-                  className="shrink-0"
-                >
-                  {XPERIENCE_PRICING.cta}
-                </MarketingButtonLink>
-              </div>
-              <ul className="mt-8 grid gap-3 border-t border-[var(--mkt-border)] pt-8 text-[0.9375rem] text-[var(--mkt-text2)] sm:grid-cols-2">
-                {XPERIENCE_INCLUDES.map((item) => (
-                  <li key={item} className="flex gap-2">
+            <div className="mt-8 max-w-xl border-t border-[var(--mkt-border)] pt-8">
+              <p className={`text-[clamp(2.5rem,5vw,3.25rem)] leading-none tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                {XPERIENCE_PRICING.price}
+              </p>
+              <p className="mt-3 text-[0.9375rem] text-[var(--mkt-text2)]">
+                {XPERIENCE_PRICING.cadence}. {XPERIENCE_PRICING.summary}
+              </p>
+              <ul className="mt-6 space-y-2">
+                {XPERIENCE_INCLUDES.slice(0, 5).map((item) => (
+                  <li key={item} className="flex gap-2 text-[0.875rem] text-[var(--mkt-text2)]">
                     <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-[var(--mkt-green-l)]" aria-hidden />
                     {item}
                   </li>
                 ))}
               </ul>
-            </div>
-          </MarketingContainer>
-        </MarketingSection>
-
-        <MarketingSection tone="dark">
-          <MarketingContainer className="relative z-10 text-center">
-            <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-white/50">
-              Next step
-            </p>
-            <h2 className={`mt-3 text-[clamp(1.75rem,4vw,2.5rem)] tracking-[-0.02em] text-white ${mktClass.serif}`}>
-              Ready to start your simulation?
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-[0.9375rem] font-light leading-relaxed text-white/70">
-              Create your account, complete payment, and we issue login credentials for Xperience.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <MarketingButtonLink href={XPERIENCE_SIGNUP_HREF} variant="ctaLight">
-                Get access — {XPERIENCE_PRICING.price}
-              </MarketingButtonLink>
-              <MarketingButtonLink href="/login" variant="ctaOutline">
-                Already have credentials? Sign in
+              <MarketingButtonLink href={XPERIENCE_SIGNUP_HREF} variant="primaryLg" className="mt-8">
+                {XPERIENCE_PRICING.cta}
               </MarketingButtonLink>
             </div>
           </MarketingContainer>
@@ -155,7 +124,7 @@ export default function XperiencePage() {
       <MarketingFooter
         cta={{
           title: "Get Xperience access",
-          subtitle: "£49 one-time. Login credentials after checkout.",
+          subtitle: `${XPERIENCE_PRICING.price} one-time. Login credentials after checkout.`,
           href: XPERIENCE_SIGNUP_HREF,
           label: "Get access",
         }}

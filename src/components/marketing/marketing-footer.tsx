@@ -13,19 +13,20 @@ const FOOTER_COLUMNS = [
   {
     title: "Products",
     links: [
-      { href: "/", label: "DeliverX" },
+      { href: "/", label: "Platform home" },
       { href: "/xperience", label: "Xperience" },
-      { href: "/#pricing", label: "DeliverX pricing" },
+      { href: "/launchpad", label: "Launchpad" },
+      { href: "/deliverx", label: "DeliverX" },
       { href: "/login", label: "Sign in" },
     ],
   },
   {
-    title: "Platform",
+    title: "Get started",
     links: [
-      { href: "/#foundation", label: "Workspace" },
-      { href: "/#workflow", label: "How it works" },
-      { href: "/#onboarding", label: "Get started" },
-      { href: "/#features-live", label: "What's live" },
+      { href: "/signup", label: "Create account" },
+      { href: "/deliverx#pricing", label: "DeliverX pricing" },
+      { href: "/launchpad#pricing", label: "Launchpad pricing" },
+      { href: "/xperience#pricing", label: "Xperience pricing" },
     ],
   },
   {

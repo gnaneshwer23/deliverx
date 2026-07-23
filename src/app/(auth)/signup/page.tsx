@@ -16,23 +16,39 @@ export default async function SignupPage({ searchParams }: { searchParams: Searc
   const preselectedRole = parseSignupRoleParam(roleParam);
   const marketingRole = preselectedRole ? dbRoleToMarketingRole(preselectedRole) : null;
   const preselectedLabel = marketingRole ? ROLE_PILL_LABELS[marketingRole] : null;
-  const product = productParam?.toLowerCase() === "xperience" ? "xperience" : null;
+  const productRaw = productParam?.toLowerCase();
+  const product =
+    productRaw === "xperience" || productRaw === "launchpad" ? productRaw : null;
   const isXperience = product === "xperience";
+  const isLaunchpad = product === "launchpad";
 
   return (
     <div className="w-full max-w-[388px]">
       <h1 className={`${dxClass.display} text-[1.625rem] text-[#0D0D0B]`}>
-        {isXperience ? "Create your Xperience account" : "Create your workspace"}
+        {isLaunchpad
+          ? "Create your Launchpad account"
+          : isXperience
+            ? "Create your Xperience account"
+            : "Create your workspace"}
       </h1>
       <p className="mb-7 mt-1 text-[15px] font-light text-[#6B6B64]">
-        {isXperience
-          ? "Pay once for access. We’ll issue login credentials after signup."
-          : "30-day free trial. No credit card needed."}
+        {isLaunchpad
+          ? "Explore open roles or start free. We’ll issue login credentials after signup."
+          : isXperience
+            ? "Pay once for access. We’ll issue login credentials after signup."
+            : "30-day free trial. No credit card needed."}
       </p>
 
       {invite || join ? (
         <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
           You&apos;ve been invited to join a DeliverX project workspace.
+        </div>
+      ) : null}
+
+      {isLaunchpad && !invite && !join ? (
+        <div className="mb-4 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-2 text-xs text-[#1C4A2E]">
+          Starting <span className="font-semibold">Launchpad</span> — join an AI-powered company
+          and build your Career Record (separate from DeliverX workspace pricing).
         </div>
       ) : null}
 

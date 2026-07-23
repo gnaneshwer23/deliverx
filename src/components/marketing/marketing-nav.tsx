@@ -8,11 +8,9 @@ import { MarketingLogo } from "@/components/marketing/marketing-logo";
 export type MarketingNavLink = { href: string; label: string };
 
 export const NAV_LINKS: readonly MarketingNavLink[] = [
-  { href: "/#foundation", label: "Workspace" },
-  { href: "/#workflow", label: "How it works" },
   { href: "/xperience", label: "Xperience" },
-  { href: "/#features-live", label: "What's live" },
-  { href: "/#pricing", label: "Pricing" },
+  { href: "/launchpad", label: "Launchpad" },
+  { href: "/deliverx", label: "DeliverX" },
 ] as const;
 
 function MobileNavDrawer({

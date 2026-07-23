@@ -29,6 +29,9 @@
 .DS_Store
 *.pem
 
+# Archived standalone app snapshot (breaks typecheck; keep blueprints only)
+/imports/**/xperience.dev/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

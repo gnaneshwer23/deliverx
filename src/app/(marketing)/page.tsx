@@ -1,114 +1,152 @@
-import dynamic from "next/dynamic";
-import { DeliverXTicker } from "@/components/marketing/deliverx-ticker";
-import { MarketingHero } from "@/components/marketing/marketing-hero";
-import { MarketingPageShell } from "@/components/marketing/marketing-layout";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
+import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import {
+  MarketingContainer,
+  MarketingPageShell,
+  MarketingSection,
+  MarketingSectionIntro,
+} from "@/components/marketing/marketing-layout";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
-import { MarketingQuickStartStrip } from "@/components/marketing/marketing-quick-start";
+import { mktClass } from "@/lib/marketing/landing-theme";
+import { SUITE_LIFECYCLE, SUITE_PRODUCTS } from "@/lib/marketing/suite-data";
 
-const sectionFallback = (minHeight: string) =>
-  function SectionFallback() {
-    return <div className={minHeight} aria-hidden />;
-  };
+export const metadata: Metadata = {
+  title: "DeliverX — Build experience. Win the role. Deliver with intelligence.",
+  description:
+    "DeliverX is the platform behind Xperience, Launchpad and DeliverX workspace — build professional experience, earn the role, then deliver with AI-assisted intelligence.",
+};
 
-const MarketingFoundationSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-foundation").then((m) => ({
-      default: m.MarketingFoundationSection,
-    })),
-  { loading: sectionFallback("min-h-[28rem]") },
-);
+const HOME_NAV = [
+  { href: "/xperience", label: "Xperience" },
+  { href: "/launchpad", label: "Launchpad" },
+  { href: "/deliverx", label: "DeliverX" },
+] as const;
 
-const MarketingWorkflowSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-workflow").then((m) => ({
-      default: m.MarketingWorkflowSection,
-    })),
-  { loading: sectionFallback("min-h-[32rem]") },
-);
-
-const MarketingProductSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-product").then((m) => ({
-      default: m.MarketingProductSection,
-    })),
-  { loading: sectionFallback("min-h-[28rem]") },
-);
-
-const MarketingOnboardingSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-onboarding").then((m) => ({
-      default: m.MarketingOnboardingSection,
-    })),
-  { loading: sectionFallback("min-h-[32rem]") },
-);
-
-const MarketingWhatWorksSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-what-works").then((m) => ({
-      default: m.MarketingWhatWorksSection,
-    })),
-  { loading: sectionFallback("min-h-[36rem]") },
-);
-
-const MarketingProofSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-proof").then((m) => ({
-      default: m.MarketingProofSection,
-    })),
-  { loading: sectionFallback("min-h-[20rem]") },
-);
-
-const MarketingSocialProofSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-social-proof").then((m) => ({
-      default: m.MarketingSocialProofSection,
-    })),
-  { loading: sectionFallback("min-h-[16rem]") },
-);
-
-const MarketingPricingSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-pricing").then((m) => ({
-      default: m.MarketingPricingSection,
-    })),
-  { loading: sectionFallback("min-h-[24rem]") },
-);
-
-const MarketingCtaSection = dynamic(
-  () =>
-    import("@/components/marketing/marketing-cta").then((m) => ({
-      default: m.MarketingCtaSection,
-    })),
-  { loading: sectionFallback("min-h-[20rem]") },
-);
-
-const MarketingFooter = dynamic(
-  () =>
-    import("@/components/marketing/marketing-footer").then((m) => ({
-      default: m.MarketingFooter,
-    })),
-  { loading: sectionFallback("min-h-[16rem]") },
-);
-
-export default function LandingPage() {
+export default function SuiteHomePage() {
   return (
     <MarketingPageShell>
-      <MarketingNav />
+      <MarketingNav links={HOME_NAV} primaryCta={{ href: "/signup", label: "Get started" }} />
+
       <main id="main-content">
-        <MarketingHero />
-        <MarketingQuickStartStrip />
-        <DeliverXTicker />
-        <MarketingFoundationSection />
-        <MarketingWorkflowSection />
-        <MarketingProductSection />
-        <MarketingOnboardingSection />
-        <MarketingWhatWorksSection />
-        <MarketingProofSection />
-        <MarketingSocialProofSection />
-        <MarketingPricingSection />
-        <MarketingCtaSection />
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#EEF5F1] via-[var(--mkt-ink)] to-[var(--mkt-ink)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:pt-[calc(var(--mkt-navh)+72px)] md:pb-24">
+          <MarketingContainer>
+            <p className={`${mktClass.label} text-[var(--mkt-green)]`}>DeliverX</p>
+            <h1
+              className={`mt-4 max-w-3xl text-[clamp(2.75rem,7vw,4.5rem)] leading-[1.02] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            >
+              Build experience.
+              <br />
+              Win the role.
+              <br />
+              <em className="not-italic text-[var(--mkt-green-l)]">Deliver with intelligence.</em>
+            </h1>
+            <p className="mt-5 max-w-xl text-[clamp(1.0625rem,2vw,1.2rem)] font-light leading-relaxed text-[var(--mkt-text2)]">
+              One platform. Three products. From your first professional experience to delivery
+              intelligence at work.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <MarketingButtonLink href="#products" variant="primaryLg">
+                Explore products
+              </MarketingButtonLink>
+              <MarketingButtonLink href="/signup" variant="ghostLg">
+                Get started
+              </MarketingButtonLink>
+            </div>
+          </MarketingContainer>
+        </section>
+
+        <MarketingSection id="products" tone="white">
+          <MarketingContainer>
+            <MarketingSectionIntro
+              label="Products"
+              title="Three ways in. One platform."
+              subtitle="Each product has its own page, pricing and path. Start where you are."
+            />
+            <ul className="mt-12 grid gap-10 md:grid-cols-3">
+              {SUITE_PRODUCTS.map((product, index) => (
+                <li key={product.id} className="flex flex-col border-t border-[var(--mkt-border)] pt-6">
+                  <p className={`${mktClass.mono} text-[var(--mkt-green-l)]`}>
+                    {String(index + 1).padStart(2, "0")}
+                  </p>
+                  <h3
+                    className={`mt-3 text-2xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                  >
+                    {product.name}
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                    {product.promise}
+                  </p>
+                  <p className="mt-2 text-[0.8125rem] text-[var(--mkt-text3)]">{product.detail}</p>
+                  <Link
+                    href={product.href}
+                    className="mt-6 inline-flex text-[0.875rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 transition hover:underline"
+                  >
+                    {product.cta} →
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </MarketingContainer>
+        </MarketingSection>
+
+        <MarketingSection tone="cream">
+          <MarketingContainer>
+            <MarketingSectionIntro
+              label="The path"
+              title="How the suite fits together"
+              subtitle="Build the professional. Earn the opportunity. Perform once hired."
+            />
+            <ol className="mt-12 grid gap-8 md:grid-cols-3">
+              {SUITE_LIFECYCLE.map((step, index) => (
+                <li key={step.name} className="flex items-start gap-4">
+                  <span className={`${mktClass.mono} shrink-0 text-[var(--mkt-green-l)]`}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <p className={`text-xl tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}>
+                      {step.name}
+                    </p>
+                    <p className="mt-1 text-[0.9375rem] text-[var(--mkt-text2)]">{step.line}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </MarketingContainer>
+        </MarketingSection>
+
+        <MarketingSection tone="dark">
+          <MarketingContainer className="relative z-10 text-center">
+            <h2 className={`text-[clamp(1.75rem,4vw,2.5rem)] tracking-[-0.02em] text-white ${mktClass.serif}`}>
+              Start with the product that fits you
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-[0.9375rem] font-light text-white/70">
+              Or create an account and we&apos;ll guide you to the right path.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              {SUITE_PRODUCTS.map((product) => (
+                <MarketingButtonLink
+                  key={product.id}
+                  href={product.href}
+                  variant={product.id === "deliverx" ? "ctaLight" : "ctaOutline"}
+                >
+                  {product.name}
+                </MarketingButtonLink>
+              ))}
+            </div>
+          </MarketingContainer>
+        </MarketingSection>
       </main>
-      <MarketingFooter />
+
+      <MarketingFooter
+        cta={{
+          title: "Ready when you are",
+          subtitle: "Xperience, Launchpad or DeliverX — pick a product page for pricing and details.",
+          href: "#products",
+          label: "View products",
+        }}
+      />
     </MarketingPageShell>
   );
 }

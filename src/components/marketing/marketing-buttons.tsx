@@ -18,7 +18,16 @@ const variants: Record<BtnVariant, string> = {
   ctaOutline: `${base} rounded-[10px] border border-white/30 bg-transparent px-7 py-[13px] text-[0.9375rem] text-white hover:border-white/50 hover:bg-white/8`,
 };
 
-const HOVER_PREFETCH_PATHS = new Set(["/signup", "/login", "/signup?product=xperience", "/xperience"]);
+const HOVER_PREFETCH_PATHS = new Set([
+  "/signup",
+  "/login",
+  "/signup?product=xperience",
+  "/signup?product=launchpad",
+  "/signup?product=launchpad&intent=roles",
+  "/xperience",
+  "/launchpad",
+  "/deliverx",
+]);
 
 function isNativeHref(href: string) {
   return (
