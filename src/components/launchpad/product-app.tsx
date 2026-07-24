@@ -486,7 +486,7 @@ export function LaunchpadApp({
                       id="lp-bg"
                       value={form.background}
                       onChange={(e) => setForm({ ...form, background: e.target.value })}
-                      placeholder="e.g. Switched from consulting; completed Xperience MediFlow evidence…"
+                      placeholder="e.g. Switched from consulting; completed Experience MediFlow evidence…"
                     />
                   </div>
                 </>

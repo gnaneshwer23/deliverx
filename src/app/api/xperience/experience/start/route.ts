@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       status: experience.status.toLowerCase(),
     });
   } catch (error) {
-    console.error("Xperience start failed", error);
+    console.error("Experience start failed", error);
     return NextResponse.json({ error: "Failed to start experience" }, { status: 500 });
   }
 }

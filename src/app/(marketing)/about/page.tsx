@@ -63,7 +63,7 @@ export default function AboutPage() {
       <MarketingFooter
         cta={{
           title: "Start your journey",
-          subtitle: "Xperience, Launchpad and Team Co-pilot — one professional growth platform.",
+          subtitle: "Experience, Launchpad and Team Co-pilot — one professional growth platform.",
           href: "/signup",
           label: "Start Free",
         }}

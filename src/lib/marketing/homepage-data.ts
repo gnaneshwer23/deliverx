@@ -38,7 +38,7 @@ export const PROBLEM = {
 export const HOME_PRODUCTS = [
   {
     id: "xperience",
-    name: "Xperience",
+    name: "Experience",
     stage: "Build the experience",
     accent: "purple" as const,
     href: "/xperience",
@@ -46,7 +46,7 @@ export const HOME_PRODUCTS = [
     sentence:
       "Join AI-powered companies, solve real product challenges, and build evidence of what you can do.",
     bullets: ["AI Companies", "Real Product Challenges", "Professional Portfolio"],
-    cta: "Explore Xperience",
+    cta: "Explore Experience",
   },
   {
     id: "launchpad",
@@ -220,7 +220,7 @@ export const HOME_PRICING = [
     stage: CAREER_BUNDLE.stage,
     price: CAREER_BUNDLE.price,
     cadence: CAREER_BUNDLE.cadence,
-    summary: "Xperience + Launchpad + Team Co-pilot for 12 months.",
+    summary: "Experience + Launchpad + Team Co-pilot for 12 months.",
     href: "/pricing#bundle",
     ctaHref: BUNDLE_SIGNUP_HREF,
     featured: true,
@@ -236,7 +236,7 @@ export const DEMO_STORIES = [
   {
     archetype: "Career Switcher",
     journey:
-      "Left operations, completed two Xperience projects, packaged a portfolio in Launchpad, and entered interviews with evidence instead of theory.",
+      "Left operations, completed two Experience projects, packaged a portfolio in Launchpad, and entered interviews with evidence instead of theory.",
   },
   {
     archetype: "Graduate",
@@ -258,15 +258,15 @@ export const DEMO_STORIES = [
 export const HOME_FAQ = [
   {
     q: "What is DeliverX?",
-    a: "DeliverX is an AI Product Experience Company — a complete career intelligence platform spanning Xperience, Launchpad and Team Co-pilot.",
+    a: "DeliverX is an AI Product Experience Company — a complete career intelligence platform spanning Experience, Launchpad and Team Co-pilot.",
   },
   {
     q: "Do I need prior Product Management experience?",
-    a: "No. Xperience is designed to build practical experience inside AI companies. Launchpad then helps you present that work; Team Co-pilot supports you once you're in a role.",
+    a: "No. Experience is designed to build practical experience inside AI companies. Launchpad then helps you present that work; Team Co-pilot supports you once you're in a role.",
   },
   {
     q: "Can I buy just one product?",
-    a: "Yes. Choose Xperience (£500), Launchpad (£250) or Team Co-pilot (£500) — or take the Complete Journey (£800) for 12 months across all three.",
+    a: "Yes. Choose Experience (£500), Launchpad (£250) or Team Co-pilot (£500) — or take the Complete Journey (£800) for 12 months across all three.",
   },
   {
     q: "Is the AI company experience realistic?",

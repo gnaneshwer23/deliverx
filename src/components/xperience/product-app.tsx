@@ -243,7 +243,7 @@ export function ProductApp({
         <div className="xp-onboarding-layout">
           <aside className="xp-onboarding-sidebar">
             <a href="/xperience" className="xp-brand">
-              Xperience
+              Experience
             </a>
             <p className="xp-eyebrow">Application progress</p>
             <h2>Apply for Associate Product Manager</h2>
@@ -328,7 +328,7 @@ export function ProductApp({
         <section className="xp-workspace">
           <aside className="xp-workspace-rail">
             <a href="/xperience" className="xp-brand">
-              Xperience
+              Experience
             </a>
             <nav>
               {(["Home", "Inbox", "Calendar", "Decisions", "Documents", "AI Coach", "Evidence"] as DashboardTool[]).map((item) => (

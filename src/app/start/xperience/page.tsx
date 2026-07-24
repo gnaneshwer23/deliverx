@@ -10,8 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 import { XPERIENCE_APP_PATH } from "@/lib/xperience/auth";
 
 export const metadata: Metadata = {
-  title: "Welcome to Xperience | DeliverX",
-  description: "Your Xperience account is ready. Continue into your company experience.",
+  title: "Welcome to Experience | DeliverX",
+  description: "Your Experience account is ready. Continue into your company experience.",
 };
 
 export default async function StartXperiencePage() {
@@ -31,14 +31,14 @@ export default async function StartXperiencePage() {
         className="pt-[calc(var(--mkt-navh)+48px)] md:pt-[calc(var(--mkt-navh)+72px)]"
       >
         <MarketingContainer className="max-w-xl">
-          <p className={mktClass.label}>Xperience · Next step</p>
+          <p className={mktClass.label}>Experience · Next step</p>
           <h1
             className={`mt-4 text-[clamp(2rem,5vw,3rem)] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
           >
-            Sign in to enter Xperience.
+            Sign in to enter Experience.
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-            Your account is ready for Xperience — Build the experience. Continue to
+            Your account is ready for Experience — Build the experience. Continue to
             onboarding and your MediFlow company workspace.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -46,10 +46,10 @@ export default async function StartXperiencePage() {
               href={`/login?next=${encodeURIComponent(XPERIENCE_APP_PATH)}&product=xperience`}
               variant="primaryLg"
             >
-              Continue to Xperience
+              Continue to Experience
             </MarketingButtonLink>
             <MarketingButtonLink href="/xperience" variant="ghostLg">
-              Back to Xperience
+              Back to Experience
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">

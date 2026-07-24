@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DeliverX — AI Product Experience Company",
     description:
-      "Build the experience → Land the opportunity → Succeed in the role. Xperience, Launchpad and Team Co-pilot.",
+      "Build the experience → Land the opportunity → Succeed in the role. Experience, Launchpad and Team Co-pilot.",
     type: "website",
     siteName: "DeliverX",
     images: [
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "DeliverX — AI Product Experience Company",
     description:
-      "Xperience, Launchpad and Team Co-pilot — build the experience, land the opportunity, succeed in the role.",
+      "Experience, Launchpad and Team Co-pilot — build the experience, land the opportunity, succeed in the role.",
     images: ["/opengraph-image"],
   },
 };

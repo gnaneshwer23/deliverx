@@ -91,7 +91,7 @@ export const TEAM_COPILOT_INCLUDES = [
 ] as const;
 
 export const BUNDLE_INCLUDES = [
-  "Full Xperience Platform",
+  "Full Experience Platform",
   "Full Launchpad Platform",
   "Full Team Co-pilot Platform",
   "Continuous access for 12 months",
@@ -129,7 +129,7 @@ export type CareerTier = {
 export const CAREER_TIERS: readonly CareerTier[] = [
   {
     id: "xperience",
-    productName: "Xperience",
+    productName: "Experience",
     stage: "Build the experience",
     designedFor: "Aspiring Product Managers building practical experience",
     headline: "Build the experience employers expect",
@@ -185,7 +185,7 @@ export const CAREER_BUNDLE: CareerTier = {
   productName: "Complete Journey",
   stage: "The full path",
   designedFor: "People who want experience, opportunity and delivery in one commitment",
-  headline: "Everything in Xperience, Launchpad and Team Co-pilot",
+  headline: "Everything in Experience, Launchpad and Team Co-pilot",
   price: "£800",
   cadence: "12 Months Access",
   summary:

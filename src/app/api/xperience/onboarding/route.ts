@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       status: result.status.toLowerCase(),
     });
   } catch (error) {
-    console.error("Xperience onboarding failed", error);
+    console.error("Experience onboarding failed", error);
     return NextResponse.json({ error: "Failed to save profile" }, { status: 500 });
   }
 }

@@ -15,7 +15,7 @@ export function parseSuiteProduct(raw: string | null | undefined): SuiteProduct 
 export function productDisplayName(product: SuiteProduct): string {
   switch (product) {
     case "xperience":
-      return "Xperience";
+      return "Experience";
     case "launchpad":
       return "Launchpad";
     case "team-copilot":
@@ -94,11 +94,11 @@ export function signupCopy(product: SuiteProduct | null): {
   switch (product) {
     case "xperience":
       return {
-        title: "Create your Xperience account",
+        title: "Create your Experience account",
         subtitle:
           "Build the experience — £500 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Xperience — Build the experience employers expect (£500 · 3 months).",
+          "Starting Experience — Build the experience employers expect (£500 · 3 months).",
       };
     case "launchpad":
       return {
@@ -120,7 +120,7 @@ export function signupCopy(product: SuiteProduct | null): {
       return {
         title: "Create your DeliverX account",
         subtitle:
-          "Complete Journey — £800 for 12 months across Xperience, Launchpad and Team Co-pilot.",
+          "Complete Journey — £800 for 12 months across Experience, Launchpad and Team Co-pilot.",
         banner:
           "Starting the Complete Journey — Experience. Opportunity. Delivery. (£800 · 12 months).",
       };

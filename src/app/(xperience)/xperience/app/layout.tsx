@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { requireXperienceAuth } from "@/lib/xperience/require-auth";
 
 export const metadata: Metadata = {
-  title: "Xperience app | DeliverX",
+  title: "Experience app | DeliverX",
   description: "Build professional experience inside a simulated AI company.",
 };
 

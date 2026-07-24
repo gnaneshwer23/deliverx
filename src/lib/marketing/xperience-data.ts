@@ -1,4 +1,4 @@
-/** Xperience product marketing — re-exports career suite pricing. */
+/** Experience product marketing — re-exports career suite pricing. */
 
 export {
   XPERIENCE_INCLUDES,
@@ -25,11 +25,11 @@ export const XPERIENCE_JOURNEY = [
 ] as const;
 
 export const XPERIENCE_PRICING = {
-  name: "Xperience",
+  name: "Experience",
   price: "£500",
   cadence: "3 Months Access",
   summary:
     "Join an AI-powered company and work as a Product Manager from day one.",
-  cta: "Start Xperience",
+  cta: "Start Experience",
   ctaHref: "/signup?product=xperience",
 } as const;

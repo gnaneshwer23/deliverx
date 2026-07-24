@@ -19,10 +19,10 @@ export const metadata: Metadata = {
 
 const RESOURCES = [
   {
-    title: "Start with Xperience",
+    title: "Start with Experience",
     body: "Build practical Product Management experience inside an AI-powered company before you apply.",
     href: "/xperience",
-    label: "Explore Xperience",
+    label: "Explore Experience",
   },
   {
     title: "Prepare with Launchpad",

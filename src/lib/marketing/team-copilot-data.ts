@@ -101,7 +101,7 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
   finalCta: {
     title: "Ready to deliver with confidence?",
     subtitle:
-      "Start Team Co-pilot for your team — or take the Complete Journey if you also want Xperience and Launchpad.",
+      "Start Team Co-pilot for your team — or take the Complete Journey if you also want Experience and Launchpad.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
     secondaryLabel: "Get the Complete Journey",

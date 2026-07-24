@@ -11,7 +11,7 @@ export { COMPANY_MISSION, COMPANY_POSITIONING };
 
 /** Product links for nav dropdown / product page secondary nav */
 export const PRODUCT_LINKS = [
-  { href: "/xperience", label: "Xperience", stage: "Build the experience" },
+  { href: "/xperience", label: "Experience", stage: "Build the experience" },
   { href: "/launchpad", label: "Launchpad", stage: "Land the opportunity" },
   { href: "/team-copilot", label: "Team Co-pilot", stage: "Succeed in the role" },
 ] as const;
@@ -35,13 +35,13 @@ export const SITE_NAV = {
 export const SUITE_PRODUCTS = [
   {
     id: "xperience",
-    name: "Xperience",
+    name: "Experience",
     stage: "Build the experience",
     href: "/xperience",
     promise:
       "Work inside AI-powered companies as a Product Manager — build judgement, delivery craft and a portfolio of evidence employers recognise.",
     detail: "£500 · 3 months. Living organisations, projects and an Experience Record.",
-    cta: "Explore Xperience",
+    cta: "Explore Experience",
   },
   {
     id: "launchpad",
@@ -66,7 +66,7 @@ export const SUITE_PRODUCTS = [
 ] as const;
 
 export const SUITE_LIFECYCLE = [
-  { name: "Xperience", line: "Build the experience", outcome: "Practical PM capability and evidence" },
+  { name: "Experience", line: "Build the experience", outcome: "Practical PM capability and evidence" },
   { name: "Launchpad", line: "Land the opportunity", outcome: "Interviews, offers and readiness" },
   { name: "Team Co-pilot", line: "Succeed in the role", outcome: "Confident delivery in real teams" },
 ] as const;

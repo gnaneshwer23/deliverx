@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       evidenceRecord,
     });
   } catch (error) {
-    console.error("Xperience decision failed", error);
+    console.error("Experience decision failed", error);
     return NextResponse.json(
       {
         ...result,

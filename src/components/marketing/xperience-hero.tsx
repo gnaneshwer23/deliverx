@@ -170,7 +170,7 @@ export function XperienceHero({ content }: { content: ProductPageContent }) {
                 <MediFlowPreview />
               </div>
               <span className="sr-only">
-                Preview of the Xperience company hub with MediFlow progress and active product work
+                Preview of the Experience company hub with MediFlow progress and active product work
               </span>
             </MarketingHeroItem>
           </div>

@@ -80,7 +80,7 @@ export async function resolveAuthenticatedPath(
     return HUB_PATH;
   }
 
-  // Xperience product users skip Team Co-pilot org onboarding.
+  // Experience product users skip Team Co-pilot org onboarding.
   if (isXperienceUser(sessionUser)) {
     if (safeNext && isXperienceDestination(safeNext)) {
       return safeNext === XPERIENCE_START_PATH ||

@@ -37,7 +37,7 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
       tone: "cream",
       label: "Career Twin",
       title: "A living profile of how you operate.",
-      body: "Your Career Twin captures strengths, stories and evidence from your experience — including work from Xperience — so career materials stay grounded in real capability.",
+      body: "Your Career Twin captures strengths, stories and evidence from your experience — including work from Experience — so career materials stay grounded in real capability.",
     },
     {
       id: "cv",

@@ -14,7 +14,7 @@ const FOOTER_COLUMNS = [
     title: "Products",
     links: [
       { href: "/", label: "Home" },
-      { href: "/xperience", label: "Xperience" },
+      { href: "/xperience", label: "Experience" },
       { href: "/launchpad", label: "Launchpad" },
       { href: "/team-copilot", label: "Team Co-pilot" },
     ],
@@ -49,7 +49,7 @@ type FooterCta = {
 
 const DEFAULT_FOOTER_CTA: FooterCta = {
   title: "Start with DeliverX",
-  subtitle: "Xperience, Launchpad or Team Co-pilot — open pricing, or create an account.",
+  subtitle: "Experience, Launchpad or Team Co-pilot — open pricing, or create an account.",
   href: "/pricing",
   label: "View pricing",
 };
@@ -133,7 +133,7 @@ export function MarketingFooter({
               AI Product Experience Company
             </p>
             <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/60">
-              DeliverX Ltd — an AI-powered professional growth platform. Xperience, Launchpad and
+              DeliverX Ltd — an AI-powered professional growth platform. Experience, Launchpad and
               Team Co-pilot.
             </p>
             <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2" aria-label="Legal">

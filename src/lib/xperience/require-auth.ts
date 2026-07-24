@@ -3,7 +3,7 @@ import { XPERIENCE_APP_PATH } from "@/lib/xperience/auth";
 import { getXperienceSession } from "@/lib/xperience/store";
 import { redirect } from "next/navigation";
 
-/** Gate authenticated Xperience app routes (separate from Team Co-pilot onboarding). */
+/** Gate authenticated Experience app routes (separate from Team Co-pilot onboarding). */
 export async function requireXperienceAuth() {
   const supabase = await createClient();
   const {

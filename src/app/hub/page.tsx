@@ -24,7 +24,7 @@ const HUB_JOURNEY = [
   {
     id: "experience",
     stage: "Build the experience",
-    name: "Xperience",
+    name: "Experience",
     progress: "Continue your journey",
     href: "/xperience/app",
     cta: "Open Experience",
@@ -120,7 +120,7 @@ export default async function HubPage() {
                       : product === "team-copilot"
                         ? "Team Co-pilot"
                         : product === "xperience"
-                          ? "Xperience"
+                          ? "Experience"
                           : "Launchpad"}
                   </span>
                   .

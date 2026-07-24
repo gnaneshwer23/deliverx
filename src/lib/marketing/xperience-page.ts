@@ -7,7 +7,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   path: "/xperience",
   stage: tier.stage,
   brandEyebrow: `DeliverX · ${tier.stage}`,
-  name: "Xperience",
+  name: "Experience",
   heroTitle: "Build the experience employers expect.",
   promise:
     "Join an AI-powered company as a Product Manager. Work real projects, make real trade-offs, and leave with judgement and an Experience Record — not another certificate.",
@@ -25,7 +25,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       tone: "white",
       label: "Why experience matters",
       title: "Employers hire people who have done the work.",
-      body: "Job descriptions ask for product experience you cannot get from courses alone. Xperience puts you inside a living organisation — with customers, stakeholders, trade-offs and launches — so you leave with judgement and evidence, not slides.",
+      body: "Job descriptions ask for product experience you cannot get from courses alone. Experience puts you inside a living organisation — with customers, stakeholders, trade-offs and launches — so you leave with judgement and evidence, not slides.",
     },
     {
       id: "company",
@@ -67,22 +67,22 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   ],
   faq: {
     label: "FAQ",
-    title: "Questions about Xperience",
+    title: "Questions about Experience",
     items: [
       {
         question: "Is this a course or a simulation?",
         answer:
-          "Neither in the usual sense. Xperience is a company experience — you work as a Product Manager inside an AI-powered organisation, with projects, stakeholders and outcomes that build a genuine Experience Record.",
+          "Neither in the usual sense. Experience is a company experience — you work as a Product Manager inside an AI-powered organisation, with projects, stakeholders and outcomes that build a genuine Experience Record.",
       },
       {
         question: "Do I need prior Product Management experience?",
         answer:
-          "No. Xperience is designed for career switchers, graduates and aspiring Product Managers who need practical experience before applying. Coaching and feedback guide you as you work.",
+          "No. Experience is designed for career switchers, graduates and aspiring Product Managers who need practical experience before applying. Coaching and feedback guide you as you work.",
       },
       {
         question: "How does this connect to Launchpad and Team Co-pilot?",
         answer:
-          "Xperience builds the experience. Launchpad helps you present it and land opportunities. Team Co-pilot supports you once you are delivering in a real organisation. You can buy stages alone or take the Complete Journey.",
+          "Experience builds the experience. Launchpad helps you present it and land opportunities. Team Co-pilot supports you once you are delivering in a real organisation. You can buy stages alone or take the Complete Journey.",
       },
       {
         question: "What do I get at the end of three months?",
@@ -106,7 +106,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   finalCta: {
     title: "Ready to build the experience?",
     subtitle:
-      "Start Xperience now — or take the Complete Journey and continue into Launchpad and Team Co-pilot.",
+      "Start Experience now — or take the Complete Journey and continue into Launchpad and Team Co-pilot.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
     secondaryLabel: "Get the Complete Journey",
