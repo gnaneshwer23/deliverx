@@ -999,13 +999,15 @@ export function HomePricing() {
           />
         </MarketingReveal>
 
-        <ul className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <ul className="mt-12 grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {HOME_PRICING.map((tier, i) => (
-            <li key={tier.id}>
-              <MarketingReveal delay={i * 0.05}>
+            <li key={tier.id} className="min-h-0">
+              <MarketingReveal delay={i * 0.05} className="h-full">
                 <article
-                  className={`flex h-full flex-col p-6 md:p-7 ${
-                    tier.featured ? "mkt-soft-panel-highlight" : "mkt-card"
+                  className={`flex h-full flex-col rounded-[var(--mkt-radius-card)] p-6 md:p-7 ${
+                    tier.featured
+                      ? "mkt-pricing-card-featured"
+                      : "mkt-card"
                   }`}
                 >
                   {tier.featured ? (
