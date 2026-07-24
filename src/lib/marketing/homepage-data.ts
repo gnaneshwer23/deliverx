@@ -41,7 +41,7 @@ export const HOME_PRODUCTS = [
     name: "Experience",
     stage: "Build the experience",
     accent: "purple" as const,
-    href: "/xperience",
+    href: "/experience",
     signupHref: XPERIENCE_SIGNUP_HREF,
     sentence:
       "Join AI-powered companies, solve real product challenges, and build evidence of what you can do.",

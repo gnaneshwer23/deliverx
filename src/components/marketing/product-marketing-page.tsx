@@ -124,7 +124,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
     href: content.finalCta.secondaryHref ?? "/pricing#bundle",
     label: content.finalCta.secondaryLabel ?? "Get the Complete Journey",
   };
-  const isXperience = content.path === "/xperience";
+  const isXperience = content.path === "/experience";
 
   return (
     <MarketingPageShell>

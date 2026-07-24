@@ -28,7 +28,7 @@ export function productDisplayName(product: SuiteProduct): string {
 export function productMarketingPath(product: SuiteProduct): string {
   switch (product) {
     case "xperience":
-      return "/xperience";
+      return "/experience";
     case "launchpad":
       return "/launchpad";
     case "team-copilot":
@@ -64,7 +64,7 @@ export function postSignupPath(options: {
   }
 
   if (product === "xperience") {
-    return "/xperience/app";
+    return "/experience/app";
   }
 
   if (product === "launchpad") {

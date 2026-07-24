@@ -48,7 +48,7 @@ export default async function StartXperiencePage() {
             >
               Continue to Experience
             </MarketingButtonLink>
-            <MarketingButtonLink href="/xperience" variant="ghostLg">
+            <MarketingButtonLink href="/experience" variant="ghostLg">
               Back to Experience
             </MarketingButtonLink>
           </div>

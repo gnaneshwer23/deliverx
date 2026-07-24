@@ -18,6 +18,26 @@ const nextConfig: NextConfig = {
         destination: "/team-copilot/:path*",
         permanent: true,
       },
+      {
+        source: "/xperience",
+        destination: "/experience",
+        permanent: true,
+      },
+      {
+        source: "/xperience/app",
+        destination: "/experience/app",
+        permanent: true,
+      },
+      {
+        source: "/xperience/app/:path*",
+        destination: "/experience/app/:path*",
+        permanent: true,
+      },
+      {
+        source: "/start/xperience",
+        destination: "/start/experience",
+        permanent: true,
+      },
     ];
   },
   async headers() {

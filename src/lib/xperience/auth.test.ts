@@ -11,7 +11,7 @@ describe("xperience auth helpers", () => {
   it("detects xperience product intent", () => {
     expect(isXperienceProduct("xperience")).toBe(true);
     expect(isXperienceProduct("team-copilot")).toBe(false);
-    expect(XPERIENCE_APP_PATH).toBe("/xperience/app");
+    expect(XPERIENCE_APP_PATH).toBe("/experience/app");
   });
 
   it("reads product from user metadata", () => {

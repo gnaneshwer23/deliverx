@@ -21,7 +21,7 @@ const RESOURCES = [
   {
     title: "Start with Experience",
     body: "Build practical Product Management experience inside an AI-powered company before you apply.",
-    href: "/xperience",
+    href: "/experience",
     label: "Explore Experience",
   },
   {

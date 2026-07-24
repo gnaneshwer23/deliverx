@@ -3,7 +3,7 @@ import { appendRoleToPath, parseSignupRoleParam } from "@/lib/marketing/role-sig
 
 const AUTH_ENTRY_PATHS = ["/login", "/signup"];
 const ONBOARDING_PREFIX = "/onboarding";
-const XPERIENCE_APP_PREFIX = "/xperience/app";
+const XPERIENCE_APP_PREFIX = "/experience/app";
 const LAUNCHPAD_APP_PREFIX = "/launchpad/app";
 const HUB_PREFIX = "/hub";
 

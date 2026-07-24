@@ -142,7 +142,7 @@ export const CAREER_TIERS: readonly CareerTier[] = [
     includes: XPERIENCE_INCLUDES,
     cta: "Start Building Experience",
     ctaHref: XPERIENCE_SIGNUP_HREF,
-    href: "/xperience",
+    href: "/experience",
   },
   {
     id: "launchpad",

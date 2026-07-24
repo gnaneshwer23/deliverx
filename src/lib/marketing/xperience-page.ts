@@ -4,7 +4,7 @@ import { BUNDLE_SIGNUP_HREF, careerTierById } from "@/lib/marketing/career-suite
 const tier = careerTierById("xperience");
 
 export const XPERIENCE_PAGE: ProductPageContent = {
-  path: "/xperience",
+  path: "/experience",
   stage: tier.stage,
   brandEyebrow: `DeliverX · ${tier.stage}`,
   name: "Experience",

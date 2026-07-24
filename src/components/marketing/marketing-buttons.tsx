@@ -26,7 +26,7 @@ const HOVER_PREFETCH_PATHS = new Set([
   "/signup?product=launchpad&intent=roles",
   "/signup?product=team-copilot",
   "/signup?product=bundle",
-  "/xperience",
+  "/experience",
   "/launchpad",
   "/team-copilot",
   "/pricing",

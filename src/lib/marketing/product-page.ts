@@ -22,7 +22,7 @@ export type ProductFaqItem = {
 };
 
 export type ProductPageContent = {
-  /** Current product path, e.g. /xperience */
+  /** Current product path, e.g. /experience */
   path: string;
   /** Stage in the career progression, shown in hero */
   stage: string;

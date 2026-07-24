@@ -26,7 +26,7 @@ const HUB_JOURNEY = [
     stage: "Build the experience",
     name: "Experience",
     progress: "Continue your journey",
-    href: "/xperience/app",
+    href: "/experience/app",
     cta: "Open Experience",
   },
   {

@@ -27,7 +27,7 @@ describe("postSignupPath", () => {
   });
 
   it("routes product funnels", () => {
-    expect(postSignupPath({ product: "xperience" })).toBe("/xperience/app");
+    expect(postSignupPath({ product: "xperience" })).toBe("/experience/app");
     expect(postSignupPath({ product: "launchpad" })).toBe("/launchpad/app");
     expect(postSignupPath({ product: "launchpad", intent: "roles" })).toBe(
       "/launchpad/app?intent=roles",

@@ -11,7 +11,7 @@ export { COMPANY_MISSION, COMPANY_POSITIONING };
 
 /** Product links for nav dropdown / product page secondary nav */
 export const PRODUCT_LINKS = [
-  { href: "/xperience", label: "Experience", stage: "Build the experience" },
+  { href: "/experience", label: "Experience", stage: "Build the experience" },
   { href: "/launchpad", label: "Launchpad", stage: "Land the opportunity" },
   { href: "/team-copilot", label: "Team Co-pilot", stage: "Succeed in the role" },
 ] as const;
@@ -37,7 +37,7 @@ export const SUITE_PRODUCTS = [
     id: "xperience",
     name: "Experience",
     stage: "Build the experience",
-    href: "/xperience",
+    href: "/experience",
     promise:
       "Work inside AI-powered companies as a Product Manager — build judgement, delivery craft and a portfolio of evidence employers recognise.",
     detail: "£500 · 3 months. Living organisations, projects and an Experience Record.",

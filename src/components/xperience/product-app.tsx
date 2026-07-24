@@ -193,7 +193,7 @@ export function ProductApp({
   async function logout() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    window.location.assign("/xperience");
+    window.location.assign("/experience");
   }
 
   function activateTool(tool: DashboardTool) {
@@ -242,7 +242,7 @@ export function ProductApp({
       {!isDashboard ? (
         <div className="xp-onboarding-layout">
           <aside className="xp-onboarding-sidebar">
-            <a href="/xperience" className="xp-brand">
+            <a href="/experience" className="xp-brand">
               Experience
             </a>
             <p className="xp-eyebrow">Application progress</p>
@@ -327,7 +327,7 @@ export function ProductApp({
       ) : (
         <section className="xp-workspace">
           <aside className="xp-workspace-rail">
-            <a href="/xperience" className="xp-brand">
+            <a href="/experience" className="xp-brand">
               Experience
             </a>
             <nav>
