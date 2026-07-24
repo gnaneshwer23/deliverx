@@ -13,12 +13,66 @@ import {
   MarketingHeroMotion,
   MarketingReveal,
 } from "@/components/marketing/marketing-reveal";
+import { XperienceHero } from "@/components/marketing/xperience-hero";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import {
   productPageNav,
   type ProductNarrativeSection,
   type ProductPageContent,
 } from "@/lib/marketing/product-page";
+
+function DefaultProductHero({ content }: { content: ProductPageContent }) {
+  const secondary = content.secondaryCta ?? { href: "/pricing", label: "See pricing" };
+
+  return (
+    <section
+      id="hero"
+      className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
+    >
+      <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 z-0 h-[55%] w-[min(800px,100%)] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(61,150,96,0.1)_0%,transparent_70%)] blur-2xl"
+        aria-hidden
+      />
+      <MarketingContainer className="relative z-[1]">
+        <MarketingHeroMotion>
+          <MarketingHeroItem>
+            <p className={mktClass.label}>
+              {content.brandEyebrow ?? `DeliverX · ${content.stage}`}
+            </p>
+          </MarketingHeroItem>
+          <MarketingHeroItem>
+            <p
+              className={`mt-5 text-[clamp(2rem,4.5vw,3rem)] leading-[1.05] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+            >
+              {content.name}
+            </p>
+          </MarketingHeroItem>
+          <MarketingHeroItem>
+            <h1 className="mt-4 max-w-3xl text-[clamp(1.35rem,3vw,1.875rem)] font-medium leading-[1.3] tracking-[-0.02em] text-[var(--mkt-text1)]">
+              {content.heroTitle}
+            </h1>
+          </MarketingHeroItem>
+          <MarketingHeroItem>
+            <p className="mt-5 max-w-xl text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+              {content.promise}
+            </p>
+          </MarketingHeroItem>
+          <MarketingHeroItem>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <MarketingButtonLink href={content.primaryCta.href} variant="primaryLg">
+                {content.primaryCta.label}
+              </MarketingButtonLink>
+              <MarketingButtonLink href={secondary.href} variant="ghostLg">
+                {secondary.label}
+              </MarketingButtonLink>
+            </div>
+          </MarketingHeroItem>
+        </MarketingHeroMotion>
+      </MarketingContainer>
+    </section>
+  );
+}
 
 function NarrativeSection({
   section,
@@ -64,13 +118,13 @@ function NarrativeSection({
 
 export function ProductMarketingPage({ content }: { content: ProductPageContent }) {
   const nav = productPageNav(content.path);
-  const secondary = content.secondaryCta ?? { href: "/pricing", label: "See pricing" };
   const bundleHref = content.pricing.bundleHref ?? "/pricing#bundle";
   const bundleLabel = content.pricing.bundleLabel ?? "Or get the Complete Journey";
   const finalSecondary = {
     href: content.finalCta.secondaryHref ?? "/pricing#bundle",
     label: content.finalCta.secondaryLabel ?? "Get the Complete Journey",
   };
+  const isXperience = content.path === "/xperience";
 
   return (
     <MarketingPageShell>
@@ -83,52 +137,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       />
 
       <main id="main-content">
-        <section
-          id="hero"
-          className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
-        >
-          <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
-          <div
-            className="pointer-events-none absolute left-1/2 top-0 z-0 h-[55%] w-[min(800px,100%)] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(61,150,96,0.1)_0%,transparent_70%)] blur-2xl"
-            aria-hidden
-          />
-          <MarketingContainer className="relative z-[1]">
-            <MarketingHeroMotion>
-              <MarketingHeroItem>
-                <p className={mktClass.label}>
-                  {content.brandEyebrow ?? `DeliverX · ${content.stage}`}
-                </p>
-              </MarketingHeroItem>
-              <MarketingHeroItem>
-                <p
-                  className={`mt-5 text-[clamp(2rem,4.5vw,3rem)] leading-[1.05] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-                >
-                  {content.name}
-                </p>
-              </MarketingHeroItem>
-              <MarketingHeroItem>
-                <h1 className="mt-4 max-w-3xl text-[clamp(1.35rem,3vw,1.875rem)] font-medium leading-[1.3] tracking-[-0.02em] text-[var(--mkt-text1)]">
-                  {content.heroTitle}
-                </h1>
-              </MarketingHeroItem>
-              <MarketingHeroItem>
-                <p className="mt-5 max-w-xl text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  {content.promise}
-                </p>
-              </MarketingHeroItem>
-              <MarketingHeroItem>
-                <div className="mt-10 flex flex-wrap gap-3">
-                  <MarketingButtonLink href={content.primaryCta.href} variant="primaryLg">
-                    {content.primaryCta.label}
-                  </MarketingButtonLink>
-                  <MarketingButtonLink href={secondary.href} variant="ghostLg">
-                    {secondary.label}
-                  </MarketingButtonLink>
-                </div>
-              </MarketingHeroItem>
-            </MarketingHeroMotion>
-          </MarketingContainer>
-        </section>
+        {isXperience ? <XperienceHero content={content} /> : <DefaultProductHero content={content} />}
 
         {content.sections.map((section, index) => (
           <NarrativeSection key={section.id} section={section} index={index} />

@@ -17,7 +17,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   },
   secondaryCta: {
     href: "/pricing",
-    label: "See pricing",
+    label: "Explore pricing",
   },
   sections: [
     {
