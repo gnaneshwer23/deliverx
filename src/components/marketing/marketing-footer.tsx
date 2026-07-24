@@ -106,7 +106,7 @@ export function MarketingFooter({
   cta?: FooterCta | null;
 } = {}) {
   return (
-    <footer className="overflow-hidden rounded-t-[2rem] bg-[var(--mkt-green)] text-white md:rounded-t-[2.5rem]">
+    <footer className="overflow-hidden bg-[var(--mkt-green)] text-white">
       {cta ? (
         <div className="border-b border-white/10 bg-[rgba(255,255,255,0.04)]">
           <MarketingContainer className="flex flex-col items-start justify-between gap-5 py-10 md:flex-row md:items-center md:py-12">
