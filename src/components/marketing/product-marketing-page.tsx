@@ -13,6 +13,7 @@ import {
   MarketingHeroMotion,
   MarketingReveal,
 } from "@/components/marketing/marketing-reveal";
+import { LaunchpadHero } from "@/components/marketing/launchpad-hero";
 import { XperienceHero } from "@/components/marketing/xperience-hero";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import {
@@ -124,7 +125,14 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
     href: content.finalCta.secondaryHref ?? "/pricing#bundle",
     label: content.finalCta.secondaryLabel ?? "Get the Complete Journey",
   };
-  const isXperience = content.path === "/experience";
+  const hero =
+    content.path === "/experience" ? (
+      <XperienceHero content={content} />
+    ) : content.path === "/launchpad" ? (
+      <LaunchpadHero content={content} />
+    ) : (
+      <DefaultProductHero content={content} />
+    );
 
   return (
     <MarketingPageShell>
@@ -137,7 +145,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       />
 
       <main id="main-content">
-        {isXperience ? <XperienceHero content={content} /> : <DefaultProductHero content={content} />}
+        {hero}
 
         {content.sections.map((section, index) => (
           <NarrativeSection key={section.id} section={section} index={index} />

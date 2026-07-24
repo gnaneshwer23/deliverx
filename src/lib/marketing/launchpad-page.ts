@@ -10,14 +10,14 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
   name: "Launchpad",
   heroTitle: "Turn your experience into opportunities.",
   promise:
-    "Package your work, sharpen how you speak about it, and walk into interviews with clarity — Career Twin, portfolio, mock interviews and salary insights in one career system.",
+    "Package your work, sharpen how you speak about it, and walk into interviews with clarity — Career Twin, portfolio and mock interviews in one career system.",
   primaryCta: {
     href: tier.ctaHref,
     label: "Start Your Career Journey",
   },
   secondaryCta: {
     href: "/pricing",
-    label: "See pricing",
+    label: "Explore pricing",
   },
   sections: [
     {
