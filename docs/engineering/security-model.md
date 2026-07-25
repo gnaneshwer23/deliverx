@@ -10,7 +10,7 @@
 - App shells and PI pages use onboarding/session guards (e.g. `requireCompleteOnboarding`) with `login?next=` return paths
 - API Route Handlers for person PI data expect an authenticated user; anonymous calls return **401**
 
-Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do not run (TD-003). T0 added `x-matched-path` fallback in `getRequestPathFromHeaders` for deep links such as `/workspace/coach` (TD-002); re-verify on prod after deploy. Proxy responses may include `x-dx-proxy` for observability.
+Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do not run (TD-003). T0 added `x-matched-path` fallback in `getRequestPathFromHeaders` for deep links such as `/workspace/coach` (TD-002); production now returns `/login?next=%2Fworkspace%2Fcoach`. Proxy responses may include `x-dx-proxy` for observability.
 
 ---
 
@@ -53,7 +53,7 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `pi_privacy_purge_person_data` is `SECURITY DEFINER` and must be **service_role only**
 - Supabase default privileges auto-grant EXECUTE to `anon`/`authenticated`; `revoke ... from public` does **not** remove those grants
 - `0089` explicitly revokes EXECUTE from `anon`/`authenticated`; verified on prod (anon/authenticated EXECUTE = false)
-- Advisor 0028/0029 still flags lower-risk helpers (`is_workspace_project_member`, `pi_cf_version_is_readable`, `current_org_id`) — tracked TD-016
+- Advisor 0028/0029 still flags lower-risk helpers — tracked TD-016. Production grants: `is_workspace_project_member` and `pi_cf_version_is_readable` are executable by anon + authenticated; `current_org_id` is executable by authenticated but not anon. All three are `SECURITY DEFINER`.
 
 ---
 

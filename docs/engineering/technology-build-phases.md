@@ -143,7 +143,7 @@ sequenceDiagram
 | --- | --- | --- | --- | --- |
 | 1 | Repository Audit | **Done** | `current-state-audit.md`, post-ship audit canvas, HEAD `f3ac383` | T0 (refresh only) |
 | 2 | Current Architecture | **Done** | `system-architecture.md`, `codebase-map.md`, constitution | T0 |
-| 3 | Database Foundation | **Partial** | PI `0066`–`0085`; gaps: artefact versions, messages, departments/teams, AI registry | T2–T4, T7 |
+| 3 | Database Foundation | **Partial** | PI `0066`–`0089`; gaps: messages, departments/teams, AI registry | T2–T4, T7 |
 | 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; **T1** export/deletion shipped (`0086`); leaked-password still **Open — founder action** (TD-006; runbook) | T1 done · T6 E2E |
 | 5 | Organisation Intelligence | **Partial** | `organisations`, `projects`, `stakeholders`; no `departments`/`teams`; not PI-first | T7 (approval for depth) |
 | 6 | First Experience & Project | **Done** | Experience planner + sim, 12 companies, `0078`–`0079` | — |
@@ -160,7 +160,7 @@ sequenceDiagram
 
 ## Technology phases
 
-Migration numbers below are **planned next** after `0085`. Do not apply until the phase is authorized and implemented.
+T1–T3 migrations are shipped through `0089`. Remaining migration numbers below are **indicative plans** starting at the next free number, `0090`; do not apply them until the phase is authorized and implemented.
 
 ### T0 — Pilot seal (signed-in QA + critical debt)
 
@@ -260,7 +260,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **Charter** | **Authorized now** for **trust infrastructure**. Full “AI Line Manager product UX” expansion → **Requires founder approval** if it becomes a new Home or SKU surface. |
 | **Entry** | T2 rubric SoT stable (agents must cite framework pins) |
 | **Work packages** | `src/lib/ai-orchestration/`: `agents` (line_manager, stakeholder, observer), `context-builder`, `output-contracts`, `guardrails`, `prompt-registry`, `usage-log`; wrap existing `src/lib/ai/*` |
-| **Schema** | `0089_ai_orchestration.sql` — `ai_agents`, `ai_prompt_versions`, `ai_interactions` (tokens, latency_ms, model, prompt_version, agent_id, input/output hashes) |
+| **Schema** | Indicative `0090_ai_orchestration.sql` — `ai_agents`, `ai_prompt_versions`, `ai_interactions` (tokens, latency_ms, model, prompt_version, agent_id, input/output hashes) |
 | **API** | Internal first; optional `GET /api/pi/ai/interactions` (self) |
 | **Data deltas** | AI agents · AI interactions · prompt versions |
 | **Contracts** | Zod/JSON Schema per agent; refuse unstructured capability writes |
@@ -281,7 +281,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **Charter** | **Authorized now** (pilot ops). Slack/Teams enterprise fan-out already partial — do not expand channels without need. |
 | **Entry** | T4 interactions exist to notify on |
 | **Work packages** | `src/lib/notifications/`; in-app inbox on `/profile` or settings; wire review + intervention + privacy events |
-| **Schema** | `0090_pi_notifications.sql` — `pi_notifications` (user_id, kind, payload, read_at) |
+| **Schema** | Indicative `0091_pi_notifications.sql` — `pi_notifications` (user_id, kind, payload, read_at) |
 | **API** | `GET/PATCH /api/pi/notifications` |
 | **Data deltas** | pi_notifications |
 | **Contracts/events** | Consume `pi_domain_events` |
@@ -320,7 +320,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **Charter** | Launchpad packaging honesty: **Authorized** if it only consumes SnapshotClaims. **Team Copilot / Workspace depth, org departments/teams modelling, mission-control: Requires founder approval** (ICP + SKU ADR). |
 | **Entry** | T6 gates green; founder decisions on ICP/SKU preferred |
 | **Work packages** | Label heuristic readiness; demote non-MVP workspace modules; optional thin `departments`/`teams` **only after approval** |
-| **Schema** | If approved: `0091_org_structure.sql` — departments, teams |
+| **Schema** | If approved: indicative `0092_org_structure.sql` — departments, teams |
 | **Exit** | Documented foundation boundaries; no marketplace; no Verified badge without attestation |
 | **Rollback** | Hide surfaces via `DELIVERX_PI_SURFACES` |
 
@@ -332,7 +332,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | --- | --- |
 | **Objective** | Employer/attestor path so `deliverxVerified` can light honestly. |
 | **Charter** | **Requires founder approval** (legal/product meaning of Verified) |
-| **Schema (indicative)** | `0092_external_attestation.sql` |
+| **Schema (indicative)** | `0093_external_attestation.sql` |
 | **Exit** | Attestation record + strength `externally_verified` path; badge lights only then |
 
 ---

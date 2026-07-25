@@ -24,7 +24,7 @@ erDiagram
 
 ---
 
-## Tables by domain (migrations 0066–0086)
+## Tables by domain (migrations 0066–0089)
 
 ### Onboarding — `0066`
 
