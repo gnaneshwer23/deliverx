@@ -4,7 +4,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 **Production:** https://www.deliverx.dev  
 **Supabase:** `jibmyxaldetyycmtlxet`  
-**Migrations:** `0066`–`0090`  
+**Migrations:** `0066`–`0091`  
 **Post-ship HEAD (audit):** `f3ac383`
 
 ---
@@ -136,6 +136,22 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 **Verification:** focused vitest 16 new orchestration tests (mock-model, injection, output validation, cascade) · migration `0090` (+ purge extend) applied to prod `jibmyxaldetyycmtlxet` (6 agents, 6 prompts, RLS on, purge covers `ai_interactions`, service_role-only EXECUTE) · Vercel prod READY (`4UYPiSFLEtKPLR4hfhJUpbNQ3VLV` / SHA `518d405`) · unauth smoke: `/api/pi/ai/interactions` 401, `/api/pi/artefacts` 401, `/settings/profile` 307. Pre-existing lint debt still fails GitHub `verify` job (not introduced by T4); not blocking under founder override.
 
 **T4 verdict:** Shipped. Do not start T5 (notifications) unless asked. T0 signed-in QA + TD-006/TD-016 remain open.
+
+---
+
+## Technology T5 — Notifications & PI observability (2026-07-25)
+
+| SHA | Summary | Migrations / notes |
+| --- | --- | --- |
+| `5c71edd` | feat(pi): ship T5 consolidated notifications and observability | `0091`; `src/lib/notifications/`; `GET/PATCH /api/pi/notifications`; Profile bell/list/mark-read; `pi_ai_usage_daily` |
+
+**Founder override:** User said `t5` — T5 shipped while T0 signed-in QA, TD-006 and TD-016 remain open. This does not claim T0 PASS and does not authorise T6.
+
+**Scope:** One self-only person inbox consolidates migrated review history, future review writes, intervention offers and privacy domain events. Every item has an internal contextual route, source identity, idempotency key, delivery timestamp and read state. Organisation Slack/Teams deliveries remain a separate tenant concern; no new email provider or channel fan-out. Notification guards never assign capability or verification. T1 export/purge now includes `pi_notifications`. A `security_invoker` daily AI usage view gives pilot ops token/cost/latency queries without bypassing `ai_interactions` RLS.
+
+**Verification:** 41 focused tests pass (5 new T5 tests); touched-file lint clean; production Next.js build passes. Full Vitest reached 910 pass / 2 skipped with one unrelated `portfolio.test.ts` timeout, then that test passed alone (2/2). Standalone `tsc --noEmit` retains only the documented pre-existing test-fixture errors. Migration `0091_pi_notifications` applied to `jibmyxaldetyycmtlxet`; `pi_notifications` RLS + three self-only policies verified; privacy purge wrapper grants verified anon=false, authenticated=false, service_role=true (old implementation also not client-executable); security advisors show no new T5 finding and existing TD-006/TD-016 warnings remain. Vercel production deployment `dpl_3euGrKM5yLKMqnBnqAM1SyK9pPq4` is READY. Unauth smoke: `/api/pi/notifications` 401, legacy review notifications 401, `/profile` 307 → login.
+
+**T5 verdict:** Shipped. Do not proceed to T6 unless asked. Open debt unchanged.
 
 ---
 
