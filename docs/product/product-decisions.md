@@ -222,6 +222,30 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-19 — T5 notifications consolidate person attention
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | Use one self-only `pi_notifications` inbox for person Professional Intelligence. Migrate legacy `pi_review_notifications` history, route future review writes into the consolidated module, project intervention offers and privacy domain events idempotently, and keep tenant-scoped Slack/Teams `notification_deliveries` separate. T5 is in-app only; no new email provider or channel expansion. Every item has an internal contextual link and delivery/read audit. Notifications never write capability, verified evidence, or verification state. |
+| **Why** | Review stubs, intervention prompts and privacy events were fragmented. A third parallel inbox or speculative email infrastructure would increase ambiguity and privacy risk without improving the pilot loop. |
+| **Consequence** | Migration `0091`; `src/lib/notifications/`; `GET/PATCH /api/pi/notifications`; Profile bell/list/mark-read; T1 export/purge extended; `pi_ai_usage_daily` security-invoker ops read model. |
+
+---
+
+## PD-2026-07-20 — Founder override of T0 gate for T5
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | User utterance `t5` explicitly authorises T5 while T0 signed-in QA and TD-006/TD-016 remain open. |
+| **Why** | T5 is authorized pilot observability work and the user explicitly directed shipment without waiting for the parallel T0 founder-login dependency. |
+| **Consequence** | T5 may ship; do not claim T0 PASS and do not proceed to T6 unless asked. Open debt remains unchanged. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval. Also TD-006 (leaked-password protection).

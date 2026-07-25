@@ -1,11 +1,11 @@
-/**
- * In-app PI review notifications stub.
- * Persists rows; optionally queues email via hook (no-op if email not configured).
- */
-
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { PiReviewAction, PiReviewStatus } from "@/lib/pi-review/types";
 import { PI_REVIEW_ACTION_LABELS, PI_REVIEW_STATUS_LABELS } from "@/lib/pi-review/types";
+import {
+  createNotification,
+  listNotifications,
+  markNotificationsRead,
+} from "@/lib/notifications";
 
 export type NotifyInput = {
   userId: string;
@@ -14,7 +14,9 @@ export type NotifyInput = {
   title: string;
   body?: string;
   payload?: Record<string, unknown>;
-  /** When true, set email_queued_at for a future worker. */
+  sourceId?: string;
+  dedupeKey?: string;
+  /** Kept for caller compatibility; T5 is intentionally in-app only. */
   queueEmail?: boolean;
 };
 
@@ -25,6 +27,7 @@ export type NotifyTransitionInput = {
   fromStatus: PiReviewStatus;
   toStatus: PiReviewStatus;
   actorRole: string;
+  eventId?: string;
   queueEmail?: boolean;
 };
 
@@ -32,22 +35,27 @@ export async function createReviewNotification(
   supabase: SupabaseClient,
   input: NotifyInput,
 ): Promise<{ data: { id: string } | null; error: string | null }> {
-  const { data, error } = await supabase
-    .from("pi_review_notifications")
-    .insert({
-      user_id: input.userId,
-      case_id: input.caseId,
-      kind: input.kind,
+  try {
+    const notification = await createNotification(supabase, {
+      userId: input.userId,
+      kind: "review",
       title: input.title,
-      body: input.body ?? "",
-      payload: input.payload ?? {},
-      email_queued_at: input.queueEmail ? new Date().toISOString() : null,
-    })
-    .select("id")
-    .single();
-
-  if (error) return { data: null, error: error.message };
-  return { data: { id: data.id as string }, error: null };
+      body: input.body,
+      href: `/profile/evidence?review=${encodeURIComponent(input.caseId)}`,
+      contextType: "evidence",
+      contextId: input.caseId,
+      payload: {
+        ...(input.payload ?? {}),
+        reviewKind: input.kind,
+      },
+      sourceType: "pi_review_case",
+      sourceId: input.sourceId ?? input.caseId,
+      dedupeKey: input.dedupeKey ?? `review:${input.caseId}:${input.kind}`,
+    });
+    return { data: { id: notification.id }, error: null };
+  } catch (error) {
+    return { data: null, error: error instanceof Error ? error.message : "Notification failed" };
+  }
 }
 
 export async function notifyReviewTransition(
@@ -73,28 +81,21 @@ export async function notifyReviewTransition(
       toStatus: input.toStatus,
       actorRole: input.actorRole,
     },
-    queueEmail:
-      input.queueEmail ??
-      (input.toStatus === "escalated_to_human_review" ||
-        input.toStatus === "upheld" ||
-        input.toStatus === "revised" ||
-        input.toStatus === "additional_evidence_required"),
+    sourceId: input.eventId ?? input.caseId,
+    dedupeKey: input.eventId
+      ? `review:event:${input.eventId}`
+      : `review:${input.caseId}:${input.action}:${input.toStatus}`,
+    queueEmail: false,
   });
 }
 
-/**
- * Optional email hook — queues only. Actual send is left to a worker
- * that reads email_queued_at IS NOT NULL AND email_sent_at IS NULL.
- */
 export async function markNotificationEmailSent(
   supabase: SupabaseClient,
   notificationId: string,
 ): Promise<{ error: string | null }> {
-  const { error } = await supabase
-    .from("pi_review_notifications")
-    .update({ email_sent_at: new Date().toISOString() })
-    .eq("id", notificationId);
-  return { error: error?.message ?? null };
+  void supabase;
+  void notificationId;
+  return { error: "T5 person notifications are in-app only" };
 }
 
 export async function listUnreadNotifications(
@@ -102,15 +103,15 @@ export async function listUnreadNotifications(
   userId: string,
   limit = 50,
 ): Promise<{ data: unknown[]; error: string | null }> {
-  const { data, error } = await supabase
-    .from("pi_review_notifications")
-    .select("id, case_id, kind, title, body, payload, created_at, email_queued_at")
-    .eq("user_id", userId)
-    .is("read_at", null)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-  if (error) return { data: [], error: error.message };
-  return { data: data ?? [], error: null };
+  try {
+    const result = await listNotifications(supabase, userId, limit);
+    return {
+      data: result.notifications.filter((notification) => !notification.readAt),
+      error: null,
+    };
+  } catch (error) {
+    return { data: [], error: error instanceof Error ? error.message : "Notification list failed" };
+  }
 }
 
 export async function markNotificationRead(
@@ -118,10 +119,10 @@ export async function markNotificationRead(
   userId: string,
   notificationId: string,
 ): Promise<{ error: string | null }> {
-  const { error } = await supabase
-    .from("pi_review_notifications")
-    .update({ read_at: new Date().toISOString() })
-    .eq("id", notificationId)
-    .eq("user_id", userId);
-  return { error: error?.message ?? null };
+  try {
+    await markNotificationsRead(supabase, userId, [notificationId]);
+    return { error: null };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Notification update failed" };
+  }
 }

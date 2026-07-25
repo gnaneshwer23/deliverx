@@ -33,7 +33,8 @@ Prefer this shape until scale, team boundaries, or isolation requirements justif
 | `real-world-outcomes` | Outcome events + calibration findings (honest strength; no auto ScoreRun) |
 | `career-intelligence` | Readiness matching from SnapshotClaims; labelled heuristic fallback |
 | `verified-portfolio` | Portfolio compile, share tokens, `deliverxVerified` gate |
-| `pi-review` | Review/challenge cases, notifications |
+| `pi-review` | Review/challenge cases; emits person attention into `notifications` |
+| `notifications` | T5 consolidated person inbox; idempotent review/intervention/privacy projection and read state |
 | `admin-framework` | Competency framework graph lifecycle, immutability, seed |
 | `pi-profile` | Profile aggregate / next-action views over PI state |
 | `pi-onboarding` | PI onboarding sessions |
@@ -45,7 +46,7 @@ Supporting product libs still present: `launchpad`, `xperience`, `auth`, `onboar
 
 ## API surface (summary)
 
-- **PI core:** `/api/pi/*` — profile, evidence, capability runs, assessment, experience-plan, observation consent, interventions, learning, growth-report, review
+- **PI core:** `/api/pi/*` — profile, evidence, capability runs, assessment, experience-plan, observation consent, interventions, learning, growth-report, review, notifications
 - **Career / portfolio:** `/api/career/*`, `/api/portfolio/*`
 - **Experience legacy/runtime:** `/api/xperience/*`, `/api/workspace/contributions`
 - **Admin framework:** `/api/admin/framework/*`

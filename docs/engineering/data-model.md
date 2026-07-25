@@ -1,6 +1,6 @@
 # Data Model
 
-**Source of truth:** `supabase/migrations/0066`–`0090` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts + T4 AI orchestration) on project `jibmyxaldetyycmtlxet`  
+**Source of truth:** `supabase/migrations/0066`–`0091` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts + T4 AI orchestration + T5 notifications) on project `jibmyxaldetyycmtlxet`  
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -131,6 +131,15 @@ erDiagram
 - `ai_interactions` — person append-only log (model, provider, tokens, latency_ms, cost_estimate_usd, prompt version, context_sources, input/output hashes, guardrail_flags); self-only RLS
 - Purge cascade extended: `ai_interactions` deleted with person data; `ai_agents` / `ai_prompt_versions` retained (catalogue exclusions)
 
+### Person notifications & observability — `0091` (T5)
+
+- `pi_notifications` — single person in-app inbox for review, intervention, privacy and system notices; every row has an internal contextual `href`, source identity, `(user_id, dedupe_key)` idempotency, `delivered_at` audit and `read_at`
+- Legacy `pi_review_notifications` rows migrate into the consolidated table; the legacy table remains only for rollback/history compatibility
+- New intervention offers create one evidence-context notification through a narrow insert trigger
+- Privacy notifications are idempotently projected from self-visible `pi_domain_events`
+- `pi_ai_usage_daily` — `security_invoker` daily interaction/token/cost/latency read model; underlying `ai_interactions` self-only RLS remains authoritative
+- Purge/export cascade includes `pi_notifications`; the service-role-only privacy RPC wrapper deletes it before domain events
+
 ---
 
 ## Advisor notes
@@ -158,6 +167,7 @@ erDiagram
 | Prompt version immutability (T4) | `ai_forbid_prompt_version_mutation` before update/delete |
 | AI interaction append-only (T4) | `ai_forbid_interaction_mutation` (purge-only DELETE bypass) |
 | Agents never write capability / verified evidence (T4) | Authority + output contracts + `runAgent` guardrails |
+| Notifications never invent capability / verification (T5) | App guard forces false audit flags; schema stores no capability fields |
 
 Exact CHECK constraint names live in the migration SQL — treat migrations as authoritative.
 
@@ -165,7 +175,7 @@ Exact CHECK constraint names live in the migration SQL — treat migrations as a
 
 ## RLS posture (summary)
 
-- Person PI tables: **self-only** (auth.uid() ownership) for candidate data
+- Person PI tables: **self-only** (auth.uid() ownership) for candidate data, including `pi_notifications`
 - Org-admin / framework admin: elevated paths for `pi_cf_*` and review admin APIs
 - Public portfolio share: tokenised views that filter non-shareable / private evidence
 - `pi_cf_audit_events`: authenticated deny-all (T1); service role only

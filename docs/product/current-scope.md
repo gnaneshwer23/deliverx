@@ -1,14 +1,15 @@
 # Current Scope
 
-**Active phase:** Post-P7 pilot hardening — **Technology T4 shipped**; T0 signed-in QA still open (PARTIAL); T1–T3 shipped  
+**Active phase:** Post-P7 pilot hardening — **Technology T5 shipped**; T0 signed-in QA still open (PARTIAL); T1–T4 shipped  
 **As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
-**T0 status:** PARTIAL — automated/unauth gates green; **signed-in QA BLOCKED (needs founder login)**. Founder override authorised T1–T4 while T0 remains open. See [`../qa/t0-results.md`](../qa/t0-results.md).  
+**T0 status:** PARTIAL — automated/unauth gates green; **signed-in QA BLOCKED (needs founder login)**. Founder override authorised T1–T5 while T0 remains open. See [`../qa/t0-results.md`](../qa/t0-results.md).  
 **T1 status:** **Shipped** — person PI export/delete (`0086`, `/api/pi/privacy/*`, settings UX); TD-004/005 closed; TD-006 documented (Auth dashboard).  
 **T2 status:** **Shipped** — rubric/DB coherence (`0087`, resolve source `db | in_code_fallback`, pin assert on capability run, golden ScoreRun harness); TD-009 closed.  
 **T3 status:** **Shipped** — artefact versioning + submission coherence (`0088`; `artefacts` / `artefact_versions` / `artefact_status_transitions`; immutable prior versions; evidence cites `artefact_version_id`; privacy cascade extended; settings panel). Hotfix `0089` locks the person-purge RPC to `service_role` only.  
-**T4 status:** **Shipped** — AI orchestration trust layer (`0090`; `ai_agents` / `ai_prompt_versions` / `ai_interactions`; `src/lib/ai-orchestration/`; Manager/Stakeholder/Observer + consolidated coaches; guardrails; mock-model tests; `GET /api/pi/ai/interactions`). Founder override (`t4`) of T0–T3 audit gate noted. Do **not** start T5 until asked.
+**T4 status:** **Shipped** — AI orchestration trust layer (`0090`; `ai_agents` / `ai_prompt_versions` / `ai_interactions`; `src/lib/ai-orchestration/`; Manager/Stakeholder/Observer + consolidated coaches; guardrails; mock-model tests; `GET /api/pi/ai/interactions`).  
+**T5 status:** **Shipped** — person PI notifications + observability (`0091`; `pi_notifications`; legacy review migration; intervention/privacy sources; `GET/PATCH /api/pi/notifications`; Profile inbox; `pi_ai_usage_daily`). Founder override (`t5`) noted. Do **not** start T6 unless asked.
 
 ---
 
@@ -33,6 +34,7 @@
 **T2 (2026-07-25):** Framework/rubric coherence — DB `pi_cf_*` SoT for ScoreRuns; labelled `in_code_fallback`; `rubric_resolve_source` on ScoreRuns (`0087`); pin assert on `POST /api/pi/capability/run`; golden reproducibility harness; TD-009 closed. TD-007 (seed depth) remains deferred.  
 **T3 (2026-07-25):** Artefact versioning — `artefacts` + immutable `artefact_versions` + append-only `artefact_status_transitions` (`0088`); user-vs-AI provenance + content hash; evidence provenance must cite `artefact_version_id` (DB CHECK + app guard); artefact tables added to T1 export/purge cascade; `/api/pi/artefacts` (+`/[id]/versions`); settings panel. Access-control check found and fixed a default-privilege leak: person-purge RPC EXECUTE revoked from anon/authenticated (`0089`).  
 **T4 (2026-07-25):** AI orchestration trust layer — agent registry (line_manager / stakeholder / observer + experience_coach / workspace_coach / interview_lab), prompt versioning, context builder, structured output contracts, prompt-injection guardrails, cost/latency logging (`ai_interactions`), mock-model CI tests. Existing Experience/Helm/Interview Lab surfaces consolidated into the registry (not rewritten). `GET /api/pi/ai/interactions` (self-only). Migration `0090`.
+**T5 (2026-07-25):** Consolidated person inbox — self-only `pi_notifications`, migrated `pi_review_notifications` history, intervention-offer trigger, idempotent privacy event consumption, contextual in-app links, Profile bell/list/mark-read, and security-invoker daily AI usage read model. No email/channel expansion; no capability or verification writes. Migration `0091`.
 
 ---
 
@@ -45,7 +47,7 @@
 - Team Co-pilot enterprise mission-control depth as a separate Home
 - Speculative intelligence microservices
 - Rewriting pre-PI delivery/org engines unless required to protect the candidate loop
-- **T5+** until explicitly asked (notifications, signed-in E2E, Launchpad/Team Copilot depth)
+- **T6+** until explicitly asked (signed-in E2E, Launchpad/Team Copilot depth)
 
 ---
 
@@ -71,4 +73,4 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 2. Prefer smallest change that hardens the shipped loop.
 3. Do not start P8/P9 without founder approval recorded in `product-decisions.md`.
 4. Update this file when the active phase changes.
-5. Do not start T5–T9 until asked; T0 signed-in QA remains open.
+5. Do not start T6–T9 until asked; T0 signed-in QA remains open.

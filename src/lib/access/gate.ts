@@ -16,7 +16,8 @@ export type PiSurface =
   | "learning"
   | "privacy"
   | "artefacts"
-  | "ai_interactions";
+  | "ai_interactions"
+  | "notifications";
 
 export type GateDecision =
   | { allowed: true }

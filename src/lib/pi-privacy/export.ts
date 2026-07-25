@@ -18,6 +18,7 @@ const EXPORT_TABLES_DIRECT: string[] = [
   "pi_learning_paths",
   "pi_growth_reports",
   "pi_assessment_sessions",
+  "pi_notifications",
   "pi_review_notifications",
   "pi_review_events",
   "pi_review_cases",

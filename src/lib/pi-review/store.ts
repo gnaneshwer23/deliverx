@@ -245,6 +245,7 @@ export async function applyReviewAction(
     fromStatus,
     toStatus,
     actorRole: input.actorRole,
+    eventId: String(event.id),
   });
 
   return {

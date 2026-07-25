@@ -34,7 +34,8 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 | GET, POST | `/api/pi/review` | User | Review/challenge |
 | GET, POST | `/api/pi/review/[id]` | User | Case detail / action |
 | GET, POST | `/api/pi/review/admin` | Admin | Admin review queue |
-| GET, POST | `/api/pi/review/notifications` | User | |
+| GET, POST | `/api/pi/review/notifications` | User | Legacy compatibility route backed by the T5 consolidated inbox |
+| GET, PATCH | `/api/pi/notifications` | User | T5 — list own contextual in-app notifications; mark selected or all read; idempotently sync privacy domain events |
 | GET, POST | `/api/pi/privacy/export` | User | T1 — person PI export JSON; GET lists requests |
 | POST | `/api/pi/privacy/delete` | User | T1 — re-auth + confirm phrase; purges person PI |
 | GET, POST | `/api/pi/artefacts` | User | T3 — list / create artefact (optional initial version); private by default |

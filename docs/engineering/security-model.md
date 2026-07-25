@@ -18,7 +18,7 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 
 | Layer | Posture |
 | --- | --- |
-| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent, artefacts + versions, AI interactions |
+| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent, artefacts + versions, AI interactions, notifications |
 | **Org / project delivery tables** | Existing org membership / project access helpers (`src/lib/access`, project access tests) |
 | **Admin framework** | Elevated admin APIs for `pi_cf_*` version management; immutability triggers after publish/seed |
 | **Review admin** | `/api/pi/review/admin` gated to admin operators |
@@ -56,6 +56,15 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - Agents cannot write capability or modify verified evidence; consequential actions require confirmation
 - Observation drafts never auto-verify; cost/latency logged on every `runAgent` call
 - Rollback: `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy delivery AI only
+
+### Person notifications (T5)
+
+- `pi_notifications` has explicit self-only SELECT/INSERT/UPDATE policies; client DELETE is not granted
+- `(user_id, dedupe_key)` prevents duplicate projection from the same review, intervention, or domain event
+- Notification links are internal contextual routes; review/intervention items bind to evidence, while privacy items bind explicitly to account privacy controls
+- Notification payload guards refuse capability assignment or verification claims; notifications are attention routing, never evidence or capability
+- `pi_ai_usage_daily` is `security_invoker`, so authenticated reads remain constrained by underlying `ai_interactions` RLS
+- T1 export/purge includes notifications; the purge RPC remains `service_role` only after the T5 wrapper
 
 ### Person-purge RPC lockdown (T3 hotfix `0089`)
 

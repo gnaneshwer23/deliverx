@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { PiProfileAggregate } from "@/lib/pi-profile/types";
 import { PI_EVIDENCE_PATH } from "@/lib/pi-profile/paths";
 import { DevelopmentLoopPanel } from "@/components/pi/development-loop-panel";
+import { NotificationInbox } from "@/components/pi/notification-inbox";
 
 function confidenceLabel(confidence: number): string {
   if (confidence >= 0.75) return "higher confidence";
@@ -69,9 +70,12 @@ export function ProfileCentre() {
         <p className="font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
           Professional Intelligence
         </p>
-        <h1 className="mt-1 font-[family-name:var(--font-display)] text-2xl text-[#1A1A18]">
-          {name}
-        </h1>
+        <div className="mt-1 flex items-start justify-between gap-4">
+          <h1 className="font-[family-name:var(--font-display)] text-2xl text-[#1A1A18]">
+            {name}
+          </h1>
+          <NotificationInbox />
+        </div>
         <p className="mt-2 max-w-xl text-sm text-[#4A4A45]">
           One centre for who you are, what you can prove, what is holding you back, what to do next,
           and which opportunities fit — from evidence, not invention.

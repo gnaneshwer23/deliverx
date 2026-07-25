@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T4 shipped · migrations head `0090`  
+**As of:** 2026-07-25 · T5 shipped · migrations head `0091`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,7 +10,7 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0090` are applied (T4 AI orchestration registry).
+Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0091` are applied (T5 person notifications).
 
 This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1–T4 shipped** under founder override while T0 PARTIAL (`t4` authorised T4 explicitly). Do **not** start T5 (notifications) until asked.
+**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1–T5 shipped** under founder override while T0 PARTIAL (`t5` authorised T5 explicitly). Do **not** start T6 unless asked.
 
 ---
 
@@ -30,11 +30,11 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 
 | Status | Count | Modules |
 | --- | --- | --- |
-| **Done** | 6 | Professional Profile · Professional Intelligence · Experience · Evidence · Observation (consent-gated) · AI Orchestration (T4 trust layer) |
+| **Done** | 7 | Professional Profile · Professional Intelligence · Experience · Evidence · Observation (consent-gated) · AI Orchestration (T4 trust layer) · Notifications (T5) |
 | **Partial** | 8 | Identity & Access · Organisation · Projects & Work Items · Meetings & Communications · Artefacts & Documents · Capability (thin seed) · Feedback & Reflection · Audit & Analytics |
-| **Missing** | 1 | Notifications (product module) — `pi_review_notifications` + org deliveries exist as stubs only |
+| **Missing** | 0 | — |
 
-**Working counts:** Done **6** · Partial **8** · Missing **1**.
+**Working counts:** Done **7** · Partial **8** · Missing **0**.
 
 Note: **AI Orchestration** moved from Partial → **Done (trust infrastructure)** with T4 registry; full “AI Line Manager product UX” Home remains approval-gated.
 
@@ -162,7 +162,7 @@ sequenceDiagram
 
 ## Technology phases
 
-T1–T4 migrations are shipped through `0090`. Remaining migration numbers below are **indicative plans** starting at the next free number, `0091`; do not apply them until the phase is authorized and implemented.
+T1–T5 migrations are shipped through `0091`. Remaining migration numbers are indicative only; next free number is `0092`.
 
 ### T0 — Pilot seal (signed-in QA + critical debt)
 
@@ -283,15 +283,16 @@ T1–T4 migrations are shipped through `0090`. Remaining migration numbers below
 | **§15 / modules** | Steps 8, 14 area · Notifications · Audit & Analytics |
 | **Charter** | **Authorized now** (pilot ops). Slack/Teams enterprise fan-out already partial — do not expand channels without need. |
 | **Entry** | T4 interactions exist to notify on |
+| **Status (2026-07-25)** | **Shipped** under founder override (`t5`) while T0 signed-in QA remains open. Migration `0091`; consolidated `pi_notifications`; legacy review rows migrated; intervention offers + privacy domain events feed one in-app inbox; `GET/PATCH /api/pi/notifications`; Profile bell/list/mark-read; `pi_ai_usage_daily` security-invoker cost/latency read model. |
 | **Work packages** | `src/lib/notifications/`; in-app inbox on `/profile` or settings; wire review + intervention + privacy events |
-| **Schema** | Indicative `0091_pi_notifications.sql` — `pi_notifications` (user_id, kind, payload, read_at) |
+| **Schema** | `0091_pi_notifications.sql` — `pi_notifications` (contextual href/ref, source/dedupe, delivery audit, read state) + `pi_ai_usage_daily` |
 | **API** | `GET/PATCH /api/pi/notifications` |
 | **Data deltas** | pi_notifications |
 | **Contracts/events** | Consume `pi_domain_events` |
 | **Security** | Self-only |
 | **Testing** | No cross-user leak; idempotent create from events |
 | **Observability** | Notification delivery audit field |
-| **Exit** | Pilot user sees in-app notifications for review/privacy/intervention; ops can query interaction costs |
+| **Exit** | **Met:** pilot user sees in-app notifications for review/privacy/intervention; ops can query interaction costs |
 | **Rollback** | Hide inbox UI; keep table |
 
 ---
@@ -367,7 +368,7 @@ T1–T4 migrations are shipped through `0090`. Remaining migration numbers below
 | Capability | Partial seed | | | **coherence** | | | | E2E | | |
 | Feedback and Reflection | Partial | | | | | | notify | | | |
 | AI Orchestration | Done (T4) | | | | | **registry ✓** | usage UI | | | |
-| Notifications | Missing module | | | | | | **module** | | | |
+| Notifications | Done (T5) | | | | | | **module ✓** | | | |
 | Audit and Analytics | Partial | QA notes | privacy audit | fallback metrics | | cost logs | inbox ops | CI | | P8 audit |
 
 \*Meetings/messages PI bridge only if it hardens evidence honesty; not mission-control.
@@ -420,7 +421,7 @@ T1–T4 migrations are shipped through `0090`. Remaining migration numbers below
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free numbers start at **`0091`** (head `0090`).
+- Additive migrations only for person PI; next free number is **`0092`** (head `0091`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.
