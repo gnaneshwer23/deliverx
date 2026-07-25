@@ -111,7 +111,7 @@ export async function loadOrgStructure(
 export async function createDepartment(
   supabase: Db,
   actor: OrgActor,
-  input: { name: unknown; description?: unknown; parentDepartmentId?: unknown },
+  input: { name?: unknown; description?: unknown; parentDepartmentId?: unknown },
 ): Promise<Department> {
   assertOrgAdmin(actor);
   const name = normalizeOrgUnitName(input.name);
@@ -144,7 +144,7 @@ export async function createDepartment(
 export async function createTeam(
   supabase: Db,
   actor: OrgActor,
-  input: { name: unknown; description?: unknown; departmentId?: unknown },
+  input: { name?: unknown; description?: unknown; departmentId?: unknown },
 ): Promise<Team> {
   assertOrgAdmin(actor);
   const name = normalizeOrgUnitName(input.name);
