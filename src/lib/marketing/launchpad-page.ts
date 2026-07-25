@@ -8,9 +8,9 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
   stage: tier.stage,
   brandEyebrow: `DeliverX · ${tier.stage}`,
   name: "Launchpad",
-  heroTitle: "Turn your experience into opportunities.",
+  heroTitle: "Turn evidence into opportunity.",
   promise:
-    "Package your work, sharpen how you speak about it, and walk into interviews with clarity — Career Twin, portfolio and mock interviews in one career system.",
+    "Career Intelligence for product professionals — role readiness, evidence-backed packaging and interview prep that cite what you can prove and what you cannot.",
   primaryCta: {
     href: tier.ctaHref,
     label: "Start Your Career Journey",

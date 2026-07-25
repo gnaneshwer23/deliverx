@@ -1,4 +1,5 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { generateMediFlowExperience } from "@/lib/experience-sim/mediflow";
 import { calculateCareerScore } from "@/lib/xperience/score";
 
 export type CandidateProfileInput = {
@@ -15,19 +16,6 @@ export type CandidateProfileInput = {
   selectedSkill?: string;
   confidence?: string;
   startTimeline?: string;
-};
-
-const DEFAULT_COMPANY_STATE = {
-  revenueProtected: 120000,
-  customerSatisfaction: 78,
-  engineeringCapacity: 64,
-  roadmapHealth: 82,
-  stakeholderTrust: {
-    Sarah: 91,
-    Maya: 72,
-    James: 48,
-    Priya: 85,
-  },
 };
 
 function careerScoreFromProfile(input: CandidateProfileInput) {
@@ -117,28 +105,48 @@ export async function startExperience(
     };
   }
 
+  const simState = generateMediFlowExperience({
+    userRole: input.targetRole || input.role || "Associate Product Manager",
+    personalisedBy: {
+      workStyle: input.workStyle,
+      learningStyle: input.learningStyle,
+      confidence: input.confidence,
+      targetRole: input.targetRole || input.role,
+    },
+  });
+
   const { data: enrolment, error } = await supabase
     .from("xperience_enrolments")
     .insert({
       user_id: user.id,
       profile_id: profileResult.profileId,
-      company_name: "MediFlow",
-      day: 1,
+      company_name: simState.company.name,
+      day: simState.day,
       status: "ACTIVE",
-      state: {
-        ...DEFAULT_COMPANY_STATE,
-        personalisedBy: {
-          workStyle: input.workStyle,
-          learningStyle: input.learningStyle,
-          confidence: input.confidence,
-          targetRole: input.targetRole || input.role,
-        },
-      },
+      lifecycle_phase: simState.lifecycle,
+      state: simState,
     })
-    .select("id, company_name, day, status, state")
+    .select("id, company_name, day, status, state, lifecycle_phase")
     .single();
 
   if (error) throw error;
+
+  try {
+    await supabase.from("experience_sim_events").insert({
+      enrolment_id: enrolment.id,
+      user_id: user.id,
+      event_type: "ExperienceStarted",
+      payload: {
+        companyId: simState.company.id,
+        projectId: simState.project.id,
+        userRole: simState.userRole,
+      },
+      user_contribution: { profileId: profileResult.profileId },
+      ai_contribution: { generators: ["company", "project", "team"] },
+    });
+  } catch (err) {
+    console.error("[xperience] ExperienceStarted event failed", err);
+  }
 
   return {
     mode: "database" as const,
@@ -179,8 +187,7 @@ export async function recordDecision(
 
   if (decisionError) throw decisionError;
 
-  const status =
-    input.evidenceScore >= 70 ? "platform_verified" : "supported";
+  const status = "supported";
 
   const { data: evidence, error: evidenceError } = await supabase
     .from("xperience_evidence")
@@ -203,10 +210,55 @@ export async function recordDecision(
 
   if (evidenceError) throw evidenceError;
 
+  // Dual-write into Evidence Ledger (SoT). Scores on xp rows are NOT ledger verification.
+  let ledgerEvidenceId: string | null = null;
+  try {
+    const { appendEvidence } = await import("@/lib/evidence-ledger/append");
+    const ledger = await appendEvidence(supabase, {
+      userId: user.id,
+      sourceType: "decision",
+      category: "practice",
+      title: input.choiceLabel,
+      summary: input.rationale || "Experience decision capture",
+      rawContent: {
+        choiceId: input.choiceId,
+        rationale: input.rationale || "No rationale provided.",
+        effects: input.effects,
+        competency: "Stakeholder judgement",
+        experienceScoreHint: input.evidenceScore,
+        note: "experienceScoreHint is not verification status",
+      },
+      sourceRecordType: "xperience_decisions",
+      sourceRecordId: decision.id as string,
+      idempotencyKey: `xperience-decision:${decision.id}`,
+      confidentiality: "private",
+      consentStatus: "analysis_allowed",
+      provenance: {
+        actorType: "user",
+        actorUserId: user.id,
+        userContribution: {
+          choiceId: input.choiceId,
+          choiceLabel: input.choiceLabel,
+          rationale: input.rationale ?? null,
+        },
+        aiContribution: {},
+        rawRef: { enrolmentId: input.enrolmentId ?? null },
+      },
+    });
+    ledgerEvidenceId = ledger.evidenceId;
+    await supabase
+      .from("xperience_evidence")
+      .update({ ledger_evidence_id: ledger.evidenceId })
+      .eq("id", evidence.id);
+  } catch (err) {
+    console.error("[xperience] ledger dual-write failed", err);
+  }
+
   return {
     mode: "database" as const,
     decisionId: decision.id as string,
     evidenceId: evidence.id as string,
+    ledgerEvidenceId,
     persisted: true,
   };
 }
@@ -220,7 +272,7 @@ export async function getXperienceSession(supabase: SupabaseClient, userId: stri
       .maybeSingle(),
     supabase
       .from("xperience_enrolments")
-      .select("id, company_name, day, status, state, created_at")
+      .select("id, company_name, day, status, state, lifecycle_phase, created_at")
       .eq("user_id", userId)
       .eq("status", "ACTIVE")
       .order("created_at", { ascending: false })

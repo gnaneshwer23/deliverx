@@ -1,6 +1,12 @@
 import { redirect } from "next/navigation";
-import { governanceTabHref } from "@/lib/governance-tabs";
 
-export default function WorkspaceRaidRedirectPage() {
-  redirect(governanceTabHref("risks"));
+/** Retired path — Professional Workspace Risks module is canonical. */
+export default async function WorkspaceRaidRedirectPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ project?: string }>;
+}) {
+  const params = await searchParams;
+  const q = params.project ? `?project=${encodeURIComponent(params.project)}` : "";
+  redirect(`/workspace/risks${q}`);
 }

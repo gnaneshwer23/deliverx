@@ -7,7 +7,14 @@ export function parseSuiteProduct(raw: string | null | undefined): SuiteProduct 
   const value = raw?.toLowerCase().trim();
   if (value === "xperience") return "xperience";
   if (value === "launchpad") return "launchpad";
-  if (value === "team-copilot" || value === "team_copilot") return "team-copilot";
+  if (
+    value === "team-copilot" ||
+    value === "team_copilot" ||
+    value === "professional-workspace" ||
+    value === "workspace"
+  ) {
+    return "team-copilot";
+  }
   if (value === "bundle" || value === "career-bundle" || value === "complete") return "bundle";
   return null;
 }
@@ -19,7 +26,7 @@ export function productDisplayName(product: SuiteProduct): string {
     case "launchpad":
       return "Launchpad";
     case "team-copilot":
-      return "Team Co-pilot";
+      return "Professional Workspace";
     case "bundle":
       return "Complete Journey";
   }
@@ -32,7 +39,7 @@ export function productMarketingPath(product: SuiteProduct): string {
     case "launchpad":
       return "/launchpad";
     case "team-copilot":
-      return "/team-copilot";
+      return "/professional-workspace";
     case "bundle":
       return "/pricing#bundle";
   }
@@ -42,10 +49,9 @@ export function productMarketingPath(product: SuiteProduct): string {
  * Where to send the user after signup / email confirm.
  * Invite/join always win over product intent.
  *
- * Hub routing:
- * - bundle / no product → /hub (ecosystem home)
- * - xperience / launchpad → their apps
+ * - xperience / launchpad / bundle → /onboarding/profile (PI progressive setup)
  * - team-copilot → organisation onboarding (then workspace)
+ * - no product → /hub
  */
 export function postSignupPath(options: {
   product?: SuiteProduct | null;
@@ -54,7 +60,7 @@ export function postSignupPath(options: {
   joinToken?: string | null;
   preselectedRole?: DbRole | null;
 }): string {
-  const { product, intent, invite, joinToken, preselectedRole } = options;
+  const { product, invite, joinToken, preselectedRole } = options;
 
   if (joinToken) {
     return `/join?token=${encodeURIComponent(joinToken)}`;
@@ -63,27 +69,17 @@ export function postSignupPath(options: {
     return `/invite/${encodeURIComponent(invite)}`;
   }
 
-  if (product === "xperience") {
-    return "/experience/app";
-  }
-
-  if (product === "launchpad") {
-    const params = new URLSearchParams();
-    if (intent) params.set("intent", intent);
-    const qs = params.toString();
-    return qs ? `/launchpad/app?${qs}` : "/launchpad/app";
+  // Career suite products establish Professional Intelligence posture first.
+  if (product === "xperience" || product === "launchpad" || product === "bundle") {
+    return "/onboarding/profile";
   }
 
   if (product === "team-copilot") {
     return appendRoleToPath("/onboarding/organisation", preselectedRole ?? null);
   }
 
-  // bundle or no strong product intent → DeliverX Hub
-  if (product === "bundle" || !product) {
-    return "/hub";
-  }
-
-  return appendRoleToPath("/onboarding/organisation", preselectedRole ?? null);
+  // No product intent → Hub (existing behaviour); PI setup available from Hub later
+  return "/hub";
 }
 
 export function signupCopy(product: SuiteProduct | null): {
@@ -110,17 +106,17 @@ export function signupCopy(product: SuiteProduct | null): {
       };
     case "team-copilot":
       return {
-        title: "Create your Team Co-pilot account",
+        title: "Create your Professional Workspace account",
         subtitle:
           "Succeed in the role — £500 for 3 months. We’ll issue login credentials after signup.",
         banner:
-          "Starting Team Co-pilot — Deliver products with confidence (£500 · 3 months).",
+          "Starting Professional Workspace — Deliver with AI teammates (£500 · 3 months).",
       };
     case "bundle":
       return {
         title: "Create your DeliverX account",
         subtitle:
-          "Complete Journey — £800 for 12 months across Experience, Launchpad and Team Co-pilot.",
+          "Complete Journey — £800 for 12 months across Experience, Launchpad and Professional Workspace.",
         banner:
           "Starting the Complete Journey — Experience. Opportunity. Delivery. (£800 · 12 months).",
       };

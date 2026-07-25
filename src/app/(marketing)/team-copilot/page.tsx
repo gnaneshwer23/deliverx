@@ -1,18 +1,6 @@
-import type { Metadata } from "next";
-import { ProductMarketingPage } from "@/components/marketing/product-marketing-page";
-import { TEAM_COPILOT_PAGE } from "@/lib/marketing/team-copilot-data";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Team Co-pilot — Deliver products with confidence | DeliverX",
-  description:
-    "Collaborative Product Delivery Operating System for real teams — PM, delivery, eng, QA and leadership in one workspace. £500 for 3 months — Succeed in the role.",
-  openGraph: {
-    title: "Team Co-pilot — Succeed in the role | DeliverX",
-    description:
-      "Deliver products with confidence. £500 · 3 months access.",
-  },
-};
-
-export default function TeamCopilotPage() {
-  return <ProductMarketingPage content={TEAM_COPILOT_PAGE} />;
+/** Retired marketing path — Professional Workspace is canonical. */
+export default function TeamCopilotRedirectPage() {
+  redirect("/professional-workspace");
 }

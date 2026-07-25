@@ -7,6 +7,8 @@ describe("parseSuiteProduct", () => {
     expect(parseSuiteProduct("launchpad")).toBe("launchpad");
     expect(parseSuiteProduct("team-copilot")).toBe("team-copilot");
     expect(parseSuiteProduct("team_copilot")).toBe("team-copilot");
+    expect(parseSuiteProduct("professional-workspace")).toBe("team-copilot");
+    expect(parseSuiteProduct("workspace")).toBe("team-copilot");
     expect(parseSuiteProduct("bundle")).toBe("bundle");
   });
 
@@ -27,12 +29,12 @@ describe("postSignupPath", () => {
   });
 
   it("routes product funnels", () => {
-    expect(postSignupPath({ product: "xperience" })).toBe("/experience/app");
-    expect(postSignupPath({ product: "launchpad" })).toBe("/launchpad/app");
+    expect(postSignupPath({ product: "xperience" })).toBe("/onboarding/profile");
+    expect(postSignupPath({ product: "launchpad" })).toBe("/onboarding/profile");
     expect(postSignupPath({ product: "launchpad", intent: "roles" })).toBe(
-      "/launchpad/app?intent=roles",
+      "/onboarding/profile",
     );
-    expect(postSignupPath({ product: "bundle" })).toBe("/hub");
+    expect(postSignupPath({ product: "bundle" })).toBe("/onboarding/profile");
     expect(postSignupPath({ product: "team-copilot" })).toBe("/onboarding/organisation");
     expect(postSignupPath({})).toBe("/hub");
   });

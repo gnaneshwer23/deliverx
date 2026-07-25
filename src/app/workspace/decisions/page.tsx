@@ -1,6 +1,16 @@
-import { redirect } from "next/navigation";
-import { governanceTabHref } from "@/lib/governance-tabs";
+import { ProfessionalModulePage } from "@/components/professional-workspace/module-page";
 
-export default function WorkspaceDecisionsRedirectPage() {
-  redirect(governanceTabHref("decisions"));
+export default async function WorkspaceDecisionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ project?: string }>;
+}) {
+  return (
+    <ProfessionalModulePage
+      moduleId="decisions"
+      searchParams={searchParams}
+      legacyHref="/workspace/governance?tab=decisions"
+      legacyLabel="Governance · Decisions"
+    />
+  );
 }

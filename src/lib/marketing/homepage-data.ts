@@ -62,15 +62,15 @@ export const HOME_PRODUCTS = [
   },
   {
     id: "team-copilot",
-    name: "Team Co-pilot",
+    name: "Professional Workspace",
     stage: "Succeed in the role",
     accent: "blue" as const,
-    href: "/team-copilot",
+    href: "/professional-workspace",
     signupHref: TEAM_COPILOT_SIGNUP_HREF,
     sentence:
-      "Collaborate with product teams in an AI-powered delivery workspace and ship with confidence.",
-    bullets: ["AI Workspace", "Product Delivery", "Team Collaboration"],
-    cta: "Explore Team Co-pilot",
+      "Work with role-based AI teammates in a Professional Workspace — AI drafts; you decide and submit.",
+    bullets: ["Shared shell", "AI teammates", "Evidence Review"],
+    cta: "Explore Professional Workspace",
   },
 ] as const;
 
@@ -113,7 +113,7 @@ export const JOURNEY_NODES = [
   {
     id: "job",
     label: "Real Job",
-    detail: "Carry the same delivery habits into your role with Team Co-pilot.",
+    detail: "Carry the same delivery habits into your role with Professional Workspace.",
   },
 ] as const;
 
@@ -220,7 +220,7 @@ export const HOME_PRICING = [
     stage: CAREER_BUNDLE.stage,
     price: CAREER_BUNDLE.price,
     cadence: CAREER_BUNDLE.cadence,
-    summary: "Experience + Launchpad + Team Co-pilot for 12 months.",
+    summary: "Experience + Launchpad + Professional Workspace for 12 months.",
     href: "/pricing#bundle",
     ctaHref: BUNDLE_SIGNUP_HREF,
     featured: true,
@@ -246,27 +246,27 @@ export const DEMO_STORIES = [
   {
     archetype: "Senior PM",
     journey:
-      "Used Launchpad to refresh interview narratives, then Team Co-pilot to raise delivery clarity with engineering and leadership.",
+      "Used Launchpad to refresh interview narratives, then Professional Workspace to raise delivery clarity with engineering and leadership.",
   },
   {
     archetype: "Engineering Manager",
     journey:
-      "Brought Team Co-pilot into the squad for dependency visibility, risk tracking and shared sprint confidence across roles.",
+      "Brought Professional Workspace into the squad for dependency visibility, risk tracking and shared sprint confidence across roles.",
   },
 ] as const;
 
 export const HOME_FAQ = [
   {
     q: "What is DeliverX?",
-    a: "DeliverX is an AI Product Experience Company — a complete career intelligence platform spanning Experience, Launchpad and Team Co-pilot.",
+    a: "DeliverX is an AI Product Experience Company — a complete career intelligence platform spanning Experience, Launchpad and Professional Workspace.",
   },
   {
     q: "Do I need prior Product Management experience?",
-    a: "No. Experience is designed to build practical experience inside AI companies. Launchpad then helps you present that work; Team Co-pilot supports you once you're in a role.",
+    a: "No. Experience is designed to build practical experience inside AI companies. Launchpad then helps you present that work; Professional Workspace supports you once you're in a role.",
   },
   {
     q: "Can I buy just one product?",
-    a: "Yes. Choose Experience (£500), Launchpad (£250) or Team Co-pilot (£500) — or take the Complete Journey (£800) for 12 months across all three.",
+    a: "Yes. Choose Experience (£500), Launchpad (£250) or Professional Workspace (£500) — or take the Complete Journey (£800) for 12 months across all three.",
   },
   {
     q: "Is the AI company experience realistic?",

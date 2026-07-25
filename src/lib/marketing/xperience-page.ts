@@ -80,9 +80,9 @@ export const XPERIENCE_PAGE: ProductPageContent = {
           "No. Experience is designed for career switchers, graduates and aspiring Product Managers who need practical experience before applying. Coaching and feedback guide you as you work.",
       },
       {
-        question: "How does this connect to Launchpad and Team Co-pilot?",
+        question: "How does this connect to Launchpad and Professional Workspace?",
         answer:
-          "Experience builds the experience. Launchpad helps you present it and land opportunities. Team Co-pilot supports you once you are delivering in a real organisation. You can buy stages alone or take the Complete Journey.",
+          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. You can buy stages alone or take the Complete Journey.",
       },
       {
         question: "What do I get at the end of three months?",
@@ -106,7 +106,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   finalCta: {
     title: "Ready to build the experience?",
     subtitle:
-      "Start Experience now — or take the Complete Journey and continue into Launchpad and Team Co-pilot.",
+      "Start Experience now — or take the Complete Journey and continue into Launchpad and Professional Workspace.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
     secondaryLabel: "Get the Complete Journey",

@@ -10,6 +10,7 @@ import { AiDrawer } from "@/components/dx/ai-drawer";
 import { AiDrawerProvider } from "@/components/dx/ai-drawer-context";
 import { AppNav } from "@/components/dx/app-nav";
 import type { DeliveryAlert } from "@/services/alerts";
+import { professionalWorkspaceNav } from "@/config/professional-workspace-nav";
 import {
   workspaceDeliveryNav,
   workspaceEcosystemNav,
@@ -291,6 +292,13 @@ function WorkspaceSidebarContent({
   return (
     <>
       <div className="flex-1 overflow-y-auto">
+        <NavSection
+          label="Professional Workspace"
+          items={professionalWorkspaceNav}
+          pathname={pathname}
+          userRole={userRole}
+          onNavigate={onNavigate}
+        />
         <CoreNavSection
           userRole={userRole}
           pathname={pathname}
@@ -299,7 +307,7 @@ function WorkspaceSidebarContent({
           onNavigate={onNavigate}
         />
         <NavSection
-          label="Workspace"
+          label="Delivery"
           items={workspaceDeliveryNav}
           pathname={pathname}
           userRole={userRole}

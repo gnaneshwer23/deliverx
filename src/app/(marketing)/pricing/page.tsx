@@ -30,7 +30,7 @@ import { mktClass } from "@/lib/marketing/landing-theme";
 export const metadata: Metadata = {
   title: "Pricing — Complete Journey | DeliverX",
   description:
-    "Experience £500, Launchpad £250, Team Co-pilot £500, or the Complete Journey at £800 for 12 months. Build the experience → Land the opportunity → Succeed in the role.",
+    "Experience £500, Launchpad £250, Professional Workspace £500, or the Complete Journey at £800 for 12 months. Build the experience → Land the opportunity → Succeed in the role.",
   openGraph: {
     title: "DeliverX Pricing",
     description: CAREER_PROGRESSION_LINE,
@@ -150,7 +150,7 @@ export default function PricingPage() {
                 <MarketingHeroItem>
                   <p className="mx-auto mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
                     Buy the stage you need — or take the Complete Journey at £800 for 12 months across
-                    Experience, Launchpad and Team Co-pilot.
+                    Experience, Launchpad and Professional Workspace.
                   </p>
                 </MarketingHeroItem>
               </div>
@@ -185,7 +185,7 @@ export default function PricingPage() {
                 align="center"
                 label="Complete Journey"
                 title="Experience. Opportunity. Delivery."
-                subtitle="Everything in Experience, Launchpad and Team Co-pilot — with 12 months of continuous access."
+                subtitle="Everything in Experience, Launchpad and Professional Workspace — with 12 months of continuous access."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -271,7 +271,7 @@ export default function PricingPage() {
       <MarketingFooter
         cta={{
           title: "Start your career journey",
-          subtitle: "£800 Complete Journey · or choose Experience, Launchpad or Team Co-pilot.",
+          subtitle: "£800 Complete Journey · or choose Experience, Launchpad or Professional Workspace.",
           href: CAREER_BUNDLE.ctaHref,
           label: "Complete Journey",
         }}

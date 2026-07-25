@@ -31,10 +31,10 @@ const RESOURCES = [
     label: "Explore Launchpad",
   },
   {
-    title: "Deliver with Team Co-pilot",
+    title: "Deliver with Professional Workspace",
     body: "Collaborate across Product, Engineering, QA and leadership in one AI delivery workspace.",
-    href: "/team-copilot",
-    label: "Explore Team Co-pilot",
+    href: "/professional-workspace",
+    label: "Explore Professional Workspace",
   },
   {
     title: "Pricing & Complete Journey",

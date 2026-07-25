@@ -13,7 +13,7 @@ export { COMPANY_MISSION, COMPANY_POSITIONING };
 export const PRODUCT_LINKS = [
   { href: "/experience", label: "Experience", stage: "Build the experience" },
   { href: "/launchpad", label: "Launchpad", stage: "Land the opportunity" },
-  { href: "/team-copilot", label: "Team Co-pilot", stage: "Succeed in the role" },
+  { href: "/professional-workspace", label: "Professional Workspace", stage: "Succeed in the role" },
 ] as const;
 
 /** Flat nav used on product pages (Home + siblings + Pricing) */
@@ -55,20 +55,20 @@ export const SUITE_PRODUCTS = [
   },
   {
     id: "team-copilot",
-    name: "Team Co-pilot",
+    name: "Professional Workspace",
     stage: "Succeed in the role",
-    href: "/team-copilot",
+    href: "/professional-workspace",
     promise:
-      "Collaborate with Product, Engineering, QA and leadership in one AI delivery workspace — plan, decide and ship with shared truth.",
-    detail: "£500 · 3 months. Shared workspace across the whole delivery team.",
-    cta: "Explore Team Co-pilot",
+      "Collaborate with role-based AI teammates in one Professional Workspace — meetings, stakeholders, artefacts, decisions and evidence.",
+    detail: "£500 · 3 months. AI drafts; humans decide and submit.",
+    cta: "Explore Professional Workspace",
   },
 ] as const;
 
 export const SUITE_LIFECYCLE = [
   { name: "Experience", line: "Build the experience", outcome: "Practical PM capability and evidence" },
   { name: "Launchpad", line: "Land the opportunity", outcome: "Interviews, offers and readiness" },
-  { name: "Team Co-pilot", line: "Succeed in the role", outcome: "Confident delivery in real teams" },
+  { name: "Professional Workspace", line: "Succeed in the role", outcome: "Confident delivery with AI teammates" },
 ] as const;
 
 export const SUITE_DIFFERENCE = [

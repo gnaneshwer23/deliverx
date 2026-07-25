@@ -17,6 +17,7 @@ export const CAREER_STORY_LINE =
 export const XPERIENCE_SIGNUP_HREF = "/signup?product=xperience";
 export const LAUNCHPAD_SIGNUP_HREF = "/signup?product=launchpad";
 export const TEAM_COPILOT_SIGNUP_HREF = "/signup?product=team-copilot";
+export const PROFESSIONAL_WORKSPACE_SIGNUP_HREF = "/signup?product=professional-workspace";
 export const BUNDLE_SIGNUP_HREF = "/signup?product=bundle";
 
 export const XPERIENCE_INCLUDES = [
@@ -63,7 +64,13 @@ export const LAUNCHPAD_INCLUDES = [
 ] as const;
 
 export const TEAM_COPILOT_INCLUDES = [
-  "AI Product Delivery Workspace",
+  "Professional Workspace shared shell",
+  "Experience + delivery project switcher",
+  "Role-based AI teammates (draft only)",
+  "Meetings, Inbox, Tasks, Artefacts",
+  "Decisions, Risks, Timeline, Insights",
+  "Coach and Evidence Review",
+  "Contribution trail (authored → outcome)",
   "Product Manager dashboard",
   "Programme & Project Manager dashboard",
   "Business Analyst workspace",
@@ -93,7 +100,7 @@ export const TEAM_COPILOT_INCLUDES = [
 export const BUNDLE_INCLUDES = [
   "Full Experience Platform",
   "Full Launchpad Platform",
-  "Full Team Co-pilot Platform",
+  "Full Professional Workspace",
   "Continuous access for 12 months",
   "Unlimited AI coaching",
   "Continuous Career Twin updates",
@@ -163,20 +170,20 @@ export const CAREER_TIERS: readonly CareerTier[] = [
   },
   {
     id: "team-copilot",
-    productName: "Team Co-pilot",
+    productName: "Professional Workspace",
     stage: "Succeed in the role",
-    designedFor: "Product teams delivering in real organisations",
-    headline: "Deliver products with confidence",
+    designedFor: "Professionals delivering multidisciplinary work with AI teammates",
+    headline: "Deliver with AI teammates — you own the work",
     price: "£500",
     cadence: "3 Months Access",
     summary:
-      "An AI-powered collaborative Product Delivery Operating System for modern product teams — coordinate people, projects and delivery with intelligent insights.",
+      "A Professional Workspace for multidisciplinary delivery — collaborate with role-based AI teammates, run meetings, manage stakeholders, create artefacts, decide, and generate observable evidence. AI drafts; humans submit.",
     idealFor:
       "Product Managers, Delivery Managers, Project Managers, Business Analysts and cross-functional product teams.",
     includes: TEAM_COPILOT_INCLUDES,
-    cta: "Start Collaborating",
-    ctaHref: TEAM_COPILOT_SIGNUP_HREF,
-    href: "/team-copilot",
+    cta: "Open Professional Workspace",
+    ctaHref: PROFESSIONAL_WORKSPACE_SIGNUP_HREF,
+    href: "/professional-workspace",
   },
 ] as const;
 
@@ -185,7 +192,7 @@ export const CAREER_BUNDLE: CareerTier = {
   productName: "Complete Journey",
   stage: "The full path",
   designedFor: "People who want experience, opportunity and delivery in one commitment",
-  headline: "Everything in Experience, Launchpad and Team Co-pilot",
+  headline: "Everything in Experience, Launchpad and Professional Workspace",
   price: "£800",
   cadence: "12 Months Access",
   summary:

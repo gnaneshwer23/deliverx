@@ -10,12 +10,22 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/deliverx",
-        destination: "/team-copilot",
+        destination: "/professional-workspace",
         permanent: true,
       },
       {
         source: "/deliverx/:path*",
-        destination: "/team-copilot/:path*",
+        destination: "/professional-workspace/:path*",
+        permanent: true,
+      },
+      {
+        source: "/team-copilot",
+        destination: "/professional-workspace",
+        permanent: true,
+      },
+      {
+        source: "/team-copilot/:path*",
+        destination: "/professional-workspace/:path*",
         permanent: true,
       },
       {

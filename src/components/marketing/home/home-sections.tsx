@@ -917,7 +917,7 @@ export function HomeTeamCopilotPreview() {
       <MarketingContainer className="!max-w-[1180px]">
         <MarketingReveal>
           <header className="mx-auto max-w-2xl text-center">
-            <p className={`${mktClass.label} !text-white/45`}>Team Co-pilot</p>
+            <p className={`${mktClass.label} !text-white/45`}>Professional Workspace</p>
             <h2
               className={`mt-3.5 text-[clamp(1.875rem,4.2vw,2.875rem)] leading-[1.06] tracking-[-0.025em] text-white ${mktClass.serif}`}
             >
@@ -946,8 +946,8 @@ export function HomeTeamCopilotPreview() {
 
         <MarketingReveal delay={0.1}>
           <div className="mt-10 text-center">
-            <MarketingButtonLink href="/team-copilot" variant="ctaLight">
-              Explore Team Co-pilot
+            <MarketingButtonLink href="/professional-workspace" variant="ctaLight">
+              Explore Professional Workspace
             </MarketingButtonLink>
           </div>
         </MarketingReveal>

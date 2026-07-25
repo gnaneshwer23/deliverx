@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
+import { applyExperienceDecision } from "@/lib/experience-sim/runtime";
 import { createClient } from "@/lib/supabase/server";
-import { applyScenarioDecision } from "@/lib/xperience/score";
-import { recordDecision } from "@/lib/xperience/store";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -30,49 +29,65 @@ export async function POST(request: Request) {
     choice?: {
       id?: string;
       label?: string;
-      impact?: { trust?: number; delivery?: number; clarity?: number };
     };
   };
 
+  const enrolmentId = String(data.enrolmentId ?? "").trim();
   const choiceId = String(data.choice?.id ?? "").trim();
   const choiceLabel = String(data.choice?.label ?? "").trim();
-  if (!choiceId || !choiceLabel) {
-    return NextResponse.json({ error: "Choice required" }, { status: 400 });
+  if (!enrolmentId || !choiceId || !choiceLabel) {
+    return NextResponse.json(
+      { error: "enrolmentId and choice required" },
+      { status: 400 },
+    );
   }
 
-  const impact = {
-    trust: Number(data.choice?.impact?.trust ?? 0),
-    delivery: Number(data.choice?.impact?.delivery ?? 0),
-    clarity: Number(data.choice?.impact?.clarity ?? 0),
-  };
-
-  const result = applyScenarioDecision({
-    choice: { id: choiceId, label: choiceLabel, impact },
-    rationale: data.rationale,
-  });
-
   try {
-    const evidenceRecord = await recordDecision(supabase, user, {
-      enrolmentId: data.enrolmentId,
+    const result = await applyExperienceDecision(supabase, user, {
+      enrolmentId,
       choiceId,
       choiceLabel,
       rationale: data.rationale,
-      effects: impact,
-      evidenceScore: result.evidenceScore,
     });
 
+    if (!result.ok) {
+      return NextResponse.json(
+        { error: result.error, state: result.state },
+        { status: 409 },
+      );
+    }
+
+    const summary =
+      result.state.consequences.at(-1)?.summary ??
+      "Decision applied to the live simulation.";
+
     return NextResponse.json({
-      ...result,
-      evidenceRecord,
+      ok: true,
+      summary,
+      effects: result.effects,
+      coachingHint: result.coachingHint,
+      evidenceScore: result.evidenceRecord
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              50 +
+                Number(result.effects.trust ?? 0) +
+                Number(result.effects.delivery ?? 0) +
+                Number(result.effects.clarity ?? 0),
+            ),
+          )
+        : null,
+      evidenceRecord: result.evidenceRecord,
+      state: result.state,
+      // Explicit: Experience never assigns capability
+      capabilityAssigned: false,
     });
   } catch (error) {
     console.error("Experience decision failed", error);
     return NextResponse.json(
-      {
-        ...result,
-        evidenceRecord: { mode: "demo", persisted: false },
-      },
-      { status: 200 },
+      { error: "Decision could not be applied" },
+      { status: 500 },
     );
   }
 }

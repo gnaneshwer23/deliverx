@@ -11,7 +11,7 @@ import { MarketingLogo } from "@/components/marketing/marketing-logo";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { marketingFontClassName, mktSans } from "@/lib/marketing/marketing-fonts";
 import { createClient } from "@/lib/supabase/server";
-import { parseSuiteProduct } from "@/lib/marketing/product-intent";
+import { parseSuiteProduct, productDisplayName } from "@/lib/marketing/product-intent";
 
 export const metadata: Metadata = {
   title: "DeliverX Hub",
@@ -30,21 +30,37 @@ const HUB_JOURNEY = [
     cta: "Open Experience",
   },
   {
+    id: "evidence",
+    stage: "See what you demonstrated",
+    name: "Evidence & ScoreRun",
+    progress: "Ledger evidence → capability projection",
+    href: "/workspace/evidence",
+    cta: "Open Evidence",
+  },
+  {
     id: "career",
     stage: "Land the opportunity",
     name: "Launchpad",
-    progress: "Continue your journey",
+    progress: "Career Intelligence — evidence-backed readiness",
     href: "/launchpad/app",
-    cta: "Open Career",
+    cta: "Open Career Intelligence",
+  },
+  {
+    id: "portfolio",
+    stage: "Evidence-linked record",
+    name: "Verified Portfolio",
+    progress: "Package claims with evidence",
+    href: "/portfolio",
+    cta: "Open Portfolio",
   },
   {
     id: "team",
     stage: "Succeed in the role",
-    name: "Team Co-pilot",
+    name: "Professional Workspace",
     progress: "Continue your journey",
-    href: "/workspace/dashboard",
+    href: "/workspace",
     onboardingHref: "/onboarding/organisation",
-    cta: "Open Team",
+    cta: "Open Workspace",
   },
 ] as const;
 
@@ -115,13 +131,7 @@ export default async function HubPage() {
                 <p className="mt-3 text-[0.8125rem] text-[var(--mkt-text3)]">
                   Signed up for{" "}
                   <span className="text-[var(--mkt-text2)]">
-                    {product === "bundle"
-                      ? "Complete Journey"
-                      : product === "team-copilot"
-                        ? "Team Co-pilot"
-                        : product === "xperience"
-                          ? "Experience"
-                          : "Launchpad"}
+                    {productDisplayName(product)}
                   </span>
                   .
                 </p>

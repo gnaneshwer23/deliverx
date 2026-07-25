@@ -4,7 +4,7 @@ import { parseSuiteProduct, type SuiteProduct } from "@/lib/marketing/product-in
 export const XPERIENCE_APP_PATH = "/experience/app";
 export const XPERIENCE_START_PATH = "/start/experience";
 
-/** Suite products that should use the Experience app surface (not Team Co-pilot org onboarding). */
+/** Suite products that should use the Experience app surface (not Professional Workspace org onboarding). */
 export function isXperienceProduct(product: SuiteProduct | null | undefined): boolean {
   return product === "xperience";
 }

@@ -3,6 +3,7 @@ import { listProjectsForOrg } from "@/services/portfolio";
 
 export const dynamic = "force-dynamic";
 
+/** Legacy AI Workspace surface — Coach module is the Professional Workspace entry. */
 export default async function AssistantPage() {
   const projects = await listProjectsForOrg();
 

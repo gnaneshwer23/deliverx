@@ -47,7 +47,7 @@ export type WorkspaceNavItem = {
 };
 
 export const workspaceCoreNav: WorkspaceNavItem[] = [
-  { href: "/workspace/assistant", label: "AI Workspace", icon: Cpu, id: "ws" },
+  { href: "/workspace/assistant", label: "Coach (AI Workspace)", icon: Cpu, id: "ws" },
   { href: "/workspace/dashboard", label: "Command Centre", icon: LayoutDashboard, id: "dash" },
   { href: "/workspace/ba", label: "BA Mission Control", icon: NotebookPen, id: "ba" },
   { href: "/workspace/product", label: "Product Mission Control", icon: TrendingUp, id: "product" },

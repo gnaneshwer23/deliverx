@@ -11,6 +11,11 @@ import {
   XPERIENCE_APP_PATH,
   XPERIENCE_START_PATH,
 } from "@/lib/xperience/auth";
+import {
+  getPiOnboardingSession,
+  needsPiOnboarding,
+} from "@/lib/pi-onboarding/store";
+import { PI_ONBOARDING_PATH } from "@/lib/pi-onboarding/types";
 
 const HUB_PATH = "/hub";
 
@@ -75,12 +80,29 @@ export async function resolveAuthenticatedPath(
 
   const product = suiteProductFromUser(sessionUser);
 
-  // Explicit hub deep link
+  // Explicit hub deep link (still allow after PI onboarding)
   if (safeNext && isHubDestination(safeNext)) {
     return HUB_PATH;
   }
 
-  // Experience product users skip Team Co-pilot org onboarding.
+  // Allow explicit PI onboarding deep link
+  if (
+    safeNext &&
+    (safeNext === PI_ONBOARDING_PATH ||
+      safeNext.startsWith(`${PI_ONBOARDING_PATH}?`))
+  ) {
+    return PI_ONBOARDING_PATH;
+  }
+
+  // Career products: complete Professional Intelligence setup before product apps.
+  if (isXperienceUser(sessionUser) || isLaunchpadUser(sessionUser) || product === "bundle") {
+    const piSession = await getPiOnboardingSession(supabase, id);
+    if (needsPiOnboarding(piSession, product)) {
+      return PI_ONBOARDING_PATH;
+    }
+  }
+
+  // Experience product users skip Professional Workspace org onboarding.
   if (isXperienceUser(sessionUser)) {
     if (safeNext && isXperienceDestination(safeNext)) {
       return safeNext === XPERIENCE_START_PATH ||
@@ -94,7 +116,7 @@ export async function resolveAuthenticatedPath(
     return XPERIENCE_APP_PATH;
   }
 
-  // Launchpad product users skip Team Co-pilot org onboarding.
+  // Launchpad product users skip Professional Workspace org onboarding.
   if (isLaunchpadUser(sessionUser)) {
     if (safeNext && isLaunchpadDestination(safeNext)) {
       if (

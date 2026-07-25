@@ -4,7 +4,7 @@ import { parseSuiteProduct, type SuiteProduct } from "@/lib/marketing/product-in
 export const LAUNCHPAD_APP_PATH = "/launchpad/app";
 export const LAUNCHPAD_START_PATH = "/start/launchpad";
 
-/** Suite products that should use the Launchpad app surface (not Team Co-pilot org onboarding). */
+/** Suite products that should use the Launchpad app surface (not Professional Workspace org onboarding). */
 export function isLaunchpadProduct(product: SuiteProduct | null | undefined): boolean {
   return product === "launchpad";
 }
