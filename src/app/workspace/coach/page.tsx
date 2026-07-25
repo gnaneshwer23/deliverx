@@ -19,7 +19,7 @@ export default async function Page({
           <h2 className="text-sm font-semibold text-[#1A1A18]">Recommended interventions</h2>
           <p className="mt-1 text-xs text-[#6B6B64]">
             Coach recommends reflection prompts, scenario practice, or learning pointers from your
-            ScoreRun gaps. You accept — nothing auto-acts, and nothing assigns capability here.
+            capability gaps. You accept — nothing auto-acts, and nothing assigns capability here.
           </p>
           <div className="mt-3">
             <DevelopmentLoopPanel />

@@ -73,8 +73,8 @@ export default async function ProfessionalWorkspaceHome({
       <WorkspaceHomeModules project={active} />
 
       <p className="mt-10 text-xs text-[#6B6B64]">
-        Legacy mission control routes remain available under Command Centre. Prefer these modules
-        for day-to-day multidisciplinary work.
+        These modules are the primary day-to-day surface for multidisciplinary work. Capability is
+        never assigned here — practice evidence is interpreted by assessment on your Evidence Ledger.
       </p>
     </div>
   );

@@ -177,7 +177,7 @@ export function RealWorldOutcomesApp() {
         <div className="mt-4 rounded-md border border-[#D6D3C8] bg-[#FAFAF7] px-3 py-3 text-sm text-[#1A1A18]">
           <p>{prompt.reason}</p>
           <Link href={prompt.href} className="mt-2 inline-block rounded-md bg-[#1C4A2E] px-3 py-1.5 text-xs font-medium text-white">
-            Re-run ScoreRun (optional)
+            Update capability profile (optional)
           </Link>
         </div>
       ) : null}
@@ -346,7 +346,7 @@ export function RealWorldOutcomesApp() {
           </button>
           <p className="text-[10px] text-[#6B6B64]">
             Appends ledger evidence with source_type real_world_outcome · self-reported (or
-            document-supported with an artefact). No ScoreRun is triggered; capability is unchanged.
+            document-supported with an artefact). No capability assessment is triggered; capability is unchanged.
           </p>
         </form>
       </section>

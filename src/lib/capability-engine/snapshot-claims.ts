@@ -195,7 +195,7 @@ export function projectGrowthDelta(
       levelDeltas: [],
       gapsClosed: [],
       gapsOpened: [],
-      message: "No ScoreRun yet — growth appears after two capability snapshots.",
+      message: "No capability assessment yet — growth appears after two capability snapshots.",
     };
   }
 
@@ -213,7 +213,7 @@ export function projectGrowthDelta(
       gapsClosed: [],
       gapsOpened: [],
       message:
-        "First ScoreRun recorded. Growth delta appears after a second run under the same framework.",
+        "First assessment recorded. Growth delta appears after a second run under the same framework.",
     };
   }
 
@@ -455,29 +455,29 @@ export function projectRoleReadinessFromClaims(
 
     if (hitLevels.length > 0 && bestWeight >= 0.85) {
       level = "satisfied_strong";
-      gapExplanation = `ScoreRun projection: ${hitLevels[0]?.competencyId} at ${hitLevels[0]?.level}.`;
+      gapExplanation = `Assessment projection: ${hitLevels[0]?.competencyId} at ${hitLevels[0]?.level}.`;
       earned += weight;
     } else if (hitLevels.length > 0 && bestWeight >= 0.5) {
       level = "partially_supported";
-      gapExplanation = `ScoreRun projection: developing signal on ${hitLevels[0]?.competencyId}.`;
-      recommendation = "Generate stronger practice evidence, then re-run ScoreRun.";
+      gapExplanation = `Assessment projection: developing signal on ${hitLevels[0]?.competencyId}.`;
+      recommendation = "Generate stronger practice evidence, then update your capability profile.";
       earned += weight * 0.5;
     } else if (met) {
       level = "partially_supported";
-      gapExplanation = "ScoreRun target comparison marks related competencies as met.";
+      gapExplanation = "Assessment target comparison marks related competencies as met.";
       earned += weight * 0.5;
     } else if (unmet || hitLevels.some((l) => String(l.level) === "emerging")) {
       level = "not_demonstrated";
-      gapExplanation = "ScoreRun marks this requirement as unmet or emerging.";
+      gapExplanation = "Assessment marks this requirement as unmet or emerging.";
       recommendation = `Close gap via Experience covering: ${req.competencyHints.join(", ")}.`;
     } else if (hitLevels.length > 0) {
       level = "claimed_unverified";
-      gapExplanation = "ScoreRun signal is thin for this requirement.";
+      gapExplanation = "Assessment signal is thin for this requirement.";
       earned += weight * 0.15;
     } else {
       level = "not_assessed";
       gapExplanation =
-        "No ScoreRun judgement matched this role requirement — not assessed for this catalogue role.";
+        "No assessment judgement matched this role requirement — not assessed for this catalogue role.";
     }
 
     return {
@@ -515,9 +515,9 @@ export function projectRoleReadinessFromClaims(
     gapCount,
     unexplainedCount,
     summary: [
-      `${role.title}: ${readinessPct}% ScoreRun projection (from capability snapshot ${claims.snapshotId.slice(0, 8)}).`,
+      `${role.title}: ${readinessPct}% assessment projection (from capability snapshot ${claims.snapshotId.slice(0, 8)}).`,
       `${strongCount} strong, ${partialCount} partial, ${gapCount} gaps.`,
-      "This packages the ScoreRun — Career does not assign capability.",
+      "This packages the capability assessment — Career does not assign capability.",
     ].join(" "),
     capabilityAssigned: false,
     readinessKind: "score_run_projection",

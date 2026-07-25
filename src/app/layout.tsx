@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DeliverX — AI Delivery Platform",
+  title: "DeliverX — Professional Intelligence Platform",
   description:
-    "DeliverX turns business cases into executable delivery workflows with AI-assisted planning, governance, and monitoring.",
+    "DeliverX builds evidence-backed Professional Intelligence — Experience, Career Intelligence, and Professional Workspace.",
 };
 
 export default function RootLayout({

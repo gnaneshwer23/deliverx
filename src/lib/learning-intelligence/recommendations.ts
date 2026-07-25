@@ -58,7 +58,7 @@ const TOPIC_HINTS: Array<{
     concepts: [
       "name the decision and the reversible/irreversible split",
       "surface second-order effects",
-      "document the rationale for later ScoreRun",
+      "document the rationale for later assessment",
     ],
     practiceFocus: "Capture a risk response decision in Workspace or Experience",
   },
@@ -91,7 +91,7 @@ function applicationTriggerForGap(gap: string, experienceHref?: string | null): 
     href,
     title: hint.practiceFocus,
     rationale:
-      "Learning alone is not competency proof. Apply what you learned in Experience or Workspace so ScoreRun can interpret practice evidence.",
+      "Learning alone is not competency proof. Apply what you learned in Experience or Workspace so assessment can interpret practice evidence.",
   };
 }
 
@@ -116,7 +116,7 @@ export function recommendLearningFromGaps(input: {
 
     recs.push({
       pathTitle: `Close gap: ${hint.topic}`,
-      rationale: `ScoreRun highlights “${gap}”. Log focused learning${roleBit}, reflect, then apply in Experience — learning completion never assigns capability.`,
+      rationale: `Assessment highlights “${gap}”. Log focused learning${roleBit}, reflect, then apply in Experience — learning completion never assigns capability.`,
       targetGap: gap,
       competencyCodes,
       suggestedKinds: hint.kinds,
@@ -158,7 +158,7 @@ export function buildLearningApplicationCta(input: {
       stage: "apply",
       title: "Apply your learning in Experience",
       rationale:
-        "You have reflected on learning. Practice evidence is what ScoreRun can use — completing a course alone never upgrades capability.",
+        "You have reflected on learning. Practice evidence is what assessment can use — completing a course alone never upgrades capability.",
       href: experienceHref,
       capabilityAssigned: false,
       learningNotCapability: true,

@@ -88,7 +88,7 @@ export default async function PortfolioExternalViewPage({ params }: { params: Pa
             <p className="mt-1 text-xs text-[#6B6B64]">
               {String(
                 view.capabilityClaimsNotice ??
-                  "ScoreRun projections with evidence citations — not DeliverX verification.",
+                  "Assessment projections with evidence citations — not DeliverX verification.",
               )}
             </p>
             <ul className="mt-2 space-y-2 text-sm text-[#4A4A45]">

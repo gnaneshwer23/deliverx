@@ -85,7 +85,7 @@ export function ProfileCentre() {
             href={PI_EVIDENCE_PATH}
             className="rounded-md bg-[#1C4A2E] px-3 py-2 text-xs font-medium text-white"
           >
-            Evidence &amp; ScoreRun
+            Evidence &amp; capability
           </Link>
           <Link
             href="/profile/baseline"
@@ -203,7 +203,7 @@ export function ProfileCentre() {
           question="What is holding me back?"
           empty={profile.holdingBack.emptyGuidance}
           emptyHref={`${PI_EVIDENCE_PATH}?run=1`}
-          emptyCta="Run ScoreRun"
+          emptyCta="Run assessment"
         >
           {profile.holdingBack.topGaps.length > 0 ? (
             <ul className="list-disc space-y-1 pl-4 text-sm text-[#4A4A45]">
@@ -213,12 +213,13 @@ export function ProfileCentre() {
             </ul>
           ) : profile.scoreRun ? (
             <p className="text-sm text-[#4A4A45]">
-              No open gaps on the latest ScoreRun — keep packaging evidence or explore opportunities.
+              No open gaps on the latest assessment — keep packaging evidence or explore
+              opportunities.
             </p>
           ) : null}
           {profile.growthDelta ? (
             <div className="mt-4 rounded-lg border border-[#E5E2D9] bg-[#FAFAF7] px-3 py-3">
-              <p className="text-xs font-medium text-[#1A1A18]">Growth since last ScoreRun</p>
+              <p className="text-xs font-medium text-[#1A1A18]">Growth since last assessment</p>
               {profile.growthDelta.status === "insufficient_history" ? (
                 <p className="mt-1 text-xs text-[#6B6B64]">
                   {profile.growthDelta.message ?? "Insufficient history for a growth delta."}
@@ -378,7 +379,7 @@ export function ProfileCentre() {
             <p className="mb-2 text-xs font-medium text-[#1A1A18]">Development loop</p>
             <p className="mb-3 text-[11px] text-[#6B6B64]">
               Recommendations you can accept — never auto-acted. Traceable to evidence and later
-              ScoreRun deltas as association only.
+              assessment deltas as association only.
             </p>
             <DevelopmentLoopPanel />
           </div>
@@ -386,7 +387,7 @@ export function ProfileCentre() {
             <p className="text-xs font-medium text-[#1A1A18]">Learning Intelligence</p>
             <p className="mt-1 text-[11px] text-[#6B6B64]">
               Knowledge gaps can be closed with focused learning + reflection. Completing a course
-              never assigns capability — apply in Experience so ScoreRun can interpret practice
+              never assigns capability — apply in Experience so assessment can interpret practice
               evidence.
             </p>
             <Link
@@ -446,7 +447,7 @@ export function ProfileCentre() {
                 </button>
               </div>
               <p className="mt-2 text-[10px] text-[#6B6B64]">
-                Planner recommends practice only — ScoreRun assigns capability levels.
+                Planner recommends practice only — capability assessment assigns levels.
               </p>
             </div>
           ) : null}
@@ -490,7 +491,7 @@ export function ProfileCentre() {
       </div>
 
       <p className="mt-10 text-[11px] text-[#6B6B64]">
-        Capability levels are projected by the ScoreRun engine from the Evidence Ledger. This page
+        Capability levels are projected by the Capability Engine from the Evidence Ledger. This page
         never assigns capability.
       </p>
     </div>

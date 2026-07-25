@@ -9,6 +9,12 @@ import {
   type RequirementSupportLevel,
 } from "@/lib/career-intelligence/types";
 import { explainReadiness } from "@/lib/career-intelligence/workflows";
+import { readinessSourceChip } from "@/lib/career-intelligence/readiness-honesty";
+import {
+  readinessKindAbbrev,
+  readinessKindTitle,
+  readinessKindUserLabel,
+} from "@/lib/ux/capability-assessment-copy";
 
 type Snapshot = {
   profile: {
@@ -174,9 +180,9 @@ export function CareerIntelligenceApp({
       <div className="mx-auto flex max-w-6xl gap-8 px-4 py-8 lg:px-6">
         <aside className="hidden w-56 shrink-0 lg:block">
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
-            Career Intelligence
+            DeliverX · Launchpad
           </p>
-          <h1 className="mt-1 text-lg font-semibold">Launchpad</h1>
+          <h1 className="mt-1 text-lg font-semibold">Career Intelligence</h1>
           <nav className="mt-6 space-y-1">
             {CAREER_MODULES.map((m) => (
               <Link
@@ -209,11 +215,8 @@ export function CareerIntelligenceApp({
                 Profile: {snap.profile.firstName || "—"} · target{" "}
                 {snap.profile.targetRole || "unset"} · evidence {snap.evidenceCount} · portfolio{" "}
                 {snap.portfolioEntryCount} · source {snap.profile.source}
-                {snap.readinessSource === "score_run"
-                  ? " · readiness from ScoreRun"
-                  : snap.readinessSource === "mixed"
-                    ? " · readiness mixed (ScoreRun + labelled heuristic)"
-                    : " · readiness from evidence coverage (heuristic)"}
+                {" · "}
+                {readinessSourceChip(snap.readinessSource)}
               </p>
             ) : null}
           </header>
@@ -229,14 +232,14 @@ export function CareerIntelligenceApp({
               {snap.scoreRun ? (
                 <div className="rounded-lg border border-[#1C4A2E]/30 bg-white p-4 text-sm">
                   <p className="font-medium text-[#1C4A2E]">
-                    ScoreRun readiness signal {Math.round(snap.scoreRun.readiness)}%
+                    Assessment readiness signal {Math.round(snap.scoreRun.readiness)}%
                   </p>
                   <p className="mt-1 text-xs text-[#6B6B64]">
                     Snapshot {snap.scoreRun.snapshotId.slice(0, 8)} · captured{" "}
                     {new Date(snap.scoreRun.capturedAt).toLocaleString()}. Same projection as
                     Profile and Portfolio — Career does not assign capability.{" "}
                     <Link href="/profile/evidence" className="underline">
-                      Re-run ScoreRun
+                      Update your capability profile
                     </Link>
                   </p>
                   {snap.scoreRun.levels?.length ? (
@@ -261,10 +264,10 @@ export function CareerIntelligenceApp({
                 </div>
               ) : (
                 <p className="rounded-lg border border-dashed border-[#D6D3C8] px-3 py-2 text-xs text-[#6B6B64]">
-                  No ScoreRun yet — percentages below are evidence coverage (heuristic), not
-                  capability.{" "}
+                  No capability assessment yet — percentages below are evidence coverage
+                  (heuristic), not capability.{" "}
                   <Link href="/profile/evidence?run=1" className="text-[#1C4A2E] underline">
-                    Run ScoreRun
+                    Run assessment
                   </Link>
                 </p>
               )}
@@ -277,22 +280,16 @@ export function CareerIntelligenceApp({
                     <h3 className="text-lg font-medium">{role.roleTitle}</h3>
                     <strong
                       className="font-mono text-sm text-[#1C4A2E]"
-                      title={
-                        role.readinessKind === "score_run_projection"
-                          ? "ScoreRun projection — not a free-floating capability invent"
-                          : "Evidence coverage heuristic — not capability"
-                      }
+                      title={readinessKindTitle(role.readinessKind)}
                     >
                       {role.readinessPct}%
                       <span className="ml-1 font-sans text-[10px] font-normal uppercase tracking-wide text-[#6B6B64]">
-                        {role.readinessKind === "score_run_projection" ? "proj." : "cov."}
+                        {readinessKindAbbrev(role.readinessKind)}
                       </span>
                     </strong>
                   </div>
                   <p className="mt-1 text-[10px] uppercase tracking-wide text-[#6B6B64]">
-                    {role.readinessKind === "score_run_projection"
-                      ? "ScoreRun projection"
-                      : "Evidence coverage (heuristic — not capability)"}
+                    {readinessKindUserLabel(role.readinessKind)}
                   </p>
                   <p className="mt-1 text-xs text-[#6B6B64]">{role.summary}</p>
                   <ul className="mt-4 space-y-3">

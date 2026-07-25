@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import { requireLaunchpadAuth } from "@/lib/launchpad/require-auth";
 
 export const metadata: Metadata = {
-  title: "Launchpad app | DeliverX",
-  description: "Get career-ready with assessment, Career Twin, portfolio and interview prep.",
+  title: "Career Intelligence | DeliverX",
+  description:
+    "Evidence-backed role readiness, roadmap, interview lab and applications — never assigns capability.",
 };
 
 export default async function LaunchpadAppLayout({

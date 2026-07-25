@@ -58,8 +58,8 @@ export function DevelopmentLoopPanel() {
   if (!items.length) {
     return (
       <p className="text-xs text-[#6B6B64]">
-        No active interventions. Enable Workspace observation, accumulate evidence, and run
-        ScoreRun — Coach will recommend targeted next steps without auto-acting.
+        No active interventions. Enable Workspace observation, accumulate evidence, and run a
+        capability assessment — Coach will recommend targeted next steps without auto-acting.
       </p>
     );
   }

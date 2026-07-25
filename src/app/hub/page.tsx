@@ -40,8 +40,8 @@ const HUB_JOURNEY = [
   {
     id: "evidence",
     stage: "See what you demonstrated",
-    name: "Evidence & ScoreRun",
-    progress: "Ledger evidence → capability projection",
+    name: "Evidence & capability",
+    progress: "Ledger evidence → capability assessment",
     href: "/profile/evidence",
     cta: "Open Evidence",
   },
@@ -56,8 +56,8 @@ const HUB_JOURNEY = [
   {
     id: "career",
     stage: "Land the opportunity",
-    name: "Launchpad",
-    progress: "Career Intelligence — evidence-backed readiness",
+    name: "Career Intelligence",
+    progress: "Evidence-backed readiness, roadmap, interview lab, applications",
     href: "/launchpad/app",
     cta: "Open Career Intelligence",
   },

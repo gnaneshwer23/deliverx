@@ -122,7 +122,7 @@ describe("workflows and contracts", () => {
       gaps: ["Stakeholder alignment under pressure"],
       recommendations: [{ title: "Practise a Day 1 TrustCare decision", rationale: "Close gap" }],
     });
-    expect(roadmap[0]?.title).toMatch(/ScoreRun gap/i);
+    expect(roadmap[0]?.title).toMatch(/capability gap/i);
     expect(roadmap[0]?.href).toBe("/experience/app");
   });
 

@@ -43,18 +43,18 @@ Severity (this roadmap):
 | **R-P1-02** | T8 attestation E2E not in T6 | Verified-on path unproven live | Matrix; MF-012; 0 attestation rows | Add harness: request → confirm → Verified on → dispute | `e2e/t0-*` or `e2e/t8-attestation.test.ts` | Mail/token | Live or local suite asserts Verified lights only via attest | M | **Now** |
 | **R-P1-03** | Next.js **16.2.9** high advisories | Middleware/SSRF/DoS class | `npm audit`; SEC-P1-01 | Upgrade ≥**16.2.11**; re-audit | `package.json` / lockfile | Build | `npm audit` Next highs closed; build + gate pass | S | **Soon** (optional attach if tiny; prefer after batch 1) |
 | **R-P1-04 — Closed** | Cookie consent + `/cookies` missing | GDPR/analytics risk | `/cookies` (+ `/cookie` alias); essential auth + honest Vercel analytics note; no fake banner | New page + footer link | Legal | Policy reachable; analytics gated if required | M | **Resolved — Batch 2** |
-| **R-P1-05** | ScoreRun jargon user-facing | Unprofessional; engine leak | UX P0-3 | Human labels; engine name admin-only | Profile, Evidence, Hub, Launchpad CTAs | — | No primary CTA says “ScoreRun” | S | Honesty/UX |
+| **R-P1-05 — Closed** | ScoreRun jargon user-facing | Unprofessional; engine leak | UX P0-3 | Human labels; engine name admin-only | Profile, Evidence, Hub, Launchpad CTAs | — | No primary CTA says “ScoreRun” | S | **Resolved — Batch 3** |
 | **R-P1-06 — Closed** | Launchpad / Experience marketing ahead of shipped depth | Expectation gap | Launchpad includes → Career Intelligence (readiness/roadmap/CV→VPP/interview/applications); twin/salary/LinkedIn demoted | `career-suite`, Experience/Launchpad marketing | TD-011 | Marketing matches LIVE | S | **Resolved — Batch 2** |
-| **R-P1-07** | Multi-shell / duplicated nav | Coherence failure | UX P1-1 | One primary IA for pilot; demote legacy | AppShell, WorkspaceSidebar, product shells | T7 | Single clear nav story | L | Defer full; small demotion now OK |
-| **R-P1-08** | Workspace points at Command Centre | Undermines T7 demotion | UX P1-2 | Remove pointer; hide demoted routes | `workspace/page.tsx` | — | No Command Centre pitch on home | S | Now |
-| **R-P1-09** | Launchpad vs Career Intelligence naming | Confused SKU | UX P1-5 | Hub/Launchpad single primary label | Hub, career-intelligence-app | — | Consistent product name | S | Now |
-| **R-P1-10** | PI review “Seed sample finding” | Demo affordance in trust surface | UX P1-4 | Gate to admin/dev or remove | `review-queue-app.tsx` | — | No seed in production UX | S | Now |
+| **R-P1-07 — Closed (partial)** | Multi-shell / duplicated nav | Coherence failure | UX P1-1 | One primary IA for pilot; demote legacy | AppShell, WorkspaceSidebar, product shells | T7 | Worst contradiction points fixed; full IA defer | L | **Partial — Batch 3** (full consolidation deferred) |
+| **R-P1-08 — Closed** | Workspace points at Command Centre | Undermines T7 demotion | UX P1-2 | Remove pointer; hide demoted routes | `workspace/page.tsx` | — | No Command Centre pitch on home | S | **Resolved — Batch 3** |
+| **R-P1-09 — Closed** | Launchpad vs Career Intelligence naming | Confused SKU | UX P1-5 | Hub/Launchpad single primary label | Hub, career-intelligence-app | — | Consistent product name | S | **Resolved — Batch 3** |
+| **R-P1-10 — Closed** | PI review “Seed sample finding” | Demo affordance in trust surface | UX P1-4 | Gate to admin/dev or remove | `review-queue-app.tsx` | — | No seed in production UX | S | **Resolved — Batch 3** |
 | **R-P1-11** | `workspace_observations` ALL without SQL consent | Consent bypass via PostgREST | DB-P1-01 | INSERT trigger requiring consented row | **`0096+`** after batch 1 | Batch 1 | No observe without consent row | M | After batch 1 |
 | **R-P1-12** | Judgements/snapshots INSERT own under invented ScoreRuns | Capability child fabrication | DB-P1-03 | Bind to engine role / signed run | Migration + persist | R-P0-01 | Child rows only via engine | M | With/after batch 1 |
 | **R-P1-13** | AI injection = regex lists; bypass flag | Jailbreak / skipped T4 guarantees | AI-P1-01/02 | Keep bypass off prod; expand patterns + red-team | `guardrails.ts`, `run.ts` | — | Bypass off; tests for known injections | M | Now (config) / later (red-team) |
 | **R-P1-14** | Empty citations allowed on coach outputs | Fake evidence-backed feel | AI-P1-03 | Require citations when evidence bound; UI “uncited” | Coach validators + UI | — | Uncited labelled | M | Soon |
 | **R-P1-15** | Password-reset email not proven | Recovery may fail | MF-014 | Founder SMTP send test | Auth config | Founder | Reset mail received | S | Ops |
-| **R-P1-16** | Unlabeled `readinessPct` risk | Trust if labels strip | MF-013; TD-011 | Audit Career UI for source labels | career-intelligence UI | — | Every % has source label | S | Now |
+| **R-P1-16 — Closed** | Unlabeled `readinessPct` risk | Trust if labels strip | MF-013; TD-011 | Audit Career UI for source labels | career-intelligence UI | — | Every % has source label | S | **Resolved — Batch 3** |
 
 ### P2 Major (18) — summary
 
@@ -73,7 +73,7 @@ Severity (this roadmap):
 | R-P2-11 | TD-012 dual-write incomplete | M | Later |
 | R-P2-12 | TD-017 fixture lint/tsc debt | M | Before CI returns |
 | R-P2-13 | Launchpad non-MVP “later” modules | S | Hide |
-| R-P2-14 | Root metadata “AI Delivery Platform” | S | Now |
+| R-P2-14 — Closed | Root metadata “AI Delivery Platform” | S | **Resolved — Batch 3** |
 | R-P2-15 | WCAG gaps (icon name, alerts, tiny text) | M | Parallel a11y |
 | R-P2-16 | No coverage tooling / Playwright CI | M | After TD-018 |
 | R-P2-17 | Soft AI rate / cost estimate honesty | S | Later |
@@ -134,10 +134,11 @@ Severity (this roadmap):
 
 ### 4. UX improvements
 
-- ScoreRun language (R-P1-05)  
-- Nav / Command Centre / naming (R-P1-07…09)  
-- Remove review seed (R-P1-10)  
-- Metadata title (R-P2-14)  
+- ScoreRun language (R-P1-05) — **shipped Batch 3**
+- Nav / Command Centre / naming (R-P1-07…09) — **shipped Batch 3** (full multi-shell rewrite deferred)
+- Remove review seed (R-P1-10) — **shipped Batch 3**
+- Metadata title (R-P2-14) — **shipped Batch 3**
+- Readiness label audit (R-P1-16) — **shipped Batch 3**
 - A11y P2 items (R-P2-15)
 
 ### 5. AI quality improvements
@@ -178,11 +179,11 @@ Batch 1 (founder approve): DB trust-rail lockdown 0095 + RLS/regression tests �
      ↓
 Batch 2 (founder approve): Honesty + legal — prices/guarantee/demo %/Launchpad includes + Privacy/Terms/Cookies — SHIPPED
      ↓
+Batch 3 (founder approve): UX language — ScoreRun→assessment, Command Centre demotion, Career naming, review seed, metadata, readiness labels — SHIPPED
+     ↓
 Founder ops: TD-018 CI · TD-006 HIBP · SMTP reset test
      ↓
 T8 E2E harness + Next ≥16.2.11
-     ↓
-UX naming / ScoreRun language / Command Centre demotion
      ↓
 DB-P1 consent + judgement binding · AI citations · a11y smoke
      ↓
@@ -191,4 +192,4 @@ DB-P1 consent + judgement binding · AI citations · a11y smoke
 
 **Do not start T9.** Do not expand marketplace / mission-control / multi-profession without approval.
 
-**Batch 2 shipped.** Remaining batches require founder approval.
+**Batch 3 shipped.** Remaining batches require founder approval.

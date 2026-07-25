@@ -59,7 +59,7 @@ describe("projectPiProfileFromParts", () => {
     });
     expect(view.nextAction?.kind).toBe("evidence");
     expect(view.nextAction?.href).toContain("/profile/evidence");
-    expect(view.holdingBack.emptyGuidance).toMatch(/ScoreRun/i);
+    expect(view.holdingBack.emptyGuidance).toMatch(/capability assessment/i);
   });
 
   it("surfaces top gaps and ScoreRun recommendation as Experience next action", () => {
@@ -268,6 +268,6 @@ describe("projectPiProfileFromParts", () => {
       previousClaims: null,
     });
     expect(view.growthDelta.status).toBe("insufficient_history");
-    expect(view.growthDelta.message).toMatch(/First ScoreRun|second run/i);
+    expect(view.growthDelta.message).toMatch(/First assessment|second run/i);
   });
 });

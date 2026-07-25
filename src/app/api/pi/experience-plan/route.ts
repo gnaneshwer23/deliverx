@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       created: result.created,
       capabilityAssigned: false as const,
       notice:
-        "Plan recommends Experience emphasis from ScoreRun gaps. Capability levels are assigned only by ScoreRun.",
+        "Plan recommends Experience emphasis from assessment gaps. Capability levels are assigned only by capability assessment.",
     });
   } catch (err) {
     console.error("[pi/experience-plan] POST failed", err);

@@ -157,7 +157,7 @@ export function LearningIntelligenceApp() {
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#4A4A45]">
         Log books, articles, courses, podcasts and certifications with reflection.
         Completing learning never assigns capability or lights Verified. Capability
-        moves only when ScoreRun interprets practice evidence from Experience or
+        moves only when assessment interprets practice evidence from Experience or
         Workspace.
       </p>
 
@@ -191,7 +191,7 @@ export function LearningIntelligenceApp() {
         <section className="mt-10">
           <h2 className="text-sm font-medium text-[#1A1A18]">Gap-driven paths</h2>
           <p className="mt-1 text-xs text-[#6B6B64]">
-            From your latest ScoreRun. Each path ends with an application trigger —
+            From your latest assessment. Each path ends with an application trigger —
             learning alone never upgrades levels.
           </p>
           <ul className="mt-4 space-y-3">
@@ -234,14 +234,14 @@ export function LearningIntelligenceApp() {
       ) : (
         <section className="mt-10 rounded-lg border border-dashed border-[#D6D3C8] bg-[#FAFAF7] px-4 py-5">
           <p className="text-sm text-[#4A4A45]">
-            No ScoreRun gaps yet. Run ScoreRun on practice evidence, or log learning
+            No assessment gaps yet. Run a capability assessment on practice evidence, or log learning
             below and apply it in Experience afterward.
           </p>
           <Link
             href={`${PI_EVIDENCE_PATH}?run=1`}
             className="mt-3 inline-block text-xs font-medium text-[#1C4A2E] underline"
           >
-            Open Evidence & ScoreRun
+            Open Evidence & capability
           </Link>
         </section>
       )}
@@ -400,7 +400,7 @@ export function LearningIntelligenceApp() {
               value={relevanceToGaps}
               onChange={(e) => setRelevanceToGaps(e.target.value)}
               rows={2}
-              placeholder="Paste a ScoreRun gap this addresses"
+              placeholder="Paste a capability gap this addresses"
               className="mt-1 w-full rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-sm"
             />
           </label>
@@ -413,7 +413,7 @@ export function LearningIntelligenceApp() {
           </button>
           <p className="text-[10px] text-[#6B6B64]">
             Appends ledger evidence with source_type learning_activity · category knowledge ·
-            learningNotCapability. No ScoreRun is triggered.
+            learningNotCapability. No capability assessment is triggered.
           </p>
         </form>
       </section>

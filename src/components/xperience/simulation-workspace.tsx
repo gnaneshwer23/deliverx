@@ -111,7 +111,7 @@ export function SimulationWorkspace({
       setState(data.state);
       setNotice(
         data.complete
-          ? "Experience complete. Evidence is on the ledger — open ScoreRun to project capability."
+          ? "Experience complete. Evidence is on the ledger — run a capability assessment to project capability."
           : "Reflection saved. Finish remaining completion criteria.",
       );
       setReflection("");
@@ -354,7 +354,7 @@ export function SimulationWorkspace({
                 </p>
                 <div className="xp-action-row" style={{ marginTop: "0.75rem" }}>
                   <a href="/profile/final">Final assessment (transfer)</a>
-                  <a href="/profile/evidence?run=1">See your capability (ScoreRun)</a>
+                  <a href="/profile/evidence?run=1">See your capability profile</a>
                   <a href="/profile/evidence">Review Evidence Ledger</a>
                   <a href="/portfolio">Package Portfolio</a>
                   <a href="/launchpad/app">Career readiness</a>

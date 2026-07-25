@@ -84,7 +84,7 @@ export function EvidenceCapabilityApp() {
     try {
       await Promise.all([loadEvidence(), loadSnapshot()]);
       setError(null);
-      setNotice("Evidence Ledger ready. ScoreRun projects capability from this evidence.");
+      setNotice("Evidence Ledger ready. Capability assessment projects capability from this evidence.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Load failed");
     }
@@ -96,7 +96,7 @@ export function EvidenceCapabilityApp() {
 
   const runScore = useCallback(async () => {
     setBusy(true);
-    setNotice("Running ScoreRun against your Evidence Ledger…");
+    setNotice("Running capability assessment against your Evidence Ledger…");
     try {
       const res = await fetch("/api/pi/capability/run", {
         method: "POST",
@@ -104,9 +104,9 @@ export function EvidenceCapabilityApp() {
         body: JSON.stringify({ persist: true }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "ScoreRun failed");
+      if (!res.ok) throw new Error(data.error || "Assessment failed");
       if (!data.ok) {
-        setNotice(data.error || "ScoreRun could not complete — add more practice evidence.");
+        setNotice(data.error || "Assessment could not complete — add more practice evidence.");
         await loadSnapshot();
         return;
       }
@@ -124,12 +124,12 @@ export function EvidenceCapabilityApp() {
       });
       setNotice(
         data.duplicate
-          ? "Same inputs — reused prior ScoreRun (deterministic)."
-          : "ScoreRun complete. Readiness, strengths and gaps are projected from evidence.",
+          ? "Same inputs — reused prior assessment (deterministic)."
+          : "Assessment complete. Readiness, strengths and gaps are projected from evidence.",
       );
       await loadEvidence();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ScoreRun failed");
+      setError(err instanceof Error ? err.message : "Assessment failed");
     } finally {
       setBusy(false);
     }
@@ -152,8 +152,8 @@ export function EvidenceCapabilityApp() {
           Evidence &amp; capability
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[#4A4A45]">
-          Review durable evidence from Experience and practice. Run ScoreRun to project readiness —
-          the engine judges; this screen never invents capability.
+          Review durable evidence from Experience and practice. Run a capability assessment to
+          project readiness — the engine judges; this screen never invents capability.
         </p>
         <p className="mt-3 text-sm text-[#1C4A2E]">{notice}</p>
         {error ? <p className="mt-1 text-sm text-red-700">{error}</p> : null}
@@ -164,7 +164,7 @@ export function EvidenceCapabilityApp() {
             onClick={() => void runScore()}
             className="rounded-md bg-[#1C4A2E] px-3 py-2 text-xs font-medium text-white disabled:opacity-50"
           >
-            {busy ? "Running ScoreRun…" : "Run ScoreRun"}
+            {busy ? "Running assessment…" : "Run assessment"}
           </button>
           <Link
             href="/profile"
@@ -237,14 +237,14 @@ export function EvidenceCapabilityApp() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-[#1A1A18]">Latest ScoreRun</h2>
+          <h2 className="text-lg font-semibold text-[#1A1A18]">Latest assessment</h2>
           <p className="mt-1 text-xs text-[#6B6B64]">
             Capability projection from the Evidence Ledger. Not assigned by Experience or Career UI.
           </p>
           {!snapshot || snapshot.readiness == null ? (
             <div className="mt-4 rounded-lg border border-dashed border-[#D6D3C8] px-4 py-6 text-sm text-[#6B6B64]">
-              No snapshot yet. After you have evidence, run ScoreRun to see readiness, strengths and
-              gaps.
+              No snapshot yet. After you have evidence, run an assessment to see readiness, strengths
+              and gaps.
             </div>
           ) : (
             <div className="mt-4 space-y-4 rounded-lg border border-[#E5E2D9] bg-white px-4 py-4">

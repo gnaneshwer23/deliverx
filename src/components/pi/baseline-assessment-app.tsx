@@ -210,7 +210,7 @@ export function BaselineAssessmentApp() {
         </h1>
         <p className="mt-2 text-sm text-[#4A4A45]">
           Your answers are Evidence Ledger records with provenance — not a silent capability
-          assignment. ScoreRun projected levels under{" "}
+          assignment. Capability assessment projected levels under{" "}
           <span className="font-medium text-[#1A1A18]">
             {completeResult.frameworkSlug}@{completeResult.frameworkVersion}
           </span>
@@ -378,7 +378,7 @@ export function BaselineAssessmentApp() {
                 onClick={() => void onComplete()}
                 className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
               >
-                Finish baseline &amp; ScoreRun
+                Finish baseline &amp; assessment
               </button>
             ) : null}
           </div>
@@ -387,7 +387,7 @@ export function BaselineAssessmentApp() {
         <div className="space-y-4">
           <p className="text-sm text-[#4A4A45]">
             {doneSelecting
-              ? "You have enough responses for a starting picture. Finish to write ledger evidence and run ScoreRun."
+              ? "You have enough responses for a starting picture. Finish to write ledger evidence and run a capability assessment."
               : "No current item. You can finish if you have enough answers, or refresh to resume."}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -397,7 +397,7 @@ export function BaselineAssessmentApp() {
               onClick={() => void onComplete()}
               className="rounded-md bg-[#1C4A2E] px-3 py-2 text-xs font-medium text-white disabled:opacity-50"
             >
-              {submitting ? "Completing…" : "Finish baseline & ScoreRun"}
+              {submitting ? "Completing…" : "Finish baseline & assessment"}
             </button>
             <button
               type="button"

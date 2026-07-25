@@ -134,7 +134,7 @@ export async function buildCareerIntelligenceSnapshot(
         const heuristic = scoreRoleReadiness(role, evidence, profile.source !== "none");
         fallback.push({
           ...heuristic,
-          summary: `${heuristic.summary} Suppressed thin ScoreRun projection — showing evidence coverage only.`,
+          summary: `${heuristic.summary} Suppressed thin assessment projection — showing evidence coverage only.`,
           readinessKind: "evidence_coverage",
         });
       }

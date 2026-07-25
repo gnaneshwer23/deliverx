@@ -243,7 +243,7 @@ export function FinalAssessmentApp() {
           {completeResult.experienceIndustry
             ? ` — different from Experience (${completeResult.experienceIndustry.replace(/_/g, " ")})`
             : ""}
-          . Levels come only from ScoreRun under{" "}
+          . Levels come only from capability assessment under{" "}
           <span className="font-medium text-[#1A1A18]">
             {completeResult.frameworkSlug}@{completeResult.frameworkVersion}
           </span>
@@ -435,7 +435,7 @@ export function FinalAssessmentApp() {
         <div className="space-y-4">
           <p className="text-sm text-[#4A4A45]">
             {doneSelecting
-              ? "You have enough responses including transfer. Finish to write ledger evidence, run final ScoreRun, and build a growth report."
+              ? "You have enough responses including transfer. Finish to write ledger evidence, run a final capability assessment, and build a growth report."
               : "No current item. Refresh to resume or finish if ready."}
           </p>
           <div className="flex flex-wrap gap-2">

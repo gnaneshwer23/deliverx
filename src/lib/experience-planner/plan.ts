@@ -353,11 +353,11 @@ function buildRationale(input: {
     : "";
 
   if (top.length === 0) {
-    return `No ScoreRun gaps yet — recommending ${scenario.companyName} (${scenario.projectName}).${industryBit}${roleBit} Practice still writes evidence to the ledger; ScoreRun assigns levels.`;
+    return `No assessment gaps yet — recommending ${scenario.companyName} (${scenario.projectName}).${industryBit}${roleBit} Practice still writes evidence to the ledger; capability assessment assigns levels.`;
   }
   const gapList = top.map((g) => `“${g.gap}”`).join("; ");
-  const recBit = input.recTitle ? ` ScoreRun also suggested “${input.recTitle}”.` : "";
-  return `Your latest ScoreRun gaps (${gapList}) map to ${scenario.companyName} — ${scenario.projectName} (${input.emphasis} emphasis).${industryBit}${roleBit}${recBit} Focus: ${scenario.coachingFocus} Experience produces evidence only — capability is assigned by ScoreRun.`;
+  const recBit = input.recTitle ? ` Assessment also suggested “${input.recTitle}”.` : "";
+  return `Your latest assessment gaps (${gapList}) map to ${scenario.companyName} — ${scenario.projectName} (${input.emphasis} emphasis).${industryBit}${roleBit}${recBit} Focus: ${scenario.coachingFocus} Experience produces evidence only — capability is assigned by assessment.`;
 }
 
 /**
@@ -398,7 +398,7 @@ export function planExperienceFromGaps(
     evidenceLinks.unshift({
       kind: "snapshot",
       id: input.snapshotId,
-      label: "ScoreRun snapshot",
+      label: "Capability assessment snapshot",
     });
   }
 

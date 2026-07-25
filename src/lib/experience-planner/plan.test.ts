@@ -101,7 +101,7 @@ describe("experience planner multi-company catalogue", () => {
     expect(plan.emphasis).toBe("discovery");
     expect(plan.industry).toBe("education");
     expect(plan.companyName.length).toBeGreaterThan(0);
-    expect(plan.rationale).toMatch(/ScoreRun gaps/i);
+    expect(plan.rationale).toMatch(/assessment gaps/i);
     expect(plan.href).toContain("planEmphasis=discovery");
     expect(plan.href).toContain(`scenario=${plan.scenarioSlug}`);
   });
@@ -121,7 +121,7 @@ describe("experience planner multi-company catalogue", () => {
     const plan = planExperienceFromGaps({ gaps: [] });
     expect(plan.scenarioSlug).toBe("mediflow-trustcare");
     expect(plan.companyName).toBe("MediFlow");
-    expect(plan.rationale).toMatch(/No ScoreRun gaps/i);
+    expect(plan.rationale).toMatch(/No assessment gaps/i);
   });
 
   it("rationale links gaps and never claims capability assignment", () => {
@@ -130,8 +130,8 @@ describe("experience planner multi-company catalogue", () => {
       recommendations: [{ title: "Practice delivery judgement" }],
       preferredIndustries: ["SaaS"],
     });
-    expect(plan.rationale).toMatch(/ScoreRun gaps/i);
-    expect(plan.rationale).toMatch(/capability is assigned by ScoreRun/i);
+    expect(plan.rationale).toMatch(/assessment gaps/i);
+    expect(plan.rationale).toMatch(/capability is assigned by assessment/i);
     expect(plan.rationale.toLowerCase()).not.toMatch(
       /you are now proficient|assigned level/,
     );

@@ -20,7 +20,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 | TD-001 | **Closed** (T6 signed-in E2E) |
 | TD-016 | **Closed** (`0092`) |
 | TD-006 | **Open** — founder Auth leaked-password toggle |
-| TD-011 | **Advanced (Batch 2)** — commercial/marketing honesty shipped; in-app ScoreRun jargon remains for UX batch |
+| TD-011 | **Closed (Batches 2–3)** — commercial/marketing honesty + in-app ScoreRun→assessment language |
 | TD-017 | **Open** — test-fixture ESLint / standalone `tsc` debt |
 | TD-018 | **Open** — GitHub Actions minutes exhausted; workflows disabled |
 | Production | **Healthy** — Vercel READY · https://www.deliverx.dev |

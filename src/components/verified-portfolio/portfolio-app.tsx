@@ -288,7 +288,7 @@ export function VerifiedPortfolioApp() {
       {capabilityClaims.length > 0 ? (
         <section className="mb-8 rounded-xl border border-[#C5D9CE] bg-[#EEF5F1] p-5">
           <h2 className="text-sm font-medium text-[#1C4A2E]">
-            Capability claims (ScoreRun projection)
+            Capability claims (assessment projection)
           </h2>
           <p className="mt-1 text-xs text-[#4A4A45]">
             Same snapshot as Profile and Career. Levels cite evidence — DeliverX has not verified
@@ -511,7 +511,7 @@ export function VerifiedPortfolioApp() {
             </p>
             <p className="mt-1 text-xs text-[#4A4A45]">
               Request a third-party confirmation of one claim. The Verified badge lights only after
-              confirmation is recorded on the Evidence Ledger — never from ScoreRuns or self-report.
+              confirmation is recorded on the Evidence Ledger — never from assessments alone or self-report.
             </p>
             <label className="mt-3 block text-xs text-[#6B6B64]">
               Claim to attest

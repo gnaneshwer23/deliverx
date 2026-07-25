@@ -38,7 +38,7 @@ export function explainReadiness(result: RoleReadinessResult): {
   };
 }
 
-/** Prefer ScoreRun gaps when a capability snapshot exists — still never writes capability. */
+/** Prefer assessment gaps when a capability snapshot exists — still never writes capability. */
 export function buildRoadmapFromScoreRunGaps(scoreRun: {
   gaps: string[];
   recommendations: Array<{ id?: string; title: string; rationale?: string }>;
@@ -48,9 +48,10 @@ export function buildRoadmapFromScoreRunGaps(scoreRun: {
     actions.push({
       id: `score-gap-${i}`,
       kind: "experience_project",
-      title: `Close ScoreRun gap: ${gap}`,
+      title: `Close capability gap: ${gap}`,
       closesRequirementIds: [`score-gap-${i}`],
-      rationale: "Derived from your latest capability ScoreRun — practise in Experience to generate new evidence.",
+      rationale:
+        "Derived from your latest capability assessment — practise in Experience to generate new evidence.",
       href: "/experience/app",
     });
   }
@@ -60,7 +61,7 @@ export function buildRoadmapFromScoreRunGaps(scoreRun: {
       kind: "experience_project",
       title: rec.title,
       closesRequirementIds: [],
-      rationale: rec.rationale || "ScoreRun recommendation",
+      rationale: rec.rationale || "Capability assessment recommendation",
       href: "/experience/app",
     });
   }
@@ -68,9 +69,9 @@ export function buildRoadmapFromScoreRunGaps(scoreRun: {
     actions.push({
       id: "score-run-review",
       kind: "portfolio_entry",
-      title: "Review Evidence Ledger and re-run ScoreRun",
+      title: "Review Evidence Ledger and update your capability profile",
       closesRequirementIds: [],
-      rationale: "No open ScoreRun gaps — package evidence into Portfolio or continue practice.",
+      rationale: "No open assessment gaps — package evidence into Portfolio or continue practice.",
       href: "/profile/evidence",
     });
   }

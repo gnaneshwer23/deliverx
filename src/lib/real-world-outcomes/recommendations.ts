@@ -91,7 +91,7 @@ export function scoreRunPromptForOutcome(input: {
     prompt,
     scoreRunTriggered: false,
     reason: prompt
-      ? "This outcome may change your gaps. You can re-run ScoreRun on your evidence — it will not run automatically, and this outcome will not change any capability level on its own."
+      ? "This outcome may change your gaps. You can update your capability profile from evidence — it will not run automatically, and this outcome will not change any capability level on its own."
       : null,
     href,
   };

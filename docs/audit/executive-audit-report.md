@@ -203,20 +203,20 @@ After M2: M3 CI seal → M4 T8 E2E → then reassess **controlled pilot**.
 ## Status card
 
 ```
-Product status:            Split — PI loop strong; marketing honesty Batch 2 shipped; CI/UX remain
+Product status:            Split — PI loop strong; honesty + UX language Batches 2–3 shipped; CI/ops remain
 Core workflow status:      Complete and verified (app path, T6 26/26); T8 E2E unverified
 Security status:           Unauth gates + DB trust rails hold; Next highs P1; TD-006 open
 Data integrity status:     Ledger/artefact/learning + ScoreRun/Verified/status rails hold
 AI quality status:         T4 contracts hold on path; injection/citations/bypass residual P1
-UX status:                 Coherent PI concept; multi-shell + ScoreRun jargon remain for Batch 3
+UX status:                 ScoreRun jargon demoted; Career Intelligence naming aligned; review seed removed
 Test coverage status:      Strong PI units + live when run; CI off; no coverage %; no a11y auto
 Release recommendation:    Testable internally
 Top five actions:
   1. Completed: DB trust-rail lockdown (0095 + RLS tests)
   2. Completed: honesty + legal Batch 2 (pilot access, Privacy/Terms/Cookies)
-  3. Founder: restore CI (TD-018) + enable leaked-password (TD-006)
-  4. Add T8 attestation E2E to release harness; bump Next ≥16.2.11
-  5. UX: ScoreRun language, Command Centre demotion, Launchpad naming, drop review seed
+  3. Completed: UX language Batch 3 (assessment labels, Career naming, seed removed)
+  4. Founder: restore CI (TD-018) + enable leaked-password (TD-006)
+  5. Add T8 attestation E2E to release harness; bump Next ≥16.2.11
 ```
 
-**Batch 1 shipped. Batch 2 shipped.** Remaining audit findings retain their original priorities; no T9 work is authorised.
+**Batch 1 shipped. Batch 2 shipped. Batch 3 shipped.** Remaining audit findings retain their original priorities; no T9 work is authorised.

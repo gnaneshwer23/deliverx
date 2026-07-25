@@ -148,7 +148,7 @@ export async function POST(request: Request) {
         capabilityAssigned: false as const,
         scoreRunTriggered: false as const,
         notice:
-          "Logged as self-reported outcome evidence. This does not change any capability level and no ScoreRun was run.",
+          "Logged as self-reported outcome evidence. This does not change any capability level and no capability assessment was run.",
       });
     }
 

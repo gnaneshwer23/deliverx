@@ -137,7 +137,7 @@ describe("growth delta", () => {
     const current = fixtureClaims();
     const delta = projectGrowthDelta(null, current);
     expect(delta.status).toBe("insufficient_history");
-    expect(delta.message).toMatch(/First ScoreRun|second run/i);
+    expect(delta.message).toMatch(/First assessment|second run/i);
     expect(delta.levelDeltas).toEqual([]);
     expect(delta.readinessDelta).toBeNull();
   });
@@ -145,7 +145,7 @@ describe("growth delta", () => {
   it("states insufficient history when no ScoreRun exists", () => {
     const delta = projectGrowthDelta(null, null);
     expect(delta.status).toBe("insufficient_history");
-    expect(delta.message).toMatch(/No ScoreRun/i);
+    expect(delta.message).toMatch(/No capability assessment/i);
   });
 
   it("compares two snapshots for readiness and level movement", () => {
@@ -188,7 +188,7 @@ describe("Career ScoreRun projection semantics", () => {
     expect(result).not.toBeNull();
     expect(result!.readinessKind).toBe("score_run_projection");
     expect(result!.capabilityAssigned).toBe(false);
-    expect(result!.summary).toMatch(/ScoreRun projection/i);
+    expect(result!.summary).toMatch(/assessment projection/i);
     expect(result!.summary).not.toMatch(/assigns capability/i);
   });
 

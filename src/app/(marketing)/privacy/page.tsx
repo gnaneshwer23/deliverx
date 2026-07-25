@@ -30,7 +30,7 @@ const sections = [
     title: "3. What we collect",
     body: [
       "Account data: email, name and authentication records via Supabase Auth when you create an account.",
-      "Professional Intelligence (PI) data you create or generate: profile and career goals, evidence ledger entries, artefacts and versions, ScoreRuns produced by the Capability Engine, SnapshotClaims, Experience planner activity, learning items, real-world outcome notes, Verified Portfolio entries, and related review or notification records.",
+      "Professional Intelligence (PI) data you create or generate: profile and career goals, evidence ledger entries, artefacts and versions, capability assessments (ScoreRuns) produced by the Capability Engine, SnapshotClaims, Experience planner activity, learning items, real-world outcome notes, Verified Portfolio entries, and related review or notification records.",
       "Workspace and delivery data when you use Professional Workspace: projects, meetings, tasks, decisions, risks, contributions and similar operational records tied to your organisation membership.",
       "Attestation data when you request external verification: attestor contact details and attestation confirm/dispute outcomes for a specific portfolio claim.",
       "Technical logs needed to operate the service (for example request metadata and AI interaction records used for orchestration trust and cost observability).",
@@ -40,7 +40,7 @@ const sections = [
     title: "4. How we use data",
     body: [
       "To provide the product you signed up for — including evidence tracking, capability scoring via the Capability Engine, career readiness views, portfolio packaging and workspace collaboration.",
-      "To enforce trust rails: append-only evidence transitions, Capability Engine–only ScoreRun writes, and Verified badges that require independent attestation.",
+      "To enforce trust rails: append-only evidence transitions, Capability Engine–only assessment writes, and Verified badges that require independent attestation.",
       "To send in-product notifications about review, intervention or privacy actions you take.",
       "AI features draft suggestions and observations. AI-generated observations are not automatically treated as verified evidence. Consequential changes require human approval where the product enforces that rule.",
     ],

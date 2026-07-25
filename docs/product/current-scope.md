@@ -77,7 +77,7 @@ Full plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
 3. **Ops + engineering:** configure T6 live CI secrets once workflows run again.
 4. **Engineering (now):** clear TD-017 test-fixture ESLint / `tsc` debt so returning CI stays honest.
-5. **Engineering (now):** UX honesty (ScoreRun language, Command Centre demotion) — commercial marketing honesty shipped in Batch 2.
+5. **Engineering (now):** Founder ops (TD-018 CI, TD-006 HIBP) + T8 E2E + Next bump — UX language Batch 3 shipped.
 
 Do **not** start **T9** (commercial). Defer marketplace, Stripe, graph DB, multi-profession expansion, and microservice splits.
 

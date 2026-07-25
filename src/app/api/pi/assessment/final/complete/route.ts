@@ -69,7 +69,7 @@ export async function POST(request: Request) {
       capabilityAssigned: false,
       deliverxVerified: false,
       notice:
-        "Final/transfer evidence is observed. Capability levels come only from ScoreRun. Growth report compares baseline → practice → final under one framework pin. Verified badge stays off.",
+        "Final/transfer evidence is observed. Capability levels come only from capability assessment. Growth report compares baseline → practice → final under one framework pin. Verified badge stays off.",
       profileHref: "/profile",
       portfolioHref: "/portfolio",
       careerHref: "/launchpad/app",

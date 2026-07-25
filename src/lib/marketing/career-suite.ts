@@ -41,13 +41,13 @@ export const XPERIENCE_INCLUDES = [
 
 /** Matches Career Intelligence as shipped (not aspirational twin/marketplace depth). */
 export const LAUNCHPAD_INCLUDES = [
-  "Role readiness with labelled source (ScoreRun, mixed, or heuristic)",
+  "Role readiness with labelled source (assessment, mixed, or heuristic)",
   "Personalised roadmap from capability gaps",
   "Evidence-backed CV packaging into Verified Portfolio",
   "Career profile grounded in Professional Intelligence",
   "Interview lab — STAR stories and practice sessions",
   "Application tracking for roles you pursue",
-  "Honest labels when readiness is heuristic, not ScoreRun-backed",
+  "Honest labels when readiness is heuristic, not assessment-backed",
 ] as const;
 
 export const TEAM_COPILOT_INCLUDES = [
@@ -176,7 +176,7 @@ export const CAREER_PROMISE = {
     "Delivery habits you can take into real teams",
   ] as const,
   disclaimer:
-    "DeliverX does not guarantee interviews or job offers. Outcomes depend on your market, effort and how you use the evidence you build. Verified badges require independent third-party attestation — not self-report or ScoreRun alone.",
+    "DeliverX does not guarantee interviews or job offers. Outcomes depend on your market, effort and how you use the evidence you build. Verified badges require independent third-party attestation — not self-report or a capability assessment alone.",
 } as const;
 
 export function careerTierById(id: CareerTierId): CareerTier {

@@ -282,6 +282,26 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## Remediation Batch 3 — UX clarity & product language (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| Copy module | `src/lib/ux/capability-assessment-copy.ts` — presentation labels; ScoreRun stays internal |
+| App UI | Profile, Evidence, Hub, Career Intelligence, Learning, Portfolio, Baseline/Final, Experience, Outcomes, Workspace coach — human assessment language |
+| Naming | Hub + Launchpad app chrome = **Career Intelligence**; `/launchpad` route retained |
+| Workspace | Removed Command Centre / Mission Control pitch from Professional Workspace home |
+| Review | Removed “Seed sample finding” from PI review queue |
+| Metadata | Root title → Professional Intelligence Platform; Launchpad app → Career Intelligence |
+| Readiness | Source labels via `readiness-honesty` + Career UI; heuristic never capability truth |
+| Tests | `capability-assessment-copy.test.ts`; aggregate/snapshot/matching/plan expectations updated |
+| Decision | PD-2026-07-25f |
+
+**Verification:** UX language units PASS; marketing honesty PASS; `npm run test:release-gate` PASS (248 PI + unauth + security); `npm run build` PASS.
+
+**Batch 3 verdict:** Shipped. Next remediation batch requires founder approval; T9 remains blocked.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

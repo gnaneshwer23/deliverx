@@ -92,7 +92,7 @@ export async function buildPiProfileAggregate(
   const holdingBack = {
     topGaps: scoreRun?.gaps.slice(0, 5) ?? [],
     emptyGuidance: !scoreRun
-      ? "Run ScoreRun after you have practice evidence to see what is holding you back."
+      ? "Run a capability assessment after you have practice evidence to see what is holding you back."
       : null,
   };
 
@@ -129,7 +129,7 @@ export async function buildPiProfileAggregate(
     emptyGuidance:
       (career?.opportunities?.length ?? 0) > 0
         ? null
-        : "Complete identity and a ScoreRun so opportunity matching can use your evidence.",
+        : "Complete identity and a capability assessment so opportunity matching can use your evidence.",
   };
 
   return {
@@ -283,7 +283,7 @@ function projectNextAction(input: {
   }
   if (!input.scoreRun) {
     return {
-      title: "Run ScoreRun on your Evidence Ledger",
+      title: "Run assessment on your Evidence Ledger",
       rationale: "Project readiness, strengths and gaps from evidence you already have.",
       href: `${PI_EVIDENCE_PATH}?run=1`,
       kind: "evidence",
@@ -353,8 +353,8 @@ function projectNextAction(input: {
       rationale:
         rec?.rationale ||
         (gap
-          ? `Baseline/ScoreRun highlights “${gap}”. Experience produces observed practice evidence against the same framework pin.`
-          : "From your latest ScoreRun recommendation."),
+          ? `Your latest assessment highlights “${gap}”. Experience produces observed practice evidence against the same framework pin.`
+          : "From your latest assessment recommendation."),
       href: input.experiencePlan?.href ?? "/experience/app",
       kind: "recommendation",
     };
@@ -370,7 +370,7 @@ function projectNextAction(input: {
   }
   return {
     title: "Review your Evidence Ledger",
-    rationale: "Keep accumulating practice evidence and re-run ScoreRun as you grow.",
+    rationale: "Keep accumulating practice evidence and re-run assessment as you grow.",
     href: PI_EVIDENCE_PATH,
     kind: "evidence",
   };
@@ -402,7 +402,7 @@ export function projectPiProfileFromParts(parts: {
   const holdingBack = {
     topGaps: parts.scoreRun?.gaps.slice(0, 5) ?? [],
     emptyGuidance: !parts.scoreRun
-      ? "Run ScoreRun after you have practice evidence to see what is holding you back."
+      ? "Run a capability assessment after you have practice evidence to see what is holding you back."
       : null,
   };
   const growthDelta: SnapshotGrowthDelta = projectGrowthDelta(

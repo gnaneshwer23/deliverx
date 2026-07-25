@@ -59,7 +59,6 @@ export function PiReviewQueueApp() {
   const [rationale, setRationale] = useState("");
   const [contextNote, setContextNote] = useState("");
   const [evidenceIdsRaw, setEvidenceIdsRaw] = useState("");
-  const [demoBusy, setDemoBusy] = useState(false);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/pi/review?open=1");
@@ -70,7 +69,9 @@ export function PiReviewQueueApp() {
     }
     setCases(json.data ?? []);
     if (!(json.data ?? []).length) {
-      setNotice("No open review cases. Seed a sample finding to try the workflow.");
+      setNotice(
+        "No open review cases. Findings appear here when a judgement or claim is queued for your review.",
+      );
     } else {
       setNotice(`${json.data.length} open case(s).`);
     }
@@ -100,39 +101,6 @@ export function PiReviewQueueApp() {
       }
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function seedSample() {
-    setDemoBusy(true);
-    try {
-      const res = await fetch("/api/pi/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subjectKind: "capability_level",
-          subjectRefType: "pi_capability_judgements",
-          subjectRefId: crypto.randomUUID(),
-          subjectLabel: "Stakeholder judgement — proposed proficient",
-          subjectSnapshot: {
-            competencyId: "comp.stakeholder_management",
-            levelProposed: "proficient",
-            confidence: 0.72,
-            note: "Snapshot for review only — UI does not invent scores",
-          },
-          priority: "normal",
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setNotice(json.error || "Seed failed");
-        return;
-      }
-      setNotice("Sample finding queued for review.");
-      await load();
-      if (json.data?.id) await openCase(json.data.id as string);
-    } finally {
-      setDemoBusy(false);
     }
   }
 
@@ -215,14 +183,6 @@ export function PiReviewQueueApp() {
           className="rounded-md border border-[#D6D3C8] bg-white px-3 py-1.5 text-xs font-medium text-[#1A1A18]"
         >
           Refresh
-        </button>
-        <button
-          type="button"
-          disabled={demoBusy}
-          onClick={() => void seedSample()}
-          className="rounded-md bg-[#1C4A2E] px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
-        >
-          {demoBusy ? "Seeding…" : "Seed sample finding"}
         </button>
       </div>
 

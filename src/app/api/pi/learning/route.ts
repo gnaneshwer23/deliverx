@@ -94,7 +94,7 @@ export async function GET() {
       capabilityAssigned: false as const,
       learningNotCapability: true as const,
       notice:
-        "Learning creates knowledge evidence only. Capability levels are assigned only by ScoreRun on practice evidence.",
+        "Learning creates knowledge evidence only. Capability levels are assigned only by capability assessment on practice evidence.",
     });
   } catch (err) {
     console.error("[pi/learning] GET failed", err);

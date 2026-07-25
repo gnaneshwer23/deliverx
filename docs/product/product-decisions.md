@@ -320,6 +320,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25f — UX language: ScoreRun stays internal; Career Intelligence is the product name
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `approve batch 3` authorizes Remediation Batch 3 only: user-facing copy uses **capability assessment** language (Run assessment / Latest assessment / Update your capability profile) instead of “ScoreRun” as a primary CTA or heading. Internal identifiers (`ScoreRun`, APIs, DB, `runKind`) remain unchanged. **Career Intelligence** is the primary product name in Hub chrome and Launchpad app shell; `/launchpad` stays the route family. Workspace home must not pitch legacy Command Centre / Mission Control. PI review “Seed sample finding” is removed from production UI. Every Career readiness % keeps an explicit source label (assessment projection vs evidence-coverage heuristic); heuristics are never capability truth. Root metadata frames Professional Intelligence, not “AI Delivery Platform”. |
+| **Why** | Audit UX P0/P1: engine jargon, dual Launchpad/Career naming, demo seed on a trust surface, and Command Centre pointers undermine T7 Professional Workspace primacy and calm professional language. |
+| **Consequence** | `src/lib/ux/capability-assessment-copy.ts` + `capability-assessment-copy.test.ts`; Profile/Evidence/Hub/Career/Learning/Portfolio presentation renames; `review-queue-app` seed removed; readiness-honesty labels humanised. Full multi-shell IA consolidation remains deferred (R-P1-07 partial). Does not authorize T9, Next bump, CI restore, or T8 E2E. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c.

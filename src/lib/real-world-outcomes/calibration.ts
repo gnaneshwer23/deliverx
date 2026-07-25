@@ -122,7 +122,7 @@ export function detectCalibrationFindings(
       findingType: "seniority_unsupported",
       severity: "watch",
       title: "Seniority target may be ahead of current evidence",
-      detail: `You are targeting ${context.targetSeniority} roles with ${summary.rejections} rejections and no offers. The evidence supporting this seniority may be limited. This is diagnostic guidance — capability levels come only from ScoreRun on practice evidence, never from rejections.`,
+      detail: `You are targeting ${context.targetSeniority} roles with ${summary.rejections} rejections and no offers. The evidence supporting this seniority may be limited. This is diagnostic guidance — capability levels come only from capability assessment on practice evidence, never from rejections.`,
       evidenceIds: evidenceIdsOf(rejectionEvents),
       implicatedGaps: gaps.slice(0, 3),
       metrics: {
@@ -173,7 +173,7 @@ export function detectCalibrationFindings(
       severity: commFeedback.length > 0 ? "action" : "watch",
       title: "Communication may be limiting outcomes",
       detail:
-        "Feedback and/or evidence gaps point to communication (clarity, stakeholder influence, storytelling) as a limiter. Diagnostic signal — practise in Interview Lab and Workspace so ScoreRun can interpret real practice evidence.",
+        "Feedback and/or evidence gaps point to communication (clarity, stakeholder influence, storytelling) as a limiter. Diagnostic signal — practise in Interview Lab and Workspace so assessment can interpret real practice evidence.",
       evidenceIds: evidenceIdsOf(commFeedback),
       implicatedGaps: commGaps,
       metrics: {

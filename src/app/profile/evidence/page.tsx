@@ -9,7 +9,7 @@ import { PI_EVIDENCE_PATH } from "@/lib/pi-profile/paths";
 export const metadata: Metadata = {
   title: "Evidence & capability · DeliverX",
   description:
-    "Person-facing Evidence Ledger and ScoreRun capability projection. Capability is never assigned by Experience UI.",
+    "Person-facing Evidence Ledger and capability assessment projection. Capability is never assigned by Experience UI.",
 };
 
 export const dynamic = "force-dynamic";

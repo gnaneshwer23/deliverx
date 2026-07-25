@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       recommendedNext: result.recommendedNext,
       capabilityAssigned: false,
       notice:
-        "Baseline evidence is observed / self-reported. Capability levels come only from ScoreRun under a pinned framework version.",
+        "Baseline evidence is observed / self-reported. Capability levels come only from capability assessment under a pinned framework version.",
       profileHref: "/profile",
       reviewHref: "/pi/review",
     });

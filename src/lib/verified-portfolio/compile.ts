@@ -272,7 +272,7 @@ export function externalViewModel(
     capabilityClaims: publicClaims,
     capabilityClaimsNotice:
       publicClaims.length > 0
-        ? "Capability levels are ScoreRun projections with evidence citations — not DeliverX verification."
+        ? "Capability levels are assessment projections with evidence citations — not DeliverX verification."
         : null,
   };
 }
