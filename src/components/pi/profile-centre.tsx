@@ -90,6 +90,12 @@ export function ProfileCentre() {
             Baseline
           </Link>
           <Link
+            href="/profile/final"
+            className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
+          >
+            Final / transfer
+          </Link>
+          <Link
             href={profile.experiencePlan?.href ?? "/experience/app"}
             className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
           >
@@ -244,6 +250,65 @@ export function ProfileCentre() {
                   {profile.growthDelta.gapsClosed.length > 0 ? (
                     <p>Gaps closed: {profile.growthDelta.gapsClosed.slice(0, 3).join("; ")}</p>
                   ) : null}
+                </div>
+              )}
+            </div>
+          ) : null}
+          {profile.growthReport ? (
+            <div className="mt-4 rounded-lg border border-[#E5E2D9] bg-white px-3 py-3">
+              <p className="text-xs font-medium text-[#1A1A18]">
+                Growth report · {profile.growthReport.status.replace(/_/g, " ")}
+              </p>
+              {profile.growthReport.status === "insufficient_history" ||
+              profile.growthReport.status === "blocked_cross_version" ? (
+                <p className="mt-1 text-xs text-[#6B6B64]">
+                  {profile.growthReport.report.message ??
+                    "Growth report unavailable until baseline and final share a framework pin."}
+                </p>
+              ) : (
+                <div className="mt-1 space-y-1 text-xs text-[#4A4A45]">
+                  <p>
+                    Experience{" "}
+                    {(profile.growthReport.report.experienceIndustry ?? "—").replace(
+                      /_/g,
+                      " ",
+                    )}{" "}
+                    → transfer{" "}
+                    {(profile.growthReport.report.transferIndustry ?? "—").replace(/_/g, " ")}
+                    {profile.growthReport.report.transferDiffersFromExperience
+                      ? " (contexts differ)"
+                      : ""}
+                  </p>
+                  {profile.growthReport.report.levels.slice(0, 4).map((l) => (
+                    <p key={l.competencyId}>
+                      {l.competencyId}:{" "}
+                      {(l.baselineLevel ?? "—").replace(/_/g, " ")} →{" "}
+                      {(l.finalLevel ?? "—").replace(/_/g, " ")}
+                      {l.evidenceIds.length
+                        ? ` · evidence ${l.evidenceIds.slice(0, 2).join(", ")}`
+                        : ""}
+                    </p>
+                  ))}
+                  {profile.growthReport.report.transferableStrengths.length > 0 ? (
+                    <p>
+                      Transferable strengths:{" "}
+                      {profile.growthReport.report.transferableStrengths
+                        .slice(0, 3)
+                        .join("; ")}
+                    </p>
+                  ) : null}
+                  {profile.growthReport.report.remainingLimitations.length > 0 ? (
+                    <p>
+                      Remaining limitations:{" "}
+                      {profile.growthReport.report.remainingLimitations
+                        .slice(0, 2)
+                        .join("; ")}
+                    </p>
+                  ) : null}
+                  <p className="text-[10px] text-[#6B6B64]">
+                    {profile.growthReport.citationCount} evidence citation
+                    {profile.growthReport.citationCount === 1 ? "" : "s"} · Verified badge off
+                  </p>
                 </div>
               )}
             </div>

@@ -4,6 +4,7 @@ import type { SnapshotGrowthDelta } from "@/lib/capability-engine/snapshot-claim
 import type { CapabilityLevel } from "@/lib/capability-engine/types";
 import type { OpportunityFit, RoadmapAction } from "@/lib/career-intelligence/types";
 import type { ExperiencePlanRecord } from "@/lib/experience-planner/types";
+import type { GrowthReportRecord } from "@/lib/pi-assessment/growth-report";
 
 export type PiProfileIdentity = {
   firstName: string;
@@ -62,7 +63,11 @@ export type PiProfileNextAction = {
     | "career"
     | "onboarding"
     | "recommendation"
-    | "baseline";
+    | "baseline"
+    | "final"
+    | "portfolio_eligibility"
+    | "career_readiness"
+    | "profile";
 } | null;
 
 export type PiProfileAggregate = {
@@ -71,6 +76,8 @@ export type PiProfileAggregate = {
   scoreRun: PiProfileScoreRun | null;
   /** Honest growth between the two most recent snapshots, or insufficient history. */
   growthDelta: SnapshotGrowthDelta;
+  /** Citation-backed baseline → practice → final growth report when available. */
+  growthReport: GrowthReportRecord | null;
   holdingBack: {
     topGaps: string[];
     emptyGuidance: string | null;
@@ -82,6 +89,8 @@ export type PiProfileAggregate = {
   };
   /** Explicit: this aggregate never writes capability. */
   capabilityAssigned: false;
+  /** Verified badge never lights from Profile / growth report (Phase 8). */
+  deliverxVerified: false;
   roadmapTeaser: RoadmapAction[];
   /** Gap-ranked Experience plan (Phase 3) — recommendation only. */
   experiencePlan: ExperiencePlanRecord | null;

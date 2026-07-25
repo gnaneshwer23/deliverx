@@ -12,6 +12,7 @@ describe("baseline evidence provenance mapping", () => {
       ["decision", "baseline_assessment"],
       ["work_sample", "work_sample"],
       ["reflection", "reflection"],
+      ["transfer", "transfer_assessment"],
     ];
     for (const [kind, source] of cases) {
       expect(evidenceSourceForItemKind(kind)).toBe(source);

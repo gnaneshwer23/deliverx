@@ -164,6 +164,38 @@ describe("buildScoreRunInsertRow framework pin", () => {
     expect(row.result).toMatchObject({ runKind: "baseline" });
   });
 
+  it("writes run_kind=final when requested", () => {
+    const result = makeResult(true);
+    const row = buildScoreRunInsertRow({
+      userId: "u1",
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      result,
+      frameworkPin: {
+        frameworkVersionId: "fv-1",
+        frameworkSlug: "pm-core",
+        version: "2026.1",
+        contentHash: "hash",
+        source: "pi_cf_published",
+      },
+      runKind: "final",
+    });
+    expect(row.run_kind).toBe("final");
+    expect(row.result).toMatchObject({ runKind: "final" });
+  });
+
+  it("writes run_kind=transfer when requested", () => {
+    const result = makeResult(true);
+    const row = buildScoreRunInsertRow({
+      userId: "u1",
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      result,
+      runKind: "transfer",
+    });
+    expect(row.run_kind).toBe("transfer");
+  });
+
   it("pins failed runs too so attribution is not lost", () => {
     const result = makeResult(false);
     const row = buildScoreRunInsertRow({

@@ -27,6 +27,7 @@ const KIND_PRIORITY: AssessmentItemKind[] = [
   "work_sample",
   "reflection",
   "decision",
+  "transfer",
 ];
 
 function kindRank(kind: AssessmentItemKind): number {

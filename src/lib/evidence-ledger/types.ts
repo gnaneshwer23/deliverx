@@ -18,6 +18,8 @@ export const PI_EVIDENCE_SOURCE_TYPES = [
   "self_report",
   "system",
   "workspace_observation",
+  "final_assessment",
+  "transfer_assessment",
 ] as const;
 
 export type PiEvidenceSourceType = (typeof PI_EVIDENCE_SOURCE_TYPES)[number];

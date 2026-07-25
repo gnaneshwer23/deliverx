@@ -18,9 +18,11 @@ import {
   planExperienceFromGaps,
   type ExperiencePlanRecord,
 } from "@/lib/experience-planner";
+import { loadLatestGrowthReport } from "@/lib/pi-assessment/growth-report";
 import {
   PI_BASELINE_PATH,
   PI_EVIDENCE_PATH,
+  PI_FINAL_PATH,
   PI_PROFILE_PATH,
 } from "@/lib/pi-profile/paths";
 import type {
@@ -36,27 +38,45 @@ const BASELINE_SOURCE_TYPES = new Set([
   "work_sample",
 ]);
 
+const EXPERIENCE_SOURCE_TYPES = new Set([
+  "experience_project",
+  "decision",
+  "workspace_observation",
+]);
+
+const FINAL_SOURCE_TYPES = new Set([
+  "final_assessment",
+  "transfer_assessment",
+]);
+
 export async function buildPiProfileAggregate(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<PiProfileAggregate> {
-  const [{ data: pi }, { data: evidenceRows }, snapshotPack, career, activePlan] =
-    await Promise.all([
-      supabase
-        .from("pi_onboarding_sessions")
-        .select("payload, status")
-        .eq("user_id", userId)
-        .maybeSingle(),
-      supabase
-        .from("pi_evidence_records")
-        .select("id, title, source_type, captured_at, created_at")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(100),
-      loadRecentSnapshotClaims(supabase, userId, 2),
-      buildCareerIntelligenceSnapshot(supabase, userId).catch(() => null),
-      loadActiveExperiencePlan(supabase, userId).catch(() => null),
-    ]);
+  const [
+    { data: pi },
+    { data: evidenceRows },
+    snapshotPack,
+    career,
+    activePlan,
+    growthReport,
+  ] = await Promise.all([
+    supabase
+      .from("pi_onboarding_sessions")
+      .select("payload, status")
+      .eq("user_id", userId)
+      .maybeSingle(),
+    supabase
+      .from("pi_evidence_records")
+      .select("id, title, source_type, captured_at, created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(100),
+    loadRecentSnapshotClaims(supabase, userId, 2),
+    buildCareerIntelligenceSnapshot(supabase, userId).catch(() => null),
+    loadActiveExperiencePlan(supabase, userId).catch(() => null),
+    loadLatestGrowthReport(supabase, userId).catch(() => null),
+  ]);
 
   const identity = projectIdentity(pi);
   const evidence = projectEvidence(evidenceRows ?? []);
@@ -77,15 +97,25 @@ export async function buildPiProfileAggregate(
       ? synthesiseEphemeralPlan(identity, scoreRun)
       : null);
 
+  const experienceEvidenceCount = Object.entries(evidence.bySourceType)
+    .filter(([k]) => EXPERIENCE_SOURCE_TYPES.has(k))
+    .reduce((sum, [, n]) => sum + n, 0);
+  const finalEvidenceCount = Object.entries(evidence.bySourceType)
+    .filter(([k]) => FINAL_SOURCE_TYPES.has(k))
+    .reduce((sum, [, n]) => sum + n, 0);
+
   const nextAction = projectNextAction({
     identity,
     evidenceCount: evidence.totalCount,
     baselineEvidenceCount: Object.entries(evidence.bySourceType)
       .filter(([k]) => BASELINE_SOURCE_TYPES.has(k) || k === "reflection")
       .reduce((sum, [, n]) => sum + n, 0),
+    experienceEvidenceCount,
+    finalEvidenceCount,
     scoreRun,
     careerRoadmap: career?.roadmap ?? [],
     experiencePlan,
+    growthReport,
   });
 
   const opportunities = {
@@ -101,10 +131,12 @@ export async function buildPiProfileAggregate(
     evidence,
     scoreRun,
     growthDelta,
+    growthReport,
     holdingBack,
     nextAction,
     opportunities,
     capabilityAssigned: false,
+    deliverxVerified: false,
     roadmapTeaser: (career?.roadmap ?? []).slice(0, 3),
     experiencePlan,
   };
@@ -192,6 +224,8 @@ function projectNextAction(input: {
   identity: PiProfileIdentity;
   evidenceCount: number;
   baselineEvidenceCount: number;
+  experienceEvidenceCount: number;
+  finalEvidenceCount: number;
   scoreRun: PiProfileScoreRun | null;
   careerRoadmap: Array<{
     title: string;
@@ -200,6 +234,7 @@ function projectNextAction(input: {
     kind: string;
   }>;
   experiencePlan?: ExperiencePlanRecord | null;
+  growthReport?: Awaited<ReturnType<typeof loadLatestGrowthReport>>;
 }): PiProfileNextAction {
   if (!input.identity.onboardingComplete && !input.identity.firstName) {
     return {
@@ -240,7 +275,30 @@ function projectNextAction(input: {
       kind: "evidence",
     };
   }
-  if (input.experiencePlan) {
+  // After Experience evidence, steer toward final/transfer assessment.
+  if (
+    input.experienceEvidenceCount > 0 &&
+    input.finalEvidenceCount === 0 &&
+    !input.growthReport
+  ) {
+    return {
+      title: "Take the final assessment (with transfer)",
+      rationale:
+        "Prove movement in a novel industry/context — transfer validity distinguishes growth from scenario familiarity.",
+      href: PI_FINAL_PATH,
+      kind: "final",
+    };
+  }
+  if (input.growthReport?.report.nextAction) {
+    const na = input.growthReport.report.nextAction;
+    return {
+      title: na.title,
+      rationale: na.rationale,
+      href: na.href,
+      kind: na.kind,
+    };
+  }
+  if (input.experiencePlan && input.experienceEvidenceCount === 0) {
     return {
       title: input.experiencePlan.title,
       rationale: input.experiencePlan.rationale,
@@ -256,9 +314,9 @@ function projectNextAction(input: {
       rationale:
         rec?.rationale ||
         (gap
-          ? `Baseline/ScoreRun highlights “${gap}”. Experience (MediFlow) produces observed practice evidence against the same framework pin.`
+          ? `Baseline/ScoreRun highlights “${gap}”. Experience produces observed practice evidence against the same framework pin.`
           : "From your latest ScoreRun recommendation."),
-      href: "/experience/app",
+      href: input.experiencePlan?.href ?? "/experience/app",
       kind: "recommendation",
     };
   }
@@ -284,13 +342,22 @@ export function projectPiProfileFromParts(parts: {
   identity: PiProfileIdentity;
   evidenceCount: number;
   baselineEvidenceCount?: number;
+  experienceEvidenceCount?: number;
+  finalEvidenceCount?: number;
   scoreRun: PiProfileScoreRun | null;
   claims?: SnapshotClaims | null;
   previousClaims?: SnapshotClaims | null;
   experiencePlan?: ExperiencePlanRecord | null;
+  growthReport?: Awaited<ReturnType<typeof loadLatestGrowthReport>>;
 }): Pick<
   PiProfileAggregate,
-  "identity" | "holdingBack" | "nextAction" | "capabilityAssigned" | "growthDelta"
+  | "identity"
+  | "holdingBack"
+  | "nextAction"
+  | "capabilityAssigned"
+  | "deliverxVerified"
+  | "growthDelta"
+  | "growthReport"
 > {
   const holdingBack = {
     topGaps: parts.scoreRun?.gaps.slice(0, 5) ?? [],
@@ -309,12 +376,17 @@ export function projectPiProfileFromParts(parts: {
       identity: parts.identity,
       evidenceCount: parts.evidenceCount,
       baselineEvidenceCount: parts.baselineEvidenceCount ?? 0,
+      experienceEvidenceCount: parts.experienceEvidenceCount ?? 0,
+      finalEvidenceCount: parts.finalEvidenceCount ?? 0,
       scoreRun: parts.scoreRun,
       careerRoadmap: [],
       experiencePlan: parts.experiencePlan ?? null,
+      growthReport: parts.growthReport ?? null,
     }),
     capabilityAssigned: false,
+    deliverxVerified: false,
     growthDelta,
+    growthReport: parts.growthReport ?? null,
   };
 }
 

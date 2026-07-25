@@ -7,7 +7,7 @@ import {
 } from "@/lib/capability-engine/types";
 import type { FrameworkVersionPin } from "@/lib/admin-framework/rubric-bridge";
 
-export type ScoreRunKind = "standard" | "baseline";
+export type ScoreRunKind = "standard" | "baseline" | "final" | "transfer";
 
 export type PersistCapabilityRunInput = {
   userId: string;
@@ -18,7 +18,7 @@ export type PersistCapabilityRunInput = {
   result: OrchestratorResult;
   /** Published pi_cf_* pin — set whenever a matching published version exists. */
   frameworkPin?: FrameworkVersionPin | null;
-  /** baseline = starting picture from assessment evidence; default standard. */
+  /** baseline = starting picture; final/transfer = post-practice; default standard. */
   runKind?: ScoreRunKind;
 };
 
