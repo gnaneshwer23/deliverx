@@ -81,7 +81,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 | SHA | Summary | Notes |
 | --- | --- | --- |
-| `2ee4c7d` | docs(qa): T0 signed-in pack + release readiness; fix path headers for coach deep-link | Automated/unauth PASS; signed-in **BLOCKED** (founder login). See `docs/qa/t0-results.md`. TD-001 still open. |
+| `c5d2b9f` | docs(qa): T0 signed-in pack + release readiness; fix path headers for coach deep-link | Automated/unauth PASS; signed-in **BLOCKED** (founder login). See `docs/qa/t0-results.md`. TD-001 still open. |
 
 **T0 verdict:** PARTIAL — do not start T1 until T0 PASS or founder override.
 

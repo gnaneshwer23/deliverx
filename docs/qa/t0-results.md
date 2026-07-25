@@ -4,7 +4,7 @@
 **Date:** 2026-07-25  
 **Executor (automated portion):** Agent  
 **Executor (signed-in):** **BLOCKED — needs founder login**  
-**Repo HEAD at verification:** `2ee4c7d` (T0 pack + path-header fix; confirm after push)  
+**Repo HEAD at verification:** `c5d2b9f` (T0 pack + path-header fix; confirm after push)  
 **Prod:** https://www.deliverx.dev · redeploy expected after this push  
 **Git:** T0 start `adbf7f9` → T0 commit on `main` (see implementation-log)
 
@@ -159,7 +159,7 @@ src/lib/auth/request-path.test.ts — 4 passed
 
 | Change | SHA | Deploy |
 | --- | --- | --- |
-| `getRequestPathFromHeaders` + `x-matched-path` fallback; request-path unit tests; `x-dx-proxy` marker on proxy responses; T0 QA pack | `2ee4c7d` (+ follow-up SHA fix if amended) | Push to main → Vercel prod |
+| `getRequestPathFromHeaders` + `x-matched-path` fallback; request-path unit tests; `x-dx-proxy` marker on proxy responses; T0 QA pack | `c5d2b9f` (+ follow-up SHA fix if amended) | Push to main → Vercel prod |
 
 ---
 
