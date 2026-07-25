@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isGatewayRedirectDestination } from "@/lib/auth/route-guards";
+import {
+  buildLoginRedirectPath,
+  isGatewayRedirectDestination,
+} from "@/lib/auth/route-guards";
 
 describe("require-onboarding gateway guard", () => {
   it("allows pm-mission onboard when target lacks project param", () => {
@@ -25,5 +28,17 @@ describe("require-onboarding gateway guard", () => {
     expect(
       shouldSkipPmMissionRedirect("/workspace/pm-mission?onboard=1&project=x", "/workspace/pm-mission?onboard=1"),
     ).toBe(false);
+  });
+
+  it("preserves deep-link next for unauthenticated workspace/settings shells", () => {
+    expect(buildLoginRedirectPath("/workspace/coach")).toBe(
+      "/login?next=%2Fworkspace%2Fcoach",
+    );
+    expect(buildLoginRedirectPath("/settings/profile")).toBe(
+      "/login?next=%2Fsettings%2Fprofile",
+    );
+    expect(buildLoginRedirectPath("/workspace/coach?project=abc")).toBe(
+      "/login?next=%2Fworkspace%2Fcoach%3Fproject%3Dabc",
+    );
   });
 });

@@ -5,7 +5,10 @@ import {
   isSponsorGatewayComplete,
 } from "@/lib/auth/onboarding";
 import { getRequestPathFromHeaders } from "@/lib/auth/request-path";
-import { isGatewayRedirectDestination } from "@/lib/auth/route-guards";
+import {
+  buildLoginRedirectPath,
+  isGatewayRedirectDestination,
+} from "@/lib/auth/route-guards";
 import { resolveGatewayRedirect } from "@/services/gatewayOnboardingEngine";
 
 async function redirectIfNotAtGatewayDestination(redirectPath: string) {
@@ -24,10 +27,19 @@ async function redirectIfNotAtGatewayDestination(redirectPath: string) {
   }
 }
 
+/** Login redirect that preserves the path the user was trying to open. */
+async function redirectToLoginPreservingNext(): Promise<never> {
+  const currentPath = await getRequestPathFromHeaders();
+  if (currentPath?.startsWith("/") && !currentPath.startsWith("//")) {
+    redirect(buildLoginRedirectPath(currentPath));
+  }
+  redirect("/login");
+}
+
 /** Redirect unauthenticated or incomplete sponsor gateway users away from app shells. */
 export async function requireCompleteOnboarding() {
   const { user, profile, gatewayStep, draftProjectId } = await getOnboardingProfile();
-  if (!user) redirect("/login");
+  if (!user) return redirectToLoginPreservingNext();
   if (!profile?.organisation_id) redirect("/onboarding/organisation");
   if (!profile?.role) redirect("/onboarding/role");
 
@@ -47,7 +59,13 @@ export async function requireCompleteOnboarding() {
 
 export async function getOnboardingRedirectIfIncomplete(): Promise<string | null> {
   const { user, profile, gatewayStep, draftProjectId } = await getOnboardingProfile();
-  if (!user) return "/login";
+  if (!user) {
+    const currentPath = await getRequestPathFromHeaders();
+    if (currentPath?.startsWith("/") && !currentPath.startsWith("//")) {
+      return buildLoginRedirectPath(currentPath);
+    }
+    return "/login";
+  }
   if (!isAccountSetupComplete(profile)) {
     if (!profile?.organisation_id) return "/onboarding/organisation";
     return "/onboarding/role";
