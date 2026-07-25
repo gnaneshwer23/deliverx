@@ -101,7 +101,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 | SHA | Summary | Migrations / notes |
 | --- | --- | --- |
-| _(pending commit)_ | feat(capability): T2 rubric DB SoT + labelled fallback + golden harness | `0087`; `rubric-resolve-policy`; pin assert on `/api/pi/capability/run`; TD-009 closed |
+| `8a41caf` | feat(capability): T2 rubric DB SoT + labelled fallback + golden harness | `0087`; `rubric-resolve-policy`; pin assert on `/api/pi/capability/run`; TD-009 closed |
 
 **T2 verdict:** Shipped. DB `pi_cf_*` preferred for ScoreRuns; `in_code_fallback` labelled + measurable; do not start T3 until asked. T0 signed-in QA remains open.
 
