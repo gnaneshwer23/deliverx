@@ -41,8 +41,10 @@
 | Security always-on | `npm run test:e2e:t6:security` | Yes (live portion optional) |
 | Composite | `npm run test:release-gate` | Yes |
 | Live signed-in | `npm run test:release-gate:live` | Yes when secrets present; optional in CI until secrets configured |
-| Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Yes (existing) |
+| Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Manual — `.github/workflows/ci-e2e.yml` (`workflow_dispatch`) |
 | Production build | `npm run build` | Yes |
+
+**CI policy (2026-07-25):** Push/PR CI (`.github/workflows/ci.yml`) runs unit tests + `test:release-gate` + `npm run build`. Lint is advisory. Playwright Chromium suites are opt-in via `ci-e2e.yml` to conserve private-repo Actions minutes. If Actions jobs never start (0s / empty jobs), check [GitHub Actions billing](https://github.com/settings/billing) — included minutes may be exhausted.
 
 ---
 
@@ -51,4 +53,4 @@
 1. Configure GitHub Actions secrets `T6_SUPABASE_URL`, `T6_SUPABASE_ANON_KEY`, `T6_SUPABASE_SERVICE_ROLE_KEY` so CI runs the live signed-in job.  
 2. When disk allows: stand up Option A (local Supabase) and point `T6_BASE_URL=http://localhost:3000`.  
 3. Founder enables TD-006 leaked-password protection.  
-4. Do not proceed to T7 without explicit founder approval.
+4. Confirm Actions minutes / spending limit so push CI can schedule jobs again.

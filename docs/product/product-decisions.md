@@ -270,6 +270,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25b — Push CI gate is release-gate + build (Playwright manual)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | Default GitHub Actions on push/PR runs unit tests, `npm run test:release-gate`, and `npm run build`. Full-repo ESLint stays advisory. Playwright smoke/17-AC runs only via `.github/workflows/ci-e2e.yml` (`workflow_dispatch`). |
+| **Why** | Private-repo Actions minutes were exhausted (0-job failures emailing on every push). Chromium install + dual Playwright suites burned the included pool without improving the T6 release signal already covered by `release-gate`. |
+| **Consequence** | Slimmer `.github/workflows/ci.yml`; new `ci-e2e.yml`; TD-017/TD-018; docs in release-readiness + implementation-log. Founder still must restore Actions billing/minutes for green check runs. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, commercial SKU packaging (T9), verification legal meaning (T8), TD-006 (leaked-password protection). T8/T9 require explicit separate approval.
+See `current-scope.md` — ICP weight, commercial SKU packaging (T9), verification legal meaning (T8), TD-006 (leaked-password protection), TD-018 (Actions minutes). T8/T9 require explicit separate approval.

@@ -21,6 +21,8 @@
 | TD-014 | Pre-pivot delivery/org API surface large vs PI SoT | Low | Deferred | Do not expand as PI WPs; avoid capability confusion |
 | TD-015 | Person-purge RPC executable by anon/authenticated (Supabase default-privilege) | **High** | Now | **Resolved T3 (`0089`, `9eae533`)**: `revoke execute ... from anon, authenticated` on `pi_privacy_purge_person_data`; verified anon/authenticated EXECUTE = false, service_role only. Root cause: `revoke ... from public` does not remove role-specific default grants. |
 | TD-016 | Other `SECURITY DEFINER` functions callable by anon/authenticated | Low–Med | Closed | **Closed on prod (2026-07-25, `0092`, `096fb72`):** exhaustive non-system inventory found nine functions (six DeliverX `public`, two managed `vault`, one managed `pgbouncer`). Anonymous EXECUTE is now false for all. `current_org_id`, `is_workspace_project_member`, and `pi_cf_version_is_readable` intentionally retain authenticated EXECUTE because active RLS policies depend on them; rollback-only authenticated read/write probes passed before and after. Purge/admin/trigger functions remain service-role or owner-only. |
+| TD-017 | Full-repo ESLint + standalone `tsc` test-fixture debt | Low–Med | Deferred | **Classified (2026-07-25):** ~16 ESLint errors (mostly `react-hooks/set-state-in-effect`) and ~16 `tsc` errors confined to `*.test.ts` fixtures. Production `src/` typechecks clean under Next build. CI lint is advisory; Playwright moved to manual `ci-e2e.yml`. Not a release blocker. |
+| TD-018 | GitHub Actions minutes exhausted on private repo | Medium | Now | **Observed 2026-07-25:** post-T6 CI runs conclude failure in 0s with zero jobs / no logs (`cannot be retried`). Pre-exhaustion failures were blocking lint. Slimmed push CI to unit + release-gate + build. Founder must restore Actions minutes or raise spending limit at GitHub billing settings to stop failure emails and get green check runs. |
 
 ---
 
@@ -31,4 +33,4 @@
 
 When resolving an item: note SHA + date in this table (append a Resolved column entry or move to a “Resolved” section).
 
-**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. **T6 (2026-07-25):** TD-001 closed by signed-in E2E + release gates. **T7 (2026-07-25):** TD-010 alias settled (not third SKU). TD-006 remains open (founder Auth toggle); all other entries retain their prior status.
+**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. **T6 (2026-07-25):** TD-001 closed by signed-in E2E + release gates. **T7 (2026-07-25):** TD-010 alias settled (not third SKU). **CI ops (2026-07-25):** TD-017/TD-018 recorded (lint/tsc fixture debt; Actions minutes). TD-006 remains open (founder Auth toggle); all other entries retain their prior status.

@@ -5,10 +5,17 @@ on:
     branches: [main, cursor/**]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
+# Blocking gate: T6 release-gate + production build.
+# Full-repo ESLint remains advisory (baseline debt — docs/qa/release-readiness.md).
+# Playwright smoke/acceptance lives in ci-e2e.yml (manual / schedule) to conserve
+# Actions minutes on a private repo and avoid push-triggered email storms when
+# the included minutes pool is exhausted.
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +31,7 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
-      - name: Unit and E2E smoke tests
+      - name: Unit tests
         run: npm test
         env:
           INVITE_JWT_SECRET: ci-invite-jwt-secret
@@ -43,29 +50,6 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.T6_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.T6_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.T6_SUPABASE_SERVICE_ROLE_KEY }}
-
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
-
-      - name: Playwright 5-step smoke suite
-        run: npm run test:smoke
-        env:
-          INVITE_JWT_SECRET: ci-invite-jwt-secret
-          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ci-smoke-anon
-          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ci-smoke-service
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
-          E2E_MOCK_INVITES: "true"
-
-      - name: Playwright 17-AC acceptance suite
-        run: npm run test:e2e:acceptance
-        env:
-          INVITE_JWT_SECRET: ci-invite-jwt-secret
-          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ci-smoke-anon
-          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ci-smoke-service
-          NEXT_PUBLIC_APP_URL: http://localhost:3000
-          E2E_MOCK_INVITES: "true"
 
       - name: Production build
         run: npm run build
