@@ -127,12 +127,13 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 | SHA | Summary | Migrations / notes |
 | --- | --- | --- |
 | `5a6e51c` | feat(ai): T4 agent registry, guardrails, provenance, usage log | `0090`; `src/lib/ai-orchestration/`; `GET /api/pi/ai/interactions`; consolidates Experience/Helm/Interview Lab personas |
+| `518d405` | fix(ai): OutputValidationResult narrowing for production build | Type-safe `contractFallback`; Vercel prod READY |
 
 **Founder override:** User said `t4` — explicit override of the T0–T3 audit gate while TD-001 signed-in QA remains open; pre-existing typecheck/lint debt (TD-016 residual) not blocking under override.
 
 **Scope:** Formal §11 agent framework without chat-as-DB: role registry (line_manager / stakeholder / observer + experience_coach / workspace_coach / interview_lab), immutable prompt versions, context builder (system instructions separate from org data), structured output contracts, prompt-injection guardrails, authority boundaries (no capability / verified-evidence writes; consequential actions need confirmation), mandatory cost/latency logging on `ai_interactions`. App registry is runtime SoT; DB catalogue seeded for ops. Existing Experience/coach/Helm behaviour wrapped, not rewritten.
 
-**Verification:** focused vitest (mock-model, injection, output validation, cascade) · migration `0090` applied to prod · unauth smoke on `/api/pi/ai/interactions` → 401 · Vercel prod READY.
+**Verification:** focused vitest 16 new orchestration tests (mock-model, injection, output validation, cascade) · migration `0090` (+ purge extend) applied to prod `jibmyxaldetyycmtlxet` (6 agents, 6 prompts, RLS on, purge covers `ai_interactions`, service_role-only EXECUTE) · Vercel prod READY (`4UYPiSFLEtKPLR4hfhJUpbNQ3VLV` / SHA `518d405`) · unauth smoke: `/api/pi/ai/interactions` 401, `/api/pi/artefacts` 401, `/settings/profile` 307. Pre-existing lint debt still fails GitHub `verify` job (not introduced by T4); not blocking under founder override.
 
 **T4 verdict:** Shipped. Do not start T5 (notifications) unless asked. T0 signed-in QA + TD-006/TD-016 remain open.
 
