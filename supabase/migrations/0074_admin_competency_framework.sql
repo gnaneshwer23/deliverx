@@ -239,6 +239,46 @@ create index if not exists pi_capability_score_runs_framework_version_idx
   on public.pi_capability_score_runs(framework_version_id);
 
 -- ---------------------------------------------------------------------------
+-- Seed: bootstrap pm-core framework BEFORE immutability triggers
+-- (published versions lock rubric_version_id — seed must link first)
+-- ---------------------------------------------------------------------------
+
+insert into public.pi_cf_frameworks (slug, title, description)
+values (
+  'pm-core',
+  'Product Manager core framework',
+  'Admin-managed competency framework replacing hard-coded CAREER_ROLE_CATALOGUE and in-code DEFAULT_RUBRIC.'
+)
+on conflict (slug) do nothing;
+
+insert into public.pi_cf_framework_versions (framework_id, version, title, status, changelog, published_at, rubric_version_id)
+select
+  f.id,
+  '2026.1',
+  'Product Manager core framework',
+  'published',
+  'Bootstrapped from pi_rubric_versions pm-core@2026.1 and CAREER_ROLE_CATALOGUE seed.',
+  now(),
+  rv.id
+from public.pi_cf_frameworks f
+left join public.pi_rubric_versions rv
+  on rv.slug = 'pm-core' and rv.version = '2026.1'
+where f.slug = 'pm-core'
+on conflict (framework_id, version) do nothing;
+
+-- Backfill rubric link if version row already existed without it (pre-trigger)
+update public.pi_cf_framework_versions fv
+set rubric_version_id = rv.id
+from public.pi_cf_frameworks f,
+     public.pi_rubric_versions rv
+where fv.framework_id = f.id
+  and f.slug = 'pm-core'
+  and fv.version = '2026.1'
+  and rv.slug = 'pm-core'
+  and rv.version = '2026.1'
+  and fv.rubric_version_id is null;
+
+-- ---------------------------------------------------------------------------
 -- Immutability: forbid content mutation when version is published+
 -- ---------------------------------------------------------------------------
 
@@ -353,42 +393,6 @@ drop trigger if exists trg_pi_cf_audit_events_immutable on public.pi_cf_audit_ev
 create trigger trg_pi_cf_audit_events_immutable
   before update or delete on public.pi_cf_audit_events
   for each row execute function public.pi_cf_forbid_audit_mutation();
-
--- ---------------------------------------------------------------------------
--- Seed: bootstrap pm-core framework from existing DEFAULT_RUBRIC / catalogue
--- ---------------------------------------------------------------------------
-
-insert into public.pi_cf_frameworks (slug, title, description)
-values (
-  'pm-core',
-  'Product Manager core framework',
-  'Admin-managed competency framework replacing hard-coded CAREER_ROLE_CATALOGUE and in-code DEFAULT_RUBRIC.'
-)
-on conflict (slug) do nothing;
-
-insert into public.pi_cf_framework_versions (framework_id, version, title, status, changelog, published_at)
-select
-  f.id,
-  '2026.1',
-  'Product Manager core framework',
-  'published',
-  'Bootstrapped from pi_rubric_versions pm-core@2026.1 and CAREER_ROLE_CATALOGUE seed.',
-  now()
-from public.pi_cf_frameworks f
-where f.slug = 'pm-core'
-on conflict (framework_id, version) do nothing;
-
--- Link to existing rubric version when present
-update public.pi_cf_framework_versions fv
-set rubric_version_id = rv.id
-from public.pi_cf_frameworks f,
-     public.pi_rubric_versions rv
-where fv.framework_id = f.id
-  and f.slug = 'pm-core'
-  and fv.version = '2026.1'
-  and rv.slug = 'pm-core'
-  and rv.version = '2026.1'
-  and fv.rubric_version_id is null;
 
 -- ---------------------------------------------------------------------------
 -- RLS: authenticated read published/deprecated; writes via service role / admin policies later
