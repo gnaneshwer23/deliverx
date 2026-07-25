@@ -134,16 +134,23 @@ export async function appendEvidence(
   });
   if (provenanceError) throw provenanceError;
 
-  const { error: transitionError } = await supabase
-    .from("pi_evidence_status_transitions")
-    .insert({
-      evidence_id: evidenceId,
-      from_status: null,
-      to_status: initialStatus,
-      reason: "initial_capture",
-      actor_type: "system",
-      actor_user_id: input.userId,
-    });
+  const { error: transitionError } =
+    initialStatus === "platform_verified"
+      ? await supabase.rpc("pi_append_platform_verified_transition", {
+          p_evidence_id: evidenceId,
+          p_user_id: input.userId,
+          p_reason: "initial_capture",
+          p_actor_type: input.provenance.actorType,
+          p_actor_user_id: input.provenance.actorUserId ?? null,
+        })
+      : await supabase.from("pi_evidence_status_transitions").insert({
+          evidence_id: evidenceId,
+          from_status: null,
+          to_status: initialStatus,
+          reason: "initial_capture",
+          actor_type: "system",
+          actor_user_id: input.userId,
+        });
   if (transitionError) throw transitionError;
 
   const { data: job, error: jobError } = await supabase

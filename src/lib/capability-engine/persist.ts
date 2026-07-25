@@ -94,14 +94,18 @@ export function buildScoreRunInsertRow(input: PersistCapabilityRunInput) {
   };
 }
 
+/**
+ * Persist an engine result through a server-only service-role client.
+ * Callers must authenticate/authorise the subject before constructing this client.
+ */
 export async function persistCapabilityRun(
-  supabase: SupabaseClient,
+  admin: SupabaseClient,
   input: PersistCapabilityRunInput,
 ) {
   const runRow = buildScoreRunInsertRow(input);
 
   if (!input.result.ok || !input.result.snapshot) {
-    const { data: failed, error } = await supabase
+    const { data: failed, error } = await admin
       .from("pi_capability_score_runs")
       .insert(runRow as Record<string, unknown>)
       .select("id")
@@ -110,7 +114,7 @@ export async function persistCapabilityRun(
     return { scoreRunId: failed.id as string, snapshotId: null as string | null };
   }
 
-  const { data: run, error: runError } = await supabase
+  const { data: run, error: runError } = await admin
     .from("pi_capability_score_runs")
     .insert(runRow as Record<string, unknown>)
     .select("id")
@@ -121,7 +125,7 @@ export async function persistCapabilityRun(
   const snapshot = input.result.snapshot;
 
   if (input.result.judgements.length) {
-    const { error: jErr } = await supabase.from("pi_capability_judgements").insert(
+    const { error: jErr } = await admin.from("pi_capability_judgements").insert(
       input.result.judgements.map((j) => ({
         score_run_id: scoreRunId,
         user_id: input.userId,
@@ -143,7 +147,7 @@ export async function persistCapabilityRun(
     if (jErr) throw jErr;
   }
 
-  const { data: snap, error: snapError } = await supabase
+  const { data: snap, error: snapError } = await admin
     .from("pi_capability_snapshots")
     .insert({
       user_id: input.userId,
@@ -161,7 +165,7 @@ export async function persistCapabilityRun(
   if (snapError) throw snapError;
 
   if (input.result.reviewQueue.length) {
-    await supabase.from("pi_capability_reviews").insert(
+    await admin.from("pi_capability_reviews").insert(
       input.result.reviewQueue.map((item) => ({
         user_id: input.userId,
         score_run_id: scoreRunId,
@@ -172,7 +176,7 @@ export async function persistCapabilityRun(
     );
   }
 
-  await supabase.from("pi_domain_events").insert({
+  await admin.from("pi_domain_events").insert({
     event_type: "CapabilitySnapshotPublished",
     aggregate_type: "capability_snapshot",
     aggregate_id: snap.id,

@@ -147,6 +147,12 @@ export async function createPortfolioEntryFromEvidence(
     evidence: selected,
     userNotes: input.userNotes,
   });
+  // External evidence linked from another claim does not attest this new entry.
+  // The T8 attestation RPC is the only path that may set the protected label.
+  const initialEvidenceStrength =
+    draft.evidenceStrength === "externally_verified"
+      ? "document_supported"
+      : draft.evidenceStrength;
 
   const { data: entry, error } = await supabase
     .from("vpp_entries")
@@ -164,7 +170,7 @@ export async function createPortfolioEntryFromEvidence(
       artefacts: draft.artefacts,
       outcomes: draft.outcomes,
       competencies_demonstrated: draft.competenciesDemonstrated,
-      evidence_strength: draft.evidenceStrength,
+      evidence_strength: initialEvidenceStrength,
       contribution_breakdown: draft.contributionBreakdown,
       reflection: draft.reflection,
       verifier_status: draft.verifierStatus,

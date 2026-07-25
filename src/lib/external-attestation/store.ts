@@ -417,14 +417,16 @@ export async function submitAttestation(
       { onConflict: "entry_id,evidence_id,claim_field" },
     );
 
-    await admin
-      .from("vpp_entries")
-      .update({
-        verifier_status: "externally_attested",
-        evidence_strength: "externally_verified",
-      })
-      .eq("id", entryId)
-      .eq("user_id", subjectUserId);
+    const { error: verifiedStateError } = await admin.rpc(
+      "pi_apply_vpp_attestation_state",
+      {
+        p_entry_id: entryId,
+        p_user_id: subjectUserId,
+        p_verifier_status: "externally_attested",
+        p_evidence_strength: "externally_verified",
+      },
+    );
+    if (verifiedStateError) throw verifiedStateError;
 
     await admin
       .from("vpp_attestation_requests")
@@ -462,11 +464,16 @@ export async function submitAttestation(
     }
     reviewCaseId = review.data.id;
 
-    await admin
-      .from("vpp_entries")
-      .update({ verifier_status: "disputed" })
-      .eq("id", entryId)
-      .eq("user_id", subjectUserId);
+    const { error: disputedStateError } = await admin.rpc(
+      "pi_apply_vpp_attestation_state",
+      {
+        p_entry_id: entryId,
+        p_user_id: subjectUserId,
+        p_verifier_status: "disputed",
+        p_evidence_strength: null,
+      },
+    );
+    if (disputedStateError) throw disputedStateError;
 
     await admin
       .from("vpp_attestation_requests")

@@ -15,6 +15,7 @@ import {
   type RubricResolveSource,
 } from "@/lib/capability-engine/rubric-resolve-policy";
 import { latestStatus } from "@/lib/evidence-ledger/append";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -191,7 +192,7 @@ export async function POST(request: Request) {
               source: "pi_cf_published" as const,
             }
           : null;
-      persisted = await persistCapabilityRun(supabase, {
+      persisted = await persistCapabilityRun(createAdminClient(), {
         userId: user.id,
         targetRole: body.targetRole,
         targetSeniority: body.targetSeniority,

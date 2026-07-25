@@ -16,6 +16,7 @@ import {
 import { latestStatus } from "@/lib/evidence-ledger/append";
 import { appendBaselineEvidence } from "@/lib/pi-assessment/evidence";
 import { getSessionForUser, listSessionItems } from "@/lib/pi-assessment/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   MIN_BASELINE_RESPONSES,
   PI_BASELINE_PATH,
@@ -212,7 +213,7 @@ export async function completeBaselineSession(
           })) ?? null);
     frameworkVersionId = frameworkPin?.frameworkVersionId ?? frameworkVersionId;
 
-    const persisted = await persistCapabilityRun(supabase, {
+    const persisted = await persistCapabilityRun(createAdminClient(), {
       userId: input.userId,
       targetRole: session.targetRole ?? undefined,
       targetSeniority: session.targetSeniority ?? undefined,

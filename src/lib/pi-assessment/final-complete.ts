@@ -27,6 +27,7 @@ import {
   type AssessmentSessionRow,
   type FinalNextAction,
 } from "@/lib/pi-assessment/types";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type CompleteFinalResult = {
   session: AssessmentSessionRow;
@@ -239,7 +240,7 @@ export async function completeFinalSession(
           })) ?? null);
     frameworkVersionId = frameworkPin?.frameworkVersionId ?? frameworkVersionId;
 
-    const persisted = await persistCapabilityRun(supabase, {
+    const persisted = await persistCapabilityRun(createAdminClient(), {
       userId: input.userId,
       targetRole: session.targetRole ?? undefined,
       targetSeniority: session.targetSeniority ?? undefined,

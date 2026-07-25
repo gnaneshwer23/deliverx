@@ -66,6 +66,11 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
   let victimId = "";
   let attackerId = "";
   let victimEvidenceId = "";
+  let elevatedEvidenceId = "";
+  let victimScoreRunId = "";
+  let victimEntryId = "";
+  let victimClient = null as ReturnType<typeof createClient> | null;
+  let attackerClient = null as ReturnType<typeof createClient> | null;
   let cleaned = false;
 
   beforeAll(async () => {
@@ -99,6 +104,105 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
       .single();
     if (error || !ev) throw new Error(`seed evidence failed: ${error?.message}`);
     victimEvidenceId = ev.id as string;
+
+    const { data: elevatedEvidence, error: elevatedEvidenceError } = await admin
+      .from("pi_evidence_records")
+      .insert({
+        user_id: victimId,
+        source_type: "external_verification",
+        category: "attestation",
+        title: "T6 privileged transition probe",
+        summary: "Must become platform_verified only through the service-role RPC",
+        raw_content: { note: "t6-privileged-transition" },
+        content_hash: `t6-elevated-${runTs}`,
+        confidentiality: "shareable",
+        consent_status: "analysis_allowed",
+        captured_at: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+    if (elevatedEvidenceError || !elevatedEvidence) {
+      throw new Error(
+        `seed elevated evidence failed: ${elevatedEvidenceError?.message}`,
+      );
+    }
+    elevatedEvidenceId = elevatedEvidence.id as string;
+
+    const { error: observedTransitionError } = await admin
+      .from("pi_evidence_status_transitions")
+      .insert({
+        evidence_id: elevatedEvidenceId,
+        from_status: null,
+        to_status: "observed",
+        reason: "t6_initial_capture",
+        actor_type: "system",
+        actor_user_id: victimId,
+      });
+    if (observedTransitionError) {
+      throw new Error(
+        `seed observed transition failed: ${observedTransitionError.message}`,
+      );
+    }
+
+    const { data: scoreRun, error: scoreRunError } = await admin
+      .from("pi_capability_score_runs")
+      .insert({
+        user_id: victimId,
+        rubric_slug: "pm-core",
+        rubric_version: "2026.1",
+        algorithm_version: "t6-trust-rail",
+        input_hash: `t6-score-run-${runTs}`,
+        status: "completed",
+        result: { source: "service_role_fixture" },
+      })
+      .select("id")
+      .single();
+    if (scoreRunError || !scoreRun) {
+      throw new Error(`seed ScoreRun failed: ${scoreRunError?.message}`);
+    }
+    victimScoreRunId = scoreRun.id as string;
+
+    const { data: entry, error: entryError } = await admin
+      .from("vpp_entries")
+      .insert({
+        user_id: victimId,
+        title: "T6 Verified-bearing column probe",
+        lifecycle: "reviewing",
+        visibility: "private",
+        evidence_strength: "document_supported",
+        verifier_status: "pending_external",
+      })
+      .select("id")
+      .single();
+    if (entryError || !entry) {
+      throw new Error(`seed VPP entry failed: ${entryError?.message}`);
+    }
+    victimEntryId = entry.id as string;
+
+    victimClient = createClient(SUPABASE_URL, ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error: victimSignInError } = await victimClient.auth.signInWithPassword({
+      email: victimEmail,
+      password,
+    });
+    if (victimSignInError) {
+      throw new Error(`victim direct sign-in failed: ${victimSignInError.message}`);
+    }
+
+    attackerClient = createClient(SUPABASE_URL, ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error: attackerSignInError } =
+      await attackerClient.auth.signInWithPassword({
+        email: attackerEmail,
+        password,
+      });
+    if (attackerSignInError) {
+      throw new Error(
+        `attacker direct sign-in failed: ${attackerSignInError.message}`,
+      );
+    }
 
     await signInWithCookies({
       url: SUPABASE_URL,
@@ -147,6 +251,195 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
     // RLS should return empty (no error) or an empty set — never the victim row.
     expect(error).toBeNull();
     expect((data ?? []).length).toBe(0);
+  }, STEP_TIMEOUT);
+
+  it("owner and non-owner cannot insert, alter, or delete ScoreRuns directly", async () => {
+    const scoreRunPayload = {
+      rubric_slug: "pm-core",
+      rubric_version: "2026.1",
+      algorithm_version: "forged-client-run",
+      input_hash: `forged-${runTs}`,
+      status: "completed",
+      result: { forged: true },
+    };
+
+    const { error: ownerInsertError } = await victimClient!
+      .from("pi_capability_score_runs")
+      .insert({ ...scoreRunPayload, user_id: victimId });
+    expect(ownerInsertError, "owner ScoreRun INSERT must be denied").toBeTruthy();
+
+    const { error: nonOwnerInsertError } = await attackerClient!
+      .from("pi_capability_score_runs")
+      .insert({ ...scoreRunPayload, user_id: victimId });
+    expect(
+      nonOwnerInsertError,
+      "non-owner ScoreRun INSERT must be denied",
+    ).toBeTruthy();
+
+    const { error: ownerUpdateError } = await victimClient!
+      .from("pi_capability_score_runs")
+      .update({ result: { forged: true } })
+      .eq("id", victimScoreRunId);
+    expect(ownerUpdateError, "owner ScoreRun UPDATE must be denied").toBeTruthy();
+
+    const { error: nonOwnerUpdateError } = await attackerClient!
+      .from("pi_capability_score_runs")
+      .update({ result: { forged: true } })
+      .eq("id", victimScoreRunId);
+    expect(
+      nonOwnerUpdateError,
+      "non-owner ScoreRun UPDATE must be denied",
+    ).toBeTruthy();
+
+    const { error: ownerDeleteError } = await victimClient!
+      .from("pi_capability_score_runs")
+      .delete()
+      .eq("id", victimScoreRunId);
+    expect(ownerDeleteError, "owner ScoreRun DELETE must be denied").toBeTruthy();
+
+    const { data: intact } = await admin!
+      .from("pi_capability_score_runs")
+      .select("id, algorithm_version, result")
+      .eq("id", victimScoreRunId)
+      .single();
+    expect(intact).toMatchObject({
+      id: victimScoreRunId,
+      algorithm_version: "t6-trust-rail",
+      result: { source: "service_role_fixture" },
+    });
+  }, STEP_TIMEOUT);
+
+  it("owner and non-owner cannot self-set Verified-bearing VPP columns", async () => {
+    const { error: ownerUpdateError } = await victimClient!
+      .from("vpp_entries")
+      .update({
+        verifier_status: "externally_attested",
+        evidence_strength: "externally_verified",
+      })
+      .eq("id", victimEntryId);
+    expect(
+      ownerUpdateError,
+      "owner Verified-bearing UPDATE must be denied",
+    ).toBeTruthy();
+
+    const { error: ownerInsertError } = await victimClient!
+      .from("vpp_entries")
+      .insert({
+        user_id: victimId,
+        title: "Forged verified entry",
+        verifier_status: "externally_attested",
+        evidence_strength: "externally_verified",
+      });
+    expect(
+      ownerInsertError,
+      "owner Verified-bearing INSERT must be denied",
+    ).toBeTruthy();
+
+    const { data: nonOwnerRows, error: nonOwnerUpdateError } =
+      await attackerClient!
+        .from("vpp_entries")
+        .update({
+          verifier_status: "externally_attested",
+          evidence_strength: "externally_verified",
+        })
+        .eq("id", victimEntryId)
+        .select("id");
+    expect(nonOwnerUpdateError).toBeNull();
+    expect(nonOwnerRows ?? []).toHaveLength(0);
+
+    const { data: intact } = await admin!
+      .from("vpp_entries")
+      .select("verifier_status, evidence_strength")
+      .eq("id", victimEntryId)
+      .single();
+    expect(intact).toMatchObject({
+      verifier_status: "pending_external",
+      evidence_strength: "document_supported",
+    });
+  }, STEP_TIMEOUT);
+
+  it("owner and non-owner cannot append platform_verified directly", async () => {
+    const transition = {
+      evidence_id: elevatedEvidenceId,
+      from_status: "observed",
+      to_status: "platform_verified",
+      reason: "forged_client_verification",
+      actor_type: "user",
+    };
+    const { error: ownerError } = await victimClient!
+      .from("pi_evidence_status_transitions")
+      .insert({ ...transition, actor_user_id: victimId });
+    expect(ownerError, "owner platform_verified INSERT must be denied").toBeTruthy();
+
+    const { error: nonOwnerError } = await attackerClient!
+      .from("pi_evidence_status_transitions")
+      .insert({ ...transition, actor_user_id: attackerId });
+    expect(
+      nonOwnerError,
+      "non-owner platform_verified INSERT must be denied",
+    ).toBeTruthy();
+
+    const { count } = await admin!
+      .from("pi_evidence_status_transitions")
+      .select("id", { count: "exact", head: true })
+      .eq("evidence_id", elevatedEvidenceId)
+      .eq("to_status", "platform_verified");
+    expect(count ?? 0).toBe(0);
+  }, STEP_TIMEOUT);
+
+  it("service-role engine and attestation paths remain writable", async () => {
+    const { error: vppRpcError } = await admin!.rpc(
+      "pi_apply_vpp_attestation_state",
+      {
+        p_entry_id: victimEntryId,
+        p_user_id: victimId,
+        p_verifier_status: "externally_attested",
+        p_evidence_strength: "externally_verified",
+      },
+    );
+    expect(vppRpcError).toBeNull();
+
+    const { error: transitionRpcError } = await admin!.rpc(
+      "pi_append_platform_verified_transition",
+      {
+        p_evidence_id: elevatedEvidenceId,
+        p_user_id: victimId,
+        p_reason: "t6_attestation_positive",
+        p_actor_type: "external_employer",
+        p_actor_user_id: null,
+      },
+    );
+    expect(transitionRpcError).toBeNull();
+
+    const [{ data: entry }, { data: transition }, { data: scoreRun }] =
+      await Promise.all([
+        admin!
+          .from("vpp_entries")
+          .select("verifier_status, evidence_strength")
+          .eq("id", victimEntryId)
+          .single(),
+        admin!
+          .from("pi_evidence_status_transitions")
+          .select("to_status, actor_type")
+          .eq("evidence_id", elevatedEvidenceId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single(),
+        admin!
+          .from("pi_capability_score_runs")
+          .select("id")
+          .eq("id", victimScoreRunId)
+          .single(),
+      ]);
+    expect(entry).toMatchObject({
+      verifier_status: "externally_attested",
+      evidence_strength: "externally_verified",
+    });
+    expect(transition).toMatchObject({
+      to_status: "platform_verified",
+      actor_type: "external_employer",
+    });
+    expect(scoreRun?.id).toBe(victimScoreRunId);
   }, STEP_TIMEOUT);
 
   it("SECURITY DEFINER purge RPC is denied to anon and authenticated", async () => {
