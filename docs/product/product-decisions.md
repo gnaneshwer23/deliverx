@@ -138,6 +138,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-12 — T1 privacy: export/delete with legal tombstone
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | Person PI export and deletion are first-class (`pi_privacy_requests`, `/api/pi/privacy/*`). Delete requires password re-auth + confirm phrase. Append-only person rows may be purged only under `app.pi_privacy_delete` in a service-role RPC. Shared `pi_cf_*` catalogue is never deleted. Privacy request tombstones + `privacy.*` domain events are retained as the legal minimum. |
+| **Why** | GDPR-style operationalisation for pilot trust; Identity & Access was Partial without export/deletion. |
+| **Consequence** | Migration `0086`; settings UX on `/settings/profile`; T0 signed-in QA may remain open while T1 is shipped under founder override. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval.

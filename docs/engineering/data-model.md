@@ -1,6 +1,6 @@
 # Data Model
 
-**Source of truth:** `supabase/migrations/0066`–`0085` (PI pivot) on project `jibmyxaldetyycmtlxet`  
+**Source of truth:** `supabase/migrations/0066`–`0086` (PI pivot + T1 privacy) on project `jibmyxaldetyycmtlxet`  
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -24,7 +24,7 @@ erDiagram
 
 ---
 
-## Tables by domain (migrations 0066–0085)
+## Tables by domain (migrations 0066–0086)
 
 ### Onboarding — `0066`
 
@@ -102,7 +102,21 @@ erDiagram
 
 ### Real-world outcomes — `0084`–`0085`
 
-- `pi_outcome_events`, `pi_calibration_findings`
+- `pi_outcome_events`
+- `pi_calibration_findings`
+
+### Privacy requests — `0086` (T1)
+
+- `pi_privacy_requests` — export/delete job status; tombstones retained after person purge
+- RPC `pi_privacy_purge_person_data` — service-role person cascade; never touches `pi_cf_*`
+- Advisor hygiene: `forbid_*` `search_path` locked; `pi_cf_audit_events` explicit deny-all for authenticated
+
+---
+
+## Advisor notes
+
+- **T1 closed:** `pi_cf_audit_events` authenticated deny-all; `forbid_*` `search_path = public`
+- **Open (ops):** leaked-password protection — Auth dashboard (TD-006)
 
 ---
 
@@ -128,6 +142,7 @@ Exact CHECK constraint names live in the migration SQL — treat migrations as a
 - Person PI tables: **self-only** (auth.uid() ownership) for candidate data
 - Org-admin / framework admin: elevated paths for `pi_cf_*` and review admin APIs
 - Public portfolio share: tokenised views that filter non-shareable / private evidence
-- Advisor notes (audit): `pi_cf_audit_events` RLS enabled with no policies (INFO); `forbid_*` functions mutable `search_path` warnings
+- `pi_cf_audit_events`: authenticated deny-all (T1); service role only
+- Privacy purge: service-role RPC only; request tombstones retained
 
 See [`security-model.md`](./security-model.md).

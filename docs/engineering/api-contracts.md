@@ -35,6 +35,8 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 | GET, POST | `/api/pi/review/[id]` | User | Case detail / action |
 | GET, POST | `/api/pi/review/admin` | Admin | Admin review queue |
 | GET, POST | `/api/pi/review/notifications` | User | |
+| GET, POST | `/api/pi/privacy/export` | User | T1 — person PI export JSON; GET lists requests |
+| POST | `/api/pi/privacy/delete` | User | T1 — re-auth + confirm phrase; purges person PI |
 
 ## PI onboarding
 

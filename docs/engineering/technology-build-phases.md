@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · HEAD ~`e9917f8` (Build Charter) · migrations head `0085`  
+**As of:** 2026-07-25 · T1 shipped · migrations head `0086`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,7 +10,7 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0085` are applied.
+Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0086` are applied (T1 privacy).
 
 This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Finish **T0** — founder completes signed-in checklist (`docs/qa/t0-signed-in-checklist.md`). Automated portion done 2026-07-25 (**PARTIAL / signed-in BLOCKED**). Do **not** start T1 until T0 PASS or explicit override.
+**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1 shipped** (founder override while T0 PARTIAL). Do **not** start T2 until asked.
 
 ---
 
@@ -144,7 +144,7 @@ sequenceDiagram
 | 1 | Repository Audit | **Done** | `current-state-audit.md`, post-ship audit canvas, HEAD `f3ac383` | T0 (refresh only) |
 | 2 | Current Architecture | **Done** | `system-architecture.md`, `codebase-map.md`, constitution | T0 |
 | 3 | Database Foundation | **Partial** | PI `0066`–`0085`; gaps: artefact versions, messages, departments/teams, AI registry | T2–T4, T7 |
-| 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; GDPR export/deletion thin | T1 |
+| 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; **T1** export/deletion shipped (`0086`); leaked-password dashboard toggle still open (TD-006) | T1 done · T6 E2E |
 | 5 | Organisation Intelligence | **Partial** | `organisations`, `projects`, `stakeholders`; no `departments`/`teams`; not PI-first | T7 (approval for depth) |
 | 6 | First Experience & Project | **Done** | Experience planner + sim, 12 companies, `0078`–`0079` | — |
 | 7 | Artefact Submission | **Partial** | `documents`, `launchpad_artefacts`, contributions; **no artefact versioning** | T3 |
@@ -191,7 +191,8 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **§15 / modules** | Step 4 · Identity & Access · Audit |
 | **Charter** | **Authorized now** |
 | **Entry** | T0 High defects understood |
-| **Work packages** | `src/lib/privacy/` (or `src/lib/pi-privacy/`) export + delete orchestrators; settings UX; `TD-004` `search_path` on `forbid_*`; `TD-005` `pi_cf_audit_events` RLS posture; `TD-006` leaked-password protection (dashboard) |
+| **Status (2026-07-25)** | **Shipped** under founder override while T0 signed-in QA remains open. Migration `0086`; `src/lib/pi-privacy/`; `/api/pi/privacy/export` + `/delete`; settings UX; TD-004/005 closed; TD-006 documented (Auth dashboard). |
+| **Work packages** | `src/lib/pi-privacy/` export + delete orchestrators; settings UX; `TD-004` `search_path` on `forbid_*`; `TD-005` `pi_cf_audit_events` RLS posture; `TD-006` leaked-password protection (dashboard) |
 | **Schema** | `0086_pi_privacy_requests.sql` — `pi_privacy_requests` (export/delete job status); optional tombstone audit |
 | **API** | `POST/GET /api/pi/privacy/export`, `POST /api/pi/privacy/delete` (auth + confirm) |
 | **Data deltas** | Privacy request entity; soft-delete/cascade map for `pi_*` person tables |
@@ -451,7 +452,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | TD-001 | T0 → T6 | Signed-in E2E |
 | TD-002 | T0 | Coach deep-link |
 | TD-003 | T0 | Proxy vs layout guards |
-| TD-004–006 | T1 | Advisors / password protection |
+| TD-004–006 | T1 | **TD-004/005 closed in `0086`**; TD-006 Auth dashboard documented |
 | TD-007 | Deferred | Thin seed OK unless founder expands |
 | TD-008 | Deferred | Env gate enough; full flag platform later |
 | TD-009 | T2 | Rubric/DB drift |
