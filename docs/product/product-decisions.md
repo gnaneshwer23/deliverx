@@ -332,6 +332,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25g — T8 Verified is E2E-gated; Next held at a patched security floor
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `approve batch 4` authorizes Remediation Batch 4 only: (1) Next.js is upgraded to a version **≥16.2.11** (shipped `16.2.12`) so the audited proxy/middleware-bypass, SSRF, and Server-Actions-DoS advisories are closed; the repo should not regress below this floor. (2) The `deliverxVerified` badge’s honest gate (`externally_attested` + `externally_verified`, kill switch respected) is now proven end-to-end by `e2e/t8-attestation.test.ts`, which runs in the live release gate. Verified must never light from ScoreRun, learning, self-report, share, or a pending/disputed/expired/fake attestation — only from a completed external attestor confirm. Private evidence must never surface on a public share, and users still cannot self-set Verified-bearing columns at the DB (Batch 1). |
+| **Why** | Audit R-P1-02 (Verified-on path unproven live) and R-P1-03 / SEC-P1-01 (Next high advisories). Shipping T8 code without an automated attestor→Verified proof left the platform’s highest trust claim unverified; the Next advisories were an exploitable middleware/SSRF/DoS class. |
+| **Consequence** | Next `16.2.9`→`16.2.12` + `eslint-config-next`; `e2e/t8-attestation.test.ts` wired into `test:release-gate:live`; `external-attestation` units added to the always-on gate and `test:pi`; `test:e2e:t8` added. Live gate now 40/40 (18 loop + 12 security + 10 T8). Does not authorize T9, and does not close founder-only TD-006 (Auth toggle) or TD-018 (Actions minutes), which remain documented-open. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c.
+See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g.

@@ -4,7 +4,7 @@
 **Authority:** Build Charter · Current Scope · Product Bible `00`/`13`/`15` · specialist audits under `docs/audit/`  
 **Constraint:** Audit synthesis only — **no product code or migrations in this pass**  
 **Migration head:** `0095_db_trust_rail_lockdown.sql` (production, 2026-07-25)
-**T8 status:** **Shipped** in code/docs (`0094`, attestation store, Verified gate). **Not** in T6 signed-in harness — treat as **Complete but unverified E2E** (units strong; live attestor → Verified-on journey not automated). Do not invent E2E pass.
+**T8 status:** **Shipped + E2E-verified** (`0094`, attestation store, Verified gate). Batch 4 added `e2e/t8-attestation.test.ts` and wired it into the live release gate — the live attestor → Verified-on journey is now automated and passing (10/10 live). Prior "unverified E2E" caveat is closed.
 
 Severity (this roadmap):
 
@@ -40,8 +40,8 @@ Severity (this roadmap):
 | ID | Problem | Impact | Evidence | Solution | Files | Deps | Acceptance | Size | Now/defer |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **R-P1-01** | TD-006 leaked-password protection OFF | Weak passwords accepted | Advisors; TD-006 | Founder Auth Attack Protection toggle | Supabase dashboard | Founder | Advisor WARN cleared | S | **Now** (founder) |
-| **R-P1-02** | T8 attestation E2E not in T6 | Verified-on path unproven live | Matrix; MF-012; 0 attestation rows | Add harness: request → confirm → Verified on → dispute | `e2e/t0-*` or `e2e/t8-attestation.test.ts` | Mail/token | Live or local suite asserts Verified lights only via attest | M | **Now** |
-| **R-P1-03** | Next.js **16.2.9** high advisories | Middleware/SSRF/DoS class | `npm audit`; SEC-P1-01 | Upgrade ≥**16.2.11**; re-audit | `package.json` / lockfile | Build | `npm audit` Next highs closed; build + gate pass | S | **Soon** (optional attach if tiny; prefer after batch 1) |
+| **R-P1-02 — Closed** | T8 attestation E2E not in T6 | Verified-on path unproven live | Matrix; MF-012; 0 attestation rows | `e2e/t8-attestation.test.ts` — request → external confirm → Verified on; negatives (self-attest, fake, expired, consent); private-evidence-never-leaks; Batch-1 DB self-set denial; wired into `test:release-gate:live` | `e2e/t8-attestation.test.ts`; `scripts/release-gate.mjs`; attestation units | Mail/token | Live suite asserts Verified lights only via attest | M | **Resolved — Batch 4** (live gate 10/10) |
+| **R-P1-03 — Closed** | Next.js **16.2.9** high advisories | Middleware/SSRF/DoS class | `npm audit`; SEC-P1-01 | Upgraded to **16.2.12** (≥16.2.11) + `eslint-config-next`; build + full live gate pass | `package.json` / lockfile | Build | Next proxy/SSRF/DoS advisories closed; build + gate pass | S | **Resolved — Batch 4** |
 | **R-P1-04 — Closed** | Cookie consent + `/cookies` missing | GDPR/analytics risk | `/cookies` (+ `/cookie` alias); essential auth + honest Vercel analytics note; no fake banner | New page + footer link | Legal | Policy reachable; analytics gated if required | M | **Resolved — Batch 2** |
 | **R-P1-05 — Closed** | ScoreRun jargon user-facing | Unprofessional; engine leak | UX P0-3 | Human labels; engine name admin-only | Profile, Evidence, Hub, Launchpad CTAs | — | No primary CTA says “ScoreRun” | S | **Resolved — Batch 3** |
 | **R-P1-06 — Closed** | Launchpad / Experience marketing ahead of shipped depth | Expectation gap | Launchpad includes → Career Intelligence (readiness/roadmap/CV→VPP/interview/applications); twin/salary/LinkedIn demoted | `career-suite`, Experience/Launchpad marketing | TD-011 | Marketing matches LIVE | S | **Resolved — Batch 2** |
@@ -181,9 +181,9 @@ Batch 2 (founder approve): Honesty + legal — prices/guarantee/demo %/Launchpad
      ↓
 Batch 3 (founder approve): UX language — ScoreRun→assessment, Command Centre demotion, Career naming, review seed, metadata, readiness labels — SHIPPED
      ↓
-Founder ops: TD-018 CI · TD-006 HIBP · SMTP reset test
+Batch 4 (founder approve): Pilot seal engineering — Next ≥16.2.11 (shipped 16.2.12) + T8 attestation→Verified live E2E — SHIPPED
      ↓
-T8 E2E harness + Next ≥16.2.11
+Founder ops: TD-018 CI · TD-006 HIBP · SMTP reset test
      ↓
 DB-P1 consent + judgement binding · AI citations · a11y smoke
      ↓
@@ -192,4 +192,4 @@ DB-P1 consent + judgement binding · AI citations · a11y smoke
 
 **Do not start T9.** Do not expand marketplace / mission-control / multi-profession without approval.
 
-**Batch 3 shipped.** Remaining batches require founder approval.
+**Batch 4 shipped.** Remaining batches require founder approval.

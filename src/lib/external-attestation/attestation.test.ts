@@ -55,6 +55,30 @@ describe("T8 verified gate", () => {
     ).toBe(true);
   });
 
+  it("pending and disputed attestation states never light Verified", () => {
+    // A requested-but-unconfirmed claim must not verify, even if labelled strong.
+    expect(
+      deliverxVerifiedClaim({
+        verifierStatus: "pending_external",
+        evidenceStrength: "externally_verified",
+      }),
+    ).toBe(false);
+    // A disputed claim must never verify.
+    expect(
+      deliverxVerifiedClaim({
+        verifierStatus: "disputed",
+        evidenceStrength: "externally_verified",
+      }),
+    ).toBe(false);
+    // The E2E confirm path is the only combination that lights the badge.
+    expect(
+      deliverxVerifiedFromAttestation({
+        verifierStatus: "externally_attested",
+        evidenceStrength: "externally_verified",
+      }),
+    ).toBe(true);
+  });
+
   it("kill switch forces badge off even with valid attestation", () => {
     expect(
       deliverxVerifiedFromAttestation({

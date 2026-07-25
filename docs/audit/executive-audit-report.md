@@ -1,7 +1,7 @@
 # DeliverX Executive Audit Report
 
 **Date:** 2026-07-25  
-**HEAD context:** Product Bible landed; specialist audits Phases 1–11 under `docs/audit/`; remediation Batch 1 + Batch 2 shipped; migrations head **`0095`**
+**HEAD context:** Product Bible landed; specialist audits Phases 1–11 under `docs/audit/`; remediation Batches 1–4 shipped; migrations head **`0095`**
 **Method:** Synthesis of inventory, UX/a11y, data/security/AI, and performance/test audits against Build Charter, Current Scope, Product Decisions, Product Bible (`00`, `01`, `13`, `15`), technical-debt register, and `docs/qa/release-readiness.md`  
 **Lifecycle:** Original audit synthesis followed by founder-approved Remediation Batch 1 (DB) and Batch 2 (honesty + legal).
 
@@ -9,7 +9,9 @@
 
 **Release status (one):** **Testable internally**
 
-**T8:** Shipped (code + `0094` + docs). Units strong. **Not** included in T6 live loop — **shipped but unverified E2E**. Do not claim live attestor → Verified-on proof.
+**T8:** Shipped (code + `0094` + docs) **and E2E-verified** (Batch 4). `e2e/t8-attestation.test.ts` is wired into the live release gate — the live attestor → Verified-on journey passes 10/10 (self-attest, fake/expired token, consent-required negatives; private evidence never leaks; Batch-1 self-set DB denial). Verified still lights only on `externally_attested + externally_verified`.
+
+**Batch 4 (pilot seal engineering):** Next.js `16.2.9` → `16.2.12` (≥16.2.11) closes the four high advisories (proxy/middleware bypass, SSRF ×2, Server Actions DoS) + five moderate; production build clean. Full live gate **40/40** (18 loop + 12 security + 10 T8). Founder-only items TD-006 (Auth toggle) and TD-018 (Actions minutes) remain open — documented, out of Batch 4 scope.
 
 ---
 
@@ -41,8 +43,9 @@ Charter next work is **ops + trust hardening**, not T9.
 - Privacy export/delete + purge service_role-only (TD-015/016 class closed for purge).  
 - T4 AI orchestration contracts (mocked): observer cannot verify; capability write refused on T4 path.  
 - T7 alias: Team Copilot = Professional Workspace (not third SKU); org structure tables present.  
-- T8 attestation **implementation** present (token flow, Verified gate, kill switch).  
-- Automated quantity: **941** pass / 25 skip; release gate **PASS** (242 PI + unauth + security always-on).
+- T8 attestation **implementation + live E2E** (token flow, Verified gate, kill switch; attestor confirm → Verified proven live — Batch 4).  
+- Automated quantity: release gate **PASS** (263 PI + unauth + security always-on); **live gate 40/40** (loop + security + T8 attestation).  
+- Next.js on **16.2.12** (≥16.2.11) — audited proxy/SSRF/DoS advisories closed (Batch 4).
 
 ---
 

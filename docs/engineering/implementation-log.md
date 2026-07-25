@@ -302,6 +302,25 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## Remediation Batch 4 — Pilot seal engineering (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| `package.json` / lockfile | **Next.js `16.2.9` → `16.2.12`** (+ `eslint-config-next` `16.2.12`); closes the four high advisories (proxy/middleware bypass, SSRF ×2, Server Actions DoS) + five moderate from `v16.2.11` |
+| `e2e/t8-attestation.test.ts` | **T8 attestation → Verified E2E** — compile entry → share → request (token) → external attestor confirm → `deliverxVerified` lights; negatives (self-attest, fake token, expired token, consent-required); private evidence never on public share; Batch-1 self-set columns still DB-denied; ledger `external_verification`/`platform_verified` asserted; no ScoreRun written |
+| `src/lib/external-attestation/attestation.test.ts` | Always-on unit coverage extended: `pending_external` / `disputed` never light Verified |
+| `scripts/release-gate.mjs` | `external-attestation` units added to always-on suite; T8 live suite wired into `--live` |
+| `package.json` | `test:pi` includes `external-attestation`; new `test:e2e:t8` |
+| Decision | PD-2026-07-25g (Verified E2E gating clarified; kept honest) |
+
+**Next before/after:** `16.2.9` → `16.2.12` (≥16.2.11 required by SEC-P1-01 / R-P1-03). Production Next build clean — no compile breaks. Remaining `npm audit` `next` flag is transitive `postcss`/`sharp` (libvips) only — a separate class from the audited proxy/SSRF/DoS advisories, which are now patched.
+
+**Verification:** `npm run build` PASS (no breaks from bump) · non-live `npm run test:release-gate` PASS (263 PI/unit incl. new external-attestation + attestation-state cases + unauth + security always-on) · **live gate PASS 40/40** against https://www.deliverx.dev (18 signed-in loop + 12 security + 10 T8 attestation), disposable identities purged after each run.
+
+**Batch 4 verdict:** Shipped. Next remediation batch requires founder approval; T9 remains blocked. TD-006 (founder Auth toggle) and TD-018 (founder Actions minutes) remain founder-only — documented, not in scope.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

@@ -45,6 +45,7 @@ const PI_UNITS = [
   "src/lib/pi-profile",
   "src/lib/pi-privacy",
   "src/lib/verified-portfolio",
+  "src/lib/external-attestation",
   "src/lib/real-world-outcomes",
   "src/lib/experience-planner",
   "src/lib/career-intelligence",
@@ -81,6 +82,13 @@ if (live) {
   run("T6 security live negatives", "npx vitest run e2e/t6-security-journeys.test.ts", {
     T6_E2E: "1",
   });
+  run(
+    "T8 attestation → Verified journey (live)",
+    "npx vitest run e2e/t8-attestation.test.ts",
+    {
+      T6_E2E: "1",
+    },
+  );
 } else {
   console.log(
     "\n[release-gate] Skipping live signed-in suites (set T6_E2E=1 or pass --live).",

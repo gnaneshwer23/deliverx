@@ -14,13 +14,15 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 
 | Track | Status |
 | --- | --- |
-| Product P0–P8 | **Shipped** — candidate PI loop + external attestation |
-| Technology T0–T8 | **Shipped** — migrations through `0094`; T8 founder-authorized 2026-07-25 |
+| Product P0–P8 | **Shipped** — candidate PI loop + external attestation (attestation→Verified live E2E, Batch 4) |
+| Technology T0–T8 | **Shipped** — migrations through `0095`; T8 founder-authorized 2026-07-25, E2E-verified in Batch 4 |
+| Next.js | **`16.2.12`** (≥16.2.11) — audited proxy/SSRF/DoS advisories closed (Batch 4) |
 | T9 | **Blocked** — separate founder approval required |
 | TD-001 | **Closed** (T6 signed-in E2E) |
 | TD-016 | **Closed** (`0092`) |
 | TD-006 | **Open** — founder Auth leaked-password toggle |
 | TD-011 | **Closed (Batches 2–3)** — commercial/marketing honesty + in-app ScoreRun→assessment language |
+| R-P1-02 / R-P1-03 | **Closed (Batch 4)** — T8 attestation→Verified live E2E; Next `16.2.12` (≥16.2.11) closes proxy/SSRF/DoS advisories |
 | TD-017 | **Open** — test-fixture ESLint / standalone `tsc` debt |
 | TD-018 | **Open** — GitHub Actions minutes exhausted; workflows disabled |
 | Production | **Healthy** — Vercel READY · https://www.deliverx.dev |
