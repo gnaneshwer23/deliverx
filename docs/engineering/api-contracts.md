@@ -1,5 +1,7 @@
 # API Contracts
 
+> **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
+
 **As of:** 2026-07-25  
 **Convention:** Next.js Route Handlers under `src/app/api/**/route.ts`  
 **Auth default for PI person APIs:** authenticated session required → **401** if missing (verified in post-ship unauth smoke)

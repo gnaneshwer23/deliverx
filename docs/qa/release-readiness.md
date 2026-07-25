@@ -1,5 +1,7 @@
 # Release readiness — Technology T6 / T0 pilot seal
 
+> **Product Bible:** Release governance summary in [`../13-qa-and-release-bible.md`](../13-qa-and-release-bible.md). This file is evidence/detail.
+
 **As of:** 2026-07-25  
 **Charter:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Detail:** [`end-to-end-audit.md`](./end-to-end-audit.md) · [`acceptance-test-results.md`](./acceptance-test-results.md) · [`security-findings.md`](./security-findings.md) · [`t0-results.md`](./t0-results.md)

@@ -2,9 +2,11 @@
 
 **Status:** Active  
 **Effective:** July 2026  
-**Authority:** Highest in the source-of-truth hierarchy (see `.cursor/rules/deliverx.mdc`)
+**Authority:** Highest in the source-of-truth hierarchy (with the Product Bible — see `.cursor/rules/deliverx.mdc` and [`../README.md`](../README.md))
 
-This charter defines what may be built **now**. Long-term architecture documents describe where DeliverX may evolve; they do **not** authorise work outside this charter.
+The **Product Bible** (`docs/00`–`docs/15`) plus this **Build Charter** govern all work. Agents must read the bible and this charter before substantial changes. Prompts should request only the next vertical slice.
+
+This charter defines what may be built **now**. Long-term architecture documents (`docs/architecture/*`) describe where DeliverX may evolve; they do **not** authorise work outside this charter.
 
 ---
 

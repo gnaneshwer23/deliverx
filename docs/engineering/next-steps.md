@@ -1,5 +1,7 @@
 # DeliverX — Build next steps
 
+> **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
+
 **As of:** 2026-07-25  
 **Authority:** [`../product/build-charter.md`](../product/build-charter.md) · [`../product/current-scope.md`](../product/current-scope.md)  
 **Companion canvas:** Cursor IDE `canvases/deliverx-next-steps.canvas.tsx` (open beside chat)

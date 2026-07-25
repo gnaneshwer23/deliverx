@@ -1,5 +1,7 @@
 # System Architecture
 
+> **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
+
 **As of:** 2026-07-25 · modular monolith  
 **Stack:** Next.js App Router · Supabase (Postgres + Auth + RLS) · Vitest
 

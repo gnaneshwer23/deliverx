@@ -1,5 +1,7 @@
 # Codebase Map
 
+> **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
+
 **As of:** 2026-07-25 · HEAD ~`f3ac383`
 
 Orientation map for agents. Prefer domain libs over hunting through unrelated delivery OS code when working under the Build Charter.
@@ -14,11 +16,12 @@ Orientation map for agents. Prefer domain libs over hunting through unrelated de
 | `src/lib/` | Domain modules (PI + legacy delivery) |
 | `src/components/` | UI components (incl. `dx` design system pieces) |
 | `src/config/` | Nav, persona, dashboard config |
-| `supabase/migrations/` | Schema — PI pivot `0066`–`0085` |
-| `docs/architecture/` | Product architecture 00–07 (vision) |
+| `supabase/migrations/` | Schema — PI pivot `0066`–`0094` |
+| `docs/` | Product Bible `00`–`15` + README (canonical reading path) |
+| `docs/architecture/` | Product architecture 00–07 (vision; not build authority) |
 | `docs/product/` | Build Charter, scope, decisions |
 | `docs/engineering/` | This folder — implementation truth |
-| `.cursor/rules/deliverx.mdc` | Engineering Constitution (always apply) |
+| `.cursor/rules/deliverx.mdc` | Engineering Constitution + Product Bible (always apply) |
 
 ---
 

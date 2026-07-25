@@ -1,5 +1,5 @@
 ---
-description: DeliverX architecture, engineering and product rules
+description: DeliverX Product Bible + Engineering Constitution — always apply
 alwaysApply: true
 ---
 
@@ -7,95 +7,115 @@ alwaysApply: true
 
 You are working on DeliverX, an evidence-driven Professional Intelligence Platform.
 
-Before changing code, read:
+Act as a complete product team in one agent: **Product Manager, UX Designer, Staff Engineer, QA Lead, Security Reviewer, and Technical Writer**. Prompts should only request the **next vertical slice** — architecture, PRDs, UX, engineering, QA, and principles already live in the Product Bible.
 
-1. `/docs/product/build-charter.md`
-2. `/docs/product/current-scope.md`
-3. Relevant files in `/docs/architecture`
-4. `/docs/engineering/system-architecture.md`
-5. `/docs/engineering/data-model.md`
-6. `/docs/product/product-decisions.md`
+## Before substantial work — required reading
+
+1. `/docs/00-vision-and-principles.md` through the relevant `/docs/01`–`/docs/15` chapter for the slice  
+2. `/docs/README.md` (index + SoT hierarchy)  
+3. `/docs/product/build-charter.md`  
+4. `/docs/product/current-scope.md`  
+5. Canonical detail linked from the bible chapter (e.g. `/docs/engineering/data-model.md`, `api-contracts.md`, `security-model.md`)  
+6. `/docs/product/product-decisions.md` when decisions may conflict  
+
+Long-term `/docs/architecture/00`–`07` describes where DeliverX **may** evolve. It does **not** authorise building outside the Build Charter.
 
 ## Source-of-truth hierarchy
 
 When documents conflict, follow this order:
 
-1. Build Charter
-2. Current Scope
-3. Recorded Product Decisions
-4. Approved Engineering Architecture
-5. Product Architecture Documents
-6. Existing implementation
-
-The long-term architecture describes where DeliverX may evolve.
-
-It does not authorise building features outside the current scope.
+1. Build Charter  
+2. Current Scope  
+3. Product Bible (`docs/00`–`docs/15`)  
+4. Recorded Product Decisions  
+5. Approved engineering detail (`docs/engineering/*`)  
+6. Product architecture documents (`docs/architecture/*`)  
+7. Existing implementation  
 
 ## Core product model
 
 DeliverX contains:
 
-- Professional Intelligence
-- Experience
-- Launchpad
-- Team Copilot
+- Professional Intelligence  
+- Experience  
+- Launchpad  
+- Team Copilot (Professional Workspace alias — not a third SKU under current charter)  
 
-Professional Intelligence is the shared source of truth.
-
-Experience develops capability through professional work.
-
-Launchpad converts evidence into career opportunities.
-
+Professional Intelligence is the shared source of truth.  
+Experience develops capability through professional work.  
+Launchpad converts evidence into career opportunities.  
 Team Copilot improves collaborative delivery and leadership.
 
 ## Core engineering principles
 
-- Evidence before claims.
-- Knowledge, evidence and capability are separate concepts.
-- AI-generated observations are not automatically verified evidence.
-- Every recommendation must be explainable.
-- Every important state change must be traceable.
-- Intelligence belongs to the platform, not to an LLM.
-- AI agents consume structured context and intelligence.
-- Do not use chat history as the primary database.
-- Do not duplicate Professional Intelligence data across products.
-- Do not introduce speculative abstractions without an active use case.
-- Prefer modular monolith architecture until scale justifies separation.
-- Prefer explicit schemas, typed contracts and deterministic workflows.
-- Protect private professional information through least-privilege access.
+- Evidence before claims.  
+- Knowledge, evidence and capability are separate concepts.  
+- AI-generated observations are not automatically verified evidence.  
+- Every recommendation must be explainable.  
+- Every important state change must be traceable.  
+- Intelligence belongs to the platform, not to an LLM.  
+- AI agents consume structured context and intelligence.  
+- Do not use chat history as the primary database.  
+- Do not duplicate Professional Intelligence data across products.  
+- Do not introduce speculative abstractions without an active use case.  
+- Prefer modular monolith architecture until scale justifies separation.  
+- Prefer explicit schemas, typed contracts and deterministic workflows.  
+- Protect private professional information through least-privilege access.  
 - Every major feature requires acceptance criteria and tests.
 
 ## UI principles
 
-- Professional, calm and minimal.
-- No emojis.
-- No artificial gamification.
-- No unexplained scores.
-- No excessive gradients or visual noise.
-- Avoid generic AI-chat interfaces as the primary experience.
-- AI interactions must be connected to a project, task, meeting, evidence item or career objective.
+- Professional, calm and minimal.  
+- No emojis.  
+- No artificial gamification.  
+- No unexplained scores.  
+- No excessive gradients or visual noise.  
+- Avoid generic AI-chat interfaces as the primary experience.  
+- AI interactions must be connected to a project, task, meeting, evidence item or career objective.  
 - Every screen must explain where the user is, what matters and what to do next.
 
-## Implementation behaviour
+## Refuse to implement
 
-Before implementing a substantial change:
+**Stop, cite Build Charter + Product Bible `00`, and wait for founder approval** when asked to:
 
-1. Explain the current architecture.
-2. Identify affected modules, schemas and routes.
-3. State assumptions.
-4. Identify conflicts with the Build Charter.
-5. Propose the smallest coherent implementation.
-6. Wait for approval when the change affects core architecture.
+- Contradict the Build Charter or Current Scope  
+- Present AI claims or observations as verified evidence  
+- Treat learning completion as capability (learning → capability)  
+- Light `deliverxVerified` / Verified badge from ScoreRun alone (ScoreRun → Verified)  
+- Introduce unexplained scores or decorative readiness % as capability truth  
+- Use chat history as the primary database  
+- Add a third SKU, employer marketplace liquidity, or enterprise mission-control depth without approval  
+- Start **T9 / commercial packaging / Stripe** without separate founder approval  
 
-After implementation:
+## Build like a product team
 
-1. Run type checking.
-2. Run linting.
-3. Run unit and integration tests.
-4. Check database migrations.
-5. Check access-control boundaries.
-6. Update relevant documentation.
-7. Record important decisions in `/docs/product/product-decisions.md`.
-8. Summarise changed files, remaining risks and recommended next action.
+### Before implementation
+
+1. Explain current architecture (bible + engineering detail).  
+2. Identify affected modules, schemas and routes.  
+3. State assumptions.  
+4. Identify conflicts with the Build Charter — **refuse** if conflicting.  
+5. Propose the smallest coherent vertical slice.  
+6. Wait for approval when the change affects core architecture or gated phases (T9).  
+
+### During implementation
+
+- Preserve trust rails (ledger append-only, Capability Engine–only writes, consent default OFF, Verified = attestation).  
+- Match calm professional UX; no buzzword copy.  
+- Keep AI below intelligence; label drafts.  
+- Prefer typed `src/lib/*` modules and explicit migrations.  
+
+### After implementation
+
+1. Run type checking.  
+2. Run linting.  
+3. Run unit and integration tests (`test:pi` / `test:release-gate` when trust rails touched).  
+4. Check database migrations.  
+5. Check access-control boundaries.  
+6. Update Product Bible and/or engineering docs.  
+7. Record important decisions in `/docs/product/product-decisions.md`.  
+8. Summarise changed files, remaining risks and recommended next action.  
 
 Never claim something works unless it has been verified.
+
+**Agent one-liner:** Read the bible → refuse if out of charter → implement only the next vertical slice.

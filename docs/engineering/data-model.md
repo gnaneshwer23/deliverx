@@ -1,6 +1,8 @@
 # Data Model
 
-**Source of truth:** `supabase/migrations/0066`–`0092` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts + T4 AI orchestration + T5 notifications + TD-016 grant hardening) on project `jibmyxaldetyycmtlxet`  
+> **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
+
+**Source of truth:** `supabase/migrations/0066`–`0094` (PI pivot through T8 external attestation; T1–T7 hardening) on project `jibmyxaldetyycmtlxet`  
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).

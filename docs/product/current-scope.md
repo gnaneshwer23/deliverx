@@ -1,5 +1,7 @@
 # Current Scope
 
+> **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
+
 **Active phase:** Post-P7 pilot hardening — **Technology T8 shipped** (founder-authorized 2026-07-25); T0–T7 shipped; TD-001/TD-016 closed  
 **As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  

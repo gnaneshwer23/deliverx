@@ -1,5 +1,7 @@
 # Product Decisions Log
 
+> **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
+
 Decisions already taken during the PI pivot build. New architectural decisions must be appended here.
 
 **Status values:** Accepted · Superseded · Pending founder

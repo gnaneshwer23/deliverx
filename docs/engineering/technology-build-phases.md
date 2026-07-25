@@ -1,5 +1,7 @@
 # DeliverX Technology Build Phases
 
+> **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
+
 **Status:** Active engineering plan (technology-oriented)  
 **As of:** 2026-07-25 · T8 shipped (founder-authorized) · migrations head `0094`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  

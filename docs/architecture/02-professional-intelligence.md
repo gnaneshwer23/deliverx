@@ -1,5 +1,7 @@
 # 02 — Professional Intelligence
 
+> **Product Bible:** Start at [`../README.md`](../README.md). This architecture extract is long-term vision — it does **not** authorize out-of-charter builds. Prefer bible chapters + Build Charter for what to build now.
+
 > **Source:** Founder documentation extract (sections 00–07), edited into clean markdown for the DeliverX governance repo.
 
 
