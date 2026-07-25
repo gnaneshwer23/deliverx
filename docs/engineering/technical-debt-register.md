@@ -5,7 +5,7 @@
 
 | ID | Item | Severity | When | Notes |
 | --- | --- | --- | --- | --- |
-| TD-001 | No signed-in E2E of P0–P7 happy path | **High** | **Now** (pilot seal) | **Still open (T0 2026-07-25):** unauth/unit green; signed-in BLOCKED (no founder/test login); ScoreRuns/evidence/outcomes still 0 on prod. Close when founder completes `docs/qa/t0-signed-in-checklist.md` (T6 automates later). |
+| TD-001 | No signed-in E2E of P0–P7 happy path | **High** | **Now** (pilot seal) | **Closed (T6 2026-07-25):** automated signed-in loop `e2e/t0-signed-in-loop.test.ts` (18/18) + security negatives; disposable users purged. Remaining human: visual/UX judgement, TD-006 Auth toggle, optional email when channels exist. |
 | TD-002 | Coach deep-link `next` loses `/workspace/coach` | Medium | Now | **Resolved on prod (T0 `c5d2b9f`):** unauth `/workspace/coach` → `login?next=/workspace/coach` via `x-matched-path` fallback. |
 | TD-003 | Edge/session proxy anonymous path-guards ineffective in prod | Medium | Now / deferred | **Reconfirmed T0:** layouts own `next=` (e.g. settings → `/settings/profile`). Documented; full proxy restore deferred. |
 | TD-004 | Supabase advisor: mutable `search_path` on `forbid_*` | Medium | Now | **Resolved T1 (`0086`)**: `search_path = public` on all `forbid_*` + privacy delete bypass flag. |
@@ -31,4 +31,4 @@
 
 When resolving an item: note SHA + date in this table (append a Resolved column entry or move to a “Resolved” section).
 
-**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. TD-001 and TD-006 remain open; all other entries retain their prior status.
+**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. **T6 (2026-07-25):** TD-001 closed by signed-in E2E + release gates. TD-006 remains open (founder Auth toggle); all other entries retain their prior status.

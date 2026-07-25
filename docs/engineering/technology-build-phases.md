@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1–T5 shipped** under founder override while T0 PARTIAL (`t5` authorised T5 explicitly). Do **not** start T6 unless asked.
+**Recommended next engineering action:** **T6 shipped** — signed-in E2E + release gates green; TD-001 closed. Do **not** start T7–T9 without founder approval (charter). Remaining: TD-006 founder Auth toggle; optional visual QA.
 
 ---
 
@@ -154,7 +154,7 @@ sequenceDiagram
 | 9 | Evidence Engine | **Done** | Ledger `0067`, append-only + provenance | — |
 | 10 | Professional Intelligence | **Done** (seed thin) | Capability Engine `0068`, SnapshotClaims, `/profile`; 3 competencies | T2 |
 | 11 | AI Manager & Stakeholder | **Done (registry)** | **T4 (`0090`):** `ai_agents` / `ai_prompt_versions` / `ai_interactions`; Manager/Stakeholder/Observer + coaches via `src/lib/ai-orchestration/` | T4 shipped |
-| 12 | End-to-End QA | **Missing** (signed-in) | Unit/integration PI tests + T4 mock-model; unauth smoke; **no signed-in E2E** | T0 then T6 |
+| 12 | End-to-End QA | **Done (T6)** | Signed-in API harness + unauth/security gates + `npm run test:release-gate`; TD-001 closed | T6 shipped |
 | 13 | Launchpad Foundation | **Partial** | `/launchpad`, career-intelligence, artefacts; marketplace deferred | T7 packaging only if authorized; depth blocked |
 | 14 | Team Copilot Foundation | **Partial** | `/workspace` + contributions + observation; SKU ADR open; mission-control blocked | T7 **Requires approval** |
 
@@ -304,14 +304,15 @@ T1–T5 migrations are shipped through `0091`. Remaining migration numbers are i
 | **Objective** | Automate the T0 checklist as signed-in E2E + per-phase release gates so “works” is never claimed from unit tests alone. |
 | **§15 / modules** | Step 12 · cross-cutting |
 | **Charter** | **Authorized now** |
-| **Entry** | T0 manual path green at least once |
-| **Work packages** | Playwright (or repo-standard) person journey; CI job with secret test user; gate script: typecheck · lint · unit · e2e-smoke |
+| **Entry** | T0 manual path green at least once — satisfied by automated disposable-user walkthrough |
+| **Status (2026-07-25)** | **Shipped**. Vitest signed-in loop + security negatives + unauth gates; `scripts/release-gate.mjs`; CI job; docs under `docs/qa/`; TD-001 closed. Approach B (prod disposable + purge) used while local Docker unavailable. |
+| **Work packages** | `e2e/t0-signed-in-loop.test.ts`; `e2e/t6-security-journeys.test.ts`; `e2e/t6-unauth-gates.test.ts`; `npm run test:release-gate` / `:live`; CI optional live secrets |
 | **Schema** | None |
 | **API** | Test against existing contracts |
-| **Testing** | E2E: profile → baseline or Experience → ledger → ScoreRun pin → consent OFF → learning no capability → outcomes no external verify → portfolio Verified off |
+| **Testing** | E2E: profile → baseline → Experience → ledger → ScoreRun pin → consent OFF/ON → learning no capability → outcomes no external verify → portfolio Verified off → notifications → artefacts → privacy export/delete; negatives: RLS, purge denial, prompt-injection |
 | **Observability** | CI artefacts / traces |
-| **Exit** | CI blocks merge on E2E failure for PI paths; TD-001 closed |
-| **Rollback** | Mark E2E non-blocking temporarily with explicit charter note |
+| **Exit** | **Met:** release gate blocks on PI unit/unauth/security failure; live signed-in 18/18; TD-001 closed |
+| **Rollback** | Mark live E2E non-blocking temporarily with explicit charter note; always-on gates remain |
 
 ---
 

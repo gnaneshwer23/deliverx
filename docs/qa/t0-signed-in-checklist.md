@@ -8,7 +8,7 @@
 
 This checklist proves the shipped **P0–P7** Professional Intelligence loop with a real signed-in journey. It does **not** authorise P8/P9 or T1+ feature work.
 
-**Founder path:** Complete every step below on production while signed in. Record pass/fail in [`t0-results.md`](./t0-results.md) against criteria in [`t0-acceptance-criteria.md`](./t0-acceptance-criteria.md).
+**Founder path:** Optional visual/UX review on production while signed in. Functional P0–P7 loop is **automated** by Technology T6 (`npm run test:release-gate:live`) — see [`t0-results.md`](./t0-results.md) and [`end-to-end-audit.md`](./end-to-end-audit.md). Record subjective notes here if useful; do not block engineering on re-running the functional checklist.
 
 ---
 

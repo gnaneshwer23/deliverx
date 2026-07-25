@@ -1,6 +1,6 @@
-# E2E testing — Playwright smoke + 17-AC acceptance
+# E2E testing — Playwright smoke + 17-AC acceptance + T6 signed-in PI loop
 
-Browser tests for DeliverX pilot readiness. Complements the Vitest integration harness in `e2e/acceptance-17-step.test.ts`.
+Browser tests for DeliverX pilot readiness. Complements the Vitest integration harness in `e2e/acceptance-17-step.test.ts` and the **Technology T6** signed-in PI loop.
 
 | Layer | Command | Coverage |
 |-------|---------|----------|
@@ -8,8 +8,13 @@ Browser tests for DeliverX pilot readiness. Complements the Vitest integration h
 | Playwright smoke (5 specs) | `npm run test:smoke` | Highest-risk pilot paths |
 | Playwright acceptance (17 specs) | `npm run test:e2e:acceptance` | One spec per acceptance criterion |
 | All Playwright | `npm run test:e2e` | Smoke + acceptance |
+| **T6 release gate** | `npm run test:release-gate` | PI units + unauth + security always-on |
+| **T6 live signed-in** | `npm run test:release-gate:live` | Full P0–P7 loop + security negatives (needs Supabase keys) |
+| T6 unauth only | `npm run test:e2e:t6:unauth` | 401 / login redirects |
+| T6 security | `npm run test:e2e:t6:security` | Guardrails (+ live when `T6_E2E=1`) |
 
-Manual pilot checklist: [PILOT_17_STEP_RUNBOOK.md](./PILOT_17_STEP_RUNBOOK.md)
+Manual pilot checklist: [PILOT_17_STEP_RUNBOOK.md](./PILOT_17_STEP_RUNBOOK.md)  
+T6 audit pack: [qa/end-to-end-audit.md](./qa/end-to-end-audit.md)
 
 ---
 
@@ -27,12 +32,19 @@ npm run test:smoke
 
 # All browser tests (22 specs)
 npm run test:e2e
+
+# T6 PI release gate (always-on)
+npm run test:release-gate
+
+# T6 live signed-in (uses .env.local; purges disposable users)
+T6_BASE_URL=https://www.deliverx.dev npm run test:release-gate:live
 ```
 
 Against a running app or preview URL:
 
 ```bash
 PLAYWRIGHT_BASE_URL=https://your-preview.vercel.app npm run test:e2e:acceptance
+T6_BASE_URL=https://your-preview.vercel.app T6_E2E=1 npm run test:e2e:t6
 ```
 
 ---

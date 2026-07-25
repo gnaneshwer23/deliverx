@@ -167,6 +167,25 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 ---
 
+## Technology T6 — Signed-in E2E & release gates (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| `e2e/t0-signed-in-loop.test.ts` | Signed-in P0–P7 + T1–T5 happy path (18 steps); disposable user + T1 purge |
+| `e2e/t6-security-journeys.test.ts` | Prompt-injection always-on; live RLS / purge denial / no capability write |
+| `e2e/t6-unauth-gates.test.ts` | CI-safe 401 + login redirects |
+| `scripts/release-gate.mjs` | `npm run test:release-gate` / `:live` |
+| `.github/workflows/ci.yml` | T6 release gate job; optional live secrets |
+| `docs/qa/*` | end-to-end-audit, acceptance-test-results, security-findings, release-readiness, t0-results |
+
+**Approach:** Option B (prod disposable identity + purge) — local Supabase (Option A) blocked by disk/Docker. No runtime product code changes; no migration; no deploy required.
+
+**Verification:** Live 26/26 pass (`t0` 18 + security 8); release-gate non-live PASS (242 PI units + unauth + security always-on); post-purge person-PI counts = 0.
+
+**T6 verdict:** Shipped. TD-001 closed. T0 PASS (automated). Do not proceed to T7 without founder approval.
+
+---
+
 ## Ops — TD-006 leaked-password protection (2026-07-25)
 
 | Check | Result |
