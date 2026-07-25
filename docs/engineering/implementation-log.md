@@ -207,13 +207,13 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 | Source | What failed | Status after fix |
 | --- | --- | --- |
-| GitHub Actions `verify.yml` | Pre-T6: lint blocked job. Post-T6: runs fail in **0s with zero jobs** (Actions minutes exhausted on private repo) | Slimmed gate to `npm test` + `test:release-gate` + `npm run build`; lint advisory; Playwright → `ci-e2e.yml`. **Push trigger temporarily off** (PR + `workflow_dispatch` remain) to stop failure emails until TD-018 minutes restored. |
-| Vercel production | T7 early SHAs (`2b6ef8f`, `5db5ef5`) failed Next typecheck on org create payloads | Fixed on later SHAs; `65a194a`+ **READY**; https://www.deliverx.dev HTTP 200 |
+| GitHub Actions `verify.yml` | Pre-T6: lint blocked job. Post-T6: runs fail in **0s with zero jobs** (Actions minutes exhausted on private repo). Removing `on.push` insufficient — GitHub still synthesized failures. | Slimmed gate; Playwright → `ci-e2e.yml`; **both workflows `disabled_manually`** until TD-018 minutes restored (`gh workflow enable` + re-add `on.push`). |
+| Vercel production | T7 early SHAs (`2b6ef8f`, `5db5ef5`) failed Next typecheck on org create payloads | Fixed on later SHAs; HEAD **READY**; https://www.deliverx.dev HTTP 200 |
 | Local gates | — | `test:release-gate` PASS; `npm test` 927 pass; `npm run build` PASS; production `src/` tsc clean; ~16 test-fixture tsc errors remain (TD-017) |
 
-**Emails:** primarily GitHub Actions failure notifications (every main push while minutes exhausted); intermittent Vercel Error deploys during T7 typecheck window. Push auto-CI paused to stop the storm; product HEAD is healthy.
+**Emails:** primarily GitHub Actions (0-job failures while minutes exhausted); intermittent Vercel Error during T7 typecheck. Workflows disabled → push no longer creates Actions runs. Product HEAD healthy.
 
-**Verified HEAD `0b25244`:** Vercel production READY; www.deliverx.dev 200; unauth `/profile` → login; `/api/pi/notifications` + `/api/org/structure` 401. Local release-gate / unit / build PASS. GitHub Actions workflows disabled until TD-018 (restore minutes, then re-enable `on.push`).
+**Verified HEAD:** Vercel production READY; www.deliverx.dev 200; unauth `/profile` → login; `/api/pi/notifications` + `/api/org/structure` 401. Local release-gate / unit / build PASS. Re-enable Actions only after TD-018.
 
 ---
 

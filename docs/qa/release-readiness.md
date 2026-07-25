@@ -44,7 +44,7 @@
 | Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Manual — `.github/workflows/ci-e2e.yml` (`workflow_dispatch`) |
 | Production build | `npm run build` | Yes |
 
-**CI policy (2026-07-25):** Default CI (`.github/workflows/verify.yml`) runs unit tests + `test:release-gate` + `npm run build` on **pull_request** and **workflow_dispatch**. Push-to-main auto-run is temporarily disabled while private-repo Actions minutes are exhausted (TD-018 — 0-job failures were emailing on every push). Re-enable `on.push` after restoring minutes at [GitHub billing](https://github.com/settings/billing). Lint is advisory. Playwright Chromium suites are opt-in via `ci-e2e.yml`.
+**CI policy (2026-07-25):** Default CI lives in `.github/workflows/verify.yml` (unit + `test:release-gate` + build; lint advisory). Playwright is `.github/workflows/ci-e2e.yml` (manual). **Both workflows are currently `disabled_manually`** because private-repo Actions minutes are exhausted (TD-018) — GitHub was synthesizing 0-job failure runs (and emails) on every push even after `on.push` was removed. After restoring minutes at [GitHub billing](https://github.com/settings/billing): `gh workflow enable ".github/workflows/verify.yml"` and `gh workflow enable "CI E2E (Playwright)"`, then re-add `on.push` to `verify.yml`.
 
 ---
 
