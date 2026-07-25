@@ -197,7 +197,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 | Workspace nav | Legacy Mission Control / Ecosystem demoted; opt-in `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV` |
 | PD-2026-07-25 | T7 authorized; T8/T9 still blocked; not third SKU |
 
-**Verification:** focused vitest (org-structure + privacy cascade + readiness honesty + nav policy); migration applied to `jibmyxaldetyycmtlxet`; advisors checked; release-gate; Vercel prod READY; unauth 401 on `/api/org/*`.
+**Verification:** focused vitest 249 PI incl. 7 T7 org-structure cases · migration `org_structure` on `jibmyxaldetyycmtlxet` (head after `0092`) · advisors: no anon EXECUTE regression; authenticated 0029 for new RLS helpers (`is_org_admin`, `is_department_member`, `is_team_member`) intentional (same TD-016 posture) · TD-006 WARN unchanged · prod deploy `dpl` Ready (`7f24974`) · unauth smoke 401 on `/api/org/*` · `npm run test:release-gate` PASS (live signed-in suites skipped without `T6_E2E` secrets).
 
 **T7 verdict:** Shipped (founder-authorized). Do not proceed to T8/T9 without separate founder approval. TD-006 remains founder-only.
 
