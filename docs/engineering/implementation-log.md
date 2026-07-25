@@ -175,7 +175,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 | `e2e/t6-security-journeys.test.ts` | Prompt-injection always-on; live RLS / purge denial / no capability write |
 | `e2e/t6-unauth-gates.test.ts` | CI-safe 401 + login redirects |
 | `scripts/release-gate.mjs` | `npm run test:release-gate` / `:live` |
-| `.github/workflows/ci.yml` | T6 release gate job; optional live secrets |
+| `.github/workflows/verify.yml` | T6 release gate job; optional live secrets |
 | `docs/qa/*` | end-to-end-audit, acceptance-test-results, security-findings, release-readiness, t0-results |
 
 **Approach:** Option B (prod disposable identity + purge) — local Supabase (Option A) blocked by disk/Docker. No runtime product code changes; no migration; no deploy required.
@@ -207,7 +207,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 | Source | What failed | Status after fix |
 | --- | --- | --- |
-| GitHub Actions `ci.yml` | Pre-T6: lint blocked job. Post-T6: runs fail in **0s with zero jobs** (Actions minutes exhausted on private repo) | Slimmed gate to `npm test` + `test:release-gate` + `npm run build`; lint advisory; Playwright → `ci-e2e.yml`. **Push trigger temporarily off** (PR + `workflow_dispatch` remain) to stop failure emails until TD-018 minutes restored. |
+| GitHub Actions `verify.yml` | Pre-T6: lint blocked job. Post-T6: runs fail in **0s with zero jobs** (Actions minutes exhausted on private repo) | Slimmed gate to `npm test` + `test:release-gate` + `npm run build`; lint advisory; Playwright → `ci-e2e.yml`. **Push trigger temporarily off** (PR + `workflow_dispatch` remain) to stop failure emails until TD-018 minutes restored. |
 | Vercel production | T7 early SHAs (`2b6ef8f`, `5db5ef5`) failed Next typecheck on org create payloads | Fixed on later SHAs; `65a194a`+ **READY**; https://www.deliverx.dev HTTP 200 |
 | Local gates | — | `test:release-gate` PASS; `npm test` 927 pass; `npm run build` PASS; production `src/` tsc clean; ~16 test-fixture tsc errors remain (TD-017) |
 
