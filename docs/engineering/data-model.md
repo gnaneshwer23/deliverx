@@ -1,6 +1,6 @@
 # Data Model
 
-**Source of truth:** `supabase/migrations/0066`–`0091` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts + T4 AI orchestration + T5 notifications) on project `jibmyxaldetyycmtlxet`  
+**Source of truth:** `supabase/migrations/0066`–`0092` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts + T4 AI orchestration + T5 notifications + TD-016 grant hardening) on project `jibmyxaldetyycmtlxet`  
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -140,11 +140,19 @@ erDiagram
 - `pi_ai_usage_daily` — `security_invoker` daily interaction/token/cost/latency read model; underlying `ai_interactions` self-only RLS remains authoritative
 - Purge/export cascade includes `pi_notifications`; the service-role-only privacy RPC wrapper deletes it before domain events
 
+### SECURITY DEFINER grant hardening — `0092`
+
+- Anonymous EXECUTE is false for every production SECURITY DEFINER function
+- `current_org_id`, `is_workspace_project_member` and `pi_cf_version_is_readable` retain authenticated EXECUTE because active RLS policies depend on them
+- Purge, auth-trigger and managed secret functions remain service-role or owner-only
+- All inventoried functions have fixed search paths (`public` for DeliverX functions; empty for managed functions)
+
 ---
 
 ## Advisor notes
 
 - **T1 closed:** `pi_cf_audit_events` authenticated deny-all; `forbid_*` `search_path = public`
+- **TD-016 closed:** advisor 0028 anonymous SECURITY DEFINER findings cleared by `0092`; three advisor 0029 findings intentionally remain for RLS policy helpers
 - **Open (ops):** leaked-password protection — founder toggle (TD-006); see [`runbook-leaked-password-protection.md`](./runbook-leaked-password-protection.md)
 
 ---

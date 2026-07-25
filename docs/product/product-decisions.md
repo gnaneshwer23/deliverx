@@ -246,6 +246,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-21 — RLS helpers retain authenticated EXECUTE
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | Every DeliverX SECURITY DEFINER function must deny anonymous/PUBLIC execution. Privileged mutations remain service-role or owner-only. `current_org_id`, `is_workspace_project_member`, and `pi_cf_version_is_readable` retain authenticated EXECUTE only because active RLS policies depend on them. |
+| **Why** | Blanket revocation would break organisation, requirements and framework RLS. The three helpers are narrow, caller-scoped/read-only policy primitives; direct anonymous RPC exposure is unnecessary. |
+| **Consequence** | Migration `0092`; TD-016 closed. Advisor 0028 findings clear, while the three advisor 0029 findings remain intentionally documented and protected by role-simulation regression probes. Future SECURITY DEFINER functions must declare a fixed `search_path` and explicit EXECUTE grants in the creating migration. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval. Also TD-006 (leaked-password protection).

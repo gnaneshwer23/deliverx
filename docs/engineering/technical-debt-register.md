@@ -20,7 +20,7 @@
 | TD-013 | Full Mermaid ER for PI schema not published | Low | Deferred | Compact sketch in `data-model.md`; expand later |
 | TD-014 | Pre-pivot delivery/org API surface large vs PI SoT | Low | Deferred | Do not expand as PI WPs; avoid capability confusion |
 | TD-015 | Person-purge RPC executable by anon/authenticated (Supabase default-privilege) | **High** | Now | **Resolved T3 (`0089`, `9eae533`)**: `revoke execute ... from anon, authenticated` on `pi_privacy_purge_person_data`; verified anon/authenticated EXECUTE = false, service_role only. Root cause: `revoke ... from public` does not remove role-specific default grants. |
-| TD-016 | Other `SECURITY DEFINER` functions callable by anon/authenticated | Low–Med | Deferred | **Residual confirmed on prod (2026-07-25):** `is_workspace_project_member` and `pi_cf_version_is_readable` grant EXECUTE to anon + authenticated; `current_org_id` grants authenticated but not anon. These are read/boolean helpers, lower risk than person purge. Revoke or switch to INVOKER in a future hardening pass. **Still open after T5** (not in T5 scope). |
+| TD-016 | Other `SECURITY DEFINER` functions callable by anon/authenticated | Low–Med | Closed | **Closed on prod (2026-07-25, `0092`, `096fb72`):** exhaustive non-system inventory found nine functions (six DeliverX `public`, two managed `vault`, one managed `pgbouncer`). Anonymous EXECUTE is now false for all. `current_org_id`, `is_workspace_project_member`, and `pi_cf_version_is_readable` intentionally retain authenticated EXECUTE because active RLS policies depend on them; rollback-only authenticated read/write probes passed before and after. Purge/admin/trigger functions remain service-role or owner-only. |
 
 ---
 
@@ -31,4 +31,4 @@
 
 When resolving an item: note SHA + date in this table (append a Resolved column entry or move to a “Resolved” section).
 
-**T5 disposition:** no debt item was closed or reclassified. TD-001, TD-006 and TD-016 remain open; all other entries retain their prior status.
+**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. TD-001 and TD-006 remain open; all other entries retain their prior status.

@@ -1,6 +1,6 @@
 # Current Scope
 
-**Active phase:** Post-P7 pilot hardening — **Technology T5 shipped**; T0 signed-in QA still open (PARTIAL); T1–T4 shipped  
+**Active phase:** Post-P7 pilot hardening — **Technology T5 shipped; TD-016 closed**; T0 signed-in QA still open (PARTIAL); T1–T4 shipped  
 **As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
@@ -10,6 +10,7 @@
 **T3 status:** **Shipped** — artefact versioning + submission coherence (`0088`; `artefacts` / `artefact_versions` / `artefact_status_transitions`; immutable prior versions; evidence cites `artefact_version_id`; privacy cascade extended; settings panel). Hotfix `0089` locks the person-purge RPC to `service_role` only.  
 **T4 status:** **Shipped** — AI orchestration trust layer (`0090`; `ai_agents` / `ai_prompt_versions` / `ai_interactions`; `src/lib/ai-orchestration/`; Manager/Stakeholder/Observer + consolidated coaches; guardrails; mock-model tests; `GET /api/pi/ai/interactions`).  
 **T5 status:** **Shipped** — person PI notifications + observability (`0091`; `pi_notifications`; legacy review migration; intervention/privacy sources; `GET/PATCH /api/pi/notifications`; Profile inbox; `pi_ai_usage_daily`). Founder override (`t5`) noted. Do **not** start T6 unless asked.
+**Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
 
@@ -35,6 +36,7 @@
 **T3 (2026-07-25):** Artefact versioning — `artefacts` + immutable `artefact_versions` + append-only `artefact_status_transitions` (`0088`); user-vs-AI provenance + content hash; evidence provenance must cite `artefact_version_id` (DB CHECK + app guard); artefact tables added to T1 export/purge cascade; `/api/pi/artefacts` (+`/[id]/versions`); settings panel. Access-control check found and fixed a default-privilege leak: person-purge RPC EXECUTE revoked from anon/authenticated (`0089`).  
 **T4 (2026-07-25):** AI orchestration trust layer — agent registry (line_manager / stakeholder / observer + experience_coach / workspace_coach / interview_lab), prompt versioning, context builder, structured output contracts, prompt-injection guardrails, cost/latency logging (`ai_interactions`), mock-model CI tests. Existing Experience/Helm/Interview Lab surfaces consolidated into the registry (not rewritten). `GET /api/pi/ai/interactions` (self-only). Migration `0090`.
 **T5 (2026-07-25):** Consolidated person inbox — self-only `pi_notifications`, migrated `pi_review_notifications` history, intervention-offer trigger, idempotent privacy event consumption, contextual in-app links, Profile bell/list/mark-read, and security-invoker daily AI usage read model. No email/channel expansion; no capability or verification writes. Migration `0091`.
+**TD-016 (2026-07-25):** Exhaustive production SECURITY DEFINER inventory (nine functions) + `0092`; anonymous EXECUTE now false for all. Authenticated EXECUTE retained only for `current_org_id`, `is_workspace_project_member`, and `pi_cf_version_is_readable` because active RLS policies depend on them; before/after role-simulation probes passed.
 
 ---
 

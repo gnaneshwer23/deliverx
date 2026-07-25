@@ -155,6 +155,18 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 ---
 
+## Security hardening — TD-016 SECURITY DEFINER grants (2026-07-25)
+
+| SHA | Summary | Migration / notes |
+| --- | --- | --- |
+| `096fb72` | Close anonymous SECURITY DEFINER EXECUTE exposure without breaking RLS | `0092`; anonymous EXECUTE false for all nine inventoried functions; authenticated retained only for three RLS helpers |
+
+**Verification:** production inventory queried from `pg_proc` plus routine/effective privileges · active `pg_policy` dependencies mapped · authenticated read probes unchanged before/after for evidence, artefacts, notifications, ScoreRuns, Workspace, requirements and `pi_cf_*` · rollback-only authenticated inserts passed for evidence, artefacts, notifications and workspace contributions · 914 tests passed (2 skipped) · migration history confirms `0092_security_definer_grants` · advisor 0028 anonymous findings cleared; three advisor 0029 findings intentionally remain for RLS-critical read helpers.
+
+**TD-016 verdict:** Closed. The authenticated findings are a documented, tested RLS requirement rather than unclassified residual exposure.
+
+---
+
 ## Ops — TD-006 leaked-password protection (2026-07-25)
 
 | Check | Result |

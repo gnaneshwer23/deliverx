@@ -66,12 +66,27 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `pi_ai_usage_daily` is `security_invoker`, so authenticated reads remain constrained by underlying `ai_interactions` RLS
 - T1 export/purge includes notifications; the purge RPC remains `service_role` only after the T5 wrapper
 
-### Person-purge RPC lockdown (T3 hotfix `0089`)
+### SECURITY DEFINER grants (`0089`, `0092`)
 
 - `pi_privacy_purge_person_data` is `SECURITY DEFINER` and must be **service_role only**
 - Supabase default privileges auto-grant EXECUTE to `anon`/`authenticated`; `revoke ... from public` does **not** remove those grants
 - `0089` explicitly revokes EXECUTE from `anon`/`authenticated`; verified on prod (anon/authenticated EXECUTE = false)
-- Advisor 0028/0029 still flags lower-risk helpers — tracked TD-016. Production grants: `is_workspace_project_member` and `pi_cf_version_is_readable` are executable by anon + authenticated; `current_org_id` is executable by authenticated but not anon. All three are `SECURITY DEFINER`.
+- `0092` closes TD-016: anonymous EXECUTE is false for every inventoried SECURITY DEFINER function. The three read helpers retain authenticated EXECUTE because active RLS policies invoke them; revocation would break person/org/framework access.
+- All DeliverX-owned SECURITY DEFINER functions have an explicit `search_path = public`; managed `vault` / `pgbouncer` functions use an empty search path.
+
+Production inventory (`anon / authenticated / service_role`, before → after):
+
+| Function | Before | After | Decision |
+| --- | --- | --- | --- |
+| `pgbouncer.get_auth(text)` | F / F / F | F / F / F | Supabase-managed internal |
+| `public.current_org_id()` | F / T / T | F / T / T | Authenticated retained for organisation RLS |
+| `public.handle_new_auth_user()` | F / F / T | F / F / T | Auth trigger; no client execution |
+| `public.is_workspace_project_member(uuid)` | T / T / T | F / T / T | Anonymous revoked; authenticated retained for requirements RLS |
+| `public.pi_cf_version_is_readable(uuid)` | T / T / T | F / T / T | PUBLIC/anonymous revoked; authenticated retained for ten `pi_cf_*` read policies |
+| `public.pi_privacy_purge_person_data(uuid, uuid)` | F / F / T | F / F / T | Privileged mutation; service-role only |
+| `public.pi_privacy_purge_person_data_t4(uuid, uuid)` | F / F / F | F / F / F | Owner-only implementation behind purge wrapper |
+| `vault.create_secret(text, text, text, uuid)` | F / F / T | F / F / T | Supabase-managed service function |
+| `vault.update_secret(uuid, text, text, text, uuid)` | F / F / T | F / F / T | Supabase-managed service function |
 
 ---
 
@@ -98,6 +113,7 @@ From Supabase advisors at post-ship audit; T1 disposition:
 1. **Mutable `search_path` on PI `forbid_*`** — **Closed in T1** (`0086`): all `forbid_*` functions set `search_path = public`.
 2. **`pi_cf_audit_events` RLS with no policies** — **Closed in T1** (`0086`): explicit authenticated deny-all policy; service role only.
 3. **Leaked-password protection off** (WARN) — **Still open (TD-006, 2026-07-25):** `get_advisors` still reports `auth_leaked_password_protection`. Not settable via SQL; Supabase MCP cannot write Auth config. Management API supports `password_hibp_enabled` (Pro+), but no access token in agent env. **Founder:** enable in [Auth → Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection). Full steps: [`runbook-leaked-password-protection.md`](./runbook-leaked-password-protection.md).
+4. **SECURITY DEFINER grants** — **TD-016 closed in `0092`:** both anonymous findings cleared. Three authenticated findings remain intentionally for RLS-critical read helpers; production role-simulation probes prove those policy paths still work.
 
 These are tracked in [`technical-debt-register.md`](./technical-debt-register.md). They do not authorise weakening ledger/verification invariants.
 
