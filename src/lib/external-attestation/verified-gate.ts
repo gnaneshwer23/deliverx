@@ -7,6 +7,7 @@ import type { EvidenceStrengthLabel, VerifierStatus } from "@/lib/verified-portf
 
 export type VerifiedBadgeEnv = {
   DELIVERX_VERIFIED_BADGE?: string;
+  [key: string]: string | undefined;
 };
 
 function truthyOff(value: string | undefined): boolean {
@@ -16,7 +17,9 @@ function truthyOff(value: string | undefined): boolean {
 }
 
 /** Global kill switch — when off, badge never lights even with valid attestation. */
-export function isVerifiedBadgeEnabled(env: VerifiedBadgeEnv = process.env): boolean {
+export function isVerifiedBadgeEnabled(
+  env: VerifiedBadgeEnv = process.env as VerifiedBadgeEnv,
+): boolean {
   return !truthyOff(env.DELIVERX_VERIFIED_BADGE);
 }
 
@@ -29,7 +32,9 @@ export function deliverxVerifiedFromAttestation(entry: {
   evidenceStrength: EvidenceStrengthLabel;
   env?: VerifiedBadgeEnv;
 }): boolean {
-  if (!isVerifiedBadgeEnabled(entry.env ?? process.env)) return false;
+  if (!isVerifiedBadgeEnabled(entry.env ?? (process.env as VerifiedBadgeEnv))) {
+    return false;
+  }
   return (
     entry.verifierStatus === "externally_attested" &&
     entry.evidenceStrength === "externally_verified"
