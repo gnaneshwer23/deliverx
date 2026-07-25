@@ -281,7 +281,17 @@ export async function updatePortfolioEntry(
   }
   if (patch.aiSummary !== undefined) row.ai_summary = patch.aiSummary;
   if (patch.hiddenFields !== undefined) row.hidden_fields = patch.hiddenFields;
-  if (patch.verifierStatus !== undefined) row.verifier_status = patch.verifierStatus;
+  // T8: users cannot self-set external attestation statuses — only the attestation path may.
+  if (patch.verifierStatus !== undefined) {
+    if (
+      patch.verifierStatus === "externally_attested" ||
+      patch.verifierStatus === "pending_external" ||
+      patch.verifierStatus === "disputed"
+    ) {
+      throw new Error("verifier_status_requires_attestation_path");
+    }
+    row.verifier_status = patch.verifierStatus;
+  }
 
   const { data, error } = await supabase
     .from("vpp_entries")

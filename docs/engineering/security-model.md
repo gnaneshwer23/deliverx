@@ -38,7 +38,10 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 
 - Evidence is **private by default**
 - Portfolio packaging and public links must exclude private/confidential rows
-- Users cannot self-promote evidence to `platform_verified` / external verification without attestation path
+- Users cannot self-promote evidence to `platform_verified` / external verification without the T8 attestation path
+- Attestor token views are least-privilege (claim summary only; no private evidence; no capability levels)
+- Self-attestation of own claim is rejected
+- `deliverxVerified` requires external attestation (PD-2026-07-06 / PD-2026-07-25c); kill switch `DELIVERX_VERIFIED_BADGE=off`
 - AI-generated observations are not automatically verified evidence
 
 ### Artefacts (T3)
@@ -145,6 +148,6 @@ These are tracked in [`technical-debt-register.md`](./technical-debt-register.md
 ## Trust rules that are security-relevant
 
 - Capability writes only via Capability Engine
-- `deliverxVerified` requires external attestation
+- `deliverxVerified` requires external attestation (T8; kill switch `DELIVERX_VERIFIED_BADGE=off`)
 - No unexplained scores as capability truth
 - Least-privilege access to professional information (Constitution)

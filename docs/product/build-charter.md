@@ -42,15 +42,16 @@ Production reference: https://www.deliverx.dev · Supabase `jibmyxaldetyycmtlxet
 
 | Work | Why blocked |
 | --- | --- |
-| **P8 — External verification / attestation** | `deliverxVerified` must not light without a defined attestation path and legal/product meaning |
-| **P9 — Commercial packaging / monetisation expansion** | Pilot loop must be trusted first |
+| **P9 — Commercial packaging / monetisation expansion** | Pilot loop must be trusted first; T9 still requires separate approval |
 | New product Homes / third SKU deep IA | Team Co-pilot vs Workspace branding ADR still open; T7 confirms **alias only** (not a third SKU) — mission-control depth still blocked |
 | Multi-profession framework platforms beyond pilot seed | Founder decision on single-domain sufficiency |
 | Employer marketplace liquidity / broad opportunity OS | Deferred vs Launchpad packaging + readiness loop |
 | Enterprise delivery OS expansion (mission-control depth) | Out of person-practice pilot ICP default |
 | Speculative microservice splits of “ten intelligence domains” | Taxonomy only until scale requires separation |
 
-If a prompt asks for P8, P9, or other out-of-charter work: **stop, cite this charter, and wait for explicit founder approval.**
+**P8 / T8 external attestation** was authorized 2026-07-25 by founder (`t8`) — see technology phase authorizations below.
+
+If a prompt asks for P9 or other out-of-charter work: **stop, cite this charter, and wait for explicit founder approval.**
 
 ---
 
@@ -84,7 +85,7 @@ If any answer is no → redesign or defer.
 
 ## Recommended next action
 
-**Technology T7 shipped.** Next is **ops + trust hardening**, not T8/T9 — see [`../engineering/next-steps.md`](../engineering/next-steps.md): restore Actions minutes (TD-018), founder Auth leaked-password toggle (TD-006), re-enable CI, clear TD-017, honesty copy (TD-011). Do **not** start **T8** (external attestation) or **T9** (commercial) without separate founder approval.
+**Technology T8 shipped (founder-authorized).** Next is **ops + trust hardening** and **T9 only after separate approval** — see [`../engineering/next-steps.md`](../engineering/next-steps.md): restore Actions minutes (TD-018), founder Auth leaked-password toggle (TD-006), honesty copy (TD-011). Do **not** start **T9** (commercial / Stripe) without separate founder approval.
 
 ---
 
@@ -94,4 +95,5 @@ If any answer is no → redesign or defer.
 | --- | --- |
 | T0–T6 | Authorized under this charter (pilot hardening) |
 | **T7** | **Authorized 2026-07-25 by founder** (`t7`) — Launchpad packaging honesty + Team Copilot / Professional Workspace foundations (departments/teams; no third SKU; no mission-control expansion) |
-| T8–T9 | **Still require separate founder approval** — do not implement attestation or commercial packaging under T7 |
+| **T8** | **Authorized 2026-07-25 by founder** (`t8`) — External attestation / employer verify path so `deliverxVerified` can light honestly; T9 still blocked |
+| T9 | **Still requires separate founder approval** — do not implement commercial packaging under T8 |

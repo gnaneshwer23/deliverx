@@ -1,6 +1,6 @@
 # Current Scope
 
-**Active phase:** Post-P7 pilot hardening — **Technology T7 shipped** (founder-authorized 2026-07-25); T0 PASS (automated); TD-001 closed; T1–T6 shipped; TD-016 closed  
+**Active phase:** Post-P7 pilot hardening — **Technology T8 shipped** (founder-authorized 2026-07-25); T0–T7 shipped; TD-001/TD-016 closed  
 **As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
@@ -11,7 +11,8 @@
 **T4 status:** **Shipped** — AI orchestration trust layer (`0090`; `ai_agents` / `ai_prompt_versions` / `ai_interactions`; `src/lib/ai-orchestration/`; Manager/Stakeholder/Observer + consolidated coaches; guardrails; mock-model tests; `GET /api/pi/ai/interactions`).  
 **T5 status:** **Shipped** — person PI notifications + observability (`0091`; `pi_notifications`; legacy review migration; intervention/privacy sources; `GET/PATCH /api/pi/notifications`; Profile inbox; `pi_ai_usage_daily`).  
 **T6 status:** **Shipped** — signed-in E2E + release gates (`e2e/t0-signed-in-loop.test.ts`, `e2e/t6-security-journeys.test.ts`, `e2e/t6-unauth-gates.test.ts`, `npm run test:release-gate`); TD-001 closed.  
-**T7 status:** **Shipped (founder-authorized 2026-07-25)** — org departments/teams (`0093`); Launchpad readiness honesty (`mixed` source); Professional Workspace nav demotion (legacy opt-in); Team Copilot = Workspace alias (not third SKU); membership privacy cascade. **T8/T9 still require separate founder approval.**  
+**T7 status:** **Shipped (founder-authorized 2026-07-25)** — org departments/teams (`0093`); Launchpad readiness honesty (`mixed` source); Professional Workspace nav demotion (legacy opt-in); Team Copilot = Workspace alias (not third SKU); membership privacy cascade.  
+**T8 status:** **Shipped (founder-authorized 2026-07-25)** — external attestation (`0094`); tokenised attestor flow; `deliverxVerified` only when `externally_attested` + `externally_verified`; kill switch `DELIVERX_VERIFIED_BADGE`; dispute → review case; attestation privacy cascade. **T9 still requires separate founder approval.**  
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -28,32 +29,25 @@
 | **P5** | Shipped | Final/transfer assessment, growth reports, `0081`–`0082` |
 | **P6** | Shipped | `/learning`, learning paths/items, `0083` — no capability assignment |
 | **P7** | Shipped | `/career/outcomes`, outcome events + calibration findings, `0084`–`0085` |
+| **P8 / T8** | Shipped | External attestation — `/portfolio/attest/[token]`, ledger `external_verification`, Verified gate |
 
 **Also present (partial / supporting):** Professional Workspace (`/workspace`), Verified Portfolio packaging (`/portfolio`), Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback), admin competency framework seed (`pm-core`), PI review/challenge.
 
-**T0 (2026-07-25):** Unauth smoke + migrations re-verified.  
-**T1 (2026-07-25):** Privacy export/deletion shipped (`0086`); TD-004/005 resolved; TD-006 documented for Auth dashboard.  
-**T2 (2026-07-25):** Framework/rubric coherence — DB `pi_cf_*` SoT for ScoreRuns; labelled `in_code_fallback`; `rubric_resolve_source` on ScoreRuns (`0087`); pin assert on `POST /api/pi/capability/run`; golden reproducibility harness; TD-009 closed. TD-007 (seed depth) remains deferred.  
-**T3 (2026-07-25):** Artefact versioning — `artefacts` + immutable `artefact_versions` + append-only `artefact_status_transitions` (`0088`); user-vs-AI provenance + content hash; evidence provenance must cite `artefact_version_id` (DB CHECK + app guard); artefact tables added to T1 export/purge cascade; `/api/pi/artefacts` (+`/[id]/versions`); settings panel. Access-control check found and fixed a default-privilege leak: person-purge RPC EXECUTE revoked from anon/authenticated (`0089`).  
-**T4 (2026-07-25):** AI orchestration trust layer — agent registry (line_manager / stakeholder / observer + experience_coach / workspace_coach / interview_lab), prompt versioning, context builder, structured output contracts, prompt-injection guardrails, cost/latency logging (`ai_interactions`), mock-model CI tests. Existing Experience/Helm/Interview Lab surfaces consolidated into the registry (not rewritten). `GET /api/pi/ai/interactions` (self-only). Migration `0090`.
-**T5 (2026-07-25):** Consolidated person inbox — self-only `pi_notifications`, migrated `pi_review_notifications` history, intervention-offer trigger, idempotent privacy event consumption, contextual in-app links, Profile bell/list/mark-read, and security-invoker daily AI usage read model. No email/channel expansion; no capability or verification writes. Migration `0091`.
-**TD-016 (2026-07-25):** Exhaustive production SECURITY DEFINER inventory (nine functions) + `0092`; anonymous EXECUTE now false for all. Authenticated EXECUTE retained only for `current_org_id`, `is_workspace_project_member`, and `pi_cf_version_is_readable` because active RLS policies depend on them; before/after role-simulation probes passed.
-**T6 (2026-07-25):** Signed-in E2E + release gates — disposable-user happy path (18/18), security negatives (RLS, purge denial, prompt-injection), unauth gates, `npm run test:release-gate`; TD-001 closed; T0 PASS (automated). Docs: `docs/qa/end-to-end-audit.md`, `acceptance-test-results.md`, `security-findings.md`, `release-readiness.md`.
-**T7 (2026-07-25):** Founder-authorized org + Workspace foundations — `departments` / `teams` / membership (`0093`); org-admin gated APIs; Launchpad `mixed` readiness honesty; legacy Mission Control / Ecosystem nav demoted (opt-in via `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV`); Team Copilot remains Professional Workspace alias (not third SKU); membership rows in privacy export/purge; org structure tables excluded from person purge. No marketplace, messages SKU, attestation, or commercial packaging.
+**T0–T7:** See prior ship notes in [`../engineering/implementation-log.md`](../engineering/implementation-log.md).  
+**T8 (2026-07-25):** Founder-authorized external attestation — `vpp_attestation_requests` / `vpp_attestations` / `vpp_attestation_events` (`0094`); consent-gated request; tokenised no-account attestor confirm/dispute; confirm appends ledger evidence (`external_verification` / `external_employer`); dispute opens `pi_review_case`; `deliverxVerified` + kill switch; share views strip private evidence and attestor PII; privacy export/purge; no marketplace / networking / Stripe.
 
 ---
 
 ## Out of scope (this phase)
 
-- P8 / **T8** external attestation / lighting `deliverxVerified`
-- P9 / **T9** commercial / packaging expansion
+- P9 / **T9** commercial / packaging expansion / Stripe
 - Multi-profession framework expansion beyond thin pilot seed
-- Employer attest portal
+- Bulk employer accounts / dashboards / networking scrape / marketplace liquidity
 - Team Co-pilot enterprise mission-control depth as a separate Home / third SKU
 - Speculative intelligence microservices
 - Rewriting pre-PI delivery/org engines unless required to protect the candidate loop
 - First-class `messages` table (reuse meetings / contributions / notifications)
-- **T8–T9** until separate founder approval
+- **T9** until separate founder approval
 
 ---
 
@@ -65,11 +59,11 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 | --- | --- | --- |
 | **ICP** | Pre-job / early PM vs employed teams for next 90 days | Career vs Workspace investment weight |
 | **Product count / SKU** | **Settled for T7 (alias):** Team Co-pilot = Professional Workspace; not a third SKU. Full pricing SKU ADR still open for commercial (T9). | Nav prefers Professional Workspace |
-| **Verification meaning** | Legal/product definition of Verified / `deliverxVerified` | Portfolio badge, marketing, **T8** timing |
+| **Verification meaning** | **Settled for T8 (PD-2026-07-25c):** Verified = named third-party attestation of a specific claim; kill switch available | Marketing copy must match |
 | **Workspace scope** | Employed Workspace in pilot via Professional Workspace modules; mission-control demoted | Observation/coach remain; legacy nav opt-in |
-| **Roadmap approval** | **T7 authorized 2026-07-25.** Explicit authorisation still required for **T8 / T9** (P8 / P9) | No external verification or commercial expansion until approved |
+| **Roadmap approval** | **T7 + T8 authorized 2026-07-25.** Explicit authorisation still required for **T9** (P9) | No commercial expansion until approved |
 | **Framework breadth** | Single seeded domain (`pm-core`) enough for pilot? | Admin seed depth |
-| **Marketing vs ledger** | Suite marketing aspirational vs committed scope | Copy audit |
+| **Marketing vs ledger** | Suite marketing aspirational vs committed scope | Copy audit (TD-011) |
 
 ---
 
@@ -81,9 +75,9 @@ Full plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
 3. **Ops + engineering:** configure T6 live CI secrets once workflows run again.
 4. **Engineering (now):** clear TD-017 test-fixture ESLint / `tsc` debt so returning CI stays honest.
-5. **Engineering (now):** marketing vs ledger honesty pass (TD-011); keep `deliverxVerified` off.
+5. **Engineering (now):** marketing vs ledger honesty pass (TD-011) — Verified wording must match T8 meaning.
 
-Do **not** start **T8** (attestation) or **T9** (commercial). Defer marketplace, Stripe, graph DB, multi-profession expansion, and microservice splits.
+Do **not** start **T9** (commercial). Defer marketplace, Stripe, graph DB, multi-profession expansion, and microservice splits.
 
 ---
 
@@ -91,7 +85,7 @@ Do **not** start **T8** (attestation) or **T9** (commercial). Defer marketplace,
 
 1. Read this file + Build Charter before implementing.
 2. Prefer smallest change that hardens the shipped loop.
-3. Do not start P8/P9 without founder approval recorded in `product-decisions.md`.
+3. Do not start P9 / T9 without founder approval recorded in `product-decisions.md`.
 4. Update this file when the active phase changes.
-5. Do not start **T8–T9** until separate founder approval; T7 is shipped.
-6. Follow [`../engineering/next-steps.md`](../engineering/next-steps.md) for ordered post-T7 hardening.
+5. T8 is shipped; do not start **T9** until separate founder approval.
+6. Follow [`../engineering/next-steps.md`](../engineering/next-steps.md) for ordered post-T8 hardening.

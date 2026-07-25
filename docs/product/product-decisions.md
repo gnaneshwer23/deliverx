@@ -74,7 +74,7 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 | **Status** | Accepted |
 | **Decision** | `deliverxVerifiedClaim` lights only when verifier status is `externally_attested` **and** evidence strength is `externally_verified`. Experience heuristic `platform_verified` never upgrades to external verification. |
 | **Why** | Badge without attestation is decorative trust / legal risk. |
-| **Consequence** | P8 attestation portal not authorised until founder approves meaning + path; public copy must disclose when not independently verified. |
+| **Consequence** | Attestation path implemented under T8 (PD-2026-07-25c). Public copy must disclose when not independently verified. Kill switch `DELIVERX_VERIFIED_BADGE=off`. |
 
 ---
 
@@ -282,6 +282,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25c — T8 authorized; Verified meaning frozen; T9 still blocked
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `t8` **authorizes Technology Phase T8 / product P8 only**: tokenised employer/third-party attestation for a **specific portfolio claim**; ledger write as `external_verification` + actor `external_employer`; `deliverxVerified` lights only when `verifier_status=externally_attested` **and** `evidence_strength=externally_verified` (extends PD-2026-07-06); global kill switch `DELIVERX_VERIFIED_BADGE=off`; dispute opens `pi_review_case` without capability rewrite; share/attest views strip private evidence and never expose attestor PII publicly; attestation person data in privacy export/purge. **Verified means:** an independent named attestor confirmed one claim via the attestation path — not a DeliverX whole-profile audit, not a ScoreRun threshold, not self-report, not learning completion. **T9 (commercial packaging / Stripe) remains blocked** until separate founder approval. No marketplace, networking scrape, or bulk employer accounts. |
+| **Why** | Charter required founder approval before lighting Verified; `t8` is that approval for attestation without auto-authorizing monetisation. |
+| **Consequence** | Migration `0094_external_attestation.sql`; `src/lib/external-attestation/`; `/api/portfolio/entries/[id]/attestations` + `/api/portfolio/attest/[token]`; `/portfolio/attest/[token]` UX; update build-charter / current-scope / technology-build-phases / next-steps. Do not implement Stripe or entitlements under this decision. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, commercial SKU packaging (T9), verification legal meaning (T8), TD-006 (leaked-password protection), TD-018 (Actions minutes). T8/T9 require explicit separate approval.
+See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c.

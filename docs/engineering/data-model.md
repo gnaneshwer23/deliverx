@@ -58,9 +58,14 @@ erDiagram
 
 - `workspace_contributions`
 
-### Verified Portfolio — `0071`
+### Verified Portfolio — `0071` + T8 `0094`
 
 - `vpp_entries`, `vpp_entry_evidence`, `vpp_versions`, `vpp_shares`
+- **T8:** `vpp_attestation_requests` (tokenised, consent-gated), `vpp_attestations` (confirm/dispute), `vpp_attestation_events` (audit)
+- Confirm → ledger `external_verification` + entry `externally_attested` / `externally_verified`
+- Dispute → `pi_review_case`; never capability write
+- Attestor PII minimal; not exposed on public share views
+- Person attestation rows included in privacy export/purge
 
 ### Career Intelligence — `0072`
 
@@ -177,7 +182,8 @@ erDiagram
 | `run_kind` ∈ standard/baseline/final/transfer | Persist + assessment paths |
 | Consent default deny | No `pi_observation_consent` row ⇒ observation denied |
 | Learning ≠ competency | Learning persist never writes ScoreRuns |
-| Outcomes ≠ external verification without attestation | Strength derivation + `externally_verified: false` on persist |
+| Outcomes ≠ external verification without attestation | Strength derivation + T8 attestation path only |
+| `deliverxVerified` gate | `externally_attested` + `externally_verified` + kill switch |
 | Framework graph immutability | Triggers after seed (`0075`/`bff9d2d` family) |
 | Artefact version immutability (T3) | `artefact_forbid_version_mutation` before update/delete; new content = new version row |
 | Evidence cites a specific artefact version (T3) | `pi_evidence_provenance` CHECK + app guard `assertEvidenceCitesArtefactVersion` |

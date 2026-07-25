@@ -4,6 +4,8 @@
  * unless external verification requirements are met.
  */
 
+import { deliverxVerifiedFromAttestation } from "@/lib/external-attestation/verified-gate";
+
 export const EVIDENCE_STRENGTH_LABELS = [
   "self_reported",
   "document_supported",
@@ -263,10 +265,8 @@ export function deliverxVerifiedClaim(entry: {
   verifierStatus: VerifierStatus;
   evidenceStrength: EvidenceStrengthLabel;
 }): boolean {
-  return (
-    entry.verifierStatus === "externally_attested" &&
-    entry.evidenceStrength === "externally_verified"
-  );
+  // T8: kill switch + attestation gate (PD-2026-07-06). Never ScoreRun/learning shortcut.
+  return deliverxVerifiedFromAttestation(entry);
 }
 
 export function defaultAiDisclosure(): string {

@@ -60,6 +60,11 @@ export function VerifiedPortfolioApp() {
   >([]);
   const [narrative, setNarrative] = useState("");
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
+  const [claimLabel, setClaimLabel] = useState("");
+  const [attestConsent, setAttestConsent] = useState(false);
+  const [attestRequests, setAttestRequests] = useState<
+    Array<{ id: string; claimLabel: string; status: string; attestUrl: string }>
+  >([]);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/portfolio/entries");
@@ -122,6 +127,59 @@ export function VerifiedPortfolioApp() {
     setDetail(data);
     setNarrative(String(data.entry.narrative ?? ""));
     setHiddenFields((data.entry.hiddenFields as string[]) ?? []);
+    setClaimLabel(String(data.entry.title ?? ""));
+    setAttestConsent(false);
+
+    const attestRes = await fetch(`/api/portfolio/entries/${id}/attestations`);
+    const attestData = await attestRes.json();
+    if (attestRes.ok) {
+      setAttestRequests(
+        (attestData.requests ?? []).map(
+          (r: { id: string; claimLabel: string; status: string; attestUrl: string }) => ({
+            id: r.id,
+            claimLabel: r.claimLabel,
+            status: r.status,
+            attestUrl: r.attestUrl,
+          }),
+        ),
+      );
+    } else {
+      setAttestRequests([]);
+    }
+  }
+
+  async function requestAttestation() {
+    if (!activeId) return;
+    if (!attestConsent) {
+      setNotice("Consent is required before requesting external attestation.");
+      return;
+    }
+    if (!claimLabel.trim()) {
+      setNotice("Claim label is required.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/portfolio/entries/${activeId}/attestations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "request",
+          claimLabel: claimLabel.trim(),
+          consentToShare: true,
+          relationshipHint: "former_manager",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setNotice(data.error || "Attestation request failed");
+        return;
+      }
+      setNotice(`Attestation link created. Share it with your attestor: ${data.request.attestUrl}`);
+      await openEntry(activeId);
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function saveNarrative() {
@@ -445,6 +503,61 @@ export function VerifiedPortfolioApp() {
                 </li>
               ))}
             </ul>
+          </div>
+
+          <div className="rounded-lg border border-[#C5D9CE] bg-[#EEF5F1] p-4">
+            <p className="text-xs uppercase tracking-wide text-[#1C4A2E]">
+              External attestation (T8)
+            </p>
+            <p className="mt-1 text-xs text-[#4A4A45]">
+              Request a third-party confirmation of one claim. The Verified badge lights only after
+              confirmation is recorded on the Evidence Ledger — never from ScoreRuns or self-report.
+            </p>
+            <label className="mt-3 block text-xs text-[#6B6B64]">
+              Claim to attest
+              <input
+                className="mt-1 w-full rounded border border-[#E5E2D9] bg-white px-3 py-2 text-sm"
+                value={claimLabel}
+                onChange={(e) => setClaimLabel(e.target.value)}
+              />
+            </label>
+            <label className="mt-2 flex items-start gap-2 text-xs text-[#4A4A45]">
+              <input
+                type="checkbox"
+                className="mt-0.5"
+                checked={attestConsent}
+                onChange={(e) => setAttestConsent(e.target.checked)}
+              />
+              I consent to share this claim summary with an external attestor for verification.
+            </label>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => void requestAttestation()}
+              className="mt-3 rounded-md bg-[#0F766E] px-3 py-2 text-xs text-white disabled:opacity-60"
+            >
+              Create attestation link
+            </button>
+            {attestRequests.length > 0 ? (
+              <ul className="mt-3 space-y-2 text-xs text-[#4A4A45]">
+                {attestRequests.map((r) => (
+                  <li key={r.id} className="flex flex-wrap items-center gap-2">
+                    <span>
+                      {r.claimLabel} · {r.status}
+                    </span>
+                    {r.status === "pending" ? (
+                      <Link
+                        href={r.attestUrl}
+                        className="text-[#0F766E] underline"
+                        target="_blank"
+                      >
+                        Open attestor link
+                      </Link>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
 
           <div className="rounded-lg border border-dashed border-[#D6D3C8] bg-[#FAFAF7] p-4">

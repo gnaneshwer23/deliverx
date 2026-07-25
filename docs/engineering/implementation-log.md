@@ -203,6 +203,24 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 ---
 
+## Technology T8 — External attestation (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| `0094_external_attestation.sql` | `vpp_attestation_requests`, `vpp_attestations`, `vpp_attestation_events`; privacy purge chain; TD-016 grants |
+| `src/lib/external-attestation/` | Domain lib — gate, privacy view, store; never writes capability |
+| `/api/portfolio/entries/[id]/attestations` | Owner request / list / revoke (consent required) |
+| `/api/portfolio/attest/[token]` | Public tokenised confirm/dispute; self-attest denied |
+| `/portfolio/attest/[token]` | Minimal calm attestor UX |
+| Kill switch | `DELIVERX_VERIFIED_BADGE=off` |
+| PD-2026-07-25c | T8 authorized; Verified meaning frozen; T9 still blocked |
+
+**Verification:** focused vitest attestation + VPP + privacy cascade · migration `external_attestation` on `jibmyxaldetyycmtlxet` · advisors: no anon EXECUTE regression · prod deploy Ready · unauth smoke 401 on owner attestation APIs · public attest invalid token 404 · `npm run test:release-gate` PASS.
+
+**T8 verdict:** Shipped (founder-authorized). Do not proceed to T9 without separate founder approval. TD-006 remains founder-only.
+
+---
+
 ## Ops — CI / Vercel failure storm (2026-07-25)
 
 | Source | What failed | Status after fix |
@@ -232,7 +250,6 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ## Not started (charter)
 
-- **P8 / T8** — External verification / attestation (requires separate founder approval)  
 - **P9 / T9** — Commercial (requires separate founder approval)  
 
-Do not append ship rows for P8/P9 until Build Charter authorises them.
+Do not append ship rows for P9 until Build Charter authorises them.

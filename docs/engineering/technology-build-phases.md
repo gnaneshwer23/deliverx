@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T7 shipped (founder-authorized) · migrations head `0093`  
+**As of:** 2026-07-25 · T8 shipped (founder-authorized) · migrations head `0094`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,17 +10,17 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0093` are applied (T7 org structure).
+Much of the founder's §15 build order is **already shipped** as product phases P0–P8 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes → external attestation). Production is live; migrations `0066`–`0094` are applied (T8 attestation).
 
-This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
+This plan does **not** re-build P0–P8. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
 | Charter posture | Technology phases |
 | --- | --- |
-| **Authorized / shipped** | T0–T7 (pilot seal through Team Copilot / org foundations) |
-| **Requires founder approval** | T8 (P8 attestation), T9 (P9 commercial) |
+| **Authorized / shipped** | T0–T8 (pilot seal through external attestation) |
+| **Requires founder approval** | T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** **T7 shipped.** Follow [`next-steps.md`](./next-steps.md) — TD-018 CI restore, TD-006 founder Auth toggle, TD-017 fixture debt, TD-011 honesty copy. Do **not** start T8–T9 without separate founder approval (charter).
+**Recommended next engineering action:** **T8 shipped.** Follow [`next-steps.md`](./next-steps.md) — TD-018 CI restore, TD-006 founder Auth toggle, TD-017 fixture debt, TD-011 honesty copy. Do **not** start T9 without separate founder approval (charter).
 
 ---
 
@@ -162,7 +162,7 @@ sequenceDiagram
 
 ## Technology phases
 
-T1–T7 migrations are shipped through `0093`. Remaining migration numbers are indicative only; next free number is `0094`.
+T1–T8 migrations are shipped through `0094`. Remaining migration numbers are indicative only; next free number is `0095`.
 
 ### T0 — Pilot seal (signed-in QA + critical debt)
 
@@ -337,9 +337,13 @@ T1–T7 migrations are shipped through `0093`. Remaining migration numbers are i
 | Field | Content |
 | --- | --- |
 | **Objective** | Employer/attestor path so `deliverxVerified` can light honestly. |
-| **Charter** | **Requires founder approval** (legal/product meaning of Verified) |
-| **Schema (indicative)** | `0093_external_attestation.sql` |
-| **Exit** | Attestation record + strength `externally_verified` path; badge lights only then |
+| **Charter** | **Authorized 2026-07-25 by founder** (`t8`). Verified meaning frozen in PD-2026-07-25c. **T9 still requires separate approval.** |
+| **Entry** | T7 shipped; founder `t8` |
+| **Status (2026-07-25)** | **Shipped**. Migration `0094_external_attestation.sql` (`vpp_attestation_requests`, `vpp_attestations`, `vpp_attestation_events`); `src/lib/external-attestation/`; owner APIs + tokenised attestor portal; confirm → ledger `external_verification`; dispute → `pi_review_case`; kill switch `DELIVERX_VERIFIED_BADGE`; privacy cascade; no marketplace / networking / Stripe. |
+| **Schema** | `0094_external_attestation.sql` (indicative canvas said `0092`/`0093` — superseded; head after T7 is `0094`) |
+| **API** | `GET/POST /api/portfolio/entries/[id]/attestations`; `GET/POST /api/portfolio/attest/[token]` |
+| **Exit** | **Met:** Attestation record + strength `externally_verified` path; badge lights only when `externally_attested` + `externally_verified` (+ kill switch) |
+| **Rollback** | Force badge off via `DELIVERX_VERIFIED_BADGE=off`; revoke pending requests |
 
 ---
 
@@ -398,7 +402,7 @@ T1–T7 migrations are shipped through `0093`. Remaining migration numbers are i
 | 15 | artefact versions | **Done** | `artefact_versions` (`0088`) immutable + provenance; evidence cites version | **T3 shipped** |
 | 16 | observations | **Done** | `workspace_observations`, consent | Keep |
 | 17 | evidence items | **Done** | `pi_evidence_records` + provenance | Keep |
-| 18 | evidence verification | **Partial** | Status transitions + review; rule-based, not full human gate | Harden honesty; P8 for external |
+| 18 | evidence verification | **Done (T8)** | Status transitions + review + external attestation (`0094`) | Keep; no ScoreRun shortcut |
 | 19 | capabilities | **Done** | judgements / snapshots | Engine-only writes |
 | 20 | capability definitions | **Partial** | `pi_cf_competencies` (3) | T2 coherence; expand only with approval |
 | 21 | evidence→capability mappings | **Done** | `pi_evidence_competency_links`, `pi_cf_evidence_rules` | Keep |
@@ -423,7 +427,7 @@ T1–T7 migrations are shipped through `0093`. Remaining migration numbers are i
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free number is **`0094`** (head `0093`).
+- Additive migrations only for person PI; next free number is **`0095`** (head `0094`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.
@@ -465,7 +469,7 @@ T1–T7 migrations are shipped through `0093`. Remaining migration numbers are i
 | TD-008 | Deferred | Env gate enough; full flag platform later |
 | TD-009 | T2 | **Closed** — labelled fallback + resolve audit column |
 | TD-010 | T7 | Alias settled (not third SKU); commercial SKU ADR deferred to T9 |
-| TD-011 | T0 | Marketing vs ledger |
+| TD-011 | T0 / T8 | Path shipped; marketing honesty pass still open |
 | TD-012–014 | Deferred | Dual-write / ER / pre-pivot surface |
 
 ---

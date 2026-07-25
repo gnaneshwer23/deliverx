@@ -57,14 +57,18 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 
 ## Portfolio (Verified Portfolio packaging)
 
-| Method | Path | Auth |
-| --- | --- | --- |
-| GET, POST | `/api/portfolio/entries` | User |
-| GET, PATCH, POST | `/api/portfolio/entries/[id]` | User |
-| GET | `/api/portfolio/health` | User |
-| POST | `/api/portfolio/migrate` | User |
+| Method | Path | Auth | Notes |
+| --- | --- | --- | --- |
+| GET, POST | `/api/portfolio/entries` | User | List / compile from evidence |
+| GET, PATCH, POST | `/api/portfolio/entries/[id]` | User | Detail / update / share · revoke · role_version · export |
+| GET, POST | `/api/portfolio/entries/[id]/attestations` | User | **T8** — list / create attestation request (consent required) / revoke pending |
+| GET, POST | `/api/portfolio/attest/[token]` | Public (token) | **T8** — least-privilege attestor view / confirm or dispute; self-attest denied |
+| GET | `/api/portfolio/health` | User | |
+| POST | `/api/portfolio/migrate` | User | Launchpad case → VPP draft |
 
-Public token view is a **page** (`/portfolio/v/[token]`), not listed here as an API.
+Public token view is a **page** (`/portfolio/v/[token]`). Attestor UX is `/portfolio/attest/[token]`.
+
+`deliverxVerified` lights only when `verifier_status=externally_attested` and `evidence_strength=externally_verified` (kill switch `DELIVERX_VERIFIED_BADGE=off`). Attestation never writes ScoreRuns / capability.
 
 ## Admin framework
 

@@ -4,7 +4,7 @@
 **Authority:** [`../product/build-charter.md`](../product/build-charter.md) · [`../product/current-scope.md`](../product/current-scope.md)  
 **Companion canvas:** Cursor IDE `canvases/deliverx-next-steps.canvas.tsx` (open beside chat)
 
-This plan is grounded in **shipped reality**, not a greenfield vision. It does **not** authorize T8, T9, marketplace, Stripe, Verified lighting, or microservice splits.
+This plan is grounded in **shipped reality**, not a greenfield vision. It does **not** authorize T9, marketplace, Stripe, or microservice splits. T8 attestation is shipped (founder-authorized 2026-07-25).
 
 ---
 
@@ -12,17 +12,18 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 
 | Track | Status |
 | --- | --- |
-| Product P0–P7 | **Shipped** — candidate PI loop live |
-| Technology T0–T7 | **Shipped** — migrations through `0093`; T7 founder-authorized 2026-07-25 |
-| T8 / T9 | **Blocked** — separate founder approval required |
+| Product P0–P8 | **Shipped** — candidate PI loop + external attestation |
+| Technology T0–T8 | **Shipped** — migrations through `0094`; T8 founder-authorized 2026-07-25 |
+| T9 | **Blocked** — separate founder approval required |
 | TD-001 | **Closed** (T6 signed-in E2E) |
 | TD-016 | **Closed** (`0092`) |
 | TD-006 | **Open** — founder Auth leaked-password toggle |
+| TD-011 | **Partial** — Verified path exists; marketing honesty pass still open |
 | TD-017 | **Open** — test-fixture ESLint / standalone `tsc` debt |
 | TD-018 | **Open** — GitHub Actions minutes exhausted; workflows disabled |
 | Production | **Healthy** — Vercel READY · https://www.deliverx.dev |
 | CI | **Disabled** (`verify.yml`, `ci-e2e.yml`) to stop 0-job failure spam |
-| Not authorized | Stripe/checkout · lighting `deliverxVerified` · marketplace liquidity · intelligence microservices |
+| Not authorized | Stripe/checkout · marketplace liquidity · intelligence microservices |
 
 ---
 
@@ -45,12 +46,12 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 
 ## B. Harden before expanding — authorized under charter
 
-Do these **after or in parallel with A** where noted. No T8/T9.
+Do these **after or in parallel with A** where noted. No T9.
 
 | # | Step | Owner | Effort | Objective | Why now | Dependency | Acceptance check |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | B1 | **Clear TD-017** (test ESLint + fixture `tsc`) | Engineering | M | Full-repo lint / standalone `tsc` green (or scoped exclude policy documented) | When CI returns, advisory lint should not become a false red; fixtures currently ~16+16 errors | None — **can start immediately** | `eslint` / `tsc --noEmit` clean on previously failing test fixtures; CI advisory → enforceable if desired |
-| B2 | **Marketing vs ledger honesty pass** (TD-011) | Engineering | S–M | Strip Verified / readiness overclaim on public and in-app copy | Trust > features; badge must stay off until attestation | None — **can start immediately** | No surface implies external verification or unexplained capability %; portfolio Verified remains off |
+| B2 | **Marketing vs ledger honesty pass** (TD-011) | Engineering | S–M | Align public/in-app Verified copy with T8 meaning (attestation-only) | Path exists; marketing must not overclaim | T8 shipped | No surface implies Verified without attestation; unexplained capability % removed |
 | B3 | **Thin `pm-core` seed deepening** (TD-007) | Engineering | M | Richer competency graph under same `pm-core@2026.1` pin | Improves ScoreRun explainability without multi-profession expansion | **Founder OK** on framework breadth (single-domain deepen vs leave thin) | Seed expanded in DB; ScoreRuns still pin `pm-core@2026.1`; no new professions |
 | B4 | **Local Supabase Option A** (when disk allows) | Engineering | L | Disposable E2E against local stack instead of only prod purge | Safer iteration; release-readiness already notes Option A blocked by disk/Docker | Disk/Docker available | `T6_BASE_URL=http://localhost:3000` live gate green |
 | B5 | **Defect-driven UX clarity** from A5 notes | Engineering | S–M | Evidence, confidence bands, next actions understandable | Charter allows small clarity fixes | A5 notes (if any) | Each defect has repro + regression where applicable |
@@ -63,11 +64,11 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 
 | Item | What it unlocks | Primary risks if rushed |
 | --- | --- | --- |
-| **T8 — External attestation (P8)** | Honest path to light `deliverxVerified` / externally_verified strength | Legal/product meaning undefined; decorative trust; employer liability |
 | **T9 — Commercial packaging (P9)** | Entitlements / pricing beyond hardcoded open | Monetisation before pilot trust; SKU ADR still open |
 | **ICP weight (90 days)** | Career vs Workspace investment priority | Wrong surface depth for the actual pilot user |
-| **Verification legal meaning** | Copy, badge, marketing, T8 timing | Overclaim vs ledger |
 | **Framework breadth** | Whether TD-007 deepen is enough or multi-profession is needed | Scope explosion outside charter |
+
+**T8 / verification meaning:** Authorized and frozen in PD-2026-07-25c — do not reopen without founder.
 
 ---
 
@@ -77,7 +78,7 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 | --- | --- |
 | Employer marketplace liquidity / opportunity OS | Charter; Launchpad packaging honesty already shipped in T7 |
 | Stripe / checkout / paywalls | T9-gated; not authorized |
-| Lighting `deliverxVerified` without attestation | PD-2026-07-06 |
+| Lighting `deliverxVerified` without attestation | PD-2026-07-06 / PD-2026-07-25c |
 | Graph database | Relational + typed contracts preferred |
 | Multi-profession framework platforms | Pilot is `pm-core` |
 | Agent swarms / chat-as-DB | Intelligence belongs to the platform |
@@ -100,7 +101,7 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 6. **B2** — Copy honesty (TD-011) — parallel anytime  
 7. **A5** — Optional founder visual QA  
 8. **B3** — Only if founder approves thin seed deepen  
-9. **C** — T8 / T9 only after separate approval  
+9. **C** — T9 only after separate approval  
 
 ---
 
@@ -110,9 +111,9 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 2. **Enable Supabase leaked-password protection (TD-006)** — founder one-click; closes the open Auth advisor WARN.  
 3. **Configure T6 live CI secrets** — restores automated signed-in release signal once workflows run.  
 4. **Clear TD-017 test-fixture lint/tsc debt** — engineering can start immediately so returning CI stays honest.  
-5. **Marketing vs ledger honesty pass (TD-011)** — engineering can start immediately; keeps Verified and readiness claims truthful until T8.
+5. **Marketing vs ledger honesty pass (TD-011)** — align copy with T8 Verified meaning.
 
-**Founder-only before engineering can finish:** A1 (minutes), A3 (Auth toggle), and any C-item (T8/T9/ICP/verification meaning/seed deepen).  
+**Founder-only before engineering can finish:** A1 (minutes), A3 (Auth toggle), and any C-item (T9/ICP/seed deepen).  
 **Engineering can start immediately:** B1 (TD-017), B2 (TD-011), A2 prep (workflow enable scripts/docs), A5 checklist support.
 
 ---
