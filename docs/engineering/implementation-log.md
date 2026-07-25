@@ -213,7 +213,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 **Emails:** primarily GitHub Actions failure notifications (every main push while minutes exhausted); intermittent Vercel Error deploys during T7 typecheck window. Push auto-CI paused to stop the storm; product HEAD is healthy.
 
-**Verified HEAD `0b25244`:** Vercel production READY; www.deliverx.dev 200; unauth `/profile` → login; `/api/pi/notifications` + `/api/org/structure` 401. Local release-gate / unit / build PASS. GitHub Actions green check requires TD-018 (restore minutes, then re-enable `on.push`).
+**Verified HEAD `0b25244`:** Vercel production READY; www.deliverx.dev 200; unauth `/profile` → login; `/api/pi/notifications` + `/api/org/structure` 401. Local release-gate / unit / build PASS. GitHub Actions workflows disabled until TD-018 (restore minutes, then re-enable `on.push`).
 
 ---
 
