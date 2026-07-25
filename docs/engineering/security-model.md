@@ -18,7 +18,7 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 
 | Layer | Posture |
 | --- | --- |
-| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent |
+| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent, artefacts + versions |
 | **Org / project delivery tables** | Existing org membership / project access helpers (`src/lib/access`, project access tests) |
 | **Admin framework** | Elevated admin APIs for `pi_cf_*` version management; immutability triggers after publish/seed |
 | **Review admin** | `/api/pi/review/admin` gated to admin operators |
@@ -40,6 +40,20 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - Portfolio packaging and public links must exclude private/confidential rows
 - Users cannot self-promote evidence to `platform_verified` / external verification without attestation path
 - AI-generated observations are not automatically verified evidence
+
+### Artefacts (T3)
+
+- `artefacts`, `artefact_versions`, `artefact_status_transitions` — self-only RLS, private by default
+- Prior artefact versions are immutable (append-only trigger); new content = new version
+- Evidence referencing an artefact must cite a specific `artefact_version_id` (DB CHECK + app guard) — never a mutable envelope
+- Artefact provenance separates user vs AI contribution; artefact creation never assigns capability
+
+### Person-purge RPC lockdown (T3 hotfix `0089`)
+
+- `pi_privacy_purge_person_data` is `SECURITY DEFINER` and must be **service_role only**
+- Supabase default privileges auto-grant EXECUTE to `anon`/`authenticated`; `revoke ... from public` does **not** remove those grants
+- `0089` explicitly revokes EXECUTE from `anon`/`authenticated`; verified on prod (anon/authenticated EXECUTE = false)
+- Advisor 0028/0029 still flags lower-risk helpers (`is_workspace_project_member`, `pi_cf_version_is_readable`, `current_org_id`) — tracked TD-016
 
 ---
 

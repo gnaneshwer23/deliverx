@@ -19,6 +19,8 @@
 | TD-012 | Experience → workspace dual-write not fully wired from all `/workspace` pages | Low–Med | Deferred | Contributions API exists; not all pages dual-write |
 | TD-013 | Full Mermaid ER for PI schema not published | Low | Deferred | Compact sketch in `data-model.md`; expand later |
 | TD-014 | Pre-pivot delivery/org API surface large vs PI SoT | Low | Deferred | Do not expand as PI WPs; avoid capability confusion |
+| TD-015 | Person-purge RPC executable by anon/authenticated (Supabase default-privilege) | **High** | Now | **Resolved T3 (`0089`, `9eae533`)**: `revoke execute ... from anon, authenticated` on `pi_privacy_purge_person_data`; verified anon/authenticated EXECUTE = false, service_role only. Root cause: `revoke ... from public` does not remove role-specific default grants. |
+| TD-016 | Other `SECURITY DEFINER` functions callable by anon/authenticated | Low–Med | Deferred | Advisor 0028/0029 also flags `is_workspace_project_member`, `pi_cf_version_is_readable`, `current_org_id` (read/boolean helpers, lower risk). Revoke or switch to INVOKER in a future hardening pass; not person-purge severity. |
 
 ---
 

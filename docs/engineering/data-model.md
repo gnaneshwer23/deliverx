@@ -1,6 +1,6 @@
 # Data Model
 
-**Source of truth:** `supabase/migrations/0066`–`0086` (PI pivot + T1 privacy) on project `jibmyxaldetyycmtlxet`  
+**Source of truth:** `supabase/migrations/0066`–`0089` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts) on project `jibmyxaldetyycmtlxet`  
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -115,6 +115,15 @@ erDiagram
 
 - `pi_capability_score_runs.rubric_resolve_source` — `db` \| `in_code_fallback` (nullable for legacy rows)
 
+### Artefacts & versioning — `0088`–`0089` (T3)
+
+- `artefacts` — logical envelope (mutable metadata, `status` draft/active/submitted/archived, `current_version_id` pointer, `confidentiality` default private, optional `work_item_ref`/`activity_ref`/`source_surface`)
+- `artefact_versions` — **immutable** version rows (`version_number`, `content`, `content_hash`, `contribution_source` user/ai/mixed + provenance columns); `unique (artefact_id, version_number)` and `unique (artefact_id, content_hash)`; append-only trigger `artefact_forbid_version_mutation` with purge-only DELETE bypass
+- `artefact_status_transitions` — append-only submission / state-change audit
+- `pi_evidence_provenance.artefact_id` / `.artefact_version_id` — FKs (`on delete restrict`) + CHECK `artefact_id is null or artefact_version_id is not null` (evidence must cite a specific version)
+- Purge RPC (`0088`) extended: transitions → clear `current_version_id` → versions → envelopes, deleted **after** evidence (RESTRICT FK); never touches `pi_cf_*`
+- `0089` hotfix: `revoke execute on pi_privacy_purge_person_data from anon, authenticated` (service_role only)
+
 ---
 
 ## Advisor notes
@@ -137,6 +146,8 @@ erDiagram
 | Learning ≠ competency | Learning persist never writes ScoreRuns |
 | Outcomes ≠ external verification without attestation | Strength derivation + `externally_verified: false` on persist |
 | Framework graph immutability | Triggers after seed (`0075`/`bff9d2d` family) |
+| Artefact version immutability (T3) | `artefact_forbid_version_mutation` before update/delete; new content = new version row |
+| Evidence cites a specific artefact version (T3) | `pi_evidence_provenance` CHECK + app guard `assertEvidenceCitesArtefactVersion` |
 
 Exact CHECK constraint names live in the migration SQL — treat migrations as authoritative.
 

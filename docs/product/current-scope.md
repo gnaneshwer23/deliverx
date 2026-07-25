@@ -1,12 +1,13 @@
 # Current Scope
 
-**Active phase:** Post-P7 pilot hardening — **Technology T2 shipped**; T0 signed-in QA still open (PARTIAL); T1 privacy shipped  
+**Active phase:** Post-P7 pilot hardening — **Technology T3 shipped**; T0 signed-in QA still open (PARTIAL); T1 + T2 shipped  
 **As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
 **T0 status:** PARTIAL — automated/unauth gates green; **signed-in QA BLOCKED (needs founder login)**. Founder override authorised T1 while T0 remains open. See [`../qa/t0-results.md`](../qa/t0-results.md).  
 **T1 status:** **Shipped** — person PI export/delete (`0086`, `/api/pi/privacy/*`, settings UX); TD-004/005 closed; TD-006 documented (Auth dashboard).  
-**T2 status:** **Shipped** — rubric/DB coherence (`0087`, resolve source `db | in_code_fallback`, pin assert on capability run, golden ScoreRun harness); TD-009 closed. Do **not** start T3 until asked.
+**T2 status:** **Shipped** — rubric/DB coherence (`0087`, resolve source `db | in_code_fallback`, pin assert on capability run, golden ScoreRun harness); TD-009 closed.  
+**T3 status:** **Shipped** — artefact versioning + submission coherence (`0088`; `artefacts` / `artefact_versions` / `artefact_status_transitions`; immutable prior versions; evidence cites `artefact_version_id`; privacy cascade extended; settings panel). Hotfix `0089` locks the person-purge RPC to `service_role` only. Do **not** start T4 until asked.
 
 ---
 
@@ -28,7 +29,8 @@
 **Post-ship audit:** Pass for engineering pilot gate (225+ PI-domain tests; invariants hold; unauth smoke locked).  
 **T0 (2026-07-25):** Unauth smoke + migrations `0085` + focused PI vitest re-verified; prod person-PI tables still empty; signed-in checklist not executed (no test credentials). TD-001 still open.  
 **T1 (2026-07-25):** Privacy export/deletion shipped (`0086`); TD-004/005 resolved; TD-006 documented for Auth dashboard.  
-**T2 (2026-07-25):** Framework/rubric coherence — DB `pi_cf_*` SoT for ScoreRuns; labelled `in_code_fallback`; `rubric_resolve_source` on ScoreRuns (`0087`); pin assert on `POST /api/pi/capability/run`; golden reproducibility harness; TD-009 closed. TD-007 (seed depth) remains deferred.
+**T2 (2026-07-25):** Framework/rubric coherence — DB `pi_cf_*` SoT for ScoreRuns; labelled `in_code_fallback`; `rubric_resolve_source` on ScoreRuns (`0087`); pin assert on `POST /api/pi/capability/run`; golden reproducibility harness; TD-009 closed. TD-007 (seed depth) remains deferred.  
+**T3 (2026-07-25):** Artefact versioning — `artefacts` + immutable `artefact_versions` + append-only `artefact_status_transitions` (`0088`); user-vs-AI provenance + content hash; evidence provenance must cite `artefact_version_id` (DB CHECK + app guard); artefact tables added to T1 export/purge cascade; `/api/pi/artefacts` (+`/[id]/versions`); settings panel. Access-control check found and fixed a default-privilege leak: person-purge RPC EXECUTE revoked from anon/authenticated (`0089`).
 
 ---
 
@@ -41,7 +43,7 @@
 - Team Co-pilot enterprise mission-control depth as a separate Home
 - Speculative intelligence microservices
 - Rewriting pre-PI delivery/org engines unless required to protect the candidate loop
-- **T3+** until explicitly asked (artefact versioning, AI registry, notifications, signed-in E2E)
+- **T4+** until explicitly asked (AI agent/prompt/cost registry, notifications, signed-in E2E)
 
 ---
 
@@ -67,4 +69,4 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 2. Prefer smallest change that hardens the shipped loop.
 3. Do not start P8/P9 without founder approval recorded in `product-decisions.md`.
 4. Update this file when the active phase changes.
-5. Do not start T3–T9 until asked; T0 signed-in QA remains open.
+5. Do not start T4–T9 until asked; T0 signed-in QA remains open.

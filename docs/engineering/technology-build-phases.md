@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T2 shipped · migrations head `0087`  
+**As of:** 2026-07-25 · T3 shipped · migrations head `0089`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,7 +10,7 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0087` are applied (T2 rubric coherence).
+Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0089` are applied (T3 artefact versioning + purge lockdown hotfix).
 
 This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1 + T2 shipped** (founder override while T0 PARTIAL). Do **not** start T3 until asked.
+**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1 + T2 + T3 shipped** (founder override while T0 PARTIAL). Do **not** start T4 (AI orchestration registry) until asked.
 
 ---
 
@@ -40,9 +40,9 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 
 | Status | Count |
 | --- | --- |
-| **Done** (table + PI use) | 12 |
-| **Partial** (exists or fragmented) | 10 |
-| **Missing** | 4 (`departments`, `teams`, `messages`, `artefact_versions`) |
+| **Done** (table + PI use) | 14 |
+| **Partial** (exists or fragmented) | 9 |
+| **Missing** | 3 (`departments`, `teams`, `messages`) |
 
 See [Entity coverage matrix](#entity-coverage-matrix).
 
@@ -147,7 +147,7 @@ sequenceDiagram
 | 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; **T1** export/deletion shipped (`0086`); leaked-password dashboard toggle still open (TD-006) | T1 done · T6 E2E |
 | 5 | Organisation Intelligence | **Partial** | `organisations`, `projects`, `stakeholders`; no `departments`/`teams`; not PI-first | T7 (approval for depth) |
 | 6 | First Experience & Project | **Done** | Experience planner + sim, 12 companies, `0078`–`0079` | — |
-| 7 | Artefact Submission | **Partial** | `documents`, `launchpad_artefacts`, contributions; **no artefact versioning** | T3 |
+| 7 | Artefact Submission | **Done (versioning)** | **T3 (`0088`):** `artefacts` + immutable `artefact_versions` + submission audit; evidence cites `artefact_version_id`. Legacy `documents` / `launchpad_artefacts` remain | T3 shipped |
 | 8 | Observation & Feedback | **Partial** | Consent + `workspace_observations` + interventions; feedback/reflection fragmented | T0/T5 |
 | 9 | Evidence Engine | **Done** | Ledger `0067`, append-only + provenance | — |
 | 10 | Professional Intelligence | **Done** (seed thin) | Capability Engine `0068`, SnapshotClaims, `/profile`; 3 competencies | T2 |
@@ -236,6 +236,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **Objective** | Introduce a first-class **artefact version** model and wire submissions into the ledger without duplicating PI data. |
 | **§15 / modules** | Step 7 · Artefacts & Documents · Evidence |
 | **Charter** | **Authorized now** (trust/honesty of evidence packaging) |
+| **Status (2026-07-25)** | **Shipped** (`c2819b3`). Migration `0088`: `artefacts`, `artefact_versions` (immutable, content hash, user-vs-AI provenance), `artefact_status_transitions` (append-only submission audit). Evidence provenance cites `artefact_version_id` (DB CHECK + app guard `assertEvidenceCitesArtefactVersion`). Self-only RLS, private by default; added to T1 export/purge cascade. `src/lib/artefacts/`; `POST/GET /api/pi/artefacts` + `/[id]/versions`; settings panel. **Hotfix `0089`** revoked anon/authenticated EXECUTE on `pi_privacy_purge_person_data` (Supabase default-privilege leak found during access-control check). 21 new tests; 890 vitest pass; prod READY; unauth 401. |
 | **Entry** | T1 privacy map aware of new tables |
 | **Work packages** | Unify conceptual model over `documents`, `launchpad_artefacts`, contribution artefact refs; `src/lib/artefacts/`; link versions to `pi_evidence_records` |
 | **Schema** | `0088_artefact_versions.sql` — `artefacts`, `artefact_versions` (immutable version rows, content hash, created_by) |
@@ -357,7 +358,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | Experience | Done | QA | | | | | | E2E | | |
 | Projects and Work Items | Partial | | | | | context | | | demote/keep | |
 | Meetings and Communications | Partial | | | | | | | | thin bridge* | |
-| Artefacts and Documents | Partial | | privacy map | | **versions** | | | | | |
+| Artefacts and Documents | Partial | | privacy map | | **versions ✓** | | | | | |
 | Observation | Done | QA | consent UX | | | Observer agent | | E2E | | |
 | Evidence | Done | QA | | | cite versions | | | E2E | | |
 | Capability | Partial seed | | | **coherence** | | | | E2E | | |
@@ -387,8 +388,8 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | 11 | work items | **Done** | `tasks` | Keep as work items |
 | 12 | meetings | **Partial** | `meetings` (`0012`) — thin PI link | Optional evidence bridge |
 | 13 | messages | **Missing** | No first-class `messages` table | Only if needed for evidence; else use meeting notes / contributions |
-| 14 | artefacts | **Partial** | `documents`, `launchpad_artefacts` | T3 unify |
-| 15 | artefact versions | **Missing** | `vpp_versions` ≠ general artefact versions | **T3** |
+| 14 | artefacts | **Done** | `artefacts` (`0088`) first-class envelope; legacy `documents` / `launchpad_artefacts` remain | T3 shipped |
+| 15 | artefact versions | **Done** | `artefact_versions` (`0088`) immutable + provenance; evidence cites version | **T3 shipped** |
 | 16 | observations | **Done** | `workspace_observations`, consent | Keep |
 | 17 | evidence items | **Done** | `pi_evidence_records` + provenance | Keep |
 | 18 | evidence verification | **Partial** | Status transitions + review; rule-based, not full human gate | Harden honesty; P8 for external |
@@ -416,7 +417,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free numbers start at **`0088`** (head `0087`).
+- Additive migrations only for person PI; next free numbers start at **`0090`** (head `0089`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.

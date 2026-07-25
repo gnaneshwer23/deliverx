@@ -162,6 +162,30 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-14 — T3 artefacts: immutable versions cited by evidence
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | Artefacts are first-class (`artefacts` envelope + immutable `artefact_versions`). New content = new version; prior versions never mutate (append-only DB trigger with a purge-only delete bypass). Each version records user-vs-AI provenance and a content hash. Submissions / state changes are recorded append-only in `artefact_status_transitions`. Evidence that references an artefact **must** cite a specific `artefact_version_id` (DB CHECK on `pi_evidence_provenance` + app guard) — never a mutable envelope. Artefacts are private by default, self-only RLS, and are included in the T1 export/delete cascade (transitions → versions → envelopes, purged after evidence to respect the RESTRICT FK). No capability is assigned by artefact creation; observation ≠ evidence. |
+| **Why** | Step 7 (Artefact Submission) was Partial with no versioning; evidence packaging trust requires immutable, provenance-bearing versions that the ledger can cite deterministically. |
+| **Consequence** | Migration `0088`; `src/lib/artefacts/`; `POST/GET /api/pi/artefacts` + `/[id]/versions`; settings UX panel. Legacy `documents` / `launchpad_artefacts` remain; new PI submissions use the versioned model. |
+
+---
+
+## PD-2026-07-15 — Person-purge RPC is service_role only (hotfix)
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | `pi_privacy_purge_person_data` (SECURITY DEFINER) is executable by `service_role` only. `revoke ... from public` is insufficient because Supabase default privileges grant EXECUTE to `anon`/`authenticated`; those grants are explicitly revoked (`0089`). |
+| **Why** | The purge RPC bypasses RLS; anonymous/authenticated PostgREST RPC access could delete another person's PI. Found during the T3 access-control boundary check. |
+| **Consequence** | Migration `0089`; verified on prod that anon/authenticated EXECUTE = false. Future SECURITY DEFINER person functions must explicitly revoke anon/authenticated. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval.

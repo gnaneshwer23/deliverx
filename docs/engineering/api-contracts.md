@@ -37,6 +37,8 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 | GET, POST | `/api/pi/review/notifications` | User | |
 | GET, POST | `/api/pi/privacy/export` | User | T1 — person PI export JSON; GET lists requests |
 | POST | `/api/pi/privacy/delete` | User | T1 — re-auth + confirm phrase; purges person PI |
+| GET, POST | `/api/pi/artefacts` | User | T3 — list / create artefact (optional initial version); private by default |
+| GET, POST | `/api/pi/artefacts/[id]/versions` | User | T3 — read artefact + versions / append immutable version (idempotent on content hash) |
 
 ## PI onboarding
 
