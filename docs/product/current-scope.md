@@ -1,8 +1,9 @@
 # Current Scope
 
 **Active phase:** Post-P7 pilot hardening  
-**As of:** 2026-07-25 · HEAD ~`f3ac383`  
-**Charter:** [`build-charter.md`](./build-charter.md)
+**As of:** 2026-07-25 · HEAD ~`e9917f8`  
+**Charter:** [`build-charter.md`](./build-charter.md)  
+**Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9; start at **T0** signed-in QA)
 
 ---
 
