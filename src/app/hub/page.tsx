@@ -62,6 +62,14 @@ const HUB_JOURNEY = [
     cta: "Open Career Intelligence",
   },
   {
+    id: "outcomes",
+    stage: "Close the loop",
+    name: "Real-world outcomes",
+    progress: "Log applications, interviews, offers — self-reported (not capability)",
+    href: "/career/outcomes",
+    cta: "Log outcomes",
+  },
+  {
     id: "portfolio",
     stage: "Evidence-linked record",
     name: "Verified Portfolio",

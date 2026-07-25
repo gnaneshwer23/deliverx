@@ -20,6 +20,7 @@ export const PI_EVIDENCE_SOURCE_TYPES = [
   "workspace_observation",
   "final_assessment",
   "transfer_assessment",
+  "real_world_outcome",
 ] as const;
 
 export type PiEvidenceSourceType = (typeof PI_EVIDENCE_SOURCE_TYPES)[number];
@@ -131,6 +132,7 @@ export function defaultCategoryForSource(source: PiEvidenceSourceType): PiEviden
     case "reflection":
       return "knowledge";
     case "application_outcome":
+    case "real_world_outcome":
       return "outcome";
     case "external_verification":
       return "attestation";

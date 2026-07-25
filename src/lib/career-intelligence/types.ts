@@ -258,4 +258,28 @@ export type CareerIntelligenceSnapshot = {
   /** Prefer score_run when a capability snapshot exists; heuristic is labelled fallback. */
   readinessSource: "score_run" | "evidence_coverage_heuristic";
   scoreRun: ScoreRunCareerContext | null;
+  /** Phase 7 — real-world outcome loop (self-reported; never capability). */
+  outcomes: CareerOutcomeContext;
+};
+
+/** Real-world outcome context surfaced on Career (read-only toward capability). */
+export type CareerOutcomeContext = {
+  total: number;
+  applications: number;
+  interviews: number;
+  offers: number;
+  rejections: number;
+  /** Diagnostic calibration findings — never capability assignment. */
+  calibration: Array<{
+    findingType: string;
+    severity: "info" | "watch" | "action";
+    title: string;
+    detail: string;
+    implicatedGaps: string[];
+    metrics: Record<string, number | string>;
+    diagnosticOnly: true;
+    capabilityAssigned: false;
+  }>;
+  narrative: string | null;
+  capabilityAssigned: false;
 };

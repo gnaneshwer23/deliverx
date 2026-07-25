@@ -2,7 +2,11 @@
 
 import type { SnapshotGrowthDelta } from "@/lib/capability-engine/snapshot-claims";
 import type { CapabilityLevel } from "@/lib/capability-engine/types";
-import type { OpportunityFit, RoadmapAction } from "@/lib/career-intelligence/types";
+import type {
+  CareerOutcomeContext,
+  OpportunityFit,
+  RoadmapAction,
+} from "@/lib/career-intelligence/types";
 import type { ExperiencePlanRecord } from "@/lib/experience-planner/types";
 import type { GrowthReportRecord } from "@/lib/pi-assessment/growth-report";
 
@@ -95,4 +99,6 @@ export type PiProfileAggregate = {
   roadmapTeaser: RoadmapAction[];
   /** Gap-ranked Experience plan (Phase 3) — recommendation only. */
   experiencePlan: ExperiencePlanRecord | null;
+  /** Phase 7 — real-world outcome loop summary + diagnostics (never capability). */
+  outcomes: CareerOutcomeContext | null;
 };

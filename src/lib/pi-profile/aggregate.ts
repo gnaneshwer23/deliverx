@@ -145,6 +145,7 @@ export async function buildPiProfileAggregate(
     deliverxVerified: false,
     roadmapTeaser: (career?.roadmap ?? []).slice(0, 3),
     experiencePlan,
+    outcomes: career?.outcomes ?? null,
   };
 }
 

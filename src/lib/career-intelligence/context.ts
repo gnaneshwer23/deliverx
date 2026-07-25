@@ -19,6 +19,12 @@ import type {
 import { listPortfolioEntries } from "@/lib/verified-portfolio/store";
 import { listUserEvidenceForPortfolio } from "@/lib/verified-portfolio/store";
 import { deriveEvidenceStrength } from "@/lib/verified-portfolio/types";
+import { loadOutcomeContext } from "@/lib/real-world-outcomes/persist";
+import {
+  outcomeNarrativeFragment,
+  reprioritiseRoadmapFromOutcomes,
+  summariseOutcomes,
+} from "@/lib/real-world-outcomes";
 
 /**
  * Load PI + VPP + ledger + latest ScoreRun context for Career Intelligence.
@@ -29,7 +35,7 @@ export async function buildCareerIntelligenceSnapshot(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<CareerIntelligenceSnapshot> {
-  const [{ data: pi }, { data: lpProfile }, portfolio, ledger, snapshotPack] =
+  const [{ data: pi }, { data: lpProfile }, portfolio, ledger, snapshotPack, outcomeCtx] =
     await Promise.all([
       supabase
         .from("pi_onboarding_sessions")
@@ -44,6 +50,7 @@ export async function buildCareerIntelligenceSnapshot(
       listPortfolioEntries(supabase, userId).catch(() => []),
       listUserEvidenceForPortfolio(supabase, userId).catch(() => []),
       loadRecentSnapshotClaims(supabase, userId, 1),
+      loadOutcomeContext(supabase, userId).catch(() => ({ events: [], findings: [] })),
     ]);
 
   const payload = (pi?.payload as Record<string, unknown>) ?? {};
@@ -140,7 +147,7 @@ export async function buildCareerIntelligenceSnapshot(
   }
 
   const topRole = roleReadiness[0] ?? null;
-  const roadmap = scoreRun
+  const baseRoadmap = scoreRun
     ? [
         ...buildRoadmapFromScoreRunGaps(scoreRun),
         ...buildRoadmapFromReadiness(roleReadiness).filter(
@@ -148,6 +155,10 @@ export async function buildCareerIntelligenceSnapshot(
         ),
       ]
     : buildRoadmapFromReadiness(roleReadiness);
+  // Phase 7: prioritise evidence gaps implicated by real-world outcomes (e.g. rejections).
+  // This reorders recommendations only — capability levels are never changed here.
+  const openFindings = outcomeCtx.findings.filter((f) => f.status !== "dismissed");
+  const roadmap = reprioritiseRoadmapFromOutcomes(baseRoadmap, openFindings);
   const opportunities = matchOpportunities(roleReadiness, profile.industries);
 
   const interviewPlan = buildInterviewPlan(
@@ -168,5 +179,34 @@ export async function buildCareerIntelligenceSnapshot(
     capabilityAssigned: false,
     readinessSource,
     scoreRun,
+    outcomes: buildCareerOutcomeContext(outcomeCtx),
+  };
+}
+
+function buildCareerOutcomeContext(outcomeCtx: {
+  events: Awaited<ReturnType<typeof loadOutcomeContext>>["events"];
+  findings: Awaited<ReturnType<typeof loadOutcomeContext>>["findings"];
+}): CareerIntelligenceSnapshot["outcomes"] {
+  const summary = summariseOutcomes(outcomeCtx.events);
+  return {
+    total: summary.total,
+    applications: summary.applications,
+    interviews: summary.interviews,
+    offers: summary.offers,
+    rejections: summary.rejections,
+    calibration: outcomeCtx.findings
+      .filter((f) => f.status !== "dismissed")
+      .map((f) => ({
+        findingType: f.findingType,
+        severity: f.severity,
+        title: f.title,
+        detail: f.detail,
+        implicatedGaps: f.implicatedGaps,
+        metrics: f.metrics,
+        diagnosticOnly: true as const,
+        capabilityAssigned: false as const,
+      })),
+    narrative: outcomeNarrativeFragment(outcomeCtx.events),
+    capabilityAssigned: false,
   };
 }

@@ -197,6 +197,13 @@ export function deriveEvidenceStrength(item: LinkedEvidenceInput): EvidenceStren
     return "externally_verified";
   }
 
+  // Real-world outcomes are self-reported by default; document_supported only when an
+  // artefact backs them (status supported). They are NOT auto outcome_validated — that
+  // label is reserved for portfolio claims genuinely validated by a positive outcome.
+  if (item.sourceType === "real_world_outcome") {
+    return item.status === "supported" ? "document_supported" : "self_reported";
+  }
+
   if (item.sourceType === "application_outcome" || item.category === "outcome") {
     return "outcome_validated";
   }
