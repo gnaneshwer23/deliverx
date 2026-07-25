@@ -276,9 +276,9 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 | --- | --- |
 | **Date** | 2026-07-25 |
 | **Status** | Accepted |
-| **Decision** | Default GitHub Actions on push/PR runs unit tests, `npm run test:release-gate`, and `npm run build`. Full-repo ESLint stays advisory. Playwright smoke/17-AC runs only via `.github/workflows/ci-e2e.yml` (`workflow_dispatch`). |
-| **Why** | Private-repo Actions minutes were exhausted (0-job failures emailing on every push). Chromium install + dual Playwright suites burned the included pool without improving the T6 release signal already covered by `release-gate`. |
-| **Consequence** | Slimmer `.github/workflows/ci.yml`; new `ci-e2e.yml`; TD-017/TD-018; docs in release-readiness + implementation-log. Founder still must restore Actions billing/minutes for green check runs. |
+| **Decision** | Default GitHub Actions runs unit tests, `npm run test:release-gate`, and `npm run build` on pull requests and `workflow_dispatch`. Full-repo ESLint stays advisory. Playwright smoke/17-AC runs only via `.github/workflows/ci-e2e.yml` (`workflow_dispatch`). **Push-to-main auto-CI is temporarily disabled** until private-repo Actions minutes/spending limit are restored (TD-018); then re-enable `on.push`. |
+| **Why** | Private-repo Actions minutes were exhausted (0-job failures emailing on every push). Chromium install + dual Playwright suites burned the included pool without improving the T6 release signal already covered by `release-gate`. Continuing push triggers while jobs cannot schedule only spam failure emails. |
+| **Consequence** | Slimmer `.github/workflows/ci.yml` (PR + dispatch); new `ci-e2e.yml`; TD-017/TD-018; docs in release-readiness + implementation-log. Founder restores Actions billing/minutes, then re-enables `on.push`. |
 
 ---
 

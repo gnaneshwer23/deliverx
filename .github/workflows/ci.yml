@@ -1,17 +1,18 @@
 name: CI
 
 on:
-  push:
-    branches: [main, cursor/**]
+  # Push trigger temporarily off while private-repo Actions minutes are exhausted
+  # (TD-018). Runs were failing in 0s with zero jobs and emailing on every main
+  # push. Re-enable `push: branches: [main, cursor/**]` after minutes/spending
+  # limit are restored at https://github.com/settings/billing
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 # Blocking gate: T6 release-gate + production build.
 # Full-repo ESLint remains advisory (baseline debt — docs/qa/release-readiness.md).
-# Playwright smoke/acceptance lives in ci-e2e.yml (manual / schedule) to conserve
-# Actions minutes on a private repo and avoid push-triggered email storms when
-# the included minutes pool is exhausted.
+# Playwright smoke/acceptance lives in ci-e2e.yml (manual) to conserve
+# Actions minutes on a private repo.
 jobs:
   verify:
     runs-on: ubuntu-latest

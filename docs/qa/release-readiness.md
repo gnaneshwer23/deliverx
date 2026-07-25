@@ -44,7 +44,7 @@
 | Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Manual — `.github/workflows/ci-e2e.yml` (`workflow_dispatch`) |
 | Production build | `npm run build` | Yes |
 
-**CI policy (2026-07-25):** Push/PR CI (`.github/workflows/ci.yml`) runs unit tests + `test:release-gate` + `npm run build`. Lint is advisory. Playwright Chromium suites are opt-in via `ci-e2e.yml` to conserve private-repo Actions minutes. If Actions jobs never start (0s / empty jobs), check [GitHub Actions billing](https://github.com/settings/billing) — included minutes may be exhausted.
+**CI policy (2026-07-25):** Default CI (`.github/workflows/ci.yml`) runs unit tests + `test:release-gate` + `npm run build` on **pull_request** and **workflow_dispatch**. Push-to-main auto-run is temporarily disabled while private-repo Actions minutes are exhausted (TD-018 — 0-job failures were emailing on every push). Re-enable `on.push` after restoring minutes at [GitHub billing](https://github.com/settings/billing). Lint is advisory. Playwright Chromium suites are opt-in via `ci-e2e.yml`.
 
 ---
 
