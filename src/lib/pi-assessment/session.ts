@@ -5,6 +5,10 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { resolvePublishedFrameworkPin } from "@/lib/admin-framework/rubric-bridge";
+import {
+  normaliseRubricResolveSource,
+  type RubricResolveSource,
+} from "@/lib/capability-engine/rubric-resolve-policy";
 import { loadAssessmentCatalog } from "@/lib/pi-assessment/catalog";
 import { selectNextAssessmentItem } from "@/lib/pi-assessment/select";
 import {
@@ -122,7 +126,7 @@ export type StartBaselineInput = {
 export type StartBaselineResult = {
   session: AssessmentSessionRow;
   resumed: boolean;
-  catalogSource: "db" | "in_code";
+  catalogSource: RubricResolveSource;
   currentItem: AssessmentItemRow | null;
 };
 
@@ -137,7 +141,7 @@ export async function startBaselineSession(
       return {
         session: existing,
         resumed: true,
-        catalogSource: (existing.metadata.catalogSource as "db" | "in_code") ?? "in_code",
+        catalogSource: normaliseRubricResolveSource(existing.metadata.catalogSource),
         currentItem: current,
       };
     }

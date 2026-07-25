@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cloneFrameworkGraph } from "@/lib/admin-framework/clone-graph";
 import {
+  diffRubricCodes,
   graphToRubricAnchorsPayload,
   graphToRubricDefinition,
   hashFrameworkGraphContent,
@@ -86,6 +87,17 @@ describe("rubric bridge", () => {
     expect(def.indicators.stakeholder_judgement?.anchors.proficient).toBe(
       PM_CORE_RUBRIC_2026_1.indicators.stakeholder_judgement.anchors.proficient,
     );
+  });
+
+  it("diffRubricCodes reports zero drift vs in-code pm-core@2026.1", () => {
+    const def = graphToRubricDefinition(graph);
+    expect(diffRubricCodes(def, PM_CORE_RUBRIC_2026_1)).toEqual({
+      missingInDb: [],
+      extraInDb: [],
+      competencyMismatches: [],
+      indicatorCodeMismatches: [],
+      anchorMismatches: [],
+    });
   });
 
   it("produces a stable content hash", () => {

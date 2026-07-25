@@ -128,7 +128,7 @@ describe("buildScoreRunInsertRow framework pin", () => {
     });
   });
 
-  it("allows null pin when DB graph is absent (in-code rubric fallback)", () => {
+  it("allows null pin when DB graph is absent (labelled in-code fallback)", () => {
     const result = makeResult(true);
     const row = buildScoreRunInsertRow({
       userId: "u1",
@@ -136,12 +136,35 @@ describe("buildScoreRunInsertRow framework pin", () => {
       rubricVersion: "2026.1",
       result,
       frameworkPin: null,
+      rubricResolveSource: "in_code_fallback",
     });
 
     expect(row.framework_version_id).toBeNull();
+    expect(row.rubric_resolve_source).toBe("in_code_fallback");
     expect(row.rubric_slug).toBe("pm-core");
     expect(row.rubric_version).toBe("2026.1");
     expect(row.run_kind).toBe("standard");
+    expect(row.result).toMatchObject({ rubricResolveSource: "in_code_fallback" });
+  });
+
+  it("writes rubric_resolve_source=db when resolved from published graph", () => {
+    const result = makeResult(true);
+    const row = buildScoreRunInsertRow({
+      userId: "u1",
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      result,
+      frameworkPin: {
+        frameworkVersionId: "fv-1",
+        frameworkSlug: "pm-core",
+        version: "2026.1",
+        contentHash: "deadbeef",
+        source: "pi_cf_published",
+      },
+      rubricResolveSource: "db",
+    });
+    expect(row.rubric_resolve_source).toBe("db");
+    expect(row.framework_version_id).toBe("fv-1");
   });
 
   it("writes run_kind=baseline when requested", () => {

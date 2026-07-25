@@ -52,6 +52,8 @@ Optional pilot gating via `src/lib/access/gate.ts`:
 | `DELIVERX_PI_ALLOWLIST` | Comma-separated emails or user ids; empty = open |
 | `DELIVERX_PI_SURFACES` | Comma-separated surface allowlist; empty = all surfaces |
 | `DELIVERX_PI_GATE=off` | Force open even if allowlist set |
+| `DELIVERX_RUBRIC_REQUIRE_DB` | T2 — fail closed when published `pi_cf_*` rubric cannot resolve |
+| `DELIVERX_RUBRIC_ALLOW_IN_CODE_FALLBACK` | T2 — explicit allow for labelled in-code fallback (default allow when REQUIRE_DB unset) |
 
 Post-ship audit noted pilot as **unguarded** in production configuration at audit time — treat allowlist as available control, not necessarily enabled.
 
@@ -72,6 +74,12 @@ These are tracked in [`technical-debt-register.md`](./technical-debt-register.md
 - Person APIs: `POST/GET /api/pi/privacy/export`, `POST /api/pi/privacy/delete`
 - Delete requires password re-auth + phrase `DELETE_MY_PI_DATA`
 - Purge via `pi_privacy_purge_person_data` (service role); never deletes `pi_cf_*`
+
+### Rubric resolve (T2)
+
+- ScoreRuns prefer published `pi_cf_*` graph; in-code fallback is labelled `in_code_fallback` and logged
+- `POST /api/pi/capability/run` asserts `framework_version_id` when DB is required
+- Admin-only framework mutation unchanged
 - Privacy request tombstones retained as legal minimum
 - Settings UX: `/settings/profile` → Privacy · export & deletion
 

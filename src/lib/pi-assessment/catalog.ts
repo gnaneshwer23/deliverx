@@ -6,6 +6,10 @@
 
 import type { AssessmentCatalogItem, AssessmentItemKind } from "@/lib/pi-assessment/types";
 import { PM_CORE_FINAL_CATALOG } from "@/lib/pi-assessment/transfer-catalog";
+import {
+  logRubricFallback,
+  type RubricResolveSource,
+} from "@/lib/capability-engine/rubric-resolve-policy";
 
 /** In-code fallback catalog — mirrors 0077 seed; not a second SoT for scoring. */
 export const PM_CORE_BASELINE_CATALOG: AssessmentCatalogItem[] = [
@@ -129,17 +133,37 @@ function mapCfKindToItemKind(
   return "interview";
 }
 
+function catalogueFallback(
+  kind: "baseline" | "final",
+  reason: "catalog_missing" | "catalog_thin",
+  frameworkSlug: string,
+  frameworkVersionId?: string | null,
+): { items: AssessmentCatalogItem[]; source: RubricResolveSource } {
+  logRubricFallback({
+    frameworkSlug,
+    version: "catalog",
+    reason,
+    frameworkVersionId: frameworkVersionId ?? null,
+  });
+  return {
+    items: [
+      ...(kind === "baseline" ? PM_CORE_BASELINE_CATALOG : PM_CORE_FINAL_CATALOG),
+    ],
+    source: "in_code_fallback",
+  };
+}
+
 /**
  * Load assessment content for a published framework version.
- * Falls back to the in-code pm-core catalog when DB content is missing/thin.
+ * Falls back to the labelled in-code pm-core catalog when DB content is missing/thin (T2 / TD-009).
  */
 export async function loadAssessmentCatalog(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: { from: (table: string) => any },
   opts: { frameworkVersionId: string | null; frameworkSlug: string },
-): Promise<{ items: AssessmentCatalogItem[]; source: "db" | "in_code" }> {
+): Promise<{ items: AssessmentCatalogItem[]; source: RubricResolveSource }> {
   if (!opts.frameworkVersionId) {
-    return { items: [...PM_CORE_BASELINE_CATALOG], source: "in_code" };
+    return catalogueFallback("baseline", "catalog_missing", opts.frameworkSlug);
   }
 
   const { data: rows, error } = await supabase
@@ -151,7 +175,7 @@ export async function loadAssessmentCatalog(
     .order("sort_order", { ascending: true });
 
   if (error || !rows?.length) {
-    return { items: [...PM_CORE_BASELINE_CATALOG], source: "in_code" };
+    return catalogueFallback("baseline", "catalog_missing", opts.frameworkSlug, opts.frameworkVersionId);
   }
 
   const competencyIds = [
@@ -230,7 +254,12 @@ export async function loadAssessmentCatalog(
 
   const selected = baselineTagged.length >= 4 ? baselineTagged : items;
   if (selected.length < 4 && opts.frameworkSlug === "pm-core") {
-    return { items: [...PM_CORE_BASELINE_CATALOG], source: "in_code" };
+    return catalogueFallback(
+      "baseline",
+      "catalog_thin",
+      opts.frameworkSlug,
+      opts.frameworkVersionId,
+    );
   }
 
   return { items: selected, source: "db" };
@@ -238,15 +267,15 @@ export async function loadAssessmentCatalog(
 
 /**
  * Load final/transfer assessment content for a published framework version.
- * Falls back to in-code transfer catalog when DB content is missing/thin.
+ * Falls back to labelled in-code transfer catalog when DB content is missing/thin (T2 / TD-009).
  */
 export async function loadFinalAssessmentCatalog(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: { from: (table: string) => any },
   opts: { frameworkVersionId: string | null; frameworkSlug: string },
-): Promise<{ items: AssessmentCatalogItem[]; source: "db" | "in_code" }> {
+): Promise<{ items: AssessmentCatalogItem[]; source: RubricResolveSource }> {
   if (!opts.frameworkVersionId) {
-    return { items: [...PM_CORE_FINAL_CATALOG], source: "in_code" };
+    return catalogueFallback("final", "catalog_missing", opts.frameworkSlug);
   }
 
   const { data: rows, error } = await supabase
@@ -258,7 +287,12 @@ export async function loadFinalAssessmentCatalog(
     .order("sort_order", { ascending: true });
 
   if (error || !rows?.length) {
-    return { items: [...PM_CORE_FINAL_CATALOG], source: "in_code" };
+    return catalogueFallback(
+      "final",
+      "catalog_missing",
+      opts.frameworkSlug,
+      opts.frameworkVersionId,
+    );
   }
 
   const competencyIds = [
@@ -327,7 +361,12 @@ export async function loadFinalAssessmentCatalog(
     .filter((i): i is AssessmentCatalogItem => i !== null);
 
   if (items.length < 3 && opts.frameworkSlug === "pm-core") {
-    return { items: [...PM_CORE_FINAL_CATALOG], source: "in_code" };
+    return catalogueFallback(
+      "final",
+      "catalog_thin",
+      opts.frameworkSlug,
+      opts.frameworkVersionId,
+    );
   }
 
   return { items, source: "db" };

@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T1 shipped · migrations head `0086`  
+**As of:** 2026-07-25 · T2 shipped · migrations head `0087`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,7 +10,7 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0086` are applied (T1 privacy).
+Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0087` are applied (T2 rubric coherence).
 
 This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1 shipped** (founder override while T0 PARTIAL). Do **not** start T2 until asked.
+**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1 + T2 shipped** (founder override while T0 PARTIAL). Do **not** start T3 until asked.
 
 ---
 
@@ -213,16 +213,17 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **§15 / modules** | Steps 3, 10 · Capability · Professional Intelligence |
 | **Charter** | **Authorized now** (coherence only — **not** multi-profession expansion) |
 | **Entry** | T0 complete enough that ScoreRuns will be created in pilot |
+| **Status (2026-07-25)** | **Shipped**. Migration `0087`; `rubric-resolve-policy` + hardened `resolve-rubric` / `rubric-bridge`; pin assert on `POST /api/pi/capability/run`; catalogue fallbacks labelled `in_code_fallback`; golden ScoreRun harness; TD-009 closed; TD-007 deferred. |
 | **Work packages** | Harden `resolve-rubric.ts` / `rubric-bridge.ts`; fail closed or loudly label when falling back; seed depth only if founder OK (`TD-007` deferred by default); golden reproducibility harness in CI |
-| **Schema** | Prefer none; optional `0087_rubric_resolve_audit.sql` if resolve provenance needs a column |
+| **Schema** | `0087_rubric_resolve_audit.sql` — `rubric_resolve_source` on `pi_capability_score_runs` (`db` \| `in_code_fallback`) |
 | **API** | No new routes; assert pin on `POST /api/pi/capability/run` |
-| **Data deltas** | None required; ensure every new ScoreRun has `framework_version_id` |
+| **Data deltas** | ScoreRuns record resolve provenance; prefer `framework_version_id` on every new ScoreRun |
 | **Contracts** | Rubric resolve result includes `source: db \| in_code_fallback` |
-| **Security** | Admin-only framework mutation unchanged |
+| **Security** | Admin-only framework mutation unchanged; `DELIVERX_RUBRIC_REQUIRE_DB` fail-closes fallback |
 | **Testing** | Contract test: DB graph vs in-code codes; golden ScoreRun reproducibility |
-| **Observability** | Log fallback rate |
+| **Observability** | Log fallback rate (`[rubric-resolve] in_code_fallback`); column + result JSON |
 | **Exit** | Pilot ScoreRuns resolve from published `pm-core@2026.1` graph; fallback measurable and rare |
-| **Rollback** | Keep in-code fallback behind explicit env |
+| **Rollback** | Keep in-code fallback behind explicit env (`DELIVERX_RUBRIC_ALLOW_IN_CODE_FALLBACK`; unset REQUIRE_DB) |
 
 **Requires founder approval:** expanding beyond 3 competencies / multi-profession platforms.
 
@@ -415,7 +416,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free numbers start at **`0086`**.
+- Additive migrations only for person PI; next free numbers start at **`0088`** (head `0087`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.
@@ -455,7 +456,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | TD-004–006 | T1 | **TD-004/005 closed in `0086`**; TD-006 Auth dashboard documented |
 | TD-007 | Deferred | Thin seed OK unless founder expands |
 | TD-008 | Deferred | Env gate enough; full flag platform later |
-| TD-009 | T2 | Rubric/DB drift |
+| TD-009 | T2 | **Closed** — labelled fallback + resolve audit column |
 | TD-010 | T7 approval | SKU ADR |
 | TD-011 | T0 | Marketing vs ledger |
 | TD-012–014 | Deferred | Dual-write / ER / pre-pivot surface |

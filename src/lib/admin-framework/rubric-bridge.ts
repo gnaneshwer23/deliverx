@@ -1,6 +1,6 @@
 /**
  * Bridge admin framework graph ↔ pi_rubric_versions.anchors (capability engine).
- * Phase 2: resolveRubricDefinition prefers DB graph; in-code getRubric remains the pin fallback.
+ * T2: resolveRubricDefinition prefers DB graph; in-code getRubric is labelled fallback only.
  */
 
 import { createHash } from "node:crypto";
@@ -142,6 +142,50 @@ export async function resolvePublishedFrameworkPin(
     version: latestPublished.version as string,
     contentHash: (latestPublished.content_hash as string | null) ?? null,
     source: "pi_cf_published",
+  };
+}
+
+/**
+ * Contract helper — compare DB-derived rubric indicator codes/keys vs in-code pin.
+ * Returns empty diffs when graphs match (expected for pm-core@2026.1 seed).
+ */
+export function diffRubricCodes(
+  db: RubricDefinition,
+  inCode: RubricDefinition,
+): {
+  missingInDb: string[];
+  extraInDb: string[];
+  competencyMismatches: string[];
+  indicatorCodeMismatches: string[];
+  anchorMismatches: string[];
+} {
+  const dbKeys = new Set(Object.keys(db.indicators));
+  const codeKeys = new Set(Object.keys(inCode.indicators));
+  const missingInDb = [...codeKeys].filter((k) => !dbKeys.has(k)).sort();
+  const extraInDb = [...dbKeys].filter((k) => !codeKeys.has(k)).sort();
+  const competencyMismatches: string[] = [];
+  const indicatorCodeMismatches: string[] = [];
+  const anchorMismatches: string[] = [];
+
+  for (const key of codeKeys) {
+    const a = db.indicators[key];
+    const b = inCode.indicators[key];
+    if (!a || !b) continue;
+    if (a.competencyId !== b.competencyId) competencyMismatches.push(key);
+    if (a.indicatorId !== b.indicatorId) indicatorCodeMismatches.push(key);
+    for (const level of ["emerging", "developing", "proficient", "advanced"] as const) {
+      if ((a.anchors[level] ?? "") !== (b.anchors[level] ?? "")) {
+        anchorMismatches.push(`${key}.${level}`);
+      }
+    }
+  }
+
+  return {
+    missingInDb,
+    extraInDb,
+    competencyMismatches: competencyMismatches.sort(),
+    indicatorCodeMismatches: indicatorCodeMismatches.sort(),
+    anchorMismatches: anchorMismatches.sort(),
   };
 }
 

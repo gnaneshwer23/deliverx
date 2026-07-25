@@ -197,11 +197,12 @@ export async function completeFinalSession(
   if (input.runScore !== false) {
     const rubricSlug = session.frameworkSlug || DEFAULT_RUBRIC_SLUG;
     const rubricVersion = session.frameworkVersion || DEFAULT_RUBRIC_VERSION;
-    const { rubric, source: rubricSource } = await resolveRubricDefinition(supabase, {
+    const resolved = await resolveRubricDefinition(supabase, {
       frameworkSlug: rubricSlug,
       version: rubricVersion,
       frameworkVersionId: session.frameworkVersionId,
     });
+    const { rubric, source: rubricSource } = resolved;
 
     const evidence = await loadEligibleEvidence(supabase, input.userId);
     const { data: prior } = await supabase
@@ -224,10 +225,18 @@ export async function completeFinalSession(
     });
 
     const frameworkPin =
-      (await resolvePublishedFrameworkPin(supabase, {
-        frameworkSlug: rubricSlug,
-        version: rubricVersion,
-      })) ?? null;
+      resolved.frameworkVersionId != null
+        ? {
+            frameworkVersionId: resolved.frameworkVersionId,
+            frameworkSlug: rubricSlug,
+            version: rubricVersion,
+            contentHash: resolved.contentHash,
+            source: "pi_cf_published" as const,
+          }
+        : ((await resolvePublishedFrameworkPin(supabase, {
+            frameworkSlug: rubricSlug,
+            version: rubricVersion,
+          })) ?? null);
     frameworkVersionId = frameworkPin?.frameworkVersionId ?? frameworkVersionId;
 
     const persisted = await persistCapabilityRun(supabase, {
@@ -239,6 +248,7 @@ export async function completeFinalSession(
       result,
       frameworkPin,
       runKind: "final",
+      rubricResolveSource: rubricSource,
     });
     scoreRunId = persisted.scoreRunId;
     snapshotId = persisted.snapshotId;

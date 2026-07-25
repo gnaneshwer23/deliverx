@@ -6,6 +6,10 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { resolvePublishedFrameworkPin } from "@/lib/admin-framework/rubric-bridge";
+import {
+  normaliseRubricResolveSource,
+  type RubricResolveSource,
+} from "@/lib/capability-engine/rubric-resolve-policy";
 import { loadFinalAssessmentCatalog } from "@/lib/pi-assessment/catalog";
 import {
   getSessionForUser,
@@ -104,7 +108,7 @@ export type StartFinalInput = {
 export type StartFinalResult = {
   session: AssessmentSessionRow;
   resumed: boolean;
-  catalogSource: "db" | "in_code";
+  catalogSource: RubricResolveSource;
   currentItem: AssessmentItemRow | null;
   experienceIndustry: string | null;
   transferIndustry: TransferIndustry | null;
@@ -121,7 +125,7 @@ export async function startFinalSession(
       return {
         session: existing,
         resumed: true,
-        catalogSource: (existing.metadata.catalogSource as "db" | "in_code") ?? "in_code",
+        catalogSource: normaliseRubricResolveSource(existing.metadata.catalogSource),
         currentItem: current,
         experienceIndustry: (existing.metadata.experienceIndustry as string) ?? null,
         transferIndustry:

@@ -9,7 +9,11 @@ import {
   DEFAULT_RUBRIC_SLUG,
   DEFAULT_RUBRIC_VERSION,
 } from "@/lib/capability-engine/types";
-import { resolvePublishedFrameworkPin } from "@/lib/admin-framework/rubric-bridge";
+import {
+  isInCodeFallbackAllowed,
+  isRubricDbRequired,
+  type RubricResolveSource,
+} from "@/lib/capability-engine/rubric-resolve-policy";
 import { latestStatus } from "@/lib/evidence-ledger/append";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +21,7 @@ export const dynamic = "force-dynamic";
 /**
  * Run Capability Engine for the authenticated user against their Evidence Ledger.
  * Returns user-facing explanations only (reasoning summaries) — no hidden CoT.
+ * T2: asserts framework pin on persist; labels rubricSource as db | in_code_fallback.
  */
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -104,7 +109,11 @@ export async function POST(request: Request) {
   let rubric = null as Awaited<
     ReturnType<typeof resolveRubricDefinition>
   >["rubric"] | null;
-  let rubricSource: "db" | "in_code" = "in_code";
+  let rubricSource: RubricResolveSource = "in_code_fallback";
+  let frameworkVersionId: string | null = null;
+  let frameworkContentHash: string | null = null;
+  let fallbackReason: string | null = null;
+
   try {
     const resolved = await resolveRubricDefinition(supabase, {
       frameworkSlug: rubricSlug,
@@ -112,8 +121,50 @@ export async function POST(request: Request) {
     });
     rubric = resolved.rubric;
     rubricSource = resolved.source;
-  } catch {
+    frameworkVersionId = resolved.frameworkVersionId;
+    frameworkContentHash = resolved.contentHash;
+    fallbackReason = resolved.fallbackReason ?? null;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "rubric_resolve_failed";
+    if (message.startsWith("rubric_db_required:")) {
+      return NextResponse.json(
+        {
+          error: "rubric_db_required",
+          detail: message,
+          rubricSlug,
+          rubricVersion,
+        },
+        { status: 503 },
+      );
+    }
+    if (message.startsWith("unknown_rubric:")) {
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
     // orchestrator falls back to getRubric when rubric is null
+    console.warn("[capability-engine] rubric resolve failed", message);
+  }
+
+  // T2: assert pin on persist — every new ScoreRun should carry framework_version_id
+  // when a published pin exists; refuse persist when DB is required and pin is missing.
+  const shouldPersist = body.persist !== false;
+  if (shouldPersist && !frameworkVersionId) {
+    if (isRubricDbRequired() || !isInCodeFallbackAllowed()) {
+      return NextResponse.json(
+        {
+          error: "framework_pin_required",
+          detail:
+            "ScoreRun persist requires a published pi_cf framework_version_id (T2 pin assert).",
+          rubricSlug,
+          rubricVersion,
+        },
+        { status: 422 },
+      );
+    }
+    console.warn("[capability-engine] persisting ScoreRun without framework_version_id", {
+      rubricSlug,
+      rubricVersion,
+      rubricSource,
+    });
   }
 
   const result = runCapabilityEngine({
@@ -128,14 +179,18 @@ export async function POST(request: Request) {
   });
 
   let persisted: { scoreRunId: string; snapshotId: string | null } | null = null;
-  let frameworkVersionId: string | null = null;
-  if (body.persist !== false) {
+  if (shouldPersist) {
     try {
-      const frameworkPin = await resolvePublishedFrameworkPin(supabase, {
-        frameworkSlug: rubricSlug,
-        version: rubricVersion,
-      });
-      frameworkVersionId = frameworkPin?.frameworkVersionId ?? null;
+      const frameworkPin =
+        frameworkVersionId != null
+          ? {
+              frameworkVersionId,
+              frameworkSlug: rubricSlug,
+              version: rubricVersion,
+              contentHash: frameworkContentHash,
+              source: "pi_cf_published" as const,
+            }
+          : null;
       persisted = await persistCapabilityRun(supabase, {
         userId: user.id,
         targetRole: body.targetRole,
@@ -145,6 +200,7 @@ export async function POST(request: Request) {
         result,
         frameworkPin,
         runKind: body.runKind === "baseline" ? "baseline" : "standard",
+        rubricResolveSource: rubricSource,
       });
     } catch (err) {
       console.error("[capability-engine] persist failed", err);
@@ -194,6 +250,7 @@ export async function POST(request: Request) {
     frameworkVersionId,
     persisted,
     rubricSource,
+    fallbackReason,
     runKind: body.runKind === "baseline" ? "baseline" : "standard",
   });
 }

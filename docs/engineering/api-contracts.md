@@ -16,7 +16,7 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 | GET, POST | `/api/pi/evidence` | User | List / append evidence |
 | GET, POST | `/api/pi/evidence/[id]` | User | Read / transition; rejects user-set `platform_verified` without admin attestation |
 | POST | `/api/pi/evidence/process` | User | Processing job kick |
-| GET, POST | `/api/pi/capability/run` | User | List / create ScoreRun via engine |
+| GET, POST | `/api/pi/capability/run` | User | List / create ScoreRun via engine. **T2:** response includes `rubricSource` (`db` \| `in_code_fallback`), `frameworkVersionId`, optional `fallbackReason`; persist asserts published pin when DB required |
 | POST | `/api/pi/assessment/start` | User | Baseline start (POST-only; GET → 405) |
 | POST | `/api/pi/assessment/next` | User | Next item |
 | POST | `/api/pi/assessment/respond` | User | Submit response |
@@ -97,7 +97,8 @@ Public token view is a **page** (`/portfolio/v/[token]`), not listed here as an 
 1. **Person PI routes:** require Supabase user session; return **401** when anonymous.
 2. **Admin framework / review admin:** org-admin or equivalent elevated role (enforced in route handlers + RLS).
 3. **Gate env (optional):** `DELIVERX_PI_ALLOWLIST`, `DELIVERX_PI_SURFACES`, `DELIVERX_PI_GATE` — see `security-model.md`.
-4. **Webhooks / cron** (`/api/integrations/*`, `/api/cron/*`): service/secret auth — outside person PI loop.
+4. **Rubric resolve env (T2):** `DELIVERX_RUBRIC_REQUIRE_DB`, `DELIVERX_RUBRIC_ALLOW_IN_CODE_FALLBACK` — see `security-model.md`.
+5. **Webhooks / cron** (`/api/integrations/*`, `/api/cron/*`): service/secret auth — outside person PI loop.
 
 ---
 

@@ -6,6 +6,7 @@ import {
   DEFAULT_PROMPT_VERSION,
 } from "@/lib/capability-engine/types";
 import type { FrameworkVersionPin } from "@/lib/admin-framework/rubric-bridge";
+import type { RubricResolveSource } from "@/lib/capability-engine/rubric-resolve-policy";
 
 export type ScoreRunKind = "standard" | "baseline" | "final" | "transfer";
 
@@ -20,12 +21,15 @@ export type PersistCapabilityRunInput = {
   frameworkPin?: FrameworkVersionPin | null;
   /** baseline = starting picture; final/transfer = post-practice; default standard. */
   runKind?: ScoreRunKind;
+  /** T2: how the rubric was resolved (db | in_code_fallback). */
+  rubricResolveSource?: RubricResolveSource | null;
 };
 
 /** Build the score-run insert row (shared by success + failure paths). */
 export function buildScoreRunInsertRow(input: PersistCapabilityRunInput) {
   const pin = input.frameworkPin ?? null;
   const runKind: ScoreRunKind = input.runKind ?? "standard";
+  const rubricResolveSource = input.rubricResolveSource ?? null;
   const base = {
     user_id: input.userId,
     rubric_slug: input.rubricSlug,
@@ -35,6 +39,7 @@ export function buildScoreRunInsertRow(input: PersistCapabilityRunInput) {
     target_seniority: input.targetSeniority ?? null,
     framework_version_id: pin?.frameworkVersionId ?? null,
     framework_content_hash: pin?.contentHash ?? null,
+    rubric_resolve_source: rubricResolveSource,
     run_kind: runKind,
   };
 
@@ -51,6 +56,7 @@ export function buildScoreRunInsertRow(input: PersistCapabilityRunInput) {
         reviewQueue: input.result.reviewQueue,
         frameworkContentHash: pin?.contentHash ?? null,
         frameworkPinSource: pin?.source ?? null,
+        rubricResolveSource,
         runKind,
       },
       error_message: input.result.error ?? "failed",
@@ -81,6 +87,7 @@ export function buildScoreRunInsertRow(input: PersistCapabilityRunInput) {
       stepsCompleted: input.result.stepsCompleted,
       frameworkContentHash: pin?.contentHash ?? null,
       frameworkPinSource: pin?.source ?? null,
+      rubricResolveSource,
       runKind,
     },
     error_message: null as string | null,
@@ -146,6 +153,7 @@ export async function persistCapabilityRun(
         ...snapshot,
         frameworkVersionId: input.frameworkPin?.frameworkVersionId ?? null,
         frameworkContentHash: input.frameworkPin?.contentHash ?? null,
+        rubricResolveSource: input.rubricResolveSource ?? null,
       },
     })
     .select("id")
@@ -174,6 +182,7 @@ export async function persistCapabilityRun(
       snapshot_id: snap.id,
       input_hash: input.result.inputHash,
       framework_version_id: input.frameworkPin?.frameworkVersionId ?? null,
+      rubric_resolve_source: input.rubricResolveSource ?? null,
     },
     schema_version: 1,
   });

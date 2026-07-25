@@ -1,6 +1,6 @@
 /**
- * Resolve a RubricDefinition from the published pi_cf_* graph, with in-code fallback.
- * Phase 2 bridge — DB is preferred when a published graph has anchors; otherwise pin to code.
+ * Resolve a RubricDefinition from the published pi_cf_* graph, with labelled in-code fallback.
+ * T2 — DB is source of truth; in-code fallback is measurable and env-gated.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -13,17 +13,58 @@ import {
   getRubric,
   type RubricDefinition,
 } from "@/lib/capability-engine/rubric";
+import {
+  isInCodeFallbackAllowed,
+  logRubricFallback,
+  type RubricResolveSource,
+} from "@/lib/capability-engine/rubric-resolve-policy";
 
 export type ResolvedRubric = {
   rubric: RubricDefinition;
-  source: "db" | "in_code";
+  /** Contract: `db` | `in_code_fallback` (never silent). */
+  source: RubricResolveSource;
   frameworkVersionId: string | null;
   contentHash: string | null;
+  /** Why fallback was used when source is in_code_fallback. */
+  fallbackReason?:
+    | "no_published_pin"
+    | "thin_or_unreadable_graph"
+    | "load_error"
+    | null;
 };
 
+function throwOrFallback(
+  opts: { frameworkSlug: string; version: string },
+  reason: NonNullable<ResolvedRubric["fallbackReason"]>,
+  inCode: RubricDefinition | null,
+  pin: { frameworkVersionId: string; contentHash: string | null } | null,
+): ResolvedRubric {
+  if (!isInCodeFallbackAllowed()) {
+    throw new Error(
+      `rubric_db_required:${opts.frameworkSlug}@${opts.version}:${reason}`,
+    );
+  }
+  if (!inCode) {
+    throw new Error(`unknown_rubric:${opts.frameworkSlug}@${opts.version}`);
+  }
+  logRubricFallback({
+    frameworkSlug: opts.frameworkSlug,
+    version: opts.version,
+    reason,
+    frameworkVersionId: pin?.frameworkVersionId ?? null,
+  });
+  return {
+    rubric: inCode,
+    source: "in_code_fallback",
+    frameworkVersionId: pin?.frameworkVersionId ?? null,
+    contentHash: pin?.contentHash ?? null,
+    fallbackReason: reason,
+  };
+}
+
 /**
- * Prefer DB-backed rubric from a published framework version; fall back to in-code.
- * When DB graph has no indicators/anchors, keep the in-code pin (dual-source safety).
+ * Prefer DB-backed rubric from a published framework version; fall back to in-code when allowed.
+ * When DB graph has no indicators/anchors, labelled fallback keeps the in-code pin.
  */
 export async function resolveRubricDefinition(
   supabase: SupabaseClient,
@@ -50,15 +91,7 @@ export async function resolveRubricDefinition(
         });
 
   if (!pin?.frameworkVersionId) {
-    if (!inCode) {
-      throw new Error(`unknown_rubric:${opts.frameworkSlug}@${opts.version}`);
-    }
-    return {
-      rubric: inCode,
-      source: "in_code",
-      frameworkVersionId: null,
-      contentHash: null,
-    };
+    return throwOrFallback(opts, "no_published_pin", inCode, null);
   }
 
   try {
@@ -76,21 +109,26 @@ export async function resolveRubricDefinition(
         source: "db",
         frameworkVersionId: pin.frameworkVersionId,
         contentHash: pin.contentHash,
+        fallbackReason: null,
       };
     }
-  } catch {
-    // fall through to in-code
+    return throwOrFallback(opts, "thin_or_unreadable_graph", inCode, {
+      frameworkVersionId: pin.frameworkVersionId,
+      contentHash: pin.contentHash,
+    });
+  } catch (err) {
+    if (
+      err instanceof Error &&
+      (err.message.startsWith("rubric_db_required:") ||
+        err.message.startsWith("unknown_rubric:"))
+    ) {
+      throw err;
+    }
+    return throwOrFallback(opts, "load_error", inCode, {
+      frameworkVersionId: pin.frameworkVersionId,
+      contentHash: pin.contentHash,
+    });
   }
-
-  if (!inCode) {
-    throw new Error(`unknown_rubric:${opts.frameworkSlug}@${opts.version}`);
-  }
-  return {
-    rubric: inCode,
-    source: "in_code",
-    frameworkVersionId: pin.frameworkVersionId,
-    contentHash: pin.contentHash,
-  };
 }
 
 async function loadRubricFromPublishedVersion(
@@ -103,7 +141,7 @@ async function loadRubricFromPublishedVersion(
     await Promise.all([
       supabase
         .from("pi_cf_framework_versions")
-        .select("id, version, title, status, framework_id")
+        .select("id, version, title, status, framework_id, content_hash")
         .eq("id", frameworkVersionId)
         .maybeSingle(),
       supabase
@@ -135,7 +173,7 @@ async function loadRubricFromPublishedVersion(
       title: (versionRow.title as string) || `${frameworkSlug} ${version}`,
       status: versionRow.status as FrameworkVersionGraph["version"]["status"],
       changelog: "",
-      contentHash: null,
+      contentHash: (versionRow.content_hash as string | null) ?? null,
       rubricVersionId: null,
       publishedAt: null,
       supersededBy: null,

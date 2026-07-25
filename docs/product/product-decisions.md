@@ -150,6 +150,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-13 — T2 rubric: DB SoT with labelled in-code fallback
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | Published `pi_cf_*` graph is the source of truth for ScoreRun rubrics. In-code `getRubric` / assessment catalogues remain only as **labelled** `in_code_fallback` (never silent). ScoreRuns record `rubric_resolve_source` and prefer `framework_version_id`. Production may fail-closed via `DELIVERX_RUBRIC_REQUIRE_DB`. Multi-profession / seed-depth expansion stays founder-gated (TD-007). |
+| **Why** | TD-009 drift between DB seed and in-code pins destroys ScoreRun reproducibility and explainability. |
+| **Consequence** | Migration `0087`; hardened `resolve-rubric` / capability run pin assert; golden ScoreRun harness in CI. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval.

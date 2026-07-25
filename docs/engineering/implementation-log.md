@@ -4,7 +4,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 **Production:** https://www.deliverx.dev  
 **Supabase:** `jibmyxaldetyycmtlxet`  
-**Migrations:** `0066`–`0085`  
+**Migrations:** `0066`–`0087`  
 **Post-ship HEAD (audit):** `f3ac383`
 
 ---
@@ -93,7 +93,17 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 | --- | --- | --- |
 | `22ce7ed` | feat(privacy): T1 person PI export/delete + advisor hygiene | `0086`; `src/lib/pi-privacy/`; `/api/pi/privacy/*`; settings UX; TD-004/005 closed; TD-006 documented |
 
-**T1 verdict:** Shipped under founder override while T0 signed-in QA remains open. Do not start T2 until asked.
+**T1 verdict:** Shipped under founder override while T0 signed-in QA remains open.
+
+---
+
+## Technology T2 — Framework / rubric coherence (2026-07-25)
+
+| SHA | Summary | Migrations / notes |
+| --- | --- | --- |
+| _(pending commit)_ | feat(capability): T2 rubric DB SoT + labelled fallback + golden harness | `0087`; `rubric-resolve-policy`; pin assert on `/api/pi/capability/run`; TD-009 closed |
+
+**T2 verdict:** Shipped. DB `pi_cf_*` preferred for ScoreRuns; `in_code_fallback` labelled + measurable; do not start T3 until asked. T0 signed-in QA remains open.
 
 ---
 

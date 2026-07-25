@@ -45,7 +45,7 @@ erDiagram
 ### Capability Engine — `0068`
 
 - `pi_rubric_versions`
-- `pi_capability_score_runs` (includes `framework_version_id`, `run_kind`)
+- `pi_capability_score_runs` (includes `framework_version_id`, `run_kind`, `rubric_resolve_source`)
 - `pi_capability_judgements`
 - `pi_capability_snapshots`
 - `pi_capability_reviews`
@@ -111,6 +111,10 @@ erDiagram
 - RPC `pi_privacy_purge_person_data` — service-role person cascade; never touches `pi_cf_*`
 - Advisor hygiene: `forbid_*` `search_path` locked; `pi_cf_audit_events` explicit deny-all for authenticated
 
+### Rubric resolve audit — `0087` (T2)
+
+- `pi_capability_score_runs.rubric_resolve_source` — `db` \| `in_code_fallback` (nullable for legacy rows)
+
 ---
 
 ## Advisor notes
@@ -127,6 +131,7 @@ erDiagram
 | Append-oriented evidence history | Ledger transitions + provenance tables; forbid silent capability invent |
 | Capability only via ScoreRun persist | App invariant + engine persist entry points |
 | Framework pin | `framework_version_id` on ScoreRuns when published pin exists |
+| Rubric resolve provenance (T2) | `rubric_resolve_source` + labelled API `rubricSource`; DB preferred |
 | `run_kind` ∈ standard/baseline/final/transfer | Persist + assessment paths |
 | Consent default deny | No `pi_observation_consent` row ⇒ observation denied |
 | Learning ≠ competency | Learning persist never writes ScoreRuns |
