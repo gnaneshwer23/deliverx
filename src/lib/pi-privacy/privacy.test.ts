@@ -21,6 +21,10 @@ const MIGRATION = join(
   process.cwd(),
   "supabase/migrations/0086_pi_privacy_requests.sql",
 );
+const SECURITY_DEFINER_GRANTS_MIGRATION = join(
+  process.cwd(),
+  "supabase/migrations/0092_security_definer_grants.sql",
+);
 
 describe("pi-privacy cascade map", () => {
   it("is complete and excludes shared framework catalogue", () => {
@@ -142,5 +146,50 @@ describe("0086 privacy migration hygiene", () => {
   it("documents privacy domain event names used by app", () => {
     expect(PRIVACY_EVENT.exportRequested).toBe("privacy.export.requested");
     expect(PRIVACY_EVENT.deleteCompleted).toBe("privacy.delete.completed");
+  });
+});
+
+describe("0092 SECURITY DEFINER grant hygiene", () => {
+  const sql = readFileSync(SECURITY_DEFINER_GRANTS_MIGRATION, "utf8");
+
+  it("removes anonymous execution from every DeliverX SECURITY DEFINER function", () => {
+    for (const signature of [
+      "current_org_id\\(\\)",
+      "is_workspace_project_member\\(uuid\\)",
+      "pi_cf_version_is_readable\\(uuid\\)",
+      "handle_new_auth_user\\(\\)",
+      "pi_privacy_purge_person_data\\(uuid, uuid\\)",
+      "pi_privacy_purge_person_data_t4\\(uuid, uuid\\)",
+    ]) {
+      expect(sql).toMatch(
+        new RegExp(`revoke execute on function public\\.${signature}[\\s\\S]*?from public, anon`),
+      );
+    }
+  });
+
+  it("retains authenticated execution only for RLS-critical read helpers", () => {
+    for (const signature of [
+      "current_org_id\\(\\)",
+      "is_workspace_project_member\\(uuid\\)",
+      "pi_cf_version_is_readable\\(uuid\\)",
+    ]) {
+      expect(sql).toMatch(
+        new RegExp(
+          `grant execute on function public\\.${signature}[\\s\\S]*?to authenticated, service_role`,
+        ),
+      );
+    }
+    expect(sql).not.toMatch(
+      /grant execute on function public\.pi_privacy_purge_person_data\(uuid, uuid\)[\s\S]*?to authenticated/,
+    );
+  });
+
+  it("keeps the purge wrapper service-role-only and its prior implementation internal", () => {
+    expect(sql).toMatch(
+      /grant execute on function public\.pi_privacy_purge_person_data\(uuid, uuid\)[\s\S]*?to service_role/,
+    );
+    expect(sql).toMatch(
+      /revoke execute on function public\.pi_privacy_purge_person_data_t4\(uuid, uuid\)[\s\S]*?from public, anon, authenticated, service_role/,
+    );
   });
 });
