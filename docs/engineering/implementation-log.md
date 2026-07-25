@@ -215,7 +215,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 | Kill switch | `DELIVERX_VERIFIED_BADGE=off` |
 | PD-2026-07-25c | T8 authorized; Verified meaning frozen; T9 still blocked |
 
-**Verification:** focused vitest attestation + VPP + privacy cascade · migration `external_attestation` on `jibmyxaldetyycmtlxet` · advisors: no anon EXECUTE regression · prod deploy Ready · unauth smoke 401 on owner attestation APIs · public attest invalid token 404 · `npm run test:release-gate` PASS.
+**Verification:** focused vitest attestation + VPP + privacy cascade · migration `external_attestation` (`0094`) on `jibmyxaldetyycmtlxet` · purge EXECUTE anon/auth false, service_role true · advisors: no anon EXECUTE regression; TD-006 WARN unchanged · intentional authenticated 0029 helpers unchanged · prod deploy Ready (`75295c6`) · unauth smoke: owner attestation APIs 401; public invalid attest token 404; `/portfolio` → login · `npm run test:release-gate` PASS.
 
 **T8 verdict:** Shipped (founder-authorized). Do not proceed to T9 without separate founder approval. TD-006 remains founder-only.
 
