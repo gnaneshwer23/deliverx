@@ -1,0 +1,101 @@
+---
+description: DeliverX architecture, engineering and product rules
+alwaysApply: true
+---
+
+# DeliverX Engineering Constitution
+
+You are working on DeliverX, an evidence-driven Professional Intelligence Platform.
+
+Before changing code, read:
+
+1. `/docs/product/build-charter.md`
+2. `/docs/product/current-scope.md`
+3. Relevant files in `/docs/architecture`
+4. `/docs/engineering/system-architecture.md`
+5. `/docs/engineering/data-model.md`
+6. `/docs/product/product-decisions.md`
+
+## Source-of-truth hierarchy
+
+When documents conflict, follow this order:
+
+1. Build Charter
+2. Current Scope
+3. Recorded Product Decisions
+4. Approved Engineering Architecture
+5. Product Architecture Documents
+6. Existing implementation
+
+The long-term architecture describes where DeliverX may evolve.
+
+It does not authorise building features outside the current scope.
+
+## Core product model
+
+DeliverX contains:
+
+- Professional Intelligence
+- Experience
+- Launchpad
+- Team Copilot
+
+Professional Intelligence is the shared source of truth.
+
+Experience develops capability through professional work.
+
+Launchpad converts evidence into career opportunities.
+
+Team Copilot improves collaborative delivery and leadership.
+
+## Core engineering principles
+
+- Evidence before claims.
+- Knowledge, evidence and capability are separate concepts.
+- AI-generated observations are not automatically verified evidence.
+- Every recommendation must be explainable.
+- Every important state change must be traceable.
+- Intelligence belongs to the platform, not to an LLM.
+- AI agents consume structured context and intelligence.
+- Do not use chat history as the primary database.
+- Do not duplicate Professional Intelligence data across products.
+- Do not introduce speculative abstractions without an active use case.
+- Prefer modular monolith architecture until scale justifies separation.
+- Prefer explicit schemas, typed contracts and deterministic workflows.
+- Protect private professional information through least-privilege access.
+- Every major feature requires acceptance criteria and tests.
+
+## UI principles
+
+- Professional, calm and minimal.
+- No emojis.
+- No artificial gamification.
+- No unexplained scores.
+- No excessive gradients or visual noise.
+- Avoid generic AI-chat interfaces as the primary experience.
+- AI interactions must be connected to a project, task, meeting, evidence item or career objective.
+- Every screen must explain where the user is, what matters and what to do next.
+
+## Implementation behaviour
+
+Before implementing a substantial change:
+
+1. Explain the current architecture.
+2. Identify affected modules, schemas and routes.
+3. State assumptions.
+4. Identify conflicts with the Build Charter.
+5. Propose the smallest coherent implementation.
+6. Wait for approval when the change affects core architecture.
+
+After implementation:
+
+1. Run type checking.
+2. Run linting.
+3. Run unit and integration tests.
+4. Check database migrations.
+5. Check access-control boundaries.
+6. Update relevant documentation.
+7. Record important decisions in `/docs/product/product-decisions.md`.
+8. Summarise changed files, remaining risks and recommended next action.
+
+Never claim something works unless it has been verified.

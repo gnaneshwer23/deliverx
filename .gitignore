@@ -25,7 +25,10 @@
 /build
 
 # misc
-.cursor/
+# Ignore Cursor local state, but keep project rules in version control.
+.cursor/**
+!.cursor/rules/
+!.cursor/rules/**
 .DS_Store
 *.pem
 

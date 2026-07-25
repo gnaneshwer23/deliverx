@@ -1,0 +1,77 @@
+# Security Model
+
+**As of:** 2026-07-25 · post-ship audit
+
+---
+
+## Authentication
+
+- Supabase Auth for end users
+- App shells and PI pages use onboarding/session guards (e.g. `requireCompleteOnboarding`) with `login?next=` return paths
+- API Route Handlers for person PI data expect an authenticated user; anonymous calls return **401**
+
+Known residual: anonymous RSC often lacks `x-pathname`; some deep links (e.g. `/workspace/coach`) fall back to layout `next=/workspace` after login (fixed pattern for workspace/settings in `f3ac383`).
+
+---
+
+## Authorisation & RLS
+
+| Layer | Posture |
+| --- | --- |
+| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent |
+| **Org / project delivery tables** | Existing org membership / project access helpers (`src/lib/access`, project access tests) |
+| **Admin framework** | Elevated admin APIs for `pi_cf_*` version management; immutability triggers after publish/seed |
+| **Review admin** | `/api/pi/review/admin` gated to admin operators |
+| **Public portfolio** | Share token views filter non-shareable / confidential evidence; invalid token still safe empty/invalid UI |
+
+---
+
+## Consent & observation
+
+- `pi_observation_consent` — **default OFF** (missing row = denied)
+- Workspace observations and coach interventions must not run as verified evidence without consent + ledger rules
+- Interventions are drafts; observation ≠ evidence ≠ capability
+
+---
+
+## Evidence privacy
+
+- Evidence is **private by default**
+- Portfolio packaging and public links must exclude private/confidential rows
+- Users cannot self-promote evidence to `platform_verified` / external verification without attestation path
+- AI-generated observations are not automatically verified evidence
+
+---
+
+## Gate environment variables
+
+Optional pilot gating via `src/lib/access/gate.ts`:
+
+| Variable | Effect |
+| --- | --- |
+| `DELIVERX_PI_ALLOWLIST` | Comma-separated emails or user ids; empty = open |
+| `DELIVERX_PI_SURFACES` | Comma-separated surface allowlist; empty = all surfaces |
+| `DELIVERX_PI_GATE=off` | Force open even if allowlist set |
+
+Post-ship audit noted pilot as **unguarded** in production configuration at audit time — treat allowlist as available control, not necessarily enabled.
+
+---
+
+## Known advisor warnings (honest)
+
+From Supabase advisors at post-ship audit:
+
+1. **Mutable `search_path`** on PI `forbid_*` functions — security hygiene follow-up
+2. **`pi_cf_audit_events` RLS enabled with no policies** (INFO) — tighten or document intentional lockout
+3. **Leaked-password protection off** (WARN) — Auth settings follow-up
+
+These are tracked in [`technical-debt-register.md`](./technical-debt-register.md). They do not authorise weakening ledger/verification invariants.
+
+---
+
+## Trust rules that are security-relevant
+
+- Capability writes only via Capability Engine
+- `deliverxVerified` requires external attestation
+- No unexplained scores as capability truth
+- Least-privilege access to professional information (Constitution)
