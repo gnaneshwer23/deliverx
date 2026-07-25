@@ -30,5 +30,5 @@
 ## Recommended next
 
 1. Founder completes [`t0-signed-in-checklist.md`](./t0-signed-in-checklist.md) on production.  
-2. Re-check TD-002 after the path-header fix deploy.  
-3. Record PASS in `t0-results.md` → update this verdict to **T0 PASS** → proceed T1.
+2. TD-002 re-verified fixed on prod after deploy.  
+3. Record PASS in `t0-results.md` after signed-in checklist → update this verdict to **T0 PASS** → proceed T1.

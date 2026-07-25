@@ -149,7 +149,7 @@ src/lib/auth/request-path.test.ts — 4 passed
 | ID | Severity | Finding | Disposition |
 | --- | --- | --- | --- |
 | TD-001 | High | No signed-in E2E / empty person-PI tables | **Still open** — blocked on founder login; T6 automates later |
-| TD-002 | Medium | `/workspace/coach` → `login?next=/workspace` | Fix shipped: prefer `x-matched-path` when proxy headers missing + proxy marker header; **re-verify on prod after deploy** |
+| TD-002 | Medium | `/workspace/coach` → `login?next=/workspace` | **Fixed on prod after `c5d2b9f` deploy:** Location now `/login?next=%2Fworkspace%2Fcoach` (via `x-matched-path`). `x-dx-proxy` still absent ⇒ TD-003 remains (layout-owned redirect). |
 | TD-003 | Medium | Proxy anon redirects appear ineffective (layout owns `next=`; settings uses layout fallback) | **Documented**; not expanded in T0 beyond observability header |
 | TD-011 | Medium | Marketing still uses “readiness score you can trust” style copy | **Still open** — not a loop-blocker; honesty pass deferred |
 
@@ -159,7 +159,7 @@ src/lib/auth/request-path.test.ts — 4 passed
 
 | Change | SHA | Deploy |
 | --- | --- | --- |
-| `getRequestPathFromHeaders` + `x-matched-path` fallback; request-path unit tests; `x-dx-proxy` marker on proxy responses; T0 QA pack | `c5d2b9f` (+ follow-up SHA fix if amended) | Push to main → Vercel prod |
+| `getRequestPathFromHeaders` + `x-matched-path` fallback; request-path tests; T0 QA pack | `c5d2b9f` / docs pin `d625b4d` | Deployed Ready; TD-002 re-verified on www.deliverx.dev |
 
 ---
 

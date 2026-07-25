@@ -6,7 +6,7 @@
 | ID | Item | Severity | When | Notes |
 | --- | --- | --- | --- | --- |
 | TD-001 | No signed-in E2E of P0–P7 happy path | **High** | **Now** (pilot seal) | **Still open (T0 2026-07-25):** unauth/unit green; signed-in BLOCKED (no founder/test login); ScoreRuns/evidence/outcomes still 0 on prod. Close when founder completes `docs/qa/t0-signed-in-checklist.md` (T6 automates later). |
-| TD-002 | Coach deep-link `next` loses `/workspace/coach` | Medium | Now | **Reconfirmed T0** on prod (`next=/workspace`). Fix: `x-matched-path` fallback in `getRequestPathFromHeaders` + `x-dx-proxy` marker — **re-verify after deploy**. |
+| TD-002 | Coach deep-link `next` loses `/workspace/coach` | Medium | Now | **Resolved on prod (T0 `c5d2b9f`):** unauth `/workspace/coach` → `login?next=/workspace/coach` via `x-matched-path` fallback. |
 | TD-003 | Edge/session proxy anonymous path-guards ineffective in prod | Medium | Now / deferred | **Reconfirmed T0:** layouts own `next=` (e.g. settings → `/settings/profile`). Documented; full proxy restore deferred. |
 | TD-004 | Supabase advisor: mutable `search_path` on `forbid_*` | Medium | Now | Function search_path hygiene |
 | TD-005 | `pi_cf_audit_events` RLS on, no policies (INFO) | Low–Med | Now | Lock down or document intentional deny-all |
