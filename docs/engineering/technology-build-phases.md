@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** **T7 shipped** — org departments/teams + Launchpad honesty + Workspace demotion. Do **not** start T8–T9 without separate founder approval (charter). Remaining: TD-006 founder Auth toggle; optional visual QA.
+**Recommended next engineering action:** **T7 shipped.** Follow [`next-steps.md`](./next-steps.md) — TD-018 CI restore, TD-006 founder Auth toggle, TD-017 fixture debt, TD-011 honesty copy. Do **not** start T8–T9 without separate founder approval (charter).
 
 ---
 
@@ -495,4 +495,5 @@ T1–T7 migrations are shipped through `0093`. Remaining migration numbers are i
 - [`testing-strategy.md`](./testing-strategy.md)
 - [`current-state-audit.md`](./current-state-audit.md)
 - [`technical-debt-register.md`](./technical-debt-register.md)
+- [`next-steps.md`](./next-steps.md)
 - [`../architecture/00-deliverx-foundation.md`](../architecture/00-deliverx-foundation.md) … `07`

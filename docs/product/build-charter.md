@@ -84,7 +84,7 @@ If any answer is no → redesign or defer.
 
 ## Recommended next action
 
-**Technology T7 shipped** (founder-authorized 2026-07-25 via `t7`): org departments/teams, Launchpad readiness honesty, Professional Workspace nav demotion. Do **not** start **T8** (external attestation) or **T9** (commercial) without separate founder approval. TD-006 remains founder-only (Auth leaked-password toggle).
+**Technology T7 shipped.** Next is **ops + trust hardening**, not T8/T9 — see [`../engineering/next-steps.md`](../engineering/next-steps.md): restore Actions minutes (TD-018), founder Auth leaked-password toggle (TD-006), re-enable CI, clear TD-017, honesty copy (TD-011). Do **not** start **T8** (external attestation) or **T9** (commercial) without separate founder approval.
 
 ---
 

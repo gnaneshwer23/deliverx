@@ -73,6 +73,20 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 ---
 
+## Recommended next actions
+
+Full plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
+
+1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
+2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
+3. **Ops + engineering:** configure T6 live CI secrets once workflows run again.
+4. **Engineering (now):** clear TD-017 test-fixture ESLint / `tsc` debt so returning CI stays honest.
+5. **Engineering (now):** marketing vs ledger honesty pass (TD-011); keep `deliverxVerified` off.
+
+Do **not** start **T8** (attestation) or **T9** (commercial). Defer marketplace, Stripe, graph DB, multi-profession expansion, and microservice splits.
+
+---
+
 ## Working rules for agents
 
 1. Read this file + Build Charter before implementing.
@@ -80,3 +94,4 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 3. Do not start P8/P9 without founder approval recorded in `product-decisions.md`.
 4. Update this file when the active phase changes.
 5. Do not start **T8–T9** until separate founder approval; T7 is shipped.
+6. Follow [`../engineering/next-steps.md`](../engineering/next-steps.md) for ordered post-T7 hardening.

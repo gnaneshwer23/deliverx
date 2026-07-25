@@ -50,7 +50,10 @@
 
 ## Recommended next
 
-1. Configure GitHub Actions secrets `T6_SUPABASE_URL`, `T6_SUPABASE_ANON_KEY`, `T6_SUPABASE_SERVICE_ROLE_KEY` so CI runs the live signed-in job.  
-2. When disk allows: stand up Option A (local Supabase) and point `T6_BASE_URL=http://localhost:3000`.  
-3. Founder enables TD-006 leaked-password protection.  
-4. Confirm Actions minutes / spending limit so push CI can schedule jobs again.
+Ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
+
+1. Founder restores Actions minutes / spending (TD-018), then re-enable workflows.  
+2. Founder enables TD-006 leaked-password protection.  
+3. Configure GitHub Actions secrets `T6_SUPABASE_URL`, `T6_SUPABASE_ANON_KEY`, `T6_SUPABASE_SERVICE_ROLE_KEY` so CI runs the live signed-in job.  
+4. Engineering clears TD-017 fixture lint/tsc debt.  
+5. When disk allows: stand up Option A (local Supabase) and point `T6_BASE_URL=http://localhost:3000`.
