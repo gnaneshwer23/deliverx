@@ -34,6 +34,7 @@ export async function updateSession(request: NextRequest) {
     requestHeaders.forEach((value, key) => {
       response.headers.set(key, value);
     });
+    response.headers.set("x-dx-proxy", "1");
     return response;
   };
 
@@ -59,9 +60,11 @@ export async function updateSession(request: NextRequest) {
       isWorkspacePath(pathname) ||
       isSettingsPath(pathname))
   ) {
-    return NextResponse.redirect(
+    const redirectResponse = NextResponse.redirect(
       new URL(buildLoginRedirectPath(requestPathWithSearch(request)), request.url),
     );
+    redirectResponse.headers.set("x-dx-proxy", "anon-redirect");
+    return redirectResponse;
   }
 
   // No auth cookies anywhere — nothing to refresh.

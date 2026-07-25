@@ -1,9 +1,10 @@
 # Current Scope
 
-**Active phase:** Post-P7 pilot hardening  
-**As of:** 2026-07-25 · HEAD ~`e9917f8`  
+**Active phase:** Post-P7 pilot hardening — **Technology T0 in progress (PARTIAL)**  
+**As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  
-**Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9; start at **T0** signed-in QA)
+**Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
+**T0 status:** PARTIAL — automated/unauth gates green; **signed-in QA BLOCKED (needs founder login)**. Do not start T1 until T0 PASS or explicit override. See [`../qa/t0-results.md`](../qa/t0-results.md) · [`../qa/release-readiness.md`](../qa/release-readiness.md).
 
 ---
 
@@ -22,7 +23,8 @@
 
 **Also present (partial / supporting):** Professional Workspace (`/workspace`), Verified Portfolio packaging (`/portfolio`), Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback), admin competency framework seed (`pm-core`), PI review/challenge.
 
-**Post-ship audit:** Pass for engineering pilot gate (225+ PI-domain tests; invariants hold; unauth smoke locked). Signed-in E2E still required.
+**Post-ship audit:** Pass for engineering pilot gate (225+ PI-domain tests; invariants hold; unauth smoke locked).  
+**T0 (2026-07-25):** Unauth smoke + migrations `0085` + focused PI vitest (163) re-verified; prod person-PI tables still empty; signed-in checklist not executed (no test credentials). TD-001 still open.
 
 ---
 

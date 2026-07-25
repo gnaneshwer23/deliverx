@@ -79,3 +79,5 @@ P8/P9: **not started** (out of charter).
 ## Recommended next action
 
 Per Build Charter: **complete signed-in human QA** and file defects under pilot hardening — do not start P8/P9.
+
+**T0 pack (2026-07-25):** [`../qa/t0-signed-in-checklist.md`](../qa/t0-signed-in-checklist.md) · [`../qa/t0-results.md`](../qa/t0-results.md) — automated gates PASS; signed-in BLOCKED pending founder login.

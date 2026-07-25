@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Execute **T0** — signed-in human QA of the P0–P7 loop on production and burn down High/Medium debt that blocks a trusted pilot (TD-001 first).
+**Recommended next engineering action:** Finish **T0** — founder completes signed-in checklist (`docs/qa/t0-signed-in-checklist.md`). Automated portion done 2026-07-25 (**PARTIAL / signed-in BLOCKED**). Do **not** start T1 until T0 PASS or explicit override.
 
 ---
 

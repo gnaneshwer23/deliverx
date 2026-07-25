@@ -10,7 +10,7 @@
 - App shells and PI pages use onboarding/session guards (e.g. `requireCompleteOnboarding`) with `login?next=` return paths
 - API Route Handlers for person PI data expect an authenticated user; anonymous calls return **401**
 
-Known residual: anonymous RSC often lacks `x-pathname`; some deep links (e.g. `/workspace/coach`) fall back to layout `next=/workspace` after login (fixed pattern for workspace/settings in `f3ac383`).
+Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do not run (TD-003). T0 added `x-matched-path` fallback in `getRequestPathFromHeaders` for deep links such as `/workspace/coach` (TD-002); re-verify on prod after deploy. Proxy responses may include `x-dx-proxy` for observability.
 
 ---
 
