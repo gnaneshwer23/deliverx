@@ -229,6 +229,14 @@ export function validateAgentOutput(
   return contract.validate(raw);
 }
 
+export function contractFallback(contractId: string): Record<string, unknown> {
+  const contract = OUTPUT_CONTRACTS[contractId];
+  if (!contract) {
+    return { error: "unknown_contract", mayWriteCapability: false, mayModifyVerifiedEvidence: false };
+  }
+  return contract.fallback();
+}
+
 /** Refuse any payload that tries to sneak capability/evidence writes. */
 export function refusesUnstructuredCapabilityWrite(raw: unknown): boolean {
   if (!isRecord(raw)) return true;

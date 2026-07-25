@@ -137,8 +137,10 @@ describe("T4 output contracts", () => {
   it("falls back deterministically on invalid output", () => {
     const r = validateAgentOutput("stakeholder_perspective_v1", { nope: true });
     expect(r.ok).toBe(false);
-    expect(r.fallback?.fallback).toBe(true);
-    expect(r.fallback?.mayModifyVerifiedEvidence).toBe(false);
+    if (!r.ok) {
+      expect(r.fallback?.fallback).toBe(true);
+      expect(r.fallback?.mayModifyVerifiedEvidence).toBe(false);
+    }
   });
 });
 

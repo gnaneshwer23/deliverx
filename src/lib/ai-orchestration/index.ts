@@ -48,6 +48,7 @@ export {
 export {
   OUTPUT_CONTRACTS,
   validateAgentOutput,
+  contractFallback,
   refusesUnstructuredCapabilityWrite,
 } from "@/lib/ai-orchestration/output-contracts";
 export type { OutputValidationResult } from "@/lib/ai-orchestration/output-contracts";

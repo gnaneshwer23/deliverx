@@ -14,6 +14,7 @@ import {
   formatGuardedUserPayload,
 } from "@/lib/ai-orchestration/guardrails";
 import {
+  contractFallback,
   refusesUnstructuredCapabilityWrite,
   validateAgentOutput,
 } from "@/lib/ai-orchestration/output-contracts";
@@ -269,8 +270,7 @@ export async function runAgent(input: RunAgentInput): Promise<RunAgentResult> {
 
   // Bypass only for legacy delivery AI callers who opt in — still logs when supabase present.
   if (orchestrationBypassEnabled() && !input.modelInvoker) {
-    const fallback = validateAgentOutput(prompt.outputContract, null);
-    const output = fallback.fallback;
+    const output = contractFallback(prompt.outputContract);
     const usage: AiUsageMetrics = {
       inputTokens: 0,
       outputTokens: 0,
@@ -308,7 +308,7 @@ export async function runAgent(input: RunAgentInput): Promise<RunAgentResult> {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Model invocation failed";
-    const fallback = validateAgentOutput(prompt.outputContract, null).fallback;
+    const fallback = contractFallback(prompt.outputContract);
     const usage: AiUsageMetrics = {
       inputTokens: estimateTokens(prompt.systemTemplate + userPayload),
       outputTokens: 0,
@@ -335,7 +335,7 @@ export async function runAgent(input: RunAgentInput): Promise<RunAgentResult> {
   try {
     parsed = parseModelJson(modelResult);
   } catch {
-    const fallback = validateAgentOutput(prompt.outputContract, null).fallback;
+    const fallback = contractFallback(prompt.outputContract);
     const usage = normaliseUsage(modelResult);
     const interaction = await persist(
       "validation_failed",
@@ -358,7 +358,7 @@ export async function runAgent(input: RunAgentInput): Promise<RunAgentResult> {
   }
 
   if (refusesUnstructuredCapabilityWrite(parsed)) {
-    const fallback = validateAgentOutput(prompt.outputContract, null).fallback;
+    const fallback = contractFallback(prompt.outputContract);
     const usage = normaliseUsage(modelResult);
     const interaction = await persist(
       "blocked",
