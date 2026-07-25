@@ -129,7 +129,7 @@ erDiagram
 ## Advisor notes
 
 - **T1 closed:** `pi_cf_audit_events` authenticated deny-all; `forbid_*` `search_path = public`
-- **Open (ops):** leaked-password protection — Auth dashboard (TD-006)
+- **Open (ops):** leaked-password protection — founder toggle (TD-006); see [`runbook-leaked-password-protection.md`](./runbook-leaked-password-protection.md)
 
 ---
 

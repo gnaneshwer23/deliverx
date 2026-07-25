@@ -79,7 +79,7 @@ From Supabase advisors at post-ship audit; T1 disposition:
 
 1. **Mutable `search_path` on PI `forbid_*`** — **Closed in T1** (`0086`): all `forbid_*` functions set `search_path = public`.
 2. **`pi_cf_audit_events` RLS with no policies** — **Closed in T1** (`0086`): explicit authenticated deny-all policy; service role only.
-3. **Leaked-password protection off** (WARN) — **Documented in T1**; must be enabled in Supabase Auth dashboard (HaveIBeenPwned). Not settable via SQL migration. Ops: [Auth → Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
+3. **Leaked-password protection off** (WARN) — **Still open (TD-006, 2026-07-25):** `get_advisors` still reports `auth_leaked_password_protection`. Not settable via SQL; Supabase MCP cannot write Auth config. Management API supports `password_hibp_enabled` (Pro+), but no access token in agent env. **Founder:** enable in [Auth → Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection). Full steps: [`runbook-leaked-password-protection.md`](./runbook-leaked-password-protection.md).
 
 These are tracked in [`technical-debt-register.md`](./technical-debt-register.md). They do not authorise weakening ledger/verification invariants.
 

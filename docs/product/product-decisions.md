@@ -186,6 +186,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-16 — TD-006 leaked-password: founder dashboard (or PAT), not agent SQL
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Pending founder |
+| **Decision** | Keep HaveIBeenPwned leaked-password protection as a **founder/ops Auth toggle** (or Management API `password_hibp_enabled` with a personal access token). Do not invent SQL/MCP workarounds; do not mark TD-006 Closed until security advisors clear. |
+| **Why** | Advisor WARN remains; feature is Pro+ Auth config; agent env has no Management API token and MCP only reads advisors. |
+| **Consequence** | Runbook [`docs/engineering/runbook-leaked-password-protection.md`](../engineering/runbook-leaked-password-protection.md); one-click [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection). |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval.
+See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval. Also TD-006 (leaked-password protection).

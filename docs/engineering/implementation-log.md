@@ -122,6 +122,19 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 ---
 
+## Ops — TD-006 leaked-password protection (2026-07-25)
+
+| Check | Result |
+| --- | --- |
+| Advisor before | `auth_leaked_password_protection` WARN present on `jibmyxaldetyycmtlxet` |
+| MCP enable | Not possible — no Auth-config write tool |
+| Management API | `PATCH /v1/projects/{ref}/config/auth` + `password_hibp_enabled: true` documented; blocked here (no `SUPABASE_ACCESS_TOKEN`) |
+| Disposition | **Open — founder action required**; runbook [`runbook-leaked-password-protection.md`](./runbook-leaked-password-protection.md) |
+
+Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enable.
+
+---
+
 ## Not started (charter)
 
 - **P8** — External verification / attestation  

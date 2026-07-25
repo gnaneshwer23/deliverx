@@ -144,7 +144,7 @@ sequenceDiagram
 | 1 | Repository Audit | **Done** | `current-state-audit.md`, post-ship audit canvas, HEAD `f3ac383` | T0 (refresh only) |
 | 2 | Current Architecture | **Done** | `system-architecture.md`, `codebase-map.md`, constitution | T0 |
 | 3 | Database Foundation | **Partial** | PI `0066`–`0085`; gaps: artefact versions, messages, departments/teams, AI registry | T2–T4, T7 |
-| 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; **T1** export/deletion shipped (`0086`); leaked-password dashboard toggle still open (TD-006) | T1 done · T6 E2E |
+| 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; **T1** export/deletion shipped (`0086`); leaked-password still **Open — founder action** (TD-006; runbook) | T1 done · T6 E2E |
 | 5 | Organisation Intelligence | **Partial** | `organisations`, `projects`, `stakeholders`; no `departments`/`teams`; not PI-first | T7 (approval for depth) |
 | 6 | First Experience & Project | **Done** | Experience planner + sim, 12 companies, `0078`–`0079` | — |
 | 7 | Artefact Submission | **Done (versioning)** | **T3 (`0088`):** `artefacts` + immutable `artefact_versions` + submission audit; evidence cites `artefact_version_id`. Legacy `documents` / `launchpad_artefacts` remain | T3 shipped |
@@ -191,7 +191,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | **§15 / modules** | Step 4 · Identity & Access · Audit |
 | **Charter** | **Authorized now** |
 | **Entry** | T0 High defects understood |
-| **Status (2026-07-25)** | **Shipped** under founder override while T0 signed-in QA remains open. Migration `0086`; `src/lib/pi-privacy/`; `/api/pi/privacy/export` + `/delete`; settings UX; TD-004/005 closed; TD-006 documented (Auth dashboard). |
+| **Status (2026-07-25)** | **Shipped** under founder override while T0 signed-in QA remains open. Migration `0086`; `src/lib/pi-privacy/`; `/api/pi/privacy/export` + `/delete`; settings UX; TD-004/005 closed; TD-006 still Open — founder Auth toggle (runbook 2026-07-25). |
 | **Work packages** | `src/lib/pi-privacy/` export + delete orchestrators; settings UX; `TD-004` `search_path` on `forbid_*`; `TD-005` `pi_cf_audit_events` RLS posture; `TD-006` leaked-password protection (dashboard) |
 | **Schema** | `0086_pi_privacy_requests.sql` — `pi_privacy_requests` (export/delete job status); optional tombstone audit |
 | **API** | `POST/GET /api/pi/privacy/export`, `POST /api/pi/privacy/delete` (auth + confirm) |
@@ -454,7 +454,7 @@ Migration numbers below are **planned next** after `0085`. Do not apply until th
 | TD-001 | T0 → T6 | Signed-in E2E |
 | TD-002 | T0 | Coach deep-link |
 | TD-003 | T0 | Proxy vs layout guards |
-| TD-004–006 | T1 | **TD-004/005 closed in `0086`**; TD-006 Auth dashboard documented |
+| TD-004–006 | T1 | **TD-004/005 closed in `0086`**; TD-006 still Open — founder Attack Protection / `password_hibp_enabled` (runbook) |
 | TD-007 | Deferred | Thin seed OK unless founder expands |
 | TD-008 | Deferred | Env gate enough; full flag platform later |
 | TD-009 | T2 | **Closed** — labelled fallback + resolve audit column |
