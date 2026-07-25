@@ -198,6 +198,30 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-17 — T4 AI orchestration trust layer (registry, not chat-as-DB)
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | Ship founder §11 agent framework as **trust infrastructure**: in-code + DB agent registry (`line_manager`, `stakeholder`, `observer`, plus consolidated `experience_coach` / `workspace_coach` / `interview_lab`), immutable prompt versions, request-time context builder (system instructions separate from organisation data), structured output contracts, prompt-injection guardrails, authority boundaries (no capability writes outside ScoreRun; no verified-evidence mutation; consequential actions need explicit confirmation), and mandatory cost/latency logging on `ai_interactions`. Chat history is not the primary database — conversations are bound to project/activity. Existing Experience / Helm / Interview Lab behaviour is consolidated into the registry, not rewritten. Full “AI Line Manager product UX” Home remains approval-gated. |
+| **Why** | Step 11 was Partial (delivery prompts + `agent_workflow_runs` without formal PI agent/prompt/cost registry). Pilot trust requires provenance, guardrails, and explainable structured outputs before expanding agent surfaces. |
+| **Consequence** | Migration `0090`; `src/lib/ai-orchestration/`; `GET /api/pi/ai/interactions`; mock-model CI tests. Founder override (`t4`) of T0–T3 audit gate while TD-001 remains open. Do not start T5 until asked. |
+
+---
+
+## PD-2026-07-18 — Founder override of T0 gate for T4
+
+| Field | Value |
+| --- | --- |
+| **Date** | Jul 2026 |
+| **Status** | Accepted |
+| **Decision** | User utterance `t4` is an explicit override of the T0–T3 audit gate (TD-001 signed-in QA still open; pre-existing typecheck errors and lint debt flagged but not blocking under override). Same pattern as T1–T3 founder overrides. |
+| **Why** | Pilot hardening of the AI trust layer is authorised now; signed-in QA remains a parallel open track (T0 → T6). |
+| **Consequence** | Document override in technology-build-phases, current-scope, implementation-log; do not claim T0 PASS. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval. Also TD-006 (leaked-password protection).

@@ -18,7 +18,7 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 
 | Layer | Posture |
 | --- | --- |
-| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent, artefacts + versions |
+| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent, artefacts + versions, AI interactions |
 | **Org / project delivery tables** | Existing org membership / project access helpers (`src/lib/access`, project access tests) |
 | **Admin framework** | Elevated admin APIs for `pi_cf_*` version management; immutability triggers after publish/seed |
 | **Review admin** | `/api/pi/review/admin` gated to admin operators |
@@ -47,6 +47,15 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - Prior artefact versions are immutable (append-only trigger); new content = new version
 - Evidence referencing an artefact must cite a specific `artefact_version_id` (DB CHECK + app guard) — never a mutable envelope
 - Artefact provenance separates user vs AI contribution; artefact creation never assigns capability
+
+### AI orchestration (T4)
+
+- `ai_agents` / `ai_prompt_versions` — platform catalogue; authenticated read; no client writes
+- `ai_interactions` — self-only RLS; append-only (purge bypass for T1 delete)
+- Prompt-injection scan + authority boundaries in `src/lib/ai-orchestration/guardrails.ts`
+- Agents cannot write capability or modify verified evidence; consequential actions require confirmation
+- Observation drafts never auto-verify; cost/latency logged on every `runAgent` call
+- Rollback: `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy delivery AI only
 
 ### Person-purge RPC lockdown (T3 hotfix `0089`)
 

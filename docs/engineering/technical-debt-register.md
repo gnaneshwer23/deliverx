@@ -20,7 +20,7 @@
 | TD-013 | Full Mermaid ER for PI schema not published | Low | Deferred | Compact sketch in `data-model.md`; expand later |
 | TD-014 | Pre-pivot delivery/org API surface large vs PI SoT | Low | Deferred | Do not expand as PI WPs; avoid capability confusion |
 | TD-015 | Person-purge RPC executable by anon/authenticated (Supabase default-privilege) | **High** | Now | **Resolved T3 (`0089`, `9eae533`)**: `revoke execute ... from anon, authenticated` on `pi_privacy_purge_person_data`; verified anon/authenticated EXECUTE = false, service_role only. Root cause: `revoke ... from public` does not remove role-specific default grants. |
-| TD-016 | Other `SECURITY DEFINER` functions callable by anon/authenticated | Low–Med | Deferred | **Residual confirmed on prod (2026-07-25):** `is_workspace_project_member` and `pi_cf_version_is_readable` grant EXECUTE to anon + authenticated; `current_org_id` grants authenticated but not anon. These are read/boolean helpers, lower risk than person purge. Revoke or switch to INVOKER in a future hardening pass. |
+| TD-016 | Other `SECURITY DEFINER` functions callable by anon/authenticated | Low–Med | Deferred | **Residual confirmed on prod (2026-07-25):** `is_workspace_project_member` and `pi_cf_version_is_readable` grant EXECUTE to anon + authenticated; `current_org_id` grants authenticated but not anon. These are read/boolean helpers, lower risk than person purge. Revoke or switch to INVOKER in a future hardening pass. **Still open after T4** (not in T4 scope). |
 
 ---
 

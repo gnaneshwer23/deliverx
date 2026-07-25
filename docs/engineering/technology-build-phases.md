@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T3 shipped · migrations head `0089`  
+**As of:** 2026-07-25 · T4 shipped · migrations head `0090`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,7 +10,7 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0089` are applied (T3 artefact versioning + purge lockdown hotfix).
+Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0090` are applied (T4 AI orchestration registry).
 
 This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
@@ -20,7 +20,7 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 | **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1 + T2 + T3 shipped** (founder override while T0 PARTIAL). Do **not** start T4 (AI orchestration registry) until asked.
+**Recommended next engineering action:** Founder completes T0 signed-in checklist (`docs/qa/t0-signed-in-checklist.md`) — still open. **T1–T4 shipped** under founder override while T0 PARTIAL (`t4` authorised T4 explicitly). Do **not** start T5 (notifications) until asked.
 
 ---
 
@@ -30,18 +30,20 @@ This plan does **not** re-build P0–P7. It maps every founder module, entity, a
 
 | Status | Count | Modules |
 | --- | --- | --- |
-| **Done** | 5 | Professional Profile · Professional Intelligence · Experience · Evidence · Observation (consent-gated) |
-| **Partial** | 9 | Identity & Access · Organisation · Projects & Work Items · Meetings & Communications · Artefacts & Documents · Capability (thin seed) · Feedback & Reflection · AI Orchestration · Audit & Analytics |
+| **Done** | 6 | Professional Profile · Professional Intelligence · Experience · Evidence · Observation (consent-gated) · AI Orchestration (T4 trust layer) |
+| **Partial** | 8 | Identity & Access · Organisation · Projects & Work Items · Meetings & Communications · Artefacts & Documents · Capability (thin seed) · Feedback & Reflection · Audit & Analytics |
 | **Missing** | 1 | Notifications (product module) — `pi_review_notifications` + org deliveries exist as stubs only |
 
-**Working counts:** Done **5** · Partial **9** · Missing **1**.
+**Working counts:** Done **6** · Partial **8** · Missing **1**.
+
+Note: **AI Orchestration** moved from Partial → **Done (trust infrastructure)** with T4 registry; full “AI Line Manager product UX” Home remains approval-gated.
 
 ### Entities (26 from founder DB prompt)
 
 | Status | Count |
 | --- | --- |
-| **Done** (table + PI use) | 14 |
-| **Partial** (exists or fragmented) | 9 |
+| **Done** (table + PI use) | 16 |
+| **Partial** (exists or fragmented) | 7 |
 | **Missing** | 3 (`departments`, `teams`, `messages`) |
 
 See [Entity coverage matrix](#entity-coverage-matrix).
@@ -143,7 +145,7 @@ sequenceDiagram
 | --- | --- | --- | --- | --- |
 | 1 | Repository Audit | **Done** | `current-state-audit.md`, post-ship audit canvas, HEAD `f3ac383` | T0 (refresh only) |
 | 2 | Current Architecture | **Done** | `system-architecture.md`, `codebase-map.md`, constitution | T0 |
-| 3 | Database Foundation | **Partial** | PI `0066`–`0089`; gaps: messages, departments/teams, AI registry | T2–T4, T7 |
+| 3 | Database Foundation | **Partial** | PI `0066`–`0090`; gaps: messages, departments/teams | T2–T4 done · T7 for org structure |
 | 4 | Auth & Onboarding | **Partial** | Supabase Auth, `pi_onboarding`, gates; **T1** export/deletion shipped (`0086`); leaked-password still **Open — founder action** (TD-006; runbook) | T1 done · T6 E2E |
 | 5 | Organisation Intelligence | **Partial** | `organisations`, `projects`, `stakeholders`; no `departments`/`teams`; not PI-first | T7 (approval for depth) |
 | 6 | First Experience & Project | **Done** | Experience planner + sim, 12 companies, `0078`–`0079` | — |
@@ -151,8 +153,8 @@ sequenceDiagram
 | 8 | Observation & Feedback | **Partial** | Consent + `workspace_observations` + interventions; feedback/reflection fragmented | T0/T5 |
 | 9 | Evidence Engine | **Done** | Ledger `0067`, append-only + provenance | — |
 | 10 | Professional Intelligence | **Done** (seed thin) | Capability Engine `0068`, SnapshotClaims, `/profile`; 3 competencies | T2 |
-| 11 | AI Manager & Stakeholder | **Partial / Missing registry** | Delivery AI prompts + `agent_workflow_runs`; no formal PI agent/prompt/cost registry | T4 |
-| 12 | End-to-End QA | **Missing** (signed-in) | Unit/integration ~225+ PI tests; unauth smoke; **no signed-in E2E** | T0 then T6 |
+| 11 | AI Manager & Stakeholder | **Done (registry)** | **T4 (`0090`):** `ai_agents` / `ai_prompt_versions` / `ai_interactions`; Manager/Stakeholder/Observer + coaches via `src/lib/ai-orchestration/` | T4 shipped |
+| 12 | End-to-End QA | **Missing** (signed-in) | Unit/integration PI tests + T4 mock-model; unauth smoke; **no signed-in E2E** | T0 then T6 |
 | 13 | Launchpad Foundation | **Partial** | `/launchpad`, career-intelligence, artefacts; marketplace deferred | T7 packaging only if authorized; depth blocked |
 | 14 | Team Copilot Foundation | **Partial** | `/workspace` + contributions + observation; SKU ADR open; mission-control blocked | T7 **Requires approval** |
 
@@ -160,7 +162,7 @@ sequenceDiagram
 
 ## Technology phases
 
-T1–T3 migrations are shipped through `0089`. Remaining migration numbers below are **indicative plans** starting at the next free number, `0090`; do not apply them until the phase is authorized and implemented.
+T1–T4 migrations are shipped through `0090`. Remaining migration numbers below are **indicative plans** starting at the next free number, `0091`; do not apply them until the phase is authorized and implemented.
 
 ### T0 — Pilot seal (signed-in QA + critical debt)
 
@@ -258,17 +260,18 @@ T1–T3 migrations are shipped through `0089`. Remaining migration numbers below
 | **Objective** | Formalise founder §11 agent framework **without** making chat the database: role registry, authority boundaries, context builder, structured outputs, provenance, guardrails, prompt-injection protections, cost/latency logging, mock-model tests. |
 | **§15 / modules** | Step 11 · AI Orchestration |
 | **Charter** | **Authorized now** for **trust infrastructure**. Full “AI Line Manager product UX” expansion → **Requires founder approval** if it becomes a new Home or SKU surface. |
+| **Status (2026-07-25)** | **Shipped** under founder override (`t4`) while T0 signed-in QA remains open. Migration `0090`; `src/lib/ai-orchestration/` (agents, prompt-registry, context-builder, output-contracts, guardrails, usage-log, run); consolidates Experience/Helm/Interview Lab personas; `GET /api/pi/ai/interactions`; mock-model + injection + validation tests. |
 | **Entry** | T2 rubric SoT stable (agents must cite framework pins) |
 | **Work packages** | `src/lib/ai-orchestration/`: `agents` (line_manager, stakeholder, observer), `context-builder`, `output-contracts`, `guardrails`, `prompt-registry`, `usage-log`; wrap existing `src/lib/ai/*` |
-| **Schema** | Indicative `0090_ai_orchestration.sql` — `ai_agents`, `ai_prompt_versions`, `ai_interactions` (tokens, latency_ms, model, prompt_version, agent_id, input/output hashes) |
-| **API** | Internal first; optional `GET /api/pi/ai/interactions` (self) |
+| **Schema** | `0090_ai_orchestration.sql` — `ai_agents`, `ai_prompt_versions`, `ai_interactions` (tokens, latency_ms, model, prompt_version, agent_slug, input/output hashes) |
+| **API** | Internal `runAgent` first; `GET /api/pi/ai/interactions` (self) |
 | **Data deltas** | AI agents · AI interactions · prompt versions |
-| **Contracts** | Zod/JSON Schema per agent; refuse unstructured capability writes |
-| **Security** | Prompt-injection denylist/sandbox; never elevate observation to verified; cost caps |
-| **Testing** | Mock-model unit tests; schema validation failures; injection fixture suite; eval harness smoke |
-| **Observability** | Mandatory cost/latency on every call |
-| **Exit** | Observer/Manager/Stakeholder calls go through registry; every call logged; mock tests in CI |
-| **Rollback** | Bypass registry behind env for legacy delivery AI only |
+| **Contracts** | Structured JSON contracts per agent; refuse unstructured capability writes |
+| **Security** | Prompt-injection denylist/sandbox; never elevate observation to verified; cost caps; consequential actions need confirmation |
+| **Testing** | Mock-model unit tests; schema validation failures; injection fixture suite |
+| **Observability** | Mandatory cost/latency on every call via `ai_interactions` |
+| **Exit** | Observer/Manager/Stakeholder calls go through registry; every call logged; mock tests in CI — **met** |
+| **Rollback** | Bypass registry behind `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy delivery AI only |
 
 ---
 
@@ -363,7 +366,7 @@ T1–T3 migrations are shipped through `0089`. Remaining migration numbers below
 | Evidence | Done | QA | | | cite versions | | | E2E | | |
 | Capability | Partial seed | | | **coherence** | | | | E2E | | |
 | Feedback and Reflection | Partial | | | | | | notify | | | |
-| AI Orchestration | Partial | | | | | **registry** | usage UI | | | |
+| AI Orchestration | Done (T4) | | | | | **registry ✓** | usage UI | | | |
 | Notifications | Missing module | | | | | | **module** | | | |
 | Audit and Analytics | Partial | QA notes | privacy audit | fallback metrics | | cost logs | inbox ops | CI | | P8 audit |
 
@@ -399,8 +402,8 @@ T1–T3 migrations are shipped through `0089`. Remaining migration numbers below
 | 22 | feedback | **Partial** | review cases, interventions | Notifications T5 |
 | 23 | reflections | **Partial** | sim reflect API; evidence source `reflection` | Keep; optional table later |
 | 24 | recommendations | **Partial** | Various services; not first-class PI table | Prefer derived + explainable; table only if tracked attribution needed |
-| 25 | AI agents | **Partial** | `agent_workflow_runs.routed_agents` strings | **T4** `ai_agents` |
-| 26 | AI interactions | **Partial** | `agent_activity_events` (no cost/latency standard) | **T4** `ai_interactions` |
+| 25 | AI agents | **Done** | `ai_agents` (`0090`) + in-code catalogue | **T4 shipped** |
+| 26 | AI interactions | **Done** | `ai_interactions` (`0090`) cost/latency/provenance | **T4 shipped** |
 | 27 | audit events | **Partial** | `pi_domain_events`, `pi_cf_audit_events` | T1/T5 harden |
 
 *(Founder list is 26 named entities; audit events included as the 27th operational entity from the same DB prompt family.)*
@@ -417,7 +420,7 @@ T1–T3 migrations are shipped through `0089`. Remaining migration numbers below
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free numbers start at **`0090`** (head `0089`).
+- Additive migrations only for person PI; next free numbers start at **`0091`** (head `0090`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.
@@ -445,7 +448,7 @@ T1–T3 migrations are shipped through `0089`. Remaining migration numbers below
 | Unauth smoke | Pages 307 / APIs 401 | Keep |
 | Signed-in manual | **Required T0** | Before claiming pilot |
 | Signed-in E2E | Missing → **T6** | Release gate |
-| AI eval / mock | Sparse → **T4** | Before new agents |
+| AI eval / mock | **T4 shipped** (mock-model + injection fixtures) | Before new agents |
 
 ### Technical debt burn-down
 

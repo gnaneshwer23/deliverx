@@ -4,7 +4,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 **Production:** https://www.deliverx.dev  
 **Supabase:** `jibmyxaldetyycmtlxet`  
-**Migrations:** `0066`–`0089`  
+**Migrations:** `0066`–`0090`  
 **Post-ship HEAD (audit):** `f3ac383`
 
 ---
@@ -119,6 +119,22 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 **Verification:** typecheck (no new errors) · lint clean on touched files · 890 vitest pass (21 new artefact tests) · migrations `0088`/`0089` applied to prod + `list_migrations` confirmed · schema verified (3 tables, 8 policies, RLS on, evidence FK + CHECK, 2 immutability triggers, purge covers versions) · purge RPC now `service_role`-only (anon/authenticated EXECUTE = false) · Vercel prod READY (`deliverx-bpv6yl695`) · unauth smoke: `/api/pi/artefacts` (+`/versions`) 401, `/settings/profile` 307.
 
 **T3 verdict:** Shipped. Do not start T4 (AI agent registry) unless asked. T0 signed-in QA remains open.
+
+---
+
+## Technology T4 — AI orchestration trust layer (2026-07-25)
+
+| SHA | Summary | Migrations / notes |
+| --- | --- | --- |
+| _(pending commit)_ | feat(ai): T4 agent registry, guardrails, provenance, usage log | `0090`; `src/lib/ai-orchestration/`; `GET /api/pi/ai/interactions`; consolidates Experience/Helm/Interview Lab personas |
+
+**Founder override:** User said `t4` — explicit override of the T0–T3 audit gate while TD-001 signed-in QA remains open; pre-existing typecheck/lint debt (TD-016 residual) not blocking under override.
+
+**Scope:** Formal §11 agent framework without chat-as-DB: role registry (line_manager / stakeholder / observer + experience_coach / workspace_coach / interview_lab), immutable prompt versions, context builder (system instructions separate from org data), structured output contracts, prompt-injection guardrails, authority boundaries (no capability / verified-evidence writes; consequential actions need confirmation), mandatory cost/latency logging on `ai_interactions`. App registry is runtime SoT; DB catalogue seeded for ops. Existing Experience/coach/Helm behaviour wrapped, not rewritten.
+
+**Verification:** focused vitest (mock-model, injection, output validation, cascade) · migration `0090` applied to prod · unauth smoke on `/api/pi/ai/interactions` → 401 · Vercel prod READY.
+
+**T4 verdict:** Shipped. Do not start T5 (notifications) unless asked. T0 signed-in QA + TD-006/TD-016 remain open.
 
 ---
 

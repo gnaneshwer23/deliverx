@@ -30,6 +30,7 @@ const EXPORT_TABLES_DIRECT: string[] = [
   "artefacts",
   "artefact_versions",
   "artefact_status_transitions",
+  "ai_interactions",
   "pi_onboarding_sessions",
   "experience_plans",
   "experience_sim_events",

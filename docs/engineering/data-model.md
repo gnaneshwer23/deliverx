@@ -1,6 +1,6 @@
 # Data Model
 
-**Source of truth:** `supabase/migrations/0066`–`0089` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts) on project `jibmyxaldetyycmtlxet`  
+**Source of truth:** `supabase/migrations/0066`–`0090` (PI pivot + T1 privacy + T2 rubric audit + T3 artefacts + T4 AI orchestration) on project `jibmyxaldetyycmtlxet`  
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -124,6 +124,13 @@ erDiagram
 - Purge RPC (`0088`) extended: transitions → clear `current_version_id` → versions → envelopes, deleted **after** evidence (RESTRICT FK); never touches `pi_cf_*`
 - `0089` hotfix: `revoke execute on pi_privacy_purge_person_data from anon, authenticated` (service_role only)
 
+### AI orchestration — `0090` (T4)
+
+- `ai_agents` — platform catalogue (line_manager / stakeholder / observer / coach); not person PI; readable by authenticated
+- `ai_prompt_versions` — **immutable** prompt rows (`agent_slug`, `prompt_slug`, `version`, `prompt_hash`, `output_contract`); app registry is runtime SoT
+- `ai_interactions` — person append-only log (model, provider, tokens, latency_ms, cost_estimate_usd, prompt version, context_sources, input/output hashes, guardrail_flags); self-only RLS
+- Purge cascade extended: `ai_interactions` deleted with person data; `ai_agents` / `ai_prompt_versions` retained (catalogue exclusions)
+
 ---
 
 ## Advisor notes
@@ -148,6 +155,9 @@ erDiagram
 | Framework graph immutability | Triggers after seed (`0075`/`bff9d2d` family) |
 | Artefact version immutability (T3) | `artefact_forbid_version_mutation` before update/delete; new content = new version row |
 | Evidence cites a specific artefact version (T3) | `pi_evidence_provenance` CHECK + app guard `assertEvidenceCitesArtefactVersion` |
+| Prompt version immutability (T4) | `ai_forbid_prompt_version_mutation` before update/delete |
+| AI interaction append-only (T4) | `ai_forbid_interaction_mutation` (purge-only DELETE bypass) |
+| Agents never write capability / verified evidence (T4) | Authority + output contracts + `runAgent` guardrails |
 
 Exact CHECK constraint names live in the migration SQL — treat migrations as authoritative.
 

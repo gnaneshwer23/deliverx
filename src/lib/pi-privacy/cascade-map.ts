@@ -155,6 +155,14 @@ export const PRIVACY_CASCADE_MAP: readonly PrivacyCascadeEntry[] = [
     purge: true,
     notes: "T3 artefact envelopes; current_version_id cleared before version purge",
   },
+  {
+    table: "ai_interactions",
+    kind: "append_only_person",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "T4 AI interaction cost/latency log; catalogue ai_agents/ai_prompt_versions excluded",
+  },
   { table: "pi_onboarding_sessions", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "experience_plans", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   {
@@ -209,6 +217,8 @@ export const PRIVACY_PURGE_EXCLUSIONS = [
   "pi_cf_audit_events",
   "pi_rubric_versions",
   "experience_scenarios",
+  "ai_agents",
+  "ai_prompt_versions",
 ] as const;
 
 export const DELETE_CONFIRM_PHRASE = "DELETE_MY_PI_DATA";
