@@ -1,11 +1,11 @@
 # DeliverX Executive Audit Report
 
 **Date:** 2026-07-25  
-**HEAD context:** Product Bible landed; specialist audits Phases 1–11 under `docs/audit/`; migrations head **`0094`**  
+**HEAD context:** Product Bible landed; specialist audits Phases 1–11 under `docs/audit/`; remediation Batch 1 shipped; migrations head **`0095`**
 **Method:** Synthesis of inventory, UX/a11y, data/security/AI, and performance/test audits against Build Charter, Current Scope, Product Decisions, Product Bible (`00`, `01`, `13`, `15`), technical-debt register, and `docs/qa/release-readiness.md`  
-**Constraint:** Audit only — **no product code or migrations modified**
+**Lifecycle:** Original audit synthesis followed by founder-approved Remediation Batch 1.
 
-**Finding counts:** P0 **8** · P1 **16** · P2 **18** · P3 **8** · P4 **9** (see [`remediation-roadmap.md`](./remediation-roadmap.md))
+**Finding counts at audit:** P0 **8** · P1 **16** · P2 **18** · P3 **8** · P4 **9**. **Three DB P0s are resolved by Batch 1** (see [`remediation-roadmap.md`](./remediation-roadmap.md)).
 
 **Release status (one):** **Testable internally**
 
@@ -20,7 +20,7 @@ DeliverX’s **Professional Intelligence candidate loop is real**: evidence ledg
 Health is **split**:
 
 - **Engine / loop:** Strong for guided internal use.  
-- **Trust at DB boundary:** Weak — three P0 integrity holes allow authenticated PostgREST to bypass app guards.  
+- **Trust at DB boundary:** Batch 1 hardened — authenticated PostgREST cannot mutate ScoreRuns, self-set Verified-bearing VPP columns, or append `platform_verified`.
 - **Product honesty / legal / CI:** Weak for any external audience.
 
 Charter next work is **ops + trust hardening**, not T9.
@@ -76,7 +76,7 @@ Charter next work is **ops + trust hardening**, not T9.
 
 - **Money-back guarantee** copy with no billing ops (Broken in feature matrix).  
 - **CI continuous verification** — workflows disabled (TD-018); gate trustworthy only when run manually.  
-- **DB trust invariants** for capability assignment and Verified — broken *at the database boundary* (app path still honest).  
+- **DB trust invariants** for capability assignment and Verified — **resolved by `0095`**, with live owner/non-owner PostgREST negatives and privileged-path positives.
 - Cookie policy route **404** / no consent banner.
 
 ---
@@ -98,9 +98,9 @@ Charter next work is **ops + trust hardening**, not T9.
 
 | Sev | Risk |
 | --- | --- |
-| P0 | PostgREST ScoreRun invent/alter |
-| P0 | PostgREST self-Verified on `vpp_entries` |
-| P0 | PostgREST `platform_verified` transitions |
+| Resolved P0 | PostgREST ScoreRun invent/alter — `0095` SELECT-only + DML revoke + immutable trigger |
+| Resolved P0 | PostgREST self-Verified — protected-column trigger + service-role-only RPC |
+| Resolved P0 | PostgREST `platform_verified` transitions — RLS + trigger + service-role-only RPC |
 | P1 | Next.js 16.2.9 high advisories (fix ≥16.2.11) |
 | P1 | TD-006 leaked-password protection off |
 | P1 | Observation insert without SQL consent |
@@ -138,7 +138,7 @@ Privacy design (consent OFF, private evidence default, export/delete) is coheren
 
 **Hold in DB:** evidence body/provenance immutability; judgement/snapshot immutability after write; learning/outcomes CHECKs; artefact version immutability; AI prompt/interaction immutability; purge grants.
 
-**Open P0:** ScoreRuns writable; VPP attestation columns writable; elevated evidence status insertable — trust enforced only in Next.js.
+**Closed P0 (`0095`):** ScoreRuns are engine/service-role-only; VPP attestation columns require the narrow attestation RPC; elevated evidence status requires the narrow privileged append RPC.
 
 **P1 follow-ons:** consent not in SQL; nullable `framework_version_id`; judgements INSERT own.
 
@@ -146,7 +146,7 @@ Privacy design (consent OFF, private evidence default, export/delete) is coheren
 
 ## 11. Test coverage
 
-- **941** pass / **25** skip; release gate PASS; live T6 **26/26** when run with secrets (inventory audit).  
+- Original audit: **941** pass / **25** skip; live T6 **26/26**. Batch 1: release gate **248 PI**, production build PASS, live gate **30/30** (18 loop + 12 security).  
 - Coverage **% unmeasured** (no tooling).  
 - Strong: capability engine, ledger, AI orchestration mocks, attestation units, privacy hygiene.  
 - Thin/absent: Playwright this pass, a11y automation, AI live eval, signed-in API matrix without live gate, continuous CI.  
@@ -161,7 +161,7 @@ Privacy design (consent OFF, private evidence default, export/delete) is coheren
 | E2E app workflow | **Verified** (LIVE) |
 | Persistence | **Verified** (then purged) |
 | App-path permissions | **Verified** |
-| DB-boundary trust | **Not verified / failing review** |
+| DB-boundary trust | **Verified — Batch 1 live RLS negatives + privileged positives** |
 | Marketing match | **Fail** |
 | T8 Verified-on | **Shipped, E2E unverified** |
 
@@ -182,7 +182,7 @@ Prior `docs/qa/release-readiness.md` T6 pilot seal remains valid for **functiona
 
 ## 14. Immediate remediation priorities
 
-1. **Batch 1 — DB trust-rail lockdown** (`0095`) — ScoreRuns engine-only; Verified columns attestation-only; block `platform_verified` client transitions; RLS regression tests. Proposal: [`first-remediation-batch.md`](./first-remediation-batch.md).  
+1. **Batch 1 — DB trust-rail lockdown** (`0095`) — **shipped**; ScoreRuns engine-only, Verified columns attestation-only, and client `platform_verified` blocked.
 2. **Honesty pass** — prices/guarantee, demo stories, decorative %, Launchpad includes (no T9).  
 3. **Founder ops** — TD-018 CI minutes; TD-006 HIBP; Privacy/Terms; SMTP reset proof.  
 4. **T8 E2E** in harness + Next ≥16.2.11.  
@@ -205,18 +205,18 @@ After M1: M2 honesty+legal → M3 CI seal → M4 T8 E2E → then reassess **cont
 ```
 Product status:            Split — PI loop strong; marketed product overclaims
 Core workflow status:      Complete and verified (app path, T6 26/26); T8 E2E unverified
-Security status:           Unauth gates OK; DB trust bypass P0 open; Next highs P1; TD-006 open
-Data integrity status:     Ledger/artefact/learning holds; ScoreRun/Verified/status P0 open
+Security status:           Unauth gates + DB trust rails hold; Next highs P1; TD-006 open
+Data integrity status:     Ledger/artefact/learning + ScoreRun/Verified/status rails hold
 AI quality status:         T4 contracts hold on path; injection/citations/bypass residual P1
 UX status:                 Coherent PI concept; multi-shell + honesty/jargon block serious use
 Test coverage status:      Strong PI units + live when run; CI off; no coverage %; no a11y auto
 Release recommendation:    Testable internally
 Top five actions:
-  1. Approve & ship DB trust-rail lockdown (0095 + RLS tests)
+  1. Completed: DB trust-rail lockdown (0095 + RLS tests)
   2. Remove/relabel commercial prices, money-back, demo testimonials, decorative %
   3. Founder: restore CI (TD-018) + enable leaked-password (TD-006) + legal Privacy/Terms
   4. Add T8 attestation E2E to release harness; bump Next ≥16.2.11
   5. UX: ScoreRun language, Command Centre demotion, Launchpad naming, drop review seed
 ```
 
-**No code changed; awaiting founder approval for batch 1.**
+**Batch 1 shipped.** Remaining audit findings retain their original priorities; no T9 work is authorised.

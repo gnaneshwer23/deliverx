@@ -296,6 +296,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25d — Capability and verification writes are privileged at DB
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | The database, not only Next.js, enforces the two highest-trust write boundaries. `pi_capability_score_runs` is authenticated-read-only and writable only through the server Capability Engine service-role path. `vpp_entries.verifier_status=externally_attested`, `evidence_strength=externally_verified`, and `pi_evidence_status_transitions.to_status=platform_verified` may be written only by narrow T8 service-role RPCs. ScoreRun UPDATE/DELETE remains forbidden except privacy purge DELETE under `app.pi_privacy_delete`. |
+| **Why** | Owner-scoped `ALL` policies proved tenant isolation but did not prove authority. A user could previously fabricate capability or verification against their own rows through PostgREST, bypassing honest app guards. |
+| **Consequence** | Migration `0095_db_trust_rail_lockdown.sql`; engine callers use `createAdminClient`; attestation store uses `pi_apply_vpp_attestation_state` and evidence append uses `pi_append_platform_verified_transition`; owner/non-owner live RLS regression tests are part of T6 security journeys. This decision does not authorize T9. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c.

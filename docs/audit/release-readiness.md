@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | Not testable | No | Core loop is live-verified |
 | **Testable internally** | **Yes — selected** | T6 + units prove app-path loop; founders/engineers can exercise product |
-| Ready for controlled pilot | **No** | DB P0 trust bypasses; commercial/legal honesty P0; CI off; T8 E2E missing |
+| Ready for controlled pilot | **No** | DB trust bypasses are closed; commercial/legal honesty P0, CI off, and T8 E2E remain |
 | Ready for public beta | **No** | Above + a11y/Next/cookie/ops gaps |
 | Ready for production | **No** | Charter + evidence |
 
@@ -26,17 +26,17 @@
 | Gate | Evidence | Result |
 | --- | --- | --- |
 | Build Charter active | `docs/product/build-charter.md` | Pass |
-| Core loop E2E (app) | T6 live 26/26 (inventory audit) | Pass |
-| Release gate manual | 242 + unauth + security always-on | Pass |
+| Core loop E2E (app) | Batch 1 live gate 30/30 (18 loop + 12 security) | Pass |
+| Release gate manual | 248 PI + unauth + security | Pass |
 | Full `npm test` | 941 pass / 25 skip | Pass |
-| Migrations head | `0094` on prod | Pass (head) |
+| Migrations head | `0095_db_trust_rail_lockdown` on prod | Pass (head) |
 | Unauth pages/APIs | LIVE + HTTP | Pass |
 | Purge / anon EXECUTE | Prod SQL | Pass |
 | Learning ≠ capability | LIVE + CHECK | Pass |
 | Verified off without attestation (app) | LIVE | Pass |
-| Verified off without attestation (**DB**) | RLS ALL on VPP | **Fail** |
-| Capability only via engine (**DB**) | ScoreRuns ALL | **Fail** |
-| Evidence verification honesty (**DB**) | transitions INSERT | **Fail** |
+| Verified off without attestation (**DB**) | protected-column trigger + service-role-only RPC; live owner/non-owner negatives | **Pass** |
+| Capability only via engine (**DB**) | SELECT-only owner RLS + DML revoke + immutable trigger; live negatives | **Pass** |
+| Evidence verification honesty (**DB**) | RLS exclusion + elevated-status trigger + service-role-only RPC | **Pass** |
 | Marketing commercial honesty | Prices + guarantee, no Stripe | **Fail** |
 | Legal Privacy/Terms | Placeholders | **Fail** |
 | Continuous CI | TD-018 disabled workflows | **Fail** |
@@ -52,8 +52,8 @@
 | Claim | Verdict |
 | --- | --- |
 | “Core evidence loop works” | **True** (app path, automated live) |
-| “Capability Engine is the only writer” | **True in app intent; False at DB** until batch 1 |
-| “Verified requires attestation” | **True in app + gate helpers; False at DB** until batch 1 |
+| “Capability Engine is the only ScoreRun writer” | **True in app and DB** after `0095` |
+| “Verified requires attestation” | **True in app and DB** after `0095` |
 | “T8 shipped” | **True** (code/docs/`0094`) |
 | “T8 E2E verified” | **False** |
 | “Ready for pilot users” | **False** until DB + honesty (+ preferably CI/legal) |
@@ -63,7 +63,7 @@
 
 ## Path to controlled pilot (minimum)
 
-1. Ship **Batch 1 — DB trust-rail lockdown** (`0095` + tests).  
+1. **Completed:** Batch 1 — DB trust-rail lockdown (`0095` + live RLS tests).
 2. Honesty: prices/guarantee/demo %/testimonials.  
 3. Legal: Privacy/Terms draft honesty or finished copy.  
 4. Founder: TD-006 and either restore CI or named manual gate cadence.  
@@ -91,7 +91,7 @@ Detail: [`release-plan.md`](./release-plan.md) exit criteria **B**.
 **Name:** DB trust-rail lockdown  
 **Doc:** [`first-remediation-batch.md`](./first-remediation-batch.md)  
 **Migration slot:** `0095` (after `0094`)  
-**Status:** Proposal only — **no code changed; awaiting founder approval for batch 1.**
+**Status:** **Shipped** — migration `0095` applied to production; app write paths deployed; local and live gates pass.
 
 ---
 

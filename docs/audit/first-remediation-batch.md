@@ -1,7 +1,7 @@
-# Phase 13 — First remediation batch (proposal only)
+# Phase 13 — First remediation batch (shipped)
 
 **Date:** 2026-07-25  
-**Status:** **Proposal — awaiting founder approval. No code or migrations applied in this audit pass.**  
+**Status:** **Shipped 2026-07-25 — founder-approved; migration `0095` applied to production.**
 **Batch name:** **DB trust-rail lockdown**  
 **Coherence rule:** Security / data integrity / authz at the Postgres boundary for ScoreRuns, Verified attestation columns, and elevated evidence statuses — plus regression/RLS tests. Optional Next.js patch is **out of this batch** unless founder expands scope (keep batch coherent).
 
@@ -150,8 +150,8 @@ Supabase: re-run security advisors; confirm no new anon EXECUTE on DEFINER mutat
 
 ---
 
-## Founder decision required
+## Founder decision
 
-Approve **Batch 1 — DB trust-rail lockdown** as the next vertical engineering slice under the Build Charter (pilot trust hardening).  
+Founder approved **Batch 1 — DB trust-rail lockdown** as the next vertical engineering slice under the Build Charter (pilot trust hardening).
 
-**No code changed in this audit; awaiting founder approval for batch 1.**
+**Batch 1 shipped.** All three DB P0s are closed by policy, trigger, grant, and live PostgREST evidence. Further batches require founder approval.

@@ -248,6 +248,24 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## Remediation Batch 1 — DB trust-rail lockdown (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| `0095_db_trust_rail_lockdown.sql` | ScoreRun authenticated DML revoke + immutable trigger; VPP protected-column trigger; elevated evidence trigger; two service-role-only RPCs |
+| `b96e538` | Server write paths moved to service-role clients / narrow attestation RPCs; live RLS regressions added |
+| `e2e/t6-security-journeys.test.ts` | Owner + non-owner negatives for all three P0s; service-role positives |
+
+**Pre-change write paths:** Capability run, baseline completion, and final completion passed the authenticated SSR client to `persistCapabilityRun`; T8 confirmation already used `createAdminClient` but wrote protected columns and `platform_verified` directly; ordinary evidence transitions used the authenticated client and relied on the API guard.
+
+**Post-change write paths:** all ScoreRun persistence receives `createAdminClient`; T8 uses `pi_apply_vpp_attestation_state` and `pi_append_platform_verified_transition`; ordinary user transitions remain authenticated and cannot request `platform_verified`.
+
+**Verification:** focused 32 pass / 9 live-skipped; touched-file ESLint clean; non-live release gate PASS (248 PI + unauth + security); Next production build PASS; migration head `0095` confirmed on `jibmyxaldetyycmtlxet`; ScoreRun grants show authenticated SELECT but no INSERT/UPDATE/DELETE/TRUNCATE; advisors show no new finding; post-deploy live release gate PASS **30/30** (18 signed-in loop + 12 security, including owner/non-owner negatives and privileged positives).
+
+**Batch 1 verdict:** Shipped. Remaining remediation batches require founder approval; T9 remains blocked.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

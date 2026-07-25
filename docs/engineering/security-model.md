@@ -18,7 +18,7 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 
 | Layer | Posture |
 | --- | --- |
-| **Person PI tables** | Self-only RLS — users read/write their own evidence, ScoreRuns, learning, outcomes, consent, artefacts + versions, AI interactions, notifications |
+| **Person PI tables** | Self-only RLS by default. ScoreRuns are the deliberate exception: users read their own rows; only the Capability Engine service-role path writes. Verified-bearing VPP columns and elevated evidence status use service-role-only RPCs. |
 | **Org / project delivery tables** | Existing org membership / project access helpers (`src/lib/access`, project access tests) |
 | **Admin framework** | Elevated admin APIs for `pi_cf_*` version management; immutability triggers after publish/seed |
 | **Review admin** | `/api/pi/review/admin` gated to admin operators |
@@ -84,6 +84,13 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `0089` explicitly revokes EXECUTE from `anon`/`authenticated`; verified on prod (anon/authenticated EXECUTE = false)
 - `0092` closes TD-016: anonymous EXECUTE is false for every inventoried SECURITY DEFINER function. The three read helpers retain authenticated EXECUTE because active RLS policies invoke them; revocation would break person/org/framework access.
 - All DeliverX-owned SECURITY DEFINER functions have an explicit `search_path = public`; managed `vault` / `pgbouncer` functions use an empty search path.
+
+### Remediation Batch 1 (`0095`)
+
+- `pi_capability_score_runs`: authenticated DML revoked; owner SELECT only; immutable trigger blocks UPDATE/DELETE except privacy purge DELETE under `app.pi_privacy_delete`.
+- `vpp_entries`: ordinary owner CRUD remains, but a trigger blocks transitions involving `externally_attested` or `externally_verified`. The T8 server calls `pi_apply_vpp_attestation_state`, executable only by `service_role`.
+- `pi_evidence_status_transitions`: owner inserts remain for ordinary statuses; both RLS and a trigger reject direct `platform_verified`. T8 calls `pi_append_platform_verified_transition`, executable only by `service_role`.
+- New functions are `SECURITY DEFINER`, fixed `search_path = public`; anon/authenticated EXECUTE is false. Post-migration advisors introduced no new findings.
 
 Production inventory (`anon / authenticated / service_role`, before → after):
 

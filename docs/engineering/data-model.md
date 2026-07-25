@@ -2,7 +2,7 @@
 
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
 
-**Source of truth:** `supabase/migrations/0066`–`0094` (PI pivot through T8 external attestation; T1–T7 hardening) on project `jibmyxaldetyycmtlxet`  
+**Source of truth:** `supabase/migrations/0066`–`0095` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown) on project `jibmyxaldetyycmtlxet`
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -163,6 +163,13 @@ erDiagram
 - RLS: org members SELECT; org-admin (pm/executive) INSERT/UPDATE/DELETE
 - Purge wrapper deletes membership rows then calls prior `pi_privacy_purge_person_data_t5`; departments/teams retained
 
+### DB trust-rail lockdown — `0095` (Remediation Batch 1)
+
+- `pi_capability_score_runs`: authenticated owner SELECT only; client INSERT/UPDATE/DELETE/TRUNCATE revoked. Engine persist callers use `createAdminClient`. UPDATE/DELETE are blocked by `trg_pi_capability_score_runs_immutable`; privacy purge DELETE remains available only under transaction-local `app.pi_privacy_delete`.
+- `vpp_entries`: explicit owner SELECT/INSERT/UPDATE/DELETE policies replace broad `ALL`. `trg_vpp_entries_verified_columns` blocks setting or changing `externally_attested` / `externally_verified`; `pi_apply_vpp_attestation_state` is the service-role-only T8 path.
+- `pi_evidence_status_transitions`: authenticated INSERT policy excludes `platform_verified`; a second trigger rejects direct elevated inserts. `pi_append_platform_verified_transition` is the service-role-only attestation append.
+- Both privileged RPCs are `SECURITY DEFINER`, `search_path = public`, with anon/authenticated EXECUTE revoked.
+
 ---
 
 ## Advisor notes
@@ -178,14 +185,14 @@ erDiagram
 | Invariant | How |
 | --- | --- |
 | Append-oriented evidence history | Ledger transitions + provenance tables; forbid silent capability invent |
-| Capability only via ScoreRun persist | App invariant + engine persist entry points |
+| Capability only via ScoreRun persist | `0095` SELECT-only client RLS + authenticated DML revoke + immutable trigger; engine callers use service role |
 | Framework pin | `framework_version_id` on ScoreRuns when published pin exists |
 | Rubric resolve provenance (T2) | `rubric_resolve_source` + labelled API `rubricSource`; DB preferred |
 | `run_kind` ∈ standard/baseline/final/transfer | Persist + assessment paths |
 | Consent default deny | No `pi_observation_consent` row ⇒ observation denied |
 | Learning ≠ competency | Learning persist never writes ScoreRuns |
 | Outcomes ≠ external verification without attestation | Strength derivation + T8 attestation path only |
-| `deliverxVerified` gate | `externally_attested` + `externally_verified` + kill switch |
+| `deliverxVerified` gate | `externally_attested` + `externally_verified` + kill switch; protected DB columns mutate only through service-role attestation RPC |
 | Framework graph immutability | Triggers after seed (`0075`/`bff9d2d` family) |
 | Artefact version immutability (T3) | `artefact_forbid_version_mutation` before update/delete; new content = new version row |
 | Evidence cites a specific artefact version (T3) | `pi_evidence_provenance` CHECK + app guard `assertEvidenceCitesArtefactVersion` |
@@ -200,7 +207,7 @@ Exact CHECK constraint names live in the migration SQL — treat migrations as a
 
 ## RLS posture (summary)
 
-- Person PI tables: **self-only** (auth.uid() ownership) for candidate data, including `pi_notifications`
+- Person PI tables: **self-only** (auth.uid() ownership) for candidate data, including `pi_notifications`; ScoreRuns are self-readable but service-role/engine-writable only
 - Org-admin / framework admin: elevated paths for `pi_cf_*` and review admin APIs
 - Public portfolio share: tokenised views that filter non-shareable / private evidence
 - `pi_cf_audit_events`: authenticated deny-all (T1); service role only

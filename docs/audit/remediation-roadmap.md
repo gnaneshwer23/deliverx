@@ -3,7 +3,7 @@
 **Date:** 2026-07-25  
 **Authority:** Build Charter · Current Scope · Product Bible `00`/`13`/`15` · specialist audits under `docs/audit/`  
 **Constraint:** Audit synthesis only — **no product code or migrations in this pass**  
-**Migration head at synthesis:** `0094_external_attestation.sql`  
+**Migration head:** `0095_db_trust_rail_lockdown.sql` (production, 2026-07-25)
 **T8 status:** **Shipped** in code/docs (`0094`, attestation store, Verified gate). **Not** in T6 signed-in harness — treat as **Complete but unverified E2E** (units strong; live attestor → Verified-on journey not automated). Do not invent E2E pass.
 
 Severity (this roadmap):
@@ -26,9 +26,9 @@ Severity (this roadmap):
 
 | ID | Problem | Impact | Evidence | Proposed solution | Affected files (expected) | Deps | Acceptance | Size | Now/defer |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **R-P0-01** | Own-row `ALL` RLS on `pi_capability_score_runs`; no forbid-mutation trigger | Authenticated JWT can invent/alter/delete ScoreRuns outside Capability Engine | `database-risk-register` DB-P0-01; `security-audit` SEC-P0-02 | Migration: engine/service_role-only writes; forbid UPDATE/DELETE for authenticated; optional INSERT revoke + engine RPC | Next migration **`0095_*`**; `capability-engine/persist.ts`; RLS tests | None | PostgREST user JWT cannot mutate ScoreRuns; engine path still works; regression tests green | M | **Fix now** (batch 1) |
-| **R-P0-02** | Own-row `ALL` on `vpp_entries` allows client-set `externally_attested` / `externally_verified` | Self-Verified badge without attestation | DB-P0-02; SEC-P0-01; `verified-gate.ts` | Trigger/CHECK or column UPDATE revoke; attestation path service_role only | **`0095_*`**; `external-attestation/store.ts`; `verified-portfolio/store.ts`; tests | R-P0-01 same mig OK | User JWT cannot set attestation columns; confirm path still lights Verified | M | **Fix now** (batch 1) |
-| **R-P0-03** | Evidence status transitions INSERT allows `to_status=platform_verified` | Bypass API verification honesty | DB-P0-03; SEC-P0-03; `api/pi/evidence/[id]/route.ts` | Trigger/CHECK: elevated statuses only via service_role / attestation actor | **`0095_*`**; evidence APIs; e2e security | Batch 1 | User JWT cannot insert `platform_verified`; attestor path still can | M | **Fix now** (batch 1) |
+| **R-P0-01 — Closed** | Own-row `ALL` RLS on `pi_capability_score_runs`; no forbid-mutation trigger | Authenticated JWT could invent/alter/delete ScoreRuns outside Capability Engine | `0095`: SELECT-only owner policy, authenticated DML revoked, immutable trigger with purge-only bypass; all engine callers use service role | `0095_db_trust_rail_lockdown.sql`; capability persist callers; live RLS tests | None | Owner/non-owner PostgREST mutation denied; service-role engine write and purge pass | M | **Resolved — Batch 1** |
+| **R-P0-02 — Closed** | Own-row `ALL` on `vpp_entries` allowed client-set `externally_attested` / `externally_verified` | Self-Verified badge without attestation | `0095`: explicit owner CRUD plus protected-column trigger; service-role-only attestation state RPC | `0095`; `external-attestation/store.ts`; VPP store/tests | R-P0-01 | Owner/non-owner protected writes denied; privileged attestation path passes | M | **Resolved — Batch 1** |
+| **R-P0-03 — Closed** | Evidence transitions allowed client `to_status=platform_verified` | API verification-honesty bypass | `0095`: RLS excludes elevated status, trigger denies direct inserts, narrow service-role append RPC | `0095`; `evidence-ledger/append.ts`; live security tests | Batch 1 | Owner/non-owner elevated insert denied; attestation append passes | M | **Resolved — Batch 1** |
 | **R-P0-04** | Priced CTAs + money-back guarantee with **no Stripe / T9** | Legal & trust; sells what cannot be fulfilled | `feature-completeness-matrix`; MF-001; UX P0-4; `homepage-data` GUARANTEE | Remove prices & guarantee **or** label “pilot — not for sale” until T9 founder approval | Marketing `career-suite.ts`, homepage, `/pricing`, start pages | T9 blocked | No unpaid guarantee claim; no “buy” implication without entitlement | S | **Fix now** (honesty pass; not batch 1) |
 | **R-P0-05** | Privacy / Terms are placeholders while product implies finished legal posture | Compliance / credibility | UX P0-1; `privacy`/`terms` pages | Founder-approved copy **or** explicit “draft / pilot” banner + remove overclaim | `(marketing)/privacy`, `terms` | Legal | No false finished-policy claim | S–M | **Fix now** (founder legal) |
 | **R-P0-06** | Unexplained decorative % on marketing/auth | Violates “no unexplained scores” | UX P0-2; A0-5; landing fixtures | Label “illustration” or remove | `home-sections`, heroes, `AuthBrandPanel`, `landing-data` | — | No bare capability-like % without method label | S | **Fix now** (honesty) |
@@ -112,7 +112,7 @@ Severity (this roadmap):
 
 ### 1. Release blockers
 
-1. **DB trust-rail lockdown** (R-P0-01…03) — proposed **first remediation batch**  
+1. **DB trust-rail lockdown** (R-P0-01…03) — **shipped in `0095`**
 2. Commercial honesty (R-P0-04, R-P0-08) + decorative % (R-P0-06)  
 3. Legal Privacy/Terms (R-P0-05)  
 4. Restore CI (R-P0-07) + TD-006 (R-P1-01)  
