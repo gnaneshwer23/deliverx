@@ -176,9 +176,9 @@ export function scoreRoleReadiness(
   const unexplainedCount = matches.filter((m) => m.level === "not_assessed").length;
 
   const summary = [
-    `${role.title}: ${readinessPct}% evidence-backed readiness.`,
+    `${role.title}: ${readinessPct}% evidence coverage (heuristic — not capability).`,
     `${strongCount} strong, ${partialCount} partial, ${gapCount} gaps.`,
-    "This score packages evidence coverage — it does not assign capability.",
+    "This packages evidence coverage — it does not assign capability.",
   ].join(" ");
 
   return {
@@ -192,5 +192,6 @@ export function scoreRoleReadiness(
     unexplainedCount,
     summary,
     capabilityAssigned: false,
+    readinessKind: "evidence_coverage",
   };
 }

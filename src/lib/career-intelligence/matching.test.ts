@@ -95,6 +95,8 @@ describe("Career Intelligence matching", () => {
     );
     expect(result.capabilityAssigned).toBe(false);
     expect(result.readinessPct).toBeGreaterThan(0);
+    expect(result.readinessKind).toBe("evidence_coverage");
+    expect(result.summary).toMatch(/evidence coverage/i);
     expect(result.summary).toMatch(/does not assign capability/i);
   });
 });
@@ -132,6 +134,7 @@ describe("workflows and contracts", () => {
 
   it("documents A–I contracts", () => {
     expect(CAREER_ROUTES.home).toBe("/launchpad/app");
+    expect(CAREER_ROUTES.profile).toBe("/profile");
     expect(CAREER_WORKFLOWS.length).toBeGreaterThan(3);
     expect(CAREER_REUSE_MATRIX.some((r) => r.verdict.includes("Reuse"))).toBe(true);
     expect(CAREER_MVP_SCOPE).toContain("Role Readiness");

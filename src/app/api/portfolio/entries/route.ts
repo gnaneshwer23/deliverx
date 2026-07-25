@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import {
+  loadRecentSnapshotClaims,
+  toPortfolioCapabilityClaims,
+} from "@/lib/capability-engine/snapshot-claims";
 import { createClient } from "@/lib/supabase/server";
 import {
   createPortfolioEntryFromEvidence,
@@ -16,11 +20,22 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const [entries, evidence] = await Promise.all([
+    const [entries, evidence, snapshotPack] = await Promise.all([
       listPortfolioEntries(supabase, user.id),
       listUserEvidenceForPortfolio(supabase, user.id),
+      loadRecentSnapshotClaims(supabase, user.id, 1),
     ]);
-    return NextResponse.json({ entries, evidence });
+    const capabilityClaims = snapshotPack.latest
+      ? toPortfolioCapabilityClaims(snapshotPack.latest, { requireCitations: false })
+      : [];
+    return NextResponse.json({
+      entries,
+      evidence,
+      capabilityClaims,
+      snapshotId: snapshotPack.latest?.snapshotId ?? null,
+      readinessSignal: snapshotPack.latest?.readiness ?? null,
+      capabilityAssigned: false,
+    });
   } catch (error) {
     console.error("[vpp] list failed", error);
     return NextResponse.json({ error: "Could not load portfolio" }, { status: 500 });

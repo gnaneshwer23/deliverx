@@ -129,7 +129,7 @@ export function pathHref(path: PiRecommendedPath): string {
     case "launchpad":
       return "/launchpad/app";
     case "hub":
-      return "/hub";
+      return "/profile";
   }
 }
 

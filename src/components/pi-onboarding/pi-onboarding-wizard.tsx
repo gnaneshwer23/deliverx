@@ -192,7 +192,7 @@ export function PiOnboardingWizard({
         }
 
         if (opts.exit) {
-          router.push("/hub");
+          router.push("/profile");
           router.refresh();
           return;
         }

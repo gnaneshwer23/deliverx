@@ -84,7 +84,7 @@ export const CAREER_MODULES: Array<{
   {
     id: "profile",
     label: "Professional Profile",
-    href: "/launchpad/app/profile",
+    href: "/profile",
     mvp: true,
     userQuestion: "What does my PI profile say about me?",
   },
@@ -183,6 +183,11 @@ export type RoleReadinessResult = {
   summary: string;
   /** Explicit: Career Intelligence does not assign capability */
   capabilityAssigned: false;
+  /**
+   * score_run_projection = derived from SnapshotClaims.
+   * evidence_coverage = labelled heuristic fallback — never capability truth.
+   */
+  readinessKind: "score_run_projection" | "evidence_coverage";
 };
 
 export type RoadmapAction = {
@@ -220,6 +225,15 @@ export type ScoreRunCareerContext = {
   strengths: string[];
   gaps: string[];
   recommendations: Array<{ id?: string; title: string; rationale?: string }>;
+  levels: Array<{
+    competencyId: string;
+    level: string;
+    confidence: number;
+    evidenceReferences: string[];
+  }>;
+  frameworkVersionId: string | null;
+  rubricSlug: string | null;
+  rubricVersion: string | null;
 };
 
 export type CareerIntelligenceSnapshot = {

@@ -325,4 +325,60 @@ describe("Capability Engine orchestrator", () => {
       true,
     );
   });
+
+  it("golden reproducibility: same evidence + same rubric version → same snapshot projection", () => {
+    const evidence = [
+      makeEvidence({
+        id: "gold-1",
+        sourceType: "decision",
+        title: "Navigated conflicting stakeholder priorities with rationale",
+        rawContent: { competency: "stakeholder" },
+        capturedAt: "2026-07-01T12:00:00.000Z",
+      }),
+      makeEvidence({
+        id: "gold-2",
+        sourceType: "decision",
+        title: "Protected delivery under constraint on roadmap",
+        rawContent: { competency: "delivery" },
+        capturedAt: "2026-07-01T13:00:00.000Z",
+      }),
+    ];
+    const a = runCapabilityEngine({
+      userId: "u-gold",
+      evidence,
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      now: new Date("2026-07-25T10:00:00.000Z"),
+    });
+    const b = runCapabilityEngine({
+      userId: "u-gold",
+      evidence,
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      now: new Date("2026-07-25T10:00:00.000Z"),
+    });
+    expect(a.ok && b.ok).toBe(true);
+    expect(a.inputHash).toBe(b.inputHash);
+    expect(a.snapshot?.readiness).toBe(b.snapshot?.readiness);
+    expect(a.snapshot?.strengths).toEqual(b.snapshot?.strengths);
+    expect(a.snapshot?.gaps).toEqual(b.snapshot?.gaps);
+    expect(
+      a.judgements.map((j) => ({
+        c: j.competencyId,
+        i: j.indicatorId,
+        l: j.levelProposed,
+        conf: j.confidence,
+        refs: j.evidenceReferences,
+      })),
+    ).toEqual(
+      b.judgements.map((j) => ({
+        c: j.competencyId,
+        i: j.indicatorId,
+        l: j.levelProposed,
+        conf: j.confidence,
+        refs: j.evidenceReferences,
+      })),
+    );
+    expect(a.snapshot?.rubricVersion).toBe("2026.1");
+  });
 });

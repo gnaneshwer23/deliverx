@@ -13,7 +13,7 @@ export type RubricDefinition = {
   indicators: Record<string, RubricIndicator>;
 };
 
-/** In-code published rubric (mirrors 0068 seed) — versioned and swapable. */
+/** In-code published rubric (mirrors 0068 seed) — versioned pin + Phase 2 DB fallback. */
 export const PM_CORE_RUBRIC_2026_1: RubricDefinition = {
   slug: "pm-core",
   version: "2026.1",

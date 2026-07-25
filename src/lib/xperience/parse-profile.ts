@@ -23,7 +23,25 @@ export function parseCandidateProfile(body: unknown): CandidateProfileInput | nu
     selectedSkill: optionalString(data.selectedSkill),
     confidence: optionalString(data.confidence),
     startTimeline: optionalString(data.startTimeline),
+    planId: optionalString(data.planId),
+    planEmphasis: parseEmphasis(data.planEmphasis),
   };
+}
+
+function parseEmphasis(
+  value: unknown,
+): "stakeholder" | "delivery" | "discovery" | "balanced" | undefined {
+  if (typeof value !== "string") return undefined;
+  const v = value.trim().toLowerCase();
+  if (
+    v === "stakeholder" ||
+    v === "delivery" ||
+    v === "discovery" ||
+    v === "balanced"
+  ) {
+    return v;
+  }
+  return undefined;
 }
 
 function optionalString(value: unknown): string | undefined {

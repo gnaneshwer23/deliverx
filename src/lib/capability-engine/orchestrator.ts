@@ -45,7 +45,8 @@ export function runCapabilityEngine(input: OrchestratorInput): OrchestratorResul
   const now = input.now ?? new Date();
   const rubricSlug = input.rubricSlug ?? DEFAULT_RUBRIC_SLUG;
   const rubricVersion = input.rubricVersion ?? DEFAULT_RUBRIC_VERSION;
-  const rubric = getRubric(rubricSlug, rubricVersion);
+  // Prefer an explicitly resolved rubric (DB bridge); fall back to in-code pin.
+  const rubric = input.rubric ?? getRubric(rubricSlug, rubricVersion);
 
   if (!rubric) {
     return {

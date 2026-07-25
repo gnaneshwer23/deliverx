@@ -1,6 +1,6 @@
 /**
  * Bridge admin framework graph ↔ pi_rubric_versions.anchors (capability engine).
- * Publish sync keeps dual-source compatible until Phase 2 migrates getRubric to DB.
+ * Phase 2: resolveRubricDefinition prefers DB graph; in-code getRubric remains the pin fallback.
  */
 
 import { createHash } from "node:crypto";
@@ -75,6 +75,73 @@ export function graphToRubricDefinition(
     version: graph.version.version,
     title: graph.version.title,
     indicators,
+  };
+}
+
+/**
+ * Resolve a published framework version pin for ScoreRun persistence.
+ * Prefers pi_cf_* published rows; returns null when DB graph is missing
+ * (caller still persists rubric_slug + rubric_version from in-code rubric).
+ */
+export type FrameworkVersionPin = {
+  frameworkVersionId: string;
+  frameworkSlug: string;
+  version: string;
+  contentHash: string | null;
+  source: "pi_cf_published";
+};
+
+export async function resolvePublishedFrameworkPin(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: { from: (table: string) => any },
+  opts: { frameworkSlug: string; version: string },
+): Promise<FrameworkVersionPin | null> {
+  const { data: framework, error: fwErr } = await supabase
+    .from("pi_cf_frameworks")
+    .select("id, slug")
+    .eq("slug", opts.frameworkSlug)
+    .maybeSingle();
+
+  if (fwErr || !framework?.id) return null;
+
+  const { data: exact, error: exactErr } = await supabase
+    .from("pi_cf_framework_versions")
+    .select("id, version, content_hash, status, framework_id")
+    .eq("framework_id", framework.id as string)
+    .eq("version", opts.version)
+    .maybeSingle();
+
+  if (
+    !exactErr &&
+    exact?.id &&
+    (exact.status === "published" || exact.status === "deprecated")
+  ) {
+    return {
+      frameworkVersionId: exact.id as string,
+      frameworkSlug: opts.frameworkSlug,
+      version: exact.version as string,
+      contentHash: (exact.content_hash as string | null) ?? null,
+      source: "pi_cf_published",
+    };
+  }
+
+  const { data: latestPublished, error: pubErr } = await supabase
+    .from("pi_cf_framework_versions")
+    .select("id, version, content_hash, status, framework_id")
+    .eq("framework_id", framework.id as string)
+    .in("status", ["published"])
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (pubErr || !latestPublished?.id) return null;
+
+  return {
+    frameworkVersionId: latestPublished.id as string,
+    frameworkSlug: opts.frameworkSlug,
+    version: latestPublished.version as string,
+    contentHash: (latestPublished.content_hash as string | null) ?? null,
+    source: "pi_cf_published",
   };
 }
 

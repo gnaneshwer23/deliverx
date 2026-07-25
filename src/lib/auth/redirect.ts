@@ -16,6 +16,7 @@ import {
   needsPiOnboarding,
 } from "@/lib/pi-onboarding/store";
 import { PI_ONBOARDING_PATH } from "@/lib/pi-onboarding/types";
+import { PI_PROFILE_PATH } from "@/lib/pi-profile/paths";
 
 const HUB_PATH = "/hub";
 
@@ -52,11 +53,19 @@ function isHubDestination(path: string): boolean {
   return path === HUB_PATH || path.startsWith(`${HUB_PATH}/`) || path.startsWith(`${HUB_PATH}?`);
 }
 
+function isProfileDestination(path: string): boolean {
+  return (
+    path === PI_PROFILE_PATH ||
+    path.startsWith(`${PI_PROFILE_PATH}/`) ||
+    path.startsWith(`${PI_PROFILE_PATH}?`)
+  );
+}
+
 /**
  * Post-login destination.
  *
- * - xperience / launchpad users → their apps (unless safeNext is another non-onboarding path)
- * - bundle / no product intent → /hub
+ * - Candidate journey (bundle / no product / career products after PI) → /profile
+ * - Explicit Experience / Launchpad / Hub deep links preserved
  * - team-copilot (and users with org) → existing workspace / onboarding flow
  * Deep links via `next` are preserved when safe.
  */
@@ -83,6 +92,11 @@ export async function resolveAuthenticatedPath(
   // Explicit hub deep link (still allow after PI onboarding)
   if (safeNext && isHubDestination(safeNext)) {
     return HUB_PATH;
+  }
+
+  // Explicit profile deep link
+  if (safeNext && isProfileDestination(safeNext)) {
+    return safeNext;
   }
 
   // Allow explicit PI onboarding deep link
@@ -113,7 +127,8 @@ export async function resolveAuthenticatedPath(
     if (safeNext && !safeNext.startsWith("/onboarding")) {
       return safeNext;
     }
-    return XPERIENCE_APP_PATH;
+    // Candidate centre — Experience remains one hop from Profile.
+    return PI_PROFILE_PATH;
   }
 
   // Launchpad product users skip Professional Workspace org onboarding.
@@ -130,15 +145,15 @@ export async function resolveAuthenticatedPath(
     if (safeNext && !safeNext.startsWith("/onboarding")) {
       return safeNext;
     }
-    return LAUNCHPAD_APP_PATH;
+    return PI_PROFILE_PATH;
   }
 
-  // Bundle or no strong product intent → DeliverX Hub (unless deep-linked elsewhere)
+  // Bundle or no strong product intent → Profile centre (Hub stays a secondary chooser)
   if (product === "bundle" || !product) {
     if (safeNext && !safeNext.startsWith("/onboarding") && !isAuthEntryLike(safeNext)) {
       return safeNext;
     }
-    return HUB_PATH;
+    return PI_PROFILE_PATH;
   }
 
   const { data: profile } = await supabase

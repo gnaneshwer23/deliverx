@@ -82,6 +82,45 @@ export default async function PortfolioExternalViewPage({ params }: { params: Pa
           </ul>
         </section>
 
+        {Array.isArray(view.capabilityClaims) && view.capabilityClaims.length > 0 ? (
+          <section className="mt-6">
+            <h2 className="text-sm font-medium">Capability claims</h2>
+            <p className="mt-1 text-xs text-[#6B6B64]">
+              {String(
+                view.capabilityClaimsNotice ??
+                  "ScoreRun projections with evidence citations — not DeliverX verification.",
+              )}
+            </p>
+            <ul className="mt-2 space-y-2 text-sm text-[#4A4A45]">
+              {(
+                view.capabilityClaims as Array<{
+                  competencyId: string;
+                  level: string;
+                  evidenceCitations: Array<{ evidenceId: string }>;
+                  deliverxVerified: boolean;
+                }>
+              ).map((c) => (
+                <li key={c.competencyId} className="border-b border-[#F0EEE6] py-1">
+                  <span className="font-medium text-[#1A1A18]">
+                    {c.competencyId} · {c.level.replace(/_/g, " ")}
+                  </span>
+                  {c.evidenceCitations.length ? (
+                    <span className="block text-[10px] text-[#6B6B64]">
+                      Cited evidence:{" "}
+                      {c.evidenceCitations.map((e) => e.evidenceId).join(", ")}
+                    </span>
+                  ) : null}
+                  {!c.deliverxVerified ? (
+                    <span className="block text-[10px] text-[#6B6B64]">
+                      Not independently verified by DeliverX
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         <p className="mt-6 text-xs text-[#6B6B64]">{String(view.aiAssistanceDisclosure)}</p>
       </article>
     </div>

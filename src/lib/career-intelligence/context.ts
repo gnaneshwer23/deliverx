@@ -1,4 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  loadRecentSnapshotClaims,
+  projectRoleReadinessFromClaims,
+  toScoreRunCareerContext,
+} from "@/lib/capability-engine/snapshot-claims";
 import { CAREER_ROLE_CATALOGUE } from "@/lib/career-intelligence/role-catalogue";
 import { scoreRoleReadiness, type MatchableEvidence } from "@/lib/career-intelligence/matching";
 import {
@@ -9,7 +14,7 @@ import {
 } from "@/lib/career-intelligence/workflows";
 import type {
   CareerIntelligenceSnapshot,
-  ScoreRunCareerContext,
+  RoleReadinessResult,
 } from "@/lib/career-intelligence/types";
 import { listPortfolioEntries } from "@/lib/verified-portfolio/store";
 import { listUserEvidenceForPortfolio } from "@/lib/verified-portfolio/store";
@@ -18,12 +23,13 @@ import { deriveEvidenceStrength } from "@/lib/verified-portfolio/types";
 /**
  * Load PI + VPP + ledger + latest ScoreRun context for Career Intelligence.
  * Read-only toward capability — never persists capability scores.
+ * Prefer SnapshotClaims for every catalogue role; heuristic is labelled coverage only.
  */
 export async function buildCareerIntelligenceSnapshot(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<CareerIntelligenceSnapshot> {
-  const [{ data: pi }, { data: lpProfile }, portfolio, ledger, { data: capSnap }] =
+  const [{ data: pi }, { data: lpProfile }, portfolio, ledger, snapshotPack] =
     await Promise.all([
       supabase
         .from("pi_onboarding_sessions")
@@ -37,13 +43,7 @@ export async function buildCareerIntelligenceSnapshot(
         .maybeSingle(),
       listPortfolioEntries(supabase, userId).catch(() => []),
       listUserEvidenceForPortfolio(supabase, userId).catch(() => []),
-      supabase
-        .from("pi_capability_snapshots")
-        .select("id, captured_at, profile, score_run_id")
-        .eq("user_id", userId)
-        .order("captured_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      loadRecentSnapshotClaims(supabase, userId, 1),
     ]);
 
   const payload = (pi?.payload as Record<string, unknown>) ?? {};
@@ -104,25 +104,39 @@ export async function buildCareerIntelligenceSnapshot(
   });
 
   const catalogue = roles.length ? roles : CAREER_ROLE_CATALOGUE;
-  let roleReadiness = catalogue
-    .map((role) => scoreRoleReadiness(role, evidence, profile.source !== "none"))
-    .sort((a, b) => b.readinessPct - a.readinessPct);
-
-  const scoreRun = parseScoreRunContext(capSnap);
+  const claims = snapshotPack.latest;
+  const scoreRun = claims ? toScoreRunCareerContext(claims) : null;
   const readinessSource = scoreRun
     ? ("score_run" as const)
     : ("evidence_coverage_heuristic" as const);
 
-  // Prefer ScoreRun readiness for the top role when a snapshot exists.
-  if (scoreRun && roleReadiness[0]) {
-    roleReadiness = [
-      {
-        ...roleReadiness[0],
-        readinessPct: Math.round(scoreRun.readiness),
-        summary: `${roleReadiness[0].summary} ScoreRun readiness ${Math.round(scoreRun.readiness)}% (from capability engine — Career does not assign capability).`,
-      },
-      ...roleReadiness.slice(1),
-    ];
+  const heuristicRoles = catalogue
+    .map((role) => scoreRoleReadiness(role, evidence, profile.source !== "none"))
+    .sort((a, b) => b.readinessPct - a.readinessPct);
+
+  let roleReadiness: RoleReadinessResult[];
+
+  if (claims && scoreRun) {
+    const projected: RoleReadinessResult[] = [];
+    const fallback: RoleReadinessResult[] = [];
+    for (const role of catalogue) {
+      const fromClaims = projectRoleReadinessFromClaims(role, claims);
+      if (fromClaims) {
+        projected.push(fromClaims);
+      } else {
+        const heuristic = scoreRoleReadiness(role, evidence, profile.source !== "none");
+        fallback.push({
+          ...heuristic,
+          summary: `${heuristic.summary} Suppressed thin ScoreRun projection — showing evidence coverage only.`,
+          readinessKind: "evidence_coverage",
+        });
+      }
+    }
+    roleReadiness = [...projected, ...fallback].sort(
+      (a, b) => b.readinessPct - a.readinessPct,
+    );
+  } else {
+    roleReadiness = heuristicRoles;
   }
 
   const topRole = roleReadiness[0] ?? null;
@@ -154,38 +168,5 @@ export async function buildCareerIntelligenceSnapshot(
     capabilityAssigned: false,
     readinessSource,
     scoreRun,
-  };
-}
-
-function parseScoreRunContext(
-  row: {
-    id: string;
-    captured_at: string;
-    score_run_id: string | null;
-    profile: unknown;
-  } | null,
-): ScoreRunCareerContext | null {
-  if (!row) return null;
-  const profile = row.profile as {
-    readiness?: number;
-    strengths?: string[];
-    gaps?: string[];
-    recommendations?: Array<{ id?: string; title: string; rationale?: string }>;
-  } | null;
-  if (!profile || typeof profile.readiness !== "number") return null;
-  return {
-    snapshotId: row.id,
-    scoreRunId: row.score_run_id,
-    capturedAt: row.captured_at,
-    readiness: profile.readiness,
-    strengths: Array.isArray(profile.strengths) ? profile.strengths : [],
-    gaps: Array.isArray(profile.gaps) ? profile.gaps : [],
-    recommendations: Array.isArray(profile.recommendations)
-      ? profile.recommendations.map((r) => ({
-          id: r.id,
-          title: r.title,
-          rationale: r.rationale,
-        }))
-      : [],
   };
 }

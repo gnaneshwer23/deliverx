@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import {
+  loadRecentSnapshotClaims,
+  toPortfolioCapabilityClaims,
+} from "@/lib/capability-engine/snapshot-claims";
 import { createClient } from "@/lib/supabase/server";
 import {
   createPortfolioShare,
@@ -27,11 +31,28 @@ export async function GET(_request: Request, { params }: { params: Params }) {
   try {
     const entry = await getPortfolioEntry(supabase, user.id, id);
     const shares = await listPortfolioShares(supabase, user.id, id);
-    const preview = externalViewModel(entry, entry.hiddenFields);
+    const { latest } = await loadRecentSnapshotClaims(supabase, user.id, 1);
+    const linkedIds = new Set(entry.evidenceLinks.map((l) => l.evidenceId));
+    const ownerClaims = latest
+      ? toPortfolioCapabilityClaims(latest, {
+          allowedEvidenceIds: linkedIds.size ? linkedIds : null,
+          requireCitations: linkedIds.size > 0,
+        })
+      : [];
+    const shareableIds = new Set(
+      entry.evidenceLinks
+        .filter((l) => l.confidentiality === "shareable" || l.confidentiality === "public")
+        .map((l) => l.evidenceId),
+    );
+    const preview = externalViewModel(entry, entry.hiddenFields, ownerClaims);
     return NextResponse.json({
       entry,
       shares,
+      capabilityClaims: ownerClaims,
       externalPreview: preview,
+      publicCapabilityClaimCount: ownerClaims.filter((c) =>
+        c.evidenceCitations.some((e) => shareableIds.has(e.evidenceId)),
+      ).length,
       exportRequirements: PORTFOLIO_EXPORT_REQUIREMENTS,
     });
   } catch {

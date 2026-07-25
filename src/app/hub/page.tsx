@@ -22,6 +22,14 @@ export const dynamic = "force-dynamic";
 
 const HUB_JOURNEY = [
   {
+    id: "profile",
+    stage: "Your Professional Intelligence",
+    name: "Profile",
+    progress: "Who you are · evidence · gaps · next path",
+    href: "/profile",
+    cta: "Open Profile",
+  },
+  {
     id: "experience",
     stage: "Build the experience",
     name: "Experience",
@@ -34,7 +42,7 @@ const HUB_JOURNEY = [
     stage: "See what you demonstrated",
     name: "Evidence & ScoreRun",
     progress: "Ledger evidence → capability projection",
-    href: "/workspace/evidence",
+    href: "/profile/evidence",
     cta: "Open Evidence",
   },
   {

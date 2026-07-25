@@ -1,3 +1,4 @@
+import type { PortfolioCapabilityClaim } from "@/lib/capability-engine/snapshot-claims";
 import type {
   ConfidentialFieldKey,
   ContributionBreakdown,
@@ -199,7 +200,11 @@ export function applyPrivacyFilter<T extends Record<string, unknown>>(
   return next;
 }
 
-export function externalViewModel(entry: PortfolioEntry, hiddenFields: ConfidentialFieldKey[]) {
+export function externalViewModel(
+  entry: PortfolioEntry,
+  hiddenFields: ConfidentialFieldKey[],
+  capabilityClaims: PortfolioCapabilityClaim[] = [],
+) {
   const filtered = applyPrivacyFilter(
     {
       title: entry.title,
@@ -239,6 +244,20 @@ export function externalViewModel(entry: PortfolioEntry, hiddenFields: Confident
   const publicLinks = entry.evidenceLinks.filter(
     (l) => l.confidentiality === "shareable" || l.confidentiality === "public",
   );
+  const shareableIds = new Set(
+    publicLinks.map((l) => l.evidenceId).filter(Boolean),
+  );
+  // Public claims may only cite shareable/public evidence — never leak private refs
+  const publicClaims = capabilityClaims
+    .map((c) => ({
+      ...c,
+      evidenceCitations: c.evidenceCitations.filter((e) =>
+        shareableIds.has(e.evidenceId),
+      ),
+      deliverxVerified: false as const,
+    }))
+    .filter((c) => c.evidenceCitations.length > 0);
+
   return {
     ...filtered,
     evidenceLinks: publicLinks.length
@@ -250,6 +269,11 @@ export function externalViewModel(entry: PortfolioEntry, hiddenFields: Confident
           deliverxVerified: false,
         }))
       : filtered.evidenceLinks,
+    capabilityClaims: publicClaims,
+    capabilityClaimsNotice:
+      publicClaims.length > 0
+        ? "Capability levels are ScoreRun projections with evidence citations — not DeliverX verification."
+        : null,
   };
 }
 

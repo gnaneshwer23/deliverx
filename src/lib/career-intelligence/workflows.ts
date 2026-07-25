@@ -71,7 +71,7 @@ export function buildRoadmapFromScoreRunGaps(scoreRun: {
       title: "Review Evidence Ledger and re-run ScoreRun",
       closesRequirementIds: [],
       rationale: "No open ScoreRun gaps — package evidence into Portfolio or continue practice.",
-      href: "/workspace/evidence",
+      href: "/profile/evidence",
     });
   }
   return actions;

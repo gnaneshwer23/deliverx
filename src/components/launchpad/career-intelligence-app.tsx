@@ -25,6 +25,7 @@ type Snapshot = {
     roleTitle: string;
     readinessPct: number;
     summary: string;
+    readinessKind?: "score_run_projection" | "evidence_coverage";
     matches: Array<{
       requirementId: string;
       label: string;
@@ -71,10 +72,17 @@ type Snapshot = {
   evidenceCount: number;
   readinessSource?: "score_run" | "evidence_coverage_heuristic";
   scoreRun?: {
+    snapshotId: string;
     readiness: number;
     strengths: string[];
     gaps: string[];
     capturedAt: string;
+    levels?: Array<{
+      competencyId: string;
+      level: string;
+      confidence: number;
+      evidenceReferences: string[];
+    }>;
   } | null;
   notice?: string;
 };
@@ -219,15 +227,28 @@ export function CareerIntelligenceApp({
               {snap.scoreRun ? (
                 <div className="rounded-lg border border-[#1C4A2E]/30 bg-white p-4 text-sm">
                   <p className="font-medium text-[#1C4A2E]">
-                    ScoreRun readiness {Math.round(snap.scoreRun.readiness)}%
+                    ScoreRun readiness signal {Math.round(snap.scoreRun.readiness)}%
                   </p>
                   <p className="mt-1 text-xs text-[#6B6B64]">
-                    Captured {new Date(snap.scoreRun.capturedAt).toLocaleString()}. Career packages
-                    this projection — it does not assign capability.{" "}
-                    <Link href="/workspace/evidence" className="underline">
+                    Snapshot {snap.scoreRun.snapshotId.slice(0, 8)} · captured{" "}
+                    {new Date(snap.scoreRun.capturedAt).toLocaleString()}. Same projection as
+                    Profile and Portfolio — Career does not assign capability.{" "}
+                    <Link href="/profile/evidence" className="underline">
                       Re-run ScoreRun
                     </Link>
                   </p>
+                  {snap.scoreRun.levels?.length ? (
+                    <ul className="mt-2 space-y-1 text-xs text-[#4A4A45]">
+                      {snap.scoreRun.levels.slice(0, 4).map((l) => (
+                        <li key={l.competencyId}>
+                          {l.competencyId}: {l.level.replace(/_/g, " ")}
+                          {l.evidenceReferences.length
+                            ? ` · cites ${l.evidenceReferences.slice(0, 2).join(", ")}`
+                            : ""}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                   {snap.scoreRun.gaps.length > 0 ? (
                     <ul className="mt-2 list-disc pl-5 text-xs text-[#4A4A45]">
                       {snap.scoreRun.gaps.slice(0, 5).map((g) => (
@@ -238,8 +259,9 @@ export function CareerIntelligenceApp({
                 </div>
               ) : (
                 <p className="rounded-lg border border-dashed border-[#D6D3C8] px-3 py-2 text-xs text-[#6B6B64]">
-                  No ScoreRun yet — readiness below is evidence-coverage heuristic only.{" "}
-                  <Link href="/workspace/evidence?run=1" className="text-[#1C4A2E] underline">
+                  No ScoreRun yet — percentages below are evidence coverage (heuristic), not
+                  capability.{" "}
+                  <Link href="/profile/evidence?run=1" className="text-[#1C4A2E] underline">
                     Run ScoreRun
                   </Link>
                 </p>
@@ -255,6 +277,11 @@ export function CareerIntelligenceApp({
                       {role.readinessPct}%
                     </strong>
                   </div>
+                  <p className="mt-1 text-[10px] uppercase tracking-wide text-[#6B6B64]">
+                    {role.readinessKind === "score_run_projection"
+                      ? "ScoreRun projection"
+                      : "Evidence coverage (heuristic — not capability)"}
+                  </p>
                   <p className="mt-1 text-xs text-[#6B6B64]">{role.summary}</p>
                   <ul className="mt-4 space-y-3">
                     {role.matches.map((m) => (

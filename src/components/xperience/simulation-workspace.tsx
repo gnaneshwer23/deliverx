@@ -353,8 +353,8 @@ export function SimulationWorkspace({
                   capability.
                 </p>
                 <div className="xp-action-row" style={{ marginTop: "0.75rem" }}>
-                  <a href="/workspace/evidence?run=1">See your capability (ScoreRun)</a>
-                  <a href="/workspace/evidence">Review Evidence Ledger</a>
+                  <a href="/profile/evidence?run=1">See your capability (ScoreRun)</a>
+                  <a href="/profile/evidence">Review Evidence Ledger</a>
                   <a href="/portfolio">Package Portfolio</a>
                   <a href="/launchpad/app">Career readiness</a>
                 </div>

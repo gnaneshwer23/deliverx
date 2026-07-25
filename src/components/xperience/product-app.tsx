@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import "./xperience-app.css";
 
@@ -66,6 +67,17 @@ export function ProductApp({
   initialProfile?: ProductAppInitialProfile | null;
   initialEnrolmentId?: string | null;
 }) {
+  const searchParams = useSearchParams();
+  const planId = searchParams.get("planId");
+  const planEmphasisRaw = searchParams.get("planEmphasis");
+  const planEmphasis =
+    planEmphasisRaw === "stakeholder" ||
+    planEmphasisRaw === "delivery" ||
+    planEmphasisRaw === "discovery" ||
+    planEmphasisRaw === "balanced"
+      ? planEmphasisRaw
+      : undefined;
+
   const [screen, setScreen] = useState<Screen>(
     initialEnrolmentId ? "Dashboard" : initialScreen,
   );
@@ -130,6 +142,8 @@ export function ProductApp({
       selectedSkill: form.selectedSkill,
       confidence: form.confidence,
       startTimeline: form.startTimeline,
+      ...(planId ? { planId } : {}),
+      ...(planEmphasis ? { planEmphasis } : {}),
     };
   }
 
@@ -158,8 +172,11 @@ export function ProductApp({
       }
       const experience = await experienceResponse.json();
       setEnrolmentId(experience.enrolmentId);
+      const emphasisNote = planEmphasis
+        ? ` Gap-focused plan: ${planEmphasis} emphasis.`
+        : "";
       setNotice(
-        `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "MediFlow"} is ready.`,
+        `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "MediFlow"} is ready.${emphasisNote}`,
       );
       setScreen("Dashboard");
     } catch {

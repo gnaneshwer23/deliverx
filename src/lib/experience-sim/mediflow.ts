@@ -11,7 +11,74 @@ function persona(
 export function generateMediFlowExperience(input: {
   userRole?: string;
   personalisedBy?: Record<string, unknown>;
+  /** Phase 3 planner emphasis — reorders coaching + decision salience. */
+  plannerEmphasis?: "stakeholder" | "delivery" | "discovery" | "balanced";
+  planId?: string | null;
+  planRationale?: string | null;
 }): ExperienceSimState {
+  const emphasis =
+    input.plannerEmphasis ??
+    (typeof input.personalisedBy?.plannerEmphasis === "string"
+      ? (input.personalisedBy.plannerEmphasis as
+          | "stakeholder"
+          | "delivery"
+          | "discovery"
+          | "balanced")
+      : "balanced");
+
+  const coachingByEmphasis: Record<string, string[]> = {
+    stakeholder: [
+      "Clarify what is committed vs exploratory before answering James.",
+      "Watch Sarah's trust — executive surprise is the primary failure mode.",
+      "Facilitate James and Maya into one shared commitment narrative.",
+    ],
+    delivery: [
+      "Start with Maya's capacity (64%) before any date commitment.",
+      "Protect quality — unscoped commits are the delivery failure mode.",
+      "Name what is in / out of TrustCare pilot scope explicitly.",
+    ],
+    discovery: [
+      "Review the TrustCare brief and customer pulse before responding to Sales.",
+      "Ask what evidence would change the pilot date decision.",
+      "Separate problem clarity from commercial pressure.",
+    ],
+    balanced: [
+      "Clarify what is committed vs exploratory before answering James.",
+    ],
+  };
+
+  const decisionsBase = [
+    {
+      id: "review_context",
+      label: "Review context",
+      description: "Gather facts from Maya and the brief before responding to Sales.",
+      impactHints: { trust: 4, delivery: 2, clarity: 6 },
+    },
+    {
+      id: "discuss_options",
+      label: "Discuss options",
+      description: "Facilitate a trade-off conversation between James and Maya.",
+      impactHints: { trust: 6, delivery: 3, clarity: 5 },
+    },
+    {
+      id: "make_decision",
+      label: "Make decision",
+      description: "Commit or renegotiate the pilot date with a clear rationale.",
+      impactHints: { trust: 8, delivery: 5, clarity: 4 },
+    },
+  ];
+
+  const orderByEmphasis: Record<string, string[]> = {
+    stakeholder: ["discuss_options", "make_decision", "review_context"],
+    delivery: ["review_context", "make_decision", "discuss_options"],
+    discovery: ["review_context", "discuss_options", "make_decision"],
+    balanced: ["review_context", "discuss_options", "make_decision"],
+  };
+  const order = orderByEmphasis[emphasis] ?? orderByEmphasis.balanced;
+  const availableDecisions = order
+    .map((id) => decisionsBase.find((d) => d.id === id)!)
+    .filter(Boolean);
+
   const sarah = persona({
     id: "p-sarah",
     name: "Sarah Chen",
@@ -214,35 +281,20 @@ export function generateMediFlowExperience(input: {
     decisions: [],
     consequences: [],
     reflections: [],
-    coachingHints: [
-      "Clarify what is committed vs exploratory before answering James.",
-    ],
-    availableDecisions: [
-      {
-        id: "review_context",
-        label: "Review context",
-        description: "Gather facts from Maya and the brief before responding to Sales.",
-        impactHints: { trust: 4, delivery: 2, clarity: 6 },
-      },
-      {
-        id: "discuss_options",
-        label: "Discuss options",
-        description: "Facilitate a trade-off conversation between James and Maya.",
-        impactHints: { trust: 6, delivery: 3, clarity: 5 },
-      },
-      {
-        id: "make_decision",
-        label: "Make decision",
-        description: "Commit or renegotiate the pilot date with a clear rationale.",
-        impactHints: { trust: 8, delivery: 5, clarity: 4 },
-      },
-    ],
+    coachingHints: coachingByEmphasis[emphasis] ?? coachingByEmphasis.balanced,
+    availableDecisions,
     completion: {
       decisionMade: false,
       consequenceApplied: false,
       meetingRecorded: false,
       reflectionCaptured: false,
       observationEmitted: false,
+    },
+    planner: {
+      planId: input.planId ?? null,
+      emphasis,
+      rationale: input.planRationale ?? null,
+      experienceKey: "mediflow_trustcare_v1",
     },
   };
 }

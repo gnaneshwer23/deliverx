@@ -234,7 +234,7 @@ export const PROFESSIONAL_WORKSPACE_MODULES: WorkspaceModuleContract[] = [
   {
     id: "evidence",
     label: "Evidence Review",
-    href: "/workspace/evidence",
+    href: "/profile/evidence",
     userJobs: ["Review what was observed", "Separate user vs AI contribution"],
     primaryActions: ["Filter evidence", "Open provenance", "Flag for capability review"],
     permissions: ["view"],

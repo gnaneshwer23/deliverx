@@ -38,7 +38,26 @@ export function VerifiedPortfolioApp() {
     entry: Record<string, unknown>;
     shares: Array<{ id: string; shareUrl: string; status: string; label: string | null }>;
     externalPreview: Record<string, unknown>;
+    capabilityClaims?: Array<{
+      competencyId: string;
+      level: string;
+      confidence: number;
+      evidenceCitations: Array<{ evidenceId: string }>;
+      reasoningSummary: string;
+      deliverxVerified: boolean;
+      snapshotId: string;
+    }>;
   } | null>(null);
+  const [capabilityClaims, setCapabilityClaims] = useState<
+    Array<{
+      competencyId: string;
+      level: string;
+      confidence: number;
+      evidenceCitations: Array<{ evidenceId: string }>;
+      reasoningSummary: string;
+      deliverxVerified: boolean;
+    }>
+  >([]);
   const [narrative, setNarrative] = useState("");
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
 
@@ -51,6 +70,7 @@ export function VerifiedPortfolioApp() {
     }
     setEvidence(data.evidence ?? []);
     setEntries(data.entries ?? []);
+    setCapabilityClaims(data.capabilityClaims ?? []);
   }, []);
 
   useEffect(() => {
@@ -206,6 +226,39 @@ export function VerifiedPortfolioApp() {
         </p>
         <p className="mt-3 text-sm text-[#1C4A2E]">{notice}</p>
       </header>
+
+      {capabilityClaims.length > 0 ? (
+        <section className="mb-8 rounded-xl border border-[#C5D9CE] bg-[#EEF5F1] p-5">
+          <h2 className="text-sm font-medium text-[#1C4A2E]">
+            Capability claims (ScoreRun projection)
+          </h2>
+          <p className="mt-1 text-xs text-[#4A4A45]">
+            Same snapshot as Profile and Career. Levels cite evidence — DeliverX has not verified
+            these claims externally.
+          </p>
+          <ul className="mt-3 space-y-2 text-sm text-[#4A4A45]">
+            {capabilityClaims.slice(0, 8).map((c) => (
+              <li key={`${c.competencyId}-${c.level}`}>
+                <span className="font-medium text-[#1A1A18]">
+                  {c.competencyId} · {c.level.replace(/_/g, " ")}
+                </span>
+                {c.evidenceCitations.length ? (
+                  <span className="block text-[10px] text-[#6B6B64]">
+                    Evidence:{" "}
+                    {c.evidenceCitations
+                      .slice(0, 3)
+                      .map((e) => e.evidenceId)
+                      .join(", ")}
+                  </span>
+                ) : null}
+                {c.deliverxVerified ? null : (
+                  <span className="block text-[10px] text-[#6B6B64]">Not DeliverX-verified</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="mb-10 grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border border-[#E5E2D9] bg-white p-5">
@@ -404,6 +457,25 @@ export function VerifiedPortfolioApp() {
             <p className="mt-1 text-xs text-[#6B6B64]">
               {String(detail.externalPreview.verificationNotice ?? "")}
             </p>
+            {Array.isArray(detail.externalPreview.capabilityClaims) &&
+            (detail.externalPreview.capabilityClaims as unknown[]).length > 0 ? (
+              <ul className="mt-2 space-y-1 text-xs text-[#4A4A45]">
+                {(
+                  detail.externalPreview.capabilityClaims as Array<{
+                    competencyId: string;
+                    level: string;
+                    deliverxVerified?: boolean;
+                  }>
+                )
+                  .slice(0, 4)
+                  .map((c) => (
+                    <li key={c.competencyId}>
+                      {c.competencyId}: {c.level.replace(/_/g, " ")}
+                      {c.deliverxVerified ? "" : " · not verified"}
+                    </li>
+                  ))}
+              </ul>
+            ) : null}
             <p className="mt-2 whitespace-pre-wrap text-sm text-[#4A4A45]">
               {String(detail.externalPreview.narrative ?? "").slice(0, 600)}
             </p>

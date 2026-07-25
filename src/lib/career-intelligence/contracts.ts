@@ -6,7 +6,7 @@ export const CAREER_ROUTES = {
   home: "/launchpad/app",
   roadmap: "/launchpad/app/roadmap",
   cv: "/launchpad/app/cv",
-  profile: "/launchpad/app/profile",
+  profile: "/profile",
   interview: "/launchpad/app/interview",
   opportunities: "/launchpad/app/opportunities",
   companies: "/launchpad/app/companies",

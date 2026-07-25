@@ -195,7 +195,7 @@ export function PiReviewQueueApp() {
           <Link href="/portfolio" className="text-[#1C4A2E] underline">
             Portfolio
           </Link>
-          <Link href="/workspace/evidence" className="text-[#1C4A2E] underline">
+          <Link href="/profile/evidence" className="text-[#1C4A2E] underline">
             Evidence
           </Link>
           <Link href="/pi/review/admin" className="text-[#1C4A2E] underline">

@@ -84,7 +84,10 @@ export async function POST(request: Request) {
       status: "completed",
       recommendedPath: recommended,
       chosenPath: chosen,
-      redirectTo: pathHref(chosen),
+      redirectTo:
+        payload.baselineOptIn !== false
+          ? "/profile/baseline"
+          : pathHref(chosen),
     });
   }
 

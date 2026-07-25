@@ -16,6 +16,9 @@ export type CandidateProfileInput = {
   selectedSkill?: string;
   confidence?: string;
   startTimeline?: string;
+  /** Phase 3 — gap-ranked plan id (optional). */
+  planId?: string;
+  planEmphasis?: "stakeholder" | "delivery" | "discovery" | "balanced";
 };
 
 function careerScoreFromProfile(input: CandidateProfileInput) {
@@ -112,7 +115,11 @@ export async function startExperience(
       learningStyle: input.learningStyle,
       confidence: input.confidence,
       targetRole: input.targetRole || input.role,
+      plannerEmphasis: input.planEmphasis ?? "balanced",
+      planId: input.planId ?? null,
     },
+    plannerEmphasis: input.planEmphasis ?? "balanced",
+    planId: input.planId ?? null,
   });
 
   const { data: enrolment, error } = await supabase
@@ -131,6 +138,22 @@ export async function startExperience(
 
   if (error) throw error;
 
+  if (input.planId) {
+    try {
+      await supabase
+        .from("experience_plans")
+        .update({
+          status: "accepted",
+          accepted_at: new Date().toISOString(),
+          enrolment_id: enrolment.id,
+        })
+        .eq("user_id", user.id)
+        .eq("id", input.planId);
+    } catch (err) {
+      console.error("[xperience] link experience plan failed", err);
+    }
+  }
+
   try {
     await supabase.from("experience_sim_events").insert({
       enrolment_id: enrolment.id,
@@ -140,9 +163,14 @@ export async function startExperience(
         companyId: simState.company.id,
         projectId: simState.project.id,
         userRole: simState.userRole,
+        plannerEmphasis: simState.planner?.emphasis ?? null,
+        planId: input.planId ?? null,
       },
       user_contribution: { profileId: profileResult.profileId },
-      ai_contribution: { generators: ["company", "project", "team"] },
+      ai_contribution: {
+        generators: ["company", "project", "team"],
+        plannerVersion: "experience-plan-v1",
+      },
     });
   } catch (err) {
     console.error("[xperience] ExperienceStarted event failed", err);

@@ -1,12 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { assertPiAccess } from "@/lib/access/gate";
 import { runCapabilityEngine } from "@/lib/capability-engine/orchestrator";
 import { persistCapabilityRun } from "@/lib/capability-engine/persist";
+import { resolveRubricDefinition } from "@/lib/capability-engine/resolve-rubric";
 import type { EligibleEvidence } from "@/lib/capability-engine/types";
 import {
   DEFAULT_RUBRIC_SLUG,
   DEFAULT_RUBRIC_VERSION,
 } from "@/lib/capability-engine/types";
+import { resolvePublishedFrameworkPin } from "@/lib/admin-framework/rubric-bridge";
 import { latestStatus } from "@/lib/evidence-ledger/append";
 
 export const dynamic = "force-dynamic";
@@ -22,12 +25,22 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const gate = assertPiAccess({
+    userId: user.id,
+    email: user.email,
+    surface: "capability_run",
+  });
+  if (!gate.allowed) {
+    return NextResponse.json({ error: gate.reason }, { status: 403 });
+  }
+
   let body: {
     targetRole?: string;
     targetSeniority?: string;
     rubricSlug?: string;
     rubricVersion?: string;
     persist?: boolean;
+    runKind?: "standard" | "baseline";
   } = {};
   try {
     body = (await request.json()) as typeof body;
@@ -88,6 +101,21 @@ export async function POST(request: Request) {
   const rubricSlug = body.rubricSlug ?? DEFAULT_RUBRIC_SLUG;
   const rubricVersion = body.rubricVersion ?? DEFAULT_RUBRIC_VERSION;
 
+  let rubric = null as Awaited<
+    ReturnType<typeof resolveRubricDefinition>
+  >["rubric"] | null;
+  let rubricSource: "db" | "in_code" = "in_code";
+  try {
+    const resolved = await resolveRubricDefinition(supabase, {
+      frameworkSlug: rubricSlug,
+      version: rubricVersion,
+    });
+    rubric = resolved.rubric;
+    rubricSource = resolved.source;
+  } catch {
+    // orchestrator falls back to getRubric when rubric is null
+  }
+
   const result = runCapabilityEngine({
     userId: user.id,
     evidence,
@@ -95,12 +123,19 @@ export async function POST(request: Request) {
     targetSeniority: body.targetSeniority,
     rubricSlug,
     rubricVersion,
+    rubric,
     previousSnapshot: (prior?.profile as never) ?? null,
   });
 
   let persisted: { scoreRunId: string; snapshotId: string | null } | null = null;
+  let frameworkVersionId: string | null = null;
   if (body.persist !== false) {
     try {
+      const frameworkPin = await resolvePublishedFrameworkPin(supabase, {
+        frameworkSlug: rubricSlug,
+        version: rubricVersion,
+      });
+      frameworkVersionId = frameworkPin?.frameworkVersionId ?? null;
       persisted = await persistCapabilityRun(supabase, {
         userId: user.id,
         targetRole: body.targetRole,
@@ -108,6 +143,8 @@ export async function POST(request: Request) {
         rubricSlug,
         rubricVersion,
         result,
+        frameworkPin,
+        runKind: body.runKind === "baseline" ? "baseline" : "standard",
       });
     } catch (err) {
       console.error("[capability-engine] persist failed", err);
@@ -154,7 +191,10 @@ export async function POST(request: Request) {
     })),
     growth: result.growth,
     stepsCompleted: result.stepsCompleted,
+    frameworkVersionId,
     persisted,
+    rubricSource,
+    runKind: body.runKind === "baseline" ? "baseline" : "standard",
   });
 }
 

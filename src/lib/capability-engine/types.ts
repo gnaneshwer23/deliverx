@@ -1,5 +1,7 @@
 /** Capability Engine — shared types. Deterministic orchestration; no single mega-prompt. */
 
+import type { RubricDefinition } from "@/lib/capability-engine/rubric";
+
 export const ALGORITHM_VERSION = "capability-engine-v1";
 export const DEFAULT_RUBRIC_SLUG = "pm-core";
 export const DEFAULT_RUBRIC_VERSION = "2026.1";
@@ -161,6 +163,11 @@ export type OrchestratorInput = {
   targetSeniority?: string;
   rubricSlug?: string;
   rubricVersion?: string;
+  /**
+   * Optional resolved rubric (DB-backed preferred in Phase 2).
+   * When set, overrides getRubric(slug, version) for this run.
+   */
+  rubric?: RubricDefinition | null;
   /** Prior snapshot for growth comparison */
   previousSnapshot?: CapabilitySnapshotProfile | null;
   /** Simulate model failure in verifier adapter */

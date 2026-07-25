@@ -139,6 +139,13 @@ export type ExperienceSimState = {
     reflectionCaptured: boolean;
     observationEmitted: boolean;
   };
+  /** Optional Phase 3 planner metadata — emphasis only; never capability. */
+  planner?: {
+    planId: string | null;
+    emphasis: "stakeholder" | "delivery" | "discovery" | "balanced";
+    rationale: string | null;
+    experienceKey: string;
+  };
 };
 
 export type ExperienceSimEventType =

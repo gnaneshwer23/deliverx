@@ -157,6 +157,7 @@ describe("privacy and external view", () => {
     expect(view.challenge).toBe("[Hidden]");
     expect(view.evidenceLinks).toHaveLength(1);
     expect(view.evidenceLinks[0]?.title).toBe("Public note");
+    expect(view.capabilityClaims).toEqual([]);
   });
 
   it("deliverxVerified only when externally attested + externally verified strength", () => {

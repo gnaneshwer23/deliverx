@@ -167,6 +167,12 @@ export function EvidenceCapabilityApp() {
             {busy ? "Running ScoreRun…" : "Run ScoreRun"}
           </button>
           <Link
+            href="/profile"
+            className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
+          >
+            Profile centre
+          </Link>
+          <Link
             href="/portfolio"
             className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
           >

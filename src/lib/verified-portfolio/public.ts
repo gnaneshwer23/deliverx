@@ -1,3 +1,7 @@
+import {
+  loadRecentSnapshotClaims,
+  toPortfolioCapabilityClaims,
+} from "@/lib/capability-engine/snapshot-claims";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { externalViewModel } from "@/lib/verified-portfolio/compile";
 import { buildPortfolioShareUrl } from "@/lib/verified-portfolio/store";
@@ -107,7 +111,21 @@ export async function getPortfolioByShareToken(token: string): Promise<PublicPor
 
   const mapped = mapEntryFromAdmin(entry, links);
   const hidden = (share.hidden_fields as ConfidentialFieldKey[]) ?? mapped.hiddenFields;
-  const view = externalViewModel(mapped, hidden);
+
+  const shareableIds = new Set(
+    links
+      .filter((l) => l.confidentiality === "shareable" || l.confidentiality === "public")
+      .map((l) => l.evidenceId),
+  );
+  const { latest } = await loadRecentSnapshotClaims(admin, mapped.userId, 1);
+  const capabilityClaims = latest
+    ? toPortfolioCapabilityClaims(latest, {
+        allowedEvidenceIds: shareableIds,
+        requireCitations: true,
+      })
+    : [];
+
+  const view = externalViewModel(mapped, hidden, capabilityClaims);
 
   await admin
     .from("vpp_shares")
