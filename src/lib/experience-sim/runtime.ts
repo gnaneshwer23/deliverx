@@ -5,7 +5,7 @@ import {
   captureReflection,
   evaluateCompletion,
 } from "@/lib/experience-sim/engines";
-import { generateExperience, isExperienceSimState } from "@/lib/experience-sim/generate";
+import { generateExperience, generateMediFlowExperience, isExperienceSimState } from "@/lib/experience-sim/generate";
 import type { ExperienceSimState } from "@/lib/experience-sim/types";
 import { recordDecision } from "@/lib/xperience/store";
 
