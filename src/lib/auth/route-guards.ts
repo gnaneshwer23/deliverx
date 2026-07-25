@@ -6,6 +6,8 @@ const ONBOARDING_PREFIX = "/onboarding";
 const XPERIENCE_APP_PREFIX = "/experience/app";
 const LAUNCHPAD_APP_PREFIX = "/launchpad/app";
 const HUB_PREFIX = "/hub";
+const WORKSPACE_PREFIX = "/workspace";
+const SETTINGS_PREFIX = "/settings";
 
 export function isAuthEntryPath(pathname: string): boolean {
   return AUTH_ENTRY_PATHS.some(
@@ -33,6 +35,14 @@ export function isLaunchpadAppPath(pathname: string): boolean {
 
 export function isHubPath(pathname: string): boolean {
   return pathname === HUB_PREFIX || pathname.startsWith(`${HUB_PREFIX}/`);
+}
+
+export function isWorkspacePath(pathname: string): boolean {
+  return pathname === WORKSPACE_PREFIX || pathname.startsWith(`${WORKSPACE_PREFIX}/`);
+}
+
+export function isSettingsPath(pathname: string): boolean {
+  return pathname === SETTINGS_PREFIX || pathname.startsWith(`${SETTINGS_PREFIX}/`);
 }
 
 /** Preserve full path (including ?role=) when sending users to login. */
