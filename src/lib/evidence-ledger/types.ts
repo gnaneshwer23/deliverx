@@ -82,6 +82,9 @@ export type AppendEvidenceInput = {
     promptVersion?: string | null;
     promptHash?: string | null;
     rawRef?: Record<string, unknown>;
+    /** T3: evidence citing an artefact MUST reference a specific immutable version. */
+    artefactId?: string | null;
+    artefactVersionId?: string | null;
   };
 };
 

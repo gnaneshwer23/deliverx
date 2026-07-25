@@ -11,6 +11,7 @@ import { hasDeveloperAccess } from "@/lib/developer-access";
 import { HelmCopilotSection } from "@/components/copilot/helm-copilot-section";
 import { ObservationConsentForm } from "@/components/pi/observation-consent-form";
 import { PrivacyDataControls } from "@/components/pi/privacy-data-controls";
+import { ArtefactVersionsPanel } from "@/components/pi/artefact-versions-panel";
 import { dxClass } from "@/lib/dx-theme";
 
 export default async function ProfileSettingsPage() {
@@ -62,6 +63,11 @@ export default async function ProfileSettingsPage() {
         <section className={`${dxClass.cardPad}`}>
           <h2 className="mb-4 font-semibold">Professional Intelligence observation</h2>
           <ObservationConsentForm />
+        </section>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Artefacts &amp; versions</h2>
+          <ArtefactVersionsPanel />
         </section>
 
         <section className={`${dxClass.cardPad}`}>

@@ -5,6 +5,7 @@ import {
   type AppendEvidenceInput,
   type PiEvidenceStatus,
 } from "@/lib/evidence-ledger/types";
+import { assertEvidenceCitesArtefactVersion } from "@/lib/artefacts/types";
 
 export type AppendEvidenceResult = {
   evidenceId: string;
@@ -18,6 +19,12 @@ export async function appendEvidence(
   supabase: SupabaseClient,
   input: AppendEvidenceInput,
 ): Promise<AppendEvidenceResult> {
+  // T3: evidence citing an artefact must reference a specific immutable version.
+  assertEvidenceCitesArtefactVersion({
+    artefactId: input.provenance.artefactId,
+    artefactVersionId: input.provenance.artefactVersionId,
+  });
+
   const contentHash = computeEvidenceContentHash({
     sourceType: input.sourceType,
     title: input.title,
@@ -122,6 +129,8 @@ export async function appendEvidence(
     prompt_version: input.provenance.promptVersion ?? null,
     prompt_hash: input.provenance.promptHash ?? null,
     raw_ref: input.provenance.rawRef ?? {},
+    artefact_id: input.provenance.artefactId ?? null,
+    artefact_version_id: input.provenance.artefactVersionId ?? null,
   });
   if (provenanceError) throw provenanceError;
 
