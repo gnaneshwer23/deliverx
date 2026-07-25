@@ -17,6 +17,7 @@ export const PI_EVIDENCE_SOURCE_TYPES = [
   "application_outcome",
   "self_report",
   "system",
+  "workspace_observation",
 ] as const;
 
 export type PiEvidenceSourceType = (typeof PI_EVIDENCE_SOURCE_TYPES)[number];
@@ -140,6 +141,8 @@ export function defaultCategoryForSource(source: PiEvidenceSourceType): PiEviden
     case "self_report":
     case "system":
       return "other";
+    case "workspace_observation":
+      return "practice";
     default:
       return "practice";
   }

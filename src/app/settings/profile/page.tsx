@@ -9,6 +9,7 @@ import { getOrgNotificationSettings } from "@/services/notificationService";
 import { isOrgAdmin } from "@/lib/org-admin";
 import { hasDeveloperAccess } from "@/lib/developer-access";
 import { HelmCopilotSection } from "@/components/copilot/helm-copilot-section";
+import { ObservationConsentForm } from "@/components/pi/observation-consent-form";
 import { dxClass } from "@/lib/dx-theme";
 
 export default async function ProfileSettingsPage() {
@@ -55,6 +56,11 @@ export default async function ProfileSettingsPage() {
             settings={notificationSettings}
             emailConfigured={isEmailConfigured()}
           />
+        </section>
+
+        <section className={`${dxClass.cardPad}`}>
+          <h2 className="mb-4 font-semibold">Professional Intelligence observation</h2>
+          <ObservationConsentForm />
         </section>
 
         <section className={`${dxClass.cardPad}`}>

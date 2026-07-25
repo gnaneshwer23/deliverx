@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import type { PiProfileAggregate } from "@/lib/pi-profile/types";
 import { PI_EVIDENCE_PATH } from "@/lib/pi-profile/paths";
+import { DevelopmentLoopPanel } from "@/components/pi/development-loop-panel";
 
 function confidenceLabel(confidence: number): string {
   if (confidence >= 0.75) return "higher confidence";
@@ -304,6 +305,14 @@ export function ProfileCentre() {
           ) : (
             <p className="text-sm text-[#6B6B64]">No next action yet.</p>
           )}
+          <div className="mt-5">
+            <p className="mb-2 text-xs font-medium text-[#1A1A18]">Development loop</p>
+            <p className="mb-3 text-[11px] text-[#6B6B64]">
+              Recommendations you can accept — never auto-acted. Traceable to evidence and later
+              ScoreRun deltas as association only.
+            </p>
+            <DevelopmentLoopPanel />
+          </div>
           {profile.experiencePlan ? (
             <div className="mt-4 rounded-lg border border-[#E5E2D9] bg-[#FAFAF7] px-3 py-3">
               <p className="text-xs font-medium text-[#1A1A18]">

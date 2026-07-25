@@ -82,7 +82,12 @@ export async function POST(request: Request) {
       },
       parentContributionId: data.parentContributionId,
     });
-    return NextResponse.json({ ok: true, ...result, capabilityAssigned: false });
+    return NextResponse.json({
+      ok: true,
+      contributionId: result.contributionId,
+      observation: result.observation,
+      capabilityAssigned: false,
+    });
   } catch (error) {
     console.error("[workspace] contribution failed", error);
     return NextResponse.json({ error: "Could not record contribution" }, { status: 500 });

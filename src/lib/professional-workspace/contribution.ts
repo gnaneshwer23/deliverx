@@ -1,11 +1,14 @@
 /**
  * Contribution tracking for Professional Workspace.
  * Records: authored | suggested | accepted | edited | submitted | outcome.
+ * When observation consent is on, significant contributions dual-write to the Evidence Ledger.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { WorkspaceModuleId } from "@/lib/professional-workspace/modules";
 import type { WorkspaceProjectRef } from "@/lib/professional-workspace/project-context";
+import { observeWorkspaceContribution } from "@/lib/workspace-observation/observe";
+import type { ObserveWorkspaceContributionResult } from "@/lib/workspace-observation/observe";
 
 export type ContributionKind =
   | "user_authored"
@@ -28,10 +31,34 @@ export type ContributionRecordInput = {
   artefactRef?: { type: string; id: string } | null;
 };
 
+export type ContributionRecordResult = {
+  contributionId: string;
+  observation: ObserveWorkspaceContributionResult;
+  capabilityAssigned: false;
+};
+
 export async function recordWorkspaceContribution(
   supabase: SupabaseClient,
   input: ContributionRecordInput,
-) {
+): Promise<ContributionRecordResult> {
+  const userContribution =
+    input.kind === "ai_suggested"
+      ? {}
+      : {
+          kind: input.kind,
+          title: input.title,
+          summary: input.summary ?? null,
+        };
+  const aiContribution =
+    input.kind === "ai_suggested"
+      ? {
+          kind: input.kind,
+          title: input.title,
+          summary: input.summary ?? null,
+          payload: input.payload ?? {},
+        }
+      : {};
+
   const { data, error } = await supabase
     .from("workspace_contributions")
     .insert({
@@ -47,29 +74,45 @@ export async function recordWorkspaceContribution(
       parent_contribution_id: input.parentContributionId ?? null,
       artefact_type: input.artefactRef?.type ?? null,
       artefact_id: input.artefactRef?.id ?? null,
-      user_contribution:
-        input.kind === "ai_suggested"
-          ? {}
-          : {
-              kind: input.kind,
-              title: input.title,
-              summary: input.summary ?? null,
-            },
-      ai_contribution:
-        input.kind === "ai_suggested"
-          ? {
-              kind: input.kind,
-              title: input.title,
-              summary: input.summary ?? null,
-              payload: input.payload ?? {},
-            }
-          : {},
+      user_contribution: userContribution,
+      ai_contribution: aiContribution,
     })
     .select("id")
     .single();
 
   if (error) throw error;
-  return { contributionId: data.id as string };
+  const contributionId = data.id as string;
+
+  let observation: ObserveWorkspaceContributionResult = {
+    observed: false,
+    reason: "consent_denied",
+    capabilityAssigned: false,
+  };
+
+  try {
+    observation = await observeWorkspaceContribution(supabase, {
+      userId: input.userId,
+      contributionId,
+      moduleId: input.moduleId,
+      kind: input.kind,
+      project: input.project,
+      title: input.title,
+      summary: input.summary,
+      payload: input.payload,
+      userContribution,
+      aiContribution,
+      parentContributionId: input.parentContributionId,
+      artefactRef: input.artefactRef,
+    });
+  } catch (err) {
+    console.error("[workspace] observation dual-write failed", err);
+  }
+
+  return {
+    contributionId,
+    observation,
+    capabilityAssigned: false,
+  };
 }
 
 export function contributionTrailLabel(kind: ContributionKind): string {

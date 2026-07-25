@@ -84,8 +84,9 @@ export async function ProfessionalModulePage({
           ) : null}
 
           <div className="rounded-lg border border-dashed border-[#D6D3C8] px-4 py-3 text-xs text-[#6B6B64]">
-            Contribution hooks are active for this module. Record authored / suggested / accepted /
-            edited / submitted / outcome via{" "}
+            Contribution hooks are active for this module. Significant submits dual-write to the
+            Evidence Ledger only when Workspace observation consent is on (Settings → Profile).
+            Observer never assigns capability — ScoreRun interprets. Record via{" "}
             <code className="font-[family-name:var(--font-dx-mono)]">
               recordWorkspaceContribution
             </code>
