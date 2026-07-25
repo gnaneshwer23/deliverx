@@ -177,7 +177,7 @@ export async function createTeam(
 export async function addDepartmentMember(
   supabase: Db,
   actor: OrgActor,
-  input: { departmentId: unknown; userId: unknown; memberRole?: unknown },
+  input: { departmentId?: unknown; userId?: unknown; memberRole?: unknown },
 ): Promise<DepartmentMember> {
   assertOrgAdmin(actor);
   const departmentId = typeof input.departmentId === "string" ? input.departmentId : "";
@@ -206,7 +206,7 @@ export async function addDepartmentMember(
 export async function addTeamMember(
   supabase: Db,
   actor: OrgActor,
-  input: { teamId: unknown; userId: unknown; memberRole?: unknown },
+  input: { teamId?: unknown; userId?: unknown; memberRole?: unknown },
 ): Promise<TeamMember> {
   assertOrgAdmin(actor);
   const teamId = typeof input.teamId === "string" ? input.teamId : "";
