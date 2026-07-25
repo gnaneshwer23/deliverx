@@ -1,5 +1,6 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { generateMediFlowExperience } from "@/lib/experience-sim/mediflow";
+import { scenarioBySlug } from "@/lib/experience-planner/catalog";
+import { generateExperience } from "@/lib/experience-sim/generate";
 import { calculateCareerScore } from "@/lib/xperience/score";
 
 export type CandidateProfileInput = {
@@ -19,6 +20,7 @@ export type CandidateProfileInput = {
   /** Phase 3 — gap-ranked plan id (optional). */
   planId?: string;
   planEmphasis?: "stakeholder" | "delivery" | "discovery" | "balanced";
+  scenarioSlug?: string;
 };
 
 function careerScoreFromProfile(input: CandidateProfileInput) {
@@ -108,18 +110,47 @@ export async function startExperience(
     };
   }
 
-  const simState = generateMediFlowExperience({
-    userRole: input.targetRole || input.role || "Associate Product Manager",
+  let scenarioSlug = input.scenarioSlug ?? null;
+  let planRationale: string | null = null;
+  let planEmphasis = input.planEmphasis ?? "balanced";
+
+  if (input.planId) {
+    try {
+      const { data: planRow } = await supabase
+        .from("experience_plans")
+        .select("scenario_slug, emphasis, rationale")
+        .eq("user_id", user.id)
+        .eq("id", input.planId)
+        .maybeSingle();
+      if (planRow) {
+        scenarioSlug = scenarioSlug || (planRow.scenario_slug as string);
+        planEmphasis =
+          (planRow.emphasis as typeof planEmphasis) || planEmphasis;
+        planRationale = (planRow.rationale as string) || null;
+      }
+    } catch (err) {
+      console.error("[xperience] load experience plan failed", err);
+    }
+  }
+
+  const resolvedSlug = scenarioSlug || "mediflow-trustcare";
+  const scenario = scenarioBySlug(resolvedSlug);
+
+  const simState = generateExperience({
+    userRole: input.targetRole || input.role || scenario?.candidateRole || "Associate Product Manager",
     personalisedBy: {
       workStyle: input.workStyle,
       learningStyle: input.learningStyle,
       confidence: input.confidence,
       targetRole: input.targetRole || input.role,
-      plannerEmphasis: input.planEmphasis ?? "balanced",
+      plannerEmphasis: planEmphasis,
       planId: input.planId ?? null,
+      scenarioSlug: resolvedSlug,
     },
-    plannerEmphasis: input.planEmphasis ?? "balanced",
+    plannerEmphasis: planEmphasis,
     planId: input.planId ?? null,
+    planRationale,
+    scenarioSlug: resolvedSlug,
   });
 
   const { data: enrolment, error } = await supabase
@@ -169,7 +200,8 @@ export async function startExperience(
       user_contribution: { profileId: profileResult.profileId },
       ai_contribution: {
         generators: ["company", "project", "team"],
-        plannerVersion: "experience-plan-v1",
+        plannerVersion: "experience-plan-v2",
+        scenarioSlug: resolvedSlug,
       },
     });
   } catch (err) {

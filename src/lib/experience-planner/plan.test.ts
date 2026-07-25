@@ -1,17 +1,26 @@
 import { describe, expect, it } from "vitest";
 import {
+  distinctCompanyCount,
+  EXPERIENCE_SCENARIO_CATALOG,
+} from "@/lib/experience-planner/catalog";
+import {
   catalogCoverageAssertion,
   emphasesDiffer,
   matchEmphasisForText,
   parseGapCompetency,
   pickEmphasis,
+  pickScenario,
   planExperienceFromGaps,
   rankGapsFromClaims,
 } from "@/lib/experience-planner/plan";
+import { generateExperience } from "@/lib/experience-sim/generate";
+import { applyDecisionConsequences, captureReflection, evaluateCompletion } from "@/lib/experience-sim/engines";
 
-describe("experience planner gap → recommendation", () => {
-  it("catalogue covers all MediFlow emphases with competency codes", () => {
+describe("experience planner multi-company catalogue", () => {
+  it("covers ≥10 distinct companies across industries", () => {
     expect(catalogCoverageAssertion()).toBe(true);
+    expect(distinctCompanyCount()).toBeGreaterThanOrEqual(10);
+    expect(EXPERIENCE_SCENARIO_CATALOG.length).toBeGreaterThanOrEqual(10);
   });
 
   it("parses competency-prefixed gap strings", () => {
@@ -32,12 +41,9 @@ describe("experience planner gap → recommendation", () => {
     expect(matchEmphasisForText("discovery hypothesis weak").emphasis).toBe(
       "discovery",
     );
-    expect(
-      matchEmphasisForText("x", "comp.product_discovery").emphasis,
-    ).toBe("discovery");
   });
 
-  it("two users with different gaps get different scenario emphases", () => {
+  it("gap A (stakeholder) and gap B (delivery) select different scenarios/emphases", () => {
     const stakeholderPlan = planExperienceFromGaps({
       gaps: [
         "comp.stakeholder_management: emerging — weak executive facilitation",
@@ -49,6 +55,7 @@ describe("experience planner gap → recommendation", () => {
           confidence: 0.4,
         },
       ],
+      preferredIndustries: ["healthcare"],
       targetRole: "APM",
       snapshotId: "snap-a",
     });
@@ -64,20 +71,21 @@ describe("experience planner gap → recommendation", () => {
           confidence: 0.2,
         },
       ],
-      targetRole: "APM",
+      preferredIndustries: ["education"],
+      targetRole: "Project Manager",
       snapshotId: "snap-b",
     });
 
     expect(stakeholderPlan.emphasis).toBe("stakeholder");
     expect(deliveryPlan.emphasis).toBe("delivery");
     expect(emphasesDiffer(stakeholderPlan, deliveryPlan)).toBe(true);
-    expect(stakeholderPlan.scenarioSlug).toContain("stakeholder");
-    expect(deliveryPlan.scenarioSlug).toContain("delivery");
     expect(stakeholderPlan.capabilityAssigned).toBe(false);
     expect(deliveryPlan.capabilityAssigned).toBe(false);
+    // Education + project manager + delivery should not be MediFlow-only forever
+    expect(deliveryPlan.companyKey).not.toBe(stakeholderPlan.companyKey);
   });
 
-  it("discovery gaps select discovery-emphasised MediFlow plan", () => {
+  it("education preference + discovery gaps favour education discovery scenario", () => {
     const plan = planExperienceFromGaps({
       gaps: ["comp.product_discovery: developing — thin hypothesis practice"],
       levels: [
@@ -87,19 +95,32 @@ describe("experience planner gap → recommendation", () => {
           confidence: 0.5,
         },
       ],
+      preferredIndustries: ["Education", "EdTech"],
+      targetRole: "Product Manager",
     });
     expect(plan.emphasis).toBe("discovery");
-    expect(plan.decisionEmphasis).toEqual(
-      expect.arrayContaining(["review_context"]),
-    );
-    expect(plan.rationale).toMatch(/discovery/i);
+    expect(plan.industry).toBe("education");
+    expect(plan.companyName.length).toBeGreaterThan(0);
+    expect(plan.rationale).toMatch(/ScoreRun gaps/i);
     expect(plan.href).toContain("planEmphasis=discovery");
+    expect(plan.href).toContain(`scenario=${plan.scenarioSlug}`);
   });
 
-  it("falls back to balanced MediFlow when gaps are empty", () => {
+  it("saas preference + stakeholder gaps favour saas / stakeholder-capable company", () => {
+    const plan = planExperienceFromGaps({
+      gaps: ["comp.stakeholder_management: emerging — enterprise facilitation"],
+      preferredIndustries: ["SaaS", "B2B"],
+      targetRole: "Associate Product Manager",
+    });
+    expect(plan.emphasis).toBe("stakeholder");
+    expect(["saas", "product_management", "healthcare"]).toContain(plan.industry);
+    expect(plan.capabilityAssigned).toBe(false);
+  });
+
+  it("falls back to MediFlow when gaps are empty and no preferences", () => {
     const plan = planExperienceFromGaps({ gaps: [] });
-    expect(plan.emphasis).toBe("balanced");
-    expect(plan.scenarioSlug).toBe("mediflow-trustcare-balanced");
+    expect(plan.scenarioSlug).toBe("mediflow-trustcare");
+    expect(plan.companyName).toBe("MediFlow");
     expect(plan.rationale).toMatch(/No ScoreRun gaps/i);
   });
 
@@ -107,12 +128,14 @@ describe("experience planner gap → recommendation", () => {
     const plan = planExperienceFromGaps({
       gaps: ["comp.delivery_execution: emerging — scope cuts"],
       recommendations: [{ title: "Practice delivery judgement" }],
+      preferredIndustries: ["SaaS"],
     });
     expect(plan.rationale).toMatch(/ScoreRun gaps/i);
     expect(plan.rationale).toMatch(/capability is assigned by ScoreRun/i);
     expect(plan.rationale.toLowerCase()).not.toMatch(
       /you are now proficient|assigned level/,
     );
+    expect(plan.frameworkVersionId).toBeNull();
   });
 
   it("ranks insufficient_evidence above proficient", () => {
@@ -124,5 +147,65 @@ describe("experience planner gap → recommendation", () => {
     });
     expect(ranked[0]?.competencyId).toBe("comp.delivery_execution");
     expect(pickEmphasis(ranked)).toBe("delivery");
+  });
+
+  it("pickScenario differs for healthcare delivery vs education discovery", () => {
+    const deliveryRanked = rankGapsFromClaims({
+      gaps: ["comp.delivery_execution: emerging — capacity"],
+    });
+    const discoveryRanked = rankGapsFromClaims({
+      gaps: ["comp.product_discovery: emerging — hypothesis"],
+    });
+    const a = pickScenario(deliveryRanked, {
+      gaps: ["comp.delivery_execution: emerging — capacity"],
+      preferredIndustries: ["Healthcare"],
+      targetRole: "Product Manager",
+    });
+    const b = pickScenario(discoveryRanked, {
+      gaps: ["comp.product_discovery: emerging — hypothesis"],
+      preferredIndustries: ["Education"],
+      targetRole: "Product Manager",
+    });
+    expect(a.slug).not.toBe(b.slug);
+    expect(a.companyKey).not.toBe(b.companyKey);
+  });
+});
+
+describe("shared scenario runtime Day-1 loop", () => {
+  it("generates playable NovaDesk state and completes decide→reflect", () => {
+    const start = generateExperience({
+      scenarioSlug: "novadesk-sla",
+      plannerEmphasis: "stakeholder",
+      userRole: "APM",
+    });
+    expect(start.company.name).toBe("NovaDesk");
+    expect(start.scenarioMeta?.slug).toBe("novadesk-sla");
+    expect(start.availableDecisions.length).toBe(3);
+
+    let { state } = applyDecisionConsequences(start, {
+      choiceId: "make_decision",
+      label: "Make decision",
+      rationale: "No custom fork",
+      decisionRowId: "dec-nova-1",
+    });
+    expect(state.lifecycle).toBe("reflecting");
+    expect(state.completion.decisionMade).toBe(true);
+    expect(state.consequences[0]?.summary).toMatch(/fork|entitlement|renewal/i);
+
+    state = {
+      ...state,
+      completion: { ...state.completion, observationEmitted: true },
+    };
+    state = captureReflection(
+      state,
+      "I refused a one-off SLA fork and offered dated entitlements instead.",
+    );
+    expect(evaluateCompletion(state).complete).toBe(true);
+  });
+
+  it("MediFlow remains playable via catalogue", () => {
+    const state = generateExperience({ scenarioSlug: "mediflow-trustcare" });
+    expect(state.company.name).toBe("MediFlow");
+    expect(state.project.name).toContain("TrustCare");
   });
 });

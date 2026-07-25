@@ -132,28 +132,35 @@ describe("projectPiProfileFromParts", () => {
         status: "active",
         createdAt: new Date().toISOString(),
         enrolmentId: null,
-        scenarioSlug: "mediflow-trustcare-delivery",
+        scenarioSlug: "mediflow-trustcare",
         emphasis: "delivery",
-        title: "MediFlow TrustCare — delivery under constraint",
+        title: "MediFlow — TrustCare pilot commitment",
         summary: "Delivery emphasis",
         coachingFocus: "Start with Maya",
+        companyName: "MediFlow",
+        companyKey: "mediflow",
+        industry: "healthcare",
+        projectName: "TrustCare Pilot — Metro Clinic",
+        candidateRole: "Associate Product Manager",
+        problem: "Sales floated a pilot date early",
         decisionEmphasis: ["review_context"],
         targetedCompetencies: ["comp.delivery_execution"],
         rankedGaps: [],
         rationale: "From ScoreRun gaps",
         evidenceLinks: [],
-        href: "/experience/app?planId=plan-1&planEmphasis=delivery",
+        href: "/experience/app?planId=plan-1&scenario=mediflow-trustcare&planEmphasis=delivery",
         targetRole: "APM",
         targetSeniority: "associate",
+        preferredIndustries: ["healthcare"],
         snapshotId: "snap-1",
         scoreRunId: "run-1",
         frameworkVersionId: "fv-1",
-        plannerVersion: "experience-plan-v1",
+        plannerVersion: "experience-plan-v2",
         capabilityAssigned: false,
       },
     });
     expect(view.nextAction?.href).toContain("planEmphasis=delivery");
-    expect(view.nextAction?.title).toMatch(/delivery/i);
+    expect(view.nextAction?.title).toMatch(/MediFlow|TrustCare/i);
   });
 
   it("exposes insufficient-history growth when only one snapshot exists", () => {

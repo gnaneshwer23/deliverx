@@ -73,7 +73,7 @@ export function SimulationWorkspace({
         body: JSON.stringify({
           enrolmentId,
           choice: { id: choiceId, label },
-          rationale: `Day ${state.day} TrustCare decision: ${label}`,
+          rationale: `Day ${state.day} decision: ${label}`,
         }),
       });
       const data = await res.json();

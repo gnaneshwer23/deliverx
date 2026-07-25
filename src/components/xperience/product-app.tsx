@@ -69,6 +69,7 @@ export function ProductApp({
 }) {
   const searchParams = useSearchParams();
   const planId = searchParams.get("planId");
+  const scenarioSlug = searchParams.get("scenario") || undefined;
   const planEmphasisRaw = searchParams.get("planEmphasis");
   const planEmphasis =
     planEmphasisRaw === "stakeholder" ||
@@ -84,7 +85,7 @@ export function ProductApp({
   const [activeTool, setActiveTool] = useState<DashboardTool>("Home");
   const [notice, setNotice] = useState(
     initialEnrolmentId
-      ? "Welcome back. Your MediFlow workspace is ready."
+      ? "Welcome back. Your Experience workspace is ready."
       : "Your workspace is ready. Choose a tool to continue.",
   );
   const [isSaving, setIsSaving] = useState(false);
@@ -144,6 +145,7 @@ export function ProductApp({
       startTimeline: form.startTimeline,
       ...(planId ? { planId } : {}),
       ...(planEmphasis ? { planEmphasis } : {}),
+      ...(scenarioSlug ? { scenarioSlug } : {}),
     };
   }
 
@@ -159,7 +161,7 @@ export function ProductApp({
 
   async function acceptOfferAndStartExperience() {
     setIsSaving(true);
-    setNotice("Creating your MediFlow workspace.");
+    setNotice("Creating your Experience workspace.");
 
     try {
       const experienceResponse = await fetch("/api/xperience/experience/start", {
@@ -176,7 +178,7 @@ export function ProductApp({
         ? ` Gap-focused plan: ${planEmphasis} emphasis.`
         : "";
       setNotice(
-        `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "MediFlow"} is ready.${emphasisNote}`,
+        `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "your company"} is ready.${emphasisNote}`,
       );
       setScreen("Dashboard");
     } catch {
@@ -219,7 +221,7 @@ export function ProductApp({
   }
 
   async function recordWorkspaceDecision(action: string) {
-    setNotice(`${action} selected for the TrustCare scenario. Recording evidence.`);
+    setNotice(`${action} selected for the scenario. Recording evidence.`);
 
     const impactByAction: Record<
       string,
@@ -241,7 +243,7 @@ export function ProductApp({
             label: action,
             impact: impactByAction[action] || { trust: 4, delivery: 4, clarity: 4 },
           },
-          rationale: "Decision made from the MediFlow dashboard.",
+          rationale: "Decision made from the Experience dashboard.",
         }),
       });
       const result = await response.json();

@@ -146,6 +146,23 @@ export type ExperienceSimState = {
     rationale: string | null;
     experienceKey: string;
   };
+  /** Multi-company catalogue metadata for shared consequence copy. */
+  scenarioMeta?: {
+    slug: string;
+    companyKey: string;
+    problem: string;
+    consequenceCopy?: {
+      reviewContext: { summary: string; messageSubject: string; messageBody: string };
+      discussOptions: { summary: string; meetingOutcome: string };
+      makeDecision: {
+        summary: string;
+        meetingOutcome: string;
+        messageSubject: string;
+        messageBody: string;
+        riskMitigatedTitle: string;
+      };
+    };
+  };
 };
 
 export type ExperienceSimEventType =

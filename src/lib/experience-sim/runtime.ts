@@ -5,7 +5,7 @@ import {
   captureReflection,
   evaluateCompletion,
 } from "@/lib/experience-sim/engines";
-import { generateMediFlowExperience, isExperienceSimState } from "@/lib/experience-sim/mediflow";
+import { generateExperience, isExperienceSimState } from "@/lib/experience-sim/generate";
 import type { ExperienceSimState } from "@/lib/experience-sim/types";
 import { recordDecision } from "@/lib/xperience/store";
 
@@ -28,12 +28,17 @@ export async function ensureSimState(
   }
 
   // Upgrade legacy seed JSON → full sim state (smallest migration path)
-  const upgraded = generateMediFlowExperience({
+  const personalisedBy =
+    data.state && typeof data.state === "object"
+      ? ((data.state as { personalisedBy?: Record<string, unknown> }).personalisedBy ?? {})
+      : {};
+  const upgraded = generateExperience({
     userRole: fallbackRole,
-    personalisedBy:
-      data.state && typeof data.state === "object"
-        ? ((data.state as { personalisedBy?: Record<string, unknown> }).personalisedBy ?? {})
-        : {},
+    personalisedBy,
+    scenarioSlug:
+      typeof personalisedBy.scenarioSlug === "string"
+        ? personalisedBy.scenarioSlug
+        : "mediflow-trustcare",
   });
   await supabase
     .from("xperience_enrolments")
@@ -105,9 +110,11 @@ export async function emitDecisionObservation(
     sourceType: "decision",
     category: "practice",
     title: `Experience decision: ${input.label}`,
-    summary: `MediFlow TrustCare — ${input.state.consequences.at(-1)?.summary ?? input.label}`,
+    summary: `${input.state.company.name} — ${input.state.consequences.at(-1)?.summary ?? input.label}`,
     rawContent: {
-      experience: "mediflow_trustcare_v1",
+      experience: input.state.planner?.experienceKey ?? input.state.scenarioMeta?.slug ?? "experience",
+      company: input.state.company.name,
+      project: input.state.project.name,
       choiceId: input.choiceId,
       effects: input.effects,
       metricsSnapshot: input.state.metrics,
@@ -249,9 +256,14 @@ export async function submitExperienceReflection(
       userId: user.id,
       sourceType: "reflection",
       category: "knowledge",
-      title: "Experience reflection — TrustCare",
+      title: `Experience reflection — ${state.company.name}`,
       summary: text.slice(0, 240),
-      rawContent: { reflection: text, day: state.day },
+      rawContent: {
+        reflection: text,
+        day: state.day,
+        company: state.company.name,
+        project: state.project.name,
+      },
       sourceRecordType: "experience_reflection",
       sourceRecordId: state.reflections.at(-1)?.id,
       idempotencyKey: `experience-reflection:${input.enrolmentId}:${state.reflections.at(-1)?.id}`,
@@ -291,4 +303,4 @@ export async function submitExperienceReflection(
   return { ok: true as const, state, complete };
 }
 
-export { generateMediFlowExperience, isExperienceSimState };
+export { generateExperience, generateMediFlowExperience, isExperienceSimState };

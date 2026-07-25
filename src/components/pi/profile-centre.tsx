@@ -307,9 +307,16 @@ export function ProfileCentre() {
           {profile.experiencePlan ? (
             <div className="mt-4 rounded-lg border border-[#E5E2D9] bg-[#FAFAF7] px-3 py-3">
               <p className="text-xs font-medium text-[#1A1A18]">
-                Recommended Experience ({profile.experiencePlan.emphasis} emphasis)
+                Recommended Experience — {profile.experiencePlan.companyName}
+              </p>
+              <p className="mt-0.5 text-[10px] uppercase tracking-wide text-[#6B6B64]">
+                {profile.experiencePlan.industry.replace(/_/g, " ")} ·{" "}
+                {profile.experiencePlan.emphasis} emphasis
               </p>
               <p className="mt-1 text-xs text-[#4A4A45]">{profile.experiencePlan.summary}</p>
+              <p className="mt-1 text-[11px] text-[#6B6B64]">
+                Why: {profile.experiencePlan.rationale}
+              </p>
               <p className="mt-1 text-[11px] text-[#6B6B64]">
                 {profile.experiencePlan.coachingFocus}
               </p>
@@ -323,7 +330,7 @@ export function ProfileCentre() {
                   href={profile.experiencePlan.href}
                   className="rounded-md bg-[#1C4A2E] px-3 py-1.5 text-[11px] font-medium text-white"
                 >
-                  Open planned Experience
+                  Open {profile.experiencePlan.companyName}
                 </Link>
                 <button
                   type="button"

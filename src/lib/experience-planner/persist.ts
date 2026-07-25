@@ -6,6 +6,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { scenarioBySlug } from "@/lib/experience-planner/catalog";
 import { planExperienceFromGaps } from "@/lib/experience-planner/plan";
 import type {
+  ExperienceIndustry,
   ExperiencePlanRecommendation,
   ExperiencePlanRecord,
   PlanFromGapsInput,
@@ -42,6 +43,10 @@ function rowToRecord(row: PlanRow): ExperiencePlanRecord {
     ? row.evidence_links
     : []) as ExperiencePlanRecommendation["evidenceLinks"];
   const emphasis = row.emphasis as ExperiencePlanRecommendation["emphasis"];
+  const meta = row.metadata ?? {};
+  const preferredIndustries = Array.isArray(meta.preferredIndustries)
+    ? (meta.preferredIndustries as string[])
+    : [];
   return {
     id: row.id,
     status: row.status as ExperiencePlanRecord["status"],
@@ -52,14 +57,21 @@ function rowToRecord(row: PlanRow): ExperiencePlanRecord {
     title: scenario?.title ?? row.scenario_slug,
     summary: scenario?.summary ?? "",
     coachingFocus: scenario?.coachingFocus ?? "",
+    companyName: scenario?.companyName ?? "Experience",
+    companyKey: scenario?.companyKey ?? "unknown",
+    industry: (scenario?.industry ?? "saas") as ExperienceIndustry,
+    projectName: scenario?.projectName ?? "",
+    candidateRole: scenario?.candidateRole ?? "",
+    problem: scenario?.problem ?? "",
     decisionEmphasis: scenario?.decisionEmphasis ?? [],
     targetedCompetencies: row.targeted_competencies ?? [],
     rankedGaps,
     rationale: row.rationale,
     evidenceLinks,
-    href: `/experience/app?planId=${row.id}&planEmphasis=${emphasis}`,
+    href: `/experience/app?planId=${row.id}&scenario=${row.scenario_slug}&planEmphasis=${emphasis}`,
     targetRole: row.target_role,
     targetSeniority: row.target_seniority,
+    preferredIndustries,
     snapshotId: row.snapshot_id,
     scoreRunId: row.score_run_id,
     frameworkVersionId: row.framework_version_id,
@@ -124,6 +136,20 @@ export async function buildPlanInputFromProfile(
     .flatMap((l) => l.evidenceReferences)
     .slice(0, 12);
 
+  const industriesRaw = payload.industries;
+  const preferredIndustries: string[] = [];
+  if (Array.isArray(industriesRaw)) {
+    for (const item of industriesRaw) {
+      if (typeof item === "string" && item.trim()) preferredIndustries.push(item.trim());
+    }
+  }
+  if (typeof payload.industry === "string" && payload.industry.trim()) {
+    preferredIndustries.push(payload.industry.trim());
+  }
+  if (typeof payload.targetIndustry === "string" && payload.targetIndustry.trim()) {
+    preferredIndustries.push(payload.targetIndustry.trim());
+  }
+
   return {
     gaps: claims?.gaps ?? [],
     levels: (claims?.levels ?? []).map((l) => ({
@@ -134,6 +160,7 @@ export async function buildPlanInputFromProfile(
     recommendations: claims?.recommendations ?? [],
     targetRole: (payload.targetRole as string) || null,
     targetSeniority: (payload.targetSeniority as string) || null,
+    preferredIndustries: [...new Set(preferredIndustries)],
     snapshotId: claims?.snapshotId ?? null,
     scoreRunId: claims?.scoreRunId ?? null,
     frameworkVersionId: claims?.frameworkVersionId ?? null,
@@ -200,6 +227,12 @@ export async function createOrRefreshExperiencePlan(
         decisionEmphasis: recommendation.decisionEmphasis,
         coachingFocus: recommendation.coachingFocus,
         capabilityAssigned: false,
+        companyName: recommendation.companyName,
+        companyKey: recommendation.companyKey,
+        industry: recommendation.industry,
+        projectName: recommendation.projectName,
+        problem: recommendation.problem,
+        preferredIndustries: recommendation.preferredIndustries,
       },
     })
     .select("*")

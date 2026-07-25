@@ -178,6 +178,7 @@ export function applyDecisionConsequences(
   let effects: Record<string, number> = {};
   let trustByPersona: Record<string, number> = {};
   let summary = "";
+  const copy = state.scenarioMeta?.consequenceCopy;
 
   if (input.choiceId === "review_context") {
     effects = {
@@ -187,17 +188,21 @@ export function applyDecisionConsequences(
       trust: 3,
     };
     trustByPersona = { "p-maya": 5, "p-james": -2, "p-sarah": 2 };
-    summary = "You slowed to review context. Maya’s trust rose; James feels delayed.";
+    summary =
+      copy?.reviewContext.summary ??
+      "You slowed to review context. Delivery trust rose; commercial pressure feels delayed.";
     next = updateTask(next, "t-brief", "done");
     next = addMessage(next, {
       id: `msg-maya-${Date.now()}`,
       fromPersonaId: "p-maya",
-      subject: "Capacity reality check",
-      body: "Thanks for asking. We’re at 64% — Tuesday is aggressive without cutting scope.",
+      subject: copy?.reviewContext.messageSubject ?? "Capacity reality check",
+      body:
+        copy?.reviewContext.messageBody ??
+        `Thanks for asking. We're at ${state.metrics.engineeringCapacity}% — the aggressive date is risky without cutting scope.`,
       day,
       read: false,
     });
-    next = personaRemember(next, "p-maya", "User sought engineering context before committing", "DecisionRecorded");
+    next = personaRemember(next, "p-maya", "User sought delivery context before committing", "DecisionRecorded");
     // Briefing counts as recorded meeting activity so Day-1 E2E can complete via reflection
     next = {
       ...next,
@@ -225,14 +230,17 @@ export function applyDecisionConsequences(
       clarity: 5,
     };
     trustByPersona = { "p-maya": 6, "p-james": 4, "p-sarah": 3 };
-    summary = "You facilitated options. Trade-offs are clearer; huddle can complete.";
+    summary =
+      copy?.discussOptions.summary ??
+      "You facilitated options. Trade-offs are clearer; huddle can complete.";
     next = updateTask(next, "t-align", "in_progress");
     next = completeMeeting(
       next,
       "m-standup",
-      "Agreed to present two date options to Metro Clinic with scope notes.",
+      copy?.discussOptions.meetingOutcome ??
+        "Agreed to present two options with explicit scope notes.",
     );
-    next = personaRemember(next, "p-james", "User opened space to negotiate date", "MeetingCompleted");
+    next = personaRemember(next, "p-james", "User opened space to negotiate", "MeetingCompleted");
     next = personaRemember(next, "p-maya", "User protected capacity in discussion", "MeetingCompleted");
     events.push({
       type: "MeetingCompleted",
@@ -251,25 +259,33 @@ export function applyDecisionConsequences(
     };
     trustByPersona = { "p-sarah": 5, "p-maya": 4, "p-james": 6, "p-priya": 3 };
     summary =
-      "You made an explicit call: renegotiate Tuesday to a scoped Friday pilot. Stakeholders realign.";
+      copy?.makeDecision.summary ??
+      "You made an explicit call with scoped renegotiation. Stakeholders realign.";
     next = updateTask(next, "t-align", "done");
     next = updateTask(next, "t-brief", "done");
     next = completeMeeting(
       next,
       "m-standup",
-      "Decision: Friday pilot with messaging-only scope; billing deferred.",
+      copy?.makeDecision.meetingOutcome ??
+        "Decision: scoped commitment with explicit out-of-scope items.",
     );
+    const openRisk = next.risks.find((r) => r.id === "r-overpromise") ?? next.risks[0];
     next = upsertRisk(next, {
-      id: "r-overpromise",
-      title: "Sales over-promise on pilot date",
+      id: openRisk?.id ?? "r-overpromise",
+      title:
+        copy?.makeDecision.riskMitigatedTitle ??
+        openRisk?.title ??
+        "Over-promise risk",
       severity: "medium",
       status: "mitigated",
     });
     next = addMessage(next, {
       id: `msg-sarah-${Date.now()}`,
       fromPersonaId: "p-sarah",
-      subject: "Clear decision — thank you",
-      body: "Friday with scoped TrustCare is acceptable. Keep Priya in the loop for the customer email.",
+      subject: copy?.makeDecision.messageSubject ?? "Clear decision — thank you",
+      body:
+        copy?.makeDecision.messageBody ??
+        "Scoped commitment is acceptable. Keep customer-facing teammates in the loop.",
       day,
       read: false,
     });
@@ -280,7 +296,10 @@ export function applyDecisionConsequences(
       "DecisionRecorded",
     );
     events.push({ type: "MeetingCompleted", payload: { meetingId: "m-standup" } });
-    events.push({ type: "RiskChanged", payload: { riskId: "r-overpromise", status: "mitigated" } });
+    events.push({
+      type: "RiskChanged",
+      payload: { riskId: openRisk?.id ?? "r-overpromise", status: "mitigated" },
+    });
   }
 
   next = {

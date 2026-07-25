@@ -25,6 +25,7 @@ export function parseCandidateProfile(body: unknown): CandidateProfileInput | nu
     startTimeline: optionalString(data.startTimeline),
     planId: optionalString(data.planId),
     planEmphasis: parseEmphasis(data.planEmphasis),
+    scenarioSlug: optionalString(data.scenarioSlug) || optionalString(data.scenario),
   };
 }
 
