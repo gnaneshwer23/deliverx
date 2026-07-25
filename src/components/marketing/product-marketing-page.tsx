@@ -225,7 +225,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
                     </p>
                   </div>
                   <span className="mt-8 text-[0.875rem] font-medium text-white transition-transform duration-300 group-hover:translate-x-1">
-                    View pricing →
+                    See pilot access →
                   </span>
                 </Link>
               </div>

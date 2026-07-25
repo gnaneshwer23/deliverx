@@ -977,7 +977,7 @@ export const PRICING_TIERS = [
       "Organisational memory"
     ],
     "highlightFeatures": ["All 7 role dashboards"],
-    "cta": "Start free trial",
+    "cta": "Join the pilot",
     "ctaHref": "/signup",
     "featured": true,
     "badge": "Available now",
@@ -996,7 +996,7 @@ export const PRICING_TIERS = [
       "Priority support",
       "Advanced portfolio views"
     ],
-    "cta": "Start free trial",
+    "cta": "Join the pilot",
     "ctaHref": "/signup",
     "featured": false,
     "ghost": true,
@@ -1007,15 +1007,15 @@ export const PRICING_TIERS = [
     "name": "PMO & programmes",
     "price": "Custom",
     "period": "",
-    "desc": "For PMOs running cross-project portfolios with SSO and dedicated success.",
+    "desc": "Pilot conversations welcome — enterprise packaging is not a live checkout SKU.",
     "features": [
       "All team features",
       "Programme layer",
       "Portfolio dashboard",
-      "SSO / SAML",
-      "Dedicated success manager"
+      "SSO / SAML (when delivered)",
+      "Dedicated success (when delivered)"
     ],
-    "cta": "Contact sales",
+    "cta": "Contact us",
     "ctaHref": "mailto:hello@deliverx.dev?subject=DeliverX%20Enterprise%20enquiry",
     "featured": false,
     "ghost": true,

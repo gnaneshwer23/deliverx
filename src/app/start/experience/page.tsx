@@ -53,8 +53,7 @@ export default async function StartXperiencePage() {
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">
-            {/* TODO(payment): Stripe £500 checkout / entitlement gate */}
-            Payment entitlement can be added later — access is open for this build.
+            Open pilot access — paid checkout and entitlements are not live yet.
           </p>
         </MarketingContainer>
       </MarketingSection>

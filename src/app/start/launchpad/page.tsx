@@ -52,7 +52,7 @@ export default async function StartLaunchpadPage({
           </h1>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
             {exploringRoles
-              ? "Your account is ready for Launchpad — Land the opportunity. Continue to assessment, Career Twin and interview prep."
+              ? "Your account is ready for Launchpad — Land the opportunity. Continue to readiness, evidence packaging and interview prep."
               : "Your account is ready for Launchpad — Land the opportunity. Continue to onboarding and your career readiness workspace."}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -67,8 +67,7 @@ export default async function StartLaunchpadPage({
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">
-            {/* TODO(payment): Stripe £250 checkout / entitlement gate */}
-            Payment entitlement can be added later — access is open for this build.
+            Open pilot access — paid checkout and entitlements are not live yet.
           </p>
         </MarketingContainer>
       </MarketingSection>

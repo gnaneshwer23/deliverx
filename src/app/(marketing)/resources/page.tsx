@@ -37,10 +37,10 @@ const RESOURCES = [
     label: "Explore Professional Workspace",
   },
   {
-    title: "Pricing & Complete Journey",
-    body: "Clear stage pricing — or 12 months across the full path.",
+    title: "Pilot access & Complete Journey",
+    body: "Open pilot access across stages — or explore the full connected path.",
     href: "/pricing",
-    label: "View pricing",
+    label: "See pilot access",
   },
 ] as const;
 

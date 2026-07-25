@@ -28,7 +28,6 @@ import {
   ReportingFeatureVisual,
   SignalsFeatureVisual,
 } from "@/components/dx/landing-feature-visual";
-import { LandingStatCard } from "@/components/dx/landing-stat";
 import { dxClass } from "@/lib/dx-theme";
 
 export function LandingNav() {
@@ -48,7 +47,7 @@ export function LandingNav() {
             Sign In
           </DxButtonLink>
           <DxButtonLink href="/signup" variant="primarySm" className="hidden md:inline-flex">
-            Start trial
+            Join the pilot
           </DxButtonLink>
           <LandingMobileNav />
         </div>
@@ -60,22 +59,19 @@ export function LandingNav() {
 export { LandingHero } from "@/components/dx/landing-hero";
 
 export function LandingProblem() {
-  const stats = [
+  const problems = [
     {
-      n: "40%",
-      t: "PM time on admin",
-      d: "Status chasing and report writing consume nearly half the week.",
+      t: "Status chasing",
+      d: "Status lives in slides and chat threads instead of a shared delivery record.",
       icon: Clock,
     },
     {
-      n: "3wk",
-      t: "Risk escalation lag",
-      d: "Issues spotted in standups often go unlogged until it's too late.",
+      t: "Late risk visibility",
+      d: "Issues spotted in standups often go unlogged until they become blockers.",
       icon: AlertTriangle,
     },
     {
-      n: "97%",
-      t: "Lessons lost",
+      t: "Lessons that do not travel",
       d: "Closure reports sit in folders instead of shaping the next programme.",
       icon: Layers,
     },
@@ -105,19 +101,19 @@ export function LandingProblem() {
                 <em className="text-[#3D9660] not-italic">Zero shared context.</em>
               </>
             }
-            description="PMs chase status in slides. Risks surface weeks late. Lessons die in closure folders."
+            description="PMs chase status in slides. Risks surface late. Lessons die in closure folders."
           />
         </LandingReveal>
         <div className="grid gap-4 md:grid-cols-3 md:gap-5">
-          {stats.map((s, i) => (
-            <LandingReveal key={s.n} delay={i * 0.06}>
-              <LandingStatCard
-                value={s.n}
-                title={s.t}
-                description={s.d}
-                icon={s.icon}
-                light
-              />
+          {problems.map((s, i) => (
+            <LandingReveal key={s.t} delay={i * 0.06}>
+              <article className="relative overflow-hidden border border-white/10 bg-white/[0.06] p-6 md:p-8">
+                <span className="mb-4 flex size-10 items-center justify-center border border-[#3D9660]/35 bg-[#3D9660]/15">
+                  <s.icon size={18} className="text-[#3D9660]" strokeWidth={1.5} />
+                </span>
+                <h3 className="text-base font-semibold leading-snug text-white md:text-lg">{s.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/70">{s.d}</p>
+              </article>
             </LandingReveal>
           ))}
         </div>
@@ -127,15 +123,14 @@ export function LandingProblem() {
             <div className="max-w-xl">
               <DxCaps className="text-[#3D9660]">The answer</DxCaps>
               <p className={`${dxClass.display} mt-3 text-2xl leading-snug text-white md:text-3xl`}>
-                One workspace. One signal graph. Human-approved AI.
+                One workspace. Shared context. Human-approved AI.
               </p>
               <p className="mt-3 text-sm font-light leading-relaxed text-white/50">
-                DeliverX replaces the patchwork with a command centre that stays in sync from
-                charter to closure.
+                DeliverX connects delivery work to Professional Intelligence — AI drafts; humans decide.
               </p>
             </div>
             <DxButtonLink href="/signup" className="shrink-0">
-              Start free trial
+              Join the pilot
             </DxButtonLink>
           </div>
         </LandingReveal>
@@ -311,51 +306,47 @@ function FeatureBlock({
 export function LandingPricing() {
   const tiers = [
     {
-      name: "Starter",
-      sub: "Solo PM",
-      price: "£49",
-      note: "per month",
+      name: "Pilot",
+      sub: "Open access",
+      price: "Free",
+      note: "during pilot",
       features: [
-        "3 active projects",
-        "Up to 10 team members",
-        "AI document analysis",
-        "Standup intelligence",
-        "Weekly status reports",
+        "Professional Intelligence surfaces",
+        "Experience, Launchpad and Workspace entry",
+        "Evidence ledger and privacy controls",
+        "AI drafts with human approval",
+        "No checkout required",
       ],
-      cta: "Start free trial",
-      href: "/signup",
-      featured: false,
-    },
-    {
-      name: "Professional",
-      sub: "Delivery teams",
-      price: "£149",
-      note: "per month",
-      features: [
-        "Unlimited projects",
-        "Unlimited team members",
-        "Meeting intelligence",
-        "Decision register",
-        "Organisational memory",
-      ],
-      cta: "Start free trial",
+      cta: "Join the pilot",
       href: "/signup",
       featured: true,
     },
     {
-      name: "Enterprise",
-      sub: "PMO & programmes",
-      price: "Custom",
-      note: "talk to us",
+      name: "Teams",
+      sub: "Coming later",
+      price: "TBD",
+      note: "after T9",
       features: [
-        "All Professional features",
-        "Programme layer",
-        "Portfolio dashboard",
-        "SSO / SAML",
-        "Dedicated success",
+        "Paid packaging not live",
+        "Entitlements planned with Stripe",
+        "Commercial terms published at launch",
       ],
-      cta: "Contact sales",
+      cta: "Join the pilot",
       href: "/signup",
+      featured: false,
+    },
+    {
+      name: "Enterprise",
+      sub: "Talk to us",
+      price: "Custom",
+      note: "enquiry",
+      features: [
+        "Pilot conversations welcome",
+        "No marketplace liquidity claim",
+        "No SSO sales pitch without delivery",
+      ],
+      cta: "Contact us",
+      href: "mailto:hello@deliverx.dev?subject=DeliverX%20pilot%20enquiry",
       featured: false,
     },
   ];
@@ -365,14 +356,14 @@ export function LandingPricing() {
       <LandingContainer>
         <LandingReveal>
           <SectionIntro
-            eyebrow="Pricing"
+            eyebrow="Access"
             align="center"
             title={
               <>
-                Simple plans. <em className="text-[#1C4A2E] not-italic">Serious delivery.</em>
+                Open pilot. <em className="text-[#1C4A2E] not-italic">Paid plans later.</em>
               </>
             }
-            description="30-day free trial on all plans. No credit card required."
+            description="No credit card. No money-back guarantee. Commercial packaging requires founder approval (T9)."
           />
         </LandingReveal>
         <div className="grid items-stretch gap-6 lg:grid-cols-3">
@@ -388,7 +379,7 @@ export function LandingPricing() {
             >
               {t.featured ? (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap border border-[#3D9660] bg-[#3D9660] px-3 py-0.5 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wider text-white">
-                  Most popular
+                  Available now
                 </span>
               ) : null}
               <DxCaps className={t.featured ? "text-[#3D9660]" : ""}>{t.name}</DxCaps>
@@ -474,7 +465,7 @@ export function LandingCta() {
                 <em className="text-[#3D9660] not-italic">intelligent</em> organisation?
               </>
             }
-            description="30-day free trial · No credit card · ~15 minutes to first project"
+            description="Open pilot access · No credit card · No money-back claim until paid plans ship"
           />
         </LandingReveal>
         <LandingReveal delay={0.08}>
@@ -483,7 +474,7 @@ export function LandingCta() {
             href="/signup"
             className="inline-flex items-center justify-center bg-white px-10 py-3.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.14em] text-[#1C4A2E] transition hover:bg-[#EEF5F1]"
           >
-            Start free trial
+            Join the pilot
           </Link>
           <Link
             href="/login"

@@ -1,5 +1,6 @@
 /**
  * Story-driven homepage content — Complete Career Intelligence Platform.
+ * Commercial honesty: no purchasable prices or refunds until T9.
  */
 
 import {
@@ -30,7 +31,7 @@ export const PROBLEM = {
   emphasis: "It's gaining experience.",
   body: [
     "Courses teach frameworks. Job posts ask for experience. Between them sits a gap that blocks careers.",
-    "DeliverX closes that gap. You join AI-powered companies, own real product challenges, and leave with evidence employers recognise — then turn that work into opportunities and succeed once you're in the role.",
+    "DeliverX closes that gap. You join AI-powered companies, own real product challenges, and leave with evidence employers can evaluate — then turn that work into opportunities and succeed once you're in the role.",
   ],
   flow: ["Learning", "Experience", "Opportunity", "Career", "Delivery"] as const,
 };
@@ -56,8 +57,8 @@ export const HOME_PRODUCTS = [
     href: "/launchpad",
     signupHref: LAUNCHPAD_SIGNUP_HREF,
     sentence:
-      "Turn your experience into a stronger CV, ace interviews, and unlock opportunities that match your potential.",
-    bullets: ["Career Twin", "CV", "Interview Preparation"],
+      "Turn your experience into a stronger CV, prepare for interviews, and track applications with labelled readiness.",
+    bullets: ["Career Intelligence", "Evidence CV", "Interview Lab"],
     cta: "Explore Launchpad",
   },
   {
@@ -98,7 +99,7 @@ export const JOURNEY_NODES = [
   {
     id: "review",
     label: "Performance Review",
-    detail: "Receive structured feedback that compounds into your Career Twin.",
+    detail: "Receive structured feedback that compounds into your evidence record.",
   },
   {
     id: "portfolio",
@@ -127,8 +128,8 @@ export const PLATFORM_TABS = [
   {
     id: "career",
     label: "Career",
-    title: "Career Twin intelligence",
-    caption: "Skills, readiness and interview stories that update as you work.",
+    title: "Career Intelligence",
+    caption: "Labelled readiness, roadmap and interview prep grounded in evidence.",
   },
   {
     id: "delivery",
@@ -177,7 +178,7 @@ export const EXPERIENCE_TIMELINE = [
   { month: "Jan", title: "Discovery", note: "Customer interviews and problem framing" },
   { month: "Feb", title: "Strategy", note: "Business case and product direction" },
   { month: "Mar", title: "Delivery", note: "PRDs, sprints and stakeholder alignment" },
-  { month: "Apr", title: "Performance Review", note: "Stars earned · Career Twin updated", stars: 4 },
+  { month: "Apr", title: "Performance Review", note: "Feedback recorded · evidence updated" },
 ] as const;
 
 export const TEAM_COPILOT_PANELS = [
@@ -220,18 +221,23 @@ export const HOME_PRICING = [
     stage: CAREER_BUNDLE.stage,
     price: CAREER_BUNDLE.price,
     cadence: CAREER_BUNDLE.cadence,
-    summary: "Experience + Launchpad + Professional Workspace for 12 months.",
+    summary: "Experience + Launchpad + Professional Workspace — open pilot access.",
     href: "/pricing#bundle",
     ctaHref: BUNDLE_SIGNUP_HREF,
     featured: true,
   },
 ] as const;
 
+/** Pilot honesty band — not a commercial refund offer. */
 export const GUARANTEE = {
-  title: "Money-back guarantee",
-  body: "If you fully complete your personalised programme, participate in the required activities, and don't feel that you've gained significant professional value, we'll offer a 100% money-back guarantee.",
+  title: "Open pilot — no checkout yet",
+  body: "DeliverX is in an open pilot. Create an account and explore Experience, Launchpad and Professional Workspace without payment. Paid plans and refunds will arrive only when commercial packaging (T9) ships.",
 };
 
+/**
+ * Illustrative scenarios only — never present as customer testimonials.
+ * Real quotes stay gated behind PILOT_QUOTE.enabled in landing-data.
+ */
 export const DEMO_STORIES = [
   {
     archetype: "Career Switcher",
@@ -241,7 +247,7 @@ export const DEMO_STORIES = [
   {
     archetype: "Graduate",
     journey:
-      "Joined an AI company in week one, built PRDs and stakeholder maps, then used Career Twin stories to stand out in graduate PM loops.",
+      "Joined an AI company in week one, built PRDs and stakeholder maps, then used Career Intelligence stories to stand out in graduate PM loops.",
   },
   {
     archetype: "Senior PM",
@@ -258,15 +264,15 @@ export const DEMO_STORIES = [
 export const HOME_FAQ = [
   {
     q: "What is DeliverX?",
-    a: "DeliverX is an AI Product Experience Company — a complete career intelligence platform spanning Experience, Launchpad and Professional Workspace.",
+    a: "DeliverX is an AI Product Experience Company — a career intelligence platform spanning Experience, Launchpad and Professional Workspace, grounded in Professional Intelligence.",
   },
   {
     q: "Do I need prior Product Management experience?",
     a: "No. Experience is designed to build practical experience inside AI companies. Launchpad then helps you present that work; Professional Workspace supports you once you're in a role.",
   },
   {
-    q: "Can I buy just one product?",
-    a: "Yes. Choose Experience (£500), Launchpad (£250) or Professional Workspace (£500) — or take the Complete Journey (£800) for 12 months across all three.",
+    q: "How much does it cost?",
+    a: "During the open pilot, access is free — there is no paid checkout yet. Experience, Launchpad and Professional Workspace are available when you create an account. Commercial pricing will ship only after founder-approved packaging (T9).",
   },
   {
     q: "Is the AI company experience realistic?",
@@ -274,14 +280,14 @@ export const HOME_FAQ = [
   },
   {
     q: "What do I walk away with?",
-    a: "A portfolio of artefacts, an Experience Record, Career Twin profile, interview stories and delivery habits you can use in real teams.",
+    a: "A portfolio of artefacts, an Experience Record, Career Intelligence profile, interview stories and delivery habits you can use in real teams. Verified badges require independent attestation.",
   },
   {
-    q: "How does the money-back guarantee work?",
-    a: "Complete your personalised programme and required activities. If you don't feel you've gained significant professional value, you're covered by our 100% money-back guarantee.",
+    q: "Is there a money-back guarantee?",
+    a: "No. There is no paid product and therefore no money-back offer during the pilot. When paid plans launch, refund terms will be published with those commercial terms.",
   },
   {
     q: "Is this a job guarantee?",
-    a: "We guarantee the quality of the experience, evidence and support — not that every employer will invite you to interview. Outcomes depend on your market and effort.",
+    a: "No. We support the quality of the experience, evidence and tooling — not that every employer will invite you to interview. Outcomes depend on your market and effort.",
   },
 ] as const;

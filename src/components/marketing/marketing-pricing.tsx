@@ -41,7 +41,7 @@ export function MarketingPricingSection() {
               Pricing <em>coming soon</em>
             </>
           }
-          subtitle="Start free today — no credit card required. Paid plans launch once billing is live."
+          subtitle="Join the pilot today — no credit card required. Paid plans launch once billing is live."
         />
 
         <div className="mt-8 grid gap-4 max-[900px]:grid-cols-1 min-[901px]:grid-cols-3">

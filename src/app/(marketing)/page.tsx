@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 export default function SuiteHomePage() {
   return (
     <MarketingPageShell>
-      <MarketingNav primaryCta={{ href: "/signup", label: "Start your journey" }} />
+      <MarketingNav primaryCta={{ href: "/signup", label: "Join the pilot" }} />
 
       <main id="main-content">
         <HomeHero />

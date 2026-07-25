@@ -105,7 +105,7 @@ export function MarketingProductSection() {
         </div>
 
         <MarketingButtonLink href="/signup" variant="primary" className="mt-10">
-          Start free trial
+          Join the pilot
         </MarketingButtonLink>
       </MarketingContainer>
     </MarketingSection>

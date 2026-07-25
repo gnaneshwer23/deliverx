@@ -29,11 +29,11 @@ Severity (this roadmap):
 | **R-P0-01 — Closed** | Own-row `ALL` RLS on `pi_capability_score_runs`; no forbid-mutation trigger | Authenticated JWT could invent/alter/delete ScoreRuns outside Capability Engine | `0095`: SELECT-only owner policy, authenticated DML revoked, immutable trigger with purge-only bypass; all engine callers use service role | `0095_db_trust_rail_lockdown.sql`; capability persist callers; live RLS tests | None | Owner/non-owner PostgREST mutation denied; service-role engine write and purge pass | M | **Resolved — Batch 1** |
 | **R-P0-02 — Closed** | Own-row `ALL` on `vpp_entries` allowed client-set `externally_attested` / `externally_verified` | Self-Verified badge without attestation | `0095`: explicit owner CRUD plus protected-column trigger; service-role-only attestation state RPC | `0095`; `external-attestation/store.ts`; VPP store/tests | R-P0-01 | Owner/non-owner protected writes denied; privileged attestation path passes | M | **Resolved — Batch 1** |
 | **R-P0-03 — Closed** | Evidence transitions allowed client `to_status=platform_verified` | API verification-honesty bypass | `0095`: RLS excludes elevated status, trigger denies direct inserts, narrow service-role append RPC | `0095`; `evidence-ledger/append.ts`; live security tests | Batch 1 | Owner/non-owner elevated insert denied; attestation append passes | M | **Resolved — Batch 1** |
-| **R-P0-04** | Priced CTAs + money-back guarantee with **no Stripe / T9** | Legal & trust; sells what cannot be fulfilled | `feature-completeness-matrix`; MF-001; UX P0-4; `homepage-data` GUARANTEE | Remove prices & guarantee **or** label “pilot — not for sale” until T9 founder approval | Marketing `career-suite.ts`, homepage, `/pricing`, start pages | T9 blocked | No unpaid guarantee claim; no “buy” implication without entitlement | S | **Fix now** (honesty pass; not batch 1) |
-| **R-P0-05** | Privacy / Terms are placeholders while product implies finished legal posture | Compliance / credibility | UX P0-1; `privacy`/`terms` pages | Founder-approved copy **or** explicit “draft / pilot” banner + remove overclaim | `(marketing)/privacy`, `terms` | Legal | No false finished-policy claim | S–M | **Fix now** (founder legal) |
-| **R-P0-06** | Unexplained decorative % on marketing/auth | Violates “no unexplained scores” | UX P0-2; A0-5; landing fixtures | Label “illustration” or remove | `home-sections`, heroes, `AuthBrandPanel`, `landing-data` | — | No bare capability-like % without method label | S | **Fix now** (honesty) |
+| **R-P0-04 — Closed** | Priced CTAs + money-back guarantee with **no Stripe / T9** | Legal & trust; sells what cannot be fulfilled | Batch 2 honesty pass: pilot access labels; no £ checkout prices; no money-back offer | Marketing `career-suite.ts`, homepage, `/pricing`, start pages | T9 blocked | No unpaid guarantee claim; no “buy” implication without entitlement | S | **Resolved — Batch 2** |
+| **R-P0-05 — Closed** | Privacy / Terms are placeholders while product implies finished legal posture | Compliance / credibility | Interim pilot Privacy + Terms with practice-accurate copy + contact | `(marketing)/privacy`, `terms` | Legal counsel later | No false finished-policy claim; interim markers present | S–M | **Resolved — Batch 2** |
+| **R-P0-06 — Closed** | Unexplained decorative % on marketing/auth | Violates “no unexplained scores” | Removed AuthBrandPanel 40%/3x/97% and landing problem %; qualitative copy only | `home-sections`, heroes, `AuthBrandPanel`, `landing-sections` | — | No bare capability-like % without method label | S | **Resolved — Batch 2** |
 | **R-P0-07** | CI workflows disabled (TD-018) | Regressions silent on `main` | `release-readiness`; MF-003 | Founder restore Actions minutes → enable `verify.yml` + `ci-e2e.yml` → re-add `on.push` | `.github/workflows/*` | Billing | Push runs release gate | S (ops) | **Fix now** (founder) |
-| **R-P0-08** | Archetype `DEMO_STORIES` read as testimonials | Misleading social proof | MF-004; homepage | Relabel “example journeys” or hide until real quotes | `homepage-data`, landing | — | No fake-testimonial reading | S | **Fix now** (honesty) |
+| **R-P0-08 — Closed** | Archetype `DEMO_STORIES` read as testimonials | Misleading social proof | Relabelled “Illustrative journeys / Example path”; `PILOT_QUOTE` remains disabled | `homepage-data`, landing | — | No fake-testimonial reading | S | **Resolved — Batch 2** |
 
 ### P1 Critical (16)
 
@@ -42,9 +42,9 @@ Severity (this roadmap):
 | **R-P1-01** | TD-006 leaked-password protection OFF | Weak passwords accepted | Advisors; TD-006 | Founder Auth Attack Protection toggle | Supabase dashboard | Founder | Advisor WARN cleared | S | **Now** (founder) |
 | **R-P1-02** | T8 attestation E2E not in T6 | Verified-on path unproven live | Matrix; MF-012; 0 attestation rows | Add harness: request → confirm → Verified on → dispute | `e2e/t0-*` or `e2e/t8-attestation.test.ts` | Mail/token | Live or local suite asserts Verified lights only via attest | M | **Now** |
 | **R-P1-03** | Next.js **16.2.9** high advisories | Middleware/SSRF/DoS class | `npm audit`; SEC-P1-01 | Upgrade ≥**16.2.11**; re-audit | `package.json` / lockfile | Build | `npm audit` Next highs closed; build + gate pass | S | **Soon** (optional attach if tiny; prefer after batch 1) |
-| **R-P1-04** | Cookie consent + `/cookies` missing | GDPR/analytics risk | MF-010; 404 | Policy + banner if legally required | New page + banner | Legal | Policy reachable; analytics gated if required | M | Ops/legal |
+| **R-P1-04 — Closed** | Cookie consent + `/cookies` missing | GDPR/analytics risk | `/cookies` (+ `/cookie` alias); essential auth + honest Vercel analytics note; no fake banner | New page + footer link | Legal | Policy reachable; analytics gated if required | M | **Resolved — Batch 2** |
 | **R-P1-05** | ScoreRun jargon user-facing | Unprofessional; engine leak | UX P0-3 | Human labels; engine name admin-only | Profile, Evidence, Hub, Launchpad CTAs | — | No primary CTA says “ScoreRun” | S | Honesty/UX |
-| **R-P1-06** | Launchpad / Experience marketing ahead of shipped depth | Expectation gap | MF-002, MF-015 | Rewrite includes to Day-1 planner + readiness honesty | `career-suite`, Experience marketing | TD-011 | Marketing matches LIVE | S | Honesty |
+| **R-P1-06 — Closed** | Launchpad / Experience marketing ahead of shipped depth | Expectation gap | Launchpad includes → Career Intelligence (readiness/roadmap/CV→VPP/interview/applications); twin/salary/LinkedIn demoted | `career-suite`, Experience/Launchpad marketing | TD-011 | Marketing matches LIVE | S | **Resolved — Batch 2** |
 | **R-P1-07** | Multi-shell / duplicated nav | Coherence failure | UX P1-1 | One primary IA for pilot; demote legacy | AppShell, WorkspaceSidebar, product shells | T7 | Single clear nav story | L | Defer full; small demotion now OK |
 | **R-P1-08** | Workspace points at Command Centre | Undermines T7 demotion | UX P1-2 | Remove pointer; hide demoted routes | `workspace/page.tsx` | — | No Command Centre pitch on home | S | Now |
 | **R-P1-09** | Launchpad vs Career Intelligence naming | Confused SKU | UX P1-5 | Hub/Launchpad single primary label | Hub, career-intelligence-app | — | Consistent product name | S | Now |
@@ -113,8 +113,8 @@ Severity (this roadmap):
 ### 1. Release blockers
 
 1. **DB trust-rail lockdown** (R-P0-01…03) — **shipped in `0095`**
-2. Commercial honesty (R-P0-04, R-P0-08) + decorative % (R-P0-06)  
-3. Legal Privacy/Terms (R-P0-05)  
+2. Commercial honesty (R-P0-04, R-P0-08) + decorative % (R-P0-06) — **shipped Batch 2**
+3. Legal Privacy/Terms/Cookies (R-P0-05, R-P1-04) — **shipped Batch 2**
 4. Restore CI (R-P0-07) + TD-006 (R-P1-01)  
 5. Next patch ≥16.2.11 (R-P1-03)
 
@@ -174,11 +174,11 @@ Severity (this roadmap):
 ## Recommended sequence
 
 ```text
-Batch 1 (founder approve): DB trust-rail lockdown 0095 + RLS/regression tests
+Batch 1 (founder approve): DB trust-rail lockdown 0095 + RLS/regression tests — SHIPPED
      ↓
-Honesty pass (copy): prices/guarantee/demo %/Launchpad includes  (no T9)
+Batch 2 (founder approve): Honesty + legal — prices/guarantee/demo %/Launchpad includes + Privacy/Terms/Cookies — SHIPPED
      ↓
-Founder ops: TD-018 CI · TD-006 HIBP · legal Privacy/Terms · SMTP reset test
+Founder ops: TD-018 CI · TD-006 HIBP · SMTP reset test
      ↓
 T8 E2E harness + Next ≥16.2.11
      ↓
@@ -190,3 +190,5 @@ DB-P1 consent + judgement binding · AI citations · a11y smoke
 ```
 
 **Do not start T9.** Do not expand marketplace / mission-control / multi-profession without approval.
+
+**Batch 2 shipped.** Remaining batches require founder approval.

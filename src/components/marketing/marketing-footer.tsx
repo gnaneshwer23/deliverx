@@ -26,9 +26,9 @@ const FOOTER_COLUMNS = [
       { href: "/solutions", label: "Solutions" },
       { href: "/resources", label: "Resources" },
       { href: "/about", label: "About" },
-      { href: "/pricing", label: "Pricing" },
+      { href: "/pricing", label: "Pilot access" },
       { href: "/pricing#bundle", label: "Complete Journey" },
-      { href: "/signup", label: "Start your journey" },
+      { href: "/signup", label: "Join the pilot" },
       { href: "/login", label: "Log in" },
     ],
   },
@@ -37,6 +37,7 @@ const FOOTER_COLUMNS = [
 const LEGAL_LINKS = [
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
+  { href: "/cookies", label: "Cookies" },
   { href: GITHUB_REPO, label: "GitHub", external: true },
 ] as const;
 
@@ -49,9 +50,9 @@ type FooterCta = {
 
 const DEFAULT_FOOTER_CTA: FooterCta = {
   title: "Start with DeliverX",
-  subtitle: "Experience, Launchpad or Professional Workspace — open pricing, or create an account.",
+  subtitle: "Experience, Launchpad or Professional Workspace — open pilot access, or create an account.",
   href: "/pricing",
-  label: "View pricing",
+  label: "See pilot access",
 };
 
 function FooterLink({
@@ -158,8 +159,8 @@ export function MarketingFooter({
           <TrustChecklist
             light
             items={[
-              "GDPR-ready infrastructure",
-              "EU data residency practices",
+              "Privacy export and delete",
+              "Observation consent default OFF",
               "Human approval on AI changes",
             ]}
           />

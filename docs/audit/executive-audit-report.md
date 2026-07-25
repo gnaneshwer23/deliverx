@@ -1,11 +1,11 @@
 # DeliverX Executive Audit Report
 
 **Date:** 2026-07-25  
-**HEAD context:** Product Bible landed; specialist audits Phases 1–11 under `docs/audit/`; remediation Batch 1 shipped; migrations head **`0095`**
+**HEAD context:** Product Bible landed; specialist audits Phases 1–11 under `docs/audit/`; remediation Batch 1 + Batch 2 shipped; migrations head **`0095`**
 **Method:** Synthesis of inventory, UX/a11y, data/security/AI, and performance/test audits against Build Charter, Current Scope, Product Decisions, Product Bible (`00`, `01`, `13`, `15`), technical-debt register, and `docs/qa/release-readiness.md`  
-**Lifecycle:** Original audit synthesis followed by founder-approved Remediation Batch 1.
+**Lifecycle:** Original audit synthesis followed by founder-approved Remediation Batch 1 (DB) and Batch 2 (honesty + legal).
 
-**Finding counts at audit:** P0 **8** · P1 **16** · P2 **18** · P3 **8** · P4 **9**. **Three DB P0s are resolved by Batch 1** (see [`remediation-roadmap.md`](./remediation-roadmap.md)).
+**Finding counts at audit:** P0 **8** · P1 **16** · P2 **18** · P3 **8** · P4 **9**. **Three DB P0s resolved by Batch 1.** **Honesty/legal P0s (R-P0-04/05/06/08) + cookie/Launchpad marketing P1s (R-P1-04/06) resolved by Batch 2** (see [`remediation-roadmap.md`](./remediation-roadmap.md)).
 
 **Release status (one):** **Testable internally**
 
@@ -21,7 +21,7 @@ Health is **split**:
 
 - **Engine / loop:** Strong for guided internal use.  
 - **Trust at DB boundary:** Batch 1 hardened — authenticated PostgREST cannot mutate ScoreRuns, self-set Verified-bearing VPP columns, or append `platform_verified`.
-- **Product honesty / legal / CI:** Weak for any external audience.
+- **Product honesty / legal:** Batch 2 shipped — pilot access CTAs, interim Privacy/Terms/Cookies, no decorative authority %. **CI** remains weak (TD-018).
 
 Charter next work is **ops + trust hardening**, not T9.
 
@@ -183,40 +183,40 @@ Prior `docs/qa/release-readiness.md` T6 pilot seal remains valid for **functiona
 ## 14. Immediate remediation priorities
 
 1. **Batch 1 — DB trust-rail lockdown** (`0095`) — **shipped**; ScoreRuns engine-only, Verified columns attestation-only, and client `platform_verified` blocked.
-2. **Honesty pass** — prices/guarantee, demo stories, decorative %, Launchpad includes (no T9).  
-3. **Founder ops** — TD-018 CI minutes; TD-006 HIBP; Privacy/Terms; SMTP reset proof.  
-4. **T8 E2E** in harness + Next ≥16.2.11.  
+2. **Batch 2 — Honesty + legal** — **shipped**; pilot access; no money-back; decorative % removed; illustrative stories; Launchpad includes; interim Privacy/Terms/Cookies.
+3. **Founder ops** — TD-018 CI minutes; TD-006 HIBP; SMTP reset proof.
+4. **T8 E2E** in harness + Next ≥16.2.11.
 5. **UX trust** — ScoreRun language, Command Centre demotion, naming, remove review seed.
 
 ---
 
 ## 15. Recommended next milestone
 
-**M1: DB trust-rail lockdown (Batch 1)** under Build Charter pilot hardening — founder approval required before implementation.
+**M1: DB trust-rail lockdown (Batch 1)** — **shipped**.
 
-Parallel (non-blocking for M1 code): founder starts TD-018 / TD-006 / legal copy track.
+**M2: Honesty + legal (Batch 2)** — **shipped**.
 
-After M1: M2 honesty+legal → M3 CI seal → M4 T8 E2E → then reassess **controlled pilot**.
+After M2: M3 CI seal → M4 T8 E2E → then reassess **controlled pilot**.
 
 ---
 
 ## Status card
 
 ```
-Product status:            Split — PI loop strong; marketed product overclaims
+Product status:            Split — PI loop strong; marketing honesty Batch 2 shipped; CI/UX remain
 Core workflow status:      Complete and verified (app path, T6 26/26); T8 E2E unverified
 Security status:           Unauth gates + DB trust rails hold; Next highs P1; TD-006 open
 Data integrity status:     Ledger/artefact/learning + ScoreRun/Verified/status rails hold
 AI quality status:         T4 contracts hold on path; injection/citations/bypass residual P1
-UX status:                 Coherent PI concept; multi-shell + honesty/jargon block serious use
+UX status:                 Coherent PI concept; multi-shell + ScoreRun jargon remain for Batch 3
 Test coverage status:      Strong PI units + live when run; CI off; no coverage %; no a11y auto
 Release recommendation:    Testable internally
 Top five actions:
   1. Completed: DB trust-rail lockdown (0095 + RLS tests)
-  2. Remove/relabel commercial prices, money-back, demo testimonials, decorative %
-  3. Founder: restore CI (TD-018) + enable leaked-password (TD-006) + legal Privacy/Terms
+  2. Completed: honesty + legal Batch 2 (pilot access, Privacy/Terms/Cookies)
+  3. Founder: restore CI (TD-018) + enable leaked-password (TD-006)
   4. Add T8 attestation E2E to release harness; bump Next ≥16.2.11
   5. UX: ScoreRun language, Command Centre demotion, Launchpad naming, drop review seed
 ```
 
-**Batch 1 shipped.** Remaining audit findings retain their original priorities; no T9 work is authorised.
+**Batch 1 shipped. Batch 2 shipped.** Remaining audit findings retain their original priorities; no T9 work is authorised.

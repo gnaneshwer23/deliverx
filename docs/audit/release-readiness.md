@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | Not testable | No | Core loop is live-verified |
 | **Testable internally** | **Yes — selected** | T6 + units prove app-path loop; founders/engineers can exercise product |
-| Ready for controlled pilot | **No** | DB trust bypasses are closed; commercial/legal honesty P0, CI off, and T8 E2E remain |
+| Ready for controlled pilot | **No** | Honesty/legal P0s closed in Batch 2; CI still off, T8 E2E and founder ops remain |
 | Ready for public beta | **No** | Above + a11y/Next/cookie/ops gaps |
 | Ready for production | **No** | Charter + evidence |
 
@@ -37,8 +37,8 @@
 | Verified off without attestation (**DB**) | protected-column trigger + service-role-only RPC; live owner/non-owner negatives | **Pass** |
 | Capability only via engine (**DB**) | SELECT-only owner RLS + DML revoke + immutable trigger; live negatives | **Pass** |
 | Evidence verification honesty (**DB**) | RLS exclusion + elevated-status trigger + service-role-only RPC | **Pass** |
-| Marketing commercial honesty | Prices + guarantee, no Stripe | **Fail** |
-| Legal Privacy/Terms | Placeholders | **Fail** |
+| Marketing commercial honesty | Pilot access; no £ checkout prices; no money-back offer; Launchpad includes match Career Intelligence | **Pass — Batch 2** |
+| Privacy / Terms / Cookies | Interim pilot policies with practice-accurate markers | **Pass — Batch 2** |
 | Continuous CI | TD-018 disabled workflows | **Fail** |
 | TD-006 HIBP | Advisor WARN | **Fail** (ops) |
 | T8 E2E Verified-on | Not in harness | **Fail** (unverified) |
@@ -56,7 +56,7 @@
 | “Verified requires attestation” | **True in app and DB** after `0095` |
 | “T8 shipped” | **True** (code/docs/`0094`) |
 | “T8 E2E verified” | **False** |
-| “Ready for pilot users” | **False** until DB + honesty (+ preferably CI/legal) |
+| “Ready for pilot users” | **Closer** — DB + honesty/legal Batch 2 shipped; still need CI/ops + T8 E2E for controlled pilot |
 | “Ready to sell” | **False** — T9 blocked; prices must not imply purchase |
 
 ---
@@ -64,11 +64,10 @@
 ## Path to controlled pilot (minimum)
 
 1. **Completed:** Batch 1 — DB trust-rail lockdown (`0095` + live RLS tests).
-2. Honesty: prices/guarantee/demo %/testimonials.  
-3. Legal: Privacy/Terms draft honesty or finished copy.  
-4. Founder: TD-006 and either restore CI or named manual gate cadence.  
-5. T8: kill switch policy + E2E or keep Verified dark for pilot.  
-6. Invite-only cohort; no public paid CTA.
+2. **Completed:** Batch 2 — product honesty + legal surface (pilot access; no money-back; decorative % removed; illustrative stories; Launchpad includes; interim Privacy/Terms/Cookies).
+3. Founder: TD-006 and either restore CI or named manual gate cadence.
+4. T8: kill switch policy + E2E or keep Verified dark for pilot.
+5. Invite-only cohort; no public paid CTA.
 
 Detail: [`release-plan.md`](./release-plan.md) exit criteria **B**.
 

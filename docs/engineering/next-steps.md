@@ -20,7 +20,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 | TD-001 | **Closed** (T6 signed-in E2E) |
 | TD-016 | **Closed** (`0092`) |
 | TD-006 | **Open** — founder Auth leaked-password toggle |
-| TD-011 | **Partial** — Verified path exists; marketing honesty pass still open |
+| TD-011 | **Advanced (Batch 2)** — commercial/marketing honesty shipped; in-app ScoreRun jargon remains for UX batch |
 | TD-017 | **Open** — test-fixture ESLint / standalone `tsc` debt |
 | TD-018 | **Open** — GitHub Actions minutes exhausted; workflows disabled |
 | Production | **Healthy** — Vercel READY · https://www.deliverx.dev |
@@ -53,7 +53,7 @@ Do these **after or in parallel with A** where noted. No T9.
 | # | Step | Owner | Effort | Objective | Why now | Dependency | Acceptance check |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | B1 | **Clear TD-017** (test ESLint + fixture `tsc`) | Engineering | M | Full-repo lint / standalone `tsc` green (or scoped exclude policy documented) | When CI returns, advisory lint should not become a false red; fixtures currently ~16+16 errors | None — **can start immediately** | `eslint` / `tsc --noEmit` clean on previously failing test fixtures; CI advisory → enforceable if desired |
-| B2 | **Marketing vs ledger honesty pass** (TD-011) | Engineering | S–M | Align public/in-app Verified copy with T8 meaning (attestation-only) | Path exists; marketing must not overclaim | T8 shipped | No surface implies Verified without attestation; unexplained capability % removed |
+| B2 | **Marketing vs ledger honesty pass** (TD-011) | Engineering | S–M | Align public/in-app Verified copy with T8 meaning (attestation-only) | **Batch 2 shipped** commercial honesty; remaining = in-app ScoreRun/Verified UX language | T8 shipped | No surface implies Verified without attestation; unexplained capability % removed from marketing |
 | B3 | **Thin `pm-core` seed deepening** (TD-007) | Engineering | M | Richer competency graph under same `pm-core@2026.1` pin | Improves ScoreRun explainability without multi-profession expansion | **Founder OK** on framework breadth (single-domain deepen vs leave thin) | Seed expanded in DB; ScoreRuns still pin `pm-core@2026.1`; no new professions |
 | B4 | **Local Supabase Option A** (when disk allows) | Engineering | L | Disposable E2E against local stack instead of only prod purge | Safer iteration; release-readiness already notes Option A blocked by disk/Docker | Disk/Docker available | `T6_BASE_URL=http://localhost:3000` live gate green |
 | B5 | **Defect-driven UX clarity** from A5 notes | Engineering | S–M | Evidence, confidence bands, next actions understandable | Charter allows small clarity fixes | A5 notes (if any) | Each defect has repro + regression where applicable |

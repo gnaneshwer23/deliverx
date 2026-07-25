@@ -15,7 +15,7 @@
 | TD-008 | No feature-flag system for PI surfaces | Medium | Deferred | Env gate (`DELIVERX_PI_*`) exists; no progressive flag framework |
 | TD-009 | In-code rubric / catalogue fallbacks vs DB seed drift | Medium | Now | **Resolved T2 (`0087`)**: DB `pi_cf_*` preferred; source `db \| in_code_fallback` labelled + logged; `rubric_resolve_source` on ScoreRuns; pin assert on capability run; golden harness. Fail-closed via `DELIVERX_RUBRIC_REQUIRE_DB`. |
 | TD-010 | Team Co-pilot vs Workspace SKU ambiguity | Medium | **Settled (T7 alias)** | **2026-07-25:** Team Copilot = Professional Workspace alias (not third SKU) — PD-2026-07-25. Commercial packaging SKU remains T9-gated. |
-| TD-011 | Marketing copy vs ledger truth (Verified / readiness %) | Medium | Now | **Partial (T8 2026-07-25):** honest attestation path + Verified meaning frozen (PD-2026-07-25c). Remaining: marketing/in-app copy honesty pass so surfaces do not overclaim. |
+| TD-011 | Marketing copy vs ledger truth (Verified / readiness %) | Medium | Now | **Advanced (Batch 2, 2026-07-25):** commercial honesty shipped — no priced CTAs/money-back without T9; Launchpad includes match Career Intelligence; decorative marketing % removed; interim Privacy/Terms/Cookies. Remaining for UX batch: in-app ScoreRun jargon and any residual Verified/readiness label audit (R-P1-05, R-P1-16). |
 | TD-012 | Experience → workspace dual-write not fully wired from all `/workspace` pages | Low–Med | Deferred | Contributions API exists; not all pages dual-write |
 | TD-013 | Full Mermaid ER for PI schema not published | Low | Deferred | Compact sketch in `data-model.md`; expand later |
 | TD-014 | Pre-pivot delivery/org API surface large vs PI SoT | Low | Deferred | Do not expand as PI WPs; avoid capability confusion |
@@ -34,4 +34,4 @@
 
 When resolving an item: note SHA + date in this table (append a Resolved column entry or move to a “Resolved” section).
 
-**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. **T6 (2026-07-25):** TD-001 closed by signed-in E2E + release gates. **T7 (2026-07-25):** TD-010 alias settled (not third SKU). **T8 (2026-07-25):** attestation path shipped; TD-011 partially closed (meaning frozen; copy pass remains). **Batch 1 (2026-07-25):** TD-019 closed by `0095` / `b96e538`. **CI ops (2026-07-25):** TD-017/TD-018 recorded. TD-006 remains open (founder Auth toggle).
+**Post-T5 hardening disposition:** TD-016 is closed by `0092` / `096fb72`. **T6 (2026-07-25):** TD-001 closed by signed-in E2E + release gates. **T7 (2026-07-25):** TD-010 alias settled (not third SKU). **T8 (2026-07-25):** attestation path shipped; TD-011 partially closed (meaning frozen; copy pass remains). **Batch 1 (2026-07-25):** TD-019 closed by `0095` / `b96e538`. **Batch 2 (2026-07-25):** commercial/legal honesty shipped (PD-2026-07-25e); TD-011 advanced. **CI ops (2026-07-25):** TD-017/TD-018 recorded. TD-006 remains open (founder Auth toggle).

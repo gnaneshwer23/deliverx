@@ -19,14 +19,14 @@ export const PRODUCT_LINKS = [
 /** Flat nav used on product pages (Home + siblings + Pricing) */
 export const PRODUCT_NAV = [
   ...PRODUCT_LINKS.map(({ href, label }) => ({ href, label })),
-  { href: "/pricing", label: "Pricing" },
+  { href: "/pricing", label: "Access" },
 ] as const;
 
 export const SITE_NAV = {
   products: PRODUCT_LINKS,
   links: [
     { href: "/#journey", label: "How it works" },
-    { href: "/pricing", label: "Pricing" },
+    { href: "/pricing", label: "Access" },
     { href: "/resources", label: "Resources" },
     { href: "/about", label: "About" },
   ],
@@ -39,8 +39,8 @@ export const SUITE_PRODUCTS = [
     stage: "Build the experience",
     href: "/experience",
     promise:
-      "Work inside AI-powered companies as a Product Manager — build judgement, delivery craft and a portfolio of evidence employers recognise.",
-    detail: "£500 · 3 months. Living organisations, projects and an Experience Record.",
+      "Work inside AI-powered companies as a Product Manager — build judgement, delivery craft and a portfolio of evidence employers can evaluate.",
+    detail: "Pilot access. Living organisations, projects and an Experience Record.",
     cta: "Explore Experience",
   },
   {
@@ -49,8 +49,8 @@ export const SUITE_PRODUCTS = [
     stage: "Land the opportunity",
     href: "/launchpad",
     promise:
-      "Turn your experience into interviews and offers — Career Twin, CV, portfolio, mock interviews and salary insights in one career system.",
-    detail: "£250 · 3 months. Assessment, packaging and interview readiness.",
+      "Turn your experience into interviews — Career Intelligence with labelled readiness, evidence CV packaging, interview lab and application tracking.",
+    detail: "Pilot access. Readiness, packaging and interview prep.",
     cta: "Explore Launchpad",
   },
   {
@@ -60,7 +60,7 @@ export const SUITE_PRODUCTS = [
     href: "/professional-workspace",
     promise:
       "Collaborate with role-based AI teammates in one Professional Workspace — meetings, stakeholders, artefacts, decisions and evidence.",
-    detail: "£500 · 3 months. AI drafts; humans decide and submit.",
+    detail: "Pilot access. AI drafts; humans decide and submit.",
     cta: "Explore Professional Workspace",
   },
 ] as const;

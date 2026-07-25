@@ -104,11 +104,11 @@ export function DxStatCard({
 }
 
 export function AuthBrandPanel() {
-  const stats = [
-    { v: "15min", l: "Setup time" },
-    { v: "40%", l: "Less admin" },
-    { v: "3x", l: "Faster reports" },
-    { v: "97%", l: "Lessons retained" },
+  const principles = [
+    "Evidence before claims",
+    "AI drafts — you decide",
+    "Observation consent default OFF",
+    "Verified only via attestation",
   ];
 
   return (
@@ -120,26 +120,28 @@ export function AuthBrandPanel() {
       <div className="relative z-10">
         <DxLogo href="/" dark />
         <h2 className={`${dxClass.display} mt-12 max-w-sm text-3xl leading-tight text-white md:text-4xl`}>
-          The workspace where
+          Professional Intelligence
           <br />
-          delivery becomes
+          for product careers —
           <br />
-          <em className="text-[#3D9660] not-italic">intelligent.</em>
+          <em className="text-[#3D9660] not-italic">evidence first.</em>
         </h2>
         <p className="mt-3.5 max-w-xs text-base font-light leading-relaxed text-white/40">
-          From business case to lessons learned — one workspace, AI watching everything.
+          Experience, Launchpad and Professional Workspace share one intelligence layer — not chat history as the database.
         </p>
-        <div className="mt-11 grid grid-cols-2 gap-3.5">
-          {stats.map((s) => (
-            <div key={s.l} className="border border-white/[0.08] p-4">
-              <div className={`${dxClass.display} text-3xl text-white`}>{s.v}</div>
-              <DxCaps className="mt-0.5 text-[7px] text-white/30">{s.l}</DxCaps>
-            </div>
+        <ul className="mt-11 space-y-3">
+          {principles.map((line) => (
+            <li
+              key={line}
+              className="border border-white/[0.08] px-4 py-3 text-sm font-light leading-snug text-white/70"
+            >
+              {line}
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
       <DxCaps className="relative z-10 text-[7px] text-white/15">
-        DeliverX © 2026 — GDPR Compliant — EU Data Residency
+        DeliverX © 2026 — Privacy controls in product — See /privacy
       </DxCaps>
     </div>
   );

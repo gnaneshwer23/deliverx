@@ -53,7 +53,7 @@ export function LandingHero({ preview }: { preview: LandingPreviewStats }) {
 
           <HeroCopyItem>
             <div className="flex flex-wrap items-center gap-3">
-              <DxButtonLink href="/signup">Start free trial</DxButtonLink>
+              <DxButtonLink href="/signup">Join the pilot</DxButtonLink>
               <DxButtonLink href="#platform" variant="ghost">
                 Watch it work
               </DxButtonLink>

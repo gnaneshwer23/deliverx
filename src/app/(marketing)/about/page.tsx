@@ -52,7 +52,7 @@ export default function AboutPage() {
                     Explore Products
                   </MarketingButtonLink>
                   <MarketingButtonLink href="/pricing" variant="ghostLg">
-                    View pricing
+                    See pilot access
                   </MarketingButtonLink>
                 </div>
               </div>

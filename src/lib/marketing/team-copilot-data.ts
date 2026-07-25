@@ -31,11 +31,11 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
     "A multidisciplinary Professional Workspace: collaborate with role-based AI teammates, conduct meetings, manage stakeholders, create artefacts, decide, track risks, and generate observable evidence.",
   primaryCta: {
     href: tier.ctaHref,
-    label: "Open Professional Workspace",
+    label: "Get started",
   },
   secondaryCta: {
     href: "/pricing",
-    label: "See pricing",
+    label: "See pilot access",
   },
   sections: [
     {
@@ -74,7 +74,7 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
     },
   ],
   pricing: {
-    label: "Pricing",
+    label: "Access",
     title: tier.headline,
     subtitle: `${tier.cadence} · Stage three of the DeliverX journey.`,
     price: tier.price,
@@ -82,21 +82,21 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
     summary: tier.summary,
     cta: tier.cta,
     ctaHref: tier.ctaHref,
-    bundleLabel: "Or get the Complete Journey",
+    bundleLabel: "Or explore the Complete Journey",
     bundleHref: "/pricing#bundle",
   },
   finalCta: {
     title: "Ready to work with AI teammates?",
     subtitle:
-      "Open Professional Workspace for your delivery practice — or take the Complete Journey if you also want Experience and Launchpad.",
+      "Open Professional Workspace for your delivery practice — or explore the Complete Journey if you also want Experience and Launchpad.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
-    secondaryLabel: "Get the Complete Journey",
+    secondaryLabel: "Explore Complete Journey",
     secondaryHref: BUNDLE_SIGNUP_HREF,
   },
   footerCta: {
-    title: "Open Professional Workspace",
-    subtitle: `${tier.price} · ${tier.cadence}. Or take the Complete Journey.`,
+    title: "Get started in Professional Workspace",
+    subtitle: `${tier.price} · ${tier.cadence}. Or explore the Complete Journey.`,
     href: tier.ctaHref,
     label: tier.cta,
   },

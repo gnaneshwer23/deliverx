@@ -26,10 +26,10 @@ export const XPERIENCE_JOURNEY = [
 
 export const XPERIENCE_PRICING = {
   name: "Experience",
-  price: "£500",
-  cadence: "3 Months Access",
+  price: "Pilot access",
+  cadence: "Open during the pilot · paid plans not yet live",
   summary:
     "Join an AI-powered company and work as a Product Manager from day one.",
-  cta: "Start Experience",
+  cta: "Join the pilot",
   ctaHref: "/signup?product=xperience",
 } as const;

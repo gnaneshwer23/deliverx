@@ -28,11 +28,11 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "Pricing — Complete Journey | DeliverX",
+  title: "Pilot access — Complete Journey | DeliverX",
   description:
-    "Experience £500, Launchpad £250, Professional Workspace £500, or the Complete Journey at £800 for 12 months. Build the experience → Land the opportunity → Succeed in the role.",
+    "Open pilot access to Experience, Launchpad and Professional Workspace. Paid plans are not live yet — join the pilot to explore the connected career path.",
   openGraph: {
-    title: "DeliverX Pricing",
+    title: "DeliverX Pilot Access",
     description: CAREER_PROGRESSION_LINE,
   },
 };
@@ -51,7 +51,7 @@ function TierCard({ tier }: { tier: CareerTier }) {
       </p>
       <div className="mt-8">
         <p
-          className={`text-[clamp(2rem,3.5vw,2.5rem)] leading-none tracking-[-0.04em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+          className={`text-[clamp(1.5rem,2.5vw,1.875rem)] leading-none tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
         >
           {tier.price}
         </p>
@@ -59,7 +59,7 @@ function TierCard({ tier }: { tier: CareerTier }) {
       </div>
       <div className="mt-7 flex flex-col gap-3">
         <MarketingButtonLink href={tier.ctaHref} variant="primary" className="w-full justify-center">
-          Buy {tier.productName}
+          {tier.cta}
         </MarketingButtonLink>
         {tier.href.startsWith("/") && !tier.href.includes("#") ? (
           <Link
@@ -96,12 +96,12 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
         </div>
         <div className="text-left md:text-right">
           <p
-            className={`text-[clamp(2.75rem,5vw,3.75rem)] leading-none tracking-[-0.05em] text-white ${mktClass.serif}`}
+            className={`text-[clamp(1.75rem,3.5vw,2.25rem)] leading-none tracking-[-0.03em] text-white ${mktClass.serif}`}
           >
             {tier.price}
           </p>
           <p className="mt-2 text-sm text-white/55">{tier.cadence}</p>
-          <p className="mt-1 text-[0.75rem] text-white/70">Best value across the full path</p>
+          <p className="mt-1 text-[0.75rem] text-white/70">Connected path across all three products</p>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 
       <div className="mt-9 flex flex-wrap gap-3">
         <MarketingButtonLink href={tier.ctaHref} variant="ctaLight">
-          Start the Complete Journey
+          Join the pilot
         </MarketingButtonLink>
         <MarketingButtonLink href="/#products" variant="ctaOutline">
           Compare products
@@ -126,7 +126,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 export default function PricingPage() {
   return (
     <MarketingPageShell>
-      <MarketingNav primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: "Complete Journey" }} />
+      <MarketingNav primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: "Join the pilot" }} />
 
       <main id="main-content">
         <section
@@ -138,19 +138,19 @@ export default function PricingPage() {
             <MarketingHeroMotion>
               <div className="mx-auto max-w-2xl text-center">
                 <MarketingHeroItem>
-                  <p className={mktClass.label}>DeliverX · Pricing</p>
+                  <p className={mktClass.label}>DeliverX · Pilot access</p>
                 </MarketingHeroItem>
                 <MarketingHeroItem>
                   <h1
                     className={`mt-4 text-[clamp(2.5rem,6.5vw,3.75rem)] leading-[1.02] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                   >
-                    Pricing that follows the journey.
+                    Open pilot. Paid plans later.
                   </h1>
                 </MarketingHeroItem>
                 <MarketingHeroItem>
                   <p className="mx-auto mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                    Buy the stage you need — or take the Complete Journey at £800 for 12 months across
-                    Experience, Launchpad and Professional Workspace.
+                    Create an account and explore Experience, Launchpad and Professional Workspace.
+                    There is no checkout and no money-back offer until commercial packaging ships.
                   </p>
                 </MarketingHeroItem>
               </div>
@@ -165,7 +165,7 @@ export default function PricingPage() {
                 align="center"
                 label="Progression"
                 title="Choose a stage — or the full path."
-                subtitle="Each product stands alone. The Complete Journey is the recommended path for the full career arc."
+                subtitle="Each product stands alone during the pilot. The Complete Journey is the recommended path for the full career arc."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -185,7 +185,7 @@ export default function PricingPage() {
                 align="center"
                 label="Complete Journey"
                 title="Experience. Opportunity. Delivery."
-                subtitle="Everything in Experience, Launchpad and Professional Workspace — with 12 months of continuous access."
+                subtitle="Everything in Experience, Launchpad and Professional Workspace — open pilot access across the connected path."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -206,8 +206,7 @@ export default function PricingPage() {
                   {CAREER_PROMISE.body}
                 </p>
                 <p className="mt-8 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  If you complete the programme, actively engage with the platform, and still do not
-                  gain:
+                  What the pilot is designed to help you build:
                 </p>
                 <ul className="mt-5 space-y-3">
                   {CAREER_PROMISE.outcomes.map((outcome) => (
@@ -223,9 +222,6 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-5 text-[0.9375rem] font-medium text-[var(--mkt-text1)]">
-                  we&apos;ll refund your money.
-                </p>
                 <div className="mt-12 border-t border-[var(--mkt-border)] pt-9">
                   <h3
                     className={`text-[1.35rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
@@ -253,14 +249,14 @@ export default function PricingPage() {
                 {CAREER_PROGRESSION_LINE}
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-                Buy one product — or take the Complete Journey.
+                Join one product — or explore the Complete Journey. No payment required during the pilot.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href={CAREER_BUNDLE.ctaHref} variant="ctaLight">
-                  Start the Complete Journey
+                  Join the pilot
                 </MarketingButtonLink>
                 <MarketingButtonLink href="#xperience" variant="ctaOutline">
-                  Buy a single product
+                  Explore a single product
                 </MarketingButtonLink>
               </div>
             </MarketingReveal>
@@ -271,9 +267,10 @@ export default function PricingPage() {
       <MarketingFooter
         cta={{
           title: "Start your career journey",
-          subtitle: "£800 Complete Journey · or choose Experience, Launchpad or Professional Workspace.",
+          subtitle:
+            "Open pilot access across Experience, Launchpad and Professional Workspace — paid plans not yet live.",
           href: CAREER_BUNDLE.ctaHref,
-          label: "Complete Journey",
+          label: "Join the pilot",
         }}
       />
     </MarketingPageShell>

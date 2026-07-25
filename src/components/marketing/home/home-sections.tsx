@@ -415,7 +415,7 @@ export function HomePlatformPreview() {
                       </div>
                     </div>
                   </MockPanel>
-                  <MockPanel title="Career Twin" body="Skills, stories and gaps updating live">
+                  <MockPanel title="Career Intelligence" body="Labelled readiness, stories and gaps">
                     <ul className="space-y-2">
                       {CAREER_TWIN_SKILLS.map((skill) => (
                         <li key={skill.label} className="space-y-1">
@@ -695,7 +695,7 @@ export function HomeExperienceRecord() {
           <MarketingReveal>
             <MarketingSectionIntro
               label="Experience Record"
-              title="A living timeline that becomes your Career Twin"
+              title="A living timeline that becomes your evidence record"
               subtitle="Every month compounds — discovery through performance review — into a continuous career record."
             />
           </MarketingReveal>
@@ -710,11 +710,6 @@ export function HomeExperienceRecord() {
                       <p className={`${mktClass.mono} text-[0.7rem] text-[var(--mkt-green-l)]`}>
                         {entry.month}
                       </p>
-                      {"stars" in entry && entry.stars ? (
-                        <p className="text-[0.75rem] tracking-widest text-[var(--mkt-amber,#B7620A)]" aria-label={`${entry.stars} stars`}>
-                          {"★".repeat(entry.stars)}
-                        </p>
-                      ) : null}
                     </div>
                     <p className={`mt-1 text-[1.1rem] tracking-tight text-[var(--mkt-text1)] ${mktClass.serif}`}>
                       {entry.title}
@@ -993,9 +988,9 @@ export function HomePricing() {
         <MarketingReveal>
           <MarketingSectionIntro
             align="center"
-            label="Pricing"
+            label="Pilot access"
             title="Start at any stage — or take the full journey"
-            subtitle="Transparent pricing. Link through for full includes and ideal-for detail."
+            subtitle="Open pilot access today. Paid plans are not live — no checkout, no money-back claim."
           />
         </MarketingReveal>
 
@@ -1030,7 +1025,7 @@ export function HomePricing() {
                     {tier.summary}
                   </p>
                   <p
-                    className={`mt-6 text-[clamp(1.75rem,3vw,2.25rem)] leading-none tracking-[-0.04em] ${mktClass.serif} ${
+                    className={`mt-6 text-[clamp(1.35rem,2.5vw,1.75rem)] leading-none tracking-[-0.03em] ${mktClass.serif} ${
                       tier.featured ? "text-white" : "text-[var(--mkt-text1)]"
                     }`}
                   >
@@ -1045,7 +1040,7 @@ export function HomePricing() {
                       variant={tier.featured ? "ctaLight" : "primary"}
                       className="w-full justify-center"
                     >
-                      Get started
+                      Join the pilot
                     </MarketingButtonLink>
                     <Link
                       href={tier.href.startsWith("/") ? tier.href : "/pricing"}
@@ -1064,9 +1059,9 @@ export function HomePricing() {
 
         <MarketingReveal delay={0.1}>
           <p className="mt-8 text-center text-[0.8125rem] text-[var(--mkt-text3)]">
-            See full includes on the{" "}
+            See what each product includes on the{" "}
             <Link href="/pricing" className="font-medium text-[var(--mkt-green)] no-underline hover:underline">
-              pricing page
+              access page
             </Link>
             .
           </p>
@@ -1174,14 +1169,14 @@ export function HomeFinalCta() {
             Ready to build your experience?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-            Start your journey today — experience, opportunity and delivery in one platform.
+            Start your journey today — experience, opportunity and delivery in one open pilot.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <MarketingButtonLink href="/signup" variant="ctaLight">
-              Start your journey
+              Join the pilot
             </MarketingButtonLink>
             <MarketingButtonLink href="/pricing" variant="ctaOutline">
-              View pricing
+              See pilot access
             </MarketingButtonLink>
           </div>
         </MarketingReveal>

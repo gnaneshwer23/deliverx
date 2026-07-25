@@ -13,11 +13,11 @@ export const XPERIENCE_PAGE: ProductPageContent = {
     "Join an AI-powered company as a Product Manager. Work real projects, make real trade-offs, and leave with judgement and an Experience Record — not another certificate.",
   primaryCta: {
     href: tier.ctaHref,
-    label: "Start Building Experience",
+    label: "Join the pilot",
   },
   secondaryCta: {
     href: "/pricing",
-    label: "Explore pricing",
+    label: "See pilot access",
   },
   sections: [
     {
@@ -82,17 +82,17 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       {
         question: "How does this connect to Launchpad and Professional Workspace?",
         answer:
-          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. You can buy stages alone or take the Complete Journey.",
+          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. During the pilot you can explore any stage — paid packaging comes later (T9).",
       },
       {
-        question: "What do I get at the end of three months?",
+        question: "What do I get from the pilot?",
         answer:
           "A portfolio of evidence, case studies and interview-ready stories from the work you completed — plus clearer judgement about how product teams actually operate.",
       },
     ],
   },
   pricing: {
-    label: "Pricing",
+    label: "Access",
     title: tier.headline,
     subtitle: `${tier.cadence} · Stage one of the DeliverX journey.`,
     price: tier.price,
@@ -100,21 +100,21 @@ export const XPERIENCE_PAGE: ProductPageContent = {
     summary: tier.summary,
     cta: tier.cta,
     ctaHref: tier.ctaHref,
-    bundleLabel: "Or get the Complete Journey",
+    bundleLabel: "Or explore the Complete Journey",
     bundleHref: "/pricing#bundle",
   },
   finalCta: {
     title: "Ready to build the experience?",
     subtitle:
-      "Start Experience now — or take the Complete Journey and continue into Launchpad and Professional Workspace.",
+      "Join the Experience pilot — or explore the Complete Journey into Launchpad and Professional Workspace.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
-    secondaryLabel: "Get the Complete Journey",
+    secondaryLabel: "Explore Complete Journey",
     secondaryHref: BUNDLE_SIGNUP_HREF,
   },
   footerCta: {
-    title: "Start Building Experience",
-    subtitle: `${tier.price} · ${tier.cadence}. Or take the Complete Journey.`,
+    title: "Join the Experience pilot",
+    subtitle: `${tier.price} · ${tier.cadence}. Or explore the Complete Journey.`,
     href: tier.ctaHref,
     label: tier.cta,
   },

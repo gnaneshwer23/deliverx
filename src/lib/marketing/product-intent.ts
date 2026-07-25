@@ -92,33 +92,33 @@ export function signupCopy(product: SuiteProduct | null): {
       return {
         title: "Create your Experience account",
         subtitle:
-          "Build the experience — £500 for 3 months. We’ll issue login credentials after signup.",
+          "Build the experience — open pilot access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Experience — Build the experience employers expect (£500 · 3 months).",
+          "Starting Experience — Build the experience employers expect (pilot access).",
       };
     case "launchpad":
       return {
         title: "Create your Launchpad account",
         subtitle:
-          "Land the opportunity — £250 for 3 months. We’ll issue login credentials after signup.",
+          "Land the opportunity — open pilot access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Launchpad — Turn your experience into opportunities (£250 · 3 months).",
+          "Starting Launchpad — Turn your experience into opportunities (pilot access).",
       };
     case "team-copilot":
       return {
         title: "Create your Professional Workspace account",
         subtitle:
-          "Succeed in the role — £500 for 3 months. We’ll issue login credentials after signup.",
+          "Succeed in the role — open pilot access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Professional Workspace — Deliver with AI teammates (£500 · 3 months).",
+          "Starting Professional Workspace — Deliver with AI teammates (pilot access).",
       };
     case "bundle":
       return {
         title: "Create your DeliverX account",
         subtitle:
-          "Complete Journey — £800 for 12 months across Experience, Launchpad and Professional Workspace.",
+          "Complete Journey — open pilot access across Experience, Launchpad and Professional Workspace.",
         banner:
-          "Starting the Complete Journey — Experience. Opportunity. Delivery. (£800 · 12 months).",
+          "Starting the Complete Journey — Experience. Opportunity. Delivery. (pilot access).",
       };
     default:
       return {

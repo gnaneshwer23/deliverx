@@ -58,7 +58,7 @@ export function MarketingHero() {
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg" className="mkt-card-lift">
-                Start free trial
+                Join the pilot
               </MarketingButtonLink>
               <a
                 href="#onboarding"

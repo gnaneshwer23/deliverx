@@ -5,10 +5,10 @@ import { TEAM_COPILOT_PAGE } from "@/lib/marketing/team-copilot-data";
 export const metadata: Metadata = {
   title: "Professional Workspace — Deliver with AI teammates | DeliverX",
   description:
-    "Multidisciplinary Professional Workspace for real work with AI teammates — meetings, stakeholders, artefacts, decisions, risks and evidence. £500 for 3 months.",
+    "Multidisciplinary Professional Workspace for real work with AI teammates — meetings, stakeholders, artefacts, decisions, risks and evidence. Open pilot access.",
   openGraph: {
     title: "Professional Workspace — Succeed in the role | DeliverX",
-    description: "AI drafts. Humans decide. £500 · 3 months access.",
+    description: "AI drafts. Humans decide. Pilot access — paid plans not yet live.",
   },
 };
 

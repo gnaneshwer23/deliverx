@@ -266,6 +266,22 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## Remediation Batch 2 — Product honesty + legal surface (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| Marketing data | `career-suite`, `homepage-data`, Launchpad/Experience/Workspace pages — pilot access; no £ checkout prices; no money-back offer |
+| Auth / landing chrome | Removed decorative 40%/3x/97% authority stats; qualitative principles only |
+| Legal | Interim `/privacy`, `/terms`, `/cookies` (+ `/cookie` alias); footer links; no certification overclaims |
+| Tests | `src/lib/marketing/marketing-honesty.test.ts` |
+| Decision | PD-2026-07-25e |
+
+**Verification:** marketing honesty units PASS; `npm run test:release-gate` PASS (248 PI + unauth + security); `npm run build` PASS.
+
+**Batch 2 verdict:** Shipped. Next remediation batch requires founder approval; T9 remains blocked.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

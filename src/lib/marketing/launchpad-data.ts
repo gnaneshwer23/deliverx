@@ -13,27 +13,27 @@ export const LAUNCHPAD_JOURNEY = [
   {
     step: "01",
     title: "Assess where you are",
-    body: "Career Twin, skills gap analysis and a clear picture of what to strengthen before you apply.",
+    body: "Labelled role readiness and a roadmap of what to strengthen before you apply.",
   },
   {
     step: "02",
     title: "Package your evidence",
-    body: "CV, LinkedIn, portfolio and case studies that make your experience readable to hiring managers.",
+    body: "CV packaging into Verified Portfolio — grounded in Professional Intelligence, not slogans.",
   },
   {
     step: "03",
-    title: "Prepare to win the interview",
-    body: "STAR stories, mock interviews, communication coaching and a readiness score you can trust.",
+    title: "Prepare and track",
+    body: "Interview lab practice and application tracking — without inventing marketplace liquidity.",
   },
 ] as const;
 
 export const LAUNCHPAD_PRICING = [
   {
     name: "Launchpad",
-    price: "£250",
-    cadence: "3 Months Access",
+    price: "Pilot access",
+    cadence: "Open during the pilot · paid plans not yet live",
     summary: "Turn your experience into career opportunities.",
-    cta: "Start Launchpad",
+    cta: "Join the pilot",
     ctaHref: "/signup?product=launchpad",
     features: [] as string[],
     featured: true,

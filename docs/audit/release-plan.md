@@ -68,7 +68,7 @@ All of C plus T9 only if founder-approved; ops runbooks; support; formal legal; 
 | --- | --- | --- | --- |
 | **M0** Audit seal | This synthesis committed | Phases 1–13 docs | Done when docs on `main` |
 | **M1** Batch 1 — DB trust rails | ScoreRun / Verified / transitions DB-enforced | Migration `0095`, lib/tests | PostgREST negatives pass |
-| **M2** Honesty + legal | Marketing matches charter | Copy + Privacy/Terms | No P0 honesty/legal open |
+| **M2** Honesty + legal | Marketing matches charter | Copy + Privacy/Terms/Cookies | **Shipped — Batch 2** |
 | **M3** Ops seal | CI + Auth hardening | TD-018, TD-006, SMTP check | Continuous or owned manual gate |
 | **M4** Verified path proof | T8 E2E + optional Next bump | Harness + deps | Attest → Verified on automated |
 | **M5** Pilot UX | Naming, ScoreRun language, Command Centre | Small UX slice | Controlled pilot checklist B |

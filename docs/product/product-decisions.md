@@ -308,6 +308,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25e — Pilot honesty: no priced claims without checkout
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | Until T9 / Stripe ships under separate founder approval, public marketing and signup copy must not present purchasable pound prices, “Buy” CTAs, or money-back / refund guarantees. Access language is **pilot access / Join the pilot / Get started**. Privacy, Terms and Cookies are interim pilot policies that describe real practices (PI data, ledger, observation consent default OFF, export/delete, attestation, essential auth cookies + optional Vercel analytics) and must not claim certifications DeliverX does not hold. Archetype stories are illustrative only; `PILOT_QUOTE` stays disabled until a real quote is approved. Launchpad marketing matches Career Intelligence as shipped (labelled readiness, roadmap, evidence CV→VPP, interview lab, applications) — not twin/networking/marketplace depth. |
+| **Why** | Audit P0 honesty/legal findings: priced CTAs and refund language without checkout are trust and compliance failures; placeholder legal pages and decorative authority % violate Build Charter principles. |
+| **Consequence** | Remediation Batch 2; `marketing-honesty.test.ts`; `/cookies` (+ `/cookie` alias); TD-011 advanced for commercial/marketing honesty (Verified in-app jargon pass remains for Batch 3 UX). Does not authorize T9. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c.
