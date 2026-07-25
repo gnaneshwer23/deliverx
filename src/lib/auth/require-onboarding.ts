@@ -27,19 +27,21 @@ async function redirectIfNotAtGatewayDestination(redirectPath: string) {
   }
 }
 
-/** Login redirect that preserves the path the user was trying to open. */
-async function redirectToLoginPreservingNext(): Promise<never> {
-  const currentPath = await getRequestPathFromHeaders();
-  if (currentPath?.startsWith("/") && !currentPath.startsWith("//")) {
-    redirect(buildLoginRedirectPath(currentPath));
-  }
-  redirect("/login");
-}
-
 /** Redirect unauthenticated or incomplete sponsor gateway users away from app shells. */
-export async function requireCompleteOnboarding() {
+export async function requireCompleteOnboarding(options?: { loginNext?: string }) {
   const { user, profile, gatewayStep, draftProjectId } = await getOnboardingProfile();
-  if (!user) return redirectToLoginPreservingNext();
+  if (!user) {
+    const fromHeaders = await getRequestPathFromHeaders();
+    const next =
+      (fromHeaders?.startsWith("/") && !fromHeaders.startsWith("//")
+        ? fromHeaders
+        : null) ??
+      (options?.loginNext?.startsWith("/") && !options.loginNext.startsWith("//")
+        ? options.loginNext
+        : null);
+    if (next) redirect(buildLoginRedirectPath(next));
+    redirect("/login");
+  }
   if (!profile?.organisation_id) redirect("/onboarding/organisation");
   if (!profile?.role) redirect("/onboarding/role");
 

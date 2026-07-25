@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/dx/app-shell";
 import { WorkspaceLiveRefresh } from "@/components/intelligence/workspace-live-refresh";
+import { getRequestPathFromHeaders } from "@/lib/auth/request-path";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
@@ -17,7 +18,8 @@ export default async function WorkspaceLayout({
 }: {
   children: ReactNode;
 }) {
-  const { user, profile } = await requireCompleteOnboarding();
+  const loginNext = (await getRequestPathFromHeaders()) ?? "/workspace";
+  const { user, profile } = await requireCompleteOnboarding({ loginNext });
 
   let orgName: string | null = null;
   if (profile.organisation_id) {

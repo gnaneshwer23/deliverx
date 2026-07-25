@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/dx/app-shell";
+import { getRequestPathFromHeaders } from "@/lib/auth/request-path";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import { getPendingApprovalCounts } from "@/services/approvalCentre";
@@ -10,7 +11,8 @@ import { countPendingReviewsByPersonaMap } from "@/lib/approval/persona-reviews"
 import { workspaceMainOffsetClass } from "@/lib/responsive-layout";
 
 export default async function SettingsLayout({ children }: { children: ReactNode }) {
-  const { user, profile } = await requireCompleteOnboarding();
+  const loginNext = (await getRequestPathFromHeaders()) ?? "/settings/profile";
+  const { user, profile } = await requireCompleteOnboarding({ loginNext });
 
   let orgName: string | null = null;
   if (profile.organisation_id) {
