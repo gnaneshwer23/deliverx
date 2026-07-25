@@ -4,6 +4,8 @@ import {
   isAuthEntryPath,
   isGatewayRedirectDestination,
   isOnboardingPath,
+  isSettingsPath,
+  isWorkspacePath,
   resolveSignupOnboardingNext,
 } from "@/lib/auth/route-guards";
 
@@ -20,6 +22,15 @@ describe("route-guards", () => {
     expect(isAuthEntryPath("/onboarding/organisation")).toBe(false);
     expect(isOnboardingPath("/onboarding/organisation")).toBe(true);
     expect(isOnboardingPath("/onboarding/role?role=pm")).toBe(true);
+  });
+
+  it("detects workspace and settings shells for login next preservation", () => {
+    expect(isWorkspacePath("/workspace")).toBe(true);
+    expect(isWorkspacePath("/workspace/coach")).toBe(true);
+    expect(isWorkspacePath("/workspaces")).toBe(false);
+    expect(isSettingsPath("/settings")).toBe(true);
+    expect(isSettingsPath("/settings/profile")).toBe(true);
+    expect(isSettingsPath("/setting")).toBe(false);
   });
 
   it("builds login redirects with encoded next paths", () => {
