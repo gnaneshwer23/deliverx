@@ -91,7 +91,7 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 | SHA | Summary | Migrations / notes |
 | --- | --- | --- |
-| *(pending commit)* | feat(privacy): T1 person PI export/delete + advisor hygiene | `0086`; `src/lib/pi-privacy/`; `/api/pi/privacy/*`; settings UX; TD-004/005 closed; TD-006 documented |
+| `22ce7ed` | feat(privacy): T1 person PI export/delete + advisor hygiene | `0086`; `src/lib/pi-privacy/`; `/api/pi/privacy/*`; settings UX; TD-004/005 closed; TD-006 documented |
 
 **T1 verdict:** Shipped under founder override while T0 signed-in QA remains open. Do not start T2 until asked.
 
