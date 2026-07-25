@@ -12,7 +12,8 @@ export type PiSurface =
   | "portfolio"
   | "baseline"
   | "workspace_observation"
-  | "final_assessment";
+  | "final_assessment"
+  | "learning";
 
 export type GateDecision =
   | { allowed: true }

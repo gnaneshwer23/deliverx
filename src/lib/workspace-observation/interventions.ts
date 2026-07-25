@@ -71,15 +71,16 @@ export function mapGapsToInterventionDrafts(input: {
         kind: "learning_pointer",
         title: `Learning pointer for ${code ?? "gap"}`,
         rationale:
-          "A learning activity alone is not competency proof. Use this pointer, then apply it in Workspace or Experience so ScoreRun can interpret practice evidence.",
+          "A learning activity alone is not competency proof. Log focused learning on /learning, reflect, then apply it in Workspace or Experience so ScoreRun can interpret practice evidence.",
         targetGap: gap,
         competencyCodes,
-        href: "/profile",
+        href: `/learning?gap=${encodeURIComponent(code ?? gap.slice(0, 64))}`,
         triggeringEvidenceIds: evidenceIds.slice(0, 8),
         payload: {
-          surface: "profile",
-          note: "Learning module (P6) not yet shipped — pointer routes to Profile for now.",
+          surface: "learning",
+          note: "Learning Intelligence — knowledge evidence only; never assigns capability.",
           capabilityAssigned: false,
+          learningNotCapability: true,
         },
       });
     }

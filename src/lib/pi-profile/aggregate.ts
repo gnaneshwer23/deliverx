@@ -19,10 +19,13 @@ import {
   type ExperiencePlanRecord,
 } from "@/lib/experience-planner";
 import { loadLatestGrowthReport } from "@/lib/pi-assessment/growth-report";
+import { buildLearningApplicationCta } from "@/lib/learning-intelligence/recommendations";
+import { loadLearningSummary } from "@/lib/learning-intelligence/persist";
 import {
   PI_BASELINE_PATH,
   PI_EVIDENCE_PATH,
   PI_FINAL_PATH,
+  PI_LEARNING_PATH,
   PI_PROFILE_PATH,
 } from "@/lib/pi-profile/paths";
 import type {
@@ -60,6 +63,7 @@ export async function buildPiProfileAggregate(
     career,
     activePlan,
     growthReport,
+    learningSummary,
   ] = await Promise.all([
     supabase
       .from("pi_onboarding_sessions")
@@ -76,6 +80,7 @@ export async function buildPiProfileAggregate(
     buildCareerIntelligenceSnapshot(supabase, userId).catch(() => null),
     loadActiveExperiencePlan(supabase, userId).catch(() => null),
     loadLatestGrowthReport(supabase, userId).catch(() => null),
+    loadLearningSummary(supabase, userId).catch(() => null),
   ]);
 
   const identity = projectIdentity(pi);
@@ -116,6 +121,7 @@ export async function buildPiProfileAggregate(
     careerRoadmap: career?.roadmap ?? [],
     experiencePlan,
     growthReport,
+    learningSummary,
   });
 
   const opportunities = {
@@ -220,6 +226,12 @@ function projectEvidence(
   };
 }
 
+function hasKnowledgeGap(scoreRun: PiProfileScoreRun | null): boolean {
+  if (!scoreRun) return false;
+  const blob = [...scoreRun.gaps, ...scoreRun.recommendations.map((r) => r.title)].join(" ");
+  return /insufficient_evidence|knowledge/i.test(blob);
+}
+
 function projectNextAction(input: {
   identity: PiProfileIdentity;
   evidenceCount: number;
@@ -235,6 +247,7 @@ function projectNextAction(input: {
   }>;
   experiencePlan?: ExperiencePlanRecord | null;
   growthReport?: Awaited<ReturnType<typeof loadLatestGrowthReport>>;
+  learningSummary?: Awaited<ReturnType<typeof loadLearningSummary>> | null;
 }): PiProfileNextAction {
   if (!input.identity.onboardingComplete && !input.identity.firstName) {
     return {
@@ -306,6 +319,31 @@ function projectNextAction(input: {
       kind: "recommendation",
     };
   }
+
+  // Phase 6: knowledge gap → learning; after reflected_upon+ → Experience application.
+  const learningCta = buildLearningApplicationCta({
+    hasKnowledgeGap: hasKnowledgeGap(input.scoreRun),
+    highestLearningLevel: input.learningSummary?.highestLevel ?? null,
+    experienceHref: input.experiencePlan?.href ?? "/experience/app",
+    learningHref: PI_LEARNING_PATH,
+  });
+  if (learningCta?.stage === "apply") {
+    return {
+      title: learningCta.title,
+      rationale: learningCta.rationale,
+      href: learningCta.href,
+      kind: "experience",
+    };
+  }
+  if (learningCta?.stage === "learn") {
+    return {
+      title: learningCta.title,
+      rationale: learningCta.rationale,
+      href: learningCta.href,
+      kind: "learning",
+    };
+  }
+
   const gap = input.scoreRun.gaps[0];
   const rec = input.scoreRun.recommendations[0];
   if (rec || gap) {
@@ -349,6 +387,7 @@ export function projectPiProfileFromParts(parts: {
   previousClaims?: SnapshotClaims | null;
   experiencePlan?: ExperiencePlanRecord | null;
   growthReport?: Awaited<ReturnType<typeof loadLatestGrowthReport>>;
+  learningSummary?: Awaited<ReturnType<typeof loadLearningSummary>> | null;
 }): Pick<
   PiProfileAggregate,
   | "identity"
@@ -382,6 +421,7 @@ export function projectPiProfileFromParts(parts: {
       careerRoadmap: [],
       experiencePlan: parts.experiencePlan ?? null,
       growthReport: parts.growthReport ?? null,
+      learningSummary: parts.learningSummary ?? null,
     }),
     capabilityAssigned: false,
     deliverxVerified: false,

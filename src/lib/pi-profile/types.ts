@@ -67,7 +67,8 @@ export type PiProfileNextAction = {
     | "final"
     | "portfolio_eligibility"
     | "career_readiness"
-    | "profile";
+    | "profile"
+    | "learning";
 } | null;
 
 export type PiProfileAggregate = {

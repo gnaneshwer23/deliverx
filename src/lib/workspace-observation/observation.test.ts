@@ -396,6 +396,9 @@ describe("intervention recommendation mapping", () => {
     expect(kinds.has("learning_pointer")).toBe(true);
     expect(drafts.every((d) => d.href.length > 0)).toBe(true);
     expect(drafts.every((d) => d.targetGap.length > 0)).toBe(true);
+    const learning = drafts.filter((d) => d.kind === "learning_pointer");
+    expect(learning.every((d) => d.href.startsWith("/learning"))).toBe(true);
+    expect(learning.every((d) => d.payload?.capabilityAssigned === false)).toBe(true);
   });
 
   it("scenario suggestions require accumulated evidence context", () => {

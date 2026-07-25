@@ -163,6 +163,74 @@ describe("projectPiProfileFromParts", () => {
     expect(view.nextAction?.title).toMatch(/MediFlow|TrustCare/i);
   });
 
+  it("suggests learning when ScoreRun shows knowledge gap and learning is early", () => {
+    const scoreRun: PiProfileScoreRun = {
+      snapshotId: "snap-1",
+      scoreRunId: "run-1",
+      capturedAt: new Date().toISOString(),
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      frameworkVersionId: "fv-1",
+      readinessSignal: 40,
+      strengths: [],
+      gaps: ["comp.product_discovery: insufficient_evidence — knowledge only"],
+      levels: [],
+      recommendations: [],
+      emptyGuidance: null,
+    };
+    const view = projectPiProfileFromParts({
+      identity,
+      evidenceCount: 4,
+      baselineEvidenceCount: 4,
+      experienceEvidenceCount: 1,
+      finalEvidenceCount: 1,
+      scoreRun,
+      learningSummary: {
+        itemCount: 0,
+        highestLevel: null,
+        reflectedUponOrHigher: false,
+        capabilityAssigned: false,
+      },
+    });
+    expect(view.nextAction?.kind).toBe("learning");
+    expect(view.nextAction?.href).toBe("/learning");
+    expect(view.capabilityAssigned).toBe(false);
+  });
+
+  it("suggests Experience application after learning reaches reflected_upon+", () => {
+    const scoreRun: PiProfileScoreRun = {
+      snapshotId: "snap-1",
+      scoreRunId: "run-1",
+      capturedAt: new Date().toISOString(),
+      rubricSlug: "pm-core",
+      rubricVersion: "2026.1",
+      frameworkVersionId: "fv-1",
+      readinessSignal: 40,
+      strengths: [],
+      gaps: ["comp.product_discovery: insufficient_evidence — knowledge only"],
+      levels: [],
+      recommendations: [],
+      emptyGuidance: null,
+    };
+    const view = projectPiProfileFromParts({
+      identity,
+      evidenceCount: 4,
+      baselineEvidenceCount: 4,
+      experienceEvidenceCount: 1,
+      finalEvidenceCount: 1,
+      scoreRun,
+      learningSummary: {
+        itemCount: 1,
+        highestLevel: "reflected_upon",
+        reflectedUponOrHigher: true,
+        capabilityAssigned: false,
+      },
+    });
+    expect(view.nextAction?.kind).toBe("experience");
+    expect(view.nextAction?.href).toContain("/experience");
+    expect(view.nextAction?.title).toMatch(/Apply your learning/i);
+  });
+
   it("exposes insufficient-history growth when only one snapshot exists", () => {
     const claims = projectSnapshotClaims({
       id: "snap-1",

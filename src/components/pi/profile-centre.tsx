@@ -378,6 +378,20 @@ export function ProfileCentre() {
             </p>
             <DevelopmentLoopPanel />
           </div>
+          <div className="mt-4 rounded-lg border border-dashed border-[#D6D3C8] bg-white px-3 py-3">
+            <p className="text-xs font-medium text-[#1A1A18]">Learning Intelligence</p>
+            <p className="mt-1 text-[11px] text-[#6B6B64]">
+              Knowledge gaps can be closed with focused learning + reflection. Completing a course
+              never assigns capability — apply in Experience so ScoreRun can interpret practice
+              evidence.
+            </p>
+            <Link
+              href="/learning"
+              className="mt-2 inline-block text-[11px] font-medium text-[#1C4A2E] underline"
+            >
+              Open /learning
+            </Link>
+          </div>
           {profile.experiencePlan ? (
             <div className="mt-4 rounded-lg border border-[#E5E2D9] bg-[#FAFAF7] px-3 py-3">
               <p className="text-xs font-medium text-[#1A1A18]">

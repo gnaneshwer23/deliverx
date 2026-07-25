@@ -46,6 +46,14 @@ const HUB_JOURNEY = [
     cta: "Open Evidence",
   },
   {
+    id: "learning",
+    stage: "Close knowledge gaps",
+    name: "Learning Intelligence",
+    progress: "Log learning → reflect → apply in Experience (not competency)",
+    href: "/learning",
+    cta: "Open Learning",
+  },
+  {
     id: "career",
     stage: "Land the opportunity",
     name: "Launchpad",
