@@ -66,7 +66,15 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `pi_ai_usage_daily` is `security_invoker`, so authenticated reads remain constrained by underlying `ai_interactions` RLS
 - T1 export/purge includes notifications; the purge RPC remains `service_role` only after the T5 wrapper
 
-### SECURITY DEFINER grants (`0089`, `0092`)
+### Organisation structure (T7)
+
+- `departments` / `teams` — org-scoped RLS (`organisation_id = current_org_id()`); SELECT for org members; INSERT/UPDATE/DELETE for org admins (`is_org_admin`)
+- `department_members` / `team_members` — same org SELECT; admin write; person `user_id` rows are privacy-export/purge targets
+- New helpers `is_org_admin`, `is_department_member`, `is_team_member` follow TD-016: fixed `search_path = public`, anon EXECUTE revoked, authenticated + service_role granted
+- Org structure never writes capability, ScoreRuns, or verified evidence
+- Cross-org leakage prevented by `current_org_id()` scoping (same posture as projects / workspace_members)
+
+### SECURITY DEFINER grants (`0089`, `0092`, `0093`)
 
 - `pi_privacy_purge_person_data` is `SECURITY DEFINER` and must be **service_role only**
 - Supabase default privileges auto-grant EXECUTE to `anon`/`authenticated`; `revoke ... from public` does **not** remove those grants

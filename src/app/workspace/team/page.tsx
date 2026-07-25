@@ -4,6 +4,7 @@ import { listPendingInvitations } from "@/services/invitations";
 import { getOrgActiveBootstrapProject } from "@/services/orgBootstrap";
 import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { InviteForm } from "@/app/onboarding/invite/invite-form";
+import { OrgStructurePanel } from "@/components/org-structure/panel";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxBadge } from "@/components/dx/dx-badge";
 import { dxClass } from "@/lib/dx-theme";
@@ -50,6 +51,7 @@ export default async function WorkspaceTeamPage() {
             />
           </section>
         ) : null}
+        <OrgStructurePanel />
         <section className={`${dxClass.cardPad}`}>
           <h2 className={`${dxClass.display} mb-4 text-lg`}>
             Members ({members.length})

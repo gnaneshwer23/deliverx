@@ -44,7 +44,7 @@ Production reference: https://www.deliverx.dev · Supabase `jibmyxaldetyycmtlxet
 | --- | --- |
 | **P8 — External verification / attestation** | `deliverxVerified` must not light without a defined attestation path and legal/product meaning |
 | **P9 — Commercial packaging / monetisation expansion** | Pilot loop must be trusted first |
-| New product Homes / third SKU deep IA | Team Co-pilot vs Workspace branding ADR still open |
+| New product Homes / third SKU deep IA | Team Co-pilot vs Workspace branding ADR still open; T7 confirms **alias only** (not a third SKU) — mission-control depth still blocked |
 | Multi-profession framework platforms beyond pilot seed | Founder decision on single-domain sufficiency |
 | Employer marketplace liquidity / broad opportunity OS | Deferred vs Launchpad packaging + readiness loop |
 | Enterprise delivery OS expansion (mission-control depth) | Out of person-practice pilot ICP default |
@@ -84,4 +84,14 @@ If any answer is no → redesign or defer.
 
 ## Recommended next action
 
-**Run signed-in human QA of the P0–P7 loop on production** (empty ScoreRun/outcome tables mean the happy path is unit-tested, not pilot-exercised). Close defects found under this charter before requesting P8/P9 authorisation.
+**Technology T7 shipped** (founder-authorized 2026-07-25 via `t7`): org departments/teams, Launchpad readiness honesty, Professional Workspace nav demotion. Do **not** start **T8** (external attestation) or **T9** (commercial) without separate founder approval. TD-006 remains founder-only (Auth leaked-password toggle).
+
+---
+
+## Technology phase authorizations
+
+| Phase | Authorization |
+| --- | --- |
+| T0–T6 | Authorized under this charter (pilot hardening) |
+| **T7** | **Authorized 2026-07-25 by founder** (`t7`) — Launchpad packaging honesty + Team Copilot / Professional Workspace foundations (departments/teams; no third SKU; no mission-control expansion) |
+| T8–T9 | **Still require separate founder approval** — do not implement attestation or commercial packaging under T7 |

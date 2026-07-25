@@ -43,6 +43,8 @@ const EXPORT_TABLES_DIRECT: string[] = [
   "launchpad_progress",
   "launchpad_profiles",
   "workspace_contributions",
+  "department_members",
+  "team_members",
   "vpp_shares",
   "vpp_versions",
   "vpp_entries",

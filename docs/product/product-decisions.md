@@ -258,6 +258,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-25 — T7 authorized; T8/T9 still blocked
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-25 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `t7` **authorizes Technology Phase T7 only**: Launchpad packaging honesty (SnapshotClaims + labelled / mixed heuristic readiness), Professional Workspace foundations (demote legacy Mission Control / Ecosystem / marketplace nav), and thin org structure (`departments`, `teams`, membership) under existing org RLS + org-admin write gates. **Team Copilot is not a third SKU** — it remains the Professional Workspace alias (extends PD-2026-07-11). Org data is structured and retrieved at request time; no PI data duplication; observation ≠ evidence; capability only via ScoreRun. **T8 (external attestation / Verified lighting) and T9 (commercial packaging) remain blocked** until separate founder approval. TD-006 remains founder-only. |
+| **Why** | Charter marked T7–T9 as requiring founder approval; `t7` is that approval for T7 depth without auto-authorizing attestation or monetisation. |
+| **Consequence** | Migration `0093_org_structure.sql`; `src/lib/org-structure/`; `/api/org/*`; workspace nav policy; readiness `mixed` source; privacy cascade for membership rows; update build-charter / current-scope / technology-build-phases. Do not implement employer attestation, networking scrape, or Stripe under this decision. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP, product count, verification legal meaning, Workspace pilot inclusion, P8/P9 roadmap approval. Also TD-006 (leaked-password protection).
+See `current-scope.md` — ICP weight, commercial SKU packaging (T9), verification legal meaning (T8), TD-006 (leaked-password protection). T8/T9 require explicit separate approval.

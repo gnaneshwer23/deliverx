@@ -147,6 +147,15 @@ erDiagram
 - Purge, auth-trigger and managed secret functions remain service-role or owner-only
 - All inventoried functions have fixed search paths (`public` for DeliverX functions; empty for managed functions)
 
+### Organisation structure — `0093` (T7)
+
+- `departments` — org-scoped units (`organisation_id`, optional `parent_department_id`); shared org data (not person-owned)
+- `teams` — org-scoped teams (optional `department_id`); shared org data
+- `department_members` / `team_members` — person membership (`user_id`, `member_role` member|lead); included in T1 export/purge
+- Helpers: `is_org_admin()`, `is_department_member(uuid)`, `is_team_member(uuid)` — SECURITY DEFINER, `search_path = public`, anon EXECUTE revoked (TD-016 posture)
+- RLS: org members SELECT; org-admin (pm/executive) INSERT/UPDATE/DELETE
+- Purge wrapper deletes membership rows then calls prior `pi_privacy_purge_person_data_t5`; departments/teams retained
+
 ---
 
 ## Advisor notes

@@ -93,6 +93,16 @@ Public token view is a **page** (`/portfolio/v/[token]`), not listed here as an 
 | POST | `/api/launchpad/onboarding` | User |
 | POST | `/api/launchpad/progress` | User |
 | POST | `/api/launchpad/artefacts` | User |
+| GET, POST | `/api/career/intelligence` | User — readiness honesty (`score_run` \| `mixed` \| `evidence_coverage_heuristic`) |
+
+## Organisation structure (T7)
+
+| Method | Path | Auth |
+| --- | --- | --- |
+| GET | `/api/org/structure` | Org member — departments/teams/membership; `capabilityAssigned: false` |
+| POST | `/api/org/departments` | Org admin — create department |
+| POST | `/api/org/teams` | Org admin — create team |
+| POST | `/api/org/members` | Org admin — add department or team member |
 
 ---
 
@@ -103,6 +113,7 @@ Public token view is a **page** (`/portfolio/v/[token]`), not listed here as an 
 3. **Gate env (optional):** `DELIVERX_PI_ALLOWLIST`, `DELIVERX_PI_SURFACES`, `DELIVERX_PI_GATE` — see `security-model.md`.
 4. **Rubric resolve env (T2):** `DELIVERX_RUBRIC_REQUIRE_DB`, `DELIVERX_RUBRIC_ALLOW_IN_CODE_FALLBACK` — see `security-model.md`.
 5. **Webhooks / cron** (`/api/integrations/*`, `/api/cron/*`): service/secret auth — outside person PI loop.
+6. **Org structure (T7):** `DELIVERX_LEGACY_WORKSPACE_NAV` / `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV` restores demoted legacy workspace nav.
 
 ---
 

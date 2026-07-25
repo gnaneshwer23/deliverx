@@ -255,8 +255,9 @@ export type CareerIntelligenceSnapshot = {
   portfolioEntryCount: number;
   evidenceCount: number;
   capabilityAssigned: false;
-  /** Prefer score_run when a capability snapshot exists; heuristic is labelled fallback. */
-  readinessSource: "score_run" | "evidence_coverage_heuristic";
+  /** Prefer score_run when a capability snapshot exists; heuristic is labelled fallback.
+   *  mixed = ScoreRun present but some catalogue roles fell back to evidence coverage. */
+  readinessSource: "score_run" | "evidence_coverage_heuristic" | "mixed";
   scoreRun: ScoreRunCareerContext | null;
   /** Phase 7 — real-world outcome loop (self-reported; never capability). */
   outcomes: CareerOutcomeContext;

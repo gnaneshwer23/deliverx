@@ -70,7 +70,7 @@ type Snapshot = {
   };
   portfolioEntryCount: number;
   evidenceCount: number;
-  readinessSource?: "score_run" | "evidence_coverage_heuristic";
+  readinessSource?: "score_run" | "evidence_coverage_heuristic" | "mixed";
   scoreRun?: {
     snapshotId: string;
     readiness: number;
@@ -211,7 +211,9 @@ export function CareerIntelligenceApp({
                 {snap.portfolioEntryCount} · source {snap.profile.source}
                 {snap.readinessSource === "score_run"
                   ? " · readiness from ScoreRun"
-                  : " · readiness from evidence coverage (heuristic)"}
+                  : snap.readinessSource === "mixed"
+                    ? " · readiness mixed (ScoreRun + labelled heuristic)"
+                    : " · readiness from evidence coverage (heuristic)"}
               </p>
             ) : null}
           </header>
@@ -273,8 +275,18 @@ export function CareerIntelligenceApp({
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <h3 className="text-lg font-medium">{role.roleTitle}</h3>
-                    <strong className="font-mono text-sm text-[#1C4A2E]">
+                    <strong
+                      className="font-mono text-sm text-[#1C4A2E]"
+                      title={
+                        role.readinessKind === "score_run_projection"
+                          ? "ScoreRun projection — not a free-floating capability invent"
+                          : "Evidence coverage heuristic — not capability"
+                      }
+                    >
                       {role.readinessPct}%
+                      <span className="ml-1 font-sans text-[10px] font-normal uppercase tracking-wide text-[#6B6B64]">
+                        {role.readinessKind === "score_run_projection" ? "proj." : "cov."}
+                      </span>
                     </strong>
                   </div>
                   <p className="mt-1 text-[10px] uppercase tracking-wide text-[#6B6B64]">

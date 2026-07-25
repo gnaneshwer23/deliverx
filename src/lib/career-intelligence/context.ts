@@ -25,6 +25,7 @@ import {
   reprioritiseRoadmapFromOutcomes,
   summariseOutcomes,
 } from "@/lib/real-world-outcomes";
+import { deriveReadinessSource } from "@/lib/career-intelligence/readiness-honesty";
 
 /**
  * Load PI + VPP + ledger + latest ScoreRun context for Career Intelligence.
@@ -113,15 +114,13 @@ export async function buildCareerIntelligenceSnapshot(
   const catalogue = roles.length ? roles : CAREER_ROLE_CATALOGUE;
   const claims = snapshotPack.latest;
   const scoreRun = claims ? toScoreRunCareerContext(claims) : null;
-  const readinessSource = scoreRun
-    ? ("score_run" as const)
-    : ("evidence_coverage_heuristic" as const);
 
   const heuristicRoles = catalogue
     .map((role) => scoreRoleReadiness(role, evidence, profile.source !== "none"))
     .sort((a, b) => b.readinessPct - a.readinessPct);
 
   let roleReadiness: RoleReadinessResult[];
+  let usedHeuristicFallback = false;
 
   if (claims && scoreRun) {
     const projected: RoleReadinessResult[] = [];
@@ -131,6 +130,7 @@ export async function buildCareerIntelligenceSnapshot(
       if (fromClaims) {
         projected.push(fromClaims);
       } else {
+        usedHeuristicFallback = true;
         const heuristic = scoreRoleReadiness(role, evidence, profile.source !== "none");
         fallback.push({
           ...heuristic,
@@ -145,6 +145,11 @@ export async function buildCareerIntelligenceSnapshot(
   } else {
     roleReadiness = heuristicRoles;
   }
+
+  const readinessSource = deriveReadinessSource({
+    hasScoreRun: Boolean(scoreRun),
+    usedHeuristicFallback,
+  });
 
   const topRole = roleReadiness[0] ?? null;
   const baseRoadmap = scoreRun

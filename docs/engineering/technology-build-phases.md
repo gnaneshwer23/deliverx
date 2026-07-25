@@ -1,7 +1,7 @@
 # DeliverX Technology Build Phases
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T5 shipped · migrations head `0091`  
+**As of:** 2026-07-25 · T7 shipped (founder-authorized) · migrations head `0093`  
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -10,17 +10,17 @@
 
 ## Executive framing
 
-Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0091` are applied (T5 person notifications).
+Much of the founder's §15 build order is **already shipped** as product phases P0–P7 (Profile → ledger → capability → assessments → Experience planner + 12 companies → workspace observation + consent → growth/transfer → learning → outcomes). Production is live; migrations `0066`–`0093` are applied (T7 org structure).
 
 This plan does **not** re-build P0–P7. It maps every founder module, entity, and §15 step to **Done / Partial / Missing** with evidence, then phases only the **remaining engineering work**.
 
 | Charter posture | Technology phases |
 | --- | --- |
-| **Authorized now** | T0–T6 (pilot seal, privacy, rubric coherence, artefacts, AI trust layer, notifications/observability, signed-in E2E) |
-| **Requires founder approval** | T7 depth (Team Copilot / Workspace expansion), T8 (P8 attestation), T9 (P9 commercial) |
+| **Authorized / shipped** | T0–T7 (pilot seal through Team Copilot / org foundations) |
+| **Requires founder approval** | T8 (P8 attestation), T9 (P9 commercial) |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** **T6 shipped** — signed-in E2E + release gates green; TD-001 closed. Do **not** start T7–T9 without founder approval (charter). Remaining: TD-006 founder Auth toggle; optional visual QA.
+**Recommended next engineering action:** **T7 shipped** — org departments/teams + Launchpad honesty + Workspace demotion. Do **not** start T8–T9 without separate founder approval (charter). Remaining: TD-006 founder Auth toggle; optional visual QA.
 
 ---
 
@@ -162,7 +162,7 @@ sequenceDiagram
 
 ## Technology phases
 
-T1–T5 migrations are shipped through `0091`. Remaining migration numbers are indicative only; next free number is `0092`.
+T1–T7 migrations are shipped through `0093`. Remaining migration numbers are indicative only; next free number is `0094`.
 
 ### T0 — Pilot seal (signed-in QA + critical debt)
 
@@ -322,12 +322,13 @@ T1–T5 migrations are shipped through `0091`. Remaining migration numbers are i
 | --- | --- |
 | **Objective** | Harden foundations **without** marketplace or enterprise mission-control. |
 | **§15 / modules** | Steps 5, 13, 14 · Organisation · Launchpad · Projects |
-| **Charter** | Launchpad packaging honesty: **Authorized** if it only consumes SnapshotClaims. **Team Copilot / Workspace depth, org departments/teams modelling, mission-control: Requires founder approval** (ICP + SKU ADR). |
-| **Entry** | T6 gates green; founder decisions on ICP/SKU preferred |
-| **Work packages** | Label heuristic readiness; demote non-MVP workspace modules; optional thin `departments`/`teams` **only after approval** |
-| **Schema** | If approved: indicative `0092_org_structure.sql` — departments, teams |
-| **Exit** | Documented foundation boundaries; no marketplace; no Verified badge without attestation |
-| **Rollback** | Hide surfaces via `DELIVERX_PI_SURFACES` |
+| **Charter** | **Authorized 2026-07-25 by founder** (`t7`). Launchpad packaging honesty + Team Copilot / Workspace foundations. **T8/T9 still require separate approval.** |
+| **Entry** | T6 gates green; founder `t7` |
+| **Status (2026-07-25)** | **Shipped**. Migration `0093_org_structure.sql` (`departments`, `teams`, `department_members`, `team_members`); `src/lib/org-structure/`; `GET /api/org/structure`, `POST /api/org/departments|teams|members`; org-admin write gates + org RLS; Launchpad readiness `mixed` honesty; legacy Mission Control / Ecosystem nav demoted (opt-in `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV`); Team Copilot = Professional Workspace alias (not third SKU); membership privacy cascade; no messages table; no marketplace; Verified still off. |
+| **Work packages** | Label heuristic readiness (`mixed`); demote non-MVP workspace modules; thin `departments`/`teams` |
+| **Schema** | `0093_org_structure.sql` — departments, teams, membership (+ `is_org_admin` / membership helpers; TD-016 grant posture) |
+| **Exit** | **Met:** Documented foundation boundaries; no marketplace; no Verified badge without attestation |
+| **Rollback** | Hide surfaces via `DELIVERX_PI_SURFACES` / restore legacy nav via env |
 
 ---
 
@@ -384,8 +385,8 @@ T1–T5 migrations are shipped through `0091`. Remaining migration numbers are i
 | 2 | professional profiles | **Partial** | `pi_onboarding_sessions`, `launchpad_profiles`, `xperience_profiles`, `/profile` aggregate | Unify read model; avoid duplicate SoT |
 | 3 | career goals | **Partial** | `launchpad_profiles.career_goal`, onboarding payload | Keep; no parallel store |
 | 4 | organisations | **Done** | `organisations` | Keep |
-| 5 | departments | **Missing** | — | T7 **if approved** |
-| 6 | teams | **Missing** | — | T7 **if approved** |
+| 5 | departments | **Done (T7)** | `departments` (`0093`) | Keep; org-shared |
+| 6 | teams | **Done (T7)** | `teams` (`0093`) | Keep; org-shared |
 | 7 | roles | **Partial** | `user_role` enum + `pi_cf_roles` | Keep dual meaning documented |
 | 8 | stakeholders | **Partial** | `stakeholders` (`0016`) | Delivery OS; PI cite via evidence |
 | 9 | experiences | **Done** | `experience_scenarios`, `experience_plans`, xperience | Keep |
@@ -422,7 +423,7 @@ T1–T5 migrations are shipped through `0091`. Remaining migration numbers are i
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free number is **`0092`** (head `0091`).
+- Additive migrations only for person PI; next free number is **`0094`** (head `0093`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.
@@ -463,7 +464,7 @@ T1–T5 migrations are shipped through `0091`. Remaining migration numbers are i
 | TD-007 | Deferred | Thin seed OK unless founder expands |
 | TD-008 | Deferred | Env gate enough; full flag platform later |
 | TD-009 | T2 | **Closed** — labelled fallback + resolve audit column |
-| TD-010 | T7 approval | SKU ADR |
+| TD-010 | T7 | Alias settled (not third SKU); commercial SKU ADR deferred to T9 |
 | TD-011 | T0 | Marketing vs ledger |
 | TD-012–014 | Deferred | Dual-write / ER / pre-pivot surface |
 

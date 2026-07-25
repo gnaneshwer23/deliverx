@@ -186,6 +186,23 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 
 ---
 
+## Technology T7 — Launchpad & Team Copilot foundations (2026-07-25)
+
+| Artefact | Summary |
+| --- | --- |
+| `0093_org_structure.sql` | `departments`, `teams`, membership; `is_org_admin` / membership helpers; privacy purge chain; TD-016 grants |
+| `src/lib/org-structure/` | Domain lib — no capability/evidence writes |
+| `/api/org/structure\|departments\|teams\|members` | Org-member read; org-admin write |
+| Launchpad readiness | `mixed` source + labelled % (not capability) |
+| Workspace nav | Legacy Mission Control / Ecosystem demoted; opt-in `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV` |
+| PD-2026-07-25 | T7 authorized; T8/T9 still blocked; not third SKU |
+
+**Verification:** focused vitest (org-structure + privacy cascade + readiness honesty + nav policy); migration applied to `jibmyxaldetyycmtlxet`; advisors checked; release-gate; Vercel prod READY; unauth 401 on `/api/org/*`.
+
+**T7 verdict:** Shipped (founder-authorized). Do not proceed to T8/T9 without separate founder approval. TD-006 remains founder-only.
+
+---
+
 ## Ops — TD-006 leaked-password protection (2026-07-25)
 
 | Check | Result |
@@ -201,7 +218,7 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ## Not started (charter)
 
-- **P8** — External verification / attestation  
-- **P9** — Commercial  
+- **P8 / T8** — External verification / attestation (requires separate founder approval)  
+- **P9 / T9** — Commercial (requires separate founder approval)  
 
 Do not append ship rows for P8/P9 until Build Charter authorises them.

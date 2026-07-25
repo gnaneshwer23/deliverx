@@ -188,6 +188,22 @@ export const PRIVACY_CASCADE_MAP: readonly PrivacyCascadeEntry[] = [
   { table: "launchpad_progress", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "launchpad_profiles", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "workspace_contributions", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
+  {
+    table: "department_members",
+    kind: "person_row",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "T7 org membership — person link only; departments table itself is org-shared",
+  },
+  {
+    table: "team_members",
+    kind: "person_row",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "T7 org membership — person link only; teams table itself is org-shared",
+  },
   { table: "career_activities", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "career_applications", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   {
@@ -227,6 +243,8 @@ export const PRIVACY_PURGE_EXCLUSIONS = [
   "experience_scenarios",
   "ai_agents",
   "ai_prompt_versions",
+  "departments",
+  "teams",
 ] as const;
 
 export const DELETE_CONFIRM_PHRASE = "DELETE_MY_PI_DATA";

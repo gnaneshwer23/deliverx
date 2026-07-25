@@ -1,6 +1,6 @@
 # Current Scope
 
-**Active phase:** Post-P7 pilot hardening — **Technology T6 shipped**; T0 PASS (automated); TD-001 closed; T1–T5 shipped; TD-016 closed  
+**Active phase:** Post-P7 pilot hardening — **Technology T7 shipped** (founder-authorized 2026-07-25); T0 PASS (automated); TD-001 closed; T1–T6 shipped; TD-016 closed  
 **As of:** 2026-07-25  
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
@@ -10,7 +10,8 @@
 **T3 status:** **Shipped** — artefact versioning + submission coherence (`0088`; `artefacts` / `artefact_versions` / `artefact_status_transitions`; immutable prior versions; evidence cites `artefact_version_id`; privacy cascade extended; settings panel). Hotfix `0089` locks the person-purge RPC to `service_role` only.  
 **T4 status:** **Shipped** — AI orchestration trust layer (`0090`; `ai_agents` / `ai_prompt_versions` / `ai_interactions`; `src/lib/ai-orchestration/`; Manager/Stakeholder/Observer + consolidated coaches; guardrails; mock-model tests; `GET /api/pi/ai/interactions`).  
 **T5 status:** **Shipped** — person PI notifications + observability (`0091`; `pi_notifications`; legacy review migration; intervention/privacy sources; `GET/PATCH /api/pi/notifications`; Profile inbox; `pi_ai_usage_daily`).  
-**T6 status:** **Shipped** — signed-in E2E + release gates (`e2e/t0-signed-in-loop.test.ts`, `e2e/t6-security-journeys.test.ts`, `e2e/t6-unauth-gates.test.ts`, `npm run test:release-gate`); TD-001 closed. Do **not** start T7–T9 without founder approval.  
+**T6 status:** **Shipped** — signed-in E2E + release gates (`e2e/t0-signed-in-loop.test.ts`, `e2e/t6-security-journeys.test.ts`, `e2e/t6-unauth-gates.test.ts`, `npm run test:release-gate`); TD-001 closed.  
+**T7 status:** **Shipped (founder-authorized 2026-07-25)** — org departments/teams (`0093`); Launchpad readiness honesty (`mixed` source); Professional Workspace nav demotion (legacy opt-in); Team Copilot = Workspace alias (not third SKU); membership privacy cascade. **T8/T9 still require separate founder approval.**  
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -38,19 +39,21 @@
 **T5 (2026-07-25):** Consolidated person inbox — self-only `pi_notifications`, migrated `pi_review_notifications` history, intervention-offer trigger, idempotent privacy event consumption, contextual in-app links, Profile bell/list/mark-read, and security-invoker daily AI usage read model. No email/channel expansion; no capability or verification writes. Migration `0091`.
 **TD-016 (2026-07-25):** Exhaustive production SECURITY DEFINER inventory (nine functions) + `0092`; anonymous EXECUTE now false for all. Authenticated EXECUTE retained only for `current_org_id`, `is_workspace_project_member`, and `pi_cf_version_is_readable` because active RLS policies depend on them; before/after role-simulation probes passed.
 **T6 (2026-07-25):** Signed-in E2E + release gates — disposable-user happy path (18/18), security negatives (RLS, purge denial, prompt-injection), unauth gates, `npm run test:release-gate`; TD-001 closed; T0 PASS (automated). Docs: `docs/qa/end-to-end-audit.md`, `acceptance-test-results.md`, `security-findings.md`, `release-readiness.md`.
+**T7 (2026-07-25):** Founder-authorized org + Workspace foundations — `departments` / `teams` / membership (`0093`); org-admin gated APIs; Launchpad `mixed` readiness honesty; legacy Mission Control / Ecosystem nav demoted (opt-in via `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV`); Team Copilot remains Professional Workspace alias (not third SKU); membership rows in privacy export/purge; org structure tables excluded from person purge. No marketplace, messages SKU, attestation, or commercial packaging.
 
 ---
 
 ## Out of scope (this phase)
 
-- P8 external attestation / lighting `deliverxVerified`
-- P9 commercial / packaging expansion
+- P8 / **T8** external attestation / lighting `deliverxVerified`
+- P9 / **T9** commercial / packaging expansion
 - Multi-profession framework expansion beyond thin pilot seed
 - Employer attest portal
-- Team Co-pilot enterprise mission-control depth as a separate Home
+- Team Co-pilot enterprise mission-control depth as a separate Home / third SKU
 - Speculative intelligence microservices
 - Rewriting pre-PI delivery/org engines unless required to protect the candidate loop
-- **T7–T9** until founder approval (Launchpad/Team Copilot depth; attestation; commercial)
+- First-class `messages` table (reuse meetings / contributions / notifications)
+- **T8–T9** until separate founder approval
 
 ---
 
@@ -61,10 +64,10 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 | ID | Decision | Impact if undecided |
 | --- | --- | --- |
 | **ICP** | Pre-job / early PM vs employed teams for next 90 days | Career vs Workspace investment weight |
-| **Product count / SKU** | Team Co-pilot merge to Workspace vs third SKU vs sunset | Nav, pricing, Hub cards |
-| **Verification meaning** | Legal/product definition of Verified / `deliverxVerified` | Portfolio badge, marketing, P8 timing |
-| **Workspace scope** | Is employed Workspace in pilot ICP? | Observation/coach polish vs hide |
-| **Roadmap approval** | Explicit authorisation for P8 / P9 | No external verification or commercial expansion until approved |
+| **Product count / SKU** | **Settled for T7 (alias):** Team Co-pilot = Professional Workspace; not a third SKU. Full pricing SKU ADR still open for commercial (T9). | Nav prefers Professional Workspace |
+| **Verification meaning** | Legal/product definition of Verified / `deliverxVerified` | Portfolio badge, marketing, **T8** timing |
+| **Workspace scope** | Employed Workspace in pilot via Professional Workspace modules; mission-control demoted | Observation/coach remain; legacy nav opt-in |
+| **Roadmap approval** | **T7 authorized 2026-07-25.** Explicit authorisation still required for **T8 / T9** (P8 / P9) | No external verification or commercial expansion until approved |
 | **Framework breadth** | Single seeded domain (`pm-core`) enough for pilot? | Admin seed depth |
 | **Marketing vs ledger** | Suite marketing aspirational vs committed scope | Copy audit |
 
@@ -76,4 +79,4 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 2. Prefer smallest change that hardens the shipped loop.
 3. Do not start P8/P9 without founder approval recorded in `product-decisions.md`.
 4. Update this file when the active phase changes.
-5. Do not start T7–T9 until founder approval; T6 signed-in E2E is shipped.
+5. Do not start **T8–T9** until separate founder approval; T7 is shipped.

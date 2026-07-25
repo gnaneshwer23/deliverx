@@ -20,7 +20,9 @@ export async function GET() {
       notice:
         snapshot.readinessSource === "score_run"
           ? "Career Intelligence packages PI profile + ScoreRun + evidence + portfolio. It does not assign capability."
-          : "Career Intelligence packages PI profile + evidence + portfolio. Run ScoreRun for engine-backed readiness. It does not assign capability.",
+          : snapshot.readinessSource === "mixed"
+            ? "Career Intelligence mixes ScoreRun projections with labelled evidence-coverage heuristics for thin roles. Percentages are not capability levels."
+            : "Career Intelligence packages PI profile + evidence + portfolio. Run ScoreRun for engine-backed readiness. It does not assign capability.",
     });
   } catch (error) {
     console.error("[career] snapshot failed", error);

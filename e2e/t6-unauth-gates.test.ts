@@ -28,6 +28,7 @@ const PROTECTED_GET = [
   "/api/career/outcomes",
   "/api/career/intelligence",
   "/api/portfolio/entries",
+  "/api/org/structure",
 ];
 
 const PROTECTED_POST = [
@@ -37,6 +38,9 @@ const PROTECTED_POST = [
   "/api/pi/learning",
   "/api/career/outcomes",
   "/api/workspace/contributions",
+  "/api/org/departments",
+  "/api/org/teams",
+  "/api/org/members",
 ];
 
 async function hit(path: string, method: "GET" | "POST" = "GET") {

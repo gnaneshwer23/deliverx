@@ -19,6 +19,7 @@ import {
   workspaceOrgAdminNav,
   type WorkspaceNavItem,
 } from "@/config/workspace-nav";
+import { isLegacyWorkspaceNavEnabled } from "@/config/workspace-nav-policy";
 import { isOrgAdmin } from "@/lib/org-admin";
 import { getMissionPersonaMeta } from "@/config/mission-persona-meta";
 import { resolveRoleHomePath } from "@/config/role-home-routing";
@@ -289,6 +290,8 @@ function WorkspaceSidebarContent({
 }) {
   const pathname = usePathname();
 
+  const showLegacyNav = isLegacyWorkspaceNavEnabled();
+
   return (
     <>
       <div className="flex-1 overflow-y-auto">
@@ -299,42 +302,46 @@ function WorkspaceSidebarContent({
           userRole={userRole}
           onNavigate={onNavigate}
         />
-        <CoreNavSection
-          userRole={userRole}
-          pathname={pathname}
-          pendingApprovals={pendingApprovals}
-          missionBadgeCounts={missionBadgeCounts}
-          onNavigate={onNavigate}
-        />
-        <NavSection
-          label="Delivery"
-          items={workspaceDeliveryNav}
-          pathname={pathname}
-          userRole={userRole}
-          onNavigate={onNavigate}
-        />
-        <NavSection
-          label="Intelligence"
-          items={workspaceIntelligenceNav}
-          pathname={pathname}
-          pendingApprovals={pendingApprovals}
-          userRole={userRole}
-          onNavigate={onNavigate}
-        />
-        <NavSection
-          label="Ecosystem"
-          items={workspaceEcosystemNav}
-          pathname={pathname}
-          userRole={userRole}
-          onNavigate={onNavigate}
-        />
-        <NavSection
-          label="Governance"
-          items={workspaceGovernanceNav}
-          pathname={pathname}
-          userRole={userRole}
-          onNavigate={onNavigate}
-        />
+        {showLegacyNav ? (
+          <>
+            <CoreNavSection
+              userRole={userRole}
+              pathname={pathname}
+              pendingApprovals={pendingApprovals}
+              missionBadgeCounts={missionBadgeCounts}
+              onNavigate={onNavigate}
+            />
+            <NavSection
+              label="Delivery"
+              items={workspaceDeliveryNav}
+              pathname={pathname}
+              userRole={userRole}
+              onNavigate={onNavigate}
+            />
+            <NavSection
+              label="Intelligence"
+              items={workspaceIntelligenceNav}
+              pathname={pathname}
+              pendingApprovals={pendingApprovals}
+              userRole={userRole}
+              onNavigate={onNavigate}
+            />
+            <NavSection
+              label="Ecosystem"
+              items={workspaceEcosystemNav}
+              pathname={pathname}
+              userRole={userRole}
+              onNavigate={onNavigate}
+            />
+            <NavSection
+              label="Governance"
+              items={workspaceGovernanceNav}
+              pathname={pathname}
+              userRole={userRole}
+              onNavigate={onNavigate}
+            />
+          </>
+        ) : null}
         {isOrgAdmin(userRole) ? (
           <NavSection
             label="Org admin"
