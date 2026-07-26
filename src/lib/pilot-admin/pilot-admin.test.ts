@@ -164,17 +164,19 @@ describe("B8 config mutations", () => {
                 eq() {
                   return {
                     select() {
+                      const result = {
+                        data: {
+                          id: "org-1",
+                          name: payload.name,
+                          industry: payload.industry ?? null,
+                          team_size: payload.team_size ?? null,
+                          delivery_type: payload.delivery_type ?? null,
+                        },
+                        error: null,
+                      };
                       return {
-                        single: async () => ({
-                          data: {
-                            id: "org-1",
-                            name: payload.name,
-                            industry: payload.industry ?? null,
-                            team_size: payload.team_size ?? null,
-                            delivery_type: payload.delivery_type ?? null,
-                          },
-                          error: null,
-                        }),
+                        single: async () => result,
+                        maybeSingle: async () => result,
                       };
                     },
                   };

@@ -1,10 +1,14 @@
+## 2026-07-26 — B8 spot-check + org-admin UPDATE RLS (`0100`)
+
+Signed-in production spot-check of Pilot admin found `PATCH /api/org/config` failing with PostgREST `PGRST116` when the actor was an org admin who was not `organisations.created_by` (legacy creator-only UPDATE policy). Migration `0100_organisations_org_admin_update.sql` adds `organisations_admin_update` via `is_org_admin()` and aligns `projects` UPDATE with the same gate (executive as well as pm). Applied to prod `jibmyxaldetyycmtlxet`. App-layer empty-update now returns an honest 403 instead of coerce-to-single noise. Spot-check: admin UI + framework pin + audited org/project PATCH + non-admin 403/redirect; no ScoreRuns/Verified from admin actions; disposable identities purged.
+
 ## 2026-07-26 — B8: Thin admin org/project config
 
 Founder reply `B8` (after being shown B8 as needing founder OK on depth) authorized six-doc phase B8 at **thin** pilot depth only — not enterprise mission-control, not a third SKU, not marketplace liquidity (PD-2026-07-26l).
 
 Shape: first-class Pilot admin at `/settings/admin` consolidating org config, project config (name/goal/delivery type/status), org structure (departments/teams via existing `0093`), and membership assign. Typed SoT `src/lib/pilot-admin/`; permissioned `GET/PATCH /api/org/config`, `GET /api/org/projects`, `PATCH /api/org/projects/[id]`; audited mutations append `audit_events` (`event_type=updated`, `source=pilot_admin|org_structure`) with explicit no-evidence / no-Verified metadata. Framework pin shown read-only as `pm-core@2026.1` (reuses admin-framework seed — no full CMS).
 
-Trust rails: org-admin role gate (pm | executive) + kill-switch `DELIVERX_PILOT_ADMIN` defaults **on**; never writes evidence, ScoreRuns, or Verified; no PostHog; no payments; no migration (`0099` remains prod head — avoid schema churn).
+Trust rails: org-admin role gate (pm | executive) + kill-switch `DELIVERX_PILOT_ADMIN` defaults **on**; never writes evidence, ScoreRuns, or Verified; no PostHog; no payments. Follow-up migration `0100` (spot-check) unlocks org-admin UPDATE RLS; original ship avoided schema churn.
 
 Verification: focused pilot-admin + a11y units PASS; `test:pi` includes `src/lib/pilot-admin`; lint + build PASS.
 

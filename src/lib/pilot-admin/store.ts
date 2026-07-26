@@ -190,10 +190,17 @@ export async function updateOrgConfig(
     })
     .eq("id", actor.organisationId)
     .select("id, name, industry, team_size, delivery_type")
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
-    throw new PilotAdminError(error?.message ?? "Could not update organisation", 400);
+  if (error) {
+    throw new PilotAdminError(error.message, 400);
+  }
+  if (!data) {
+    // Usually RLS: only creator could update before 0100; org-admin policy required.
+    throw new PilotAdminError(
+      "Organisation update blocked by access policy (org admin required)",
+      403,
+    );
   }
 
   const after = mapOrgConfig(data as Record<string, unknown>);
