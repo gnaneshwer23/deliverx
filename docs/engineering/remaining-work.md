@@ -14,6 +14,8 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1–B9 shipped**: confidence bands, recommendation SM, Vercel pilot KPI custom events, human reviewer ops, eight-step onboarding, Xperience entry ceremony, shell search, thin admin, and NFR polish (rate limit / failure / activity SM). PostHog remains deferred pending FD-PACK-7. Other Bn not authorised until founder selects.
 
+**Outcomes & efficiency audit (2026-07-26):** Full B0–B9 scorecard + leverage / waste / pilot-readiness — [`b1-b9-outcomes-efficiency-audit.md`](./b1-b9-outcomes-efficiency-audit.md) · canvas IDE [`deliverx-b1-b9-outcomes-audit.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-b1-b9-outcomes-audit.canvas.tsx) · repo [`canvases/deliverx-b1-b9-outcomes-audit.canvas.tsx`](./canvases/deliverx-b1-b9-outcomes-audit.canvas.tsx). Verdict: **Conditional** pilot-ready; stop Bn expansion; next ROI is founder ops (TD-018, TD-006, SMTP).
+
 ---
 
 ## Shipped baseline (do not re-open without evidence)
@@ -188,8 +190,10 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 - [`../product/current-scope.md`](../product/current-scope.md)  
 - [`next-steps.md`](./next-steps.md)  
 - [`six-doc-build-phases.md`](./six-doc-build-phases.md)  
+- [`b1-b9-outcomes-efficiency-audit.md`](./b1-b9-outcomes-efficiency-audit.md)  
 - [`../audit/release-readiness.md`](../audit/release-readiness.md)  
 - [`../audit/missing-functionality-register.md`](../audit/missing-functionality-register.md)  
 - [`../15-delivery-roadmap.md`](../15-delivery-roadmap.md)  
 - Six-doc gap check: [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)  
 - Six-doc B phases: [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
+- B0–B9 outcomes audit: [`canvases/deliverx-b1-b9-outcomes-audit.canvas.tsx`](./canvases/deliverx-b1-b9-outcomes-audit.canvas.tsx)  
