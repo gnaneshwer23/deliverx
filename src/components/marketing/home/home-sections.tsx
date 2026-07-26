@@ -145,7 +145,7 @@ export function HomeProducts() {
                 Three products. One <em>connected path.</em>
               </>
             }
-            subtitle="Everything you need to go from aspiring to achieving."
+            subtitle="Experience, Launchpad and Professional Workspace share one Professional Intelligence record."
           />
         </MarketingReveal>
 
