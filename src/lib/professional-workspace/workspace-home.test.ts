@@ -30,9 +30,10 @@ describe("Professional Workspace home honesty", () => {
     expect(home).toMatch(/Team Copilot is the same product alias/);
     expect(home).toMatch(/Observation off \(default\)/);
     expect(home).toMatch(/not a delivery health score/);
-    expect(home).toMatch(/aria-label="Workspace context"/);
     expect(home).toMatch(/Where am I\?/);
     expect(home).toMatch(/What matters now/);
+    expect(home).toMatch(/WorkspaceProductShell/);
+    expect(home).toMatch(/pw-module/);
   });
 
   it("exposes primary modules without requiring mission-control depth", () => {
@@ -61,9 +62,25 @@ describe("Professional Workspace suite chrome", () => {
     const chrome = source(
       "../../components/professional-workspace/module-chrome.tsx",
     );
-    expect(chrome).toContain('aria-label="Workspace modules"');
+    const frame = source(
+      "../../components/professional-workspace/workspace-product-frame.tsx",
+    );
+    expect(frame).toContain('aria-label="Workspace modules"');
+    expect(frame).toContain("pw-rail");
     expect(chrome).toContain("Nothing here yet");
     expect(chrome).toContain("Open Evidence Ledger");
+    expect(chrome).toContain("WorkspaceProductFrame");
     expect(chrome).not.toMatch(/recordWorkspaceContribution/);
+  });
+
+  it("shares product-app CSS tokens with Experience/Launchpad density", () => {
+    const css = source(
+      "../../components/professional-workspace/workspace-app.css",
+    );
+    expect(css).toContain(".pw-root");
+    expect(css).toContain("--pw-accent: #1c4a2e");
+    expect(css).toContain("--pw-surface: #fffdf8");
+    expect(css).toContain(".pw-rail");
+    expect(css).toContain(".pw-module-grid");
   });
 });

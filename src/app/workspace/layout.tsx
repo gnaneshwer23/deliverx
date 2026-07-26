@@ -32,7 +32,9 @@ export default async function WorkspaceLayout({
     return (
       <ProductSuiteShell>
         <WorkspaceLiveRefresh>
-          <main className="min-h-screen bg-[var(--dx-page)]">{children}</main>
+          <main className="min-h-screen bg-[var(--dx-page)] [&:has(.pw-root)]:bg-transparent">
+            {children}
+          </main>
         </WorkspaceLiveRefresh>
       </ProductSuiteShell>
     );

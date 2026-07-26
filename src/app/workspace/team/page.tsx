@@ -5,9 +5,11 @@ import { getOrgActiveBootstrapProject } from "@/services/orgBootstrap";
 import { ProjectBootstrapPanel } from "@/components/project/project-bootstrap-panel";
 import { InviteForm } from "@/app/onboarding/invite/invite-form";
 import { OrgStructurePanel } from "@/components/org-structure/panel";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { DxBadge } from "@/components/dx/dx-badge";
-import { dxClass } from "@/lib/dx-theme";
+import {
+  WorkspacePageHeader,
+  WorkspaceProductShell,
+} from "@/components/professional-workspace/workspace-product-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -30,20 +32,47 @@ export default async function WorkspaceTeamPage() {
   ]);
 
   return (
-    <>
-      <DxPageHeader
-        breadcrumb="DeliverX · Professional Workspace"
+    <WorkspaceProductShell
+      aside={
+        <>
+          <section>
+            <h2>What matters</h2>
+            <p style={{ marginTop: 8 }}>
+              Membership and thin org structure only — not executive mission control.
+            </p>
+          </section>
+          <section>
+            <h2>Next</h2>
+            <ul>
+              <li>Review members and roles</li>
+              <li>Invite teammates when needed</li>
+              <li>Configure departments/teams via pilot admin if you are an org admin</li>
+            </ul>
+          </section>
+        </>
+      }
+    >
+      <WorkspacePageHeader
+        eyebrow="Professional Workspace · Team"
         title="Team"
-        subtitle="See members, thin org structure, and invitations. This is not executive mission control — membership and structure only."
-        action={
-          <Link href="/workspace" className={`${dxClass.btnGhost} text-[10px]`}>
+        lead="See members, thin org structure, and invitations. This is not executive mission control — membership and structure only."
+        actions={
+          <Link href="/workspace" className="pw-button secondary">
             Back to Workspace
           </Link>
         }
+        context={
+          <div className="pw-context-card">
+            <span>Members</span>
+            <strong>{members.length}</strong>
+            <small>Organisation roster</small>
+          </div>
+        }
       />
-      <div className="grid gap-8 p-6 md:p-8 lg:grid-cols-2">
+
+      <div className="pw-module-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
         {bootstrapProject ? (
-          <section className="lg:col-span-2">
+          <section style={{ gridColumn: "1 / -1" }}>
             <ProjectBootstrapPanel
               projectId={bootstrapProject.id}
               initialStatus={bootstrapProject.bootstrap_status}
@@ -51,20 +80,36 @@ export default async function WorkspaceTeamPage() {
             />
           </section>
         ) : null}
-        <OrgStructurePanel />
-        <section className={`${dxClass.cardPad}`}>
-          <h2 className={`${dxClass.display} mb-4 text-lg`}>
-            Members ({members.length})
-          </h2>
+
+        <section className="pw-panel" style={{ gridColumn: "1 / -1" }}>
+          <OrgStructurePanel />
+        </section>
+
+        <section className="pw-panel">
+          <h3>Members ({members.length})</h3>
           {members.length === 0 ? (
-            <p className="text-sm text-[#6B6B64]">No team members in this organisation yet.</p>
+            <p className="pw-lead" style={{ marginTop: 10 }}>
+              No team members in this organisation yet.
+            </p>
           ) : (
-            <ul className="divide-y divide-[#F0F0E8]">
+            <ul style={{ listStyle: "none", padding: 0, margin: "14px 0 0" }}>
               {members.map((m) => (
-                <li key={m.id} className="flex items-center justify-between gap-3 py-3">
+                <li
+                  key={m.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    padding: "12px 0",
+                    borderBottom: "1px solid var(--pw-line)",
+                  }}
+                >
                   <div>
-                    <p className="font-medium">{m.name ?? m.email}</p>
-                    <p className="text-xs text-[#6B6B64]">{m.email}</p>
+                    <p style={{ margin: 0, fontWeight: 600 }}>{m.name ?? m.email}</p>
+                    <p className="pw-lead" style={{ margin: "4px 0 0", fontSize: "0.8rem" }}>
+                      {m.email}
+                    </p>
                   </div>
                   <DxBadge tone="accent">
                     {ROLE_LABEL[m.role ?? ""] ?? m.role ?? "Member"}
@@ -75,14 +120,14 @@ export default async function WorkspaceTeamPage() {
           )}
         </section>
 
-        <section className={`${dxClass.cardPad}`}>
-          <h2 className={`${dxClass.display} mb-2 text-lg`}>Invite teammates</h2>
-          <p className="mb-4 text-sm text-[#6B6B64]">
+        <section className="pw-panel">
+          <h3>Invite teammates</h3>
+          <p className="pw-lead" style={{ marginTop: 8, marginBottom: 14 }}>
             PMs and executives can send email invitations with role assignment.
           </p>
           <InviteForm pending={pending} />
         </section>
       </div>
-    </>
+    </WorkspaceProductShell>
   );
 }

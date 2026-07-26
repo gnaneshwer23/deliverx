@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { FolderKanban, Plus } from "lucide-react";
-import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
@@ -12,6 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  WorkspacePageHeader,
+  WorkspaceProductShell,
+} from "@/components/professional-workspace/workspace-product-shell";
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
@@ -21,32 +23,59 @@ export default async function ProjectsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="p-8">
-      <PageHeader
+    <WorkspaceProductShell
+      aside={
+        <>
+          <section>
+            <h2>What matters</h2>
+            <p style={{ marginTop: 8 }}>
+              Delivery initiatives in your organisation. Open a project for workstreams, tasks, and
+              meetings.
+            </p>
+          </section>
+          <section>
+            <h2>Related</h2>
+            <ul className="pw-link-list" style={{ listStyle: "none", padding: 0 }}>
+              <li>
+                <Link href="/workspace">Workspace home</Link>
+              </li>
+              <li>
+                <Link href="/project/new">Create delivery project</Link>
+              </li>
+            </ul>
+          </section>
+        </>
+      }
+    >
+      <WorkspacePageHeader
+        eyebrow="Professional Workspace · Projects"
         title="Projects"
-        description="All delivery initiatives in your organisation."
-        icon={FolderKanban}
+        lead="All delivery initiatives in your organisation."
         actions={
-          <Link
-            href="/project/new"
-            className="inline-flex h-9 items-center gap-1.5 rounded-md bg-[#0F766E] px-4 text-sm font-medium text-white hover:bg-[#0E6B62]"
-          >
-            <Plus size={16} /> New project
+          <Link href="/project/new" className="pw-button">
+            New project
           </Link>
+        }
+        context={
+          <div className="pw-context-card">
+            <span>Projects</span>
+            <strong>{projects?.length ?? 0}</strong>
+            <small>Organisation list</small>
+          </div>
         }
       />
 
       {!projects?.length ? (
         <EmptyState
           title="No projects yet"
-          description="Create your first project to start tracking delivery intelligence."
+          description="Create your first project to start tracking delivery work."
           actionLabel="Create project"
           actionHref="/project/new"
         />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="pw-table-wrap">
           <Table>
-            <TableHeader className="bg-slate-50 text-slate-500">
+            <TableHeader>
               <TableRow>
                 <TableHead className="px-4">Name</TableHead>
                 <TableHead className="px-4">Status</TableHead>
@@ -57,25 +86,18 @@ export default async function ProjectsPage() {
             </TableHeader>
             <TableBody>
               {projects.map((p) => (
-                <TableRow key={p.id} className="hover:bg-slate-50/50">
+                <TableRow key={p.id}>
                   <TableCell className="px-4">
-                    <Link
-                      href={`/project/${p.id}`}
-                      className="font-medium text-[#0F766E] hover:underline"
-                    >
-                      {p.name}
-                    </Link>
+                    <Link href={`/project/${p.id}`}>{p.name}</Link>
                   </TableCell>
                   <TableCell className="px-4">
                     <StatusBadge status={p.status} />
                   </TableCell>
-                  <TableCell className="px-4 text-slate-600">
-                    {p.delivery_type ?? "—"}
-                  </TableCell>
-                  <TableCell className="px-4 text-slate-500">
+                  <TableCell className="px-4">{p.delivery_type ?? "—"}</TableCell>
+                  <TableCell className="px-4">
                     {new Date(p.created_at).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="px-4 text-slate-500">
+                  <TableCell className="px-4">
                     {p.closure_processed_at ? "Extracted" : "—"}
                   </TableCell>
                 </TableRow>
@@ -84,6 +106,6 @@ export default async function ProjectsPage() {
           </Table>
         </div>
       )}
-    </main>
+    </WorkspaceProductShell>
   );
 }

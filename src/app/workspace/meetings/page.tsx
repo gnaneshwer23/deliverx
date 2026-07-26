@@ -17,9 +17,10 @@ export default async function WorkspaceMeetingsPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX · Intelligence"
+      breadcrumb="Professional Workspace · Meetings"
       title="Meetings"
       titleEm="& standups"
+      lead="Organisation feed of meetings and standups. Counts are activity volume — not programme health."
       stats={[
         { label: "Recent meetings", value: meetings.length },
         { label: "Standups (7d)", value: standups.length, tone: standups.length ? "green" : "default" },

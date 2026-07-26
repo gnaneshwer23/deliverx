@@ -56,7 +56,7 @@
 | **B9** | Shipped | PI API rate limit `0101` (90/60s); failure codes + AI 429; intervention + Experience activity SM honesty |
 | **Contextual Home** | Shipped | `/profile` Daily Briefing — journey states A–D; `DELIVERX_CONTEXTUAL_HOME`; no Insights nav / no Team Copilot executive |
 
-**Also present (partial / supporting):** Professional Workspace (`/workspace`) — suite-shell parity for the thin home (ProductSuiteShell by default; legacy Mission Control nav opt-in); Verified Portfolio packaging (`/portfolio`); Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback); admin competency framework seed (`pm-core`); PI review/challenge.
+**Also present (partial / supporting):** Professional Workspace (`/workspace`) — product-app UI parity with Experience/Launchpad (shared `.pw-root` chrome + side rail; ProductSuiteShell outer nav; legacy Mission Control nav opt-in); Verified Portfolio packaging (`/portfolio`); Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback); admin competency framework seed (`pm-core`); PI review/challenge.
 
 **T0–T7:** See prior ship notes in [`../engineering/implementation-log.md`](../engineering/implementation-log.md).  
 **T8 (2026-07-25):** Founder-authorized external attestation — `vpp_attestation_requests` / `vpp_attestations` / `vpp_attestation_events` (`0094`); consent-gated request; tokenised no-account attestor confirm/dispute; confirm appends ledger evidence (`external_verification` / `external_employer`); dispute opens `pi_review_case`; `deliverxVerified` + kill switch; share views strip private evidence and attestor PII; privacy export/purge; no marketplace / networking / Stripe.

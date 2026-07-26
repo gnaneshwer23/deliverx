@@ -37,9 +37,9 @@ export default async function WorkspaceDocumentsPage() {
 
   return (
     <OrgListPage
-      breadcrumb="DeliverX · Intelligence"
+      breadcrumb="Professional Workspace · Documents"
       title="Documents"
-      titleEm="library"
+      lead="Delivery artefacts across organisation projects."
       stats={[{ label: "Total documents", value: documents.length }]}
       empty={
         rows.length === 0

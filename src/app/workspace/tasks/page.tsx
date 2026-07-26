@@ -6,7 +6,6 @@ import {
   listUserMeetingSourcedTasks,
   type TaskStatus,
 } from "@/services/delivery";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
@@ -22,7 +21,6 @@ import {
   partitionStandupFromKanban,
   selectStandupBatchTasks,
 } from "@/lib/standup-tasks";
-import { dxClass } from "@/lib/dx-theme";
 import {
   Table,
   TableBody,
@@ -31,6 +29,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  WorkspacePageHeader,
+  WorkspaceProductShell,
+} from "@/components/professional-workspace/workspace-product-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -124,66 +126,69 @@ export default async function WorkspaceTasksPage({
   }
 
   return (
-    <>
-      <DxPageHeader breadcrumb="DeliverX · Workspace" title="Tasks" titleEm="inbox" />
-      <div className="p-6 md:p-8">
-        <TaskViewToggle
-          view={view}
-          projectId={projectId}
-          statusFilter={statusFilter}
-          sourceFilter={sourceFilter}
-        />
-
-        {view === "kanban" ? (
-          <div className="mb-4 flex flex-wrap gap-2">
-            <Link
-              href={buildHref({ source: undefined, page: 0, view: "kanban" })}
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                !standupSourceActive ? dxClass.filterActive : dxClass.filterInactive
-              }`}
-            >
-              All tasks
-            </Link>
-            <Link
-              href={buildHref({ source: "standup", page: 0, view: "kanban" })}
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                standupSourceActive ? dxClass.filterActive : dxClass.filterInactive
-              }`}
-            >
-              From standup
-            </Link>
+    <WorkspaceProductShell>
+      <WorkspacePageHeader
+        eyebrow="Professional Workspace · Tasks"
+        title="Tasks"
+        lead="Work across organisation projects. Completing a task here does not assign capability or light Verified."
+        context={
+          <div className="pw-context-card">
+            <span>Visible</span>
+            <strong>{view === "kanban" ? filteredKanbanTasks.length : total}</strong>
+            <small>{view === "kanban" ? "In board" : "Matching filters"}</small>
           </div>
-        ) : null}
+        }
+      />
 
-        <div className="mb-4 flex flex-wrap gap-2">
+      <TaskViewToggle
+        view={view}
+        projectId={projectId}
+        statusFilter={statusFilter}
+        sourceFilter={sourceFilter}
+      />
+
+      {view === "kanban" ? (
+        <div className="pw-chip-row">
           <Link
-            href={buildHref({ project: undefined, page: 0, view })}
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              !projectId
-                ? dxClass.filterActive
-                : dxClass.filterInactive
-            }`}
+            href={buildHref({ source: undefined, page: 0, view: "kanban" })}
+            className={!standupSourceActive ? "pw-chip is-active" : "pw-chip"}
           >
-            All projects
+            All tasks
           </Link>
-          {projects.map((p) => (
-            <Link
-              key={p.id}
-              href={buildHref({ project: p.id, page: 0, view })}
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                projectId === p.id
-                  ? dxClass.filterActive
-                  : dxClass.filterInactive
-              }`}
-            >
-              {p.name}
-            </Link>
-          ))}
+          <Link
+            href={buildHref({ source: "standup", page: 0, view: "kanban" })}
+            className={standupSourceActive ? "pw-chip is-active" : "pw-chip"}
+          >
+            From standup
+          </Link>
         </div>
+      ) : null}
 
-        {view === "table" ? (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {STATUSES.map((s) => (
+      <div className="pw-chip-row">
+        <Link
+          href={buildHref({ project: undefined, page: 0, view })}
+          className={!projectId ? "pw-chip is-active" : "pw-chip"}
+        >
+          All projects
+        </Link>
+        {projects.map((p) => (
+          <Link
+            key={p.id}
+            href={buildHref({ project: p.id, page: 0, view })}
+            className={projectId === p.id ? "pw-chip is-active" : "pw-chip"}
+          >
+            {p.name}
+          </Link>
+        ))}
+      </div>
+
+      {view === "table" ? (
+        <div className="pw-chip-row">
+          {STATUSES.map((s) => {
+            const active =
+              (s.value === "all" && (!statusFilter || statusFilter === "all")) ||
+              statusFilter === s.value;
+            return (
               <Link
                 key={s.value}
                 href={buildHref({
@@ -191,99 +196,86 @@ export default async function WorkspaceTasksPage({
                   page: 0,
                   view: "table",
                 })}
-                className={`rounded-full px-3 py-1 text-xs font-medium ${
-                  (s.value === "all" && (!statusFilter || statusFilter === "all")) ||
-                  statusFilter === s.value
-                    ? dxClass.filterActive
-                    : dxClass.filterInactive
-                }`}
+                className={active ? "pw-chip is-active" : "pw-chip"}
               >
                 {s.label}
               </Link>
-            ))}
-          </div>
-        ) : null}
+            );
+          })}
+        </div>
+      ) : null}
 
-        {view === "kanban" && !standupSourceActive ? (
-          <StandupTasksSection tasks={standupBatch} />
-        ) : null}
+      {view === "kanban" && !standupSourceActive ? (
+        <StandupTasksSection tasks={standupBatch} />
+      ) : null}
 
-        {view === "kanban" && standupSourceActive ? (
-          <StandupTasksSection tasks={filteredKanbanTasks} highlightOnly />
-        ) : null}
+      {view === "kanban" && standupSourceActive ? (
+        <StandupTasksSection tasks={filteredKanbanTasks} highlightOnly />
+      ) : null}
 
-        {tasks.length === 0 && !(view === "kanban" && standupSourceActive) ? (
-          <EmptyState
-            title={standupSourceActive ? "No standup tasks found" : "No tasks found"}
-            description={
-              standupSourceActive
-                ? "Standup action items appear here after the PM approves meeting extractions."
-                : "Create tasks from a project page to see them here."
-            }
-            actionLabel={standupSourceActive ? "View all tasks" : "View projects"}
-            actionHref={standupSourceActive ? buildHref({ source: undefined, view: "kanban" }) : "/workspace/projects"}
-          />
-        ) : view === "kanban" ? (
-          standupSourceActive ? null : (
-            <TaskKanban tasks={filteredKanbanTasks} />
-          )
-        ) : (
-          <div className={`${dxClass.card} overflow-hidden`}>
-            <Table>
-              <TableHeader className="bg-[#F7F7F2] text-[#6B6B64]">
-                <TableRow>
-                  <TableHead className="px-4">Task</TableHead>
-                  <TableHead className="px-4">Project</TableHead>
-                  <TableHead className="px-4">Workstream</TableHead>
-                  <TableHead className="px-4">Status</TableHead>
-                  <TableHead className="px-4">Priority</TableHead>
-                  <TableHead className="px-4">Due</TableHead>
+      {tasks.length === 0 && !(view === "kanban" && standupSourceActive) ? (
+        <EmptyState
+          title={standupSourceActive ? "No standup tasks found" : "No tasks found"}
+          description={
+            standupSourceActive
+              ? "Standup action items appear here after the PM approves meeting extractions."
+              : "Create tasks from a project page to see them here."
+          }
+          actionLabel={standupSourceActive ? "View all tasks" : "View projects"}
+          actionHref={
+            standupSourceActive
+              ? buildHref({ source: undefined, view: "kanban" })
+              : "/workspace/projects"
+          }
+        />
+      ) : view === "kanban" ? (
+        standupSourceActive ? null : <TaskKanban tasks={filteredKanbanTasks} />
+      ) : (
+        <div className="pw-table-wrap">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-4">Task</TableHead>
+                <TableHead className="px-4">Project</TableHead>
+                <TableHead className="px-4">Workstream</TableHead>
+                <TableHead className="px-4">Status</TableHead>
+                <TableHead className="px-4">Priority</TableHead>
+                <TableHead className="px-4">Due</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tasks.map((task) => (
+                <TableRow key={task.id}>
+                  <TableCell className="px-4">
+                    <Link href={`/project/${task.project_id}/tasks/${task.id}`}>
+                      {task.title}
+                    </Link>
+                  </TableCell>
+                  <TableCell className="px-4">
+                    <Link href={`/project/${task.project_id}`}>{task.project_name}</Link>
+                  </TableCell>
+                  <TableCell className="px-4">{task.workstream_name ?? "—"}</TableCell>
+                  <TableCell className="px-4">
+                    <StatusBadge status={task.status} />
+                  </TableCell>
+                  <TableCell className="px-4">
+                    <StatusBadge status={task.priority} />
+                  </TableCell>
+                  <TableCell className="px-4">
+                    {task.due_date ? new Date(task.due_date).toLocaleDateString() : "—"}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tasks.map((task) => (
-                  <TableRow key={task.id} className="hover:bg-[#F7F7F2]/50">
-                    <TableCell className="px-4">
-                      <Link
-                        href={`/project/${task.project_id}/tasks/${task.id}`}
-                        className="font-medium text-[#1C4A2E] hover:underline"
-                      >
-                        {task.title}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="px-4">
-                      <Link
-                        href={`/project/${task.project_id}`}
-                        className="text-[#6B6B64] hover:underline"
-                      >
-                        {task.project_name}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="px-4 text-[#6B6B64]">
-                      {task.workstream_name ?? "—"}
-                    </TableCell>
-                    <TableCell className="px-4">
-                      <StatusBadge status={task.status} />
-                    </TableCell>
-                    <TableCell className="px-4">
-                      <StatusBadge status={task.priority} />
-                    </TableCell>
-                    <TableCell className="px-4 text-[#6B6B64]">
-                      {task.due_date ? new Date(task.due_date).toLocaleDateString() : "—"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <Pagination
-              page={page}
-              totalPages={pages}
-              totalItems={total}
-              buildHref={(p) => buildHref({ page: p, view: "table" })}
-            />
-          </div>
-        )}
-      </div>
-    </>
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination
+            page={page}
+            totalPages={pages}
+            totalItems={total}
+            buildHref={(p) => buildHref({ page: p, view: "table" })}
+          />
+        </div>
+      )}
+    </WorkspaceProductShell>
   );
 }

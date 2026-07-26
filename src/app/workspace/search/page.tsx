@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { DxPageHeader } from "@/components/dx/dx-page-chrome";
 import { searchWorkspace } from "@/services/search";
-import { dxClass } from "@/lib/dx-theme";
 import { WorkspaceSearchForm } from "./search-form";
+import {
+  WorkspacePageHeader,
+  WorkspaceProductShell,
+} from "@/components/professional-workspace/workspace-product-shell";
 
 type SearchParams = Promise<{ q?: string }>;
 
@@ -24,46 +26,63 @@ export default async function WorkspaceSearchPage({
   const results = query ? await searchWorkspace(query) : null;
 
   return (
-    <>
-      <DxPageHeader breadcrumb="DeliverX · Search" title="Workspace" titleEm="search" />
-      <div className="p-6 md:p-8">
-        <WorkspaceSearchForm initialQuery={query} />
-
-        {!query ? (
-          <p className="mt-6 text-sm text-[#6B6B64]">
-            Search projects, tasks, RAID items, documents, and semantic project memory across
-            your organisation.
-          </p>
-        ) : results && results.items.length === 0 ? (
-          <p className="mt-6 text-sm text-[#6B6B64]">No results for &ldquo;{query}&rdquo;.</p>
-        ) : results ? (
-          <ul className="mt-6 space-y-2">
-            {results.items.map((item) => (
-              <li key={`${item.type}-${item.id}`}>
-                <Link
-                  href={item.href}
-                  className={`${dxClass.cardPad} flex items-center justify-between gap-4 transition hover:border-[#1C4A2E]/40`}
-                >
-                  <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-xs text-[#6B6B64]">{item.subtitle}</p>
-                  </div>
-                  <div className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase text-[#A8A89E]">
-                      {TYPE_LABEL[item.type] ?? item.type}
-                    </span>
-                    {item.similarity != null ? (
-                      <span className="font-[family-name:var(--font-dx-mono)] text-[8px] text-[#1C4A2E]">
-                        {Math.round(item.similarity * 100)}% match
-                      </span>
-                    ) : null}
-                  </div>
-                </Link>
+    <WorkspaceProductShell
+      aside={
+        <>
+          <section>
+            <h2>What this searches</h2>
+            <p style={{ marginTop: 8 }}>
+              Projects, tasks, RAID items, documents, and semantic project memory across your
+              organisation.
+            </p>
+          </section>
+          <section>
+            <h2>Related</h2>
+            <ul className="pw-link-list" style={{ listStyle: "none", padding: 0 }}>
+              <li>
+                <Link href="/help">Suite help &amp; Cmd/Ctrl+K</Link>
               </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-    </>
+              <li>
+                <Link href="/workspace">Workspace home</Link>
+              </li>
+            </ul>
+          </section>
+        </>
+      }
+    >
+      <WorkspacePageHeader
+        eyebrow="Professional Workspace · Search"
+        title="Workspace search"
+        lead="Find delivery artefacts and memory in your organisation. Suite-wide Cmd/Ctrl+K remains available from the top bar."
+      />
+
+      <WorkspaceSearchForm initialQuery={query} />
+
+      {!query ? (
+        <p className="pw-lead" style={{ marginTop: 20 }}>
+          Enter a query to search projects, tasks, RAID, documents, and memory.
+        </p>
+      ) : results && results.items.length === 0 ? (
+        <div className="pw-empty" role="status" style={{ marginTop: 20 }}>
+          <strong>No results</strong>
+          Nothing matched &ldquo;{query}&rdquo;.
+        </div>
+      ) : results ? (
+        <ul className="pw-module-grid" style={{ listStyle: "none", padding: 0, marginTop: 20 }}>
+          {results.items.map((item) => (
+            <li key={`${item.type}-${item.id}`}>
+              <Link href={item.href} className="pw-module">
+                <span className="kind">{TYPE_LABEL[item.type] ?? item.type}</span>
+                <strong>{item.title}</strong>
+                <p>{item.subtitle}</p>
+                {item.similarity != null ? (
+                  <span className="meta">{Math.round(item.similarity * 100)}% lexical match</span>
+                ) : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </WorkspaceProductShell>
   );
 }

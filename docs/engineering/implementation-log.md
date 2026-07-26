@@ -1,3 +1,19 @@
+## 2026-07-26 — Professional Workspace UI parity (Experience / Launchpad)
+
+Founder feedback: Workspace was not the same designed UI as Experience and Launchpad after suite-shell parity (`74daea5`).
+
+**Scope:** Visual/IA chrome alignment — reuse product-app patterns; no Team Copilot Dashboard 5 / mission-control depth.
+
+Shape:
+- Design note: `docs/design/workspace-ui-parity.md` (gap audit + closed gaps)
+- Shared CSS `workspace-app.css` (`.pw-root`) + `WorkspaceProductFrame` / `WorkspaceProductShell` / `WorkspacePageHeader`
+- Home, module chrome, team, tasks, projects, search, meetings/documents (`OrgListPage`) on product rail + warm surface
+- Outer chrome remains `ProductSuiteShell`; legacy AppShell still flag-gated
+
+Verification: focused workspace unit tests; lint; `npm run build`; browser screenshots under `/tmp/deliverx-workspace-ui-parity/`.
+
+---
+
 ## 2026-07-26 — Contextual Home + Daily Briefing
 
 Founder dashboard-architecture intent governed by Build Charter (PD-2026-07-26o).

@@ -38,36 +38,40 @@ export async function ProfessionalModulePage({
   const empty = !active;
 
   return (
-    <Suspense fallback={<div className="p-8 text-sm">Loading module…</div>}>
+    <Suspense
+      fallback={
+        <div className="pw-root">
+          <div className="pw-main">
+            <p className="pw-lead">Loading module…</p>
+          </div>
+        </div>
+      }
+    >
       <ProfessionalModuleChrome moduleId={moduleId} project={active} empty={empty}>
-        <div className="space-y-4">
-          <div className="rounded-lg border border-[#E5E2D9] bg-white px-4 py-4">
-            <p className="text-sm font-medium text-[#1A1A18]">Primary actions</p>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#4A4A45]">
+        <div style={{ display: "grid", gap: 16 }}>
+          <div className="pw-panel">
+            <h3>Primary actions</h3>
+            <ul style={{ marginTop: 10, paddingLeft: 18 }}>
               {mod.primaryActions.map((a) => (
-                <li key={a}>{a}</li>
+                <li key={a} style={{ color: "var(--pw-muted)", fontSize: "0.9rem", margin: "6px 0" }}>
+                  {a}
+                </li>
               ))}
             </ul>
-            <p className="mt-3 text-xs text-[#6B6B64]">
+            <p style={{ marginTop: 12, fontSize: "0.8rem", color: "var(--pw-muted)" }}>
               Permissions: {mod.permissions.join(", ")} · AI may {mod.aiActions[0]?.toLowerCase()}.
               AI will not auto-submit or auto-decide.
             </p>
           </div>
 
           {active?.kind === "org" && legacyHref ? (
-            <Link
-              href={withProjectQuery(legacyHref, active)}
-              className="inline-flex rounded-md bg-[#1C4A2E] px-3 py-2 text-xs font-medium text-white"
-            >
+            <Link href={withProjectQuery(legacyHref, active)} className="pw-button">
               Continue in {legacyLabel ?? "legacy surface"}
             </Link>
           ) : null}
 
           {active?.kind === "experience" ? (
-            <Link
-              href="/experience/app"
-              className="inline-flex rounded-md bg-[#1C4A2E] px-3 py-2 text-xs font-medium text-white"
-            >
+            <Link href="/experience/app" className="pw-button">
               Open Experience simulation
             </Link>
           ) : null}
@@ -76,14 +80,14 @@ export async function ProfessionalModulePage({
             <div>
               <Link
                 href={withProjectQuery(secondaryHref, active)}
-                className="text-sm text-[#1C4A2E] underline"
+                style={{ color: "var(--pw-accent)", fontWeight: 600, textUnderlineOffset: 4 }}
               >
                 {secondaryLabel ?? secondaryHref}
               </Link>
             </div>
           ) : null}
 
-          <div className="rounded-lg border border-dashed border-[#D6D3C8] px-4 py-3 text-xs text-[#6B6B64]">
+          <div className="pw-empty">
             Significant submits can dual-write to the Evidence Ledger only when Workspace
             observation consent is on (Settings → Profile). Observation never assigns capability —
             capability assessment interprets evidence later.
