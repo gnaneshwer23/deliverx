@@ -352,7 +352,7 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 | TD-017 | `tsc --noEmit` 0; eslint 0 — fixture types + `scheduleEffectWork` for mount fetches |
 | Decision | PD-2026-07-26b |
 
-**Verification:** targeted units PASS; `npx tsc --noEmit` 0; `npm run lint` 0; `npm run test:release-gate` PASS; `npm run build` PASS.
+**Verification:** targeted units PASS; `npx tsc --noEmit` 0; `npm run lint` 0; `npm run test:release-gate` PASS; `npm run build` PASS. Shipped `3b596d9` → production Ready (`www.deliverx.dev`).
 
 **Batch 6 verdict:** Shipped. Next remediation batch requires founder approval. TD-006 / TD-018 remain founder-owned (not flipped). T9 remains blocked.
 
