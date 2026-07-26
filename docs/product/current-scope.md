@@ -2,8 +2,9 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **Technology T9 commercial packaging shipped in code** (founder-authorized 2026-07-26); live payments remain test/config-gated pending founder Stripe ops
-**As of:** 2026-07-26
+**Active phase:** **Technology T9 commercial packaging shipped in code** (founder-authorized 2026-07-26); **payments later** — live Stripe / `DELIVERX_BILLING_ENFORCE` are founder ops, not missing product engineering
+**As of:** 2026-07-26  
+**Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
 **T0 status:** **PASS (automated)** — signed-in P0–P7 loop verified by T6 harness (`docs/qa/t0-results.md`). Optional founder visual review remains.  
@@ -71,15 +72,15 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 ## Recommended next actions
 
-Full plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
+Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-work.md) · ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
-3. **Ops + engineering:** configure T6 live CI secrets once workflows run again.
-4. **Engineering (now):** clear TD-017 test-fixture ESLint / `tsc` debt so returning CI stays honest.
-5. **Engineering (now):** Founder ops (TD-018 CI, TD-006 HIBP) + T8 E2E + Next bump — UX language Batch 3 shipped.
+3. **Founder / ops:** prove SMTP password-reset delivery; optional VoiceOver/keyboard AT lab before claiming whole-product AA.
+4. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
+5. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
 
-Founder ops remaining: create/confirm three Stripe recurring prices; set Vercel env vars; register `/api/billing/webhook`; enable Customer Portal; run test-mode checkout; only then set `DELIVERX_BILLING_ENFORCE=on`. Defer marketplace, graph DB, multi-profession expansion, and microservice splits.
+Defer marketplace, graph DB, multi-profession expansion, and microservice splits without new approval.
 
 ---
 
@@ -89,5 +90,5 @@ Founder ops remaining: create/confirm three Stripe recurring prices; set Vercel 
 2. Prefer smallest change that hardens the shipped loop.
 3. T9 is authorized and recorded in `product-decisions.md`; do not expand beyond its bounded SKU/entitlement decision.
 4. Update this file when the active phase changes.
-5. T9 commercial code is shipped; do not claim live payments until Stripe founder ops and production smoke pass.
-6. Follow [`../engineering/next-steps.md`](../engineering/next-steps.md) for ordered post-T8 hardening.
+5. T9 commercial code is shipped; **payments later** — do not claim live payments until Stripe founder ops and production smoke pass; do not invent eng work whose only goal is enabling Stripe.
+6. Follow [`../engineering/remaining-work.md`](../engineering/remaining-work.md) and [`../engineering/next-steps.md`](../engineering/next-steps.md) for residual hardening.

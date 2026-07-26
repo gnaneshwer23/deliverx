@@ -1,0 +1,163 @@
+# DeliverX — Remaining work inventory
+
+**As of:** 2026-07-26  
+**Authority:** Build Charter · Current Scope · Product Bible `00`–`15` · audit remediation roadmap  
+**Companion:** [`next-steps.md`](./next-steps.md) · [`technical-debt-register.md`](./technical-debt-register.md) · [`../audit/remediation-roadmap.md`](../audit/remediation-roadmap.md)  
+**Canvas:** Cursor IDE [`deliverx-remaining-work.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-remaining-work.canvas.tsx)
+
+This is the **master remaining-work inventory**. It is docs-only truth for what is still open after P0–P7 product, T0–T9 tech (T9 **code**), remediations Batches 1–6, DB consent `0096`, AI citations, and Batch 1 DB trust rails (`0095`).
+
+**Founder posture (2026-07-26):** Live Stripe / entitlement enforcement is **deferred founder ops** (“payments later”), not missing product engineering. Do not treat unconfigured Stripe as an engineering gap.
+
+---
+
+## Shipped baseline (do not re-open without evidence)
+
+| Band | Status |
+| --- | --- |
+| Product P0–P7 (+ P8 attestation) | Shipped + live-verified (T6 / T8 E2E) |
+| Technology T0–T8 | Shipped |
+| Technology T9 | **Shipped in code** (`0097`, Checkout, Portal, webhooks, entitlements); live payments **off** until founder Stripe ops |
+| Remediation Batches 1–6 | Shipped |
+| DB trust rails `0095` | Shipped |
+| Observation consent SQL `0096` | Shipped |
+| AI citation enforcement | Shipped |
+| TD-001, TD-011, TD-017, TD-019 | Closed |
+
+**Release posture:** Testable internally. Controlled pilot still gated primarily by **founder ops** (CI, Auth hygiene), not by missing T9 product code.
+
+---
+
+## A. Founder ops
+
+Blocks live commercial enablement, continuous CI, and/or auth hygiene. Engineering cannot close these without founder action.
+
+| ID | Item | Status | Why it matters | Owner | Effort | Blocks |
+| --- | --- | --- | --- | --- | --- | --- |
+| **TD-018** / R-P0-07 / MF-003 | Restore GitHub Actions minutes; re-enable `verify.yml` + `ci-e2e.yml` + `on.push` | **Open** | CI is dark; regressions are silent on `main` | Founder → Engineering enable | S | Continuous verification; Playwright/axe in CI |
+| **TD-006** / R-P1-01 / MF-011 | Enable Auth leaked-password protection (HIBP) | **Open** | Advisor WARN; weak passwords accepted | Founder (Auth Attack Protection) | S | Auth hygiene for pilot / beta |
+| **T9 Stripe ops** | Stripe Dashboard prices (test then live); Vercel `STRIPE_*` env; webhook endpoint + secret; Customer Portal; test checkout smoke | **Deferred ops** (code ready) | Without this, checkout stays config-gated; public £ prices stay pilot fallback | Founder | M | Live paid access; honest public pricing |
+| **`DELIVERX_BILLING_ENFORCE=on`** | Flip entitlement enforcement after smoke | **Deferred ops** (default off) | Enforcement before ops would lock users out of Experience/Launchpad incorrectly | Founder (after smoke) | S | Paid-product gate behaviour |
+| **R-P1-15** / MF-014 | SMTP / password-reset email delivery proof | **Open** | Recovery path unproven in prod | Founder / ops | S | Confident password recovery in pilot |
+| **AT lab** | Human VoiceOver/NVDA + keyboard pass on Hub→Profile→Evidence; optional axe on authenticated journeys | **Open** (engineering a11y core closed Batch 5–6) | Whole-product WCAG 2.2 AA must not be claimed without AT evidence | Founder (+ eng support) | M | AA claim; controlled-pilot a11y confidence |
+| **Legal counsel** (optional) | Review interim Privacy / Terms / Cookies | **Open** | Policies are practice-accurate interim, not counsel-signed | Founder / counsel | M | “Finished legal posture” claims |
+| **TD-007 breadth** | Keep thin `pm-core` seed vs deepen single domain | **Pending decision** | Affects ScoreRun explainability without multi-profession expansion | Founder | S (decision) | Whether eng deepens seed (B-track) |
+
+**Payments later — explicit:** Do **not** schedule engineering remediations whose only goal is “make Stripe live.” Founder will configure payments when ready; inventory item is ops, not a product backlog slice.
+
+---
+
+## B. Engineering optional / residual
+
+Authorized under charter hardening. **Not** blocking “payments later.” Only items still open in debt/audit docs are listed; closed Batch items are omitted.
+
+| ID | Item | Status | Why it matters | Owner | Effort | Blocks |
+| --- | --- | --- | --- | --- | --- | --- |
+| **R-P1-12** | Bind judgements/snapshots INSERT to Capability Engine / signed ScoreRun (DB-P1-03 follow-on) | **Open** | Child-row fabrication residual after ScoreRun lockdown | Engineering | M | Stronger DB trust (ScoreRuns already locked) |
+| **R-P1-13** | AI injection red-team beyond regex lists; keep `DELIVERX_AI_ORCHESTRATION_BYPASS` off in prod | **Partial** (bypass = config; red-team open) | Jailbreak / skipped T4 guarantees | Engineering | M | Stronger AI trust claims |
+| **R-P2-04** | Bound evidence child selects | **Open** | Latent payload / perf risk | Engineering | S | Scale readiness |
+| **R-P2-05** | AI route `maxDuration` | **Open** | Long hangs / cost | Engineering | S | Ops reliability |
+| **R-P2-06** | Explicit PI API rate limit | **Open** | Abuse / cost | Engineering | M | Abuse resistance |
+| **R-P2-07** | Mutable `search_path` advisor residuals | **Open** | Advisor hygiene | Engineering | S | Clean security advisors |
+| **R-P2-01** | Auth RLS initplan WARN ×N | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
+| **R-P2-02** | Unindexed PI FKs | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
+| **R-P2-03** | Profile/Career aggregate fan-out | **Open** (defer) | Read-path cost | Engineering | M | Perf polish |
+| **R-P2-08** / TD-007 | Deepen `pm-core` seed (same pin) | **Open** — needs founder OK | Richer judgements without new professions | Engineering | M | Explainability depth |
+| **R-P2-09** | Human review / challenge workflow usage | **Open** (tables/UI thin; 0 cases) | Dispute path unused | Engineering / ops | M | Review ops maturity |
+| **R-P2-10** | Org departments/teams seed for Workspace pilot | **Open** (0 rows) | Structure unused | Engineering | S | Workspace org demos |
+| **R-P2-11** / TD-012 | Experience → workspace dual-write on remaining pages | **Open** / deferred | Observation coverage gaps | Engineering | M | Full observation coverage |
+| **R-P2-16** | Coverage % tooling + Playwright/axe in CI | **Open** | Coverage unmeasured; CI still off | Engineering | M | Continuous quality signal (needs TD-018) |
+| **R-P2-17** | Soft AI rate / cost-estimate honesty | **Open** | Heuristic cost copy | Engineering | S | Cost honesty |
+| **R-P2-18** | Pre-pivot purge residue (org/delivery) | **Open** | Privacy residual track | Engineering | M | Full purge completeness |
+| **TD-003** | Edge proxy anonymous path-guards | **Documented defer** | Layouts own redirects | Engineering | M | Proxy purity (not pilot-blocking) |
+| **TD-013** | Full Mermaid ER publish | **Open** / deferred | Docs polish | Engineering | S | Schema docs completeness |
+| **Mission Control density** | Further demotion / honesty outside Twin/PMO/Marketplace Batch 6 slice | **Residual** | Pre-pivot surfaces can confuse | Engineering | S–M | UX clarity (not charter expansion) |
+| **CI enable follow-through** | After TD-018: enable workflows, drop lint `continue-on-error`, wire live secrets | **Blocked on A** | Makes seal continuous | Engineering | S | Continuous CI |
+
+**Closed — do not list as remaining:** R-P0-01…06/08, R-P1-02…11/14/16, R-P2-12…15 (core), Batches 1–6, citations, `0095`/`0096`, T8 E2E, Next 16.2.12, TD-017.
+
+---
+
+## C. Explicitly deferred / out of charter
+
+Do **not** build without new founder approval recorded in [`../product/product-decisions.md`](../product/product-decisions.md).
+
+| ID | Item | Status | Why deferred | Owner | Effort | Blocks |
+| --- | --- | --- | --- | --- | --- | --- |
+| MF-D02 / R-P4-02 | Employer marketplace liquidity / opportunity OS | Deferred | Charter out of scope | — | L | Would need new approval |
+| MF-D03 / R-P4-03 | Enterprise mission-control depth / third SKU | Deferred | T7 alias only; demoted | — | L | Would need new approval |
+| MF-D04 / R-P4-04 | Multi-profession frameworks beyond `pm-core` | Deferred | Founder gate | — | L | Would need new approval |
+| MF-D05 / R-P4-05 | Graph DB / microservice split of intelligence domains | Deferred | Taxonomy only | — | L | Would need new approval |
+| MF-D06 / R-P4-06 | First-class `messages` table | Deferred | Explicit non-goal | — | M | — |
+| MF-D07 / R-P4-07 | Networking / hiring-manager OS | Deferred | Launchpad deferred modules | — | L | Would need new approval |
+| MF-D08 / R-P4-08 / TD-008 | Progressive feature-flag SaaS platform | Deferred | Env gates enough for pilot | — | M | — |
+| MF-D09 / R-P4-09 | Money-back / job guarantee product | Deferred / rejected | FAQ disclaims; Batch 2 removed offer | — | — | Legal trust if reintroduced |
+| R-P4-01 eng expansion | Annual/enterprise packaging, tax/VAT automation, fourth Workspace SKU, custom card forms | Deferred | Beyond PD-2026-07-26d | — | L | Would need new approval |
+| — | Agent swarms / chat-as-primary-DB | Deferred | Intelligence belongs to platform | — | — | Principles violation |
+| — | Social OAuth (Google/GitHub) | Not required for pilot | Optional ICP need | — | M | Only if ICP requires |
+
+---
+
+## D. Document intake checklist
+
+When the founder adds new documents for a post-audit gap check, compare each doc **systematically** against this inventory and the Product Bible. Do not implement from a new doc until the intake answers below are recorded.
+
+### Compare against
+
+1. **Product Bible** `docs/00`–`docs/15` (vision, PRD, UX, auth, PI, Experience, Launchpad, Team Copilot, AI, eng handbook, architecture, data model, QA, analytics, roadmap)
+2. **Build Charter** + **Current Scope** + **Product Decisions**
+3. **Feature completeness matrix** statuses (`docs/audit/feature-completeness-matrix.md`)
+4. **This file** sections **A / B / C** (ops vs residual eng vs deferred)
+5. **Technical debt register** + **remediation roadmap** IDs (avoid duplicate tickets)
+
+### Questions each new document must answer
+
+| # | Question | Pass criterion |
+| --- | ---: | --- |
+| 1 | What **user problem** does it claim to solve? | Named persona + outcome; not “platform completeness” |
+| 2 | Disposition: **keep / modify / defer / reject** relative to shipped loop? | Explicit one of four |
+| 3 | Does it **conflict** with Build Charter or Current Scope? | If yes → stop for founder approval |
+| 4 | Is the ask **net-new** or already **shipped** (P0–P8 / T0–T9 code / Batches 1–6)? | Cite evidence (matrix row, migration, live gate) |
+| 5 | If residual: map to **A** (founder ops), **B** (eng optional), or **C** (out of charter)? | Single bucket |
+| 6 | Does it reopen a **closed trust rail** (Verified, capability-only-via-engine, consent default OFF, learning≠capability)? | If yes → refuse or require PD update |
+| 7 | Does it imply **live payments / enforcement** before Stripe ops? | Route to section A T9 ops, not new eng |
+| 8 | What is the **smallest vertical slice** and acceptance test? | One slice; measurable AC |
+| 9 | Effort **S / M / L** and what it **blocks** if skipped? | Honest sizing |
+| 10 | Any **legal / commercial honesty** claim (prices, guarantee, Verified, WCAG AA)? | Must match shipped evidence |
+
+### Intake workflow
+
+```text
+New doc arrives
+  → Answer questions 1–10 in a short intake note (or PR description)
+  → Diff claims vs feature matrix + remaining-work A/B/C
+  → Update this file only if a genuinely new open item appears
+  → Do not start implementation without charter fit + (if gated) founder PD
+```
+
+---
+
+## Priority view (max 10)
+
+| Pri | Bucket | Item |
+| ---: | --- | --- |
+| 1 | A | TD-018 — restore CI minutes / enable workflows |
+| 2 | A | TD-006 — leaked-password Auth toggle |
+| 3 | A | SMTP password-reset proof |
+| 4 | A | VoiceOver/keyboard AT lab (before AA claims) |
+| 5 | A | Stripe ops + enforce **when founder chooses “payments later” is now** |
+| 6 | B | R-P1-12 judgements/snapshots INSERT binding |
+| 7 | B | R-P1-13 AI injection red-team (bypass stays off) |
+| 8 | B | R-P2-16 coverage/Playwright CI after TD-018 |
+| 9 | B | R-P2-06 PI API rate limit (optional soon) |
+| 10 | C | Marketplace / mission-control / multi-profession — stay deferred |
+
+---
+
+## Related
+
+- [`../product/current-scope.md`](../product/current-scope.md)  
+- [`next-steps.md`](./next-steps.md)  
+- [`../audit/release-readiness.md`](../audit/release-readiness.md)  
+- [`../audit/missing-functionality-register.md`](../audit/missing-functionality-register.md)  
+- [`../15-delivery-roadmap.md`](../15-delivery-roadmap.md)  
