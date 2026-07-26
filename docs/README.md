@@ -30,6 +30,10 @@
 | Metrics | `14` |
 | What next | `15` + [`engineering/next-steps.md`](./engineering/next-steps.md) |
 
+### Design source of truth
+
+- [`design/screen-pack-01/README.md`](./design/screen-pack-01/README.md) — Screen Pack 01 for marketing, auth, evolved onboarding, signed-in home, Launchpad, Employers and Team Copilot. The pack labels each surface as implementable, phased, or build-gated; it does not authorize live payments, marketplace liquidity or enterprise mission-control depth.
+
 ---
 
 ## Document index
