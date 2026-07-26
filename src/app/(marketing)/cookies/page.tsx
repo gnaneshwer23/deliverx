@@ -5,9 +5,9 @@ import {
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 
 export const metadata = {
-  title: "Cookie Policy — DeliverX",
+  title: "Cookie Policy | DeliverX",
   description:
-    "How DeliverX uses cookies and local storage during the open pilot — essential auth and optional Vercel analytics.",
+    "How DeliverX uses cookies and local storage during the open pilot: essential auth and optional Vercel analytics.",
 };
 
 const sections = [

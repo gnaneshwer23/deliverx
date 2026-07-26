@@ -5,9 +5,9 @@ import {
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 
 export const metadata = {
-  title: "Terms of Service — DeliverX",
+  title: "Terms of Service | DeliverX",
   description:
-    "DeliverX pilot and subscription terms — Stripe billing, entitlement access, evidence honesty, and acceptable use.",
+    "DeliverX pilot and subscription terms: Stripe billing, entitlement access, evidence honesty, and acceptable use.",
 };
 
 const sections = [
@@ -38,7 +38,7 @@ const sections = [
   {
     title: "5. Evidence, capability and Verified",
     body: [
-      "Evidence before claims is a product principle. AI drafts are not automatically verified evidence. Capability is written only through the Capability Engine. A DeliverX Verified badge lights only when an independent attestor confirms a specific claim through the attestation path — not from a capability assessment alone, self-report or learning completion.",
+      "Evidence before claims is a product principle. AI drafts are not automatically verified evidence. Capability is written only through the Capability Engine. A DeliverX Verified badge lights only when an independent attestor confirms a specific claim through the attestation path, not from a capability assessment alone, self-report or learning completion.",
       "We do not guarantee interviews, job offers or employer outcomes.",
     ],
   },

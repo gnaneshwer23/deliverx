@@ -14,7 +14,7 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "About — DeliverX",
+  title: "About | DeliverX",
   description: COMPANY_MISSION,
 };
 
@@ -38,7 +38,7 @@ export default function AboutPage() {
                   {COMPANY_MISSION}
                 </p>
                 <p className="mt-5 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                  We start with Product Managers — and keep room to expand the same growth model to
+                  We start with Product Managers, and keep room to expand the same growth model to
                   neighbouring professional roles over time.
                 </p>
                 <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text3)]">
@@ -59,8 +59,8 @@ export default function AboutPage() {
       </main>
       <MarketingFooter
         cta={{
-          title: "Start your journey",
-          subtitle: "Experience, Launchpad and Professional Workspace — one professional growth platform.",
+          title: "Get started",
+          subtitle: "Experience, Launchpad and Professional Workspace: one professional growth platform.",
           href: "/signup",
           label: "Start Free",
         }}

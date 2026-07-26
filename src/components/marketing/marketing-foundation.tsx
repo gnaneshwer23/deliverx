@@ -66,7 +66,7 @@ function MeetingIntelVisual() {
           Standup · 09:30
         </p>
         <p className="mt-1.5 text-[0.6875rem] leading-relaxed text-white/65">
-          &ldquo;API vendor delayed 3 weeks — need PM escalation&rdquo;
+          &ldquo;API vendor delayed 3 weeks; need PM escalation&rdquo;
         </p>
       </div>
       <div className="flex items-center gap-2 pl-2">
@@ -107,25 +107,25 @@ function SponsorVisual() {
 const FOUNDATION_CARDS = [
   {
     title: "Unified delivery hub",
-    desc: "Team progress, blockers, and approvals in one signal graph — no chasing updates across tools.",
+    desc: "Team progress, blockers, and approvals in one signal graph. No chasing updates across tools.",
     span: "md:col-span-2",
     visual: <ActivityFeedVisual />,
   },
   {
     title: "Real requirements & traceability",
-    desc: "Gap analysis and sign-off status linked to delivery milestones — not a static spreadsheet.",
+    desc: "Gap analysis and sign-off status linked to delivery milestones, not a static spreadsheet.",
     span: "",
     visual: <ReqTraceVisual />,
   },
   {
     title: "Meeting intel → tasks",
-    desc: "Standup and workshop transcripts become structured actions — routed to the Review Queue first.",
+    desc: "Standup and workshop transcripts become structured actions, routed to the Review Queue first.",
     span: "",
     visual: <MeetingIntelVisual />,
   },
   {
     title: "Sponsor visibility without noise",
-    desc: "Portfolio health and escalation signals — filtered so sponsors see decisions, not every standup note.",
+    desc: "Portfolio health and escalation signals, filtered so sponsors see decisions, not every standup note.",
     span: "md:col-span-2",
     visual: <SponsorVisual />,
   },
@@ -151,7 +151,7 @@ export function MarketingFoundationSection() {
               Stop chasing updates. <em>Start seeing delivery.</em>
             </>
           }
-          subtitle="Progress, blockers, and approvals in one place — without Slack threads, Jira dashboards, or email chains to reconcile."
+          subtitle="Progress, blockers, and approvals in one place, without Slack threads, Jira dashboards, or email chains to reconcile."
           className="[&_em]:text-[#6EE7B7] [&_h2]:text-white [&_p]:text-white/65 [&_header>p]:text-white/45"
         />
 

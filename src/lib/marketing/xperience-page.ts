@@ -10,7 +10,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   name: "Experience",
   heroTitle: "Build the experience employers expect.",
   promise:
-    "Join an AI-powered company as a Product Manager. Work real projects, make real trade-offs, and leave with judgement and an Experience Record — not another certificate.",
+    "Join a company with AI colleagues as a Product Manager. Work real projects, make real trade-offs, and leave with judgement and an Experience Record, not another certificate.",
   primaryCta: {
     href: tier.ctaHref,
     label: "Join the pilot",
@@ -25,7 +25,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       tone: "white",
       label: "Why experience matters",
       title: "Employers hire people who have done the work.",
-      body: "Job descriptions ask for product experience you cannot get from courses alone. Experience puts you inside a living organisation — with customers, stakeholders, trade-offs and launches — so you leave with judgement and evidence, not slides.",
+      body: "Job descriptions ask for product experience you cannot get from courses alone. Experience puts you inside a living organisation with customers, stakeholders, trade-offs and launches, so you leave with judgement and evidence, not slides.",
     },
     {
       id: "company",
@@ -43,7 +43,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       id: "work",
       tone: "white",
       label: "The work you'll do",
-      title: "Operate as a Product Manager — end to end.",
+      title: "Operate as a Product Manager, end to end.",
       body: "Capability grows through decisions, not lectures. You run discovery, strategy, delivery and launches with AI coaching that challenges your thinking while you stay accountable for the outcomes.",
       items: [
         "Customer discovery and stakeholder management",
@@ -57,7 +57,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       tone: "cream",
       label: "Your Experience Record",
       title: "Evidence you can take into interviews.",
-      body: "Every project, decision and conversation compounds into a professional record — portfolio artefacts, case studies and interview-ready proof of how you operate.",
+      body: "Every project, decision and conversation compounds into a professional record: portfolio artefacts, case studies and interview-ready proof of how you operate.",
       items: [
         "Professional portfolio and case study generation",
         "Resume-ready evidence from real simulated work",
@@ -72,7 +72,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       {
         question: "Is this a course or a simulation?",
         answer:
-          "Neither in the usual sense. Experience is a company experience — you work as a Product Manager inside an AI-powered organisation, with projects, stakeholders and outcomes that build a genuine Experience Record.",
+          "Neither in the usual sense. Experience is a company experience: you work as a Product Manager inside an organisation with AI colleagues, with projects, stakeholders and outcomes that build a genuine Experience Record.",
       },
       {
         question: "Do I need prior Product Management experience?",
@@ -82,12 +82,12 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       {
         question: "How does this connect to Launchpad and Professional Workspace?",
         answer:
-          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. During the pilot you can explore any stage — purchasable prices appear only when Stripe Checkout is configured.",
+          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. During the pilot you can explore any stage. Purchasable prices appear only when Stripe Checkout is configured.",
       },
       {
         question: "What do I get from the pilot?",
         answer:
-          "A portfolio of evidence, case studies and interview-ready stories from the work you completed — plus clearer judgement about how product teams actually operate.",
+          "A portfolio of evidence, case studies and interview-ready stories from the work you completed, plus clearer judgement about how product teams actually operate.",
       },
     ],
   },
@@ -106,7 +106,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
   finalCta: {
     title: "Ready to build the experience?",
     subtitle:
-      "Join the Experience pilot — or explore the Complete Journey into Launchpad and Professional Workspace.",
+      "Join the Experience pilot, or explore the Complete Journey into Launchpad and Professional Workspace.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
     secondaryLabel: "Explore Complete Journey",

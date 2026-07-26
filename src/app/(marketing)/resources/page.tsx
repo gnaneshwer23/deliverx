@@ -10,7 +10,7 @@ import { COMPANY_MISSION } from "@/lib/marketing/career-suite";
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "Resources — DeliverX",
+  title: "Resources | DeliverX",
   description:
     "Guides and starting points for building product experience, landing opportunities and succeeding in the role.",
 };
@@ -18,25 +18,25 @@ export const metadata: Metadata = {
 const RESOURCES = [
   {
     title: "Start with Experience",
-    body: "Build practical Product Management experience inside an AI-powered company before you apply.",
+    body: "Build practical Product Management experience inside a company with AI colleagues before you apply.",
     href: "/experience",
     label: "Explore Experience",
   },
   {
     title: "Prepare with Launchpad",
-    body: "Turn experience into interviews — Career Intelligence, evidence CV packaging, portfolio and interview lab.",
+    body: "Turn experience into interviews with Career Intelligence, evidence CV packaging, portfolio and interview lab.",
     href: "/launchpad",
     label: "Explore Launchpad",
   },
   {
     title: "Deliver with Professional Workspace",
-    body: "Work with role-based AI teammates on meetings, artefacts, decisions and evidence — AI drafts; you decide.",
+    body: "Work with role-based AI teammates on meetings, artefacts, decisions and evidence. AI drafts; you decide.",
     href: "/professional-workspace",
     label: "Explore Professional Workspace",
   },
   {
     title: "Pilot access & Complete Journey",
-    body: "Open pilot access across stages — or explore the full connected path.",
+    body: "Open pilot access across stages, or explore the full connected path.",
     href: "/pricing",
     label: "See pilot access",
   },

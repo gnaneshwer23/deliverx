@@ -106,7 +106,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
   name: "How it works",
   heroTitle: "Turn realistic work into a professional record you can explain.",
   promise:
-    "DeliverX connects direction, experience, evidence and career action — without treating self-report, AI observation or course completion as proven capability.",
+    "DeliverX connects direction, experience, evidence and career action, without treating self-report, AI observation or course completion as proven capability.",
   trustLine:
     "Evidence before claims. AI drafts are labelled. ScoreRuns never light Verified alone. Learning is not capability.",
   primaryCta: {
@@ -121,10 +121,10 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
     id: "what",
     tone: "white",
     label: "What DeliverX is",
-    title: "One evidence-driven loop — not a course, chat bot or score theatre.",
+    title: "One evidence-driven loop, not a course, chatbot or score theatre.",
     body: "Professional Intelligence is the shared record. Experience generates evidence through realistic work. Launchpad packages that record for career moves. Professional Workspace carries delivery habits into real teams. Everything either creates trustworthy evidence or consumes it.",
     items: [
-      "You own decisions and submissions — AI drafts stay labelled",
+      "You own decisions and submissions. AI drafts stay labelled",
       "Capability judgements use a versioned framework and explain why a band applies",
       "Verified means a named independent attestor confirmed a specific claim",
     ],
@@ -134,7 +134,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
     tone: "cream",
     label: "What to do first",
     title: "Begin with direction, then enter a company context.",
-    body: "New visitors start by mapping who they are professionally — self-reported answers that guide recommendations, not evidence. Next you join a realistic company, role, team and project. An assessment is available; it is not mandatory.",
+    body: "New visitors start by mapping who they are professionally: self-reported answers that guide recommendations, not evidence. Next you join a realistic company, role, team and project. An assessment is available; it is not mandatory.",
     items: [
       "Create an account and complete Professional Identity mapping",
       "Choose Experience and enter company → role → team → project",
@@ -144,7 +144,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
   pipeline: {
     label: "At a glance",
     title: "Work becomes a record you can act on.",
-    subtitle: "One connected flow — not a course playlist and a separate career tool.",
+    subtitle: "One connected flow, not a course playlist and a separate career tool.",
     nodes: [
       { id: "work", label: "Work", detail: "Company context" },
       { id: "evidence", label: "Evidence", detail: "Provenance kept" },
@@ -156,16 +156,16 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
     label: "The loop",
     title: "Five steps from direction to career action.",
     subtitle:
-      "Scan this once and you will know exactly what DeliverX does — and what it never pretends.",
+      "Scan this once and you will know exactly what DeliverX does, and what it never pretends.",
   },
   steps: [
     {
       id: "direction",
       step: "01",
       title: "Map your direction",
-      body: "Share your current context, target role and priorities. These answers are self-reported and guide recommendations — they do not create evidence or capability.",
+      body: "Share your current context, target role and priorities. These answers are self-reported and guide recommendations. They do not create evidence or capability.",
       mock: "intelligence",
-      mockCaption: "Professional Identity mapping — self-reported direction, not evidence",
+      mockCaption: "Professional Identity mapping: self-reported direction, not evidence",
     },
     {
       id: "context",
@@ -173,7 +173,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
       title: "Enter a realistic context",
       body: "Join a company, role, team and project matched to a useful place to start. An assessment is available, not mandatory.",
       mock: "experience",
-      mockCaption: "Experience company context — company, role, team and project",
+      mockCaption: "Experience company context: company, role, team and project",
     },
     {
       id: "work",
@@ -181,7 +181,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
       title: "Do meaningful work",
       body: "Make decisions, create artefacts and respond to stakeholders. AI colleagues support the work in context; you own every submission. Drafts are labelled and never enter the ledger automatically.",
       mock: "experience",
-      mockCaption: "Active project work — you submit; AI drafts stay labelled",
+      mockCaption: "Active project work: you submit; AI drafts stay labelled",
     },
     {
       id: "review",
@@ -189,7 +189,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
       title: "Review what the work demonstrates",
       body: "Evidence keeps its provenance. Capability judgements use a versioned framework and explain why a band applies. ScoreRuns never light Verified alone.",
       mock: "intelligence",
-      mockCaption: "Evidence and Capability Engine — explainable bands, Verified only via attestation",
+      mockCaption: "Evidence and Capability Engine: explainable bands, Verified only via attestation",
     },
     {
       id: "use",
@@ -230,7 +230,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
   handoffs: {
     label: "Product hand-offs",
     title: "Experience generates. Intelligence interprets. Products consume.",
-    subtitle: "Same record across the suite — no duplicated professional truth.",
+    subtitle: "Same record across the suite. No duplicated professional truth.",
     items: [
       {
         from: "Experience",
@@ -279,7 +279,7 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
       {
         question: "Where do I go after signup?",
         answer:
-          "After onboarding you land on Profile with a Daily Briefing that adapts to your journey. Explainable recommendations can suggest a next action — accepting or dismissing them never changes capability or Verified status.",
+          "After onboarding you land on Profile with a Daily Briefing that adapts to where you are. Explainable recommendations can suggest a next action. Accepting or dismissing them never changes capability or Verified status.",
       },
     ],
   },

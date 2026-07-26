@@ -15,7 +15,7 @@ export function ScrumPreview({ role }: { role: RoleDashboard }) {
           <p className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
             Sprint burndown · 58 / 80 pts
           </p>
-          <span className="text-[0.6875rem] font-medium text-[var(--mkt-stat-warn)]">72% complete</span>
+          <span className="text-[0.6875rem] font-medium text-[var(--mkt-stat-warn)]">Behind ideal</span>
         </div>
         <div className="relative h-28">
           <svg className="h-full w-full" viewBox="0 0 280 100" preserveAspectRatio="none" aria-hidden>

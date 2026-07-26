@@ -142,7 +142,7 @@ export function HomeProducts() {
             label="Three products"
             title={
               <>
-                Three products. One <em>career journey.</em>
+                Three products. One <em>connected path.</em>
               </>
             }
             subtitle="Everything you need to go from aspiring to achieving."
@@ -219,8 +219,8 @@ export function HomeJourney() {
           <MarketingSectionIntro
             align="center"
             label="How it works"
-            title="Your interactive career journey"
-            subtitle="Hover a stage to see what happens — from discovery through to a real role."
+            title="From discovery to a real role"
+            subtitle="Hover a stage to see what happens, from discovery through to a real role."
           />
         </MarketingReveal>
 
@@ -291,7 +291,7 @@ export function HomePlatformPreview() {
             align="center"
             label="Platform"
             title="One hub across experience, career and delivery"
-            subtitle="Switch views — the same Professional Intelligence record, different lenses. No unexplained scores."
+            subtitle="Switch views for the same Professional Intelligence record with different lenses. No unexplained scores."
           />
         </MarketingReveal>
 
@@ -401,7 +401,7 @@ export function HomePlatformPreview() {
                         <MockChip>Why this band</MockChip>
                       </div>
                       <p className="text-[0.7rem] leading-relaxed text-[var(--mkt-text3)]">
-                        Not a decorative score — band explains evidence coverage against the pinned
+                        Not a decorative score. The band explains evidence coverage against the pinned
                         framework.
                       </p>
                     </div>
@@ -449,7 +449,7 @@ export function HomePlatformPreview() {
                         <MockChip>3 open decisions</MockChip>
                       </div>
                       <p className="text-[0.7rem] leading-relaxed text-[var(--mkt-text3)]">
-                        Thin Workspace summary — not an executive mission-control dashboard.
+                        Thin Workspace summary, not an executive mission-control dashboard.
                       </p>
                     </div>
                   </MockPanel>
@@ -507,7 +507,7 @@ export function HomePlatformPreview() {
 }
 
 const PLATFORM_PRIORITIES = [
-  { label: "Retention dip — investigate", tone: "risk" as const },
+  { label: "Retention dip: investigate", tone: "risk" as const },
   { label: "Roadmap alignment", tone: "focus" as const },
   { label: "Stakeholder update", tone: "ok" as const },
 ];
@@ -594,7 +594,7 @@ export function HomeOutputs() {
             align="center"
             label="What you'll build"
             title="Professional artefacts employers recognise"
-            subtitle="Every challenge produces work you can show — not just certificates."
+            subtitle="Every challenge produces work you can show, not just certificates."
           />
         </MarketingReveal>
         <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -622,7 +622,7 @@ export function HomeAiCompany() {
             align="center"
             label="AI Company"
             title="Meet your AI colleagues"
-            subtitle="They remember, challenge, disagree and negotiate — so the work feels real."
+            subtitle="They remember, challenge, disagree and negotiate, so the work feels real."
           />
         </MarketingReveal>
         <ul className="mt-12 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -662,7 +662,7 @@ export function HomeExperienceRecord() {
             <MarketingSectionIntro
               label="Professional Intelligence"
               title="Your work becomes useful when its meaning is clear"
-              subtitle="Claims, evidence, capability judgements and independent attestations stay distinct — so recommendations remain explainable."
+              subtitle="Claims, evidence, capability judgements and independent attestations stay distinct, so recommendations remain explainable."
             />
           </MarketingReveal>
           <MarketingReveal delay={0.06}>
@@ -808,7 +808,7 @@ export function HomeTeamCopilotPreview() {
               Deliver products with confidence
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-[0.9375rem] font-light leading-relaxed text-white/60">
-              A calm delivery workspace for product work — tasks, meetings, decisions and evidence
+              A calm delivery workspace for product work: tasks, meetings, decisions and evidence
               with observation consent default OFF.
             </p>
           </header>
@@ -849,7 +849,7 @@ export function HomeOutcomes() {
             align="center"
             label="Outcomes"
             title="After DeliverX you'll have"
-            subtitle="Capability you can demonstrate — not just knowledge you can recite."
+            subtitle="Capability you can demonstrate, not just knowledge you can recite."
           />
         </MarketingReveal>
         <ul className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -878,8 +878,8 @@ export function HomePricing() {
           <MarketingSectionIntro
             align="center"
             label="Pilot access"
-            title="Start at any stage — or take the full journey"
-            subtitle="Open pilot access today. Paid plans are not live — no checkout, no money-back claim."
+            title="Start at any stage, or take the full path"
+            subtitle="Open pilot access today. Paid plans are not live: no checkout, no money-back claim."
           />
         </MarketingReveal>
 
@@ -986,9 +986,9 @@ export function HomeStories() {
         <MarketingReveal>
           <MarketingSectionIntro
             align="center"
-            label="Illustrative journeys"
+            label="Illustrative paths"
             title="How different people move through DeliverX"
-            subtitle="These are demo stories — example paths, not customer testimonials."
+            subtitle="These are demo stories: example paths, not customer testimonials."
           />
         </MarketingReveal>
         <ul className="mt-12 grid gap-4 md:grid-cols-2">
@@ -1058,7 +1058,7 @@ export function HomeFinalCta() {
             Ready to build your experience?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-            Start with meaningful work — then use Launchpad and Professional Workspace when you are ready.
+            Start with meaningful work, then use Launchpad and Professional Workspace when you are ready.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
             <MarketingButtonLink href="/signup?product=xperience" variant="ctaLight">

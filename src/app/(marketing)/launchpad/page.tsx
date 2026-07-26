@@ -3,13 +3,13 @@ import { ProductMarketingPage } from "@/components/marketing/product-marketing-p
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 
 export const metadata: Metadata = {
-  title: "Launchpad — Turn your experience into opportunities | DeliverX",
+  title: "Launchpad | Turn your experience into opportunities | DeliverX",
   description:
-    "Career Intelligence — labelled readiness, evidence-backed CV packaging, interview lab and application tracking. Open pilot access.",
+    "Career Intelligence: labelled readiness, evidence-backed CV packaging, interview lab and application tracking. Open pilot access.",
   openGraph: {
-    title: "Launchpad — Land the opportunity | DeliverX",
+    title: "Launchpad | Land the opportunity | DeliverX",
     description:
-      "Turn your experience into opportunities. Pilot access — paid plans not yet live.",
+      "Turn your experience into opportunities. Pilot access; paid plans not yet live.",
   },
 };
 

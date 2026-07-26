@@ -16,7 +16,7 @@ import {
 export const COMPANY_POSITIONING = "AI Product Experience Company";
 
 export const COMPANY_MISSION =
-  "DeliverX is an AI-powered professional growth platform that supports Product Managers from their first practical experience through to successful product delivery in real organisations.";
+  "DeliverX is an evidence-driven professional growth platform that supports Product Managers from their first practical experience through to successful product delivery in real organisations.";
 
 export const CAREER_PROGRESSION_LINE =
   "Build the experience → Land the opportunity → Succeed in the role.";
@@ -43,7 +43,7 @@ export const XPERIENCE_INCLUDES = [
   "Day-1 company workspace and product challenges",
   "Customer discovery and stakeholder scenarios",
   "Strategy, PRD and delivery artefacts from real work",
-  "AI coaching drafts — you decide and submit",
+  "AI coaching drafts: you decide and submit",
   "Performance feedback that feeds your evidence ledger",
   "Professional portfolio packaging from completed work",
   "Interview-ready evidence grounded in what you did",
@@ -56,7 +56,7 @@ export const LAUNCHPAD_INCLUDES = [
   "Personalised roadmap from capability gaps",
   "Evidence-backed CV packaging into Verified Portfolio",
   "Career profile grounded in Professional Intelligence",
-  "Interview lab — STAR stories and practice sessions",
+  "Interview lab: STAR stories and practice sessions",
   "Application tracking for roles you pursue",
   "Honest labels when readiness is heuristic, not assessment-backed",
 ] as const;
@@ -122,7 +122,7 @@ function buildTiers(env: BillingEnv = process.env as BillingEnv): {
       price: experiencePrice.price,
       cadence: experiencePrice.cadence,
       summary:
-        "Join an AI-powered company and work as a Product Manager from day one. Every project, decision and conversation builds genuine professional evidence — not another certificate.",
+        "Join a company with AI colleagues and work as a Product Manager from day one. Every project, decision and conversation builds genuine professional evidence, not another certificate.",
       idealFor:
         "Career switchers, graduates and aspiring Product Managers who want practical experience before applying for roles.",
       includes: XPERIENCE_INCLUDES,
@@ -140,7 +140,7 @@ function buildTiers(env: BillingEnv = process.env as BillingEnv): {
       price: launchpadPrice.price,
       cadence: launchpadPrice.cadence,
       summary:
-        "Career Intelligence for product professionals — labelled readiness, evidence-backed packaging, interview prep and application tracking grounded in what you can prove.",
+        "Career Intelligence for product professionals: labelled readiness, evidence-backed packaging, interview prep and application tracking grounded in what you can prove.",
       idealFor:
         "Professionals actively preparing for Product Management interviews and career transitions.",
       includes: LAUNCHPAD_INCLUDES,
@@ -154,13 +154,13 @@ function buildTiers(env: BillingEnv = process.env as BillingEnv): {
       productName: "Professional Workspace",
       stage: "Succeed in the role",
       designedFor: "Professionals delivering multidisciplinary work with AI teammates",
-      headline: "Deliver with AI teammates — you own the work",
+      headline: "Deliver with AI teammates; you own the work",
       price: checkoutReady ? "Included" : PILOT_ACCESS_LABEL,
       cadence: checkoutReady
         ? "With Complete Journey · not sold alone"
         : PILOT_ACCESS_CADENCE,
       summary:
-        "A Professional Workspace for multidisciplinary delivery — collaborate with role-based AI teammates, run meetings, manage stakeholders, create artefacts, decide, and generate observable evidence. AI drafts; humans submit.",
+        "A Professional Workspace for multidisciplinary delivery. Collaborate with role-based AI teammates, run meetings, manage stakeholders, create artefacts, decide, and generate observable evidence. AI drafts; humans submit.",
       idealFor:
         "Product Managers, Delivery Managers, Project Managers, Business Analysts and cross-functional product teams.",
       includes: TEAM_COPILOT_INCLUDES,
@@ -180,7 +180,7 @@ function buildTiers(env: BillingEnv = process.env as BillingEnv): {
     price: professionalPrice.price,
     cadence: professionalPrice.cadence,
     summary:
-      "The connected professional growth path — build experience, prepare for opportunity and practise delivery with shared Professional Intelligence.",
+      "The connected professional growth path: build experience, prepare for opportunity and practise delivery with shared Professional Intelligence.",
     idealFor:
       "People who want the full path: company experience, career readiness and delivery tools in one subscription.",
     includes: BUNDLE_INCLUDES,
@@ -215,7 +215,7 @@ export const CAREER_PROMISE = {
   guaranteeTitle: built.checkoutReady ? "Commercial terms" : "Pilot promise",
   guaranteeBody: built.checkoutReady
     ? "Paid plans use Stripe Checkout and Customer Portal. There is no money-back guarantee. Cancel anytime via Settings → Billing; access continues through the paid period then entitlements revoke."
-    : "During the open pilot there is no paid checkout and no money-back offer — access is free while we harden the product with early users. Paid plans appear on this page only when Stripe Checkout is configured.",
+    : "During the open pilot there is no paid checkout and no money-back offer. Access is free while we harden the product with early users. Paid plans appear on this page only when Stripe Checkout is configured.",
   outcomes: [
     "Meaningful Product Management practice",
     "Evidence you can cite in interviews",
@@ -223,7 +223,7 @@ export const CAREER_PROMISE = {
     "Delivery habits you can take into real teams",
   ] as const,
   disclaimer:
-    "DeliverX does not guarantee interviews or job offers. Outcomes depend on your market, effort and how you use the evidence you build. Verified badges require independent third-party attestation — not self-report or a capability assessment alone.",
+    "DeliverX does not guarantee interviews or job offers. Outcomes depend on your market, effort and how you use the evidence you build. Verified badges require independent third-party attestation, not self-report or a capability assessment alone.",
 } as const;
 
 export function careerTierById(id: CareerTierId): CareerTier {

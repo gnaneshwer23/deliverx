@@ -35,7 +35,7 @@ const CAPABILITIES = [
   },
   {
     title: "Delivery signal graph",
-    desc: "After PM approval, delivery impact events propagate to every relevant dashboard — from BA gaps to Sponsor escalation.",
+    desc: "After PM approval, delivery impact events propagate to every relevant dashboard, from BA gaps to Sponsor escalation.",
     span: "",
     accent: "#60A5FA",
     icon: (
@@ -60,7 +60,7 @@ export function MarketingProductSection() {
               Approval-gated AI. <em>Role-ready views.</em>
             </>
           }
-          subtitle="Requirements register, meeting intel, RAID, and persona mission controls — live on main today. Choose a role in the hero to preview an example dashboard."
+          subtitle="Requirements register, meeting intel, RAID, and persona mission controls are live on main today. Choose a role in the hero to preview an example dashboard."
         />
 
         <div className="mt-10 grid gap-3 md:grid-cols-3 md:grid-rows-2 md:gap-4">

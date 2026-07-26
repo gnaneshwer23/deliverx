@@ -456,11 +456,11 @@ export function LandingDashboardMockup({
                 compact ? "px-2 py-1.5" : "mt-4 px-3 py-2"
               }`}
             >
-              <span className="flex size-6 items-center justify-center bg-[#1C4A2E] text-[10px] text-white">
-                ✦
+              <span className="flex size-6 items-center justify-center bg-[#1C4A2E] text-[9px] font-semibold text-white">
+                AI
               </span>
               <span className="text-[11px] leading-tight text-[#2C2C28]">
-                Coach suggests rebalancing QA
+                Coach draft: rebalance QA (review)
               </span>
             </div>
           </div>

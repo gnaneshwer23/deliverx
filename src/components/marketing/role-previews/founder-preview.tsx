@@ -9,9 +9,8 @@ export function FounderPreview({ role }: { role: RoleDashboard }) {
       <PreviewCard className="p-4">
         <PreviewLabel>Board memo · Week 24</PreviewLabel>
         <p className="font-[family-name:var(--font-dx-display)] text-[0.9375rem] leading-relaxed text-[var(--mkt-text1)]">
-          Portfolio delivery confidence is{" "}
-          <span className="text-[var(--mkt-green-l)]">84%</span>, up 3pts. NHS EHR vendor
-          delay threatens Q3 go-live — decision on API budget required this week. Platform v2
+          Portfolio delivery has two open blockers this week. NHS EHR vendor
+          delay threatens Q3 go-live. Decision on API budget required this week. Platform v2
           release blocked by 2 critical defects.
         </p>
         <p className="mt-2 text-[0.6875rem] text-[var(--mkt-text3)]">

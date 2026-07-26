@@ -21,10 +21,10 @@ import {
 import { HOME_SUPPORT } from "@/lib/marketing/homepage-data";
 
 export const metadata: Metadata = {
-  title: "DeliverX — Experience, Launchpad and Professional Workspace",
+  title: "DeliverX | Experience, Launchpad and Professional Workspace",
   description: HOME_SUPPORT,
   openGraph: {
-    title: "DeliverX — AI Product Experience Company",
+    title: "DeliverX | AI Product Experience Company",
     description: CAREER_PROGRESSION_LINE || COMPANY_MISSION,
   },
 };

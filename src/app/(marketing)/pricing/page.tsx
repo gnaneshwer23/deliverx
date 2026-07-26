@@ -162,7 +162,7 @@ export default function PricingPage() {
               <MarketingSectionIntro
                 align="center"
                 label="Progression"
-                title="Choose a stage — or the full path."
+                title="Choose a stage, or the full path."
                 subtitle="Experience and Launchpad stand alone. Complete Journey adds both plus Professional Workspace."
               />
             </MarketingReveal>
@@ -183,7 +183,7 @@ export default function PricingPage() {
                 align="center"
                 label="Complete Journey"
                 title="Experience. Opportunity. Delivery."
-                subtitle="Everything in Experience, Launchpad and Professional Workspace — one connected subscription."
+                subtitle="Everything in Experience, Launchpad and Professional Workspace: one connected subscription."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -248,7 +248,7 @@ export default function PricingPage() {
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
                 {COMMERCIAL_CHECKOUT_READY
-                  ? "Start one product — or choose the Complete Journey. Billing is managed securely in Stripe."
+                  ? "Start one product, or choose the Complete Journey. Billing is managed securely in Stripe."
                   : "Join the pilot now. Paid prices stay hidden until checkout is fully configured."}
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
@@ -266,7 +266,7 @@ export default function PricingPage() {
 
       <MarketingFooter
         cta={{
-          title: "Start your career journey",
+          title: "Get started",
           subtitle:
             COMMERCIAL_CHECKOUT_READY
               ? "Stripe-secured monthly plans with entitlement-backed access."

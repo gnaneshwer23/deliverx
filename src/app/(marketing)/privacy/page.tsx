@@ -5,7 +5,7 @@ import {
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 
 export const metadata = {
-  title: "Privacy Policy — DeliverX",
+  title: "Privacy Policy | DeliverX",
   description:
     "Interim pilot privacy policy describing how DeliverX handles Professional Intelligence data, consent, evidence, export and delete.",
 };
@@ -37,8 +37,8 @@ const sections = [
   {
     title: "4. How we use data",
     body: [
-      "To provide the product you signed up for — including evidence tracking, capability scoring via the Capability Engine, career readiness views, portfolio packaging and workspace collaboration.",
-      "To enforce trust rails: append-only evidence transitions, Capability Engine–only assessment writes, and Verified badges that require independent attestation.",
+      "To provide the product you signed up for, including evidence tracking, capability scoring via the Capability Engine, career readiness views, portfolio packaging and workspace collaboration.",
+      "To enforce trust rails: append-only evidence transitions, Capability Engine-only assessment writes, and Verified badges that require independent attestation.",
       "To send in-product notifications about review, intervention or privacy actions you take.",
       "AI features draft suggestions and observations. AI-generated observations are not automatically treated as verified evidence. Consequential changes require human approval where the product enforces that rule.",
     ],
@@ -60,7 +60,7 @@ const sections = [
   {
     title: "7. Processors and hosting",
     body: [
-      "We use infrastructure providers to run the product, including Supabase (authentication and PostgreSQL) and Vercel (application hosting). On production deploys we may load Vercel Web Analytics and Speed Insights for aggregate product usage — see the Cookies page. We do not use those signals as Professional Intelligence capability truth.",
+      "We use infrastructure providers to run the product, including Supabase (authentication and PostgreSQL) and Vercel (application hosting). On production deploys we may load Vercel Web Analytics and Speed Insights for aggregate product usage (see the Cookies page). We do not use those signals as Professional Intelligence capability truth.",
     ],
   },
   {

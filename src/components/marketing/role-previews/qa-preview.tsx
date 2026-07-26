@@ -7,52 +7,27 @@ const DEFECTS = [
   { id: "BUG-158", severity: "Medium", status: "In Review" },
 ];
 
-/** Release readiness gauge — dominant circular progress. */
+/** Release gate summary — critical defects drive the call. */
 export function QaPreview({ role }: { role: RoleDashboard }) {
-  const readiness = 84;
-  const circumference = 2 * Math.PI * 42;
-  const offset = circumference - (readiness / 100) * circumference;
-
   return (
     <div data-layout="qa-readiness" className="space-y-4">
       <div className="flex items-center gap-6">
-        <div className="relative shrink-0">
-          <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden>
-            <circle
-              cx="50"
-              cy="50"
-              r="42"
-              fill="none"
-              stroke="var(--mkt-border)"
-              strokeWidth="8"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="42"
-              fill="none"
-              stroke={role.accent}
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              transform="rotate(-90 50 50)"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-[family-name:var(--font-dx-display)] text-2xl text-[var(--mkt-text1)]">
-              {readiness}%
-            </span>
-            <span className="text-[0.6rem] uppercase tracking-[0.06em] text-[var(--mkt-text3)]">
-              Ready
-            </span>
-          </div>
+        <div
+          className="flex size-[120px] shrink-0 flex-col items-center justify-center rounded-full border-8 border-[var(--mkt-border)]"
+          style={{ borderColor: role.accent }}
+        >
+          <span className="font-[family-name:var(--font-dx-display)] text-lg text-[var(--mkt-text1)]">
+            Hold
+          </span>
+          <span className="text-[0.6rem] uppercase tracking-[0.06em] text-[var(--mkt-text3)]">
+            Conditional
+          </span>
         </div>
 
         <div className="flex-1 space-y-2">
-          <PreviewLabel>Release readiness</PreviewLabel>
+          <PreviewLabel>Release gate</PreviewLabel>
           <p className="text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
-            Conditional go — 2 critical defects blocking full release. UAT at 76%, due May 22.
+            Conditional go: 2 critical defects blocking full release. UAT due May 22.
           </p>
           <div className="flex gap-2">
             {[

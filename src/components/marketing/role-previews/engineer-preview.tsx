@@ -64,7 +64,7 @@ export function EngineerPreview({ role }: { role: RoleDashboard }) {
                         : "#6B7280",
                 }}
               >
-                {item.type === "merge" ? "⎇" : item.type === "review" ? "◎" : "●"}
+                {item.type === "merge" ? "MR" : item.type === "review" ? "RV" : "CI"}
               </span>
               <p className="min-w-0 flex-1 text-[0.75rem] text-[var(--mkt-text1)]">{item.text}</p>
               <span className="shrink-0 text-[0.6rem] text-[var(--mkt-text3)]">{item.time}</span>
@@ -75,9 +75,9 @@ export function EngineerPreview({ role }: { role: RoleDashboard }) {
 
       <div className="flex gap-2">
         <div className="flex-1 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)] px-3 py-2 text-center">
-          <div className="text-[0.6rem] uppercase text-[var(--mkt-text3)]">Coverage</div>
+          <div className="text-[0.6rem] uppercase text-[var(--mkt-text3)]">Stories</div>
           <div className="font-[family-name:var(--font-dx-display)] text-xl" style={{ color: role.accent }}>
-            87%
+            3 open
           </div>
         </div>
         <div className="flex-1 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)] px-3 py-2 text-center">

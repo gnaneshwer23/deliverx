@@ -17,7 +17,7 @@ export const FOOTER_PLATFORM_LINKS = [
   {
     href: "/professional-workspace",
     label: "Team Copilot",
-    note: "Workspace alias — not a third SKU",
+    note: "Workspace alias (not a third SKU)",
   },
 ] as const;
 
@@ -54,7 +54,7 @@ export const FOOTER_COLUMNS = [
 export const DEFAULT_FOOTER_CTA = {
   title: "Start with DeliverX",
   subtitle:
-    "Experience, Launchpad or Professional Workspace — open pilot access, or create an account.",
+    "Experience, Launchpad or Professional Workspace: open pilot access, or create an account.",
   href: "/signup",
   label: "Start",
 } as const;

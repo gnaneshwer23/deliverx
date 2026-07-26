@@ -1,3 +1,15 @@
+## 2026-07-26 — Marketing de-AI copy pass
+
+Founder: remove em dashes, emojis, and anything that looks/sounds like generic AI marketing.
+
+**Scope:** Marketing + public legal surfaces. Em dashes → natural punctuation; strip decorative glyphs (sparkles, checkmarks-as-ornament); replace empty “AI-powered” with evidence-driven / companies with AI colleagues; soften empty journey fluff while keeping Complete Journey SKU naming; role-preview mocks lose unexplained readiness % theatre.
+
+Docs: PD-2026-07-26s.
+
+Verification: `npm test -- --run src/lib/marketing` (26); marketing honesty via test:pi subset; push + Vercel Ready; spot-check homepage / how-it-works / footer.
+
+---
+
 ## 2026-07-26 — Marketing type scale +12.5%
 
 Founder: overall marketing text looks small.

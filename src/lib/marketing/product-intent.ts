@@ -92,33 +92,33 @@ export function signupCopy(product: SuiteProduct | null): {
       return {
         title: "Create your Experience account",
         subtitle:
-          "Build the experience — open pilot access. We’ll issue login credentials after signup.",
+          "Build the experience. Open pilot access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Experience — Build the experience employers expect (pilot access).",
+          "Starting Experience: Build the experience employers expect (pilot access).",
       };
     case "launchpad":
       return {
         title: "Create your Launchpad account",
         subtitle:
-          "Land the opportunity — open pilot access. We’ll issue login credentials after signup.",
+          "Land the opportunity. Open pilot access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Launchpad — Turn your experience into opportunities (pilot access).",
+          "Starting Launchpad: Turn your experience into opportunities (pilot access).",
       };
     case "team-copilot":
       return {
         title: "Create your Professional Workspace account",
         subtitle:
-          "Succeed in the role — open pilot access. We’ll issue login credentials after signup.",
+          "Succeed in the role. Open pilot access. We’ll issue login credentials after signup.",
         banner:
-          "Starting Professional Workspace — Deliver with AI teammates (pilot access).",
+          "Starting Professional Workspace: Deliver with AI teammates (pilot access).",
       };
     case "bundle":
       return {
         title: "Create your DeliverX account",
         subtitle:
-          "Complete Journey — open pilot access across Experience, Launchpad and Professional Workspace.",
+          "Complete Journey: open pilot access across Experience, Launchpad and Professional Workspace.",
         banner:
-          "Starting the Complete Journey — Experience. Opportunity. Delivery. (pilot access).",
+          "Starting the Complete Journey: Experience. Opportunity. Delivery. (pilot access).",
       };
     default:
       return {

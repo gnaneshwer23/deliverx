@@ -593,6 +593,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26s — Marketing copy: no em dashes, emojis, or AI garnish
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Public marketing and legal surfaces avoid em dashes, emojis, decorative symbols, empty “AI-powered” garnish, and buzzword stacks. Prefer plain punctuation (period, comma, colon, parentheses) and calm product English. Honest mentions of AI colleagues, AI drafts, and AI teammates stay where accurate. Product name **Complete Journey** and brand line **AI Product Experience Company** remain. |
+| **Why** | Founder: remove em dashes, emojis, and anything that looks or sounds like generic AI marketing. |
+| **Consequence** | Marketing data + components updated; role-preview mocks drop decorative glyphs and unexplained readiness %; honesty tests remain the gate. Engineering comments and Product Bible not rewritten wholesale. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.

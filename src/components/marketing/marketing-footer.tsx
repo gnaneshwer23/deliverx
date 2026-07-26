@@ -110,7 +110,7 @@ export function MarketingFooter({
               AI Product Experience Company
             </p>
             <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/60">
-              DeliverX Ltd — an evidence-driven professional growth platform. Experience, Launchpad
+              DeliverX Ltd is an evidence-driven professional growth platform. Experience, Launchpad
               and Professional Workspace share one Professional Intelligence record.
             </p>
             <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2 xl:hidden" aria-label="Legal">

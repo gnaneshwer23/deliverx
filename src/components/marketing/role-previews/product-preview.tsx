@@ -64,8 +64,8 @@ export function ProductPreview({ role }: { role: RoleDashboard }) {
 
       <div className="flex gap-3 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)] px-3 py-2">
         {[
-          { label: "NPS", value: "52", target: "60" },
-          { label: "Retention", value: "87%", target: "90-day" },
+          { label: "NPS", value: "52", target: "target 60" },
+          { label: "Retention", value: "Watch", target: "90-day" },
           { label: "Churn", value: "3%", target: "+0.5%" },
         ].map((m) => (
           <div key={m.label} className="flex-1 text-center">

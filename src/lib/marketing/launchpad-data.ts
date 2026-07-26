@@ -18,12 +18,12 @@ export const LAUNCHPAD_JOURNEY = [
   {
     step: "02",
     title: "Package your evidence",
-    body: "CV packaging into Verified Portfolio — grounded in Professional Intelligence, not slogans.",
+    body: "CV packaging into Verified Portfolio, grounded in Professional Intelligence, not slogans.",
   },
   {
     step: "03",
     title: "Prepare and track",
-    body: "Interview lab practice and application tracking — without inventing marketplace liquidity.",
+    body: "Interview lab practice and application tracking, without inventing marketplace liquidity.",
   },
 ] as const;
 

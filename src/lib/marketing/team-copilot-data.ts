@@ -7,7 +7,7 @@ export const TEAM_COPILOT_JOURNEY = [
   {
     step: "01",
     title: "One Professional Workspace",
-    body: "Understand the project, work with AI teammates, run meetings, and manage stakeholders in one shell — not a separate chatbot product.",
+    body: "Understand the project, work with AI teammates, run meetings, and manage stakeholders in one shell, not a separate chatbot product.",
   },
   {
     step: "02",
@@ -17,7 +17,7 @@ export const TEAM_COPILOT_JOURNEY = [
   {
     step: "03",
     title: "Evidence from real work",
-    body: "Decisions, risks, meetings and outcomes generate observable evidence — capability is judged later, not assigned by the Workspace.",
+    body: "Decisions, risks, meetings and outcomes generate observable evidence. Capability is judged later, not assigned by the Workspace.",
   },
 ] as const;
 
@@ -69,7 +69,7 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
       tone: "cream",
       label: "Modules",
       title: "Multidisciplinary work, not a chatbot.",
-      body: "Each module has clear user jobs, permissions, AI actions, evidence hooks and empty/error/completion states — so the Workspace stays a place of work.",
+      body: "Each module has clear user jobs, permissions, AI actions, evidence hooks and empty/error/completion states, so the Workspace stays a place of work.",
       items: TEAM_COPILOT_JOURNEY.map((j) => `${j.title}: ${j.body}`),
     },
   ],
@@ -88,7 +88,7 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
   finalCta: {
     title: "Ready to work with AI teammates?",
     subtitle:
-      "Open Professional Workspace for your delivery practice — or explore the Complete Journey if you also want Experience and Launchpad.",
+      "Open Professional Workspace for your delivery practice, or explore the Complete Journey if you also want Experience and Launchpad.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
     secondaryLabel: "Explore Complete Journey",

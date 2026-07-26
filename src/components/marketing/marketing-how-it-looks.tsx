@@ -184,7 +184,7 @@ export function MarketingHowItLooksSection() {
               Real dashboards. <em>Not slide decks.</em>
             </>
           }
-          subtitle="Every role gets a mission control built for how they work — kanban, tables, review queues, and KPI strips. Example data from an NHS EHR programme."
+          subtitle="Every role gets a mission control built for how they work: kanban, tables, review queues, and KPI strips. Example data from an NHS EHR programme."
         />
 
         <div className="relative mt-10 min-h-[480px] md:min-h-[520px]">
@@ -197,7 +197,7 @@ export function MarketingHowItLooksSection() {
                   What would you like to explore?
                 </p>
                 <p className="mt-1 text-[0.8125rem] text-[var(--mkt-text3)]">
-                  Pick the areas that matter to your role — we&apos;ll tailor your workspace.
+                  Pick the areas that matter to your role. We&apos;ll tailor your workspace.
                 </p>
               </div>
 

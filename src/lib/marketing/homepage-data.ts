@@ -14,7 +14,7 @@ import {
 export const HOME_EYEBROW = "Experience · Launchpad · Professional Workspace";
 
 export const HOME_SUPPORT =
-  "DeliverX gives professionals a realistic company, meaningful work and AI colleagues to help them build evidence-backed experience — then turn that record into career action.";
+  "DeliverX gives professionals a realistic company, meaningful work and AI colleagues to help them build evidence-backed experience, then turn that record into career action.";
 
 export const BUILT_FOR = [
   "Career Switchers",
@@ -28,7 +28,7 @@ export const PROBLEM = {
   emphasis: "It's gaining experience.",
   body: [
     "Courses teach frameworks. Job posts ask for experience. Between them sits a gap that blocks careers.",
-    "DeliverX closes that gap. You join AI-powered companies, own real product challenges, and leave with evidence employers can evaluate — then turn that work into opportunities and succeed once you're in the role.",
+    "DeliverX closes that gap. You join companies with AI colleagues, own real product challenges, and leave with evidence employers can evaluate. Then you turn that work into opportunities and succeed once you're in the role.",
   ],
   flow: ["Learning", "Experience", "Opportunity", "Career", "Delivery"] as const,
 };
@@ -42,7 +42,7 @@ export const HOME_PRODUCTS = [
     href: "/experience",
     signupHref: XPERIENCE_SIGNUP_HREF,
     sentence:
-      "Join AI-powered companies, solve real product challenges, and build evidence of what you can do.",
+      "Join companies with AI colleagues, solve real product challenges, and build evidence of what you can do.",
     bullets: ["AI Companies", "Real Product Challenges", "Professional Portfolio"],
     cta: "Explore Experience",
   },
@@ -66,7 +66,7 @@ export const HOME_PRODUCTS = [
     href: "/professional-workspace",
     signupHref: TEAM_COPILOT_SIGNUP_HREF,
     sentence:
-      "Work with role-based AI teammates in a Professional Workspace — AI drafts; you decide and submit.",
+      "Work with role-based AI teammates in a Professional Workspace. AI drafts; you decide and submit.",
     bullets: ["Shared shell", "AI teammates", "Evidence Review"],
     cta: "Explore Professional Workspace",
   },
@@ -86,7 +86,7 @@ export const JOURNEY_NODES = [
   {
     id: "own",
     label: "Own Products",
-    detail: "Take ownership of outcomes — strategy, discovery and delivery craft.",
+    detail: "Take ownership of outcomes: strategy, discovery and delivery craft.",
   },
   {
     id: "launch",
@@ -120,7 +120,7 @@ export const PLATFORM_TABS = [
     id: "experience",
     label: "Experience",
     title: "Work inside AI companies",
-    caption: "Company context, priorities and artefacts — you own every submission.",
+    caption: "Company context, priorities and artefacts. You own every submission.",
   },
   {
     id: "career",
@@ -132,7 +132,7 @@ export const PLATFORM_TABS = [
     id: "delivery",
     label: "Delivery",
     title: "Professional Workspace",
-    caption: "Meetings, risks and decisions with AI drafts — not enterprise mission control.",
+    caption: "Meetings, risks and decisions with AI drafts, not enterprise mission control.",
   },
 ] as const;
 
@@ -183,7 +183,7 @@ export const TEAM_COPILOT_PANELS = [
   { title: "Meetings", body: "Agendas and notes tied to the project." },
   { title: "Decisions", body: "Recorded choices with contribution trails." },
   { title: "Risks", body: "Surface blockers before they stall delivery." },
-  { title: "Artefacts", body: "Documents you author — AI drafts stay labelled." },
+  { title: "Artefacts", body: "Documents you author. AI drafts stay labelled." },
   { title: "Evidence Review", body: "Inspect what work demonstrated." },
   { title: "Coach", body: "Contextual drafts attached to real work." },
   { title: "Consent", body: "Observation stays off until you enable it." },
@@ -256,14 +256,14 @@ export const DEMO_STORIES = [
   {
     archetype: "Engineering Manager",
     journey:
-      "Used Professional Workspace with the squad for shared tasks, risk notes and meeting context — AI drafts labelled; people decide.",
+      "Used Professional Workspace with the squad for shared tasks, risk notes and meeting context. AI drafts labelled; people decide.",
   },
 ] as const;
 
 export const HOME_FAQ = [
   {
     q: "What is DeliverX?",
-    a: "DeliverX is an AI Product Experience Company — a career intelligence platform spanning Experience, Launchpad and Professional Workspace, grounded in Professional Intelligence.",
+    a: "DeliverX is an AI Product Experience Company: a career intelligence platform spanning Experience, Launchpad and Professional Workspace, grounded in Professional Intelligence.",
   },
   {
     q: "Do I need prior Product Management experience?",
@@ -277,15 +277,15 @@ export const HOME_FAQ = [
   },
   {
     q: "Is the AI company experience realistic?",
-    a: "You work with AI colleagues who remember decisions, challenge weak thinking and negotiate priorities — across strategy, delivery, compliance and launch scenarios.",
+    a: "You work with AI colleagues who remember decisions, challenge weak thinking and negotiate priorities across strategy, delivery, compliance and launch scenarios.",
   },
   {
     q: "What do I walk away with?",
-    a: "A portfolio of artefacts, an Experience Record, Career Intelligence profile, interview stories and delivery habits you can use in real teams. Verified badges require independent attestation — ScoreRuns alone never light Verified.",
+    a: "A portfolio of artefacts, an Experience Record, Career Intelligence profile, interview stories and delivery habits you can use in real teams. Verified badges require independent attestation. ScoreRuns alone never light Verified.",
   },
   {
     q: "What happens after I sign in?",
-    a: "You land on your Profile home with a Daily Briefing that adapts to your journey — guided next actions from explainable recommendations when available. Learning completion never becomes capability.",
+    a: "You land on your Profile home with a Daily Briefing that adapts to where you are. Guided next actions come from explainable recommendations when available. Learning completion never becomes capability.",
   },
   {
     q: "Is there a money-back guarantee?",
@@ -293,6 +293,6 @@ export const HOME_FAQ = [
   },
   {
     q: "Is this a job guarantee?",
-    a: "No. We support the quality of the experience, evidence and tooling — not that every employer will invite you to interview. Outcomes depend on your market and effort.",
+    a: "No. We support the quality of the experience, evidence and tooling, not that every employer will invite you to interview. Outcomes depend on your market and effort.",
   },
 ] as const;

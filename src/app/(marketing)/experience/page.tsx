@@ -3,13 +3,13 @@ import { ProductMarketingPage } from "@/components/marketing/product-marketing-p
 import { XPERIENCE_PAGE } from "@/lib/marketing/xperience-page";
 
 export const metadata: Metadata = {
-  title: "Experience — Build the experience employers expect | DeliverX",
+  title: "Experience | Build the experience employers expect | DeliverX",
   description:
-    "Join an AI-powered company and work as a Product Manager from day one. Open pilot access — Build the experience in the DeliverX journey.",
+    "Join a company with AI colleagues and work as a Product Manager from day one. Open pilot access. Build practical experience before you apply.",
   openGraph: {
-    title: "Experience — Build the experience | DeliverX",
+    title: "Experience | Build the experience | DeliverX",
     description:
-      "Build the experience employers expect. Pilot access — paid plans not yet live.",
+      "Build the experience employers expect. Pilot access; paid plans not yet live.",
   },
 };
 

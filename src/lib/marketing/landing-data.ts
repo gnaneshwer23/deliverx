@@ -89,12 +89,12 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "feeds": [
       {
         "dot": "#DC2626",
-        "text": "NHS EHR — vendor API delayed 3 weeks. Go-live at risk.",
+        "text": "NHS EHR: vendor API delayed 3 weeks. Go-live at risk.",
         "from": "from Project Manager · 2m ago"
       },
       {
         "dot": "#D97706",
-        "text": "Platform v2 release readiness: 84% — 2 critical defects blocking go-live.",
+        "text": "Platform v2 release readiness: 2 critical defects blocking go-live.",
         "from": "from QA Team · 1h ago"
       },
       {
@@ -127,7 +127,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "Business Analyst",
-        "status": "Requirements signed off — no action",
+        "status": "Requirements signed off: no action",
         "badge": "Clear",
         "badgeCls": "badge-g"
       },
@@ -148,7 +148,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "accent": "#60A5FA",
     "accentBg": "rgba(96,165,250,.1)",
     "title": "Project Manager · NHS EHR",
-    "badge": "Sprint 24 · 72%",
+    "badge": "Sprint 24 · 58 of 80 pts",
     "tagline": "Milestones, RAID, and delivery confidence",
     "kpis": [
       {
@@ -175,7 +175,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "feeds": [
       {
         "dot": "#DC2626",
-        "text": "Auth API blocker — US-45 stalled for 5 days. Platform team has not responded.",
+        "text": "Auth API blocker: US-45 stalled for 5 days. Platform team has not responded.",
         "from": "from Scrum Master · 30m ago"
       },
       {
@@ -185,7 +185,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       },
       {
         "dot": "#3D9660",
-        "text": "Reports API merged. US-44 complete. Sprint at 72%.",
+        "text": "Reports API merged. US-44 complete. Sprint at 58 of 80 pts.",
         "from": "from Engineer · 2h ago"
       }
     ],
@@ -234,7 +234,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "accent": "#2DD4BF",
     "accentBg": "rgba(45,212,191,.1)",
     "title": "Business Analyst · Requirements",
-    "badge": "78% Traceability",
+    "badge": "Traceability gaps open",
     "tagline": "Requirements, gaps, and traceability",
     "kpis": [
       {
@@ -261,17 +261,17 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "feeds": [
       {
         "dot": "#DC2626",
-        "text": "FR-006 approval workflow — who can approve budgets above £50k? Sent to Sponsor. Awaiting 3 days.",
+        "text": "FR-006 approval workflow: who can approve budgets above £50k? Sent to Sponsor. Awaiting 3 days.",
         "from": "Blocks Engineering"
       },
       {
         "dot": "#D97706",
-        "text": "FR-004 lab integration — HL7 FHIR v4 or custom API? Sent to PM. Awaiting 1 day.",
+        "text": "FR-004 lab integration: HL7 FHIR v4 or custom API? Sent to PM. Awaiting 1 day.",
         "from": "Needs PM Review"
       },
       {
         "dot": "#D97706",
-        "text": "FR-003 GDPR data retention — 7-year NHS guidance? Sent to Legal. 2 days awaiting.",
+        "text": "FR-003 GDPR data retention: 7-year NHS guidance? Sent to Legal. 2 days awaiting.",
         "from": "GDPR Risk"
       }
     ],
@@ -320,7 +320,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "accent": "#A78BFA",
     "accentBg": "rgba(167,139,250,.1)",
     "title": "Product Manager · Roadmap",
-    "badge": "NPS 52 · 87% Retention",
+    "badge": "NPS 52 · retention watch",
     "tagline": "Roadmap, RICE scoring, and feature adoption",
     "kpis": [
       {
@@ -347,17 +347,17 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "feeds": [
       {
         "dot": "#A78BFA",
-        "text": "AI Workspace Generation — RICE 280. In delivery Sprint 4–6.",
+        "text": "AI Workspace Generation: RICE 280. In delivery Sprint 4–6.",
         "from": "Now"
       },
       {
         "dot": "#60A5FA",
-        "text": "Meeting Intelligence — RICE 250. Sprint 5.",
+        "text": "Meeting Intelligence: RICE 250. Sprint 5.",
         "from": "Now"
       },
       {
         "dot": "rgba(100,100,100,.6)",
-        "text": "Portfolio Dashboard — RICE 140. Planned Q3.",
+        "text": "Portfolio Dashboard: RICE 140. Planned Q3.",
         "from": "Next"
       }
     ],
@@ -376,7 +376,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "bg": "rgba(45,212,191,.15)",
         "color": "#2DD4BF",
         "name": "Business Analyst",
-        "status": "PRD validated — 46 requirements extracted",
+        "status": "PRD validated: 46 requirements extracted",
         "badge": "Done",
         "badgeCls": "badge-g"
       },
@@ -406,7 +406,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "accent": "#93C5FD",
     "accentBg": "rgba(147,197,253,.1)",
     "title": "Engineer · Sprint 24",
-    "badge": "87% Test Coverage",
+    "badge": "Coverage gaps on Auth API",
     "tagline": "Stories, dependencies, and CI/CD",
     "kpis": [
       {
@@ -418,7 +418,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
       {
         "label": "Blocked",
         "val": "1",
-        "delta": "Auth API — 5 days",
+        "delta": "Auth API: 5 days",
         "dir": "dn"
       },
       {
@@ -428,22 +428,22 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "dir": "up"
       }
     ],
-    "feedTitle": "My Stories — Sprint 24",
+    "feedTitle": "My Stories: Sprint 24",
     "loopTitle": "AI Review Queue",
     "feeds": [
       {
         "dot": "#3D9660",
-        "text": "US-44 — Reports API · GET /reports/ai endpoint. Merged PR #421.",
+        "text": "US-44: Reports API · GET /reports/ai endpoint. Merged PR #421.",
         "from": "Done · 5pts"
       },
       {
         "dot": "#D97706",
-        "text": "US-47 — Sponsor dashboard · portfolio health widget. PR #424 open.",
+        "text": "US-47: Sponsor dashboard · portfolio health widget. PR #424 open.",
         "from": "In Review · 3pts"
       },
       {
         "dot": "#DC2626",
-        "text": "US-45 — RAID auto-sync. Blocked on Auth API — 5 days. Platform team no ETA.",
+        "text": "US-45: RAID auto-sync. Blocked on Auth API: 5 days. Platform team no ETA.",
         "from": "Blocked · 8pts"
       }
     ],
@@ -492,7 +492,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "accent": "#FCD34D",
     "accentBg": "rgba(252,211,77,.1)",
     "title": "QA / Test Manager · Release",
-    "badge": "84% Ready · Conditional Go",
+    "badge": "Conditional go · 2 critical",
     "tagline": "Release readiness, defects, and UAT",
     "kpis": [
       {
@@ -519,17 +519,17 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "feeds": [
       {
         "dot": "#DC2626",
-        "text": "BUG-142 Critical — Auth token expiry causes silent logout. Marcus T. fixing.",
+        "text": "BUG-142 Critical: Auth token expiry causes silent logout. Marcus T. fixing.",
         "from": "Critical · Blocks release"
       },
       {
         "dot": "#DC2626",
-        "text": "BUG-167 Critical — Report generation fails for budgets over £1M.",
+        "text": "BUG-167 Critical: Report generation fails for budgets over £1M.",
         "from": "Critical · Open"
       },
       {
         "dot": "#D97706",
-        "text": "BUG-158 Medium — RAID table pagination breaks at 50+ items.",
+        "text": "BUG-158 Medium: RAID table pagination breaks at 50+ items.",
         "from": "Medium · In Review"
       }
     ],
@@ -548,7 +548,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
         "bg": "rgba(147,197,253,.15)",
         "color": "#93C5FD",
         "name": "Engineer",
-        "status": "Reports API — ready to test",
+        "status": "Reports API: ready to test",
         "badge": "Test Now",
         "badgeCls": "badge-g"
       },
@@ -578,7 +578,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "accent": "#6EE7B7",
     "accentBg": "rgba(110,231,183,.1)",
     "title": "Scrum Master · Sprint 24",
-    "badge": "87% Success Probability",
+    "badge": "Delivery risk · 2 blockers",
     "tagline": "Sprint health, blockers, and team wellbeing",
     "kpis": [
       {
@@ -605,17 +605,17 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "feeds": [
       {
         "dot": "#DC2626",
-        "text": "Auth API — Platform team unresponsive. Day 5. Affects 2 teams. US-45 blocked.",
+        "text": "Auth API: Platform team unresponsive. Day 5. Affects 2 teams. US-45 blocked.",
         "from": "High · Re-escalate to PM"
       },
       {
         "dot": "#D97706",
-        "text": "Test environment unstable — 3 failed deploys. DevOps ETA tomorrow.",
+        "text": "Test environment unstable: 3 failed deploys. DevOps ETA tomorrow.",
         "from": "Medium · Day 2"
       },
       {
         "dot": "#D97706",
-        "text": "FR-003 acceptance criteria incomplete — BA clarification pending.",
+        "text": "FR-003 acceptance criteria incomplete: BA clarification pending.",
         "from": "Medium · Day 1"
       }
     ],
@@ -743,7 +743,7 @@ export const THREAD_CALLOUTS = [
   {
     "tone": "green",
     "title": "BA resolves FR-003",
-    "body": "Acceptance criteria accepted. Engineer story moves to ready. QA test cases generated. SM impediment cleared. Traceability 78% to 81%."
+    "body": "Acceptance criteria accepted. Engineer story moves to ready. QA test cases generated. SM impediment cleared. Traceability improved after BA sign-off."
   }
 ] as const;
 
@@ -760,7 +760,7 @@ const DELIVERY_STAGE_DETAILS: Record<WorkspaceFlowStepId, string> = {
   extract:
     "AI proposes workstreams, milestones, and initial RAID. Nothing is applied until you accept, edit, or reject each item in the AI Review Queue.",
   invite_ba:
-    "Generate a BA join link from the business case flow. Your analyst lands in a workspace built from the same brief — no duplicate setup.",
+    "Generate a BA join link from the business case flow. Your analyst lands in a workspace built from the same brief: no duplicate setup.",
   ba_review:
     "BA reviews extracted requirements and closes gaps. Approved stories and traceability feed engineering and QA from one signal graph.",
   delivery:
@@ -830,7 +830,7 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
     category: "onboarding",
     title: "PM business case upload + AI review",
     description:
-      "Upload a business case or charter on PM Mission Control. Delivery Brain extracts scope, milestones, and RAID — every proposal lands in the AI Review Queue for your approval.",
+      "Upload a business case or charter on PM Mission Control. Delivery Brain extracts scope, milestones, and RAID: every proposal lands in the AI Review Queue for your approval.",
   },
   {
     category: "onboarding",
@@ -848,7 +848,7 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
     category: "ai-meetings",
     title: "Ask Helm on mission pages",
     description:
-      "Ask Helm — your delivery copilot — on every persona mission-control page. Context-aware answers grounded in your project data.",
+      "Ask Helm: your delivery copilot: on every persona mission-control page. Context-aware answers grounded in your project data.",
   },
   {
     category: "ai-meetings",
@@ -866,19 +866,19 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
     category: "ai-meetings",
     title: "Standup tasks on persona missions",
     description:
-      "Standup intelligence surfaces on each persona mission-control page — action items scoped to how that role works.",
+      "Standup intelligence surfaces on each persona mission-control page: action items scoped to how that role works.",
   },
   {
     category: "visibility",
     title: "Delivery signals across roles",
     description:
-      "PM Command Centre surfaces blockers, risks, and sprint health — propagated across persona dashboards after approval via delivery impact events.",
+      "PM Command Centre surfaces blockers, risks, and sprint health: propagated across persona dashboards after approval via delivery impact events.",
   },
   {
     category: "visibility",
     title: "Dual workspace surfaces",
     description:
-      "Organisation-wide tools at /workspace/* plus project-scoped views at /project/[id]/* — same signal graph, two navigation contexts.",
+      "Organisation-wide tools at /workspace/* plus project-scoped views at /project/[id]/*: same signal graph, two navigation contexts.",
   },
 ] as const;
 
@@ -922,17 +922,17 @@ export const PROOF_STATS = [
   {
     n: "7",
     label: "Persona workspaces",
-    desc: "Sponsor, PM, BA, PO, Engineer, QA, and Scrum Master — each with a mission-control layout matched to how that role works, not a shared generic board.",
+    desc: "Sponsor, PM, BA, PO, Engineer, QA, and Scrum Master: each with a mission-control layout matched to how that role works, not a shared generic board.",
   },
   {
     n: "1",
     label: "AI Review Queue",
-    desc: "Every AI proposal — workspace updates, extracted requirements, meeting actions — lands in one approval queue. Nothing applies until a human accepts, edits, or rejects it.",
+    desc: "Every AI proposal: workspace updates, extracted requirements, meeting actions: lands in one approval queue. Nothing applies until a human accepts, edits, or rejects it.",
   },
   {
     n: "≤10s",
     label: "Signal propagation",
-    desc: "After PM approval, delivery impact events reach relevant persona dashboards in seconds during pilot testing — not batch overnight sync.",
+    desc: "After PM approval, delivery impact events reach relevant persona dashboards in seconds during pilot testing: not batch overnight sync.",
   },
 ] as const;
 
@@ -952,7 +952,7 @@ export const QUICK_START_STEPS: readonly QuickStartStep[] = [
   {
     step: "02",
     label: "Invite your team",
-    detail: "Generate role-specific /join links — BA, Engineer, and QA land in the same workspace.",
+    detail: "Generate role-specific /join links: BA, Engineer, and QA land in the same workspace.",
   },
   {
     step: "03",
@@ -967,7 +967,7 @@ export const PRICING_TIERS = [
     "name": "Free trial",
     "price": "Coming soon",
     "period": "",
-    "desc": "Full platform during early access — all seven role dashboards, AI Review Queue, and connected delivery signals.",
+    "desc": "Full platform during early access: all seven role dashboards, AI Review Queue, and connected delivery signals.",
     "features": [
       "All 7 role dashboards",
       "AI document analysis + Review Queue",
@@ -989,7 +989,7 @@ export const PRICING_TIERS = [
     "name": "Delivery teams",
     "price": "Coming soon",
     "period": "",
-    "desc": "Paid plans for delivery teams — pricing finalised once billing is live.",
+    "desc": "Paid plans for delivery teams: pricing finalised once billing is live.",
     "features": [
       "Everything in early access",
       "Unlimited projects",
@@ -1007,7 +1007,7 @@ export const PRICING_TIERS = [
     "name": "PMO & programmes",
     "price": "Custom",
     "period": "",
-    "desc": "Pilot conversations welcome — enterprise packaging is not a live checkout SKU.",
+    "desc": "Pilot conversations welcome: enterprise packaging is not a live checkout SKU.",
     "features": [
       "All team features",
       "Programme layer",

@@ -10,7 +10,7 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
   name: "Launchpad",
   heroTitle: "Turn evidence into opportunity.",
   promise:
-    "Career Intelligence for product professionals — labelled readiness, evidence-backed packaging and interview prep that cite what you can prove and what you cannot.",
+    "Career Intelligence for product professionals: labelled readiness, evidence-backed packaging and interview prep that cite what you can prove and what you cannot.",
   primaryCta: {
     href: tier.ctaHref,
     label: "Join the pilot",
@@ -24,7 +24,7 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
       id: "readiness",
       tone: "white",
       label: "Role readiness",
-      title: "Know where you stand — and why.",
+      title: "Know where you stand, and why.",
       body: "Career Intelligence shows role readiness with an explicit source label: ScoreRun projection, mixed, or evidence-coverage heuristic. Decorative percentages without a method are not capability truth.",
       items: [
         "Readiness grounded in Professional Intelligence where a ScoreRun exists",
@@ -37,14 +37,14 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
       tone: "cream",
       label: "Career profile",
       title: "A profile grounded in evidence, not slogans.",
-      body: "Your career profile draws on SnapshotClaims and evidence from Experience and Professional Intelligence — so packaging stays tied to what the ledger can support.",
+      body: "Your career profile draws on SnapshotClaims and evidence from Experience and Professional Intelligence, so packaging stays tied to what the ledger can support.",
     },
     {
       id: "cv",
       tone: "white",
       label: "CV and portfolio",
       title: "Make your experience readable to hiring managers.",
-      body: "Translate projects and decisions into CV packaging that can flow into Verified Portfolio entries — clear outcomes and relevant skills, not unverifiable claims.",
+      body: "Translate projects and decisions into CV packaging that can flow into Verified Portfolio entries: clear outcomes and relevant skills, not unverifiable claims.",
       items: [
         "Evidence-backed CV packaging",
         "Portfolio entries from work you can cite",
@@ -56,7 +56,7 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
       tone: "cream",
       label: "Interview lab",
       title: "Practise with structure.",
-      body: "STAR stories and interview practice sessions help you answer with evidence. Sessions are recorded as observations — they do not assign capability.",
+      body: "STAR stories and interview practice sessions help you answer with evidence. Sessions are recorded as observations. They do not assign capability.",
       items: [
         "STAR interview story drafting",
         "Interview practice sessions",
@@ -68,7 +68,7 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
       tone: "white",
       label: "Applications",
       title: "Track the roles you pursue.",
-      body: "Log applications and outcomes as you go — so career progress stays visible without inventing an employer marketplace.",
+      body: "Log applications and outcomes as you go, so career progress stays visible without inventing an employer marketplace.",
     },
   ],
   pricing: {
@@ -86,7 +86,7 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
   finalCta: {
     title: "Ready to land the opportunity?",
     subtitle:
-      "Join the Launchpad pilot — or take the Complete Journey if you also need company experience and delivery tools.",
+      "Join the Launchpad pilot, or take the Complete Journey if you also need company experience and delivery tools.",
     ctaLabel: tier.cta,
     ctaHref: tier.ctaHref,
     secondaryLabel: "Explore Complete Journey",

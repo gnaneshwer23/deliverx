@@ -14,7 +14,7 @@ import { HOW_IT_WORKS_PAGE } from "@/lib/marketing/how-it-works-data";
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "How it works — DeliverX",
+  title: "How it works | DeliverX",
   description: HOW_IT_WORKS_PAGE.promise,
   openGraph: {
     title: "How DeliverX works",

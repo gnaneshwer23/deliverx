@@ -46,8 +46,8 @@ export function DeliverXTicker() {
   return (
     <section className={styles.band} aria-label="DeliverX roles and platform capabilities">
       <p className="sr-only">
-        DeliverX connects seven delivery personas — Sponsor, Project Manager, Business Analyst,
-        Product Manager, Engineer, QA, and Scrum Master — with capabilities including Delivery
+        DeliverX connects seven delivery personas: Sponsor, Project Manager, Business Analyst,
+        Product Manager, Engineer, QA, and Scrum Master, with capabilities including Delivery
         Brain, AI Review Queue, meeting intelligence, and organisational memory.
       </p>
 

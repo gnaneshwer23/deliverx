@@ -114,7 +114,7 @@ export function MarketingWhatWorksSection() {
                 Shipped and <em>in production.</em>
               </>
             }
-            subtitle="No vapourware. These capabilities are live on main today — the same paths you follow when you start a free trial."
+            subtitle="No vapourware. These capabilities are live on main today, the same paths you follow when you start a free trial."
           />
           <div className="mkt-live-stat shrink-0 lg:mb-1">
             <p className="font-[family-name:var(--font-dx-display)] text-3xl leading-none tracking-tight text-[var(--mkt-green-l)]">
@@ -190,7 +190,7 @@ export function MarketingWhatWorksSection() {
                 <MarketingBadge tone="badge-n">Not in production</MarketingBadge>
               </div>
               <p className="mt-2 text-[0.8125rem] leading-relaxed text-[var(--mkt-text2)]">
-                Honest next-up items we&apos;re building — listed here so you know what&apos;s planned, not promised on a date.
+                Honest next-up items we&apos;re building, listed here so you know what&apos;s planned, not promised on a date.
               </p>
             </header>
 
@@ -223,7 +223,7 @@ export function MarketingWhatWorksSection() {
             </ul>
 
             <p className="mt-5 border-t border-[var(--mkt-border)] pt-4 text-[0.6875rem] leading-relaxed text-[var(--mkt-text3)]">
-              Roadmap order may shift based on pilot feedback. We only list items here when the direction is clear — not when they ship.
+              Roadmap order may shift based on pilot feedback. We only list items here when the direction is clear, not when they ship.
             </p>
           </aside>
         </div>

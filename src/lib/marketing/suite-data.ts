@@ -47,7 +47,7 @@ export const SUITE_PRODUCTS = [
     stage: "Build the experience",
     href: "/experience",
     promise:
-      "Work inside AI-powered companies as a Product Manager — build judgement, delivery craft and a portfolio of evidence employers can evaluate.",
+      "Work inside companies with AI colleagues as a Product Manager. Build judgement, delivery craft and a portfolio of evidence employers can evaluate.",
     detail: "Pilot access. Living organisations, projects and an Experience Record.",
     cta: "Explore Experience",
   },
@@ -57,7 +57,7 @@ export const SUITE_PRODUCTS = [
     stage: "Land the opportunity",
     href: "/launchpad",
     promise:
-      "Turn your experience into interviews — Career Intelligence with labelled readiness, evidence CV packaging, interview lab and application tracking.",
+      "Turn your experience into interviews with Career Intelligence: labelled readiness, evidence CV packaging, interview lab and application tracking.",
     detail: "Pilot access. Readiness, packaging and interview prep.",
     cta: "Explore Launchpad",
   },
@@ -67,7 +67,7 @@ export const SUITE_PRODUCTS = [
     stage: "Succeed in the role",
     href: "/professional-workspace",
     promise:
-      "Collaborate with role-based AI teammates in one Professional Workspace — meetings, stakeholders, artefacts, decisions and evidence.",
+      "Collaborate with role-based AI teammates in one Professional Workspace: meetings, stakeholders, artefacts, decisions and evidence.",
     detail: "Pilot access. AI drafts; humans decide and submit.",
     cta: "Explore Professional Workspace",
   },
@@ -82,11 +82,11 @@ export const SUITE_LIFECYCLE = [
 export const SUITE_DIFFERENCE = [
   {
     title: "Experience before employment",
-    body: "Build real product judgement inside living organisations before you apply — so employers see work, not just ambition.",
+    body: "Build real product judgement inside living organisations before you apply, so employers see work, not just ambition.",
   },
   {
     title: "Career intelligence",
-    body: "A continuous picture of your skills, stories and readiness — so every project compounds into a clearer career path.",
+    body: "A continuous picture of your skills, stories and readiness, so every project compounds into a clearer career path.",
   },
   {
     title: "Better delivery",
@@ -94,7 +94,7 @@ export const SUITE_DIFFERENCE = [
   },
   {
     title: "Continuous growth",
-    body: "From first experience through opportunity and delivery — one journey, not three disconnected tools.",
+    body: "From first experience through opportunity and delivery: one connected path, not three disconnected tools.",
   },
 ] as const;
 

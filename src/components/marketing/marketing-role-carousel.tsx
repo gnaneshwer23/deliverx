@@ -17,7 +17,7 @@ export function MarketingRoleCarousel() {
             See every role
           </p>
           <p className="mt-1 text-sm text-[var(--mkt-text2)]">
-            Six tailored dashboards — scroll to compare layouts
+            Six tailored dashboards. Scroll to compare layouts
           </p>
         </div>
         <span className="hidden rounded-full border border-[var(--mkt-border)] bg-[var(--mkt-s2)] px-3 py-1 font-[family-name:var(--font-mkt-mono)] text-[0.625rem] text-[var(--mkt-text3)] sm:inline">

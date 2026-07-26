@@ -69,7 +69,7 @@ export function HowItWorksHero({ content }: { content: HowItWorksPageContent }) 
               </div>
               <span className="sr-only">
                 Preview of Professional Intelligence: direction, evidence with provenance, and
-                explainable capability judgements — Verified only via attestation
+                explainable capability judgements. Verified only via attestation
               </span>
             </MarketingHeroItem>
           </div>

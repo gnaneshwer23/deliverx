@@ -5,15 +5,15 @@ const MATRIX_ROWS = [
   { req: "FR-001", story: "US-12", status: "linked" as const },
   { req: "FR-003", story: "US-18", status: "gap" as const },
   { req: "FR-004", story: "US-22", status: "partial" as const },
-  { req: "FR-006", story: "—", status: "missing" as const },
+  { req: "FR-006", story: "-", status: "missing" as const },
   { req: "FR-008", story: "US-31", status: "linked" as const },
 ];
 
 const STATUS_CELL: Record<string, { symbol: string; color: string; bg: string }> = {
-  linked: { symbol: "✓", color: "#3D9660", bg: "rgba(61,150,96,.12)" },
-  partial: { symbol: "◐", color: "#D97706", bg: "rgba(217,119,6,.12)" },
-  gap: { symbol: "!", color: "#DC2626", bg: "rgba(220,38,38,.1)" },
-  missing: { symbol: "—", color: "#9CA3AF", bg: "rgba(156,163,175,.1)" },
+  linked: { symbol: "OK", color: "#3D9660", bg: "rgba(61,150,96,.12)" },
+  partial: { symbol: "Part", color: "#D97706", bg: "rgba(217,119,6,.12)" },
+  gap: { symbol: "Gap", color: "#DC2626", bg: "rgba(220,38,38,.1)" },
+  missing: { symbol: "-", color: "#9CA3AF", bg: "rgba(156,163,175,.1)" },
 };
 
 /** Traceability matrix hero — requirements ↔ stories grid. */
@@ -29,7 +29,7 @@ export function BaPreview({ role }: { role: RoleDashboard }) {
             className="rounded-full px-2 py-0.5 text-[0.6rem] font-semibold"
             style={{ background: role.accentBg, color: role.accent }}
           >
-            78% coverage
+            Gaps open
           </span>
         </div>
         <div className="overflow-x-auto">

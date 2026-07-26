@@ -22,7 +22,7 @@ export function MarketingLoopSection() {
               One signal feeds <em>every</em> role.
             </>
           }
-          subtitle="When a BA closes a requirement gap, the engineer's board updates. When QA logs a defect, the PM's release confidence drops. When the Sponsor approves a budget, the delivery tracker reflects it — automatically."
+          subtitle="When a BA closes a requirement gap, the engineer's board updates. When QA logs a defect, the PM's release confidence drops. When the Sponsor approves a budget, the delivery tracker reflects it automatically."
         />
       </MarketingContainer>
 

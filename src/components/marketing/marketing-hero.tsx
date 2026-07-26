@@ -54,7 +54,7 @@ export function MarketingHero() {
             <p className="mb-9 max-w-[480px] text-[clamp(0.9375rem,1.5vw,1.0625rem)] font-light leading-[1.65] text-[var(--mkt-text2)]">
               Teams lose hours reconciling Slack, Jira, and decks that never align. DeliverX connects{" "}
               <span className="font-medium text-[var(--mkt-green)]">seven delivery roles</span> in one
-              signal graph — AI drafts updates; your team approves before anything applies.
+              signal graph. AI drafts updates; your team approves before anything applies.
             </p>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <MarketingButtonLink href="/signup" variant="primaryLg" className="mkt-card-lift">

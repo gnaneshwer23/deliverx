@@ -70,7 +70,7 @@ export function MarketingOnboardingSection() {
         <div className="mt-6 grid gap-6 md:grid-cols-2 md:gap-8">
           <div className="mkt-card mkt-card-gradient p-5 md:p-6">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--mkt-text3)]">
-              Get started path — {role.name}
+              Get started path: {role.name}
             </p>
             <ol className="mkt-onboarding-path space-y-0 pl-1">
               {ob.steps.map((step) => (
