@@ -266,6 +266,14 @@ export function HomeJourney() {
             </ol>
           </div>
         </MarketingReveal>
+
+        <MarketingReveal delay={0.1}>
+          <div className="mt-10 text-center">
+            <MarketingButtonLink href="/how-it-works" variant="ghost">
+              See the full workflow →
+            </MarketingButtonLink>
+          </div>
+        </MarketingReveal>
       </MarketingContainer>
     </MarketingSection>
   );
@@ -689,14 +697,14 @@ export function HomeAiCompany() {
 
 export function HomeExperienceRecord() {
   return (
-    <MarketingSection id="experience-record" tone="white">
+    <MarketingSection id="professional-intelligence" tone="white">
       <MarketingContainer className="!max-w-[1180px]">
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <MarketingReveal>
             <MarketingSectionIntro
-              label="Experience Record"
-              title="A living timeline that becomes your evidence record"
-              subtitle="Every month compounds — discovery through performance review — into a continuous career record."
+              label="Professional Intelligence"
+              title="Your work becomes useful when its meaning is clear"
+              subtitle="Claims, evidence, capability judgements and independent attestations stay distinct — so recommendations remain explainable."
             />
           </MarketingReveal>
           <MarketingReveal delay={0.06}>
@@ -731,52 +739,42 @@ function TeamCopilotVisual({ title }: { title: (typeof TEAM_COPILOT_PANELS)[numb
     "mb-4 flex h-16 items-center overflow-hidden rounded-lg border border-white/[0.08] bg-[#0A1628] px-3";
 
   switch (title) {
-    case "Roadmap":
+    case "Tasks":
       return (
         <div className={`${shell} flex-col justify-center gap-1.5 py-2`} aria-hidden>
-          {[
-            { w: "72%", tone: "bg-emerald-400/70" },
-            { w: "55%", tone: "bg-sky-400/65" },
-            { w: "40%", tone: "bg-white/30" },
-          ].map((bar) => (
-            <div key={bar.w} className="h-1.5 w-full rounded-full bg-white/10">
-              <div className={`h-full rounded-full ${bar.tone}`} style={{ width: bar.w }} />
+          {["72%", "55%", "40%"].map((w, i) => (
+            <div key={w} className="h-1.5 w-full rounded-full bg-white/10">
+              <div
+                className={`h-full rounded-full ${i === 0 ? "bg-sky-400/70" : i === 1 ? "bg-emerald-400/65" : "bg-white/30"}`}
+                style={{ width: w }}
+              />
             </div>
           ))}
         </div>
       );
-    case "Delivery":
+    case "Meetings":
       return (
         <div className={`${shell} justify-between gap-3`} aria-hidden>
-          <svg viewBox="0 0 80 28" className="h-7 w-[4.5rem] shrink-0 text-emerald-400/80" fill="none">
-            <path
-              d="M1 22 L12 16 L22 19 L34 8 L46 12 L58 5 L70 10 L79 3"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M1 22 L12 16 L22 19 L34 8 L46 12 L58 5 L70 10 L79 3 V28 H1 Z"
-              fill="url(#dx-delivery-fill)"
-              opacity="0.35"
-            />
-            <defs>
-              <linearGradient id="dx-delivery-fill" x1="40" y1="3" x2="40" y2="28" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#34d399" stopOpacity="0.5" />
-                <stop offset="1" stopColor="#34d399" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div className="min-w-0 flex-1 space-y-1.5">
-            <div className="h-1 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-[78%] rounded-full bg-emerald-400/75" />
-            </div>
-            <div className="flex justify-between text-[0.55rem] uppercase tracking-[0.1em] text-white/35">
-              <span>Sprint</span>
-              <span className="text-emerald-400/80">78%</span>
-            </div>
+          <div className="flex size-9 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-[0.65rem] text-white/70">
+            10:30
           </div>
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <div className="h-1.5 w-[80%] rounded-full bg-white/20" />
+            <div className="h-1.5 w-[55%] rounded-full bg-white/10" />
+          </div>
+        </div>
+      );
+    case "Decisions":
+      return (
+        <div className={`${shell} gap-1.5`} aria-hidden>
+          {["Decide", "Record", "Share"].map((label) => (
+            <div
+              key={label}
+              className="flex flex-1 flex-col items-center justify-center rounded-md border border-white/[0.06] bg-white/[0.03] py-1"
+            >
+              <span className="text-[0.55rem] uppercase tracking-[0.08em] text-white/55">{label}</span>
+            </div>
+          ))}
         </div>
       );
     case "Risks":
@@ -785,120 +783,54 @@ function TeamCopilotVisual({ title }: { title: (typeof TEAM_COPILOT_PANELS)[numb
           {[
             { c: "bg-rose-400", s: "size-2.5" },
             { c: "bg-amber-400", s: "size-3.5" },
-            { c: "bg-rose-400/80", s: "size-2" },
             { c: "bg-emerald-400", s: "size-3" },
-            { c: "bg-amber-400/70", s: "size-2.5" },
-            { c: "bg-emerald-400/80", s: "size-2" },
-            { c: "bg-rose-400/60", s: "size-3" },
             { c: "bg-white/30", s: "size-2" },
           ].map((dot, i) => (
-            <span key={i} className={`rounded-full ${dot.c} ${dot.s} shadow-[0_0_8px_rgba(255,255,255,0.08)]`} />
+            <span key={i} className={`rounded-full ${dot.c} ${dot.s}`} />
           ))}
         </div>
       );
-    case "Stakeholders":
+    case "Artefacts":
       return (
-        <div className={`${shell} justify-center -space-x-2`} aria-hidden>
-          {["#5B8DEF", "#34D399", "#F5A524", "#A78BFA", "#F87171"].map((color, i) => (
+        <div className={`${shell} justify-center gap-2`} aria-hidden>
+          {["PRD", "Plan", "Note"].map((label) => (
             <span
-              key={color}
-              className="relative flex size-8 items-center justify-center rounded-full border-2 border-[#0A1628] text-[0.55rem] font-medium text-white/90"
-              style={{ backgroundColor: color, zIndex: 5 - i }}
+              key={label}
+              className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-1 text-[0.55rem] uppercase tracking-[0.08em] text-white/55"
             >
-              {["PM", "BA", "Eng", "QA", "Ex"][i]}
+              {label}
             </span>
           ))}
         </div>
       );
-    case "Releases":
+    case "Evidence Review":
       return (
-        <div className={`${shell} justify-between gap-2`} aria-hidden>
-          {["Beta", "GA", "Ent"].map((label, i) => {
-            const scores = [92, 74, 48];
-            const tones = ["bg-emerald-400/80", "bg-sky-400/75", "bg-amber-400/70"];
-            return (
-              <div key={label} className="flex flex-1 flex-col items-center gap-1">
-                <div className="flex h-8 w-full items-end justify-center gap-0.5">
-                  <div className={`w-2 rounded-sm ${tones[i]}`} style={{ height: `${scores[i]}%` }} />
-                  <div
-                    className={`w-2 rounded-sm ${tones[i]} opacity-50`}
-                    style={{ height: `${Math.round(scores[i] * 0.7)}%` }}
-                  />
-                </div>
-                <span className="text-[0.55rem] uppercase tracking-[0.08em] text-white/40">{label}</span>
-              </div>
-            );
-          })}
-        </div>
-      );
-    case "Executive Dashboard":
-      return (
-        <div className={`${shell} gap-1.5`} aria-hidden>
-          {[
-            { label: "Health", value: "G", tone: "text-emerald-400" },
-            { label: "Risk", value: "2", tone: "text-amber-400" },
-            { label: "Dec", value: "3", tone: "text-sky-400" },
-          ].map((kpi) => (
-            <div
-              key={kpi.label}
-              className="flex flex-1 flex-col items-center justify-center rounded-md border border-white/[0.06] bg-white/[0.03] py-1"
-            >
-              <span className={`text-[0.85rem] font-medium leading-none ${kpi.tone}`}>{kpi.value}</span>
-              <span className="mt-1 text-[0.5rem] uppercase tracking-[0.1em] text-white/35">{kpi.label}</span>
-            </div>
-          ))}
-        </div>
-      );
-    case "Sprint Confidence":
-      return (
-        <div className={`${shell} gap-3`} aria-hidden>
-          <div className="relative flex size-10 shrink-0 items-center justify-center">
-            <svg viewBox="0 0 36 36" className="absolute inset-0 size-10 -rotate-90">
-              <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
-              <circle
-                cx="18"
-                cy="18"
-                r="14"
-                fill="none"
-                stroke="#34d399"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeDasharray="88"
-                strokeDashoffset="22"
-                opacity="0.85"
-              />
-            </svg>
-            <span className="relative text-[0.7rem] font-medium text-white/90">81</span>
+        <div className={`${shell} flex-col justify-center gap-1.5 py-2`} aria-hidden>
+          <div className="h-1.5 w-full rounded-full bg-white/10">
+            <div className="h-full w-[65%] rounded-full bg-emerald-400/70" />
           </div>
-          <div className="min-w-0 flex-1 space-y-1">
-            <div className="flex h-5 items-end gap-0.5">
-              {[40, 55, 48, 70, 62, 78, 81].map((h, i) => (
-                <span
-                  key={i}
-                  className="flex-1 rounded-sm bg-emerald-400/70"
-                  style={{ height: `${h}%`, opacity: 0.45 + i * 0.07 }}
-                />
-              ))}
-            </div>
-            <p className="text-[0.55rem] uppercase tracking-[0.1em] text-white/35">Predictability</p>
-          </div>
+          <p className="text-[0.55rem] uppercase tracking-[0.1em] text-white/35">Source labelled</p>
         </div>
       );
-    case "Dependency Graph":
+    case "Coach":
       return (
-        <div className={`${shell} relative justify-center`} aria-hidden>
-          <svg viewBox="0 0 120 40" className="h-9 w-full max-w-[9rem]">
-            <line x1="22" y1="20" x2="50" y2="10" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-            <line x1="22" y1="20" x2="50" y2="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-            <line x1="50" y1="10" x2="82" y2="20" stroke="rgba(52,211,153,0.45)" strokeWidth="1" />
-            <line x1="50" y1="30" x2="82" y2="20" stroke="rgba(248,113,113,0.5)" strokeWidth="1" />
-            <line x1="82" y1="20" x2="105" y2="20" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
-            <circle cx="18" cy="20" r="5" fill="#5B8DEF" />
-            <circle cx="50" cy="10" r="4.5" fill="#34D399" />
-            <circle cx="50" cy="30" r="4.5" fill="#F5A524" />
-            <circle cx="82" cy="20" r="5" fill="#F87171" />
-            <circle cx="108" cy="20" r="4" fill="rgba(255,255,255,0.35)" />
-          </svg>
+        <div className={`${shell} gap-2`} aria-hidden>
+          <span className="rounded-md border border-dashed border-white/20 px-2 py-1 text-[0.55rem] text-white/45">
+            AI draft
+          </span>
+          <span className="text-[0.55rem] text-white/30">→</span>
+          <span className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-[0.55rem] text-emerald-300/80">
+            You submit
+          </span>
+        </div>
+      );
+    case "Consent":
+      return (
+        <div className={`${shell} justify-between`} aria-hidden>
+          <span className="text-[0.65rem] text-white/55">Observation</span>
+          <span className="rounded-full border border-white/15 px-2.5 py-1 text-[0.55rem] uppercase tracking-[0.1em] text-white/45">
+            Default off
+          </span>
         </div>
       );
     default:
@@ -919,8 +851,8 @@ export function HomeTeamCopilotPreview() {
               Deliver products with confidence
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-[0.9375rem] font-light leading-relaxed text-white/60">
-              An enterprise delivery workspace for product teams — roadmap, risks, releases and
-              executive clarity in one place.
+              A calm delivery workspace for product work — tasks, meetings, decisions and evidence
+              with observation consent default OFF.
             </p>
           </header>
         </MarketingReveal>
@@ -1169,14 +1101,14 @@ export function HomeFinalCta() {
             Ready to build your experience?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-            Start your journey today — experience, opportunity and delivery in one open pilot.
+            Start with meaningful work — then use Launchpad and Professional Workspace when you are ready.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-            <MarketingButtonLink href="/signup" variant="ctaLight">
-              Join the pilot
+            <MarketingButtonLink href="/signup?product=xperience" variant="ctaLight">
+              Start your experience
             </MarketingButtonLink>
-            <MarketingButtonLink href="/pricing" variant="ctaOutline">
-              See pilot access
+            <MarketingButtonLink href="/how-it-works" variant="ctaOutline">
+              See how it works
             </MarketingButtonLink>
           </div>
         </MarketingReveal>

@@ -26,16 +26,16 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
   stage: tier.stage,
   brandEyebrow: `DeliverX · ${tier.stage}`,
   name: "Professional Workspace",
-  heroTitle: "Deliver with AI teammates — you own the work.",
+  heroTitle: "Deliver with context. Keep human judgement in control.",
   promise:
-    "A multidisciplinary Professional Workspace: collaborate with role-based AI teammates, conduct meetings, manage stakeholders, create artefacts, decide, track risks, and generate observable evidence.",
+    "Professional Workspace brings tasks, meetings, decisions, risks and artefacts together with contextual AI support. AI drafts; people decide and submit. Not an enterprise mission-control product.",
   primaryCta: {
     href: tier.ctaHref,
     label: "Get started",
   },
   secondaryCta: {
-    href: "/pricing",
-    label: "See pilot access",
+    href: "/how-it-works",
+    label: "See how it works",
   },
   sections: [
     {

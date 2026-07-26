@@ -53,6 +53,11 @@ const nextConfig: NextConfig = {
         destination: "/start/experience",
         permanent: true,
       },
+      {
+        source: "/solutions",
+        destination: "/how-it-works",
+        permanent: true,
+      },
     ];
   },
   async headers() {

@@ -14,6 +14,7 @@ import {
   MarketingReveal,
 } from "@/components/marketing/marketing-reveal";
 import { LaunchpadHero } from "@/components/marketing/launchpad-hero";
+import { WorkspaceHero } from "@/components/marketing/workspace-hero";
 import { XperienceHero } from "@/components/marketing/xperience-hero";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import {
@@ -23,7 +24,7 @@ import {
 } from "@/lib/marketing/product-page";
 
 function DefaultProductHero({ content }: { content: ProductPageContent }) {
-  const secondary = content.secondaryCta ?? { href: "/pricing", label: "See pricing" };
+  const secondary = content.secondaryCta ?? { href: "/how-it-works", label: "See how it works" };
 
   return (
     <section
@@ -130,6 +131,8 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       <XperienceHero content={content} />
     ) : content.path === "/launchpad" ? (
       <LaunchpadHero content={content} />
+    ) : content.path === "/professional-workspace" ? (
+      <WorkspaceHero content={content} />
     ) : (
       <DefaultProductHero content={content} />
     );

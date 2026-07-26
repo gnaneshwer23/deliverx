@@ -5,7 +5,7 @@
 ## Screen: How DeliverX works
 
 **Product area:** Marketing
-**Route:** `/solutions`
+**Route:** `/how-it-works` (legacy `/solutions` permanently redirects here)
 **Primary user:** Professional comparing DeliverX with courses, simulations and career tools
 **Purpose:** Explain the complete evidence lifecycle without turning it into a technical architecture diagram.
 

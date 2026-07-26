@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PRODUCT_NAV } from "@/lib/marketing/suite-data";
+import { PRIMARY_NAV } from "@/lib/marketing/suite-data";
 
 export type ProductHowStep = {
   step: string;
@@ -99,8 +99,5 @@ export type ProductPageContent = {
 };
 
 export function productPageNav(currentPath: string) {
-  return [
-    { href: "/", label: "Home" },
-    ...PRODUCT_NAV.filter((link) => link.href !== currentPath),
-  ] as const;
+  return PRIMARY_NAV.filter((link) => link.href !== currentPath);
 }

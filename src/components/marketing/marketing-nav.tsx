@@ -1,99 +1,25 @@
 "use client";
 
-import { ChevronDown, Menu, X } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingLogo } from "@/components/marketing/marketing-logo";
-import { PRODUCT_LINKS, SITE_NAV } from "@/lib/marketing/suite-data";
+import { PRIMARY_NAV } from "@/lib/marketing/suite-data";
 
 export type MarketingNavLink = { href: string; label: string };
 
-export const NAV_LINKS: readonly MarketingNavLink[] = [
-  ...SITE_NAV.links,
-] as const;
-
-function ProductsDropdown({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const menuId = useId();
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onPointerDown(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        onOpenChange(false);
-      }
-    }
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onOpenChange(false);
-    }
-    document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open, onOpenChange]);
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={menuId}
-        aria-haspopup="menu"
-        onClick={() => onOpenChange(!open)}
-        className="inline-flex items-center gap-1 px-3 py-1.5 text-[0.8125rem] text-[var(--mkt-text3)] transition-colors hover:text-[var(--mkt-text1)]"
-      >
-        Products
-        <ChevronDown
-          className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`}
-          aria-hidden
-        />
-      </button>
-      {open ? (
-        <div
-          id={menuId}
-          role="menu"
-          className="absolute left-0 top-full z-30 mt-2 min-w-[260px] overflow-hidden rounded-[1.25rem] border border-[var(--mkt-border)] bg-[var(--mkt-s1)] py-2 shadow-[0_16px_48px_rgba(13,13,11,0.08)]"
-        >
-          {PRODUCT_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              role="menuitem"
-              onClick={() => onOpenChange(false)}
-              className="block px-4 py-2.5 no-underline transition-colors hover:bg-[rgba(61,150,96,0.05)]"
-            >
-              <span className="block text-[0.875rem] text-[var(--mkt-text1)]">{link.label}</span>
-              <span className="mt-0.5 block text-[0.75rem] text-[var(--mkt-text3)]">
-                {link.stage}
-              </span>
-            </a>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-}
+export const NAV_LINKS: readonly MarketingNavLink[] = PRIMARY_NAV;
 
 function MobileNavDrawer({
   open,
   onClose,
   links,
   primaryCta,
-  showProducts = true,
 }: {
   open: boolean;
   onClose: () => void;
   links: readonly MarketingNavLink[];
   primaryCta: { href: string; label: string };
-  showProducts?: boolean;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -132,26 +58,6 @@ function MobileNavDrawer({
         </div>
 
         <ul className="flex flex-col gap-0.5">
-          {showProducts ? (
-            <li className="mb-3 border-b border-[var(--mkt-border)] pb-3">
-              <p className="px-1 pb-2 text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
-                Products
-              </p>
-              {PRODUCT_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={onClose}
-                  className="block px-1 py-2 text-[0.9375rem] text-[var(--mkt-text2)] no-underline transition hover:text-[var(--mkt-text1)]"
-                >
-                  {link.label}
-                  <span className="mt-0.5 block text-[0.75rem] text-[var(--mkt-text3)]">
-                    {link.stage}
-                  </span>
-                </a>
-              ))}
-            </li>
-          ) : null}
           {links.map((link) => (
             <li key={`${link.href}-${link.label}`}>
               <a
@@ -172,7 +78,7 @@ function MobileNavDrawer({
             className="w-full justify-center"
             onClick={onClose}
           >
-            Log in
+            Sign in
           </MarketingButtonLink>
           <MarketingButtonLink
             href={primaryCta.href}
@@ -190,21 +96,18 @@ function MobileNavDrawer({
 
 export function MarketingNav({
   links,
-  primaryCta = { href: "/signup", label: "Start Free" },
-  showProductsDropdown = true,
+  primaryCta = { href: "/signup", label: "Start" },
 }: {
   links?: readonly MarketingNavLink[];
   primaryCta?: { href: string; label: string };
-  /** When false, only render the provided flat links (e.g. product pages). */
+  /** @deprecated Products dropdown removed — primary IA is flat. */
   showProductsDropdown?: boolean;
 } = {}) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [productsOpen, setProductsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const menuButtonId = useId();
 
-  const useSiteNav = links === undefined;
-  const resolvedLinks = useSiteNav ? NAV_LINKS : links;
-  const dropdown = useSiteNav && showProductsDropdown;
+  const resolvedLinks = links ?? NAV_LINKS;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -224,7 +127,6 @@ export function MarketingNav({
       >
         <MarketingLogo />
         <nav className="mx-auto hidden items-center gap-1 md:flex" aria-label="Primary">
-          {dropdown ? <ProductsDropdown open={productsOpen} onOpenChange={setProductsOpen} /> : null}
           {resolvedLinks.map((link) => (
             <a
               key={`${link.href}-${link.label}`}
@@ -238,6 +140,7 @@ export function MarketingNav({
         <div className="ml-auto flex items-center gap-1.5 md:ml-3">
           <button
             type="button"
+            id={menuButtonId}
             aria-expanded={mobileOpen}
             aria-controls="marketing-mobile-nav"
             onClick={() => setMobileOpen((v) => !v)}
@@ -251,7 +154,7 @@ export function MarketingNav({
             <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
           </button>
           <MarketingButtonLink href="/login" variant="ghost" className="hidden sm:inline-flex">
-            Log in
+            Sign in
           </MarketingButtonLink>
           <MarketingButtonLink href={primaryCta.href} variant="primary">
             {primaryCta.label}
@@ -263,7 +166,6 @@ export function MarketingNav({
         onClose={() => setMobileOpen(false)}
         links={resolvedLinks}
         primaryCta={primaryCta}
-        showProducts={dropdown}
       />
     </>
   );

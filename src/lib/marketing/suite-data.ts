@@ -9,27 +9,35 @@ import {
 
 export { COMPANY_MISSION, COMPANY_POSITIONING };
 
-/** Product links for nav dropdown / product page secondary nav */
+/** Primary marketing header links — founder-simplified IA. */
+export const PRIMARY_NAV = [
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/experience", label: "Experience" },
+  { href: "/launchpad", label: "Launchpad" },
+  { href: "/professional-workspace", label: "Professional Workspace" },
+] as const;
+
+/** Product links for footer / secondary surfaces */
 export const PRODUCT_LINKS = [
   { href: "/experience", label: "Experience", stage: "Build the experience" },
   { href: "/launchpad", label: "Launchpad", stage: "Land the opportunity" },
-  { href: "/professional-workspace", label: "Professional Workspace", stage: "Succeed in the role" },
+  {
+    href: "/professional-workspace",
+    label: "Professional Workspace",
+    stage: "Succeed in the role",
+  },
 ] as const;
 
-/** Flat nav used on product pages (Home + siblings + Pricing) */
-export const PRODUCT_NAV = [
-  ...PRODUCT_LINKS.map(({ href, label }) => ({ href, label })),
-  { href: "/pricing", label: "Access" },
-] as const;
+/**
+ * Flat nav for product marketing pages — same primary set, excluding current path.
+ * @deprecated Prefer PRIMARY_NAV; kept for callers that still filter PRODUCT_NAV.
+ */
+export const PRODUCT_NAV = PRIMARY_NAV;
 
+/** Site nav used by MarketingNav when no links override is passed. */
 export const SITE_NAV = {
   products: PRODUCT_LINKS,
-  links: [
-    { href: "/#journey", label: "How it works" },
-    { href: "/pricing", label: "Access" },
-    { href: "/resources", label: "Resources" },
-    { href: "/about", label: "About" },
-  ],
+  links: PRIMARY_NAV,
 } as const;
 
 export const SUITE_PRODUCTS = [

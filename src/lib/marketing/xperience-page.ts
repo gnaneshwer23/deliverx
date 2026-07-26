@@ -16,8 +16,8 @@ export const XPERIENCE_PAGE: ProductPageContent = {
     label: "Join the pilot",
   },
   secondaryCta: {
-    href: "/pricing",
-    label: "See pilot access",
+    href: "/how-it-works",
+    label: "See how it works",
   },
   sections: [
     {

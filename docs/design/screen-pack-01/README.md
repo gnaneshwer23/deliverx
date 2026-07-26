@@ -25,7 +25,7 @@
 | Surface | Route | Pack disposition | Implementation rule |
 | --- | --- | --- | --- |
 | Home | `/` | **Pack-1 implementable now** | Evolve the existing marketing page; preserve honesty rails. |
-| How it works | `/solutions` | **Pack-1 implementable now** | Reframe the existing route; no net-new product promise. |
+| How it works | `/how-it-works` (legacy `/solutions` redirects) | **Pack-1 implementable now** | Canonical route `/how-it-works`; keep honesty rails. |
 | Product marketing | `/experience`, `/launchpad`, `/team-copilot`, `/professional-workspace` | **Pack-1 implementable now** | PI may remain a home section until a route is approved. |
 | Pricing money UI | `/pricing` | **Design-complete / build-gated** | Proposed £500/£250/£500/£800 packaging is not the accepted T9 catalogue. Do not publish or make purchasable without a new packaging decision, live Stripe, checkout smoke, and an explicit `DELIVERX_BILLING_ENFORCE` decision. |
 | Employers | Proposed `/employers` | **Design-complete / build-gated** | Narrative landing design is approved; employer accounts, matching and marketplace liquidity need separate founder build approval and operations. |

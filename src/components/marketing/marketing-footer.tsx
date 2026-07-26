@@ -13,23 +13,22 @@ const FOOTER_COLUMNS = [
   {
     title: "Products",
     links: [
-      { href: "/", label: "Home" },
       { href: "/experience", label: "Experience" },
       { href: "/launchpad", label: "Launchpad" },
       { href: "/professional-workspace", label: "Professional Workspace" },
+      { href: "/how-it-works", label: "How it works" },
     ],
   },
   {
-    title: "Company",
+    title: "More",
     links: [
-      { href: "/#journey", label: "How it works" },
-      { href: "/solutions", label: "Solutions" },
+      { href: "/#professional-intelligence", label: "Professional Intelligence" },
+      { href: "/professional-workspace", label: "Team Copilot" },
+      { href: "/pricing", label: "Pilot access" },
       { href: "/resources", label: "Resources" },
       { href: "/about", label: "About" },
-      { href: "/pricing", label: "Pilot access" },
-      { href: "/pricing#bundle", label: "Complete Journey" },
       { href: "/signup", label: "Join the pilot" },
-      { href: "/login", label: "Log in" },
+      { href: "/login", label: "Sign in" },
     ],
   },
 ] as const;
@@ -51,8 +50,8 @@ type FooterCta = {
 const DEFAULT_FOOTER_CTA: FooterCta = {
   title: "Start with DeliverX",
   subtitle: "Experience, Launchpad or Professional Workspace — open pilot access, or create an account.",
-  href: "/pricing",
-  label: "See pilot access",
+  href: "/signup",
+  label: "Start",
 };
 
 function FooterLink({

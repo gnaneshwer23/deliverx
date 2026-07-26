@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { HomeHero } from "@/components/marketing/home/home-hero";
 import {
-  HomeAiCompany,
   HomeBuiltFor,
   HomeExperienceRecord,
   HomeFaq,
@@ -9,13 +8,10 @@ import {
   HomeGuarantee,
   HomeJourney,
   HomeOutcomes,
-  HomeOutputs,
   HomePlatformPreview,
-  HomePricing,
   HomeProblem,
   HomeProducts,
   HomeStories,
-  HomeTeamCopilotPreview,
 } from "@/components/marketing/home/home-sections";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { MarketingPageShell } from "@/components/marketing/marketing-layout";
@@ -27,7 +23,7 @@ import {
 import { HOME_SUPPORT } from "@/lib/marketing/homepage-data";
 
 export const metadata: Metadata = {
-  title: "DeliverX — Complete Career Intelligence Platform",
+  title: "DeliverX — Experience, Launchpad and Professional Workspace",
   description: HOME_SUPPORT,
   openGraph: {
     title: "DeliverX — AI Product Experience Company",
@@ -38,7 +34,7 @@ export const metadata: Metadata = {
 export default function SuiteHomePage() {
   return (
     <MarketingPageShell>
-      <MarketingNav primaryCta={{ href: "/signup", label: "Join the pilot" }} />
+      <MarketingNav primaryCta={{ href: "/signup", label: "Start" }} />
 
       <main id="main-content">
         <HomeHero />
@@ -47,19 +43,14 @@ export default function SuiteHomePage() {
         <HomeProducts />
         <HomeJourney />
         <HomePlatformPreview />
-        <HomeOutputs />
-        <HomeAiCompany />
         <HomeExperienceRecord />
-        <HomeTeamCopilotPreview />
         <HomeOutcomes />
-        <HomePricing />
         <HomeGuarantee />
         <HomeStories />
         <HomeFaq />
         <HomeFinalCta />
       </main>
 
-      {/* Page already ends with HomeFinalCta — omit duplicate footer CTA band */}
       <MarketingFooter cta={null} />
     </MarketingPageShell>
   );

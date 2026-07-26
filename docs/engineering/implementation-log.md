@@ -1,4 +1,13 @@
-## 2026-07-26 — Professional Workspace UI parity (Experience / Launchpad)
+## 2026-07-26 — Marketing IA simplify (founder request)
+
+Founder: primary marketing nav = How it works · Experience · Launchpad · Professional Workspace (+ Start / Sign in). Secondary links demoted to footer. Experience/Launchpad/Workspace heroes strengthened with product-frame dashboard mocks (no unexplained score theatre). New `/how-it-works` with end-to-end workflow + per-step SVG diagrams; `/solutions` redirects there. Homepage fold trimmed (pricing / Team Copilot mission-control preview off main story).
+
+Screen-pack note: pack-01 listed how-it-works on `/solutions`; canonical public route is now `/how-it-works` (permanent redirect preserves old URL).
+
+Verification: lint + build; browser check of marketing surfaces.
+
+---
+
 
 Founder feedback: Workspace was not the same designed UI as Experience and Launchpad after suite-shell parity (`74daea5`).
 

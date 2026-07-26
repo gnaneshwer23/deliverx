@@ -11,10 +11,10 @@ import {
   XPERIENCE_SIGNUP_HREF,
 } from "@/lib/marketing/career-suite";
 
-export const HOME_EYEBROW = "The Complete Career Intelligence Platform";
+export const HOME_EYEBROW = "Experience · Launchpad · Professional Workspace";
 
 export const HOME_SUPPORT =
-  "DeliverX helps you gain practical experience, secure career opportunities, and deliver products with confidence.";
+  "DeliverX gives professionals a realistic company, meaningful work and AI colleagues to help them build evidence-backed experience — then turn that record into career action.";
 
 export const BUILT_FOR = [
   "Career Switchers",
@@ -181,14 +181,14 @@ export const EXPERIENCE_TIMELINE = [
 ] as const;
 
 export const TEAM_COPILOT_PANELS = [
-  { title: "Roadmap", body: "Shared product roadmap with clear ownership." },
-  { title: "Delivery", body: "Sprint health and release readiness at a glance." },
-  { title: "Risks", body: "RAID intelligence before issues become blockers." },
-  { title: "Stakeholders", body: "Communication and alignment across roles." },
-  { title: "Releases", body: "Launch plans with confidence scoring." },
-  { title: "Executive Dashboard", body: "Leadership view of progress and risk." },
-  { title: "Sprint Confidence", body: "Predictability signals for the current sprint." },
-  { title: "Dependency Graph", body: "See what blocks what — before it hurts." },
+  { title: "Tasks", body: "Shared work with clear ownership." },
+  { title: "Meetings", body: "Agendas and notes tied to the project." },
+  { title: "Decisions", body: "Recorded choices with contribution trails." },
+  { title: "Risks", body: "Surface blockers before they stall delivery." },
+  { title: "Artefacts", body: "Documents you author — AI drafts stay labelled." },
+  { title: "Evidence Review", body: "Inspect what work demonstrated." },
+  { title: "Coach", body: "Contextual drafts attached to real work." },
+  { title: "Consent", body: "Observation stays off until you enable it." },
 ] as const;
 
 export const OUTCOMES = [
