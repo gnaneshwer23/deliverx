@@ -17,6 +17,7 @@ import {
   loadRecentSnapshotClaims,
   toPiProfileScoreRun,
 } from "@/lib/capability-engine/snapshot-claims";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
@@ -136,6 +137,10 @@ export async function POST(request: Request) {
         eventType,
         findings,
         evidenceHref: "/profile/evidence?run=1",
+      });
+      await emitPilotKpi("outcome_event_recorded", {
+        outcome_type: eventType,
+        has_artefact: Boolean(body.hasArtefact),
       });
 
       return NextResponse.json({

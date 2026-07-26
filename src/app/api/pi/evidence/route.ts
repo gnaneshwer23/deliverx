@@ -9,6 +9,7 @@ import {
   type PiEvidenceSourceType,
 } from "@/lib/evidence-ledger/types";
 import { deriveEvidenceStrength } from "@/lib/verified-portfolio/types";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
@@ -171,6 +172,14 @@ export async function POST(request: Request) {
         promptHash: typeof body.promptHash === "string" ? body.promptHash : null,
       },
     });
+
+    if (!result.duplicate) {
+      await emitPilotKpi("evidence_appended", {
+        source_type: sourceType,
+        category: categoryRaw,
+        actor_type: actorType,
+      });
+    }
 
     return NextResponse.json(result, { status: result.duplicate ? 200 : 201 });
   } catch (err) {

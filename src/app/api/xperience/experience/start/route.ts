@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { parseCandidateProfile } from "@/lib/xperience/parse-profile";
 import { startExperience } from "@/lib/xperience/store";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -37,6 +38,9 @@ export async function POST(request: Request) {
 
   try {
     const experience = await startExperience(supabase, user, profile);
+    if (experience.created) {
+      await emitPilotKpi("experience_started", { source: "xperience" });
+    }
     return NextResponse.json({
       ...experience,
       status: experience.status.toLowerCase(),

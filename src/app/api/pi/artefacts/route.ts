@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { assertPiAccess } from "@/lib/access/gate";
 import { createArtefact, listArtefacts } from "@/lib/artefacts";
 import { isArtefactKind, isArtefactSourceSurface } from "@/lib/artefacts/types";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export async function GET() {
   const supabase = await createClient();
@@ -85,6 +86,13 @@ export async function POST(request: Request) {
           }
         : undefined,
     });
+    if (result.version) {
+      await emitPilotKpi("artefact_version_created", {
+        kind: result.artefact.kind,
+        source_surface: result.artefact.sourceSurface ?? "unknown",
+        version_number: result.version.versionNumber,
+      });
+    }
     return NextResponse.json({ ok: true, ...result }, { status: 201 });
   } catch (error) {
     console.error("[pi/artefacts] create failed", error);

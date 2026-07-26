@@ -12,7 +12,7 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
-**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1 shipped** (`confidence-bands@2026.1`). **B2 shipped** (code on `main`; migration `0098` applied to prod `jibmyxaldetyycmtlxet`; Vercel `DELIVERX_RECOMMENDATION_SM=on` for Production + Preview). Other Bn not authorised until founder selects.
+**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1–B3 shipped**: confidence bands, recommendation SM, and Vercel pilot KPI custom events. PostHog remains deferred pending FD-PACK-7. Other Bn not authorised until founder selects.
 
 ---
 
@@ -155,8 +155,8 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Open** | Defer — clarify vs R-P2-09 | M | Pack centres human reviewer; shipped Verified = T8 attestation |
 | **PACK-E6** | Onboarding shape: keep 6-step PI vs rebuild toward pack 8-step conversation | **Pending decision** | Defer | M | Shipped `/onboarding/profile` steps differ; no rebuild without FD |
 | **PACK-E7** | App-shell global search (+ help) | **Open** | Defer | M | Suite nav exists; search/help not inventoried before |
-| **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Open** | Defer | M | PRD targets exist; product analytics thin → phase **B3**; provider-agnostic |
-| **PACK-E9** | PostHog vs keep Vercel Analytics | **Pending decision** | Reject default (Vercel) | M | PostHog MCP authenticated in workspace — still **FD-PACK-7**; do not assume PostHog |
+| **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Done (B3)** | Keep | M | Typed Vercel event catalogue, real state-transition emission, PII sanitizer, KPI operations note; no DB migration |
+| **PACK-E9** | PostHog vs keep Vercel Analytics | **Vercel selected for pilot; PostHog pending** | Keep Vercel now | M | Founder authorized Vercel path; PostHog SDK/sink remains blocked by **FD-PACK-7** |
 
 **Explicitly rejected from pack (do not add as build work):** money-back / guarantee terms on Pricing; schema rename to pack table names; restart M0–M7 greenfield; “one company” seed replacing 12-company catalogue (PD-2026-07-03); Insights as a third product Home; Prisma alongside typed Supabase client.
 

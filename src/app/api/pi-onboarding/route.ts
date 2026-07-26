@@ -16,6 +16,7 @@ import {
   type PiRecommendedPath,
   isPiOnboardingStep,
 } from "@/lib/pi-onboarding/types";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +79,11 @@ export async function POST(request: Request) {
       console.error("[pi-onboarding] product sync failed", err);
       // Session is complete; product profile sync can be retried — do not block path.
     }
+
+    await emitPilotKpi("onboarding_pi_completed", {
+      chosen_path: chosen,
+      baseline_opt_in: payload.baselineOptIn !== false,
+    });
 
     return NextResponse.json({
       ok: true,

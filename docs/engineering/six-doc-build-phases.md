@@ -7,7 +7,7 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1 and B2 shipped** (founder `Start Building B1`; founder reply `B2` = FD-PACK-6 / PD-2026-07-26f, 2026-07-26). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B3 shipped** (B3 Vercel Analytics path authorized 2026-07-26; PostHog still FD-PACK-7). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
 **Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0098_pi_recommendations.sql` (applied 2026-07-26). New migrations continue at `0099+`. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26).
 
@@ -42,9 +42,9 @@
 
 | Status | Count | Notes |
 | --- | ---: | --- |
-| Built | 30 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendation SM |
+| Built | 31 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendations + B3 KPI events |
 | Partial | 27 | Remains mapped into Bn or remaining-work A/B |
-| Missing | 8 | Aligns with PACK-E1, E4–E9 (E2/E3 done) |
+| Missing | 7 | Aligns with PACK-E1, E4–E7/E9 (E2/E3/E8 done) |
 | Conflicts | 5 | Reject / modify-with-PD |
 | Out of charter | 4 | Marketplace, third SKU depth, multi-profession, microservices |
 | **Total material rows** | **74** | De-duplicated across docs 01–06 |
@@ -185,7 +185,7 @@ Evidence paths verified present unless noted.
 | **B0** | Archive pack into `docs/build-pack/` + advisory SoT note | S | Index / IMPL-PATH | FD-PACK-1/2 (optional) |
 | **B1** | Document + label versioned confidence-band algorithm | S · **Shipped** | Schema 5.1 / SCH-BANDS / explainability | — |
 | **B2** | Formal recommendation entity + state machine | M · **Shipped** | FR-010 / TRD-SM-REC / M7 “next action” | — |
-| **B3** | Pilot KPI event layer (provider-agnostic; PostHog optional) | M | METRICS / NFR-OBS / PACK-E8 | FD-PACK-7 for PostHog sink only |
+| **B3** | Pilot KPI event layer (Vercel; PostHog deferred) | M · **Shipped** | METRICS / NFR-OBS / PACK-E8 | — |
 | **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M | FR-007 remainder / FLOW-REVIEWER / M5 review | FD-PACK-5 |
 | **B5** | Onboarding shape (keep 6-step **or** rebuild toward 8-step) | M | FR-003 / UX-ONB-8 / M3 | FD-PACK-3 |
 | **B6** | Xperience entry ceremony screens | M | FR-005 / FLOW-XP-ENTRY / M4 | FD-PACK-4 |
@@ -257,21 +257,21 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B3 — Pilot KPI instrumentation
+### B3 — Pilot KPI instrumentation (**shipped** 2026-07-26)
 
 1. **Objective / value:** Measure activation / loop completion against PRD targets without vanity dashboards.  
 2. **IDs:** METRICS, NFR-OBS, PACK-E8; sink choice PACK-E9.  
 3. **Reuse:** Existing domain events where present; Vercel Analytics.  
-4. **Code areas:** `src/lib/analytics/` event catalogue; emit on signup, onboarding complete, activity start, submission, evidence verify, PI update.  
-5. **DB:** Optional `0098+` `analytics_events` if server-side store desired; else client/provider only.  
+4. **Code areas:** `src/lib/analytics/` typed event catalogue + privacy sanitizer; emit on successful signup, onboarding complete, Experience start/plan, persisted capability assessment, evidence append, artefact version, recommendation viewed/accepted, outcome record.
+5. **DB:** **None** — Vercel custom events only.
 6. **APIs:** Internal emit helper; no public analytics API.  
 7. **AI:** Log schema-failure/cost already in `ai_interactions` — link funnel events to interaction IDs where useful.  
 8. **UX:** None (or internal ops view later — out of Bn unless asked).  
-9. **Deps/risks:** Privacy — no PII in event props; consent for marketing analytics if added. PostHog MCP authenticated in workspace — **adapter optional** after FD-PACK-7.  
-10. **AC/tests:** Event name contract tests; no PII fixture asserts.  
-11. **Flag:** `DELIVERX_ANALYTICS=vercel|posthog|off`.  
-12. **DoD:** Catalogue documented; core funnel events emit; provider selectable.  
-13. **Size / approval:** M · PostHog sink needs **FD-PACK-7**; Vercel-only path can proceed without it.
+9. **Deps/risks:** Privacy — typed allowlist excludes PII/free text; Vercel custom-event plan availability and protected-preview delivery must be confirmed operationally. PostHog adapter remains blocked by FD-PACK-7.
+10. **AC/tests:** Event-name contracts + PII stripping + kill-switch tests; `test:pi`.
+11. **Flag:** `DELIVERX_ANALYTICS=vercel|off` (production default Vercel); `NEXT_PUBLIC_DELIVERX_PILOT_KPIS=off` for client signup kill switch. `posthog` intentionally emits nothing.
+12. **DoD:** **Met** — catalogue + KPI map documented; core state transitions emit; no migration or PostHog dependency.
+13. **Size / approval:** M · founder authorized Vercel path; PostHog still needs **FD-PACK-7**.
 
 **Pack theme:** PRD §7 metrics / TRD observability.
 
@@ -439,7 +439,7 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1 and B2 shipped.** Next eng candidate: **B3 (pilot KPI instrumentation)** — Vercel-only path can proceed without FD-PACK-7; PostHog sink needs **FD-PACK-7**.
+**B1–B3 shipped.** Next eng candidate: **B4 (human reviewer ops)** only with FD-PACK-5, or founder-ops/residual hardening. PostHog remains deferred pending FD-PACK-7.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 

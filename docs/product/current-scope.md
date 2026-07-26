@@ -2,7 +2,7 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **B2 recommendation state machine — shipped** (founder-authorized 2026-07-26 via reply `B2` = FD-PACK-6; PD-2026-07-26f). B1 confidence bands remain live (`confidence-bands@2026.1`). T9 commercial code remains shipped; **payments later**.
+**Active phase:** **B3 pilot KPI instrumentation — shipped** (founder-authorized 2026-07-26: “B3 pilot KPIs — Vercel Analytics path can start now; PostHog sink needs FD-PACK-7”; PD-2026-07-26g). B1/B2 remain live. T9 commercial code remains shipped; **payments later**.
 **As of:** 2026-07-26  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
@@ -20,6 +20,7 @@
 **T9 status:** **Shipped in code (founder-authorized 2026-07-26, `approve t9`)** — migration `0097`; Stripe Checkout + Customer Portal; idempotent subscription webhooks; Experience / Launchpad / Complete Journey entitlements; optional enforcement via `DELIVERX_BILLING_ENFORCE=on`; honest prices appear only when all Stripe price IDs exist. **Live Stripe is TEST-ONLY / OFF until founder configures Stripe + Vercel env and webhook.**
 **B1 status:** **Shipped (founder-authorized 2026-07-26, `Start Building B1`)** — versioned algorithm `confidence-bands@2026.1`; typed SoT in `src/lib/capability-engine/confidence-bands.ts`; Profile / Career / Portfolio / Evidence “Why this band” labels; no DB migration; ScoreRun/bands never light Verified.
 **B2 status:** **Shipped + prod flag on (founder-authorized 2026-07-26, reply `B2` = FD-PACK-6 / PD-2026-07-26f)** — migration `0098_pi_recommendations.sql`; typed SoT `src/lib/recommendations/`; lifecycle `generated → viewed → accepted | dismissed` (+ `accepted → completed | dismissed`); `GET/POST/PATCH /api/pi/recommendations`; Profile + Career next-action UI; Vercel Production + Preview `DELIVERX_RECOMMENDATION_SM=on` (2026-07-26); dismiss/accept never mutate capability or Verified.
+**B3 status:** **Shipped (founder-authorized 2026-07-26; PD-2026-07-26g)** — typed privacy allowlist `src/lib/analytics/`; Vercel server/client custom events on successful signup, onboarding completion, Experience start/plan, persisted capability assessment, evidence append, artefact version, recommendation viewed/accepted, and outcome record; no DB migration; production-default server events with `DELIVERX_ANALYTICS=off` kill switch; PostHog not wired pending FD-PACK-7.
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -39,6 +40,7 @@
 | **P8 / T8** | Shipped | External attestation — `/portfolio/attest/[token]`, ledger `external_verification`, Verified gate |
 | **B1** | Shipped | Confidence bands `confidence-bands@2026.1` — algorithm doc + UI “Why this band” |
 | **B2** | Shipped | Recommendation SM `0098` — Profile / Career next actions with accept/dismiss |
+| **B3** | Shipped | Vercel pilot KPI custom events — typed catalogue, no PII, no DB/PostHog sink |
 
 **Also present (partial / supporting):** Professional Workspace (`/workspace`), Verified Portfolio packaging (`/portfolio`), Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback), admin competency framework seed (`pm-core`), PI review/challenge.
 
@@ -79,7 +81,7 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-work.md) · ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
-**Candidate next scope (not authorised until founder picks a Bn):** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1 and B2 shipped.** Next eng candidate: **B3** (pilot KPI events; PostHog sink only with **FD-PACK-7**) or residual founder-ops items. Does **not** authorise pack M0–M7 restart or live payments.
+**Candidate next scope (not authorised until founder picks a Bn):** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1, B2 and B3 shipped.** Next candidate: **B4** only with FD-PACK-5, or residual founder-ops items. PostHog remains deferred behind FD-PACK-7. Does **not** authorise pack M0–M7 restart or live payments.
 
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
@@ -87,7 +89,7 @@ Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-wo
 4. **B2 pilot UI:** **Done (ops)** — migration `0098` on prod `jibmyxaldetyycmtlxet`; Vercel Production + Preview `DELIVERX_RECOMMENDATION_SM=on` (redeployed 2026-07-26).
 5. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
 6. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
-7. **Engineering (candidate, six-doc):** **B1 + B2 done.** B3–B7 only with matching founder FD-PACK decisions; B0 optional docs archive.
+7. **Engineering (candidate, six-doc):** **B1–B3 done.** B4–B7 only with matching founder FD-PACK decisions; B0 optional docs archive.
 
 Defer marketplace, graph DB, multi-profession expansion, and microservice splits without new approval.
 
@@ -101,4 +103,4 @@ Defer marketplace, graph DB, multi-profession expansion, and microservice splits
 4. Update this file when the active phase changes.
 5. T9 commercial code is shipped; **payments later** — do not claim live payments until Stripe founder ops and production smoke pass; do not invent eng work whose only goal is enabling Stripe.
 6. Follow [`../engineering/remaining-work.md`](../engineering/remaining-work.md) and [`../engineering/next-steps.md`](../engineering/next-steps.md) for residual hardening.
-7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit. **B1 and B2 are authorized and shipped.**
+7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit. **B1–B3 are authorized and shipped.**

@@ -7,6 +7,7 @@ import {
   planExperienceFromGaps,
   buildPlanInputFromProfile,
 } from "@/lib/experience-planner";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
@@ -90,6 +91,9 @@ export async function POST(request: Request) {
   try {
     const result = await createOrRefreshExperiencePlan(supabase, user.id, {
       force: Boolean(body.force),
+    });
+    await emitPilotKpi("experience_plan_generated", {
+      created: result.created,
     });
     return NextResponse.json({
       ok: true,

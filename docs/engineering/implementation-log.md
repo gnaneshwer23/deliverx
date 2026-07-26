@@ -1,3 +1,9 @@
+## 2026-07-26 — B3: Pilot KPI instrumentation (Vercel)
+
+Founder authorized the Vercel Analytics path for B3 and kept a PostHog sink behind FD-PACK-7 (PD-2026-07-26g). Shipped a typed event catalogue and privacy sanitizer in `src/lib/analytics/`; best-effort Vercel server events after successful onboarding, Experience, capability assessment, evidence, artefact, recommendation and outcome state changes; client event after successful signup; no PII/free-text properties, user IDs, DB migration, or PostHog dependency. `DELIVERX_ANALYTICS=off` is the server kill switch; production defaults on. Event operations and KPI mapping: `docs/engineering/pilot-kpi-instrumentation.md`.
+
+Verification: focused KPI units PASS (5); `test:pi` PASS (325); touched-source ESLint PASS; non-live release gate PASS; production build PASS. Standalone `tsc --noEmit` remains blocked by six pre-existing `e2e/t6-security-journeys.test.ts` `never.id` fixture errors, with no B3 source errors reported. Build retains the pre-existing `phaseIHealth.ts` whole-project NFT trace warning.
+
 ## 2026-07-26 — B2 flag on in production
 
 Founder request to deploy all built work enabled Vercel `DELIVERX_RECOMMENDATION_SM=on` for Production + Preview. Redeployed production so the env takes effect. `DELIVERX_BILLING_ENFORCE` left unset (payments still off). Migration `0098` already on `jibmyxaldetyycmtlxet`. Code HEAD already on `main` (`b48a790` and predecessors B1/B2/deploy fix) — no new feature commit required for enablement.

@@ -1,6 +1,6 @@
 # 14 — Analytics & Product Metrics
 
-**Status:** Catalogue + honesty on gaps  
+**Status:** B3 Vercel pilot KPI instrumentation shipped
 **Audience:** Product, Engineering  
 **As of:** 2026-07-25
 
@@ -14,13 +14,16 @@ Measure activation, evidence density, judgement quality, privacy honesty, and Ve
 
 | Present | Gap |
 | --- | --- |
-| Vercel Analytics / Speed Insights on web | Not a full product event warehouse |
+| Vercel Analytics / Speed Insights + B3 custom events | Not a full product event warehouse; PostHog deferred pending FD-PACK-7 |
 | `pi_domain_events` for PI domain lifecycle | Not all product UX events mirrored |
 | `ai_interactions` + `pi_ai_usage_daily` | Cost/latency — not funnel analytics |
 | Attestation events (`vpp_attestation_events`) | Good audit; may lack marketing funnel join |
 | Privacy request records | Operational, not growth analytics |
 
-**Gap:** Many catalogue events below are **desired schema**; do not assume client `track()` exists for each. Prefer emitting into domain events or a thin analytics helper when implementing slices — do not invent a parallel metrics SKU.
+**B3:** Core pilot events now emit through the typed allowlist in `src/lib/analytics/`;
+see [`engineering/pilot-kpi-instrumentation.md`](./engineering/pilot-kpi-instrumentation.md).
+Rows outside that B3 map remain desired schema unless their domain store already records
+them. Do not invent a parallel metrics SKU or assume PostHog is wired.
 
 ---
 
@@ -28,24 +31,25 @@ Measure activation, evidence density, judgement quality, privacy honesty, and Ve
 
 | Event name | Trigger | Properties (suggested) | Segment | Purpose |
 | --- | --- | --- | --- | --- |
-| `account_created` | Signup success | `method` | Auth | Top of funnel |
+| `account_created` | Signup success | `method`, `product_intent` | Auth | Top of funnel |
 | `onboarding_pi_step_completed` | Each PI step save | `step`, `session_id` | Onboarding | Funnel drop-off |
-| `onboarding_pi_completed` | Path chosen | `recommended_path`, `chosen_path` | Onboarding | Activation |
-| `experience_plan_generated` | Plan create | `scenario_count` | Experience | Engagement |
-| `experience_started` | Scenario/sim start | `company_key`, `scenario_id` | Experience | Activation |
-| `artefact_version_submitted` | New artefact version | `artefact_id`, `provenance` | Evidence | Work density |
-| `evidence_appended` | Ledger append | `source_type`, `has_artefact_version` | Evidence | Core KPI |
+| `onboarding_pi_completed` | Path chosen | `chosen_path`, `baseline_opt_in` | Onboarding | Activation |
+| `experience_started` | Scenario/sim start | `source` | Experience | Activation |
+| `experience_plan_generated` | Persisted plan create/refresh | `created` | Experience | Core loop |
+| `artefact_version_created` | New immutable artefact version | `kind`, `source_surface`, `version_number` | Evidence | Work density |
+| `evidence_appended` | Ledger append | `source_type`, `category`, `actor_type` | Evidence | Core KPI |
 | `evidence_status_transitioned` | Status change | `from`, `to` | Evidence | Trust pipeline |
 | `evidence_externally_verified` | T8 confirm path | `entry_id`, `attestation_id` | Trust | Verified integrity |
-| `capability_score_run_created` | Engine persist | `run_kind`, `framework_version_id`, `rubric_source` | Judgement | Capability quality |
+| `capability_assessment_completed` | Engine ScoreRun + snapshot persist | `run_kind`, `framework_pinned`, `rubric_source` | Judgement | Capability quality |
 | `snapshot_claims_refreshed` | Projection update | `claim_count` | Judgement | Downstream freshness |
-| `recommendation_viewed` | Plan/readiness shown | `surface`, `readiness_source` | Launchpad/Exp | Explainability |
+| `recommendation_viewed` | Generated recommendation transitions to viewed | `surface`, `count` | Launchpad/Exp | Explainability |
+| `recommendation_accepted` | Recommendation transitions to accepted | `surface` | Launchpad/Exp | Follow-through |
 | `application_submitted` | Career application record | `role_label` | Launchpad | Outcome proxy |
 | `collaboration_contribution` | Workspace contribution | `project_id?` | Workspace | Org evidence |
 | `observation_consent_changed` | Consent update | `enabled` | Privacy | Expect low opt-in |
 | `intervention_draft_created` | Coach draft | `agent` | AI | Coaching usage |
 | `learning_item_completed` | Learning progress | `path_id` | Learning | Knowledge only |
-| `outcome_event_recorded` | P7 outcome | `outcome_type` | Outcomes | Calibration |
+| `outcome_event_recorded` | P7 outcome | `outcome_type`, `has_artefact` | Outcomes | Calibration |
 | `attestation_requested` | Owner creates request | `entry_id` | T8 | Funnel |
 | `attestation_confirmed` | Attestor confirm | `entry_id` | T8 | Success |
 | `attestation_disputed` | Attestor dispute | `entry_id` | T8 | Trust ops |

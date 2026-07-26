@@ -101,6 +101,7 @@ export async function startExperience(
   if (existing) {
     return {
       mode: "database" as const,
+      created: false,
       enrolmentId: existing.id as string,
       company: existing.company_name as string,
       day: existing.day as number,
@@ -210,6 +211,7 @@ export async function startExperience(
 
   return {
     mode: "database" as const,
+    created: true,
     enrolmentId: enrolment.id as string,
     company: enrolment.company_name as string,
     day: enrolment.day as number,

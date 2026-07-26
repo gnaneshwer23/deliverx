@@ -11,6 +11,7 @@ import {
 import type { RecommendationAction } from "@/lib/recommendations";
 import { transitionRecommendation } from "@/lib/recommendations";
 import { createClient } from "@/lib/supabase/server";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 const USER_ACTIONS: readonly RecommendationAction[] = [
   "viewed",
@@ -133,7 +134,10 @@ export async function PATCH(request: Request) {
     recommendationId?: unknown;
     recommendationIds?: unknown;
     action?: unknown;
+    surface?: unknown;
   };
+  const surface =
+    value.surface === "profile" || value.surface === "career" ? value.surface : "unknown";
 
   const action = typeof value.action === "string" ? value.action : "";
   if (!USER_ACTIONS.includes(action as RecommendationAction)) {
@@ -153,6 +157,9 @@ export async function PATCH(request: Request) {
     }
     try {
       const updated = await markRecommendationsViewed(supabase, user.id, ids);
+      if (updated > 0) {
+        await emitPilotKpi("recommendation_viewed", { surface, count: updated });
+      }
       return NextResponse.json({ ok: true, updated, capabilityAssigned: false });
     } catch (error) {
       console.error("[pi/recommendations] mark viewed failed", error);
@@ -173,6 +180,9 @@ export async function PATCH(request: Request) {
       recommendationId: value.recommendationId,
       to: action as RecommendationAction,
     });
+    if (action === "accepted" && !result.idempotent) {
+      await emitPilotKpi("recommendation_accepted", { surface });
+    }
     return NextResponse.json({
       ok: true,
       recommendation: result.record,

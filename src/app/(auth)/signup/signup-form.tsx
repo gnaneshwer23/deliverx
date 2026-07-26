@@ -10,6 +10,7 @@ import {
   type SuiteProduct,
 } from "@/lib/marketing/product-intent";
 import { dxClass } from "@/lib/dx-theme";
+import { trackPilotKpi } from "@/lib/analytics/client";
 
 export function SignupForm({
   invite,
@@ -79,6 +80,15 @@ export function SignupForm({
       setError(formatAuthError(signUpError.message));
       setPending(false);
       return;
+    }
+
+    // Supabase can return a non-error response for an already-registered address;
+    // identities confirms that this request actually created an auth identity.
+    if ((data.user?.identities?.length ?? 0) > 0) {
+      trackPilotKpi("account_created", {
+        method: "password",
+        ...(product ? { product_intent: product } : {}),
+      });
     }
 
     if (data.session) {

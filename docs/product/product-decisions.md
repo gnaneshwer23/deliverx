@@ -420,13 +420,26 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26g — B3 pilot KPIs use Vercel Analytics; PostHog deferred
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder message **“B3 pilot KPIs — Vercel Analytics path can start now; PostHog sink needs FD-PACK-7”** authorizes six-doc phase **B3** on the existing Vercel Analytics path. Pilot KPI events use one typed, privacy-allowlisted catalogue and emit only after real state changes. No analytics database table is added. PostHog is not installed or configured as a product analytics sink; FD-PACK-7 remains open for that separate decision. |
+| **Privacy / control** | Third-party event properties exclude PII and free-text evidence. No user ID is required. Server emission defaults on only in Vercel production and can be killed with `DELIVERX_ANALYTICS=off`; client signup emission can be killed with `NEXT_PUBLIC_DELIVERX_PILOT_KPIS=off`. Setting `DELIVERX_ANALYTICS=posthog` emits nothing. |
+| **Why** | Existing Vercel Web Analytics provides the smallest coherent PACK-E8 path without adding a second SDK, event warehouse, or speculative abstraction. Real transitions provide pilot evidence-loop signal; page-view theatre does not. |
+| **Consequence** | B3 / PACK-E8 ships with `src/lib/analytics/` and [`../engineering/pilot-kpi-instrumentation.md`](../engineering/pilot-kpi-instrumentation.md). PACK-E9 is resolved only for the current pilot path (Vercel now); PostHog remains explicitly deferred pending FD-PACK-7. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
-Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1 and B2 shipped**; no Bn beyond those should start without the matching decision.
+Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B3 shipped**; no Bn beyond those should start without the matching decision.
 
 | ID | Decision | Default if silent | Blocks |
 | --- | --- | --- | --- |
@@ -436,7 +449,7 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-4** | Invest in Xperience entry ceremony vs Day-1 sufficiency for pilot? | Day-1 enough | B6 |
 | **FD-PACK-5** | Human reviewer queue as pilot ops path (**not** Verified badge path)? | Leave thin; T8 = Verified | B4 |
 | **FD-PACK-6** | Formal recommendation state machine (FR-010) now? | **Settled — yes (PD-2026-07-26f)** | — |
-| **FD-PACK-7** | PostHog vs stay on Vercel Analytics for pilot KPIs? | Stay Vercel; PostHog optional later | B3 PostHog sink |
+| **FD-PACK-7** | Add a PostHog product analytics sink after the Vercel pilot path? | Stay Vercel; PostHog optional later | PostHog sink only (B3 Vercel path shipped) |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | Defer search | B7 |
 
 **Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**.

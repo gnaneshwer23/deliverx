@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { assertPiAccess } from "@/lib/access/gate";
 import { addArtefactVersion, getArtefactDetail } from "@/lib/artefacts";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,13 @@ export async function POST(request: Request, context: Ctx) {
       storageRef: typeof data.storageRef === "string" ? data.storageRef : null,
       changeNote: typeof data.changeNote === "string" ? data.changeNote : undefined,
     });
+    if (!result.duplicate) {
+      await emitPilotKpi("artefact_version_created", {
+        kind: result.artefact.kind,
+        source_surface: result.artefact.sourceSurface ?? "unknown",
+        version_number: result.version.versionNumber,
+      });
+    }
     return NextResponse.json({ ok: true, ...result }, { status: 201 });
   } catch (error) {
     console.error("[pi/artefacts/versions] create failed", error);

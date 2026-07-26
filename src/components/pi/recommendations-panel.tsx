@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import type { RecommendationRecord } from "@/lib/recommendations/types";
 import { MAX_ACTIVE_RECOMMENDATIONS_SHOWN } from "@/lib/recommendations/generate";
@@ -24,6 +25,8 @@ const STATUS_LABEL: Record<string, string> = {
  * and offers the deterministic destination link.
  */
 export function RecommendationsPanel() {
+  const pathname = usePathname();
+  const analyticsSurface = pathname.startsWith("/career") ? "career" : "profile";
   const [state, setState] = useState<PanelState | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +65,11 @@ export function RecommendationsPanel() {
     void fetch("/api/pi/recommendations", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "viewed", recommendationIds: generatedIds }),
+      body: JSON.stringify({
+        action: "viewed",
+        recommendationIds: generatedIds,
+        surface: analyticsSurface,
+      }),
     }).then((res) => {
       if (res.ok) {
         setState((prev) =>
@@ -79,7 +86,7 @@ export function RecommendationsPanel() {
         );
       }
     });
-  }, [state]);
+  }, [analyticsSurface, state]);
 
   async function act(id: string, action: "accepted" | "dismissed" | "completed") {
     setBusyId(id);
@@ -88,7 +95,7 @@ export function RecommendationsPanel() {
       const res = await fetch("/api/pi/recommendations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recommendationId: id, action }),
+        body: JSON.stringify({ recommendationId: id, action, surface: analyticsSurface }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Update failed");

@@ -16,6 +16,7 @@ import {
 } from "@/lib/capability-engine/rubric-resolve-policy";
 import { latestStatus } from "@/lib/evidence-ledger/append";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
@@ -206,6 +207,14 @@ export async function POST(request: Request) {
     } catch (err) {
       console.error("[capability-engine] persist failed", err);
     }
+  }
+
+  if (persisted && !result.duplicate) {
+    await emitPilotKpi("capability_assessment_completed", {
+      run_kind: body.runKind === "baseline" ? "baseline" : "standard",
+      rubric_source: rubricSource,
+      framework_pinned: frameworkVersionId != null,
+    });
   }
 
   // Strip anything beyond user-facing explanations
