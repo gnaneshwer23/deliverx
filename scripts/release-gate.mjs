@@ -44,6 +44,7 @@ const PI_UNITS = [
   "src/lib/pi-assessment",
   "src/lib/pi-profile",
   "src/lib/pi-privacy",
+  "src/lib/pi-review",
   "src/lib/verified-portfolio",
   "src/lib/external-attestation",
   "src/lib/real-world-outcomes",

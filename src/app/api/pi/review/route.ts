@@ -4,10 +4,22 @@ import {
   createReviewCase,
   listReviewCases,
   isPiReviewSubjectKind,
+  isReviewerQueueEnabled,
   type PiReviewStatus,
 } from "@/lib/pi-review";
 
 export const dynamic = "force-dynamic";
+
+function flagOffResponse() {
+  return NextResponse.json({
+    data: [],
+    error: null,
+    enabled: false,
+    deliverxVerified: false,
+    notice:
+      "Reviewer queue is off. Set DELIVERX_REVIEWER_QUEUE=on to enable. Human review never grants Verified.",
+  });
+}
 
 export async function GET(request: Request) {
   const supabase = await createClient();
@@ -15,6 +27,8 @@ export async function GET(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!isReviewerQueueEnabled()) return flagOffResponse();
 
   const url = new URL(request.url);
   const statusParam = url.searchParams.get("status");
@@ -31,7 +45,12 @@ export async function GET(request: Request) {
     limit: 100,
   });
   if (error) return NextResponse.json({ error }, { status: 500 });
-  return NextResponse.json({ data: data ?? [], error: null });
+  return NextResponse.json({
+    data: data ?? [],
+    error: null,
+    enabled: true,
+    deliverxVerified: false,
+  });
 }
 
 export async function POST(request: Request) {
@@ -40,6 +59,18 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json(
+      {
+        error:
+          "Reviewer queue is disabled. Set DELIVERX_REVIEWER_QUEUE=on to enable.",
+        enabled: false,
+        deliverxVerified: false,
+      },
+      { status: 403 },
+    );
+  }
 
   let body: Record<string, unknown>;
   try {
@@ -86,5 +117,8 @@ export async function POST(request: Request) {
   });
 
   if (error) return NextResponse.json({ error }, { status: 500 });
-  return NextResponse.json({ data, error: null }, { status: 201 });
+  return NextResponse.json(
+    { data, error: null, enabled: true, deliverxVerified: false },
+    { status: 201 },
+  );
 }

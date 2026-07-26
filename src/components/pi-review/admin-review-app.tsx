@@ -13,6 +13,7 @@ import {
   type PiReviewSubjectKind,
 } from "@/lib/pi-review/types";
 import { availableActions } from "@/lib/pi-review/status-machine";
+import { REVIEW_DOES_NOT_GRANT_VERIFIED } from "@/lib/pi-review/trust-guards";
 
 type CaseRow = {
   id: string;
@@ -49,12 +50,19 @@ export function PiReviewAdminApp() {
   const [rationale, setRationale] = useState("");
   const [evidenceIdsRaw, setEvidenceIdsRaw] = useState("");
   const [proposedLevel, setProposedLevel] = useState("");
+  const [aiAssisted, setAiAssisted] = useState(false);
+  const [citationsRaw, setCitationsRaw] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/pi/review/admin");
     const json = await res.json();
     if (!res.ok) {
       setNotice(json.error || "Could not load admin queue");
+      return;
+    }
+    if (json.enabled === false) {
+      setCases([]);
+      setNotice(json.notice || "Reviewer queue is disabled for this environment.");
       return;
     }
     setCases(json.data ?? []);
@@ -94,6 +102,11 @@ export function PiReviewAdminApp() {
       if (proposedLevel.trim()) {
         proposedRevision.levelProposed = proposedLevel.trim();
       }
+      const citations = citationsRaw
+        .split(/[\s,]+/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((sourceId) => ({ sourceId }));
       const res = await fetch("/api/pi/review/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,6 +116,8 @@ export function PiReviewAdminApp() {
           rationale,
           evidenceIds,
           proposedRevision,
+          aiAssisted,
+          citations: aiAssisted ? citations : undefined,
         }),
       });
       const json = await res.json();
@@ -111,11 +126,13 @@ export function PiReviewAdminApp() {
         return;
       }
       setNotice(
-        `Admin ${PI_REVIEW_ACTION_LABELS[action]} → ${PI_REVIEW_STATUS_LABELS[json.data.toStatus as PiReviewStatus]}. Capability tables untouched.`,
+        `Admin ${PI_REVIEW_ACTION_LABELS[action]} → ${PI_REVIEW_STATUS_LABELS[json.data.toStatus as PiReviewStatus]}. Capability tables untouched. Verified unchanged.`,
       );
       setRationale("");
       setEvidenceIdsRaw("");
       setProposedLevel("");
+      setAiAssisted(false);
+      setCitationsRaw("");
       await load();
       await openCase(activeId);
     } finally {
@@ -137,8 +154,15 @@ export function PiReviewAdminApp() {
           Human review queue
         </h1>
         <p className="max-w-2xl text-sm text-[#4A4A45]">
-          Uphold, revise (with evidence), or escalate. Revising never silently rewrites verified
-          capability — it records a new event and signals reassessment.
+          Uphold, revise (with evidence), or escalate. Revising never silently rewrites capability —
+          it records a new event and signals reassessment. Observer / AI drafts are proposals only;
+          you decide.
+        </p>
+        <p
+          className="max-w-2xl rounded-md border border-[#D6D3C8] bg-[#F7F6F2] px-3 py-2 text-sm text-[#4A4A45]"
+          role="note"
+        >
+          {REVIEW_DOES_NOT_GRANT_VERIFIED}
         </p>
         <Link href="/pi/review" className="text-sm text-[#1C4A2E] underline">
           User review queue
@@ -149,6 +173,11 @@ export function PiReviewAdminApp() {
         {notice}
       </p>
 
+      {cases.length === 0 && !busy ? (
+        <p className="rounded-md border border-dashed border-[#D6D3C8] bg-white px-4 py-6 text-sm text-[#6B6B64]">
+          Admin queue is empty. Challenged and escalated cases appear here for decision.
+        </p>
+      ) : null}
       <button
         type="button"
         onClick={() => void load()}
@@ -230,6 +259,29 @@ export function PiReviewAdminApp() {
                     placeholder="e.g. developing"
                   />
                 </label>
+                <label className="flex items-start gap-2 text-xs text-[#6B6B64]">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5"
+                    checked={aiAssisted}
+                    onChange={(e) => setAiAssisted(e.target.checked)}
+                  />
+                  <span>
+                    Decision used an AI / Observer draft (label as draft; citations required when
+                    checked)
+                  </span>
+                </label>
+                {aiAssisted ? (
+                  <label className="block text-xs text-[#6B6B64]">
+                    Citation source ids (comma-separated)
+                    <input
+                      className="mt-1 w-full rounded-md border border-[#D6D3C8] px-2 py-1.5 text-sm font-[family-name:var(--font-dx-mono)]"
+                      value={citationsRaw}
+                      onChange={(e) => setCitationsRaw(e.target.value)}
+                      placeholder="context source ids used by the draft"
+                    />
+                  </label>
+                ) : null}
                 <button
                   type="button"
                   disabled={busy}
@@ -238,6 +290,9 @@ export function PiReviewAdminApp() {
                 >
                   {busy ? "Saving…" : "Apply admin decision"}
                 </button>
+                <p className="text-[11px] text-[#6B6B64]">
+                  Applying a decision does not grant Verified and does not write capability levels.
+                </p>
               </div>
 
               <ol className="space-y-2 border border-[#E5E2D9] bg-white px-4 py-3 text-xs">

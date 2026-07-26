@@ -82,9 +82,12 @@ erDiagram
 
 - `career_applications`, `career_activities`
 
-### PI Review — `0073`
+### PI Review — `0073` (+ B4 ops hardening, no new migration)
 
 - `pi_review_cases`, `pi_review_events`, `pi_review_notifications`
+- Feature flag `DELIVERX_REVIEWER_QUEUE` (default off) gates API/UI surfaces
+- Trust guards reject Verified / capability-write payloads; revise queues reassessment only
+- Ops playbook: [`reviewer-ops-playbook.md`](./reviewer-ops-playbook.md)
 
 ### Admin competency framework — `0074`–`0076`
 

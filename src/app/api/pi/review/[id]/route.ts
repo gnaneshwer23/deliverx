@@ -5,6 +5,7 @@ import {
   getReviewCase,
   listReviewEvents,
   isPiReviewAction,
+  isReviewerQueueEnabled,
   USER_ACTIONS,
   type PiReviewAction,
 } from "@/lib/pi-review";
@@ -21,6 +22,17 @@ export async function GET(_request: Request, ctx: Ctx) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json(
+      {
+        error: "Reviewer queue is disabled",
+        enabled: false,
+        deliverxVerified: false,
+      },
+      { status: 403 },
+    );
+  }
+
   const caseRes = await getReviewCase(supabase, id, user.id);
   if (caseRes.error || !caseRes.data) {
     return NextResponse.json({ error: caseRes.error ?? "Not found" }, { status: 404 });
@@ -33,6 +45,8 @@ export async function GET(_request: Request, ctx: Ctx) {
       events: eventsRes.data ?? [],
     },
     error: null,
+    enabled: true,
+    deliverxVerified: false,
   });
 }
 
@@ -43,6 +57,17 @@ export async function POST(request: Request, ctx: Ctx) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json(
+      {
+        error: "Reviewer queue is disabled",
+        enabled: false,
+        deliverxVerified: false,
+      },
+      { status: 403 },
+    );
+  }
 
   let body: Record<string, unknown>;
   try {
@@ -86,11 +111,20 @@ export async function POST(request: Request, ctx: Ctx) {
 
   if (error) {
     const status =
-      error.includes("not allowed") || error.includes("required") || error.includes("Cannot change")
+      error.includes("not allowed") ||
+      error.includes("required") ||
+      error.includes("Cannot change") ||
+      error.includes("cannot set") ||
+      error.includes("cannot write")
         ? 400
         : 500;
-    return NextResponse.json({ error }, { status });
+    return NextResponse.json({ error, deliverxVerified: false }, { status });
   }
 
-  return NextResponse.json({ data, error: null });
+  return NextResponse.json({
+    data,
+    error: null,
+    enabled: true,
+    deliverxVerified: false,
+  });
 }

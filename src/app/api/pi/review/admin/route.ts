@@ -8,6 +8,7 @@ import {
   listReviewEvents,
   getReviewCase,
   isPiReviewAction,
+  isReviewerQueueEnabled,
   ADMIN_ACTIONS,
   type PiReviewAction,
   type PiReviewStatus,
@@ -40,6 +41,17 @@ export async function GET(request: Request) {
   const gate = await requireAdmin();
   if ("error" in gate && gate.error) return gate.error;
 
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json({
+      data: [],
+      error: null,
+      enabled: false,
+      deliverxVerified: false,
+      notice:
+        "Reviewer queue is off. Set DELIVERX_REVIEWER_QUEUE=on. Human review never grants Verified.",
+    });
+  }
+
   const url = new URL(request.url);
   const caseId = url.searchParams.get("caseId");
 
@@ -62,6 +74,8 @@ export async function GET(request: Request) {
     return NextResponse.json({
       data: { case: caseRes.data, events: eventsRes.data ?? [] },
       error: null,
+      enabled: true,
+      deliverxVerified: false,
     });
   }
 
@@ -80,7 +94,12 @@ export async function GET(request: Request) {
     limit: 200,
   });
   if (error) return NextResponse.json({ error }, { status: 500 });
-  return NextResponse.json({ data: data ?? [], error: null });
+  return NextResponse.json({
+    data: data ?? [],
+    error: null,
+    enabled: true,
+    deliverxVerified: false,
+  });
 }
 
 /** Admin action: uphold / revise / escalate / start_review / etc. */
@@ -88,6 +107,17 @@ export async function POST(request: Request) {
   const gate = await requireAdmin();
   if ("error" in gate && gate.error) return gate.error;
   const { user } = gate;
+
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json(
+      {
+        error: "Reviewer queue is disabled",
+        enabled: false,
+        deliverxVerified: false,
+      },
+      { status: 403 },
+    );
+  }
 
   let body: Record<string, unknown>;
   try {
@@ -118,6 +148,9 @@ export async function POST(request: Request) {
     ? body.evidenceIds.map(String).filter(Boolean)
     : [];
 
+  const aiAssisted = body.aiAssisted === true;
+  const citations = body.citations;
+
   const { data, error } = await applyReviewAction(admin, {
     caseId,
     actorUserId: user.id,
@@ -130,20 +163,33 @@ export async function POST(request: Request) {
       body.proposedRevision && typeof body.proposedRevision === "object"
         ? (body.proposedRevision as Record<string, unknown>)
         : undefined,
+    aiAssisted,
+    citations,
     audit: {
       source: "api.pi.review.admin",
       reviewer_id: user.id,
       capability_mutation: false,
+      deliverx_verified_touched: false,
     },
   });
 
   if (error) {
     const status =
-      error.includes("not allowed") || error.includes("required") || error.includes("Cannot change")
+      error.includes("not allowed") ||
+      error.includes("required") ||
+      error.includes("Cannot change") ||
+      error.includes("cannot set") ||
+      error.includes("cannot write") ||
+      error.includes("citation")
         ? 400
         : 500;
-    return NextResponse.json({ error }, { status });
+    return NextResponse.json({ error, deliverxVerified: false }, { status });
   }
 
-  return NextResponse.json({ data, error: null });
+  return NextResponse.json({
+    data,
+    error: null,
+    enabled: true,
+    deliverxVerified: false,
+  });
 }

@@ -32,7 +32,7 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 | **Person PI tables** | Self-only RLS by default. ScoreRuns are the deliberate exception: users read their own rows; only the Capability Engine service-role path writes. Verified-bearing VPP columns and elevated evidence status use service-role-only RPCs. |
 | **Org / project delivery tables** | Existing org membership / project access helpers (`src/lib/access`, project access tests) |
 | **Admin framework** | Elevated admin APIs for `pi_cf_*` version management; immutability triggers after publish/seed |
-| **Review admin** | `/api/pi/review/admin` gated to admin operators |
+| **Review admin** | `/api/pi/review/admin` gated to admin operators; B4 flag `DELIVERX_REVIEWER_QUEUE` (default off); never lights Verified |
 | **Public portfolio** | Share token views filter non-shareable / confidential evidence; invalid token still safe empty/invalid UI |
 
 ---
@@ -90,6 +90,14 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `capability_assigned` and `verification_changed` are CHECKed false; application guards refuse payloads that claim capability or Verified
 - Feature flag `DELIVERX_RECOMMENDATION_SM` defaults off; when off the API returns empty/`enabled:false` and refuses transitions
 - T1 export/purge includes all three tables; B2 purge wrapper remains `service_role` only
+
+### Human reviewer queue (B4 / non-Verified)
+
+- Reuses `0073` `pi_review_*`; self-only RLS on cases/events; admin queue uses service-role after `canAccessPiReviewAdmin`
+- Feature flag `DELIVERX_REVIEWER_QUEUE` defaults off; when off APIs return `enabled:false` / refuse mutations
+- Application trust guards reject `deliverxVerified` and capability-write keys in review payloads
+- AI-assisted admin decisions require citation source ids (audit only — not evidence creation)
+- Verified remains T8 attestation only; review never lights the badge
 
 ### Organisation structure (T7)
 

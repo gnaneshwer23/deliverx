@@ -1,3 +1,11 @@
+## 2026-07-26 — B4: Human reviewer ops (non-Verified)
+
+Founder reply `B4` (after being told B4 requires FD-PACK-5) authorized six-doc phase B4 and closed FD-PACK-5 (PD-2026-07-26h). Reused `0073` `pi_review_*` (no new migration). Hardened `/api/pi/review/*` behind `DELIVERX_REVIEWER_QUEUE` (default off); trust guards reject Verified/capability write payloads; AI-assisted admin decisions require citations; queue UI shows explicit non-Verified notice; ops playbook `docs/engineering/reviewer-ops-playbook.md`; notifications remain on case transitions. Zero Verified side-effects — T8 attestation remains the only Verified path.
+
+Verification: focused B4 trust + status-machine units PASS (39); `test:pi` PASS (364); release-gate PASS (includes `src/lib/pi-review`); touched-source ESLint PASS; production build PASS. Standalone `tsc --noEmit` remains blocked by six pre-existing `e2e/t6-security-journeys.test.ts` `never.id` fixture errors, with no B4 source errors reported. Build retains the pre-existing `phaseIHealth.ts` whole-project NFT trace warning. No DB migration.
+
+Next candidate: **B5** (needs FD-PACK-3) or founder-ops residual. Founder action to open queue in prod: set Vercel `DELIVERX_REVIEWER_QUEUE=on` and redeploy.
+
 ## 2026-07-26 — B3: Pilot KPI instrumentation (Vercel)
 
 Founder authorized the Vercel Analytics path for B3 and kept a PostHog sink behind FD-PACK-7 (PD-2026-07-26g). Shipped a typed event catalogue and privacy sanitizer in `src/lib/analytics/`; best-effort Vercel server events after successful onboarding, Experience, capability assessment, evidence, artefact, recommendation and outcome state changes; client event after successful signup; no PII/free-text properties, user IDs, DB migration, or PostHog dependency. `DELIVERX_ANALYTICS=off` is the server kill switch; production defaults on. Event operations and KPI mapping: `docs/engineering/pilot-kpi-instrumentation.md`.

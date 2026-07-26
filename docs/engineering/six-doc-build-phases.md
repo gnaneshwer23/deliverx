@@ -7,9 +7,9 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B3 shipped** (B3 Vercel Analytics path authorized 2026-07-26; PostHog still FD-PACK-7). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B4 shipped** (B4 founder-authorized 2026-07-26 via reply `B4` = FD-PACK-5). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0098_pi_recommendations.sql` (applied 2026-07-26). New migrations continue at `0099+`. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26).
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0098_pi_recommendations.sql` (applied 2026-07-26). New migrations continue at `0099+`. B4 reused `0073` `pi_review_*` (no new migration). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables.
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -42,9 +42,9 @@
 
 | Status | Count | Notes |
 | --- | ---: | --- |
-| Built | 31 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendations + B3 KPI events |
+| Built | 32 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendations + B3 KPI events + B4 reviewer ops |
 | Partial | 27 | Remains mapped into Bn or remaining-work A/B |
-| Missing | 7 | Aligns with PACK-E1, E4–E7/E9 (E2/E3/E8 done) |
+| Missing | 6 | Aligns with PACK-E1, E4, E6–E7/E9 (E2/E3/E5/E8 done) |
 | Conflicts | 5 | Reject / modify-with-PD |
 | Out of charter | 4 | Marketplace, third SKU depth, multi-profession, microservices |
 | **Total material rows** | **74** | De-duplicated across docs 01–06 |
@@ -65,7 +65,7 @@ Evidence paths verified present unless noted.
 | FR-004 | Profile without presenting claims as evidence | Built | SnapshotClaims; Verified gate; ledger empty until evidence | Keep |
 | FR-005 | Enter simulated org + assigned project | Partial | Built: 12-company catalogue `0079`, Experience planner, Day-1 sim. Remainder: pack entry ceremony screens (PACK-E4); “one org” pack wording conflicts with catalogue PD | Modify |
 | FR-006 | Activities + versioned artefact submissions | Built | `0088_artefact_versions.sql`; Experience → ledger | Keep |
-| FR-007 | Reviewer/controlled rule verifies → evidence | Partial | Built: Capability Engine persist; consent `0096`; T8 attestation `0094` for Verified. Remainder: human reviewer queue thin (`0073`, `src/lib/pi-review/`) — PACK-E5 | Modify |
+| FR-007 | Reviewer/controlled rule verifies → evidence | **Built** (ops path) | Capability Engine persist; consent `0096`; T8 attestation `0094` for Verified; human reviewer queue + playbook (PACK-E5 / B4) — **non-Verified** | Keep |
 | FR-008 | Evidence maps to capability definitions | Built | ScoreRuns pin `pm-core@2026.1`; `src/lib/capability-engine/` | Keep |
 | FR-009 | PI updates with explanation | Built | Growth reports; SnapshotClaims; AI citations `src/lib/ai-orchestration/citations.ts` | Keep |
 | FR-010 | Next action with rationale (goal/evidence/gap) | **Built** | Formal SM `0098` + `src/lib/recommendations/`; Profile/Career panels (PACK-E2 / B2) | Keep |
@@ -127,7 +127,7 @@ Evidence paths verified present unless noted.
 | FLOW-E2E | Primary visitor→…→PI→next action | Built | T6 LIVE + T8 attestation E2E; release-gate | Keep |
 | FLOW-PUBLIC | Marketing→signup with product context | Partial | `postSignupPath` / `start/*`; residual polish | Keep |
 | FLOW-XP-ENTRY | Welcome→role→team→project→activity | Partial | Catalogue + Day-1; ceremony Missing (PACK-E4) | Modify |
-| FLOW-REVIEWER | Human reviewer queue workflow | Partial | `pi_review_*` thin / 0 cases; Verified ≠ this path | Modify |
+| FLOW-REVIEWER | Human reviewer queue workflow | **Built** (ops) | `pi_review_*` + playbook + flag; Verified ≠ this path (PACK-E5 / B4) | Keep |
 | FLOW-ADMIN | Admin configures org/role/project/activities | Partial | Seed + thin admin (FR-011) | Defer |
 | FLOW-LP-UNLOCK | Launchpad after min evidence or choice | Partial | Entitlements `0097` + readiness honesty; unlock rules not pack-literal | Keep |
 | FLOW-FAIL | AI timeout, upload, duplicate submit, session recovery | Partial | AI fallback units; idempotency/recovery polish residual | Keep |
@@ -186,7 +186,7 @@ Evidence paths verified present unless noted.
 | **B1** | Document + label versioned confidence-band algorithm | S · **Shipped** | Schema 5.1 / SCH-BANDS / explainability | — |
 | **B2** | Formal recommendation entity + state machine | M · **Shipped** | FR-010 / TRD-SM-REC / M7 “next action” | — |
 | **B3** | Pilot KPI event layer (Vercel; PostHog deferred) | M · **Shipped** | METRICS / NFR-OBS / PACK-E8 | — |
-| **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M | FR-007 remainder / FLOW-REVIEWER / M5 review | FD-PACK-5 |
+| **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M · **Shipped** | FR-007 remainder / FLOW-REVIEWER / M5 review | — |
 | **B5** | Onboarding shape (keep 6-step **or** rebuild toward 8-step) | M | FR-003 / UX-ONB-8 / M3 | FD-PACK-3 |
 | **B6** | Xperience entry ceremony screens | M | FR-005 / FLOW-XP-ENTRY / M4 | FD-PACK-4 |
 | **B7** | App-shell global search + help (no Insights product) | M | UX-SHELL / PACK-E7 | FD-PACK-8 |
@@ -277,21 +277,21 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B4 — Human reviewer ops (non-Verified)
+### B4 — Human reviewer ops (non-Verified) (**shipped** 2026-07-26)
 
 1. **Objective / value:** Structured review for disputes/submissions without pretending reviewers light `deliverxVerified`.  
 2. **IDs:** FR-007 remainder, FLOW-REVIEWER, PACK-E5, R-P2-09.  
 3. **Reuse:** `src/lib/pi-review/`, `0073`, admin review API.  
 4. **Code areas:** Reviewer queue UI; playbook doc; notifications on case transitions.  
-5. **DB:** Prefer reuse `pi_review_*`; maybe `0098+` indexes/status only.  
-6. **APIs:** Existing `/api/pi/review/*` hardened; no Verified write path.  
-7. **AI:** Observer may propose observations; reviewer decide; citations if AI-assisted.  
+5. **DB:** Reused `pi_review_*` (no new migration).  
+6. **APIs:** `/api/pi/review/*` hardened behind flag; no Verified write path; trust guards.  
+7. **AI:** Observer may propose observations; reviewer decide; citations required if AI-assisted.  
 8. **UX:** Queue + reason-mandatory decisions; clear “does not grant Verified badge”.  
 9. **Deps/risks:** **Trust:** must not bypass Capability Engine or T8 attestation rules (CX-04).  
-10. **AC/tests:** RLS cross-user; Verified remains false without attestation; release-gate trust tests.  
-11. **Flag:** `DELIVERX_REVIEWER_QUEUE=on`.  
+10. **AC/tests:** Trust-rail units + status machine; Verified remains false without attestation; `pi-review` in `test:pi` / release-gate.  
+11. **Flag:** `DELIVERX_REVIEWER_QUEUE=on` — **default off**; founder enables in Vercel when ready.  
 12. **DoD:** Playbook + usable queue; zero Verified side-effects; tests pass.  
-13. **Size / approval:** M · **FD-PACK-5**.
+13. **Size / approval:** M · **FD-PACK-5** (PD-2026-07-26h).
 
 **Pack theme:** M5 review — without replacing T8.
 
@@ -407,7 +407,7 @@ Evidence paths verified present unless noted.
 | FD-PACK-2 | Copy pack into `docs/build-pack/`? | Skip until asked | B0 |
 | FD-PACK-3 | Keep 6-step vs 8-step onboarding | Keep 6-step | B5 |
 | FD-PACK-4 | Xperience entry ceremony vs Day-1 enough | Day-1 enough | B6 |
-| FD-PACK-5 | Human reviewer ops path (non-Verified)? | Leave thin | B4 |
+| FD-PACK-5 | Human reviewer ops path (non-Verified)? | **Settled — yes (PD-2026-07-26h)** | — |
 | FD-PACK-6 | Formal recommendation SM now? | **Settled — yes (PD-2026-07-26f)** | — |
 | FD-PACK-7 | PostHog vs Vercel Analytics | Stay Vercel | B3 PostHog sink |
 | FD-PACK-8 | Global search/help (no Insights product)? | Defer search | B7 |
@@ -439,11 +439,11 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1–B3 shipped.** Next eng candidate: **B4 (human reviewer ops)** only with FD-PACK-5, or founder-ops/residual hardening. PostHog remains deferred pending FD-PACK-7.
+**B1–B4 shipped.** Next eng candidate: **B5 (onboarding shape)** only with FD-PACK-3, or founder-ops/residual hardening. PostHog remains deferred pending FD-PACK-7.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
-Do **not** start B4–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
+Do **not** start B5–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
 
 ---
 

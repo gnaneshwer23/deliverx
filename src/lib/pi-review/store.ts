@@ -21,6 +21,10 @@ import {
   createReviewNotification,
   notifyReviewTransition,
 } from "@/lib/pi-review/notifications";
+import {
+  guardAiAssistedCitations,
+  guardReviewTrustRails,
+} from "@/lib/pi-review/trust-guards";
 
 export type ServiceResult<T> = { data: T | null; error: string | null };
 
@@ -142,13 +146,20 @@ export async function listReviewEvents(
  */
 export async function applyReviewAction(
   supabase: SupabaseClient,
-  input: TransitionInput & { caseUserId?: string; subjectKind?: string },
+  input: TransitionInput & {
+    caseUserId?: string;
+    subjectKind?: string;
+    aiAssisted?: boolean;
+    citations?: unknown;
+  },
 ): Promise<
   ServiceResult<{
     case: ReviewCaseRow;
     event: ReviewEventRow;
     fromStatus: PiReviewStatus;
     toStatus: PiReviewStatus;
+    deliverxVerifiedTouched: false;
+    capabilityWritten: false;
   }>
 > {
   const caseRes = await getReviewCase(supabase, input.caseId, input.caseUserId);
@@ -158,6 +169,24 @@ export async function applyReviewAction(
   const reviewCase = caseRes.data;
   const fromStatus = reviewCase.current_status;
   const subjectKind = input.subjectKind ?? reviewCase.subject_kind;
+
+  const trustGuard = guardReviewTrustRails({
+    proposedRevision: input.proposedRevision,
+    factualCorrection: input.factualCorrection,
+    visibilityChange: input.visibilityChange,
+    audit: input.audit,
+  });
+  if (trustGuard) {
+    return { data: null, error: trustGuard };
+  }
+
+  const aiCitationGuard = guardAiAssistedCitations({
+    aiAssisted: input.aiAssisted,
+    citations: input.citations,
+  });
+  if (aiCitationGuard) {
+    return { data: null, error: aiCitationGuard };
+  }
 
   const rewriteGuard = guardCapabilityRewrite({
     action: input.action,
@@ -213,7 +242,11 @@ export async function applyReviewAction(
       audit: {
         ...(input.audit ?? {}),
         capability_mutation: false,
-        note: "Review events never rewrite capability levels; revise queues reassessment only",
+        deliverx_verified_touched: false,
+        ai_assisted: Boolean(input.aiAssisted),
+        citations: input.aiAssisted ? (input.citations ?? []) : undefined,
+        note:
+          "Review events never rewrite capability levels or light Verified; revise queues reassessment only. Verified = T8 attestation.",
       },
     })
     .select("*")
@@ -254,6 +287,8 @@ export async function applyReviewAction(
       event: event as ReviewEventRow,
       fromStatus,
       toStatus,
+      deliverxVerifiedTouched: false,
+      capabilityWritten: false,
     },
     error: null,
   };

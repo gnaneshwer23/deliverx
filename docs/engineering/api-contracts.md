@@ -44,10 +44,10 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 | GET, POST | `/api/pi/learning` | User | Learning paths |
 | PATCH | `/api/pi/learning/[id]` | User | Update learning item/path |
 | GET | `/api/pi/growth-report` | User | Citation-backed growth report |
-| GET, POST | `/api/pi/review` | User | Review/challenge |
-| GET, POST | `/api/pi/review/[id]` | User | Case detail / action |
-| GET, POST | `/api/pi/review/admin` | Admin | Admin review queue |
-| GET, POST | `/api/pi/review/notifications` | User | Legacy compatibility route backed by the T5 consolidated inbox |
+| GET, POST | `/api/pi/review` | User | B4 — Review/challenge queue. Flag `DELIVERX_REVIEWER_QUEUE` (default off). Never lights Verified. |
+| GET, POST | `/api/pi/review/[id]` | User | B4 — Case detail / user action. Flag gated. |
+| GET, POST | `/api/pi/review/admin` | Admin | B4 — Admin review queue (uphold/revise/escalate). Flag gated; AI-assisted requires citations. Never writes capability or Verified. |
+| GET, POST | `/api/pi/review/notifications` | User | Legacy compatibility route backed by the T5 consolidated inbox; flag gated with B4 |
 | GET, PATCH | `/api/pi/notifications` | User | T5 — list own contextual in-app notifications; mark selected or all read; idempotently sync privacy domain events |
 | GET, POST, PATCH | `/api/pi/recommendations` | User | B2 — list/sync own recommendations from latest capability snapshot; accept / dismiss / complete / mark viewed. Flag `DELIVERX_RECOMMENDATION_SM` (default off). Never assigns capability or Verified. |
 | GET, POST | `/api/pi/privacy/export` | User | T1 — person PI export JSON; GET lists requests |

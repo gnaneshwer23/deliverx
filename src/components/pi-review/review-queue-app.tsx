@@ -13,6 +13,7 @@ import {
   type PiReviewSubjectKind,
 } from "@/lib/pi-review/types";
 import { availableActions } from "@/lib/pi-review/status-machine";
+import { REVIEW_DOES_NOT_GRANT_VERIFIED } from "@/lib/pi-review/trust-guards";
 
 type CaseRow = {
   id: string;
@@ -66,6 +67,11 @@ export function PiReviewQueueApp() {
     const json = await res.json();
     if (!res.ok) {
       setNotice(json.error || "Could not load review queue");
+      return;
+    }
+    if (json.enabled === false) {
+      setCases([]);
+      setNotice(json.notice || "Reviewer queue is disabled for this environment.");
       return;
     }
     setCases(json.data ?? []);
@@ -155,8 +161,14 @@ export function PiReviewQueueApp() {
         </h1>
         <p className="max-w-2xl text-sm text-[#4A4A45]">
           Accept findings, add context, or challenge judgements. Challenges create a new review
-          record — history is never overwritten. Verified capability levels cannot change without
-          evidence.
+          record — history is never overwritten. Capability levels cannot change without evidence,
+          and only via Capability Engine reassessment — not this queue.
+        </p>
+        <p
+          className="max-w-2xl rounded-md border border-[#D6D3C8] bg-[#F7F6F2] px-3 py-2 text-sm text-[#4A4A45]"
+          role="note"
+        >
+          {REVIEW_DOES_NOT_GRANT_VERIFIED}
         </p>
         <div className="flex flex-wrap gap-3 pt-1 text-sm">
           <Link href="/portfolio" className="text-[#1C4A2E] underline">
@@ -175,6 +187,11 @@ export function PiReviewQueueApp() {
         {notice}
       </p>
 
+      {cases.length === 0 && !busy ? (
+        <p className="rounded-md border border-dashed border-[#D6D3C8] bg-white px-4 py-6 text-sm text-[#6B6B64]">
+          No open cases. Findings appear here when a judgement or claim is queued for your review.
+        </p>
+      ) : null}
       <div className="flex flex-wrap gap-2">
         <button
           type="button"

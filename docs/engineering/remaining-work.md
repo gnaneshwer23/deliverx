@@ -68,7 +68,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | **R-P2-02** | Unindexed PI FKs | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
 | **R-P2-03** | Profile/Career aggregate fan-out | **Open** (defer) | Read-path cost | Engineering | M | Perf polish |
 | **R-P2-08** / TD-007 | Deepen `pm-core` seed (same pin) | **Open** — needs founder OK | Richer judgements without new professions | Engineering | M | Explainability depth |
-| **R-P2-09** | Human review / challenge workflow usage | **Open** (tables/UI thin; 0 cases) | Dispute path unused | Engineering / ops | M | Review ops maturity |
+| **R-P2-09** | Human review / challenge workflow usage | **Done (B4)** — playbook + queue + flag; Verified ≠ this path | Dispute path usable | Engineering / ops | M | Review ops maturity |
 | **R-P2-10** | Org departments/teams seed for Workspace pilot | **Open** (0 rows) | Structure unused | Engineering | S | Workspace org demos |
 | **R-P2-11** / TD-012 | Experience → workspace dual-write on remaining pages | **Open** / deferred | Observation coverage gaps | Engineering | M | Full observation coverage |
 | **R-P2-16** | Coverage % tooling + Playwright/axe in CI | **Open** | Coverage unmeasured; CI still off | Engineering | M | Continuous quality signal (needs TD-018) |
@@ -152,7 +152,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | **PACK-E2** | Formal recommendation entity + state machine (generated→viewed→accepted/dismissed) | **Done (B2)** | Keep | M | `0098` + `src/lib/recommendations/`; flag `DELIVERX_RECOMMENDATION_SM`; PD-2026-07-26f |
 | **PACK-E3** | Documented, versioned confidence-band algorithm (Schema §5.1) | **Done (B1)** | Keep | S | `confidence-bands@2026.1` — algorithm doc + typed SoT + UI why-copy |
 | **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Open** | Defer | M | Day-1 + catalogue already prove loop; ceremony is UX depth |
-| **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Open** | Defer — clarify vs R-P2-09 | M | Pack centres human reviewer; shipped Verified = T8 attestation |
+| **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Done (B4)** | Keep | M | Playbook + hardened queue; flag `DELIVERX_REVIEWER_QUEUE`; PD-2026-07-26h; Verified = T8 only |
 | **PACK-E6** | Onboarding shape: keep 6-step PI vs rebuild toward pack 8-step conversation | **Pending decision** | Defer | M | Shipped `/onboarding/profile` steps differ; no rebuild without FD |
 | **PACK-E7** | App-shell global search (+ help) | **Open** | Defer | M | Suite nav exists; search/help not inventoried before |
 | **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Done (B3)** | Keep | M | Typed Vercel event catalogue, real state-transition emission, PII sanitizer, KPI operations note; no DB migration |

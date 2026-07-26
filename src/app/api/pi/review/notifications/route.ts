@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isReviewerQueueEnabled } from "@/lib/pi-review";
 import {
   listUnreadNotifications,
   markNotificationRead,
@@ -14,9 +15,18 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json({
+      data: [],
+      error: null,
+      enabled: false,
+      deliverxVerified: false,
+    });
+  }
+
   const { data, error } = await listUnreadNotifications(supabase, user.id);
   if (error) return NextResponse.json({ error }, { status: 500 });
-  return NextResponse.json({ data, error: null });
+  return NextResponse.json({ data, error: null, enabled: true, deliverxVerified: false });
 }
 
 export async function POST(request: Request) {
@@ -25,6 +35,13 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!isReviewerQueueEnabled()) {
+    return NextResponse.json(
+      { error: "Reviewer queue is disabled", enabled: false, deliverxVerified: false },
+      { status: 403 },
+    );
+  }
 
   let body: Record<string, unknown>;
   try {
@@ -40,5 +57,5 @@ export async function POST(request: Request) {
 
   const { error } = await markNotificationRead(supabase, user.id, notificationId);
   if (error) return NextResponse.json({ error }, { status: 500 });
-  return NextResponse.json({ data: { ok: true }, error: null });
+  return NextResponse.json({ data: { ok: true }, error: null, enabled: true });
 }
