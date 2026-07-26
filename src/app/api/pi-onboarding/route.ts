@@ -7,25 +7,29 @@ import {
   upsertPiOnboardingSession,
 } from "@/lib/pi-onboarding/store";
 import {
+  isPiOnboardingStep,
+  isSkippableStep,
   nextStep,
   pathHref,
   recommendPath,
+  stepsForSet,
   validateStep,
   type PiOnboardingPayload,
   type PiOnboardingStep,
   type PiRecommendedPath,
-  isPiOnboardingStep,
 } from "@/lib/pi-onboarding/types";
+import { resolveOnboardingStepSet } from "@/lib/pi-onboarding/flag";
 import { emitPilotKpi } from "@/lib/analytics/server";
 
 export const dynamic = "force-dynamic";
 
 type Body = {
-  action?: "save" | "complete";
+  action?: "save" | "skip" | "complete";
   step?: string;
   payload?: PiOnboardingPayload;
   chosenPath?: PiRecommendedPath;
   advance?: boolean;
+  partial?: boolean;
 };
 
 export async function POST(request: Request) {
@@ -45,24 +49,42 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const step = coerceStep(body.step);
+  const stepSet = resolveOnboardingStepSet();
+  const steps = stepsForSet(stepSet);
+  const step = coerceStep(body.step, stepSet);
   const payload = body.payload ?? {};
-  const partial = Boolean((body as { partial?: boolean }).partial);
-  if (!partial) {
-    const validation = validateStep(step, payload);
+  const action = body.action ?? "save";
+
+  if (action === "skip" && !isSkippableStep(step)) {
+    return NextResponse.json(
+      { error: "This step cannot be skipped." },
+      { status: 400 },
+    );
+  }
+
+  const skipsValidation = action === "skip" || Boolean(body.partial);
+  if (!skipsValidation) {
+    const validation = validateStep(step, payload, stepSet);
     if (!validation.ok) {
       return NextResponse.json({ error: validation.message }, { status: 400 });
     }
   }
 
-  const recommended = recommendPath(payload);
-  const action = body.action ?? "save";
+  const persistedPayload: PiOnboardingPayload =
+    action === "skip"
+      ? {
+          ...payload,
+          skippedSteps: Array.from(new Set([...(payload.skippedSteps ?? []), step])),
+        }
+      : payload;
+
+  const recommended = recommendPath(persistedPayload);
 
   if (action === "complete") {
     const chosen = body.chosenPath ?? recommended;
     await upsertPiOnboardingSession(supabase, user.id, {
       current_step: "completed",
-      payload,
+      payload: persistedPayload,
       status: "completed",
       recommended_path: recommended,
       chosen_path: chosen,
@@ -72,7 +94,7 @@ export async function POST(request: Request) {
       await syncPiPayloadToProductProfiles(
         supabase,
         user,
-        payload,
+        persistedPayload,
         suiteProductFromAuthUser(user),
       );
     } catch (err) {
@@ -82,7 +104,10 @@ export async function POST(request: Request) {
 
     await emitPilotKpi("onboarding_pi_completed", {
       chosen_path: chosen,
-      baseline_opt_in: payload.baselineOptIn !== false,
+      baseline_opt_in: persistedPayload.baselineOptIn !== false,
+      step_set: stepSet,
+      step_count: steps.length,
+      steps_skipped: persistedPayload.skippedSteps?.length ?? 0,
     });
 
     return NextResponse.json({
@@ -91,27 +116,27 @@ export async function POST(request: Request) {
       recommendedPath: recommended,
       chosenPath: chosen,
       redirectTo:
-        payload.baselineOptIn !== false
+        persistedPayload.baselineOptIn !== false
           ? "/profile/baseline"
           : pathHref(chosen),
     });
   }
 
-  const advance = body.advance !== false;
-  let current: PiOnboardingStep | "completed" = step;
+  const advance = action === "skip" ? true : body.advance !== false;
+  let current: PiOnboardingStep = step;
   if (advance) {
-    const n = nextStep(step);
+    const n = nextStep(step, stepSet);
     current = n === "completed" ? "path" : n;
   }
 
-  // Stay on path until explicit complete
+  // Stay on the final step until an explicit complete.
   if (step === "path" && advance) {
     current = "path";
   }
 
   const session = await upsertPiOnboardingSession(supabase, user.id, {
-    current_step: isPiOnboardingStep(String(current)) ? (current as PiOnboardingStep) : step,
-    payload,
+    current_step: isPiOnboardingStep(current) ? current : step,
+    payload: persistedPayload,
     status: "started",
     recommended_path: recommended,
   });

@@ -7,9 +7,9 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B4 shipped** (B4 founder-authorized 2026-07-26 via reply `B4` = FD-PACK-5). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B5 shipped** (B5 founder-authorized 2026-07-26 via reply `b5` = FD-PACK-3). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0098_pi_recommendations.sql` (applied 2026-07-26). New migrations continue at `0099+`. B4 reused `0073` `pi_review_*` (no new migration). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables.
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0099_pi_onboarding_step_sets.sql` (applied 2026-07-26). New migrations continue at `0100+`. B4 reused `0073` `pi_review_*` (no new migration). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back.
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -42,9 +42,9 @@
 
 | Status | Count | Notes |
 | --- | ---: | --- |
-| Built | 32 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendations + B3 KPI events + B4 reviewer ops |
-| Partial | 27 | Remains mapped into Bn or remaining-work A/B |
-| Missing | 6 | Aligns with PACK-E1, E4, E6–E7/E9 (E2/E3/E5/E8 done) |
+| Built | 34 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendations + B3 KPI events + B4 reviewer ops + B5 onboarding shape |
+| Partial | 25 | Remains mapped into Bn or remaining-work A/B |
+| Missing | 5 | Aligns with PACK-E1, E4, E7/E9 (E2/E3/E5/E6/E8 done) |
 | Conflicts | 5 | Reject / modify-with-PD |
 | Out of charter | 4 | Marketplace, third SKU depth, multi-profession, microservices |
 | **Total material rows** | **74** | De-duplicated across docs 01–06 |
@@ -61,7 +61,7 @@ Evidence paths verified present unless noted.
 | --- | --- | --- | --- | --- |
 | FR-001 | Visitor understands product; clear CTAs | Partial | Built: `src/app/(marketing)/`, CTAs → signup. Remainder: residual aspirational copy vs feature matrix | Keep |
 | FR-002 | Create/verify account; session; protected routes | Built | Supabase Auth; `e2e/t0-signed-in-loop.test.ts`; route guards | Keep |
-| FR-003 | Personalised onboarding with saved/editable progress | Partial | Built: 6-step PI onboarding `src/lib/pi-onboarding/types.ts`, `/onboarding/profile`, `src/app/api/pi-onboarding/`. Remainder: pack 8-step conversation shape (PACK-E6) | Modify |
+| FR-003 | Personalised onboarding with saved/editable progress | **Built** | 8-step conversation `v2-conversation` in `src/lib/pi-onboarding/types.ts`, `/onboarding/profile`, `src/app/api/pi-onboarding/`; review step is the editable identity summary; progressive save + cross-set resume (PACK-E6 / B5) | Keep |
 | FR-004 | Profile without presenting claims as evidence | Built | SnapshotClaims; Verified gate; ledger empty until evidence | Keep |
 | FR-005 | Enter simulated org + assigned project | Partial | Built: 12-company catalogue `0079`, Experience planner, Day-1 sim. Remainder: pack entry ceremony screens (PACK-E4); “one org” pack wording conflicts with catalogue PD | Modify |
 | FR-006 | Activities + versioned artefact submissions | Built | `0088_artefact_versions.sql`; Experience → ledger | Keep |
@@ -112,7 +112,7 @@ Evidence paths verified present unless noted.
 | UX-SHELL | Top bar: search, notifications, help, account | Partial | Notifications + account in shell. Remainder: global search + help (PACK-E7) | Modify |
 | UX-NAV | Home/PI/Xperience/Launchpad/Team Copilot/Portfolio/Insights/Settings | Partial | Built: `src/config/product-suite-nav.ts` (Hub/Profile/Experience/Launchpad/Workspace/Portfolio). Remainder: Insights-as-product = reject; Settings exists | Modify |
 | UX-MKT | Marketing page set | Partial | Most `(marketing)` routes live; Enterprise/Contact depth varies | Keep |
-| UX-ONB-8 | 8-step conversation onboarding | Partial / Missing shape | 6-step shipped; 8-step not (PACK-E6) | Defer |
+| UX-ONB-8 | 8-step conversation onboarding | **Built** | `welcome → identity → targets → strengths → evidence → working_style → review → path`; claim labels, skippable non-essentials, explained recommendation (PACK-E6 / B5) | Keep |
 | UX-HOME | Today/journey/PI snapshot/experience/≤3 recs | Partial | `/hub` + profile-centre; not pack zone layout 1:1 | Modify |
 | UX-PI | Overview/Capabilities/Evidence/Growth/Portfolio/Privacy | Built | `/profile`, ledger, growth, `/portfolio`, settings privacy | Keep |
 | UX-XP | Company/project/activity/meetings/evidence screens | Partial | Day-1 + planner + workspace; ceremony thinner (PACK-E4) | Modify |
@@ -187,7 +187,7 @@ Evidence paths verified present unless noted.
 | **B2** | Formal recommendation entity + state machine | M · **Shipped** | FR-010 / TRD-SM-REC / M7 “next action” | — |
 | **B3** | Pilot KPI event layer (Vercel; PostHog deferred) | M · **Shipped** | METRICS / NFR-OBS / PACK-E8 | — |
 | **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M · **Shipped** | FR-007 remainder / FLOW-REVIEWER / M5 review | — |
-| **B5** | Onboarding shape (keep 6-step **or** rebuild toward 8-step) | M | FR-003 / UX-ONB-8 / M3 | FD-PACK-3 |
+| **B5** | Onboarding shape — evolved to the 8-step conversation | M · **Shipped** | FR-003 / UX-ONB-8 / M3 | — |
 | **B6** | Xperience entry ceremony screens | M | FR-005 / FLOW-XP-ENTRY / M4 | FD-PACK-4 |
 | **B7** | App-shell global search + help (no Insights product) | M | UX-SHELL / PACK-E7 | FD-PACK-8 |
 | **B8** | Thin admin org/project config for pilot | M | FR-011 / FLOW-ADMIN / M4 admin | Founder OK depth |
@@ -297,23 +297,25 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B5 — Onboarding shape decision slice
+### B5 — Onboarding shape decision slice (**shipped** 2026-07-26)
 
 1. **Objective / value:** Clearer first-run personalisation **or** confirm shipped 6-step is enough.  
 2. **IDs:** FR-003, UX-ONB-8, PACK-E6, FLOW onboarding exceptions.  
-3. **Reuse:** `src/lib/pi-onboarding/`, wizard component, API.  
-4. **Code areas:** Onboarding wizard steps only if rebuild approved.  
-5. **DB:** Likely none (payload JSON already flexible).  
-6. **APIs:** Existing `/api/pi-onboarding`.  
-7. **AI:** Wording assist only; no evidence creation from self-report.  
-8. **UX:** Either polish 6-step copy **or** expand toward pack 8-step with claim labels.  
-9. **Deps/risks:** Overlong onboarding hurts activation METRICS.  
-10. **AC/tests:** Persist/resume tests; claim-vs-evidence labels.  
-11. **Flag:** step-set version env.  
-12. **DoD:** Founder-chosen shape shipped + tests.  
-13. **Size / approval:** M · **blocked FD-PACK-3**.
+3. **Reuse:** `src/lib/pi-onboarding/`, wizard component, API — **modified, not rebuilt**.  
+4. **Code areas:** `src/lib/pi-onboarding/types.ts` (step sets + review summary + recommendation rationale), `src/lib/pi-onboarding/flag.ts` (new), wizard, `/api/pi-onboarding`, `/onboarding/profile`.  
+5. **DB:** `0099_pi_onboarding_step_sets.sql` — widens the `current_step` check to the union of both step sets. No data change; `payload` JSON already flexible.  
+6. **APIs:** Existing `/api/pi-onboarding` plus an explicit `action: "skip"` for non-essential steps.  
+7. **AI:** None in this slice — recommendation rationale is deterministic; no evidence created from self-report.  
+8. **UX:** Expanded to the pack 8-step conversation with claim labels, review-before-use and an explained recommendation.  
+9. **Deps/risks:** Overlong onboarding hurts activation METRICS — mitigated by three skippable steps, progressive save and `steps_skipped` in the KPI event.  
+10. **AC/tests:** Step-set walk, cross-set resume mapping, per-set validation, claim-vs-evidence labels, flag resolution — `src/lib/pi-onboarding/types.test.ts` (now inside `test:pi`).  
+11. **Flag:** `DELIVERX_ONBOARDING_STEP_SET` — unset/`v2-conversation` ships the 8-step shape; `v1-six-step` rolls back with no redeploy.  
+12. **DoD:** **Met** — founder-chosen shape shipped; sessions resume across step sets; no capability/Verified side-effects; tests green.  
+13. **Size / approval:** M · **FD-PACK-3** (PD-2026-07-26i).
 
 **Pack theme:** M3 onboarding.
+
+**Ship artefact:** Step set `v2-conversation` = `welcome → identity → targets → strengths → evidence → working_style → review → path`; migration `0099`.
 
 ---
 
@@ -405,7 +407,7 @@ Evidence paths verified present unless noted.
 | --- | --- | --- | --- |
 | FD-PACK-1 | Pack advisory vs elevate into SoT under Bible | Advisory | B0 framing |
 | FD-PACK-2 | Copy pack into `docs/build-pack/`? | Skip until asked | B0 |
-| FD-PACK-3 | Keep 6-step vs 8-step onboarding | Keep 6-step | B5 |
+| FD-PACK-3 | Keep 6-step vs 8-step onboarding | **Settled — 8-step (PD-2026-07-26i)** | — |
 | FD-PACK-4 | Xperience entry ceremony vs Day-1 enough | Day-1 enough | B6 |
 | FD-PACK-5 | Human reviewer ops path (non-Verified)? | **Settled — yes (PD-2026-07-26h)** | — |
 | FD-PACK-6 | Formal recommendation SM now? | **Settled — yes (PD-2026-07-26f)** | — |
@@ -439,11 +441,11 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1–B4 shipped.** Next eng candidate: **B5 (onboarding shape)** only with FD-PACK-3, or founder-ops/residual hardening. PostHog remains deferred pending FD-PACK-7.
+**B1–B5 shipped.** Next eng candidate: **B6 (Xperience entry ceremony)** only with FD-PACK-4, or **B7 (shell search + help)** only with FD-PACK-8. Otherwise founder-ops/residual hardening (**B9** needs no new PD if scoped to R-P2-06 + failure polish). PostHog remains deferred pending FD-PACK-7.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
-Do **not** start B5–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
+Do **not** start B6–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
 
 ---
 

@@ -8,7 +8,8 @@ import {
   getPiOnboardingSession,
   suiteProductFromAuthUser,
 } from "@/lib/pi-onboarding/store";
-import { pathHref, type PiOnboardingPayload } from "@/lib/pi-onboarding/types";
+import { pathHref, stepsForSet, type PiOnboardingPayload } from "@/lib/pi-onboarding/types";
+import { resolveOnboardingStepSet } from "@/lib/pi-onboarding/flag";
 
 export const metadata: Metadata = {
   title: "Set up your Professional Profile | DeliverX",
@@ -51,16 +52,18 @@ export default async function PiOnboardingProfilePage() {
     lastName: session?.payload?.lastName || rest.join(" ") || "",
   };
 
+  const stepSet = resolveOnboardingStepSet();
   const initialStep =
     session?.current_step && session.current_step !== "completed"
-      ? coerceStep(session.current_step)
-      : "identity";
+      ? coerceStep(session.current_step, stepSet)
+      : stepsForSet(stepSet)[0]!;
 
   return (
     <PiOnboardingWizard
       initialStep={initialStep}
       initialPayload={initialPayload}
       email={user.email ?? ""}
+      stepSet={stepSet}
     />
   );
 }

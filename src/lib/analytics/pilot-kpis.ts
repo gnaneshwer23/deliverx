@@ -5,7 +5,13 @@ export const PILOT_KPI_CATALOGUE = {
   },
   onboarding_pi_completed: {
     kpi: "activation",
-    properties: ["chosen_path", "baseline_opt_in"],
+    properties: [
+      "chosen_path",
+      "baseline_opt_in",
+      "step_set",
+      "step_count",
+      "steps_skipped",
+    ],
   },
   experience_started: {
     kpi: "core_evidence_loop",
@@ -52,6 +58,10 @@ export type PilotKpiProperties = {
   onboarding_pi_completed: {
     chosen_path: string;
     baseline_opt_in: boolean;
+    /** Which onboarding step set produced this completion (B5). */
+    step_set: string;
+    step_count: number;
+    steps_skipped: number;
   };
   experience_started: {
     source: "xperience";

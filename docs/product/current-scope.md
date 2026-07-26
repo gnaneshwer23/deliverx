@@ -2,7 +2,7 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **B4 human reviewer ops (non-Verified) — shipped** (founder reply `B4` = FD-PACK-5 approval; PD-2026-07-26h). B1–B3 remain live. T9 commercial code remains shipped; **payments later**.
+**Active phase:** **B5 onboarding shape — shipped** (founder reply `b5` = FD-PACK-3 approval; PD-2026-07-26i). B1–B4 remain live. T9 commercial code remains shipped; **payments later**.
 **As of:** 2026-07-26  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
@@ -22,6 +22,7 @@
 **B2 status:** **Shipped + prod flag on (founder-authorized 2026-07-26, reply `B2` = FD-PACK-6 / PD-2026-07-26f)** — migration `0098_pi_recommendations.sql`; typed SoT `src/lib/recommendations/`; lifecycle `generated → viewed → accepted | dismissed` (+ `accepted → completed | dismissed`); `GET/POST/PATCH /api/pi/recommendations`; Profile + Career next-action UI; Vercel Production + Preview `DELIVERX_RECOMMENDATION_SM=on` (2026-07-26); dismiss/accept never mutate capability or Verified.
 **B3 status:** **Shipped (founder-authorized 2026-07-26; PD-2026-07-26g)** — typed privacy allowlist `src/lib/analytics/`; Vercel server/client custom events on successful signup, onboarding completion, Experience start/plan, persisted capability assessment, evidence append, artefact version, recommendation viewed/accepted, and outcome record; no DB migration; production-default server events with `DELIVERX_ANALYTICS=off` kill switch; PostHog not wired pending FD-PACK-7.
 **B4 status:** **Shipped (founder-authorized 2026-07-26, reply `B4` = FD-PACK-5 / PD-2026-07-26h)** — reuse `0073` `pi_review_*`; hardened `/api/pi/review/*` + queue UI; ops playbook `docs/engineering/reviewer-ops-playbook.md`; trust guards reject Verified/capability writes; AI-assisted decisions require citations; flag `DELIVERX_REVIEWER_QUEUE` default **off** until founder enables; zero Verified side-effects (T8 remains Verified path).
+**B5 status:** **Shipped (founder-authorized 2026-07-26, reply `b5` = FD-PACK-3 / PD-2026-07-26i)** — PI onboarding evolved from six steps to the pack's eight-step discovery conversation (`welcome → identity → targets → strengths → evidence → working_style → review → path`); new self-assessment and working-style steps are skippable and explicitly labelled self-reported claims; review step reads back every answer with edit links before consent and default visibility are confirmed; recommendation now states its deterministic rationale and flags limited data; migration `0099_pi_onboarding_step_sets.sql`; step-set flag `DELIVERX_ONBOARDING_STEP_SET` (rollback `v1-six-step`, no redeploy); onboarding creates no capability, no evidence and no Verified status.
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -42,6 +43,8 @@
 | **B1** | Shipped | Confidence bands `confidence-bands@2026.1` — algorithm doc + UI “Why this band” |
 | **B2** | Shipped | Recommendation SM `0098` — Profile / Career next actions with accept/dismiss |
 | **B3** | Shipped | Vercel pilot KPI custom events — typed catalogue, no PII, no DB/PostHog sink |
+| **B4** | Shipped | Human reviewer queue + ops playbook (non-Verified), flag-gated |
+| **B5** | Shipped | Eight-step PI onboarding conversation `0099` — claim labels, skippable steps, review before use |
 
 **Also present (partial / supporting):** Professional Workspace (`/workspace`), Verified Portfolio packaging (`/portfolio`), Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback), admin competency framework seed (`pm-core`), PI review/challenge.
 
@@ -82,7 +85,7 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-work.md) · ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
-**Candidate next scope (not authorised until founder picks a Bn):** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B4 shipped.** Next candidate: **B5** only with FD-PACK-3, or residual founder-ops items. PostHog remains deferred behind FD-PACK-7. Does **not** authorise pack M0–M7 restart or live payments.
+**Candidate next scope (not authorised until founder picks a Bn):** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B5 shipped.** Next candidates: **B6** only with FD-PACK-4, **B7** only with FD-PACK-8, or residual founder-ops items. PostHog remains deferred behind FD-PACK-7. Does **not** authorise pack M0–M7 restart or live payments.
 
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
@@ -91,7 +94,7 @@ Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-wo
 5. **B4 pilot queue:** **Code shipped** — set Vercel `DELIVERX_REVIEWER_QUEUE=on` (Production ± Preview) and redeploy when ready to open the ops queue. Default remains off.
 6. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
 7. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
-8. **Engineering (candidate, six-doc):** **B1–B4 done.** B5–B7 only with matching founder FD-PACK decisions; B0 optional docs archive.
+8. **Engineering (candidate, six-doc):** **B1–B5 done.** B6–B7 only with matching founder FD-PACK decisions; B0 optional docs archive.
 
 Defer marketplace, graph DB, multi-profession expansion, and microservice splits without new approval.
 
@@ -105,4 +108,4 @@ Defer marketplace, graph DB, multi-profession expansion, and microservice splits
 4. Update this file when the active phase changes.
 5. T9 commercial code is shipped; **payments later** — do not claim live payments until Stripe founder ops and production smoke pass; do not invent eng work whose only goal is enabling Stripe.
 6. Follow [`../engineering/remaining-work.md`](../engineering/remaining-work.md) and [`../engineering/next-steps.md`](../engineering/next-steps.md) for residual hardening.
-7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit. **B1–B4 are authorized and shipped.**
+7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit. **B1–B5 are authorized and shipped.**

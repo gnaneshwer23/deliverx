@@ -446,23 +446,38 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26i — FD-PACK-3 approved; B5 eight-step conversational onboarding
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder reply **`b5`** (after being told B5 requires FD-PACK-3, default if silent “keep 6-step”) is treated as **explicit approval of FD-PACK-3** and authorization to build six-doc phase **B5**. Selecting the phase cannot mean the no-op default, so the direction is: **evolve** the shipped six-step PI onboarding toward the pack's eight-step discovery conversation. Modify, do not rebuild — existing step ids, payload fields, API and session table are reused. |
+| **Chosen shape** | `welcome → identity (background) → targets (career direction) → strengths → evidence → working_style → review → path (recommendation)`. Pack steps map onto shipped ids: Background = `identity` (name, professional identity, current situation), Career direction = `targets` (objective, target role, seniority, timeframe, industries), Review = `review` (read-back summary **plus** the consent and visibility rail moved off the retired `consent` step). `strengths` and `working_style` are new; `situation` and `consent` are retired ids that stay resolvable so in-progress sessions resume instead of restarting. |
+| **Trust rails** | Self-assessed strengths are recorded as a **self-reported claim** and are explicitly labelled as “not a capability level, score or Verified status”. Onboarding writes no ScoreRun, no capability, no ledger evidence and cannot light `deliverxVerified`. Consent to analysis and default visibility remain mandatory before completion. `strengths`, `evidence` and `working_style` are skippable without penalty; skips are recorded honestly and reported in the recommendation rationale as limited data. |
+| **Why** | FR-003 / UX-ONB-8 / PACK-E6 required a discovery conversation rather than an administrative form, with explicit claim labels, an editable identity summary and an explained first recommendation. The prior six-step set had no welcome, no self-assessment, no working-style personalisation and no review-before-use. |
+| **Rollback / flag** | `DELIVERX_ONBOARDING_STEP_SET` selects the step-set version: unset (or `v2-conversation`) ships the eight-step shape; `v1-six-step` restores the previously shipped set with no redeploy, no migration and no data loss. Migration `0099_pi_onboarding_step_sets.sql` widens the `current_step` check to the union of both sets. |
+| **Consequence** | B5 authorized and shipped under this decision. FD-PACK-3 closes; PACK-E6 closes. Onboarding step count changes, so `onboarding_pi_completed` now carries `step_set`, `step_count` and `steps_skipped` to keep the B3 activation KPI interpretable across shapes. Remaining FD-PACK-* stay pending. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
-Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B4 shipped**; no Bn beyond those should start without the matching decision.
+Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B5 shipped**; no Bn beyond those should start without the matching decision.
 
 | ID | Decision | Default if silent | Blocks |
 | --- | --- | --- | --- |
 | **FD-PACK-1** | Treat six-doc pack as advisory under Bible + Charter, or elevate into SoT? | Advisory under Bible | B0 framing |
 | **FD-PACK-2** | Copy pack into `docs/build-pack/`? | Skip until asked | B0 |
-| **FD-PACK-3** | Keep shipped 6-step PI onboarding vs rebuild toward pack 8-step conversation? | Keep 6-step | B5 |
+| **FD-PACK-3** | Keep shipped 6-step PI onboarding vs evolve toward pack 8-step conversation? | **Settled — evolve to 8-step (PD-2026-07-26i)** | — |
 | **FD-PACK-4** | Invest in Xperience entry ceremony vs Day-1 sufficiency for pilot? | Day-1 enough | B6 |
 | **FD-PACK-5** | Human reviewer queue as pilot ops path (**not** Verified badge path)? | **Settled — yes, non-Verified ops (PD-2026-07-26h)** | — |
 | **FD-PACK-6** | Formal recommendation state machine (FR-010) now? | **Settled — yes (PD-2026-07-26f)** | — |
 | **FD-PACK-7** | Add a PostHog product analytics sink after the Vercel pilot path? | Stay Vercel; PostHog optional later | PostHog sink only (B3 Vercel path shipped) |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | Defer search | B7 |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**.

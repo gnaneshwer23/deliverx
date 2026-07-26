@@ -2,9 +2,11 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import {
   type PiOnboardingPayload,
   type PiOnboardingStep,
+  type PiOnboardingStepSet,
   type PiRecommendedPath,
-  isPiOnboardingStep,
+  DEFAULT_PI_ONBOARDING_STEP_SET,
   recommendPath,
+  resolveStepForSet,
 } from "@/lib/pi-onboarding/types";
 import { saveOnboardingProfile as saveXperienceProfile } from "@/lib/xperience/store";
 import { saveOnboardingProfile as saveLaunchpadProfile } from "@/lib/launchpad/store";
@@ -127,17 +129,27 @@ export async function syncPiPayloadToProductProfiles(
     professionalIdentity: identityLabel,
     currentSituation: payload.currentSituation,
     careerObjective: payload.careerObjective,
+    careerTimeHorizon: payload.careerTimeHorizon,
     targetSeniority: payload.targetSeniority,
     preferredIndustries: payload.preferredIndustries ?? [],
+    selfReportedStrengths: payload.selfReportedStrengths ?? [],
+    developmentPriorities: payload.developmentPriorities ?? [],
+    strengthsNote: payload.strengthsNote,
+    collaborationStyle: payload.collaborationStyle,
+    feedbackPreference: payload.feedbackPreference,
+    communicationPreference: payload.communicationPreference,
     visibilityDefault: payload.visibilityDefault,
     consentAnalysis: payload.consentAnalysis,
     skippedImports: payload.skippedImports ?? [],
+    skippedSteps: payload.skippedSteps ?? [],
     cvImportNote: payload.cvImportNote,
     portfolioImportNote: payload.portfolioImportNote,
     learningImportNote: payload.learningImportNote,
     sourceClasses: {
       identity: "self_reported",
       targets: "self_reported",
+      strengths: "self_reported_claim",
+      workingStyle: "self_reported_preference",
       experienceSummary: payload.noPriorExperience ? "self_reported_none" : "self_reported",
       imports: "imported_draft_or_note",
     },
@@ -201,7 +213,14 @@ export async function syncPiPayloadToProductProfiles(
   }
 }
 
-export function coerceStep(raw: string | null | undefined): PiOnboardingStep {
-  if (raw && isPiOnboardingStep(raw)) return raw;
-  return "identity";
+/**
+ * Resolve a persisted step id against the active step set. Sessions saved under
+ * an older step set resume on the nearest equivalent question rather than
+ * restarting.
+ */
+export function coerceStep(
+  raw: string | null | undefined,
+  stepSet: PiOnboardingStepSet = DEFAULT_PI_ONBOARDING_STEP_SET,
+): PiOnboardingStep {
+  return resolveStepForSet(raw, stepSet);
 }

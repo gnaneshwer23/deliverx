@@ -17,6 +17,7 @@ PostHog is not wired; that sink remains deferred pending FD-PACK-7.
 | --- | --- | --- |
 | Activation denominator | `account_created` | Successful Supabase password signup |
 | Activation | `onboarding_pi_completed` | PI onboarding session persisted as completed |
+| Activation shape (B5) | `onboarding_pi_completed` properties `step_set` / `step_count` / `steps_skipped` | Records which onboarding step set produced the completion, so activation stays comparable when the shape changes |
 | Core loop entry | `experience_started` | Xperience enrolment/start succeeds |
 | Core loop planning | `experience_plan_generated` | Experience plan create/refresh succeeds |
 | Judgement coverage | `capability_assessment_completed` | A non-duplicate ScoreRun and snapshot persist successfully |
