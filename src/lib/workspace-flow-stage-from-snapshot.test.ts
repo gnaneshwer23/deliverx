@@ -24,7 +24,7 @@ describe("resolveWorkspaceFlowStageFromSnapshot", () => {
           baInviteJoinUrl: null,
           baInviteExpiresAt: null,
         },
-        counts: { requirements: null, gaps: 2, risks: 1, clarifications: 0 },
+        counts: { requirements: null, gaps: 2, risks: 1, objectives: 0, traceability: null },
         nothingAppliedYet: true,
         charterTitle: "BC",
         aiSummary: "Summary",

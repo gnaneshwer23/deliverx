@@ -96,7 +96,15 @@ describe("recallSync", () => {
       mode: "stub",
       speakerCount: 1,
       segments: [],
-      extraction: { summary: "ok", actions: [], decisions: [], risks: [], blockers: [], dependencies: [] },
+      extraction: {
+        summary: "ok",
+        actions: [],
+        decisions: [],
+        risks: [],
+        blockers: [],
+        dependencies: [],
+        ceremonyInsights: [],
+      },
       queuedProposals: 2,
     });
 
@@ -138,7 +146,15 @@ describe("recallSync", () => {
       mode: "stub",
       speakerCount: 1,
       segments: [],
-      extraction: { summary: "ok", actions: [], decisions: [], risks: [], blockers: [], dependencies: [] },
+      extraction: {
+        summary: "ok",
+        actions: [],
+        decisions: [],
+        risks: [],
+        blockers: [],
+        dependencies: [],
+        ceremonyInsights: [],
+      },
       queuedProposals: 1,
     });
 

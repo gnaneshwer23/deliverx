@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -90,9 +91,7 @@ export function EvidenceCapabilityApp() {
     }
   }, [loadEvidence, loadSnapshot]);
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  useEffect(() => scheduleEffectWork(() => { void refresh(); }), [refresh]);
 
   const runScore = useCallback(async () => {
     setBusy(true);
@@ -138,8 +137,10 @@ export function EvidenceCapabilityApp() {
   useEffect(() => {
     if (!autoRun || didAutoRun || busy) return;
     if (evidence.length === 0 && !error) return;
-    setDidAutoRun(true);
-    void runScore();
+    return scheduleEffectWork(() => {
+      setDidAutoRun(true);
+      void runScore();
+    });
   }, [autoRun, didAutoRun, busy, evidence.length, error, runScore]);
 
   return (

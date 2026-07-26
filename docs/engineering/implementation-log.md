@@ -341,6 +341,23 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## Remediation Batch 6 — Residual a11y + honesty polish + TD-017 (2026-07-26)
+
+| Artefact | Summary |
+| --- | --- |
+| Experience honesty | Removed decorative Experience score / interview readiness %; qualitative setup bands + honesty labels (`setup-signal`) |
+| Scenario pulses | Product-app illustrative signals qualitative; sim pulses labelled “scenario — not capability” |
+| Demoted surfaces | Twin / PMO / Marketplace banners + Hub CTAs; Twin KPI text alternatives; honest empty marketplace |
+| A11y polish | Decorative Lucide `aria-hidden`; alert “View all” hit area; accessibility contracts extended |
+| TD-017 | `tsc --noEmit` 0; eslint 0 — fixture types + `scheduleEffectWork` for mount fetches |
+| Decision | PD-2026-07-26b |
+
+**Verification:** targeted units PASS; `npx tsc --noEmit` 0; `npm run lint` 0; `npm run test:release-gate` PASS; `npm run build` PASS.
+
+**Batch 6 verdict:** Shipped. Next remediation batch requires founder approval. TD-006 / TD-018 remain founder-owned (not flipped). T9 remains blocked.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

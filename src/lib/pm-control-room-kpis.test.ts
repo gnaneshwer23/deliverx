@@ -30,8 +30,9 @@ const SAMPLE_RAID: PmMissionControl["raid"] = {
 };
 
 function task(overrides: Partial<TaskWithMeta> & Pick<TaskWithMeta, "id">): TaskWithMeta {
+  const { id, ...rest } = overrides;
   return {
-    id: overrides.id,
+    id,
     project_id: "proj-1",
     title: "Task",
     status: "todo",
@@ -39,7 +40,7 @@ function task(overrides: Partial<TaskWithMeta> & Pick<TaskWithMeta, "id">): Task
     assignee_id: null,
     project_name: "Atlas",
     workstream_name: null,
-    ...overrides,
+    ...rest,
   } as TaskWithMeta;
 }
 

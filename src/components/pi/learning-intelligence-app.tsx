@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import {
   LEARNING_ITEM_KINDS,
@@ -68,9 +69,7 @@ export function LearningIntelligenceApp() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();

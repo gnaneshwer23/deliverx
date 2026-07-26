@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import {
   OUTCOME_EVENT_TYPES,
@@ -64,9 +65,7 @@ export function RealWorldOutcomesApp() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function onRecord(e: FormEvent) {
     e.preventDefault();

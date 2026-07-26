@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import type { ExperienceSimState } from "@/lib/experience-sim/types";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 
 type DashboardTool =
   | "Home"
@@ -58,9 +60,7 @@ export function SimulationWorkspace({
     }
   }, [enrolmentId]);
 
-  useEffect(() => {
-    void hydrate();
-  }, [hydrate]);
+  useEffect(() => scheduleEffectWork(() => { void hydrate(); }), [hydrate]);
 
   async function decide(choiceId: string, label: string) {
     if (!state || busy) return;
@@ -144,9 +144,21 @@ export function SimulationWorkspace({
   const m = state.metrics;
   const pulse: Array<[string, string, string]> = [
     ["Revenue protected", formatMoney(m.revenueProtected), `Risk ${m.projectRisk}`],
-    ["Customer satisfaction", `${m.customerSatisfaction}%`, `Outcome ${m.businessOutcome}`],
-    ["Engineering capacity", `${m.engineeringCapacity}%`, `Morale ${m.teamMorale}`],
-    ["Roadmap health", `${m.roadmapHealth}%`, `Timeline pressure ${m.timelinePressure}`],
+    [
+      "Customer satisfaction",
+      `${m.customerSatisfaction}% scenario`,
+      `Outcome ${m.businessOutcome}`,
+    ],
+    [
+      "Engineering capacity",
+      `${m.engineeringCapacity}% scenario`,
+      `Morale ${m.teamMorale}`,
+    ],
+    [
+      "Roadmap health",
+      `${m.roadmapHealth}% scenario`,
+      `Timeline pressure ${m.timelinePressure}`,
+    ],
   ];
 
   const unread = state.messages.filter((msg) => !msg.read);
@@ -271,7 +283,14 @@ export function SimulationWorkspace({
 
         <div className="xp-session-notice">{notice}</div>
 
-        <section className="xp-pulse-grid">
+        <section
+          className="xp-pulse-grid"
+          aria-label="Scenario workplace signals — simulation metrics, not capability"
+        >
+          <p className="xp-honesty-note xp-pulse-honesty">
+            Scenario workplace signals from the live simulation — not capability
+            or readiness scores.
+          </p>
           {pulse.map(([label, value, hint]) => (
             <article key={label}>
               <span>{label}</span>
@@ -353,11 +372,11 @@ export function SimulationWorkspace({
                   capability.
                 </p>
                 <div className="xp-action-row" style={{ marginTop: "0.75rem" }}>
-                  <a href="/profile/final">Final assessment (transfer)</a>
-                  <a href="/profile/evidence?run=1">See your capability profile</a>
-                  <a href="/profile/evidence">Review Evidence Ledger</a>
-                  <a href="/portfolio">Package Portfolio</a>
-                  <a href="/launchpad/app">Career readiness</a>
+                  <Link href="/profile/final">Final assessment (transfer)</Link>
+                  <Link href="/profile/evidence?run=1">See your capability profile</Link>
+                  <Link href="/profile/evidence">Review Evidence Ledger</Link>
+                  <Link href="/portfolio">Package Portfolio</Link>
+                  <Link href="/launchpad/app">Career readiness</Link>
                 </div>
               </div>
             )}

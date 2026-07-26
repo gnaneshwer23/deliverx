@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import {
   EVIDENCE_STRENGTH_DISPLAY,
@@ -78,9 +79,7 @@ export function VerifiedPortfolioApp() {
     setCapabilityClaims(data.capabilityClaims ?? []);
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function createEntry() {
     if (!title.trim() || selected.length === 0) {

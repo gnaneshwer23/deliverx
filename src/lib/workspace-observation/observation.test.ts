@@ -201,10 +201,10 @@ describe("observation → ledger provenance rules", () => {
             project_kind: null,
             project_id: null,
           };
-          const makeEqChain = (): {
+          const makeEqChain: () => {
             eq: () => ReturnType<typeof makeEqChain>;
             maybeSingle: () => Promise<{ data: typeof consentedRow; error: null }>;
-          } => ({
+          } = () => ({
             eq: () => makeEqChain(),
             maybeSingle: async () => ({ data: consentedRow, error: null }),
           });

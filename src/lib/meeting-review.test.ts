@@ -33,9 +33,9 @@ function proposal(
 describe("meeting-review helpers", () => {
   it("filters proposals to a single meeting source_id", () => {
     const rows = [
-      proposal({ id: "p1", source_id: "m1", title: "Task A" }),
-      proposal({ id: "p2", source_id: "m2", title: "Task B" }),
-      proposal({ id: "p3", source_id: "m1", title: "Task C" }),
+      proposal({ id: "p1", source_id: "m1", title: "Task A", action_type: "create_task" }),
+      proposal({ id: "p2", source_id: "m2", title: "Task B", action_type: "create_task" }),
+      proposal({ id: "p3", source_id: "m1", title: "Task C", action_type: "create_task" }),
     ];
 
     expect(filterProposalsForMeeting(rows, "m1").map((row) => row.id)).toEqual(["p1", "p3"]);

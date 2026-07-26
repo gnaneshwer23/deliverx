@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import type { InterventionRecord } from "@/lib/workspace-observation/types";
 
@@ -25,9 +26,7 @@ export function DevelopmentLoopPanel() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function act(id: string, action: "accepted" | "dismissed" | "completed") {
     setBusyId(id);

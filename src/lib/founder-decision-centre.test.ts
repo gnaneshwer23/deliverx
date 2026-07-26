@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ArtifactReviewRow } from "@/lib/approval/artifact-review";
 import type { FounderDecisionRow } from "@/services/founderEngine";
 import {
   FOUNDER_DECISION_CENTRE_MAX,
@@ -25,6 +26,26 @@ const SAMPLE_APPROVAL: FounderDecisionRow = {
   kind: "approval",
 };
 
+const SAMPLE_REVIEW: ArtifactReviewRow = {
+  id: "r1",
+  organisation_id: "org-1",
+  project_id: "p1",
+  entity_type: "structure_bundle",
+  entity_id: null,
+  entity_ids: ["e1"],
+  title: "Strategic plan bundle",
+  summary: "AI draft ready for sign-off",
+  payload: {},
+  status: "needs_review",
+  source: "ai",
+  reviewer_notes: null,
+  decided_by: null,
+  decided_at: null,
+  created_by: null,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
+
 describe("founder-decision-centre", () => {
   it("caps decision centre at four items", () => {
     const decisions = Array.from({ length: 8 }, (_, i) => ({
@@ -46,17 +67,7 @@ describe("founder-decision-centre", () => {
   it("prioritises reviews on day-one mode", () => {
     const items = buildFounderDecisionCentreItems({
       decisions: [SAMPLE_DECISION],
-      pendingReviews: [
-        {
-          id: "r1",
-          title: "Strategic plan bundle",
-          summary: "AI draft ready for sign-off",
-          entity_type: "structure_bundle",
-          status: "pending",
-          project_id: "p1",
-          created_at: new Date().toISOString(),
-        },
-      ],
+      pendingReviews: [SAMPLE_REVIEW],
       projectId: "p1",
       mode: "day-one",
     });

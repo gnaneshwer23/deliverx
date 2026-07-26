@@ -98,7 +98,9 @@ describe("updateRequirement service exports", () => {
   it("exports CRUD helpers from baRequirements", async () => {
     const mod = await import("@/services/baRequirements");
     expect(typeof mod.updateRequirement).toBe("function");
-    expect(typeof mod.seedRequirementsFromStructuredAnalysis).toBe("undefined");
+    expect(
+      typeof (mod as Record<string, unknown>).seedRequirementsFromStructuredAnalysis,
+    ).toBe("undefined");
     expect(typeof mod.bulkInsertClarificationGaps).toBe("function");
     expect(typeof mod.listClarificationGaps).toBe("function");
   });

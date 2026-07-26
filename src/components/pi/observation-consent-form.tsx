@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import type { ObservationConsentRecord } from "@/lib/workspace-observation/types";
 import { WORKSPACE_OBSERVATION_CONSENT_COPY } from "@/lib/workspace-observation/types";
 
@@ -33,9 +34,7 @@ export function ObservationConsentForm() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function setConsent(next: boolean) {
     setSaving(true);

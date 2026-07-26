@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import { ATTESTATION_RELATIONSHIPS } from "@/lib/external-attestation/types";
 
@@ -48,9 +49,7 @@ export function AttestationForm({ token }: { token: string }) {
     }
   }, [token]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function submit() {
     setBusy(true);

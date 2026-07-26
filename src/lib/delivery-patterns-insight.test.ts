@@ -29,7 +29,7 @@ const baseSnapshot: CoordinationSnapshot = {
   ],
   recommendations: [],
   graph: { nodes: [], edges: [] },
-  chainSummary: "Nominal",
+  chainSummary: ["Nominal"],
   crossOrgAlerts: [],
 };
 

@@ -3,6 +3,11 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import {
+  SETUP_SIGNAL_HONESTY,
+  setupSignalBand,
+  setupSignalFocus,
+} from "@/lib/xperience/setup-signal";
 import "./xperience-app.css";
 
 type Screen = "Profile" | "Goals" | "Baseline" | "WorkStyle" | "Offer" | "Dashboard";
@@ -118,13 +123,16 @@ export function ProductApp({
   const firstName = form.firstName.trim() || "there";
 
   const identity = useMemo(() => {
-    const confidence = Number(form.confidence);
-    const readiness = 38 + confidence * 8;
+    const focus = setupSignalFocus({
+      workStyle: form.workStyle,
+      selectedSkill: form.selectedSkill,
+      learningStyle: form.learningStyle,
+    });
     return {
-      score: 280 + confidence * 34,
-      readiness,
-      strengths: [form.workStyle, form.selectedSkill, form.learningStyle],
-      growth: ["Stakeholder tension", "Commercial tradeoffs", "Evidence quality"],
+      band: setupSignalBand(form.confidence),
+      honesty: SETUP_SIGNAL_HONESTY,
+      strengths: focus.strengths,
+      growth: focus.growth,
     };
   }, [form.confidence, form.learningStyle, form.selectedSkill, form.workStyle]);
 
@@ -250,7 +258,11 @@ export function ProductApp({
       setAgentRecommendation(
         result.summary || "Continue with the next stakeholder check-in.",
       );
-      setNotice(`${action} recorded. Evidence score ${result.evidenceScore}.`);
+      setNotice(
+        typeof result.evidenceScore === "number"
+          ? `${action} recorded. Scenario evidence points logged (${result.evidenceScore}) — not a capability score.`
+          : `${action} recorded.`,
+      );
     } catch {
       setNotice(`${action} selected. Evidence will sync when the backend is available.`);
     }
@@ -280,12 +292,13 @@ export function ProductApp({
               ))}
             </div>
             <div className="xp-readiness-card">
-              <p className="xp-eyebrow">Career identity</p>
-              <strong>{identity.score}</strong>
-              <span>Experience score</span>
+              <p className="xp-eyebrow">Setup signal</p>
+              <strong className="xp-setup-band">{identity.band}</strong>
+              <span>Qualitative band from your self-reported confidence</span>
+              <p className="xp-honesty-note">{identity.honesty}</p>
               <div>
-                <small>Interview readiness</small>
-                <b>{identity.readiness}%</b>
+                <small>Growth focus</small>
+                <b>{identity.growth[0]}</b>
               </div>
             </div>
           </aside>
@@ -385,12 +398,19 @@ export function ProductApp({
               {notice}
             </div>
 
-            <section className="xp-pulse-grid">
+            <section
+              className="xp-pulse-grid"
+              aria-label="Illustrative scenario workplace signals — not capability"
+            >
+              <p className="xp-honesty-note xp-pulse-honesty">
+                Illustrative scenario signals for this workplace story — not
+                capability or readiness scores.
+              </p>
               {[
-                ["Revenue protected", "£120k", "At risk without a clear tradeoff"],
-                ["Customer satisfaction", "78%", "Down 4 points this week"],
-                ["Engineering capacity", "64%", "Scope pressure is rising"],
-                ["Roadmap health", "82%", "Stable but fragile"]
+                ["Revenue protected", "£120k at risk", "Needs a clear tradeoff"],
+                ["Customer trust", "Softening", "Satisfaction pressure this week"],
+                ["Engineering capacity", "Constrained", "Scope pressure is rising"],
+                ["Roadmap health", "Fragile but stable", "Commitments need clarity"],
               ].map(([label, value, hint]) => (
                 <article key={label}>
                   <span>{label}</span>
@@ -477,14 +497,27 @@ const workspaceContent: Record<DashboardTool, { title: string; body: string; act
     items: ["Clarify the tradeoff", "Prepare a stakeholder update", "Strengthen evidence quality"]
   },
   Evidence: {
-    title: "Your work is becoming a private readiness portfolio.",
+    title: "Your work is becoming a private evidence portfolio.",
     body: "Decisions, written updates, meeting preparation and feedback are captured after onboarding for later review.",
     action: "View evidence",
     items: ["Roadmap tradeoff", "Stakeholder update", "Decision rationale"]
   }
 };
 
-function OfferCard({ firstName, identity, form }: { firstName: string; identity: { score: number; readiness: number; strengths: string[]; growth: string[] }; form: { targetRole: string; industry: string; companyType: string } }) {
+function OfferCard({
+  firstName,
+  identity,
+  form,
+}: {
+  firstName: string;
+  identity: {
+    band: string;
+    honesty: string;
+    strengths: string[];
+    growth: string[];
+  };
+  form: { targetRole: string; industry: string; companyType: string };
+}) {
   return (
     <div className="xp-offer-card">
       <p className="xp-eyebrow">Offer letter</p>
@@ -497,10 +530,20 @@ function OfferCard({ firstName, identity, form }: { firstName: string; identity:
         <div><dt>Start</dt><dd>Monday, Day 1</dd></div>
       </dl>
       <div className="xp-identity-preview">
-        <article><span>Experience score</span><strong>{identity.score}</strong></article>
-        <article><span>Interview readiness</span><strong>{identity.readiness}%</strong></article>
-        <article><span>Growth focus</span><strong>{identity.growth[0]}</strong></article>
+        <article>
+          <span>Setup signal</span>
+          <strong className="xp-setup-band">{identity.band}</strong>
+        </article>
+        <article>
+          <span>Signal type</span>
+          <strong>Self-reported</strong>
+        </article>
+        <article>
+          <span>Growth focus</span>
+          <strong>{identity.growth[0]}</strong>
+        </article>
       </div>
+      <p className="xp-honesty-note">{identity.honesty}</p>
     </div>
   );
 }

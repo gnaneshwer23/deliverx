@@ -352,7 +352,19 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 | **Status** | Accepted |
 | **Decision** | Founder utterance `approve batch 5` authorizes Remediation Batch 5 only: (1) Signed-in primary surfaces share one journey nav — Hub · Profile · Experience · Launchpad · Workspace · Portfolio — via `ProductSuiteShell` / AppShell strip. Local side/rail navigation remains contextual (Workspace modules, Experience tools, Launchpad MVP modules). (2) **Launchpad** is the product chrome name in suite nav/Hub CTA; **Career Intelligence** remains the capability language *inside* Launchpad (clarifies PD-2026-07-25f dual naming). (3) Non-MVP Launchpad modules stay out of primary nav (routes may remain). (4) Public share/attest portfolio token routes stay outside the signed-in shell. (5) WCAG 2.2 AA core chrome/auth gaps close (named controls, skip links, auth live regions, readable chrome type, Launchpad mobile nav, Escape/focus on primary menus); whole-product AA is not claimed. Stable URLs and redirects are preserved. |
 | **Why** | Audit R-P1-07 / R-P2-15: competing shells made DeliverX feel stitched together; accessibility gaps blocked a public-beta honesty bar. |
-| **Consequence** | Shared suite shell; dead dark WorkspaceSidebar removed; a11y unit contracts; docs updated. Follow-ups: residual AT/axe live QA, dense legacy toolbar a11y, Experience decorative % honesty. Does not authorize T9. |
+| **Consequence** | Shared suite shell; dead dark WorkspaceSidebar removed; a11y unit contracts; docs updated. Follow-ups: residual AT/axe live QA (Batch 6 closed engineering-owned residuals). Does not authorize T9. |
+
+---
+
+## PD-2026-07-26b — Experience honesty + residual a11y + TD-017 clear
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `approve batch 6` authorizes Remediation Batch 6 only: (1) Experience onboarding must not present decorative unexplained readiness % or Experience score as capability — qualitative self-reported setup bands with honesty labels; scenario workplace pulses labelled non-capability. (2) Bookmarkable demoted Twin / PMO / Marketplace surfaces get honest deferred banners, text chart alternatives / empty states, and named decorative icons — without inventing fake data or rewriting Mission Control into new product surfaces. (3) TD-017 fixture ESLint + standalone `tsc` debt is cleared so CI can run clean lint/typecheck when TD-018 restores Actions minutes. (4) TD-006 (leaked-password Auth toggle) and TD-018 (Actions minutes) remain founder-owned and are **not** flipped by this batch — document only. T9 / Stripe remain blocked. |
+| **Why** | Constitution “no unexplained scores”; Batch 5 deferred residuals; CI will fail on fixture debt when workflows return. |
+| **Consequence** | `setup-signal` helper; demoted banners; Twin KPI text summaries; `scheduleEffectWork`; TD-017 closed. VoiceOver/NVDA + authenticated axe remain founder/QA manual. |
 
 ---
 

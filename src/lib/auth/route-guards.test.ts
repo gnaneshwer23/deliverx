@@ -1,3 +1,4 @@
+import type { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
 import {
   buildLoginRedirectPath,
@@ -10,9 +11,14 @@ import {
 } from "@/lib/auth/route-guards";
 
 function mockRequest(pathname: string, search = "") {
+  const url = new URL(`http://local${pathname}${search}`);
   return {
-    nextUrl: new URL(`http://local${pathname}${search}`),
-  };
+    nextUrl: {
+      pathname: url.pathname,
+      search: url.search,
+      searchParams: url.searchParams,
+    },
+  } as Pick<NextRequest, "nextUrl">;
 }
 
 describe("route-guards", () => {

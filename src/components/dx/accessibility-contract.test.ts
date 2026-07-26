@@ -28,4 +28,26 @@ describe("primary shell accessibility contracts", () => {
     expect(loginForm).toContain('role="alert"');
     expect(loginForm).toContain('aria-live="assertive"');
   });
+
+  it("marks decorative chrome icons aria-hidden", () => {
+    expect(source("./alert-bell-dropdown.tsx")).toContain(
+      "<Bell size={14} aria-hidden />",
+    );
+    expect(source("./app-nav.tsx")).toContain("<Menu size={18} aria-hidden />");
+  });
+
+  it("frames demoted Twin/PMO/Marketplace surfaces honestly", () => {
+    const banner = source("./demoted-workspace-banner.tsx");
+    expect(banner).toContain("role=\"note\"");
+    expect(banner).toContain("Back to Hub");
+    expect(source("../../app/workspace/twin/page.tsx")).toContain(
+      "DemotedWorkspaceBanner",
+    );
+    expect(source("../../app/workspace/pmo/page.tsx")).toContain(
+      "DemotedWorkspaceBanner",
+    );
+    expect(source("../../app/workspace/marketplace/page.tsx")).toContain(
+      "DemotedWorkspaceBanner",
+    );
+  });
 });

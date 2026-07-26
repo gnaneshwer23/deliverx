@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PI_EVIDENCE_PATH, PI_PROFILE_PATH } from "@/lib/pi-profile/paths";
@@ -95,9 +96,7 @@ export function BaselineAssessmentApp() {
     }
   }, []);
 
-  useEffect(() => {
-    void bootstrap();
-  }, [bootstrap]);
+  useEffect(() => scheduleEffectWork(() => { void bootstrap(); }), [bootstrap]);
 
   async function onSubmitResponse(e: FormEvent) {
     e.preventDefault();

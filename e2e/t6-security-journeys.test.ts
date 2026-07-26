@@ -265,12 +265,12 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
 
     const { error: ownerInsertError } = await victimClient!
       .from("pi_capability_score_runs")
-      .insert({ ...scoreRunPayload, user_id: victimId });
+      .insert({ ...scoreRunPayload, user_id: victimId } as never);
     expect(ownerInsertError, "owner ScoreRun INSERT must be denied").toBeTruthy();
 
     const { error: nonOwnerInsertError } = await attackerClient!
       .from("pi_capability_score_runs")
-      .insert({ ...scoreRunPayload, user_id: victimId });
+      .insert({ ...scoreRunPayload, user_id: victimId } as never);
     expect(
       nonOwnerInsertError,
       "non-owner ScoreRun INSERT must be denied",
@@ -278,13 +278,13 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
 
     const { error: ownerUpdateError } = await victimClient!
       .from("pi_capability_score_runs")
-      .update({ result: { forged: true } })
+      .update({ result: { forged: true } } as never)
       .eq("id", victimScoreRunId);
     expect(ownerUpdateError, "owner ScoreRun UPDATE must be denied").toBeTruthy();
 
     const { error: nonOwnerUpdateError } = await attackerClient!
       .from("pi_capability_score_runs")
-      .update({ result: { forged: true } })
+      .update({ result: { forged: true } } as never)
       .eq("id", victimScoreRunId);
     expect(
       nonOwnerUpdateError,
@@ -315,7 +315,7 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
       .update({
         verifier_status: "externally_attested",
         evidence_strength: "externally_verified",
-      })
+      } as never)
       .eq("id", victimEntryId);
     expect(
       ownerUpdateError,
@@ -329,7 +329,7 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
         title: "Forged verified entry",
         verifier_status: "externally_attested",
         evidence_strength: "externally_verified",
-      });
+      } as never);
     expect(
       ownerInsertError,
       "owner Verified-bearing INSERT must be denied",
@@ -341,7 +341,7 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
         .update({
           verifier_status: "externally_attested",
           evidence_strength: "externally_verified",
-        })
+        } as never)
         .eq("id", victimEntryId)
         .select("id");
     expect(nonOwnerUpdateError).toBeNull();
@@ -368,12 +368,12 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
     };
     const { error: ownerError } = await victimClient!
       .from("pi_evidence_status_transitions")
-      .insert({ ...transition, actor_user_id: victimId });
+      .insert({ ...transition, actor_user_id: victimId } as never);
     expect(ownerError, "owner platform_verified INSERT must be denied").toBeTruthy();
 
     const { error: nonOwnerError } = await attackerClient!
       .from("pi_evidence_status_transitions")
-      .insert({ ...transition, actor_user_id: attackerId });
+      .insert({ ...transition, actor_user_id: attackerId } as never);
     expect(
       nonOwnerError,
       "non-owner platform_verified INSERT must be denied",

@@ -71,10 +71,10 @@ Severity (this roadmap):
 | R-P2-09 | Human review workflow unused | M | Later |
 | R-P2-10 | Org departments/teams 0 rows | S | When Workspace pilot |
 | R-P2-11 | TD-012 dual-write incomplete | M | Later |
-| R-P2-12 | TD-017 fixture lint/tsc debt | M | Before CI returns |
+| R-P2-12 — Closed | TD-017 fixture lint/tsc debt | M | **Resolved — Batch 6** |
 | R-P2-13 — Closed | Launchpad non-MVP “later” modules | S | **Resolved — Batch 5** (hidden from nav; routes remain) |
 | R-P2-14 — Closed | Root metadata “AI Delivery Platform” | S | **Resolved — Batch 3** |
-| R-P2-15 — Closed (core) | WCAG gaps (icon name, alerts, tiny text) | M | **Resolved — Batch 5** (primary AA gaps; see a11y audit deferred) |
+| R-P2-15 — Closed | WCAG gaps (icon name, alerts, tiny text, demoted surfaces) | M | **Resolved — Batch 5–6** (core AA + residual primary/demoted; see a11y audit deferred for AT lab) |
 | R-P2-16 | No coverage tooling / Playwright CI | M | After TD-018 |
 | R-P2-17 | Soft AI rate / cost estimate honesty | S | Later |
 | R-P2-18 | Pre-pivot purge residue (org/delivery) | M | Privacy residual track |
@@ -186,13 +186,15 @@ Batch 4 (founder approve): Pilot seal engineering — Next ≥16.2.11 (shipped 1
      ↓
 Batch 5 (founder approve): Navigation coherence + WCAG 2.2 AA core — SHIPPED
      ↓
+Batch 6 (founder approve): Residual a11y + Experience honesty + TD-017 — SHIPPED
+     ↓
 Founder ops: TD-018 CI · TD-006 HIBP · SMTP reset test
      ↓
-DB-P1 consent + judgement binding · AI citations · residual a11y QA
+DB-P1 consent + judgement binding · AI citations · residual AT/axe QA
      ↓
 (Only with founder): T9 commercial
 ```
 
 **Do not start T9.** Do not expand marketplace / mission-control / multi-profession without approval.
 
-**Batch 5 shipped.** Remaining batches require founder approval.
+**Batch 6 shipped.** Next remediation batch requires founder approval. TD-006 and TD-018 remain founder-owned (document only — not flipped).

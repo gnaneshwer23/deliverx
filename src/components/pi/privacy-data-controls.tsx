@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import { DELETE_CONFIRM_PHRASE } from "@/lib/pi-privacy/cascade-map";
 import type { PrivacyRequestRecord } from "@/lib/pi-privacy/types";
 import { dxClass } from "@/lib/dx-theme";
@@ -41,9 +42,7 @@ export function PrivacyDataControls() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => scheduleEffectWork(() => { void load(); }), [load]);
 
   async function runExport() {
     setExporting(true);

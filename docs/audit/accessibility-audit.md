@@ -1,35 +1,26 @@
 # Accessibility audit (Phase 8)
 
-**Date:** 2026-07-25 · **Updated:** 2026-07-26 (Batch 5)  
+**Date:** 2026-07-25 · **Updated:** 2026-07-26 (Batch 6)  
 **Target:** WCAG 2.2 Level AA where practical  
-**Method:** Static analysis of semantic HTML, ARIA, labels, focus styles, contrast tokens; production HTML fetch for `/` and `/login`. Interactive keyboard/focus live testing **BLOCKED** for authenticated routes without pilot credentials. Batch 5 closed the primary AA gaps with unit contracts.
+**Method:** Static analysis of semantic HTML, ARIA, labels, focus styles, contrast tokens; production HTML fetch for `/` and `/login`. Interactive keyboard/focus live testing **BLOCKED** for authenticated routes without pilot credentials. Batch 5–6 closed the primary AA gaps with unit contracts; Batch 6 added demoted-surface text alternatives and Experience honesty.
 
-**Verdict:** **Not fully WCAG 2.2 AA compliant** across every surface. Core signed-in chrome + auth now meet the audited P0/P1 a11y slice. Do not claim whole-product AA until axe + keyboard QA on authenticated journeys is run.
+**Verdict:** **Not fully WCAG 2.2 AA compliant** across every surface. Core signed-in chrome + auth + demoted Twin/PMO/Marketplace honesty now meet the audited engineering-owned a11y slice. Do not claim whole-product AA until axe + keyboard/AT QA on authenticated journeys is run.
 
 ---
 
-## Batch 5 status (2026-07-26)
+## Batch 6 status (2026-07-26)
 
 | ID | Status | Notes |
 | --- | --- | --- |
-| A0-1 User menu name | **Resolved** | `aria-label` Open/Close account menu |
-| A0-2 Auth error live regions | **Resolved** | Login/signup/forgot/reset + login page banner `role="alert"` |
-| A0-3 Auth panel contrast | **Resolved** | Brand panel body/footer raised to `white/75` / `white/70` |
-| A0-4 Tiny 7–9px essential labels | **Resolved (chrome)** | `dxClass` labels/nav/buttons ≥12px (`text-xs`); residual marketing mocks deferred |
-| A0-5 Decorative unexplained % | **Prior batches** | Auth KPIs removed Batch 2; marketing honesty Batch 2 |
-| A1-1 App skip links | **Resolved** | `ProductSuiteShell` + `AppShell` skip to main |
-| A1-2 Launchpad mobile nav | **Resolved** | Horizontal module switcher below `lg` |
-| A1-3 Escape on menus | **Resolved** | User menu + alert bell Escape + focus restore |
-| A1-4 Icon-only controls | **Partial** | Named primary chrome icons; residual Lucide in dense legacy panels deferred |
-| A1-5 Badge context | **Resolved** | Nav badges include `aria-label` with item context |
-| A1-6 Placeholder-only fields | **Partial** | Launchpad interview notes now labelled; Portfolio fields remain mixed |
-| A2-1 Muted greys | **Partial** | Primary chrome muted text darkened; marketing microcopy deferred |
-| A2-2 Heading hierarchy | **Resolved (Launchpad)** | Page `h1` = Launchpad; module purpose stays `h2` |
-| A2-5 Target size | **Partial** | Primary chrome controls `min-h-11`; dense legacy toolbars deferred |
+| A1-4 Icon-only controls | **Resolved (primary + demoted)** | Chrome icons named/`aria-hidden`; Twin/PMO/Marketplace decorative Lucide `aria-hidden` |
+| A2-5 Target size | **Improved** | Alert “View all” + demoted CTAs `min-h-11`; Experience tools already ≥48px |
+| Twin/PMO chart alternatives | **Resolved (honest)** | KPI text summaries + demoted banners; empty/deferred framing without fake data |
+| Experience decorative readiness % | **Resolved** | Qualitative setup bands + honesty labels; scenario pulses labelled non-capability |
+| TD-017 lint/tsc | **Closed** | `tsc --noEmit` 0; eslint 0 |
 
-**Deferred (honest):** VoiceOver/NVDA pass; axe on authenticated Hub→Profile→Evidence; marketing decorative micro-labels; Twin/PMO chart text alternatives; full icon inventory outside primary chrome; Experience onboarding decorative readiness % (content honesty residual, not chrome).
+**Deferred (honest):** VoiceOver/NVDA pass; axe on authenticated Hub→Profile→Evidence; marketing decorative micro-labels; Portfolio mixed placeholder-only fields; full residual Mission Control density outside Twin/PMO/Marketplace.
 
-**Manual method until CI axe:** Tab through `/`, `/login`, then (with credentials) Hub → Profile → Experience → Launchpad → Workspace; verify skip link, visible focus ring, Escape closes menus, Launchpad modules reachable at 768px.
+**Manual method until CI axe:** Tab through `/`, `/login`, then (with credentials) Hub → Profile → Experience → Launchpad → Workspace; verify skip link, visible focus ring, Escape closes menus, Launchpad modules reachable at 768px. Optionally bookmark `/workspace/twin`, `/workspace/pmo`, `/workspace/marketplace` and confirm demoted banners + text KPI summaries.
 
 ---
 

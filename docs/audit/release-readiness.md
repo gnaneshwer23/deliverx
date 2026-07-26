@@ -45,7 +45,7 @@
 | Next.js security advisories | Upgraded `16.2.9`→`16.2.12` (≥16.2.11); proxy/SSRF/DoS class closed | **Pass — Batch 4** |
 | Continuous CI | TD-018 disabled workflows | **Fail** (founder) |
 | TD-006 HIBP | Advisor WARN | **Fail** (ops, founder) |
-| WCAG 2.2 AA | Core chrome/auth AA slice Batch 5; full-product claim deferred | **Partial — Batch 5** (do not claim whole-product AA) |
+| WCAG 2.2 AA | Core chrome/auth AA Batch 5; residual demoted/Experience honesty Batch 6; full-product claim deferred | **Partial — Batch 5–6** (do not claim whole-product AA) |
 | T9 / Stripe | Charter block | N/A (correctly absent) |
 
 ---

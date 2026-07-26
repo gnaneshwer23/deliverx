@@ -13,7 +13,7 @@ export async function processNextEvidenceJobs(
   const limit = options.limit ?? 5;
   const workerId = options.workerId ?? `worker-${process.pid}`;
 
-  let query = supabase
+  const query = supabase
     .from("pi_evidence_processing_jobs")
     .select("id, evidence_id, attempts, max_attempts, status")
     .in("status", ["pending", "failed"])

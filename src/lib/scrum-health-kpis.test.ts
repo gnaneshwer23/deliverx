@@ -27,7 +27,7 @@ describe("scrum-health-kpis", () => {
         prediction: "On track with risk",
       },
       impediments: [{ title: "Env access", owner: "DevOps", ageDays: 3, severity: "high" }],
-      dataSources: { velocity: "live" },
+      dataSources: { velocity: "live", burndown: "live" },
     });
     expect(kpis).toHaveLength(5);
   });

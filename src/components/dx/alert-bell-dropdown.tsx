@@ -67,7 +67,7 @@ export function AlertBellDropdown({
             <span className="text-xs font-semibold text-[#0D0D0B]">Active alerts</span>
             <Link
               href="/workspace/alerts"
-              className="text-[10px] text-[#1C4A2E] hover:underline"
+              className="inline-flex min-h-11 items-center text-xs text-[#1C4A2E] hover:underline"
               onClick={() => setOpen(false)}
             >
               View all

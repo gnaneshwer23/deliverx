@@ -90,7 +90,16 @@ describe("pm-day-one-panels", () => {
   it("builds day-one KPI strip with honest empty health and bootstrap milestones", () => {
     const kpis = buildPmDayOneKpis({
       pendingReviewCount: 3,
-      bootstrapSummary: { structure: { milestones: 4 }, personas: {} },
+      bootstrapSummary: {
+        structure: {
+          workstreams: 0,
+          tasks: 0,
+          raidItems: 0,
+          milestones: 4,
+          stakeholders: 0,
+        },
+        personas: {},
+      },
       overview: { budgetLabel: "£120k / £200k" } as PmMissionControl["overview"],
       milestones: [
         { phase: "Discovery", status: "done" },
