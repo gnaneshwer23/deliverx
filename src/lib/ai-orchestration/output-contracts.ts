@@ -1,7 +1,13 @@
 /**
  * T4 structured output contracts — validate agent JSON; refuse unstructured capability writes.
  * No Zod dependency: lightweight schema validators matching platform style.
+ *
+ * Citations are normalised to structured `AiCitation[]` here; whether they are
+ * *required* and whether the ids *resolve* to the run context is enforced
+ * centrally in `runAgent` via `enforceCitations` (see `citations.ts`).
  */
+
+import { normaliseCitations } from "@/lib/ai-orchestration/citations";
 
 export type OutputValidationResult<T = Record<string, unknown>> =
   | { ok: true; data: T }
@@ -58,7 +64,7 @@ function validateLineManager(raw: unknown): OutputValidationResult {
       summary: String(raw.summary).trim(),
       priorities: raw.priorities as string[],
       suggestedActions: raw.suggestedActions as string[],
-      citations: Array.isArray(raw.citations) ? raw.citations : [],
+      citations: normaliseCitations(raw.citations),
       requiresConfirmation: Boolean(raw.requiresConfirmation ?? true),
       ...BASE_GUARDS,
     }),
@@ -87,6 +93,9 @@ function validateStakeholder(raw: unknown): OutputValidationResult {
   requireString(raw, "perspective", errors);
   requireString(raw, "concern", errors);
   requireStringArray(raw, "questions", errors);
+  if (raw.citations !== undefined && !Array.isArray(raw.citations)) {
+    errors.push("citations must be an array");
+  }
   if (errors.length) return { ok: false, errors, fallback: stakeholderFallback(raw) };
   return {
     ok: true,
@@ -95,6 +104,7 @@ function validateStakeholder(raw: unknown): OutputValidationResult {
       concern: String(raw.concern).trim(),
       questions: raw.questions as string[],
       asks: Array.isArray(raw.asks) ? raw.asks : [],
+      citations: normaliseCitations(raw.citations),
       requiresConfirmation: true,
     }),
   };
@@ -107,6 +117,7 @@ function stakeholderFallback(partial?: Record<string, unknown>): Record<string, 
     concern: typeof partial?.concern === "string" ? partial.concern : "Could not validate stakeholder output",
     questions: [],
     asks: [],
+    citations: [],
     requiresConfirmation: true,
     fallback: true,
   });
@@ -119,6 +130,9 @@ function validateObserver(raw: unknown): OutputValidationResult {
   if (typeof raw.confidence !== "string") errors.push("confidence must be a string band");
   if (raw.isEvidence === true) errors.push("observer output cannot claim isEvidence=true");
   if (raw.isVerified === true) errors.push("observer output cannot claim isVerified=true");
+  if (raw.citations !== undefined && !Array.isArray(raw.citations)) {
+    errors.push("citations must be an array");
+  }
   if (errors.length) return { ok: false, errors, fallback: observerFallback(raw) };
   return {
     ok: true,
@@ -126,6 +140,7 @@ function validateObserver(raw: unknown): OutputValidationResult {
       observation: String(raw.observation).trim(),
       confidence: String(raw.confidence ?? "low"),
       signals: Array.isArray(raw.signals) ? raw.signals : [],
+      citations: normaliseCitations(raw.citations),
       isEvidence: false,
       isVerified: false,
       requiresHumanReview: true,
@@ -142,6 +157,7 @@ function observerFallback(partial?: Record<string, unknown>): Record<string, unk
         : "Observer draft unavailable — validation failed.",
     confidence: "low",
     signals: [],
+    citations: [],
     isEvidence: false,
     isVerified: false,
     requiresHumanReview: true,
@@ -154,13 +170,16 @@ function validateCoach(raw: unknown): OutputValidationResult {
   const errors: string[] = [];
   if (!isRecord(raw)) return { ok: false, errors: ["output must be an object"], fallback: coachFallback() };
   requireString(raw, "hint", errors);
+  if (raw.citations !== undefined && !Array.isArray(raw.citations)) {
+    errors.push("citations must be an array");
+  }
   if (errors.length) return { ok: false, errors, fallback: coachFallback(raw) };
   return {
     ok: true,
     data: applyBaseGuards({
       hint: String(raw.hint).trim(),
       nextSteps: Array.isArray(raw.nextSteps) ? raw.nextSteps : [],
-      citations: Array.isArray(raw.citations) ? raw.citations : [],
+      citations: normaliseCitations(raw.citations),
       requiresConfirmation: false,
     }),
   };
@@ -177,6 +196,37 @@ function coachFallback(partial?: Record<string, unknown>): Record<string, unknow
     requiresConfirmation: false,
     fallback: true,
   });
+}
+
+/**
+ * Deterministic fallback used when a citation-required output arrives with
+ * missing / empty / unknown citations. Starts from the contract fallback and
+ * overlays honest "insufficient evidence/context" copy on the primary field.
+ * Never carries citations and never claims capability/verified state.
+ */
+export function citationInsufficientFallback(
+  contractId: string,
+  reason: "insufficient_evidence" | "unknown_source",
+): Record<string, unknown> {
+  const base = contractFallback(contractId);
+  const message =
+    reason === "unknown_source"
+      ? "I could not ground this in the evidence or project context provided, so I am not making a claim. Add or re-share the relevant evidence and try again."
+      : "There isn't enough cited evidence or project context to support a claim here, so I'm holding back rather than guessing.";
+
+  const overlaid: Record<string, unknown> = { ...base };
+  if (typeof overlaid.summary === "string") overlaid.summary = message;
+  if (typeof overlaid.perspective === "string") overlaid.perspective = message;
+  if (typeof overlaid.observation === "string") overlaid.observation = message;
+  if (typeof overlaid.hint === "string") overlaid.hint = message;
+
+  overlaid.citations = [];
+  overlaid.fallback = true;
+  overlaid.citationFallback = true;
+  overlaid.citationFallbackReason = reason;
+  overlaid.mayWriteCapability = false;
+  overlaid.mayModifyVerifiedEvidence = false;
+  return overlaid;
 }
 
 export const OUTPUT_CONTRACTS: Record<

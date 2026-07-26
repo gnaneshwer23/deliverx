@@ -2,6 +2,7 @@
  * T4 guardrails — prompt-injection protections + authority enforcement.
  */
 
+import { buildCitationIndex } from "@/lib/ai-orchestration/citations";
 import type { AiAgentAuthority, AiStructuredContext } from "@/lib/ai-orchestration/types";
 
 export type GuardrailVerdict =
@@ -149,6 +150,14 @@ export function formatGuardedUserPayload(
   const pin = context.frameworkPin
     ? `${context.frameworkPin.code ?? "unknown"} (${context.frameworkPin.frameworkVersionId ?? "unpinned"})`
     : "(none)";
+  const index = buildCitationIndex(context);
+  const citableSources =
+    index.ids.size === 0
+      ? "(none)"
+      : [...index.ids]
+          .sort()
+          .map((id) => `- ${id} (${index.typeById.get(id) ?? "other"})`)
+          .join("\n");
 
   return [
     "## Bound surface",
@@ -165,6 +174,9 @@ export function formatGuardedUserPayload(
     "",
     "## Framework pin",
     pin,
+    "",
+    "## Citable sources (cite ONLY these ids in `citations`)",
+    citableSources,
     "",
     "## User message (untrusted)",
     sanitisedUserMessage.trim() || "(empty)",

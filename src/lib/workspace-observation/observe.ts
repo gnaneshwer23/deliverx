@@ -28,6 +28,21 @@ export type ObserveWorkspaceContributionInput = {
   aiContribution?: Record<string, unknown>;
   parentContributionId?: string | null;
   artefactRef?: { type: string; id: string } | null;
+  /**
+   * Provenance for AI-authored drafts accepted onto the ledger. Preserves the
+   * model, prompt version/hash, the context source ids that grounded the draft,
+   * and the citation ids the AI output resolved to. Never carries capability
+   * or verified state.
+   */
+  aiProvenance?: {
+    modelId?: string | null;
+    modelVersion?: string | null;
+    promptSlug?: string | null;
+    promptVersion?: string | null;
+    promptHash?: string | null;
+    contextSourceIds?: string[];
+    citationIds?: string[];
+  } | null;
 };
 
 export type ObserveWorkspaceContributionResult =
@@ -143,24 +158,39 @@ export async function observeWorkspaceContribution(
           title: input.title,
           summary: input.summary ?? null,
         },
-        aiContribution: {
-          ...(input.aiContribution ?? {}),
-          ...(aiAuthored
-            ? {
-                note: "AI-authored draft elements preserved. No capability level written by observer.",
-              }
-            : {}),
-        },
-        promptSlug: aiAuthored ? "workspace-observation-ai" : null,
-        promptVersion: aiAuthored ? "workspace-obs-v1" : null,
-        rawRef: {
-          contributionId: input.contributionId,
-          consentId: consent.effective?.id ?? null,
-          moduleId: input.moduleId,
-          sequenceKind: contract.sequenceKind,
-        },
+      aiContribution: {
+        ...(input.aiContribution ?? {}),
+        ...(aiAuthored
+          ? {
+              note: "AI-authored draft elements preserved. No capability level written by observer.",
+              citationIds: input.aiProvenance?.citationIds ?? [],
+              contextSourceIds: input.aiProvenance?.contextSourceIds ?? [],
+            }
+          : {}),
       },
-    });
+      modelId: aiAuthored ? (input.aiProvenance?.modelId ?? null) : null,
+      modelVersion: aiAuthored ? (input.aiProvenance?.modelVersion ?? null) : null,
+      promptSlug: aiAuthored
+        ? (input.aiProvenance?.promptSlug ?? "workspace-observation-ai")
+        : null,
+      promptVersion: aiAuthored
+        ? (input.aiProvenance?.promptVersion ?? "workspace-obs-v1")
+        : null,
+      promptHash: aiAuthored ? (input.aiProvenance?.promptHash ?? null) : null,
+      rawRef: {
+        contributionId: input.contributionId,
+        consentId: consent.effective?.id ?? null,
+        moduleId: input.moduleId,
+        sequenceKind: contract.sequenceKind,
+        ...(aiAuthored
+          ? {
+              aiContextSourceIds: input.aiProvenance?.contextSourceIds ?? [],
+              aiCitationIds: input.aiProvenance?.citationIds ?? [],
+            }
+          : {}),
+      },
+    },
+  });
   } catch (err) {
     if (isObservationConsentDbError(err)) {
       return { observed: false, reason: "consent_denied", capabilityAssigned: false };
@@ -190,6 +220,16 @@ export async function observeWorkspaceContribution(
         actorType: aiAuthored ? "ai" : "user",
         userContribution: input.userContribution ?? {},
         aiContribution: input.aiContribution ?? {},
+        ...(aiAuthored
+          ? {
+              modelId: input.aiProvenance?.modelId ?? null,
+              promptSlug: input.aiProvenance?.promptSlug ?? "workspace-observation-ai",
+              promptVersion: input.aiProvenance?.promptVersion ?? "workspace-obs-v1",
+              promptHash: input.aiProvenance?.promptHash ?? null,
+              contextSourceIds: input.aiProvenance?.contextSourceIds ?? [],
+              citationIds: input.aiProvenance?.citationIds ?? [],
+            }
+          : {}),
       },
     })
     .select("id")

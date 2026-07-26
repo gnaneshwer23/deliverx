@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { scheduleEffectWork } from "@/lib/react/schedule-effect-work";
 import Link from "next/link";
 import type { InterventionRecord } from "@/lib/workspace-observation/types";
+import { AiCitationStrip } from "@/components/dx/ai-citation-strip";
 
 export function DevelopmentLoopPanel() {
   const [items, setItems] = useState<InterventionRecord[]>([]);
@@ -78,12 +79,7 @@ export function DevelopmentLoopPanel() {
           {item.targetGap ? (
             <p className="mt-1 text-[11px] text-[#6B6B64]">Targets: {item.targetGap}</p>
           ) : null}
-          {item.triggeringEvidenceIds.length > 0 ? (
-            <p className="mt-1 text-[10px] text-[#6B6B64]">
-              Evidence cited: {item.triggeringEvidenceIds.slice(0, 3).join(", ")}
-              {item.triggeringEvidenceIds.length > 3 ? "…" : ""}
-            </p>
-          ) : null}
+          <AiCitationStrip citations={item.triggeringEvidenceIds} />
           <div className="mt-2 flex flex-wrap gap-2">
             {item.href ? (
               <Link

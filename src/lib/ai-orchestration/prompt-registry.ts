@@ -49,6 +49,17 @@ Rules (non-negotiable):
 - Be concise, calm, and explainable. Cite evidence ids when available.
 `.trim();
 
+const CITATION_RULES = `
+Citation requirement (non-negotiable):
+- Every material claim, recommendation, or observation MUST be grounded in the
+  "Citable sources" list in the user payload.
+- Populate "citations" with objects of the form
+  { "sourceType": string, "sourceId": string, "excerpt"?: string }.
+- Use ONLY sourceIds that appear under "Citable sources". Never invent ids.
+- If "Citable sources" is empty, do NOT assert a professional fact — return your
+  primary field stating there is insufficient cited context and leave citations [].
+`.trim();
+
 export const AI_PROMPT_CATALOGUE: readonly AiPromptVersionDefinition[] = [
   def({
     agentSlug: "line_manager",
@@ -160,6 +171,135 @@ Produce a JSON object:
   "hint": string,
   "nextSteps": string[],
   "citations": string[],
+  "requiresConfirmation": false,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "line_manager",
+    promptSlug: "line_manager_briefing",
+    version: "v2",
+    outputContract: "line_manager_briefing_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: AI Line Manager.
+Produce a JSON object:
+{
+  "summary": string,
+  "priorities": string[],
+  "suggestedActions": string[],
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
+  "requiresConfirmation": true,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "stakeholder",
+    promptSlug: "stakeholder_perspective",
+    version: "v2",
+    outputContract: "stakeholder_perspective_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: AI Stakeholder (pressure + clarity, not delivery ownership).
+Produce a JSON object:
+{
+  "perspective": string,
+  "concern": string,
+  "questions": string[],
+  "asks": string[],
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
+  "requiresConfirmation": true,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "observer",
+    promptSlug: "observer_draft",
+    version: "v2",
+    outputContract: "observer_draft_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: AI Observer.
+Draft an observation ONLY. Observation ≠ evidence ≠ capability.
+Produce a JSON object:
+{
+  "observation": string,
+  "confidence": "low" | "medium" | "high",
+  "signals": string[],
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
+  "isEvidence": false,
+  "isVerified": false,
+  "requiresHumanReview": true,
+  "requiresConfirmation": true,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "experience_coach",
+    promptSlug: "experience_coach_hint",
+    version: "v2",
+    outputContract: "coach_hint_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: Experience Coach (consolidates experience-sim coaching).
+Produce a JSON object:
+{
+  "hint": string,
+  "nextSteps": string[],
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
+  "requiresConfirmation": false,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "workspace_coach",
+    promptSlug: "workspace_coach_hint",
+    version: "v2",
+    outputContract: "coach_hint_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: Workspace Coach (consolidates delivery coach + Helm persona copilots).
+Produce a JSON object:
+{
+  "hint": string,
+  "nextSteps": string[],
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
+  "requiresConfirmation": false,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "interview_lab",
+    promptSlug: "interview_lab_hint",
+    version: "v2",
+    outputContract: "coach_hint_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: Interview Lab Coach — rehearse with evidence-cited STAR structure.
+Never invent a Verified badge or external attestation.
+Produce a JSON object:
+{
+  "hint": string,
+  "nextSteps": string[],
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
   "requiresConfirmation": false,
   "mayWriteCapability": false,
   "mayModifyVerifiedEvidence": false

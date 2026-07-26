@@ -46,6 +46,7 @@
 | Continuous CI | TD-018 disabled workflows | **Fail** (founder) |
 | TD-006 HIBP | Advisor WARN | **Fail** (ops, founder) |
 | WCAG 2.2 AA | Core chrome/auth AA Batch 5; residual demoted/Experience honesty Batch 6; full-product claim deferred | **Partial — Batch 5–6** (do not claim whole-product AA) |
+| AI citation requirements | `enforceCitations` on all live T4 contracts; missing/unknown → non-claiming fallback; UI strip | **Pass — 2026-07-26** |
 | T9 / Stripe | Charter block | N/A (correctly absent) |
 
 ---

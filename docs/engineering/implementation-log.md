@@ -374,6 +374,27 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## AI citation requirements — pre-T9 hardening (2026-07-26)
+
+| Artefact | Summary |
+| --- | --- |
+| `src/lib/ai-orchestration/citations.ts` | Citation policy + `enforceCitations` against exact run context; optional class documented narrowly (`conversational_ack_v1` only) |
+| `output-contracts.ts` / `types.ts` | Structured `AiCitation` (`sourceType`, `sourceId`, optional excerpt/hash/label); `citationInsufficientFallback` |
+| `run.ts` | Missing/empty/unknown citations → `validation_failed` + `invalid_output` flags + honest non-claiming fallback; `runResultToEvidenceProvenance` |
+| `prompt-registry.ts` | Prompt **v2** (CITATION_RULES) for all 6 agents; v1 retained immutably |
+| `guardrails.ts` | Payload enumerates `## Citable sources` |
+| Observation / UI | `aiProvenance` (model/prompt/context/citation ids) on workspace observe; `AiCitationStrip` on PI interventions, Interview Lab, opportunity matching, recommendations |
+| Tests | Valid known citation; missing rejected; fabricated id rejected; fallback non-claiming; injection still blocked; optional class; legacy coaches; provenance helper |
+| Docs | AI quality audit, prompt register, risk register, bible `09`, engineering AI notes, release readiness |
+
+**No schema migration** — validation reason logged in existing `ai_interactions.error_message` + `guardrail_flags` JSON. Do not take `0096` (consent owns it; already shipped).
+
+**Verification:** `orchestration.test.ts` 26 PASS · observation units PASS · `npm run test:release-gate` PASS · `npm run build` PASS.
+
+**Verdict:** AI citation requirements — shipped. **T9 not started.**
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

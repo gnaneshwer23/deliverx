@@ -8,9 +8,9 @@
 
 ## Executive verdict
 
-The T4 orchestration layer is a **credible trust wrapper**: shared rules, prompt versioning, injection scan, authority boundaries, structured output validation, forced `mayWriteCapability=false`, interaction logging (cost/latency/provenance), and confirmation gates for consequential actions.
+The T4 orchestration layer is a **credible trust wrapper**: shared rules, prompt versioning, injection scan, authority boundaries, structured output validation, forced `mayWriteCapability=false`, interaction logging (cost/latency/provenance), confirmation gates for consequential actions, and **citation requirements** (pre-T9 hardening, 2026-07-26): material outputs must cite the exact structured context for the run or fail closed to an honest “insufficient evidence/context” fallback.
 
-Residual risk is highest where **legacy delivery AI** can bypass orchestration, where **guardrails are pattern-based** (not semantic), and where **DB RLS** still allows humans to invent capability/Verified outside AI (see Phase 5) — AI is not the only threat to those invariants.
+Residual risk is highest where **legacy delivery AI** can bypass orchestration, where **guardrails are pattern-based** (not semantic), and where **DB RLS** still allows humans to invent capability/Verified outside AI (see Phase 5) — AI is not the only threat to those invariants. Empty-citation risk (AI-P1-03) is **closed** on the T4 path.
 
 ---
 
@@ -35,13 +35,14 @@ Residual risk is highest where **legacy delivery AI** can bypass orchestration, 
 
 | Scenario | Assessment | Control |
 | --- | --- | --- |
-| Hallucination / fabricated company info | Possible if org JSON incomplete; prompts forbid invention; citations optional | Prompt rules + structured context framing (“untrusted facts”) |
+| Hallucination / fabricated company info | Possible if org JSON incomplete; prompts forbid invention; **citations required** on T4 path | Prompt rules + structured context framing + `enforceCitations` fail-closed |
 | Unsupported capability claims | Output contracts force `mayWriteCapability=false`; runner refuses true flags | Strong on T4 path |
 | Fabricated evidence / Verified | Observer contract forbids `isEvidence`/`isVerified`; interview prompt forbids Verified badge | Strong on T4 path; UI must not treat drafts as ledger |
 | Prompt injection | Regex hard-blocks ignore-previous / reveal-system / exfil secrets / jailbreak | Bypassable with novel phrasing — **not complete** |
 | Cross-user leakage | Context builder must be caller-scoped; interactions RLS self-only | Depends on callers passing only own context — review when wiring |
 | Excessive confidence | Observer uses low/medium/high band; fallback forces low | Soft |
 | Inconsistent / schema failure | Validators + fallbacks | Good |
+| Empty / fabricated citations | `enforceCitations` rejects missing/unknown; deterministic non-claiming fallback | **Strong on T4 path (2026-07-26)** |
 | Stale context | No TTL; bound to request payload | Caller responsibility |
 | Timeouts / API failure | Fallback output; should not write capability | Core ScoreRun path separate — failure shouldn’t break ledger append |
 | Repeated requests | Logged per interaction; no server-side dedupe/rate limit in orchestration | Cost risk |
@@ -56,7 +57,7 @@ Residual risk is highest where **legacy delivery AI** can bypass orchestration, 
 | AI cannot create verified evidence via `runAgent` | **Yes** (contracts + no DB write to elevated status) |
 | AI cannot modify capability without rules | **Yes** on T4 path; capability still writable by **user JWT** (Phase 5) |
 | AI observations labelled | **Yes** in types/copy/contracts (`ai_authored`, draft flags) |
-| Recommendations show rationale | **Partial** — fields exist; citations often empty |
+| Recommendations show rationale | **Yes on T4 path** — structured citations required; `AiCitationStrip` on primary PI/coach/career surfaces; public portfolio never shows raw evidence |
 | Consequential actions need confirmation | **Yes** when `requiresUserConfirmationForActions` + flags |
 | Model/prompt provenance logged | **Yes** when persist not skipped |
 | AI failure doesn’t break core workflow | **Mostly** — fallbacks; assessment/ScoreRun independent |
@@ -65,8 +66,22 @@ Residual risk is highest where **legacy delivery AI** can bypass orchestration, 
 
 ## Quality engineering notes
 
-- Mock invoker + `orchestration.test.ts` cover injection blocks and contract refusals  
-- T6 always-on gates include prompt-injection patterns  
+- Mock invoker + `orchestration.test.ts` cover injection blocks, contract refusals, **and citation enforcement** (valid / missing / fabricated / optional / provenance / fallback)  
+- T6 always-on gates include prompt-injection patterns + orchestration suite  
 - No live eval harness for hallucination rate / citation faithfulness in this audit  
 
 See [`prompt-register.md`](./prompt-register.md), [`ai-risk-register.md`](./ai-risk-register.md)
+
+---
+
+## Agent citation matrix (2026-07-26)
+
+| Agent | Contract | Class | Classification | Fallback on fail |
+| --- | --- | --- | --- | --- |
+| `line_manager` | `line_manager_briefing_v1` | required | coach/manager recommendation tied to project/evidence | Insufficient evidence copy; no capability write |
+| `stakeholder` | `stakeholder_perspective_v1` | required | organisation/project factual answer | Same |
+| `observer` | `observer_draft_v1` | required | observer finding | Same; never isEvidence/isVerified |
+| `experience_coach` | `coach_hint_v1` | required | coach recommendation referencing evidence | Same |
+| `workspace_coach` | `coach_hint_v1` | required | coach recommendation referencing evidence | Same |
+| `interview_lab` | `coach_hint_v1` | required | career/interview advice referencing candidate evidence | Same |
+| _(none)_ | `conversational_ack_v1` | optional | purely conversational acknowledgement | N/A — not live |

@@ -5,6 +5,7 @@ import { Check, X, Sparkles, Loader2 } from "lucide-react";
 import { postAi } from "@/lib/ai/client-fetch";
 import type { Recommendation } from "@/services/intelligenceEngine";
 import type { AiReviewAction } from "@/services/recommendations";
+import { AiCitationStrip } from "@/components/dx/ai-citation-strip";
 
 type ReviewState = "pending" | "accepted" | "ignored";
 
@@ -105,6 +106,10 @@ export function RecommendationsPanel({
               <p className="mt-1 text-xs text-slate-500">
                 {rationales[item.id] ?? item.rationale}
               </p>
+              <AiCitationStrip
+                citations={[]}
+                emptyLabel="Uncited — rationale shown without evidence ids"
+              />
               <div className="mt-2 flex items-center justify-between text-xs">
                 <span className="text-slate-500">
                   Confidence: {Math.round(item.confidence * 100)}%

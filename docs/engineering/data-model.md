@@ -131,11 +131,12 @@ erDiagram
 - Purge RPC (`0088`) extended: transitions → clear `current_version_id` → versions → envelopes, deleted **after** evidence (RESTRICT FK); never touches `pi_cf_*`
 - `0089` hotfix: `revoke execute on pi_privacy_purge_person_data from anon, authenticated` (service_role only)
 
-### AI orchestration — `0090` (T4)
+### AI orchestration — `0090` (T4) + citation hardening (no migration)
 
 - `ai_agents` — platform catalogue (line_manager / stakeholder / observer / coach); not person PI; readable by authenticated
-- `ai_prompt_versions` — **immutable** prompt rows (`agent_slug`, `prompt_slug`, `version`, `prompt_hash`, `output_contract`); app registry is runtime SoT
+- `ai_prompt_versions` — **immutable** prompt rows (`agent_slug`, `prompt_slug`, `version`, `prompt_hash`, `output_contract`); app registry is runtime SoT (v2 citation-aware templates live in app; v1 DB seeds retained)
 - `ai_interactions` — person append-only log (model, provider, tokens, latency_ms, cost_estimate_usd, prompt version, context_sources, input/output hashes, guardrail_flags); self-only RLS
+- **Citations (2026-07-26):** structured `AiCitation` in output JSON; `enforceCitations` validates against `context_sources` / evidence ids for the same run; failures logged in `error_message` + `guardrail_flags` — **no new columns / migration**
 - Purge cascade extended: `ai_interactions` deleted with person data; `ai_agents` / `ai_prompt_versions` retained (catalogue exclusions)
 
 ### Person notifications & observability — `0091` (T5)
@@ -207,6 +208,7 @@ erDiagram
 | Prompt version immutability (T4) | `ai_forbid_prompt_version_mutation` before update/delete |
 | AI interaction append-only (T4) | `ai_forbid_interaction_mutation` (purge-only DELETE bypass) |
 | Agents never write capability / verified evidence (T4) | Authority + output contracts + `runAgent` guardrails |
+| AI citations required for material claims (pre-T9) | `enforceCitations` against run context; fail closed to non-claiming fallback |
 | Notifications never invent capability / verification (T5) | App guard forces false audit flags; schema stores no capability fields |
 
 Exact CHECK constraint names live in the migration SQL — treat migrations as authoritative.

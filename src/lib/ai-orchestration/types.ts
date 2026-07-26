@@ -111,6 +111,45 @@ export type AiStructuredContext = {
   userMessage: string;
 };
 
+/**
+ * Structured citation an agent must attach to any material observation,
+ * recommendation, or organisation/project claim. `sourceId` MUST resolve to a
+ * context source supplied to the same `runAgent` call — fabricated ids fail
+ * validation (see `citations.ts`).
+ */
+export const AI_CITATION_SOURCE_TYPES = [
+  "evidence",
+  "project",
+  "observation",
+  "framework",
+  "org_snapshot",
+  "career_goal",
+  "experience_state",
+  "artefact",
+  "assessment",
+  "task",
+  "meeting",
+  "other",
+] as const;
+
+export type AiCitationSourceType = (typeof AI_CITATION_SOURCE_TYPES)[number];
+
+export type AiCitation = {
+  sourceType: AiCitationSourceType;
+  /** Must match an id present in the run's structured context. */
+  sourceId: string;
+  /** Optional short quote grounding the claim (never confidential raw evidence). */
+  excerpt?: string;
+  /** Optional integrity hash of the cited source snapshot. */
+  hash?: string;
+  /** Optional human label carried through for UI (not trusted for validation). */
+  label?: string;
+};
+
+export function isAiCitationSourceType(v: string): v is AiCitationSourceType {
+  return (AI_CITATION_SOURCE_TYPES as readonly string[]).includes(v);
+}
+
 export type AiUsageMetrics = {
   inputTokens: number;
   outputTokens: number;

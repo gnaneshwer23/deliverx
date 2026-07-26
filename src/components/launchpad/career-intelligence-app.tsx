@@ -15,6 +15,7 @@ import {
   readinessKindTitle,
   readinessKindUserLabel,
 } from "@/lib/ux/capability-assessment-copy";
+import { AiCitationStrip } from "@/components/dx/ai-citation-strip";
 
 type Snapshot = {
   profile: {
@@ -452,9 +453,7 @@ export function CareerIntelligenceApp({
                   <li key={s.prompt} className="rounded-lg border border-[#E5E2D9] bg-white p-4">
                     <p className="text-sm font-medium">{s.prompt}</p>
                     <p className="mt-1 text-xs text-[#6B6B64]">{s.tip}</p>
-                    <p className="mt-1 font-mono text-[10px]">
-                      Evidence ids: {s.evidenceIds.join(", ") || "none linked"}
-                    </p>
+                    <AiCitationStrip citations={s.evidenceIds} />
                   </li>
                 ))}
               </ul>
@@ -511,9 +510,7 @@ export function CareerIntelligenceApp({
                     <p className="mt-1 text-xs text-[#B7620A]">
                       Gaps: {opp.gaps.join("; ") || "none listed"}
                     </p>
-                    <p className="mt-1 text-xs text-[#6B6B64]">
-                      Evidence: {opp.evidenceCited.join("; ") || "—"}
-                    </p>
+                    <AiCitationStrip citations={opp.evidenceCited} />
                   </li>
                 ))}
               </ul>

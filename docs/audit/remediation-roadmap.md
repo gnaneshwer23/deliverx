@@ -52,7 +52,7 @@ Severity (this roadmap):
 | **R-P1-11 — Closed** | `workspace_observations` ALL without SQL consent | Consent bypass via PostgREST | DB-P1-01 | INSERT trigger requiring consented row | **`0096_consent_enforcement.sql`** + app error mapping + T6 live RLS | Batch 1 | No observe without consent row; history retained on revoke | M | **Resolved — DB consent enforcement** |
 | **R-P1-12** | Judgements/snapshots INSERT own under invented ScoreRuns | Capability child fabrication | DB-P1-03 | Bind to engine role / signed run | Migration + persist | R-P0-01 | Child rows only via engine | M | With/after batch 1 |
 | **R-P1-13** | AI injection = regex lists; bypass flag | Jailbreak / skipped T4 guarantees | AI-P1-01/02 | Keep bypass off prod; expand patterns + red-team | `guardrails.ts`, `run.ts` | — | Bypass off; tests for known injections | M | Now (config) / later (red-team) |
-| **R-P1-14** | Empty citations allowed on coach outputs | Fake evidence-backed feel | AI-P1-03 | Require citations when evidence bound; UI “uncited” | Coach validators + UI | — | Uncited labelled | M | Soon |
+| **R-P1-14 — Closed** | Empty citations allowed on coach outputs | Fake evidence-backed feel | AI-P1-03 | Require citations when evidence bound; UI “uncited” | Coach validators + UI + `enforceCitations` | — | Uncited labelled; missing/unknown fail closed | M | **Resolved — 2026-07-26 citation hardening** |
 | **R-P1-15** | Password-reset email not proven | Recovery may fail | MF-014 | Founder SMTP send test | Auth config | Founder | Reset mail received | S | Ops |
 | **R-P1-16 — Closed** | Unlabeled `readinessPct` risk | Trust if labels strip | MF-013; TD-011 | Audit Career UI for source labels | career-intelligence UI | — | Every % has source label | S | **Resolved — Batch 3** |
 
@@ -145,7 +145,7 @@ Severity (this roadmap):
 ### 5. AI quality improvements
 
 - Bypass off in prod (verify)  
-- Citation requirement / uncited label  
+- Citation requirement / uncited label — **shipped 2026-07-26**  
 - Red-team injection suite  
 - Optional PI rate limit
 
@@ -190,11 +190,11 @@ Batch 6 (founder approve): Residual a11y + Experience honesty + TD-017 — SHIPP
      ↓
 Founder ops: TD-018 CI · TD-006 HIBP · SMTP reset test
      ↓
-DB-P1 consent + judgement binding · AI citations · residual AT/axe QA
+DB-P1 consent + judgement binding · **AI citations (shipped)** · residual AT/axe QA
      ↓
 (Only with founder): T9 commercial
 ```
 
 **Do not start T9.** Do not expand marketplace / mission-control / multi-profession without approval.
 
-**Batch 6 shipped.** Next remediation batch requires founder approval. TD-006 and TD-018 remain founder-owned (document only — not flipped).
+**Batch 6 shipped. DB consent `0096` shipped. AI citation requirements shipped.** Next remediation batch requires founder approval. TD-006 and TD-018 remain founder-owned (document only — not flipped).

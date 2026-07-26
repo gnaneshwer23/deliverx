@@ -1,16 +1,20 @@
 export {
   AI_AGENT_ROLES,
   AI_BOUND_SURFACES,
+  AI_CITATION_SOURCE_TYPES,
   AI_INTERACTION_STATUSES,
   AI_ORCHESTRATION_EVENT,
   isAiAgentRole,
   isAiBoundSurface,
+  isAiCitationSourceType,
 } from "@/lib/ai-orchestration/types";
 export type {
   AiAgentAuthority,
   AiAgentDefinition,
   AiAgentRole,
   AiBoundSurface,
+  AiCitation,
+  AiCitationSourceType,
   AiContextSource,
   AiInteractionRecord,
   AiInteractionStatus,
@@ -46,9 +50,24 @@ export {
 } from "@/lib/ai-orchestration/guardrails";
 
 export {
+  CITATION_POLICIES,
+  buildCitationIndex,
+  enforceCitations,
+  formatCitationLabels,
+  getCitationPolicy,
+  normaliseCitations,
+} from "@/lib/ai-orchestration/citations";
+export type {
+  CitationClass,
+  CitationEnforcementResult,
+  CitationPolicy,
+} from "@/lib/ai-orchestration/citations";
+
+export {
   OUTPUT_CONTRACTS,
   validateAgentOutput,
   contractFallback,
+  citationInsufficientFallback,
   refusesUnstructuredCapabilityWrite,
 } from "@/lib/ai-orchestration/output-contracts";
 export type { OutputValidationResult } from "@/lib/ai-orchestration/output-contracts";
@@ -61,5 +80,14 @@ export {
   logAiInteraction,
 } from "@/lib/ai-orchestration/usage-log";
 
-export { createMockModelInvoker, runAgent } from "@/lib/ai-orchestration/run";
-export type { ModelInvoker, RunAgentInput, RunAgentResult } from "@/lib/ai-orchestration/run";
+export {
+  createMockModelInvoker,
+  runAgent,
+  runResultToEvidenceProvenance,
+} from "@/lib/ai-orchestration/run";
+export type {
+  AiEvidenceProvenance,
+  ModelInvoker,
+  RunAgentInput,
+  RunAgentResult,
+} from "@/lib/ai-orchestration/run";

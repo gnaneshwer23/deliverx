@@ -1,10 +1,11 @@
 /**
- * T4 agent runner — guardrails → prompt registry → model → validate → log.
+ * T4 agent runner — guardrails → prompt registry → model → validate → citations → log.
  * Mock-model injectable for CI. Never writes capability or verified evidence.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireAgent } from "@/lib/ai-orchestration/agents";
+import { enforceCitations } from "@/lib/ai-orchestration/citations";
 import {
   buildStructuredContext,
   type BuildContextInput,
@@ -14,6 +15,7 @@ import {
   formatGuardedUserPayload,
 } from "@/lib/ai-orchestration/guardrails";
 import {
+  citationInsufficientFallback,
   contractFallback,
   refusesUnstructuredCapabilityWrite,
   validateAgentOutput,
@@ -92,7 +94,7 @@ export function createMockModelInvoker(
         summary: "Focus on the top delivery risk and one decision this week.",
         priorities: ["Clear the critical blocker", "Confirm stakeholder ask"],
         suggestedActions: ["Open RAID triage", "Schedule a 15-minute decision forum"],
-        citations: [],
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
         requiresConfirmation: true,
         mayWriteCapability: false,
         mayModifyVerifiedEvidence: false,
@@ -102,6 +104,7 @@ export function createMockModelInvoker(
         concern: "Timeline confidence is unclear without cited evidence.",
         questions: ["What evidence supports the current milestone date?"],
         asks: ["Share a one-page status with citations"],
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
         requiresConfirmation: true,
         mayWriteCapability: false,
         mayModifyVerifiedEvidence: false,
@@ -110,6 +113,7 @@ export function createMockModelInvoker(
         observation: "Contributor drafted a status update; consent-gated observation only.",
         confidence: "medium",
         signals: ["status_update_drafted"],
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
         isEvidence: false,
         isVerified: false,
         requiresHumanReview: true,
@@ -120,7 +124,7 @@ export function createMockModelInvoker(
       experience_coach: {
         hint: "Name the stakeholder trade-off before locking the decision.",
         nextSteps: ["Record the decision rationale"],
-        citations: [],
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
         requiresConfirmation: false,
         mayWriteCapability: false,
         mayModifyVerifiedEvidence: false,
@@ -128,7 +132,7 @@ export function createMockModelInvoker(
       workspace_coach: {
         hint: "Triage the highest-severity alert before expanding scope.",
         nextSteps: ["Open the coach panel alert"],
-        citations: [],
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
         requiresConfirmation: false,
         mayWriteCapability: false,
         mayModifyVerifiedEvidence: false,
@@ -136,7 +140,7 @@ export function createMockModelInvoker(
       interview_lab: {
         hint: "Structure your answer as Situation → Task → Action → Result with one evidence citation.",
         nextSteps: ["Pick one ledger evidence id to cite"],
-        citations: [],
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
         requiresConfirmation: false,
         mayWriteCapability: false,
         mayModifyVerifiedEvidence: false,
@@ -404,15 +408,46 @@ export async function runAgent(input: RunAgentInput): Promise<RunAgentResult> {
     };
   }
 
+  const citationCheck = enforceCitations({
+    contractId: prompt.outputContract,
+    output: validated.data,
+    context,
+  });
+
+  if (!citationCheck.ok) {
+    const fallback = citationInsufficientFallback(prompt.outputContract, citationCheck.reason);
+    const flags = [...guard.flags, ...citationCheck.flags, "invalid_output"];
+    const interaction = await persist(
+      "validation_failed",
+      fallback,
+      citationCheck.errors,
+      flags,
+      usage,
+    );
+    return {
+      ok: false,
+      status: "validation_failed",
+      output: fallback,
+      errors: citationCheck.errors,
+      flags,
+      interaction,
+      context,
+      prompt: promptMeta,
+      usage,
+    };
+  }
+
+  const validatedOutput = { ...validated.data, citations: citationCheck.citations };
   const status: AiInteractionStatus =
-    validated.data && (validated.data as { fallback?: boolean }).fallback ? "fallback" : "ok";
-  const interaction = await persist(status, validated.data, [], guard.flags, usage);
+    validatedOutput && (validatedOutput as { fallback?: boolean }).fallback ? "fallback" : "ok";
+  const flags = [...guard.flags, ...citationCheck.flags];
+  const interaction = await persist(status, validatedOutput, [], flags, usage);
   return {
     ok: true,
     status,
-    output: validated.data,
+    output: validatedOutput,
     errors: [],
-    flags: guard.flags,
+    flags,
     interaction,
     context,
     prompt: promptMeta,
@@ -431,5 +466,41 @@ function normaliseUsage(result: ModelInvokeResult): AiUsageMetrics {
       result.usage?.costEstimateUsd ?? estimateCostUsd(inputTokens, outputTokens),
     model: result.usage?.model ?? getDefaultAiModel(),
     provider: result.usage?.provider ?? resolveAiProvider(),
+  };
+}
+
+export type AiEvidenceProvenance = {
+  actorType: "ai";
+  modelId: string | null;
+  modelVersion: string | null;
+  promptSlug: string;
+  promptVersion: string;
+  promptHash: string;
+  contextSourceIds: string[];
+  citationIds: string[];
+  aiAuthored: true;
+};
+
+export function runResultToEvidenceProvenance(result: RunAgentResult): AiEvidenceProvenance {
+  const output = (result.output ?? {}) as { citations?: Array<{ sourceId?: string }> };
+  const citationIds = Array.isArray(output.citations)
+    ? output.citations
+        .map((c) => (typeof c?.sourceId === "string" ? c.sourceId : null))
+        .filter((v): v is string => Boolean(v))
+    : [];
+  const contextSourceIds = result.context.sources
+    .map((s) => s.ref)
+    .filter((v): v is string => typeof v === "string" && v.length > 0);
+
+  return {
+    actorType: "ai",
+    modelId: result.usage?.model ?? null,
+    modelVersion: null,
+    promptSlug: result.prompt.slug,
+    promptVersion: result.prompt.version,
+    promptHash: result.prompt.hash,
+    contextSourceIds,
+    citationIds,
+    aiAuthored: true,
   };
 }

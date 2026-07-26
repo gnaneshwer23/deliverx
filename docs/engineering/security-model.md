@@ -58,6 +58,8 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - Prompt-injection scan + authority boundaries in `src/lib/ai-orchestration/guardrails.ts`
 - Agents cannot write capability or modify verified evidence; consequential actions require confirmation
 - Observation drafts never auto-verify; cost/latency logged on every `runAgent` call
+- **Citation requirement (2026-07-26):** material outputs must cite the exact run context (`citations.ts` / `enforceCitations`); missing/unknown → `validation_failed` + honest non-claiming fallback; logged via `guardrail_flags`
+- AI observation provenance may carry model / prompt / contextSourceIds / citationIds — never capability or Verified
 - Rollback: `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy delivery AI only
 
 ### Person notifications (T5)
