@@ -523,12 +523,131 @@
   line-height: 1.45;
 }
 
+/* B6 entry ceremony */
+.xp-ceremony-card {
+  margin-top: 22px;
+  border: 1px solid var(--xp-line);
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+}
+
+.xp-ceremony-card p:not(.xp-eyebrow) {
+  color: var(--xp-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.xp-ceremony-list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  color: var(--xp-muted);
+  line-height: 1.5;
+}
+
+.xp-ceremony-list li {
+  margin: 8px 0;
+}
+
+.xp-ceremony-meta {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+.xp-ceremony-meta dt {
+  color: var(--xp-muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.xp-ceremony-meta dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
+.xp-ceremony-columns {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.xp-ceremony-group {
+  margin-top: 22px;
+}
+
+.xp-ceremony-people {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.xp-persona-card {
+  border: 1px solid var(--xp-line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.xp-persona-card strong {
+  display: block;
+}
+
+.xp-persona-card span {
+  display: block;
+  margin-top: 2px;
+  color: var(--xp-accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.xp-persona-card p {
+  margin: 8px 0 0;
+  color: var(--xp-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.xp-ceremony-next {
+  margin-top: 22px;
+}
+
+.xp-ceremony-alert {
+  margin-bottom: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(180, 120, 20, 0.28);
+  background: rgba(200, 140, 30, 0.08);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.xp-root .xp-ceremony-skip {
+  margin-top: 20px;
+  min-height: auto;
+  padding: 6px 0;
+  background: transparent;
+  border: 0;
+  color: var(--xp-muted);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.xp-root .xp-ceremony-skip:hover {
+  transform: none;
+  color: var(--xp-ink);
+}
+
 @media (max-width: 860px) {
   .xp-two-col,
   .xp-identity-preview,
   .xp-pulse-grid,
   .xp-workspace-grid,
-  .xp-work-lanes {
+  .xp-work-lanes,
+  .xp-ceremony-columns,
+  .xp-ceremony-people {
     grid-template-columns: 1fr;
   }
 

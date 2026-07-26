@@ -1,3 +1,17 @@
+## 2026-07-26 — B6: Xperience entry ceremony
+
+Founder reply `B6` (after being shown B6 as gated on FD-PACK-4, default if silent "Day-1 is enough") authorized six-doc phase B6 and closed FD-PACK-4 / PACK-E4 (PD-2026-07-26j). Selecting the phase cannot mean the no-op default, so a calm entry ceremony was **added** as UX depth around the existing Day-1 loop — Experience was not rebuilt.
+
+Shape: after the offer is accepted and the workspace is generated, a five-step narrative plays before the dashboard — `company → role → team → project → first_activity`. All content is derived from the `ExperienceSimState` the planner/sim already produced (company welcome, role expectations, team + stakeholders, project success metrics/constraints/timeline, and the first decision or scheduled meeting). Reuses the 12-company catalogue (`0079`), Experience planner and Day-1 sim.
+
+Code: typed SoT `src/lib/xperience/entry-ceremony.ts` (step ids, pure transition machine, `deriveCeremonyContent`, kill-switch reader); UI `src/components/xperience/entry-ceremony.tsx` (accessible stepper with `aria-current`, focus moved to each step heading, skip on every step, loading/empty/error fallback copy, mobile single-column); wired into `product-app.tsx` (`Ceremony` screen between offer-accept and dashboard); flag resolved server-side in `src/app/(xperience)/experience/app/page.tsx`.
+
+Trust rails: ceremony is narrative only — no invented scores/readiness %, no capability, no ledger evidence, no `deliverxVerified`; an always-present honesty line says evidence is only recorded once the candidate acts inside the workspace. Observation consent stays default OFF and is untouched. **No migration** (UI-only over existing entities; `0099` remains prod head); **no new API**. Kill-switch `DELIVERX_XP_ENTRY_CEREMONY` defaults **on**; set `off`/`0`/`false`/`disabled` to roll back to direct-to-dashboard with no redeploy and no data change.
+
+Verification: focused ceremony units PASS (17); `test:pi` PASS (416, now including `src/lib/xperience`); touched-source ESLint PASS; production build PASS. Standalone `tsc --noEmit` remains blocked only by the six pre-existing `e2e/t6-security-journeys.test.ts` `never.id` fixture errors, with no B6 source errors. No trust rails touched, so no new release-gate coverage was required. No founder env action required — the ceremony is the default; the only ops lever is the optional `off` kill-switch.
+
+Next candidate: **B7** (needs FD-PACK-8) or **B8** (founder OK on depth); **B9** needs no new PD if scoped to R-P2-06 plus failure polish.
+
 ## 2026-07-26 — B5: Onboarding shape — eight-step conversation
 
 Founder reply `b5` (after being told B5 requires FD-PACK-3, default if silent “keep 6-step”) authorized six-doc phase B5 and closed FD-PACK-3 (PD-2026-07-26i). Selecting the phase cannot mean the no-op default, so the shipped six-step PI onboarding was **evolved** — not rebuilt — toward the pack's eight-step discovery conversation: `welcome → identity (background) → targets (career direction) → strengths → evidence → working_style → review → path`. Existing step ids, payload fields, wizard, API route and `pi_onboarding_sessions` are reused; `situation` and `consent` are retired ids whose questions moved onto `identity` and `review`.

@@ -12,7 +12,7 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
-**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1–B3 shipped**: confidence bands, recommendation SM, and Vercel pilot KPI custom events. PostHog remains deferred pending FD-PACK-7. Other Bn not authorised until founder selects.
+**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1–B6 shipped**: confidence bands, recommendation SM, Vercel pilot KPI custom events, human reviewer ops, eight-step onboarding, and the Xperience entry ceremony. PostHog remains deferred pending FD-PACK-7. Other Bn not authorised until founder selects.
 
 ---
 
@@ -151,7 +151,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | **PACK-E1** | Optional copy of six docs into `docs/build-pack/` + SoT note | **Open** — founder OK | Defer | S | Docs-only; pack Index requests path; Bible remains higher SoT than pack |
 | **PACK-E2** | Formal recommendation entity + state machine (generated→viewed→accepted/dismissed) | **Done (B2)** | Keep | M | `0098` + `src/lib/recommendations/`; flag `DELIVERX_RECOMMENDATION_SM`; PD-2026-07-26f |
 | **PACK-E3** | Documented, versioned confidence-band algorithm (Schema §5.1) | **Done (B1)** | Keep | S | `confidence-bands@2026.1` — algorithm doc + typed SoT + UI why-copy |
-| **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Open** | Defer | M | Day-1 + catalogue already prove loop; ceremony is UX depth |
+| **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Done (B6)** | Keep | M | Narrative entry over generated sim state; `src/lib/xperience/entry-ceremony.ts` + UI; kill-switch `DELIVERX_XP_ENTRY_CEREMONY` (default on); no migration/API; PD-2026-07-26j |
 | **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Done (B4)** | Keep | M | Playbook + hardened queue; flag `DELIVERX_REVIEWER_QUEUE`; PD-2026-07-26h; Verified = T8 only |
 | **PACK-E6** | Onboarding shape: keep 6-step PI vs evolve toward pack 8-step conversation | **Done (B5)** | Keep | M | 8-step `v2-conversation` shipped by evolving the existing wizard; migration `0099`; flag `DELIVERX_ONBOARDING_STEP_SET` (rollback `v1-six-step`); PD-2026-07-26i; self-reported strengths never become capability |
 | **PACK-E7** | App-shell global search (+ help) | **Open** | Defer | M | Suite nav exists; search/help not inventoried before |

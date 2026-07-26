@@ -8,9 +8,18 @@ import {
   setupSignalBand,
   setupSignalFocus,
 } from "@/lib/xperience/setup-signal";
+import type { ExperienceSimState } from "@/lib/experience-sim/types";
+import { EntryCeremony } from "@/components/xperience/entry-ceremony";
 import "./xperience-app.css";
 
-type Screen = "Profile" | "Goals" | "Baseline" | "WorkStyle" | "Offer" | "Dashboard";
+type Screen =
+  | "Profile"
+  | "Goals"
+  | "Baseline"
+  | "WorkStyle"
+  | "Offer"
+  | "Ceremony"
+  | "Dashboard";
 type DashboardTool = "Home" | "Inbox" | "Calendar" | "Decisions" | "Documents" | "AI Coach" | "Evidence";
 
 const steps: Array<{ key: Exclude<Screen, "Dashboard">; label: string }> = [
@@ -66,11 +75,14 @@ export function ProductApp({
   initialUser,
   initialProfile,
   initialEnrolmentId,
+  ceremonyEnabled = false,
 }: {
   initialScreen?: Screen;
   initialUser?: ProductAppInitialUser;
   initialProfile?: ProductAppInitialProfile | null;
   initialEnrolmentId?: string | null;
+  /** B6 entry ceremony kill-switch, resolved server-side. */
+  ceremonyEnabled?: boolean;
 }) {
   const searchParams = useSearchParams();
   const planId = searchParams.get("planId");
@@ -97,6 +109,7 @@ export function ProductApp({
   const [enrolmentId, setEnrolmentId] = useState<string | undefined>(
     initialEnrolmentId ?? undefined,
   );
+  const [simState, setSimState] = useState<ExperienceSimState | null>(null);
   const [agentRecommendation, setAgentRecommendation] = useState(
     "The system will recommend the next action after your first decision.",
   );
@@ -120,6 +133,7 @@ export function ProductApp({
     steps.findIndex((step) => step.key === screen),
   );
   const isDashboard = screen === "Dashboard";
+  const isCeremony = screen === "Ceremony";
   const firstName = form.firstName.trim() || "there";
 
   const identity = useMemo(() => {
@@ -182,13 +196,19 @@ export function ProductApp({
       }
       const experience = await experienceResponse.json();
       setEnrolmentId(experience.enrolmentId);
+      const rawState = experience.state as unknown;
+      const nextState =
+        rawState && typeof rawState === "object"
+          ? (rawState as ExperienceSimState)
+          : null;
+      setSimState(nextState);
       const emphasisNote = planEmphasis
         ? ` Gap-focused plan: ${planEmphasis} emphasis.`
         : "";
       setNotice(
         `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "your company"} is ready.${emphasisNote}`,
       );
-      setScreen("Dashboard");
+      setScreen(ceremonyEnabled ? "Ceremony" : "Dashboard");
     } catch {
       setNotice("Could not persist your workspace. Check your connection and try again.");
     } finally {
@@ -266,6 +286,16 @@ export function ProductApp({
     } catch {
       setNotice(`${action} selected. Evidence will sync when the backend is available.`);
     }
+  }
+
+  if (isCeremony) {
+    return (
+      <EntryCeremony
+        state={simState}
+        firstName={firstName}
+        onEnterWorkspace={() => setScreen("Dashboard")}
+      />
+    );
   }
 
   return (

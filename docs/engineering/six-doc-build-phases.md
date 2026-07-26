@@ -7,9 +7,9 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B5 shipped** (B5 founder-authorized 2026-07-26 via reply `b5` = FD-PACK-3). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B6 shipped** (B6 founder-authorized 2026-07-26 via reply `B6` = FD-PACK-4). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0099_pi_onboarding_step_sets.sql` (applied 2026-07-26). New migrations continue at `0100+`. B4 reused `0073` `pi_review_*` (no new migration). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back.
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0099_pi_onboarding_step_sets.sql` (applied 2026-07-26). New migrations continue at `0100+`. B6 added **no migration** (UI-only ceremony over existing entities). B4 reused `0073` `pi_review_*` (no new migration). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back.
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -188,7 +188,7 @@ Evidence paths verified present unless noted.
 | **B3** | Pilot KPI event layer (Vercel; PostHog deferred) | M · **Shipped** | METRICS / NFR-OBS / PACK-E8 | — |
 | **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M · **Shipped** | FR-007 remainder / FLOW-REVIEWER / M5 review | — |
 | **B5** | Onboarding shape — evolved to the 8-step conversation | M · **Shipped** | FR-003 / UX-ONB-8 / M3 | — |
-| **B6** | Xperience entry ceremony screens | M | FR-005 / FLOW-XP-ENTRY / M4 | FD-PACK-4 |
+| **B6** | Xperience entry ceremony screens | M · **Shipped** | FR-005 / FLOW-XP-ENTRY / M4 | — |
 | **B7** | App-shell global search + help (no Insights product) | M | UX-SHELL / PACK-E7 | FD-PACK-8 |
 | **B8** | Thin admin org/project config for pilot | M | FR-011 / FLOW-ADMIN / M4 admin | Founder OK depth |
 | **B9** | Pack-aligned NFR polish (rate limit, failure recovery, activity SM honesty) | M | NFR-SEC rate / FLOW-FAIL / TRD-SM-ACTIVITY | Prefer after TD-018 for CI proof |
@@ -319,23 +319,25 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B6 — Xperience entry ceremony
+### B6 — Xperience entry ceremony (**shipped** 2026-07-26)
 
 1. **Objective / value:** Coherent company→role→team→project→first activity narrative.  
 2. **IDs:** FR-005 remainder, FLOW-XP-ENTRY, UX-XP, PACK-E4.  
-3. **Reuse:** Catalogue `0079`, Experience planner, Day-1 sim, org knowledge.  
-4. **Code areas:** `src/app` Experience entry routes/components.  
-5. **DB:** Optional progress flags on assignment; else client+existing assignment status.  
-6. **APIs:** Thin progress PATCH if persisted.  
-7. **AI:** Stakeholder intro may use bounded agents + citations.  
-8. **UX:** Multi-step entry; skip allowed; mobile prioritises start activity.  
-9. **Deps/risks:** Must not market as full multi-week sim if still Day-1 depth.  
-10. **AC/tests:** E2E reaches first activity; no fake evidence.  
-11. **Flag:** `DELIVERX_XP_ENTRY_CEREMONY=on`.  
-12. **DoD:** Ceremony complete or explicitly deferred with FD.  
-13. **Size / approval:** M · **blocked FD-PACK-4**.
+3. **Reuse:** Catalogue `0079`, Experience planner, Day-1 sim, generated `ExperienceSimState` — **not rebuilt**.  
+4. **Code areas:** `src/lib/xperience/entry-ceremony.ts` (step machine + content derivation + flag); `src/components/xperience/entry-ceremony.tsx`; wired into `src/components/xperience/product-app.tsx`; flag resolved in `src/app/(xperience)/experience/app/page.tsx`.  
+5. **DB:** **None** — ceremony is UI-only over the sim state already returned by `POST /api/xperience/experience/start`. `0099` remains prod head.  
+6. **APIs:** **None new** — reuses the existing start response state.  
+7. **AI:** None in this slice — narrative is deterministic from generated state; no agent calls, no evidence.  
+8. **UX:** Five-step entry (`company → role → team → project → first_activity`) after offer-accept and before the dashboard; skip on every step; accessible stepper (`aria-current`, focus moves to each step heading); loading/empty/error fallback copy when state is missing; mobile collapses to a single column so the first activity stays reachable.  
+9. **Deps/risks:** Copy states the workplace is simulated and Day-1 depth; must not imply a full multi-week sim. Ceremony invents no scores and lights nothing.  
+10. **AC/tests:** `src/lib/xperience/entry-ceremony.test.ts` (17) covers step order, transitions (next/back/skip/goto/complete, finished immutability), progress, content derivation from state, safe fallback, meeting-vs-decision first activity, and flag resolution; `src/lib/xperience` added to `test:pi`.  
+11. **Flag:** `DELIVERX_XP_ENTRY_CEREMONY` — kill-switch defaulting **on**; set `off`/`0`/`false`/`disabled` to roll back to direct-to-dashboard with no redeploy, no data change.  
+12. **DoD:** **Met** — ceremony reaches the first activity and enters the workspace; no fake evidence, no capability, no Verified; consent default OFF untouched; tests green; build passes.  
+13. **Size / approval:** M · **FD-PACK-4** (PD-2026-07-26j).
 
 **Pack theme:** M4 organisation/project entry.
+
+**Ship artefact:** Step machine `xp-entry-ceremony@2026.1` = `company → role → team → project → first_activity`; no migration.
 
 ---
 
@@ -408,7 +410,7 @@ Evidence paths verified present unless noted.
 | FD-PACK-1 | Pack advisory vs elevate into SoT under Bible | Advisory | B0 framing |
 | FD-PACK-2 | Copy pack into `docs/build-pack/`? | Skip until asked | B0 |
 | FD-PACK-3 | Keep 6-step vs 8-step onboarding | **Settled — 8-step (PD-2026-07-26i)** | — |
-| FD-PACK-4 | Xperience entry ceremony vs Day-1 enough | Day-1 enough | B6 |
+| FD-PACK-4 | Xperience entry ceremony vs Day-1 enough | **Settled — build ceremony (PD-2026-07-26j)** | — |
 | FD-PACK-5 | Human reviewer ops path (non-Verified)? | **Settled — yes (PD-2026-07-26h)** | — |
 | FD-PACK-6 | Formal recommendation SM now? | **Settled — yes (PD-2026-07-26f)** | — |
 | FD-PACK-7 | PostHog vs Vercel Analytics | Stay Vercel | B3 PostHog sink |
@@ -441,11 +443,11 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1–B5 shipped.** Next eng candidate: **B6 (Xperience entry ceremony)** only with FD-PACK-4, or **B7 (shell search + help)** only with FD-PACK-8. Otherwise founder-ops/residual hardening (**B9** needs no new PD if scoped to R-P2-06 + failure polish). PostHog remains deferred pending FD-PACK-7.
+**B1–B6 shipped.** Next eng candidate: **B7 (shell search + help)** only with FD-PACK-8, or **B8 (thin admin config)** with founder OK on depth. Otherwise founder-ops/residual hardening (**B9** needs no new PD if scoped to R-P2-06 + failure polish). PostHog remains deferred pending FD-PACK-7.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
-Do **not** start B6–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
+Do **not** start B7 without FD-PACK-8. Do **not** treat Stripe as next eng work.
 
 ---
 

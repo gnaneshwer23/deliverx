@@ -461,9 +461,25 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26j — FD-PACK-4 approved; B6 Xperience entry ceremony
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder reply **`B6`** (after being shown B6 as gated on FD-PACK-4, default if silent "Day-1 is enough") is treated as **explicit approval of FD-PACK-4** and authorization to build six-doc phase **B6**. Selecting the phase cannot mean the no-op default, so the direction is: **add** a calm entry ceremony as UX depth around the existing Day-1 Experience loop. Reuse the 12-company catalogue (`0079`), Experience planner and Day-1 sim — do not rebuild Experience. |
+| **Chosen shape** | A narrative entry that plays after the offer is accepted and the workspace is generated, before the dashboard opens: **company welcome → role → team → project → first activity**. All content is derived from the already-generated `ExperienceSimState` (company, role, team/stakeholders, project, first decision/meeting). Typed SoT `src/lib/xperience/entry-ceremony.ts` (step machine + content derivation + flag); UI `src/components/xperience/entry-ceremony.tsx`. Skip is allowed on every step; the stepper allows jumping between steps; the last step's CTA enters the workspace. |
+| **Trust rails** | Ceremony is narrative only. It invents no scores or readiness %, writes no capability, creates no ledger evidence and cannot light `deliverxVerified`. An always-present honesty line states evidence is only recorded once the candidate acts inside the workspace. Observation consent stays default OFF and is untouched — no auto-observation. Copy must not market Day-1 depth as a full multi-week simulation. |
+| **DB / API** | **None.** The ceremony is UI-only over existing entities; the sim state is already returned by `POST /api/xperience/experience/start` and held client-side. No migration (`0099` remains prod head); no new API route. |
+| **Rollback / flag** | `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch that **defaults ON** so the ceremony ships with the Experience entry; set `off` (or `0`/`false`/`disabled`) to roll back to the previous direct-to-dashboard flow with no redeploy and no data change. Resolved server-side in the Experience app page and passed to the client. |
+| **Why** | FR-005 remainder / FLOW-XP-ENTRY / UX-XP / PACK-E4 required a coherent organisation→project entry narrative. Day-1 + catalogue already proved the loop, but arrival jumped straight to the dashboard with no sense of company, role, team or project. |
+| **Consequence** | B6 authorized and shipped under this decision. FD-PACK-4 closes; PACK-E4 closes. `src/lib/xperience` joins the `test:pi` gate. No founder env action required — the ceremony is the default; the only ops lever is the optional `off` kill-switch. Remaining FD-PACK-* (1/2/7/8) stay pending. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
@@ -474,10 +490,10 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-1** | Treat six-doc pack as advisory under Bible + Charter, or elevate into SoT? | Advisory under Bible | B0 framing |
 | **FD-PACK-2** | Copy pack into `docs/build-pack/`? | Skip until asked | B0 |
 | **FD-PACK-3** | Keep shipped 6-step PI onboarding vs evolve toward pack 8-step conversation? | **Settled — evolve to 8-step (PD-2026-07-26i)** | — |
-| **FD-PACK-4** | Invest in Xperience entry ceremony vs Day-1 sufficiency for pilot? | Day-1 enough | B6 |
+| **FD-PACK-4** | Invest in Xperience entry ceremony vs Day-1 sufficiency for pilot? | **Settled — build ceremony (PD-2026-07-26j)** | — |
 | **FD-PACK-5** | Human reviewer queue as pilot ops path (**not** Verified badge path)? | **Settled — yes, non-Verified ops (PD-2026-07-26h)** | — |
 | **FD-PACK-6** | Formal recommendation state machine (FR-010) now? | **Settled — yes (PD-2026-07-26f)** | — |
 | **FD-PACK-7** | Add a PostHog product analytics sink after the Vercel pilot path? | Stay Vercel; PostHog optional later | PostHog sink only (B3 Vercel path shipped) |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | Defer search | B7 |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**.
