@@ -540,6 +540,22 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26o — Contextual Home + Daily Briefing (founder dashboard architecture)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Ship a **contextual Home + Daily Briefing** as the next vertical slice on canonical `/profile` (post-login candidate landing). Home adapts to journey state (A–D) and answers five questions in under ~10s. Insights remain **content inside Home / PI / Launchpad** — not a fifth suite nav product (reaffirms B7 / CX-05). |
+| **Chosen shape** | Typed SoT `src/lib/contextual-home/`; deterministic `resolveHomeState` + `buildDailyBriefing` (template prose v1, no LLM); ProfileCentre above-fold briefing; kill-switch `DELIVERX_CONTEXTUAL_HOME` default **on**. Design: [`../design/contextual-home-daily-briefing.md`](../design/contextual-home-daily-briefing.md). |
+| **Charter gates (enforced)** | No unexplained % / “Excellent” health; no nav emoji; Verified counts only from T8 attestation; Learning ≠ capability; ScoreRun ≠ Verified; Team Copilot **executive** Dashboard 5 **deferred** — thin Workspace summary card + link only. |
+| **Trust rails** | Briefing cites real entities; `capabilityAssigned: false`; never inflates Verified; fails independently without blanking Profile; reuses SnapshotClaims / recommendations / Experience / onboarding — no parallel PI truth. |
+| **Analytics** | B3 catalogue adds privacy-safe `home_briefing_viewed` + `home_primary_cta_clicked` (`surface`, `home_state`, `cta_kind`). |
+| **Why** | Founder dashboard architecture hypothesis: static widget homes fail; Daily Briefing gives start-of-workday clarity while staying inside Build Charter. |
+| **Consequence** | Contextual Home authorized and shipped under this decision. Team Copilot executive OS and Insights-as-product remain gated. Launchpad-primary heuristics may be tightened later without a new SKU. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
@@ -559,4 +575,4 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-7** | Add a PostHog product analytics sink after the Vercel pilot path? | Stay Vercel; PostHog optional later | PostHog sink only (B3 Vercel path shipped) |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | **Settled — build search + help (PD-2026-07-26k)** | — |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**; **B7 shell search + help (FD-PACK-8)**; **B8 thin pilot admin (PD-2026-07-26l)**; **B9 NFR polish (PD-2026-07-26m)**.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**; **B7 shell search + help (FD-PACK-8)**; **B8 thin pilot admin (PD-2026-07-26l)**; **B9 NFR polish (PD-2026-07-26m)**; **Contextual Home + Daily Briefing (PD-2026-07-26o)** — Insights not a nav product; Team Copilot executive deferred.

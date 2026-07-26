@@ -45,6 +45,14 @@ export const PILOT_KPI_CATALOGUE = {
     kpi: "career_outcomes",
     properties: ["outcome_type", "has_artefact"],
   },
+  home_briefing_viewed: {
+    kpi: "home_engagement",
+    properties: ["surface", "home_state"],
+  },
+  home_primary_cta_clicked: {
+    kpi: "home_engagement",
+    properties: ["surface", "home_state", "cta_kind"],
+  },
 } as const;
 
 export type PilotKpiEventName = keyof typeof PILOT_KPI_CATALOGUE;
@@ -94,6 +102,25 @@ export type PilotKpiProperties = {
   outcome_event_recorded: {
     outcome_type: string;
     has_artefact: boolean;
+  };
+  home_briefing_viewed: {
+    surface: "profile";
+    home_state:
+      | "not_onboarded"
+      | "recommend_experience"
+      | "active_experience"
+      | "launchpad_primary"
+      | "progress";
+  };
+  home_primary_cta_clicked: {
+    surface: "profile";
+    home_state:
+      | "not_onboarded"
+      | "recommend_experience"
+      | "active_experience"
+      | "launchpad_primary"
+      | "progress";
+    cta_kind: string;
   };
 };
 

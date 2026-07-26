@@ -11,6 +11,7 @@ import {
   whyThisConfidenceDisplayBand,
 } from "@/lib/capability-engine/confidence-bands";
 import { DevelopmentLoopPanel } from "@/components/pi/development-loop-panel";
+import { DailyBriefingPanel } from "@/components/pi/daily-briefing-panel";
 import { NotificationInbox } from "@/components/pi/notification-inbox";
 import { RecommendationsPanel } from "@/components/pi/recommendations-panel";
 
@@ -65,7 +66,7 @@ export function ProfileCentre() {
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <header className="mb-8 border-b border-[#E5E2D9] pb-5">
         <p className="font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
-          Professional Intelligence
+          Professional Intelligence · Home
         </p>
         <div className="mt-1 flex items-start justify-between gap-4">
           <h1 className="font-[family-name:var(--font-display)] text-2xl text-[#1A1A18]">
@@ -74,8 +75,9 @@ export function ProfileCentre() {
           <NotificationInbox />
         </div>
         <p className="mt-2 max-w-xl text-sm text-[#4A4A45]">
-          One centre for who you are, what you can prove, what is holding you back, what to do next,
-          and which opportunities fit — from evidence, not invention.
+          {profile.homeBriefing
+            ? "Your professional home — where you are, what to do today, and what comes next from evidence."
+            : "One centre for who you are, what you can prove, what is holding you back, what to do next, and which opportunities fit — from evidence, not invention."}
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
@@ -116,6 +118,10 @@ export function ProfileCentre() {
           </Link>
         </div>
       </header>
+
+      {profile.homeBriefing ? (
+        <DailyBriefingPanel briefing={profile.homeBriefing} />
+      ) : null}
 
       <div className="space-y-8">
         <Section

@@ -17,6 +17,8 @@ describe("pilot KPI catalogue", () => {
     expect(names).toContain("capability_assessment_completed");
     expect(names).toContain("evidence_appended");
     expect(names).toContain("recommendation_accepted");
+    expect(names).toContain("home_briefing_viewed");
+    expect(names).toContain("home_primary_cta_clicked");
     expect(names.every((name) => /^[a-z][a-z0-9_]*$/.test(name))).toBe(true);
   });
 

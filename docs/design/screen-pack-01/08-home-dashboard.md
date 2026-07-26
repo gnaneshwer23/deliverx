@@ -1,6 +1,6 @@
 # 08 — Signed-In Home Dashboard
 
-**Implementation status:** **Pack-1 implementable now**
+**Implementation status:** **Shipped (contextual Home + Daily Briefing)** — see [`../contextual-home-daily-briefing.md`](../contextual-home-daily-briefing.md).
 **IA decision for implementation slice:** Evolve `/profile` as the unified home. Preserve `/hub` until redirect and nav impacts are tested; do not ship two competing home dashboards.
 
 ## Screen: Your professional home

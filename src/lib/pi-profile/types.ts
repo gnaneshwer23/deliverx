@@ -7,6 +7,7 @@ import type {
   OpportunityFit,
   RoadmapAction,
 } from "@/lib/career-intelligence/types";
+import type { DailyBriefing } from "@/lib/contextual-home/types";
 import type { ExperiencePlanRecord } from "@/lib/experience-planner/types";
 import type { GrowthReportRecord } from "@/lib/pi-assessment/growth-report";
 
@@ -103,4 +104,9 @@ export type PiProfileAggregate = {
   experiencePlan: ExperiencePlanRecord | null;
   /** Phase 7 — real-world outcome loop summary + diagnostics (never capability). */
   outcomes: CareerOutcomeContext | null;
+  /**
+   * Contextual Home Daily Briefing when DELIVERX_CONTEXTUAL_HOME is on.
+   * Null when kill-switched or briefing projection fails independently.
+   */
+  homeBriefing: DailyBriefing | null;
 };

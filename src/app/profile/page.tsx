@@ -6,9 +6,9 @@ import { PI_PROFILE_PATH } from "@/lib/pi-profile/paths";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Professional Intelligence Profile · DeliverX",
+  title: "Home · Professional Intelligence · DeliverX",
   description:
-    "Who you are, what you can prove, what is holding you back, what next, and which opportunities fit.",
+    "Your professional home — where you are, what to do today, and what comes next from evidence.",
 };
 
 export const dynamic = "force-dynamic";

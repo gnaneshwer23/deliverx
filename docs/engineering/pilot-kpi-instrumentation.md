@@ -26,6 +26,8 @@ PostHog is not wired; that sink remains deferred pending FD-PACK-7.
 | Recommendation engagement | `recommendation_viewed` | Generated recommendations transition to viewed |
 | Recommendation engagement | `recommendation_accepted` | Recommendation transitions to accepted |
 | Career outcomes | `outcome_event_recorded` | P7 outcome persistence and calibration refresh succeed |
+| Home engagement | `home_briefing_viewed` | Contextual Home Daily Briefing rendered on `/profile` |
+| Home engagement | `home_primary_cta_clicked` | User clicks the briefing primary CTA |
 
 There is no `activity_submitted` event yet because the shipped PI path has no one
 canonical activity-submission transition. Artefact versions and evidence appends are

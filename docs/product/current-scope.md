@@ -2,7 +2,7 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **B9 Pack-aligned NFR polish — shipped** (founder reply `b9`; PD-2026-07-26m). B1–B8 remain live. T9 commercial code remains shipped; **payments later**.
+**Active phase:** **Contextual Home + Daily Briefing — shipped** (PD-2026-07-26o). B1–B9 remain live. T9 commercial code remains shipped; **payments later**.
 **As of:** 2026-07-26  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
@@ -27,6 +27,7 @@
 **B7 status:** **Shipped (founder-authorized 2026-07-26, reply `B7` = FD-PACK-8 / PD-2026-07-26k)** — App-shell global search + help as shell utilities (no Insights product). Typed catalogue `src/lib/global-search/` (14 destinations + 7 help articles); Cmd/Ctrl+K dialog in ProductSuiteShell; `/help` orientation page; `GET /api/pi/search?q=` self-only (evidence / projects `created_by` / artefacts / enrolments). Kill-switch `DELIVERX_GLOBAL_SEARCH` defaults **on** (set `off` to roll back, no redeploy). **No migration.**
 **B8 status:** **Shipped (founder-authorized 2026-07-26, reply `B8` = thin depth / PD-2026-07-26l)** — Pilot admin at `/settings/admin` for org + project config, departments/teams, membership assign; typed SoT `src/lib/pilot-admin/`; `GET/PATCH /api/org/config`, `GET /api/org/projects`, `PATCH /api/org/projects/[id]`; audited via `audit_events`; framework pin `pm-core@2026.1` read-only; kill-switch `DELIVERX_PILOT_ADMIN` defaults **on** + org-admin role gate. Follow-up `0100` org-admin UPDATE RLS. Never rewrites verified evidence or lights Verified. Not enterprise mission-control / third SKU / marketplace.
 **B9 status:** **Shipped (founder-authorized 2026-07-26, reply `b9` / PD-2026-07-26m)** — Pack-aligned NFR polish: per-user PI API rate limit (`0101`, default 90/60s, kill-switch `DELIVERX_PI_RATE_LIMIT`); shared PI error contracts + AI 429 `Retry-After`; intervention + Experience activity state-machine honesty (409 on invalid). No capability/Verified from activity alone. TD-018 CI remains founder-ops (not claimed restored).
+**Contextual Home status:** **Shipped (PD-2026-07-26o)** — journey-adaptive Daily Briefing on `/profile`; states A–D; Team Copilot executive deferred; kill-switch `DELIVERX_CONTEXTUAL_HOME` default on; no Insights nav product.
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -53,6 +54,7 @@
 | **B7** | Shipped | Suite shell Cmd/Ctrl+K search + `/help`; `GET /api/pi/search` self-only; no Insights product; kill-switch default on |
 | **B8** | Shipped | `/settings/admin` thin pilot org/project config; audited; org-admin + `DELIVERX_PILOT_ADMIN`; no evidence rewrite |
 | **B9** | Shipped | PI API rate limit `0101` (90/60s); failure codes + AI 429; intervention + Experience activity SM honesty |
+| **Contextual Home** | Shipped | `/profile` Daily Briefing — journey states A–D; `DELIVERX_CONTEXTUAL_HOME`; no Insights nav / no Team Copilot executive |
 
 **Also present (partial / supporting):** Professional Workspace (`/workspace`) — suite-shell parity for the thin home (ProductSuiteShell by default; legacy Mission Control nav opt-in); Verified Portfolio packaging (`/portfolio`); Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback); admin competency framework seed (`pm-core`); PI review/challenge.
 
@@ -93,7 +95,7 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-work.md) · ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
-**Candidate next scope:** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B9 shipped.** Next candidates: optional **B0** pack archive, residual founder-ops, or FD-PACK-7 PostHog. Does **not** authorise pack M0–M7 restart or live payments.
+**Candidate next scope:** Contextual Home shipped (PD-2026-07-26o). Optional follow-ups: tighten Launchpad-primary heuristics; founder-authorized Team Copilot executive later. [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B9 shipped.** Other candidates: optional **B0** pack archive, residual founder-ops, or FD-PACK-7 PostHog. Does **not** authorise pack M0–M7 restart or live payments.
 
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).

@@ -1,3 +1,23 @@
+## 2026-07-26 — Contextual Home + Daily Briefing
+
+Founder dashboard-architecture intent governed by Build Charter (PD-2026-07-26o).
+
+**Scope:** Journey-adaptive Daily Briefing on canonical `/profile` (states A–D). Insights = content only (not a nav product). Team Copilot executive Dashboard 5 deferred — thin Workspace card only. No unexplained % / emoji nav / fake Verified.
+
+Shape:
+- Design: `docs/design/contextual-home-daily-briefing.md`
+- Typed SoT `src/lib/contextual-home/` — `resolveHomeState`, `buildDailyBriefing`, signal projection from PI aggregate + Experience enrolment
+- `GET /api/pi/profile` attaches `homeBriefing` when `DELIVERX_CONTEXTUAL_HOME` is on (default); kill-switch restores prior Profile
+- UI: `DailyBriefingPanel` above-fold on ProfileCentre; screen-bound context rail
+- B3 KPIs: `home_briefing_viewed`, `home_primary_cta_clicked`
+- Auth redirect unchanged — candidate landing remains `/profile`
+
+Verification: contextual-home unit suite + `test:pi`; lint; `npm run build`.
+
+Next: optional Launchpad-primary heuristic polish; founder ops (TD-018, TD-006); Team Copilot executive remains gated.
+
+---
+
 ## 2026-07-26 — Professional Workspace suite parity (thin)
 
 Founder request: enhance Professional Workspace to match signed-in suite pages (Profile, Experience, Launchpad, Portfolio, Help).
