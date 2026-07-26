@@ -120,7 +120,7 @@ export function MarketingWhatWorksSection() {
             <p className="font-[family-name:var(--font-dx-display)] text-3xl leading-none tracking-tight text-[var(--mkt-green-l)]">
               {LIVE_FEATURES.length}
             </p>
-            <p className="mt-1 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--mkt-text3)]">
+            <p className="mt-1 font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-[var(--mkt-text3)]">
               Live capabilities
             </p>
           </div>
@@ -182,7 +182,7 @@ export function MarketingWhatWorksSection() {
 
           <aside className="mkt-roadmap-panel mkt-card-gradient flex flex-col p-5 md:p-6 xl:sticky xl:top-[calc(var(--mkt-navh)+1.5rem)] xl:self-start">
             <header className="mb-1">
-              <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-green-l)]">
+              <p className="font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--mkt-green-l)]">
                 On the roadmap
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">

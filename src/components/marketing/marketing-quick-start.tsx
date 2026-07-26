@@ -9,7 +9,7 @@ export function MarketingQuickStartStrip() {
       className="border-y border-[var(--mkt-border)] bg-[var(--mkt-s2)] py-8 md:py-10"
     >
       <MarketingContainer>
-        <p className="mb-5 text-center font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
+        <p className="mb-5 text-center font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
           Start in three steps
         </p>
         <ol className="grid gap-4 md:grid-cols-3 md:gap-6">

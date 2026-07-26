@@ -13,7 +13,7 @@ export function MarketingRoleCarousel() {
     <div className="relative mt-10 overflow-hidden">
       <div className="mb-5 flex items-end justify-between gap-4 px-5 md:px-10 lg:px-12">
         <div>
-          <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
+          <p className="font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
             See every role
           </p>
           <p className="mt-1 text-sm text-[var(--mkt-text2)]">

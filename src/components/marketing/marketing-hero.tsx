@@ -40,7 +40,7 @@ export function MarketingHero() {
       <MarketingContainer className="relative z-[1]">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           <div>
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[rgba(61,150,96,0.25)] bg-[rgba(61,150,96,0.08)] px-3.5 py-1 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-green-l)]">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[rgba(61,150,96,0.25)] bg-[rgba(61,150,96,0.08)] px-3.5 py-1 font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--mkt-green-l)]">
               <span className="size-1.5 rounded-full bg-[var(--mkt-green-l)] shadow-[0_0_8px_rgba(61,150,96,0.6)]" aria-hidden />
               Delivery intelligence platform
             </p>

@@ -631,6 +631,15 @@
    Avoid content-visibility on marketing sections: estimated intrinsic
    sizes caused scroll/header jumps when real section height differed. */
 
+/*
+  Marketing type scale (~12.5%): raise rem root only while a marketing
+  shell is mounted. Signed-in suite keeps the browser default (typically 16px).
+  rem-based marketing copy, nav, buttons, and mktClass tokens all inherit.
+*/
+html:has(.marketing-page) {
+  font-size: 112.5%; /* 16px → 18px */
+}
+
 .mkt-product-hero {
   min-height: min(70svh, 620px);
 }

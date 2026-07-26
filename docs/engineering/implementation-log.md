@@ -1,3 +1,13 @@
+## 2026-07-26 — Marketing type scale +12.5%
+
+Founder: overall marketing text looks small.
+
+**Change:** `html:has(.marketing-page) { font-size: 112.5% }` (16→18px rem root) so marketing rem type scales systematically without touching the signed-in suite. Mono labels `10px` → `0.6875rem`; nav height 64→68px. Hierarchy preserved (body/captions/labels still distinct).
+
+Verification: marketing honesty units; lint; local screenshots under `/tmp/deliverx-type-scale/`; build + Vercel Ready after push.
+
+---
+
 ## 2026-07-26 — Marketing header stability + beta readiness
 
 Founder: header/page jumping, responsiveness audit, honest beta-ready verdict (payments may stay off).

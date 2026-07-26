@@ -12,7 +12,7 @@ export function MarketingCtaSection() {
         aria-hidden
       />
       <MarketingContainer className="relative">
-        <p className="mb-4 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-white/50">
+        <p className="mb-4 font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-white/50">
           Start delivering with confidence
         </p>
         <h2 className="font-[family-name:var(--font-dx-display)] text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.04] tracking-[-0.03em] text-white [&_em]:not-italic [&_em]:text-[#6EE7B7]">

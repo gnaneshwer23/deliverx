@@ -24,7 +24,7 @@ function ReviewQueueMock() {
   return (
     <div className="rounded-2xl border border-[var(--mkt-border)] bg-white p-5 shadow-[0_24px_64px_-32px_rgba(28,74,46,0.2)] md:p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
+        <p className="font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--mkt-text3)]">
           AI Review Queue
         </p>
         <span className="rounded-full bg-[rgba(96,165,250,0.12)] px-2.5 py-0.5 font-[family-name:var(--font-mkt-mono)] text-[9px] font-semibold uppercase tracking-[0.08em] text-[#60A5FA]">
@@ -91,7 +91,7 @@ export function MarketingWorkflowSection() {
 
         {/* Horizontal pipeline stepper */}
         <div className="mt-16">
-          <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-white/40">
+          <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-white/40">
             End-to-end flow
           </p>
 
@@ -156,7 +156,7 @@ export function MarketingWorkflowSection() {
                     }`}
                   >
                     <span
-                      className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-[family-name:var(--font-mkt-mono)] text-[10px] font-semibold ${
+                      className={`flex size-10 shrink-0 items-center justify-center rounded-xl font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-semibold ${
                         isActive
                           ? "bg-[#3D9660] text-white"
                           : "border border-white/10 bg-white/5 text-white/50"
@@ -175,7 +175,7 @@ export function MarketingWorkflowSection() {
 
           {/* Active stage detail */}
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm md:p-6">
-            <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.12em] text-[#6EE7B7]">
+            <p className="font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-[#6EE7B7]">
               Step {stage.code} · {stage.label}
             </p>
             <p className="mt-2 max-w-3xl text-[0.9375rem] leading-relaxed text-white/75">{stage.detail}</p>
@@ -189,7 +189,7 @@ export function MarketingWorkflowSection() {
 
       {/* Signal threads — light cards on dark section footer */}
       <MarketingContainer className="relative mt-12 md:mt-16">
-        <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.14em] text-white/40">
+        <p className="mb-6 font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-white/40">
           Example signal threads
         </p>
         <div className="grid gap-4 md:grid-cols-3">
@@ -204,7 +204,7 @@ export function MarketingWorkflowSection() {
                   style={{ background: THREAD_DOT[thread.tone], color: THREAD_DOT[thread.tone] }}
                   aria-hidden
                 />
-                <span className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.1em] text-white/40">
+                <span className="font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.1em] text-white/40">
                   Signal thread
                 </span>
               </div>

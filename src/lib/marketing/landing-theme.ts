@@ -25,7 +25,8 @@ export const mkt = {
   accentPurple: "#7C3AED",
   accentGreen: "#3D9660",
   accentBlue: "#2563EB",
-  navH: 64,
+  /** Slightly taller bar so ~12.5% type bump still clears “Professional Workspace”. */
+  navH: 68,
   maxW: 1120,
   /** Soft SaaS panels — high radius like premium landing reference */
   radiusPanel: "1.75rem",
@@ -47,8 +48,9 @@ export const mktClass = {
   serif: "font-[family-name:var(--font-dx-display)]",
   sans: "font-[family-name:var(--font-mkt-sans)]",
   mono: "font-[family-name:var(--font-mkt-mono)]",
+  /** rem so it tracks `html:has(.marketing-page)` type scale (was fixed 10px). */
   label:
-    "font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-green-m)]",
+    "font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-[var(--mkt-green-m)]",
   sectionTitle:
     "font-[family-name:var(--font-dx-display)] text-[clamp(1.875rem,4.2vw,2.875rem)] leading-[1.06] tracking-[-0.025em] text-[var(--mkt-text1)]",
   sectionSub:

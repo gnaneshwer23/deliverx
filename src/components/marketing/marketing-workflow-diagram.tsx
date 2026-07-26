@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 export function WorkflowDiagram() {
   return (
     <div className="mt-12">
-      <p className="mb-8 font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-white/40">
+      <p className="mb-8 font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-white/40">
         How it works · example automation
       </p>
 

@@ -79,7 +79,7 @@ export default function TermsPage() {
     <>
       <main id="main-content" className="pt-[calc(var(--mkt-navh)+64px)] pb-24">
         <MarketingContainer className="max-w-2xl">
-          <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]">
+          <p className="font-[family-name:var(--font-mkt-mono)] text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]">
             DeliverX Ltd · Legal · Interim pilot terms
           </p>
           <h1 className="mt-4 font-[family-name:var(--font-dx-display)] text-[clamp(2rem,4vw,2.75rem)] tracking-[-0.03em] text-[var(--mkt-text1)]">
