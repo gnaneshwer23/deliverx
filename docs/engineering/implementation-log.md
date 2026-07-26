@@ -1,3 +1,9 @@
+## 2026-07-26 — B9 rate-limit concurrency fix (`0102`)
+
+Production verification found `checkPiApiRateLimit` used read→compute→`update(count+1)` (last-writer-wins). A concurrent burst (130 @ concurrency 8) returned ~129×200 / 0×429 while the DB counter only advanced to ~58.
+
+**Fix:** Migration `0102_pi_api_rate_limit_atomic.sql` adds `pi_api_rate_limit_increment(user_id, window_bucket)` — single SQL upsert `INSERT … ON CONFLICT DO UPDATE SET request_count = request_count + 1 RETURNING request_count`. App decides allow/deny from the returned count. Optional `pi_api_rate_limit_prune_before(timestamptz)` for ops pruning of old buckets (no required cron). Both RPCs are `SECURITY DEFINER`, `EXECUTE` service_role only. Defaults and 429 contract unchanged (90/60s, `DELIVERX_PI_RATE_LIMIT=off`, `code:"rate_limited"` + `Retry-After` + `X-RateLimit-*`).
+
 ## 2026-07-26 — B9: Pack-aligned NFR polish (rate limit, failure recovery, activity SM)
 
 Founder reply `b9` authorized six-doc phase B9 scoped to residual R-P2-06 / FLOW-FAIL / TRD-SM-ACTIVITY honesty — no new FD-PACK (PD-2026-07-26m). TD-018 CI darkness remains founder-ops and does **not** block local + Vercel-verified NFR fixes.

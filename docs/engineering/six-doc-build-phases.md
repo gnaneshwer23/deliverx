@@ -9,7 +9,7 @@
 
 **Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B9 shipped** (B9 founder-authorized 2026-07-26 via reply `b9`). Optional **B0** remains founder-optional. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0101_pi_api_rate_limits.sql` (applied 2026-07-26 during B9). New migrations continue at `0102+`. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back. B7 flag `DELIVERX_GLOBAL_SEARCH` defaults **on**. B8 flag `DELIVERX_PILOT_ADMIN` defaults **on** (+ org-admin role gate). B9 flag `DELIVERX_PI_RATE_LIMIT` defaults **on** (thresholds via `DELIVERX_PI_RATE_LIMIT_MAX` / `_WINDOW_MS`).
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0102_pi_api_rate_limit_atomic.sql` (B9 concurrency fix; `0101` table remains). New migrations continue at `0103+`. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back. B7 flag `DELIVERX_GLOBAL_SEARCH` defaults **on**. B8 flag `DELIVERX_PILOT_ADMIN` defaults **on** (+ org-admin role gate). B9 flag `DELIVERX_PI_RATE_LIMIT` defaults **on** (thresholds via `DELIVERX_PI_RATE_LIMIT_MAX` / `_WINDOW_MS`).
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -387,7 +387,7 @@ Evidence paths verified present unless noted.
 2. **IDs:** TRD-SEC-RATE, FLOW-FAIL, TRD-SM-ACTIVITY, NFR-SEC remainder.  
 3. **Reuse:** Existing API routes, Experience activity models, `platformRateLimitEngine`, recommendation SM pattern.  
 4. **Code areas:** `src/services/piApiRateLimit.ts`, `src/lib/pi/rate-limit-*`, `src/lib/api/pi-errors.ts`, intervention + Experience activity SMs; wired PI routes.  
-5. **DB:** `0101_pi_api_rate_limits.sql` — per-user window counters; RLS on, no client policies.  
+5. **DB:** `0101_pi_api_rate_limits.sql` — per-user window counters; RLS on, no client policies. `0102` — atomic `pi_api_rate_limit_increment` (+ optional prune RPC); service_role only.  
 6. **APIs:** Same routes; 429 `{code:"rate_limited"}` + `Retry-After`; 409 `{code:"invalid_transition"}`.  
 7. **AI:** Org AI 429 now includes `ai_rate_limited` + `Retry-After`; bypass stays off in prod.  
 8. **UX:** Calm retry copy; evidence/process honest pending/retryHint.  

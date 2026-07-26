@@ -1,6 +1,6 @@
 /**
  * B9 PI API rate limit — per-user window counters for /api/pi/** routes.
- * Reuses the pure platformRateLimitEngine; DB-backed like org/platform limits.
+ * Atomic increment via `pi_api_rate_limit_increment` (0102); decide from returned count.
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -9,6 +9,7 @@ import {
   resolvePiRateLimitThresholds,
   type PiRateLimitEnv,
 } from "@/lib/pi/rate-limit-flag";
+import { decisionFromAtomicCount } from "@/lib/pi/rate-limit-atomic";
 import { piRateLimitedResponse } from "@/lib/pi/rate-limit-response";
 import {
   bucketStartIso,
@@ -17,6 +18,11 @@ import {
 } from "./platformRateLimitEngine";
 
 export { piRateLimitedResponse } from "@/lib/pi/rate-limit-response";
+
+function isMissingRelationOrRpc(error: { code?: string } | null | undefined): boolean {
+  // 42P01 = undefined_table; 42883 = undefined_function
+  return error?.code === "42P01" || error?.code === "42883";
+}
 
 export async function checkPiApiRateLimit(
   userId: string,
@@ -27,16 +33,14 @@ export async function checkPiApiRateLimit(
   const windowBucket = bucketStartIso(now, windowMs);
   const admin = createAdminClient();
 
-  const { data: existing, error: fetchError } = await admin
-    .from("pi_api_rate_limits")
-    .select("request_count")
-    .eq("user_id", userId)
-    .eq("window_bucket", windowBucket)
-    .maybeSingle();
+  const { data: returnedCount, error } = await admin.rpc("pi_api_rate_limit_increment", {
+    p_user_id: userId,
+    p_window_bucket: windowBucket,
+  });
 
-  if (fetchError) {
-    // Table missing in older envs — fail open so pilot is not bricked.
-    if (fetchError.code === "42P01") {
+  if (error) {
+    // Table/RPC missing in older envs — fail open so pilot is not bricked.
+    if (isMissingRelationOrRpc(error)) {
       return computeRateLimitDecision({
         currentCount: 0,
         maxRequests,
@@ -44,37 +48,11 @@ export async function checkPiApiRateLimit(
         now,
       });
     }
-    throw fetchError;
+    throw error;
   }
 
-  const currentCount = Number(existing?.request_count ?? 0);
-  const decision = computeRateLimitDecision({
-    currentCount,
-    maxRequests,
-    windowMs,
-    now,
-  });
-
-  if (!decision.allowed) return decision;
-
-  if (existing) {
-    const { error: updateError } = await admin
-      .from("pi_api_rate_limits")
-      .update({ request_count: currentCount + 1 })
-      .eq("user_id", userId)
-      .eq("window_bucket", windowBucket);
-    if (updateError) throw updateError;
-  } else {
-    const { error: insertError } = await admin.from("pi_api_rate_limits").insert({
-      user_id: userId,
-      window_bucket: windowBucket,
-      request_count: 1,
-    });
-    if (insertError) throw insertError;
-  }
-
-  return computeRateLimitDecision({
-    currentCount: currentCount + 1,
+  return decisionFromAtomicCount({
+    returnedCount: Number(returnedCount ?? 0),
     maxRequests,
     windowMs,
     now,

@@ -29,10 +29,10 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 
 | Layer | Posture |
 | --- | --- |
-| **PI person APIs** | Per-user window counters in `pi_api_rate_limits` (migration `0101`). Default **90 requests / 60s** via `DELIVERX_PI_RATE_LIMIT_MAX` / `DELIVERX_PI_RATE_LIMIT_WINDOW_MS`. Kill-switch `DELIVERX_PI_RATE_LIMIT=off` (or `0`/`false`/`disabled`) bypasses with no redeploy. Wired on high-cost routes (capability/run, evidence, search, interventions, recommendations, assessment respond, privacy export, evidence/process). **429** returns calm copy + `code:"rate_limited"` + `Retry-After` + `X-RateLimit-*`. Sized above legitimate pilot UI pace. |
+| **PI person APIs** | Per-user window counters in `pi_api_rate_limits` (`0101`). Atomic increment via `pi_api_rate_limit_increment` (`0102`) — upsert `request_count = request_count + 1 RETURNING`; allow/deny from returned count (closes concurrent last-writer-wins hole). Default **90 requests / 60s** via `DELIVERX_PI_RATE_LIMIT_MAX` / `DELIVERX_PI_RATE_LIMIT_WINDOW_MS`. Kill-switch `DELIVERX_PI_RATE_LIMIT=off` (or `0`/`false`/`disabled`) bypasses with no redeploy. Wired on high-cost routes (capability/run, evidence, search, interventions, recommendations, assessment respond, privacy export, evidence/process). **429** returns calm copy + `code:"rate_limited"` + `Retry-After` + `X-RateLimit-*`. Sized above legitimate pilot UI pace. Optional prune: `pi_api_rate_limit_prune_before(timestamptz)` (service_role); no required cron. |
 | **Org AI generation** | Existing `org_ai_rate_limits` (30/60s). B9 adds `code:"ai_rate_limited"` + `Retry-After` on throw. |
 | **Platform API keys** | Existing `platform_api_rate_limits` (120/60s) with `X-RateLimit-*` headers. |
-| **Table access** | Rate-limit tables: RLS enabled, **no client policies** (service-role only). Fail-open if table missing (`42P01`) so older envs are not bricked. |
+| **Table access** | Rate-limit tables: RLS enabled, **no client policies** (service-role only). Increment/prune RPCs: `SECURITY DEFINER`, `EXECUTE` service_role only. Fail-open if table/RPC missing (`42P01` / `42883`) so older envs are not bricked. |
 
 Do **not** claim CI continuous rate-limit proof while TD-018 keeps Actions dark — local + Vercel verification only.
 
