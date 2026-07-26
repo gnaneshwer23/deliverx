@@ -3,6 +3,15 @@ import type {
   PersonaContract,
   ProjectMetrics,
 } from "@/lib/experience-sim/types";
+import {
+  assertActivityTransition,
+  decideMeetingTransition,
+  decideRiskTransition,
+  decideTaskTransition,
+  type MeetingStatus,
+  type RiskStatus,
+  type TaskStatus,
+} from "@/lib/experience-sim/activity-state-machine";
 
 function clamp(n: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, Math.round(n)));
@@ -70,15 +79,21 @@ export function applyMetricDeltas(
   return next;
 }
 
-/** Task Engine */
+/** Task Engine — valid transitions only (B9 activity SM honesty). */
 export function updateTask(
   state: ExperienceSimState,
   taskId: string,
-  status: "todo" | "in_progress" | "blocked" | "done",
+  status: TaskStatus,
 ): ExperienceSimState {
   return {
     ...state,
-    tasks: state.tasks.map((t) => (t.id === taskId ? { ...t, status } : t)),
+    tasks: state.tasks.map((t) => {
+      if (t.id !== taskId) return t;
+      const decision = decideTaskTransition(t.status, status);
+      assertActivityTransition(decision, "a task");
+      if (decision.kind === "noop") return t;
+      return { ...t, status };
+    }),
   };
 }
 
@@ -90,7 +105,7 @@ export function addMessage(
   return { ...state, messages: [message, ...state.messages] };
 }
 
-/** Meeting Engine */
+/** Meeting Engine — scheduled → completed only (B9 activity SM honesty). */
 export function completeMeeting(
   state: ExperienceSimState,
   meetingId: string,
@@ -98,22 +113,34 @@ export function completeMeeting(
 ): ExperienceSimState {
   return {
     ...state,
-    meetings: state.meetings.map((m) =>
-      m.id === meetingId ? { ...m, status: "completed" as const, outcome } : m,
-    ),
+    meetings: state.meetings.map((m) => {
+      if (m.id !== meetingId) return m;
+      const to: MeetingStatus = "completed";
+      const decision = decideMeetingTransition(m.status, to);
+      assertActivityTransition(decision, "a meeting");
+      if (decision.kind === "noop") return { ...m, outcome };
+      return { ...m, status: to, outcome };
+    }),
     completion: { ...state.completion, meetingRecorded: true },
   };
 }
 
-/** Risk Engine */
+/** Risk Engine — open → mitigated|accepted only when status changes (B9). */
 export function upsertRisk(
   state: ExperienceSimState,
   risk: ExperienceSimState["risks"][number],
 ): ExperienceSimState {
-  const exists = state.risks.some((r) => r.id === risk.id);
+  const existing = state.risks.find((r) => r.id === risk.id);
+  if (existing && existing.status !== risk.status) {
+    const decision = decideRiskTransition(
+      existing.status as RiskStatus,
+      risk.status as RiskStatus,
+    );
+    assertActivityTransition(decision, "a risk");
+  }
   return {
     ...state,
-    risks: exists
+    risks: existing
       ? state.risks.map((r) => (r.id === risk.id ? risk : r))
       : [...state.risks, risk],
   };

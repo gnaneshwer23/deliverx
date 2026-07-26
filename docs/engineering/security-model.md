@@ -11,7 +11,7 @@
 
 # Security Model
 
-**As of:** 2026-07-25 · post-ship audit
+**As of:** 2026-07-26 · B9 NFR polish
 
 ---
 
@@ -22,6 +22,19 @@
 - API Route Handlers for person PI data expect an authenticated user; anonymous calls return **401**
 
 Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do not run (TD-003). T0 added `x-matched-path` fallback in `getRequestPathFromHeaders` for deep links such as `/workspace/coach` (TD-002); production now returns `/login?next=%2Fworkspace%2Fcoach`. Proxy responses may include `x-dx-proxy` for observability.
+
+---
+
+## Rate limiting (B9 / TRD-SEC-RATE)
+
+| Layer | Posture |
+| --- | --- |
+| **PI person APIs** | Per-user window counters in `pi_api_rate_limits` (migration `0101`). Default **90 requests / 60s** via `DELIVERX_PI_RATE_LIMIT_MAX` / `DELIVERX_PI_RATE_LIMIT_WINDOW_MS`. Kill-switch `DELIVERX_PI_RATE_LIMIT=off` (or `0`/`false`/`disabled`) bypasses with no redeploy. Wired on high-cost routes (capability/run, evidence, search, interventions, recommendations, assessment respond, privacy export, evidence/process). **429** returns calm copy + `code:"rate_limited"` + `Retry-After` + `X-RateLimit-*`. Sized above legitimate pilot UI pace. |
+| **Org AI generation** | Existing `org_ai_rate_limits` (30/60s). B9 adds `code:"ai_rate_limited"` + `Retry-After` on throw. |
+| **Platform API keys** | Existing `platform_api_rate_limits` (120/60s) with `X-RateLimit-*` headers. |
+| **Table access** | Rate-limit tables: RLS enabled, **no client policies** (service-role only). Fail-open if table missing (`42P01`) so older envs are not bricked. |
+
+Do **not** claim CI continuous rate-limit proof while TD-018 keeps Actions dark — local + Vercel verification only.
 
 ---
 

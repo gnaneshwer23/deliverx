@@ -10,6 +10,7 @@ import {
 } from "@/lib/evidence-ledger/types";
 import { deriveEvidenceStrength } from "@/lib/verified-portfolio/types";
 import { emitPilotKpi } from "@/lib/analytics/server";
+import { enforcePiApiRateLimit } from "@/services/piApiRateLimit";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,9 @@ export async function GET() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
 
   const { data: records, error } = await supabase
     .from("pi_evidence_records")
@@ -87,6 +91,9 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
 
   let body: Record<string, unknown>;
   try {

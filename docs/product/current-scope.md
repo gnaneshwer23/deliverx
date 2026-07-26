@@ -2,7 +2,7 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **B8 Thin admin org/project config — shipped** (founder reply `B8` = thin depth OK; PD-2026-07-26l). B1–B7 remain live. T9 commercial code remains shipped; **payments later**.
+**Active phase:** **B9 Pack-aligned NFR polish — shipped** (founder reply `b9`; PD-2026-07-26m). B1–B8 remain live. T9 commercial code remains shipped; **payments later**.
 **As of:** 2026-07-26  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
@@ -25,7 +25,8 @@
 **B5 status:** **Shipped (founder-authorized 2026-07-26, reply `b5` = FD-PACK-3 / PD-2026-07-26i)** — PI onboarding evolved from six steps to the pack's eight-step discovery conversation (`welcome → identity → targets → strengths → evidence → working_style → review → path`); new self-assessment and working-style steps are skippable and explicitly labelled self-reported claims; review step reads back every answer with edit links before consent and default visibility are confirmed; recommendation now states its deterministic rationale and flags limited data; migration `0099_pi_onboarding_step_sets.sql`; step-set flag `DELIVERX_ONBOARDING_STEP_SET` (rollback `v1-six-step`, no redeploy); onboarding creates no capability, no evidence and no Verified status.
 **B6 status:** **Shipped (founder-authorized 2026-07-26, reply `B6` = FD-PACK-4 / PD-2026-07-26j)** — Xperience entry ceremony plays after the offer is accepted and before the dashboard: **company welcome → role → team → project → first activity**, all derived from the already-generated `ExperienceSimState` (reuses 12-company catalogue `0079`, Experience planner, Day-1 sim). Typed SoT `src/lib/xperience/entry-ceremony.ts`; UI `src/components/xperience/entry-ceremony.tsx`. Skip allowed on every step; accessible stepper; loading/empty/error fallbacks. **No migration** (UI-only over existing entities; `0099` remains prod head); no new API. Kill-switch `DELIVERX_XP_ENTRY_CEREMONY` defaults **on** (set `off` to roll back, no redeploy). Ceremony is narrative only — no scores/readiness %, no capability, no ledger evidence, no Verified; observation consent stays default OFF.
 **B7 status:** **Shipped (founder-authorized 2026-07-26, reply `B7` = FD-PACK-8 / PD-2026-07-26k)** — App-shell global search + help as shell utilities (no Insights product). Typed catalogue `src/lib/global-search/` (14 destinations + 7 help articles); Cmd/Ctrl+K dialog in ProductSuiteShell; `/help` orientation page; `GET /api/pi/search?q=` self-only (evidence / projects `created_by` / artefacts / enrolments). Kill-switch `DELIVERX_GLOBAL_SEARCH` defaults **on** (set `off` to roll back, no redeploy). **No migration.**
-**B8 status:** **Shipped (founder-authorized 2026-07-26, reply `B8` = thin depth / PD-2026-07-26l)** — Pilot admin at `/settings/admin` for org + project config, departments/teams, membership assign; typed SoT `src/lib/pilot-admin/`; `GET/PATCH /api/org/config`, `GET /api/org/projects`, `PATCH /api/org/projects/[id]`; audited via `audit_events`; framework pin `pm-core@2026.1` read-only; kill-switch `DELIVERX_PILOT_ADMIN` defaults **on** + org-admin role gate. **No migration** (`0099` remains prod head). Never rewrites verified evidence or lights Verified. Not enterprise mission-control / third SKU / marketplace.
+**B8 status:** **Shipped (founder-authorized 2026-07-26, reply `B8` = thin depth / PD-2026-07-26l)** — Pilot admin at `/settings/admin` for org + project config, departments/teams, membership assign; typed SoT `src/lib/pilot-admin/`; `GET/PATCH /api/org/config`, `GET /api/org/projects`, `PATCH /api/org/projects/[id]`; audited via `audit_events`; framework pin `pm-core@2026.1` read-only; kill-switch `DELIVERX_PILOT_ADMIN` defaults **on** + org-admin role gate. Follow-up `0100` org-admin UPDATE RLS. Never rewrites verified evidence or lights Verified. Not enterprise mission-control / third SKU / marketplace.
+**B9 status:** **Shipped (founder-authorized 2026-07-26, reply `b9` / PD-2026-07-26m)** — Pack-aligned NFR polish: per-user PI API rate limit (`0101`, default 90/60s, kill-switch `DELIVERX_PI_RATE_LIMIT`); shared PI error contracts + AI 429 `Retry-After`; intervention + Experience activity state-machine honesty (409 on invalid). No capability/Verified from activity alone. TD-018 CI remains founder-ops (not claimed restored).
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -51,6 +52,7 @@
 | **B6** | Shipped | Xperience entry ceremony — company→role→team→project→first activity; no migration; kill-switch default on |
 | **B7** | Shipped | Suite shell Cmd/Ctrl+K search + `/help`; `GET /api/pi/search` self-only; no Insights product; kill-switch default on |
 | **B8** | Shipped | `/settings/admin` thin pilot org/project config; audited; org-admin + `DELIVERX_PILOT_ADMIN`; no evidence rewrite |
+| **B9** | Shipped | PI API rate limit `0101` (90/60s); failure codes + AI 429; intervention + Experience activity SM honesty |
 
 **Also present (partial / supporting):** Professional Workspace (`/workspace`), Verified Portfolio packaging (`/portfolio`), Career Intelligence readiness (ScoreRun-preferring; labelled heuristic fallback), admin competency framework seed (`pm-core`), PI review/challenge.
 
@@ -91,7 +93,7 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-work.md) · ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
-**Candidate next scope (not authorised until founder picks a Bn):** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B8 shipped.** Next candidates: **B9** residual NFR polish, or residual founder-ops items. PostHog remains deferred behind FD-PACK-7. Does **not** authorise pack M0–M7 restart or live payments.
+**Candidate next scope:** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B9 shipped.** Next candidates: optional **B0** pack archive, residual founder-ops, or FD-PACK-7 PostHog. Does **not** authorise pack M0–M7 restart or live payments.
 
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
@@ -100,7 +102,7 @@ Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-wo
 5. **B4 pilot queue:** **Code shipped** — set Vercel `DELIVERX_REVIEWER_QUEUE=on` (Production ± Preview) and redeploy when ready to open the ops queue. Default remains off.
 6. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
 7. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
-8. **Engineering (candidate, six-doc):** **B1–B8 done.** B9 residual NFR polish; B0 optional docs archive.
+8. **Engineering (optional):** **B0** pack archive if founder wants docs intake; FD-PACK-7 if PostHog sink desired.
 
 Defer marketplace, graph DB, multi-profession expansion, and microservice splits without new approval.
 
@@ -114,4 +116,4 @@ Defer marketplace, graph DB, multi-profession expansion, and microservice splits
 4. Update this file when the active phase changes.
 5. T9 commercial code is shipped; **payments later** — do not claim live payments until Stripe founder ops and production smoke pass; do not invent eng work whose only goal is enabling Stripe.
 6. Follow [`../engineering/remaining-work.md`](../engineering/remaining-work.md) and [`../engineering/next-steps.md`](../engineering/next-steps.md) for residual hardening.
-7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit. **B1–B8 are authorized and shipped.**
+7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit. **B1–B9 are authorized and shipped.**

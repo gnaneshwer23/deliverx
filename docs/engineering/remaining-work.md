@@ -12,7 +12,7 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
-**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1–B6 shipped**: confidence bands, recommendation SM, Vercel pilot KPI custom events, human reviewer ops, eight-step onboarding, and the Xperience entry ceremony. PostHog remains deferred pending FD-PACK-7. Other Bn not authorised until founder selects.
+**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1–B9 shipped**: confidence bands, recommendation SM, Vercel pilot KPI custom events, human reviewer ops, eight-step onboarding, Xperience entry ceremony, shell search, thin admin, and NFR polish (rate limit / failure / activity SM). PostHog remains deferred pending FD-PACK-7. Other Bn not authorised until founder selects.
 
 ---
 
@@ -62,7 +62,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | **R-P1-13** | AI injection red-team beyond regex lists; keep `DELIVERX_AI_ORCHESTRATION_BYPASS` off in prod | **Partial** (bypass = config; red-team open) | Jailbreak / skipped T4 guarantees | Engineering | M | Stronger AI trust claims |
 | **R-P2-04** | Bound evidence child selects | **Open** | Latent payload / perf risk | Engineering | S | Scale readiness |
 | **R-P2-05** | AI route `maxDuration` | **Open** | Long hangs / cost | Engineering | S | Ops reliability |
-| **R-P2-06** | Explicit PI API rate limit | **Open** | Abuse / cost | Engineering | M | Abuse resistance |
+| **R-P2-06** | Explicit PI API rate limit | **Done (B9)** — `0101` + `enforcePiApiRateLimit`; kill-switch + thresholds | Abuse / cost | Engineering | M | Abuse resistance |
 | **R-P2-07** | Mutable `search_path` advisor residuals | **Open** | Advisor hygiene | Engineering | S | Clean security advisors |
 | **R-P2-01** | Auth RLS initplan WARN ×N | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
 | **R-P2-02** | Unindexed PI FKs | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
@@ -178,7 +178,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | 6 | B | R-P1-12 judgements/snapshots INSERT binding |
 | 7 | B | R-P1-13 AI injection red-team (bypass stays off) |
 | 8 | B | R-P2-16 coverage/Playwright CI after TD-018 |
-| 9 | B | R-P2-06 PI API rate limit (optional soon) |
+| 9 | B | R-P2-06 PI API rate limit | **Done (B9)** |
 | 10 | C | Marketplace / mission-control / multi-profession — stay deferred |
 
 ---

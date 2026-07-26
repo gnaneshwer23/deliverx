@@ -11,6 +11,10 @@ import type {
   InterventionRecord,
   InterventionStatus,
 } from "@/lib/workspace-observation/types";
+import {
+  decideInterventionTransition,
+  InvalidInterventionTransitionError,
+} from "@/lib/workspace-observation/intervention-state-machine";
 
 const GAP_CODE_RE = /^(comp\.[a-z0-9_]+)/i;
 
@@ -175,6 +179,26 @@ export async function transitionIntervention(
     to: "accepted" | "dismissed" | "completed";
   },
 ): Promise<InterventionRecord> {
+  const { data: existing, error: loadError } = await supabase
+    .from("pi_interventions")
+    .select("*")
+    .eq("id", input.interventionId)
+    .eq("user_id", input.userId)
+    .maybeSingle();
+  if (loadError) throw loadError;
+  if (!existing) {
+    throw new Error("Intervention not found");
+  }
+
+  const from = existing.status as InterventionStatus;
+  const decision = decideInterventionTransition(from, input.to);
+  if (decision.kind === "invalid") {
+    throw new InvalidInterventionTransitionError(from, input.to);
+  }
+  if (decision.kind === "noop") {
+    return mapInterventionRow(existing as Record<string, unknown>);
+  }
+
   const now = new Date().toISOString();
   const patch: Record<string, unknown> = {
     status: input.to,

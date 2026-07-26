@@ -7,9 +7,9 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B8 shipped** (B8 founder-authorized 2026-07-26 via reply `B8` = thin depth). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B9 shipped** (B9 founder-authorized 2026-07-26 via reply `b9`). Optional **B0** remains founder-optional. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0100_organisations_org_admin_update.sql` (applied 2026-07-26 during B8 signed-in spot-check). New migrations continue at `0101+`. B6–B8 originally shipped without schema; `0100` is the B8 RLS follow-up so org admins can PATCH org config. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back. B7 flag `DELIVERX_GLOBAL_SEARCH` defaults **on**. B8 flag `DELIVERX_PILOT_ADMIN` defaults **on** (+ org-admin role gate).
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0101_pi_api_rate_limits.sql` (applied 2026-07-26 during B9). New migrations continue at `0102+`. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back. B7 flag `DELIVERX_GLOBAL_SEARCH` defaults **on**. B8 flag `DELIVERX_PILOT_ADMIN` defaults **on** (+ org-admin role gate). B9 flag `DELIVERX_PI_RATE_LIMIT` defaults **on** (thresholds via `DELIVERX_PI_RATE_LIMIT_MAX` / `_WINDOW_MS`).
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -42,8 +42,8 @@
 
 | Status | Count | Notes |
 | --- | ---: | --- |
-| Built | 36 | Core evidence loop + trust rails + T0–T9 code + B1–B8 (bands, recommendations, KPIs, reviewer ops, onboarding, ceremony, search, thin admin) |
-| Partial | 23 | Remains mapped into Bn or remaining-work A/B |
+| Built | 37 | Core evidence loop + trust rails + T0–T9 code + B1–B9 (bands, recommendations, KPIs, reviewer ops, onboarding, ceremony, search, thin admin, NFR polish) |
+| Partial | 20 | Remains mapped into Bn or remaining-work A/B |
 | Missing | 5 | Aligns with PACK-E1, E4, E7/E9 (E2/E3/E5/E6/E8 done) |
 | Conflicts | 5 | Reject / modify-with-PD |
 | Out of charter | 4 | Marketplace, third SKU depth, multi-profession, microservices |
@@ -77,7 +77,7 @@ Evidence paths verified present unless noted.
 | BR-004 | Capability from evidence; explainable recommendations | Built | Capability path + recommendation SM (FR-010 / B2) | Keep |
 | BR-005 | User visibility control | Built | Privacy settings; export/delete `0086` | Keep |
 | BR-006 | No marketing of mocked/unbuilt as available | Partial | Batch 2 honesty; residual matrix copy items | Keep |
-| NFR-SEC | RLS, least privilege, secrets, rate limits | Partial | Built: RLS/trust rails. Remainder: PI API rate limit R-P2-06; CI secret scanning when TD-018 | Keep |
+| NFR-SEC | RLS, least privilege, secrets, rate limits | **Built** (pilot) | Built: RLS/trust rails + PI API rate limit R-P2-06 / B9. Remainder: CI secret scanning when TD-018 | Keep |
 | NFR-PRIV | Consent, export, deletion | Built | `0086`, `0096`; settings privacy | Keep |
 | NFR-A11Y | WCAG 2.2 AA target | Partial | Batch 5–6 core chrome; whole-product AA needs AT lab (ops) | Keep |
 | NFR-PERF | Responsive pages; AI non-blocking | Partial | Generally met; AI `maxDuration` R-P2-05 open | Keep |
@@ -98,9 +98,9 @@ Evidence paths verified present unless noted.
 | TRD-AI-BOUND | Agents propose; verification creates evidence | Built | Consent + engine + T8 rules | Keep |
 | TRD-SM-ARTEFACT | draft→submitted→superseded immutable | Built | `0088` | Keep |
 | TRD-SM-REC | Recommendation generated→viewed→accepted/dismissed | **Built** | `0098` + typed SM; accepted→completed|dismissed for close-out (PACK-E2 / B2) | Keep |
-| TRD-SM-ACTIVITY | Activity + reviewer state machine | Partial | Experience/workspace models differ; human under_review path thin | Modify |
+| TRD-SM-ACTIVITY | Activity + reviewer state machine | **Built** (pilot) | Intervention SM + Experience task/meeting/risk SM honesty (B9); reviewer path via B4 | Keep |
 | TRD-SEC-RLS | RLS + service-role server-only | Built | `0092`/`0095`; T6 security | Keep |
-| TRD-SEC-RATE | Rate limits auth/AI/uploads | Partial | R-P2-06 open | Keep |
+| TRD-SEC-RATE | Rate limits auth/AI/uploads | **Built** (pilot) | PI per-user `0101` + org AI + platform key limits (B9 / R-P2-06) | Keep |
 | TRD-CI | PR gates + staging Playwright | Partial | Workflows exist but disabled TD-018 | Keep |
 | TRD-FLAGS | Feature flags for incomplete modules | Partial | Env gates; progressive flag SaaS deferred MF-D08 | Defer |
 
@@ -130,7 +130,7 @@ Evidence paths verified present unless noted.
 | FLOW-REVIEWER | Human reviewer queue workflow | **Built** (ops) | `pi_review_*` + playbook + flag; Verified ≠ this path (PACK-E5 / B4) | Keep |
 | FLOW-ADMIN | Admin configures org/role/project/activities | **Built** (thin) | Pilot admin org/project/structure + membership; activities remain Experience/workspace create paths — not enterprise CMS (B8) | Keep |
 | FLOW-LP-UNLOCK | Launchpad after min evidence or choice | Partial | Entitlements `0097` + readiness honesty; unlock rules not pack-literal | Keep |
-| FLOW-FAIL | AI timeout, upload, duplicate submit, session recovery | Partial | AI fallback units; idempotency/recovery polish residual | Keep |
+| FLOW-FAIL | AI timeout, upload, duplicate submit, session recovery | **Built** (pilot) | AI fallback + B9 pending/retry codes + 429 honesty; residual polish open | Keep |
 
 ### 2.5 Backend Schema (05)
 
@@ -191,7 +191,7 @@ Evidence paths verified present unless noted.
 | **B6** | Xperience entry ceremony screens | M · **Shipped** | FR-005 / FLOW-XP-ENTRY / M4 | — |
 | **B7** | App-shell global search + help (no Insights product) | M · **Shipped** | UX-SHELL / PACK-E7 | — |
 | **B8** | Thin admin org/project config for pilot | M | FR-011 / FLOW-ADMIN / M4 admin | **Shipped** (founder reply `B8`) |
-| **B9** | Pack-aligned NFR polish (rate limit, failure recovery, activity SM honesty) | M | NFR-SEC rate / FLOW-FAIL / TRD-SM-ACTIVITY | Prefer after TD-018 for CI proof |
+| **B9** | Pack-aligned NFR polish (rate limit, failure recovery, activity SM honesty) | M · **Shipped** | NFR-SEC rate / FLOW-FAIL / TRD-SM-ACTIVITY | Prefer after TD-018 for CI proof (shipped without CI; TD-018 still open) |
 
 ---
 
@@ -381,23 +381,25 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B9 — Pack-aligned NFR polish
+### B9 — Pack-aligned NFR polish (**shipped** 2026-07-26)
 
 1. **Objective / value:** Rate-limit / recovery / activity-state honesty matching TRD without new SKUs.  
 2. **IDs:** TRD-SEC-RATE, FLOW-FAIL, TRD-SM-ACTIVITY, NFR-SEC remainder.  
-3. **Reuse:** Existing API routes, Experience activity models.  
-4. **Code areas:** PI API middleware rate limit; clearer pending/error states.  
-5. **DB:** Optional rate-limit tables; prefer edge/KV if already available.  
-6. **APIs:** Same routes; 429 behaviour documented.  
-7. **AI:** Rate-limit AI routes; keep bypass off in prod.  
-8. **UX:** Explicit pending/retry copy.  
-9. **Deps/risks:** Prefer CI (TD-018) to prove continuously.  
-10. **AC/tests:** Rate-limit unit/integration; failure-path tests; release-gate if authz touched.  
-11. **Flag:** limit thresholds via env.  
-12. **DoD:** Documented limits + tests; no trust-rail bypass.  
-13. **Size / approval:** M · no new PD if scoped to residual R-P2-06 / failure polish.
+3. **Reuse:** Existing API routes, Experience activity models, `platformRateLimitEngine`, recommendation SM pattern.  
+4. **Code areas:** `src/services/piApiRateLimit.ts`, `src/lib/pi/rate-limit-*`, `src/lib/api/pi-errors.ts`, intervention + Experience activity SMs; wired PI routes.  
+5. **DB:** `0101_pi_api_rate_limits.sql` — per-user window counters; RLS on, no client policies.  
+6. **APIs:** Same routes; 429 `{code:"rate_limited"}` + `Retry-After`; 409 `{code:"invalid_transition"}`.  
+7. **AI:** Org AI 429 now includes `ai_rate_limited` + `Retry-After`; bypass stays off in prod.  
+8. **UX:** Calm retry copy; evidence/process honest pending/retryHint.  
+9. **Deps/risks:** Prefer CI (TD-018) to prove continuously — **not claimed restored**.  
+10. **AC/tests:** Rate-limit + SM + error-contract units; `test:pi` includes `src/lib/pi` + `experience-sim`.  
+11. **Flag:** `DELIVERX_PI_RATE_LIMIT` kill-switch defaults **on**; thresholds via `DELIVERX_PI_RATE_LIMIT_MAX` / `_WINDOW_MS`.  
+12. **DoD:** **Met** — documented limits + tests; no trust-rail bypass.  
+13. **Size / approval:** M · founder reply `b9` = PD-2026-07-26m (no new FD-PACK).
 
-**Pack theme:** M8 hardening.
+**Pack theme:** M8 hardening. **Shipped 2026-07-26.**
+
+**Ship artefact:** Default 90 req / 60s per user; migration `0101`.
 
 ---
 
@@ -443,11 +445,9 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1–B8 shipped.** Next eng candidate: **B9** (residual NFR polish / R-P2-06; no new PD if scoped), or residual founder-ops. PostHog remains deferred pending FD-PACK-7.
+**B1–B9 shipped.** Next eng candidates: optional **B0** (pack archive) if founder wants docs intake, or residual founder-ops (TD-018, TD-006, SMTP, AT lab). PostHog remains deferred pending FD-PACK-7.
 
-Optional parallel: **B0** (pack archive) if founder wants docs intake.
-
-Do **not** expand B8 into enterprise mission-control without new founder approval. Do **not** treat Stripe as next eng work.
+Do **not** expand into enterprise mission-control without new founder approval. Do **not** treat Stripe as next eng work.
 
 ---
 

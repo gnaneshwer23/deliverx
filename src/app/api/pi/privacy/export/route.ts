@@ -6,6 +6,7 @@ import {
   requestAndBuildExport,
   assertExportNoCrossUserLeak,
 } from "@/lib/pi-privacy";
+import { enforcePiApiRateLimit } from "@/services/piApiRateLimit";
 
 export async function GET() {
   const supabase = await createClient();
@@ -15,6 +16,9 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
 
   const gate = assertPiAccess({
     userId: user.id,
@@ -30,7 +34,10 @@ export async function GET() {
     return NextResponse.json({ ok: true, requests });
   } catch (error) {
     console.error("[privacy/export] list failed", error);
-    return NextResponse.json({ error: "Could not list privacy requests" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Could not list privacy requests. Please try again." },
+      { status: 500 },
+    );
   }
 }
 
@@ -42,6 +49,9 @@ export async function POST() {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
 
   const gate = assertPiAccess({
     userId: user.id,
@@ -67,7 +77,12 @@ export async function POST() {
   } catch (error) {
     console.error("[privacy/export] failed", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Export failed" },
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Export failed. Please try again — nothing was deleted.",
+      },
       { status: 500 },
     );
   }

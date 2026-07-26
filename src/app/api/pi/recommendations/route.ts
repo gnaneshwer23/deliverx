@@ -12,6 +12,7 @@ import type { RecommendationAction } from "@/lib/recommendations";
 import { transitionRecommendation } from "@/lib/recommendations";
 import { createClient } from "@/lib/supabase/server";
 import { emitPilotKpi } from "@/lib/analytics/server";
+import { enforcePiApiRateLimit } from "@/services/piApiRateLimit";
 
 const USER_ACTIONS: readonly RecommendationAction[] = [
   "viewed",
@@ -32,6 +33,12 @@ async function requireUser() {
       response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
     };
   }
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) {
+    return { supabase, user: null, response: rateLimited };
+  }
+
   const gate = assertPiAccess({
     userId: user.id,
     email: user.email,

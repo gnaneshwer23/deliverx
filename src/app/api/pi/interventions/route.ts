@@ -5,7 +5,14 @@ import {
   ensureInterventionsForGaps,
   listActiveInterventions,
   transitionIntervention,
+  InvalidInterventionTransitionError,
 } from "@/lib/workspace-observation";
+import { enforcePiApiRateLimit } from "@/services/piApiRateLimit";
+import {
+  invalidTransitionResponse,
+  piErrorResponse,
+  PI_ERROR_CODE,
+} from "@/lib/api/pi-errors";
 
 export async function GET() {
   const supabase = await createClient();
@@ -13,8 +20,14 @@ export async function GET() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized", code: PI_ERROR_CODE.unauthorized },
+      { status: 401 },
+    );
   }
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
 
   const gate = assertPiAccess({
     userId: user.id,
@@ -22,7 +35,10 @@ export async function GET() {
     surface: "profile",
   });
   if (!gate.allowed) {
-    return NextResponse.json({ error: gate.reason }, { status: 403 });
+    return NextResponse.json(
+      { error: gate.reason, code: PI_ERROR_CODE.forbidden },
+      { status: 403 },
+    );
   }
 
   try {
@@ -73,7 +89,11 @@ export async function GET() {
     });
   } catch (error) {
     console.error("[interventions] list failed", error);
-    return NextResponse.json({ error: "Could not load interventions" }, { status: 500 });
+    return piErrorResponse(
+      500,
+      "Could not load interventions. Please try again.",
+      PI_ERROR_CODE.server,
+    );
   }
 }
 
@@ -83,8 +103,14 @@ export async function POST(request: Request) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized", code: PI_ERROR_CODE.unauthorized },
+      { status: 401 },
+    );
   }
+
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
 
   const gate = assertPiAccess({
     userId: user.id,
@@ -92,17 +118,20 @@ export async function POST(request: Request) {
     surface: "profile",
   });
   if (!gate.allowed) {
-    return NextResponse.json({ error: gate.reason }, { status: 403 });
+    return NextResponse.json(
+      { error: gate.reason, code: PI_ERROR_CODE.forbidden },
+      { status: 403 },
+    );
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return piErrorResponse(400, "Invalid JSON", PI_ERROR_CODE.badRequest);
   }
   if (!body || typeof body !== "object") {
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    return piErrorResponse(400, "Invalid body", PI_ERROR_CODE.badRequest);
   }
 
   const data = body as {
@@ -111,13 +140,14 @@ export async function POST(request: Request) {
   };
 
   if (!data.interventionId || !data.action) {
-    return NextResponse.json(
-      { error: "interventionId and action required" },
-      { status: 400 },
+    return piErrorResponse(
+      400,
+      "interventionId and action required",
+      PI_ERROR_CODE.badRequest,
     );
   }
   if (!["accepted", "dismissed", "completed"].includes(data.action)) {
-    return NextResponse.json({ error: "invalid action" }, { status: 400 });
+    return piErrorResponse(400, "invalid action", PI_ERROR_CODE.badRequest);
   }
 
   try {
@@ -132,7 +162,17 @@ export async function POST(request: Request) {
       capabilityAssigned: false,
     });
   } catch (error) {
+    if (error instanceof InvalidInterventionTransitionError) {
+      return invalidTransitionResponse(error.from, error.to, "intervention");
+    }
+    if (error instanceof Error && error.message === "Intervention not found") {
+      return piErrorResponse(404, "Intervention not found", PI_ERROR_CODE.notFound);
+    }
     console.error("[interventions] transition failed", error);
-    return NextResponse.json({ error: "Could not update intervention" }, { status: 500 });
+    return piErrorResponse(
+      500,
+      "Could not update intervention. Please try again.",
+      PI_ERROR_CODE.server,
+    );
   }
 }

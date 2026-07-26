@@ -509,13 +509,29 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26m — B9 NFR polish authorized (founder reply `b9`)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder reply **`b9`** is treated as **authorization to build six-doc phase B9** scoped to residual rate-limit / failure-recovery / activity-SM honesty (R-P2-06, FLOW-FAIL, TRD-SM-ACTIVITY). **No new FD-PACK** required per phase plan. |
+| **Chosen shape** | Per-user PI API rate limit (`0101` + `DELIVERX_PI_RATE_LIMIT*` env); shared PI error codes + AI 429 `Retry-After`; intervention + Experience activity state-machine honesty with clear 409 on invalid transitions. |
+| **Trust rails** | Limits must not break legitimate pilot flows (default 90/min); kill-switch available; honest failures only; activity transitions never assign capability or light Verified. TD-018 stays founder-ops — shipping does not claim CI restored. |
+| **DB / API** | Migration `0101_pi_api_rate_limits.sql`. Same PI routes; documented 429/409 contracts. |
+| **Rollback / flag** | `DELIVERX_PI_RATE_LIMIT=off` (or `0`/`false`/`disabled`) bypasses PI rate limiting with no redeploy. |
+| **Why** | Pack NFR-SEC / TRD-SEC-RATE / FLOW-FAIL / TRD-SM-ACTIVITY remainder needed pilot hardening without new SKUs. |
+| **Consequence** | B9 authorized and shipped under this decision. R-P2-06 closed. Remaining FD-PACK-* (1/2/7) stay pending. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
-Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B8 shipped**; no Bn beyond those should start without the matching decision.
+Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B9 shipped**; no Bn beyond those should start without the matching decision.
 
 | ID | Decision | Default if silent | Blocks |
 | --- | --- | --- | --- |
@@ -528,4 +544,4 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-7** | Add a PostHog product analytics sink after the Vercel pilot path? | Stay Vercel; PostHog optional later | PostHog sink only (B3 Vercel path shipped) |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | **Settled — build search + help (PD-2026-07-26k)** | — |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**; **B7 shell search + help (FD-PACK-8)**; **B8 thin pilot admin (PD-2026-07-26l)**.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**; **B7 shell search + help (FD-PACK-8)**; **B8 thin pilot admin (PD-2026-07-26l)**; **B9 NFR polish (PD-2026-07-26m)**.

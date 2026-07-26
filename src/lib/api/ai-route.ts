@@ -13,7 +13,15 @@ export function aiRouteError(err: unknown) {
     );
   }
   if (err instanceof AiGenerationError) {
-    return Response.json({ error: err.message, code: "ai_generation_failed" }, { status: 502 });
+    return Response.json(
+      {
+        error:
+          err.message ||
+          "AI generation failed. Please try again in a moment — nothing was saved as verified evidence.",
+        code: "ai_generation_failed",
+      },
+      { status: 502 },
+    );
   }
   if (err instanceof ApiError) {
     return apiErrorResponse(err);

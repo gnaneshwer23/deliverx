@@ -1,3 +1,18 @@
+## 2026-07-26 — B9: Pack-aligned NFR polish (rate limit, failure recovery, activity SM)
+
+Founder reply `b9` authorized six-doc phase B9 scoped to residual R-P2-06 / FLOW-FAIL / TRD-SM-ACTIVITY honesty — no new FD-PACK (PD-2026-07-26m). TD-018 CI darkness remains founder-ops and does **not** block local + Vercel-verified NFR fixes.
+
+**Objective:** Rate-limit / recovery / activity-state honesty matching TRD without new SKUs.
+
+Shape:
+- Per-user PI API rate limit — `pi_api_rate_limits` (`0101`); pure engine reuse; `enforcePiApiRateLimit` on capability/run, evidence (+process), search, interventions, recommendations, assessment respond, privacy export. Default **90/60s**; kill-switch `DELIVERX_PI_RATE_LIMIT=off`; thresholds via env.
+- Failure polish — shared `src/lib/api/pi-errors.ts` (`code` envelope); AI 429 gains `ai_rate_limited` + `Retry-After`; evidence/process returns honest `pending`/`retryHint` without fake success.
+- Activity SM honesty — intervention lifecycle machine (offered→accepted|dismissed|expired; accepted→completed|dismissed); Experience task/meeting/risk transitions enforced in engines; invalid → 409 `invalid_transition`. Never capability / Verified from activity alone.
+
+Verification: B9 unit suites PASS; `test:pi` PASS (461); lint + build PASS. Migration `0101` applied to prod `jibmyxaldetyycmtlxet`. TD-018 still open — no claim that GitHub Actions CI is restored.
+
+Next: founder ops (TD-018, TD-006, SMTP, AT lab) or optional B0 pack archive / FD-PACK-7 PostHog.
+
 ## 2026-07-26 — B8 spot-check + org-admin UPDATE RLS (`0100`)
 
 Signed-in production spot-check of Pilot admin found `PATCH /api/org/config` failing with PostgREST `PGRST116` when the actor was an org admin who was not `organisations.created_by` (legacy creator-only UPDATE policy). Migration `0100_organisations_org_admin_update.sql` adds `organisations_admin_update` via `is_org_admin()` and aligns `projects` UPDATE with the same gate (executive as well as pm). Applied to prod `jibmyxaldetyycmtlxet`. App-layer empty-update now returns an honest 403 instead of coerce-to-single noise. Spot-check: admin UI + framework pin + audited org/project PATCH + non-admin 403/redirect; no ScoreRuns/Verified from admin actions; disposable identities purged.

@@ -132,6 +132,7 @@ Public token view is a **page** (`/portfolio/v/[token]`). Attestor UX is `/portf
 4. **Rubric resolve env (T2):** `DELIVERX_RUBRIC_REQUIRE_DB`, `DELIVERX_RUBRIC_ALLOW_IN_CODE_FALLBACK` — see `security-model.md`.
 5. **Webhooks / cron** (`/api/integrations/*`, `/api/cron/*`): service/secret auth — outside person PI loop.
 6. **Org structure (T7):** `DELIVERX_LEGACY_WORKSPACE_NAV` / `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV` restores demoted legacy workspace nav.
+7. **PI rate limit (B9):** `DELIVERX_PI_RATE_LIMIT` kill-switch (default on); `DELIVERX_PI_RATE_LIMIT_MAX` (default 90); `DELIVERX_PI_RATE_LIMIT_WINDOW_MS` (default 60000). Exceeded calls return **429** `{ error, code: "rate_limited", retryAfterSeconds }` with `Retry-After` + `X-RateLimit-*` headers. Invalid activity/intervention transitions return **409** `{ error, code: "invalid_transition", from, to }`.
 
 ---
 
@@ -140,3 +141,5 @@ Public token view is a **page** (`/portfolio/v/[token]`). Attestor UX is `/portf
 - Prefer typed payloads colocated with `src/lib/*/types.ts` and `contracts.ts` modules.
 - Do not invent capability or verification fields in API responses that the ledger/engine did not produce.
 - When adding routes: document here + add unauth 401 smoke coverage for person PI endpoints.
+- Honest failures: prefer stable `code` fields; never return success when a state transition was rejected.
+- Activity / intervention status machines (B9): only declared transitions apply; same-state is an idempotent no-op; never assigns capability or Verified.

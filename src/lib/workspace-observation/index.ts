@@ -39,3 +39,11 @@ export {
   recordInterventionSnapshotDelta,
   ensureInterventionsForGaps,
 } from "@/lib/workspace-observation/interventions";
+
+export {
+  INTERVENTION_TRANSITIONS,
+  canTransitionIntervention,
+  decideInterventionTransition,
+  InvalidInterventionTransitionError,
+} from "@/lib/workspace-observation/intervention-state-machine";
+export type { InterventionTransitionDecision } from "@/lib/workspace-observation/intervention-state-machine";

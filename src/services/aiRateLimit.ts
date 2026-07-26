@@ -99,8 +99,16 @@ export async function assertOrgAiRateLimit(): Promise<string> {
 
   if (!decision.allowed) {
     throw new ApiError(
-      `AI rate limit exceeded. Retry in ${decision.retryAfterSeconds}s.`,
+      "AI rate limit exceeded. Please wait a moment and try again.",
       429,
+      "ai_rate_limited",
+      {
+        "Retry-After": String(decision.retryAfterSeconds),
+        "X-RateLimit-Limit": String(decision.limit),
+        "X-RateLimit-Remaining": "0",
+        "X-RateLimit-Reset": decision.resetAt,
+      },
+      { retryAfterSeconds: decision.retryAfterSeconds },
     );
   }
 

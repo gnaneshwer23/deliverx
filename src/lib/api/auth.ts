@@ -5,6 +5,9 @@ export class ApiError extends Error {
   constructor(
     message: string,
     readonly status: number = 500,
+    readonly code?: string,
+    readonly headers?: Record<string, string>,
+    readonly details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -57,7 +60,13 @@ export async function requireProjectWriteAccess(projectId: string) {
 
 export function apiErrorResponse(err: unknown) {
   if (err instanceof ApiError) {
-    return Response.json({ error: err.message }, { status: err.status });
+    const body: Record<string, unknown> = { error: err.message };
+    if (err.code) body.code = err.code;
+    if (err.details) Object.assign(body, err.details);
+    return Response.json(body, {
+      status: err.status,
+      headers: err.headers,
+    });
   }
   const message = err instanceof Error ? err.message : "Request failed";
   const status = message === "Not authenticated" ? 401 : 500;

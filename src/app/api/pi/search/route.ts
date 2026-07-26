@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { assertPiAccess } from "@/lib/access/gate";
 import { isGlobalSearchEnabled, runGlobalSearch } from "@/lib/global-search";
 import { createClient } from "@/lib/supabase/server";
+import { enforcePiApiRateLimit } from "@/services/piApiRateLimit";
+import { PI_ERROR_CODE, piErrorResponse } from "@/lib/api/pi-errors";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +25,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rateLimited = await enforcePiApiRateLimit(user.id);
+  if (rateLimited) return rateLimited;
+
   const gate = assertPiAccess({
     userId: user.id,
     email: user.email,
@@ -40,6 +45,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: true, query: q, items });
   } catch (error) {
     console.error("[pi/search] failed", error);
-    return NextResponse.json({ error: "Could not run search" }, { status: 500 });
+    return piErrorResponse(
+      500,
+      "Could not run search. Please try again.",
+      PI_ERROR_CODE.server,
+    );
   }
 }
