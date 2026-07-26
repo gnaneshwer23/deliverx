@@ -3,11 +3,14 @@
 **As of:** 2026-07-26  
 **Authority:** Build Charter · Current Scope · Product Bible `00`–`15` · audit remediation roadmap  
 **Companion:** [`next-steps.md`](./next-steps.md) · [`technical-debt-register.md`](./technical-debt-register.md) · [`../audit/remediation-roadmap.md`](../audit/remediation-roadmap.md)  
-**Canvas:** Cursor IDE [`deliverx-remaining-work.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-remaining-work.canvas.tsx)
+**Canvas:** Cursor IDE [`deliverx-remaining-work.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-remaining-work.canvas.tsx)  
+**Six-doc pack gap check:** Cursor IDE [`deliverx-six-doc-gap-check.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-gap-check.canvas.tsx) · repo archive [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
 This is the **master remaining-work inventory**. It is docs-only truth for what is still open after P0–P7 product, T0–T9 tech (T9 **code**), remediations Batches 1–6, DB consent `0096`, AI citations, and Batch 1 DB trust rails (`0095`).
 
 **Founder posture (2026-07-26):** Live Stripe / entitlement enforcement is **deferred founder ops** (“payments later”), not missing product engineering. Do not treat unconfigured Stripe as an engineering gap.
+
+**Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
 ---
 
@@ -107,7 +110,7 @@ When the founder adds new documents for a post-audit gap check, compare each doc
 1. **Product Bible** `docs/00`–`docs/15` (vision, PRD, UX, auth, PI, Experience, Launchpad, Team Copilot, AI, eng handbook, architecture, data model, QA, analytics, roadmap)
 2. **Build Charter** + **Current Scope** + **Product Decisions**
 3. **Feature completeness matrix** statuses (`docs/audit/feature-completeness-matrix.md`)
-4. **This file** sections **A / B / C** (ops vs residual eng vs deferred)
+4. **This file** sections **A / B / C / E** (ops vs residual eng vs deferred vs pack net-new)
 5. **Technical debt register** + **remediation roadmap** IDs (avoid duplicate tickets)
 
 ### Questions each new document must answer
@@ -130,10 +133,32 @@ When the founder adds new documents for a post-audit gap check, compare each doc
 ```text
 New doc arrives
   → Answer questions 1–10 in a short intake note (or PR description)
-  → Diff claims vs feature matrix + remaining-work A/B/C
+  → Diff claims vs feature matrix + remaining-work A/B/C/E
   → Update this file only if a genuinely new open item appears
   → Do not start implementation without charter fit + (if gated) founder PD
 ```
+
+---
+
+## E. Six-doc pack — net-new only (sourced 2026-07-26)
+
+Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirement-by-requirement gap tables: gap-check canvas above.
+
+| ID | Item | Status | Verdict | Effort | Notes |
+| --- | --- | --- | --- | --- | --- |
+| **PACK-E1** | Optional copy of six docs into `docs/build-pack/` + SoT note | **Open** — founder OK | Defer | S | Docs-only; pack Index requests path; Bible remains higher SoT than pack |
+| **PACK-E2** | Formal recommendation entity + state machine (generated→viewed→accepted/dismissed) | **Open** | Modify / founder OK | M | FR-010 / TRD SM; today Profile/Career CTAs only |
+| **PACK-E3** | Documented, versioned confidence-band algorithm (Schema §5.1) | **Open** | Keep | S | PD-2026-07-05 prefers bands; algorithm doc incomplete |
+| **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Open** | Defer | M | Day-1 + catalogue already prove loop; ceremony is UX depth |
+| **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Open** | Defer — clarify vs R-P2-09 | M | Pack centres human reviewer; shipped Verified = T8 attestation |
+| **PACK-E6** | Onboarding shape: keep 6-step PI vs rebuild toward pack 8-step conversation | **Pending decision** | Defer | M | Shipped `/onboarding/profile` steps differ; no rebuild without FD |
+| **PACK-E7** | App-shell global search (+ help) | **Open** | Defer | M | Suite nav exists; search/help not inventoried before |
+| **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Open** | Defer | M | PRD targets exist; product analytics thin |
+| **PACK-E9** | PostHog vs keep Vercel Analytics | **Pending decision** | Reject default | M | TRD preference only; not required for pilot |
+
+**Explicitly rejected from pack (do not add as build work):** money-back / guarantee terms on Pricing; schema rename to pack table names; restart M0–M7 greenfield; “one company” seed replacing 12-company catalogue (PD-2026-07-03); Insights as a third product Home; Prisma alongside typed Supabase client.
+
+**Conflicts flagged (founder):** pack SoT order under-ranks Product Bible; Team Copilot “architecture only” vs shipped Workspace alias (keep alias, refuse third SKU); human-reviewer-primary verification vs Capability Engine + T8 Verified rules.
 
 ---
 
@@ -161,3 +186,4 @@ New doc arrives
 - [`../audit/release-readiness.md`](../audit/release-readiness.md)  
 - [`../audit/missing-functionality-register.md`](../audit/missing-functionality-register.md)  
 - [`../15-delivery-roadmap.md`](../15-delivery-roadmap.md)  
+- Six-doc gap check: [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)  
