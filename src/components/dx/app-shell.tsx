@@ -9,7 +9,7 @@ import { SignOutButton } from "@/components/auth/sign-out-button";
 import { AiDrawer } from "@/components/dx/ai-drawer";
 import { AiDrawerProvider } from "@/components/dx/ai-drawer-context";
 import { AppNav } from "@/components/dx/app-nav";
-import { ProductSuiteNav } from "@/components/dx/product-suite-shell";
+import { ProductSuiteNav } from "@/components/dx/product-suite-shell-frame";
 import type { DeliveryAlert } from "@/services/alerts";
 import { professionalWorkspaceNav } from "@/config/professional-workspace-nav";
 import {

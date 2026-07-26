@@ -1,3 +1,15 @@
+## 2026-07-26 — B7: App-shell global search + help
+
+Founder reply `B7` (after being shown B7 as gated on FD-PACK-8, default if silent "Defer search") authorized six-doc phase B7 and closed FD-PACK-8 / PACK-E7 (PD-2026-07-26k). Selecting the phase cannot mean the defer default, so shell search + help were **added** as utilities — not an Insights product Home (CX-05).
+
+Shape: typed catalogue in `src/lib/global-search/` (14 destinations + 7 help articles); Cmd/Ctrl+K dialog + Help link in ProductSuiteShell; `/help` orientation page answering where am I / what next without inventing scores; `GET /api/pi/search?q=` merges catalogue hits with the caller's own evidence, projects (`created_by`), artefacts, and Experience enrolments. Explicit owner filters provide defence in depth beyond RLS.
+
+Trust rails: no Insights nav item; no unexplained scores; no PostHog; no migration (`0099` remains prod head). Kill-switch `DELIVERX_GLOBAL_SEARCH` defaults **on**; set `off`/`0`/`false`/`disabled` to hide chrome and 404 the API with no redeploy.
+
+Verification: focused global-search + a11y contract units PASS (16); `test:pi` PASS (426, including `src/lib/global-search`); touched-source ESLint PASS; production build PASS. No founder env action required — search is the default; the only ops lever is the optional `off` kill-switch.
+
+Next candidate: **B8** (founder OK on admin depth) or **B9** (no new PD if scoped to R-P2-06 + failure polish).
+
 ## 2026-07-26 — B6: Xperience entry ceremony
 
 Founder reply `B6` (after being shown B6 as gated on FD-PACK-4, default if silent "Day-1 is enough") authorized six-doc phase B6 and closed FD-PACK-4 / PACK-E4 (PD-2026-07-26j). Selecting the phase cannot mean the no-op default, so a calm entry ceremony was **added** as UX depth around the existing Day-1 loop — Experience was not rebuilt.

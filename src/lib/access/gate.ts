@@ -18,7 +18,8 @@ export type PiSurface =
   | "artefacts"
   | "ai_interactions"
   | "notifications"
-  | "recommendations";
+  | "recommendations"
+  | "search";
 
 export type GateDecision =
   | { allowed: true }

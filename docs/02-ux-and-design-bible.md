@@ -36,6 +36,7 @@ Prefer journey over product silos. **Batch 5:** signed-in primary surfaces share
 | Learning | `/learning`, `/profile/learning` | Knowledge gaps → apply CTAs |
 | Outcomes | `/career/outcomes` | Real-world calibration |
 | Settings | `/settings/*` | Account, privacy, consent, developer |
+| Help | `/help` | Orientation (where am I / what next); shell Search (Cmd/Ctrl+K) — not a product Home |
 
 Legacy Mission Control / Ecosystem nav is **demoted** (opt-in `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV`) — T7.
 

@@ -154,7 +154,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Done (B6)** | Keep | M | Narrative entry over generated sim state; `src/lib/xperience/entry-ceremony.ts` + UI; kill-switch `DELIVERX_XP_ENTRY_CEREMONY` (default on); no migration/API; PD-2026-07-26j |
 | **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Done (B4)** | Keep | M | Playbook + hardened queue; flag `DELIVERX_REVIEWER_QUEUE`; PD-2026-07-26h; Verified = T8 only |
 | **PACK-E6** | Onboarding shape: keep 6-step PI vs evolve toward pack 8-step conversation | **Done (B5)** | Keep | M | 8-step `v2-conversation` shipped by evolving the existing wizard; migration `0099`; flag `DELIVERX_ONBOARDING_STEP_SET` (rollback `v1-six-step`); PD-2026-07-26i; self-reported strengths never become capability |
-| **PACK-E7** | App-shell global search (+ help) | **Open** | Defer | M | Suite nav exists; search/help not inventoried before |
+| **PACK-E7** | App-shell global search (+ help) | **Done (B7)** | Keep | M | `src/lib/global-search/`; shell Cmd/Ctrl+K + `/help`; `GET /api/pi/search` self-only; flag `DELIVERX_GLOBAL_SEARCH` default on; no Insights product (CX-05); PD-2026-07-26k |
 | **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Done (B3)** | Keep | M | Typed Vercel event catalogue, real state-transition emission, PII sanitizer, KPI operations note; no DB migration |
 | **PACK-E9** | PostHog vs keep Vercel Analytics | **Vercel selected for pilot; PostHog pending** | Keep Vercel now | M | Founder authorized Vercel path; PostHog SDK/sink remains blocked by **FD-PACK-7** |
 

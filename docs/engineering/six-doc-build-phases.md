@@ -109,8 +109,8 @@ Evidence paths verified present unless noted.
 | ID | Requirement | Status | Evidence / remainder | Verdict |
 | --- | --- | --- | --- | --- |
 | UX-PRINCIPLES | Calm, evidence-distinct, explainable | Built | UX bible; Batch 3 language; suite shell | Keep |
-| UX-SHELL | Top bar: search, notifications, help, account | Partial | Notifications + account in shell. Remainder: global search + help (PACK-E7) | Modify |
-| UX-NAV | Home/PI/Xperience/Launchpad/Team Copilot/Portfolio/Insights/Settings | Partial | Built: `src/config/product-suite-nav.ts` (Hub/Profile/Experience/Launchpad/Workspace/Portfolio). Remainder: Insights-as-product = reject; Settings exists | Modify |
+| UX-SHELL | Top bar: search, notifications, help, account | **Built** | Global search + Help in ProductSuiteShell (PACK-E7 / B7); notifications + account remain | Keep |
+| UX-NAV | Home/PI/Xperience/Launchpad/Team Copilot/Portfolio/Insights/Settings | Partial | Built: suite nav without Insights (CX-05 reject). Settings + Help shell links exist | Modify |
 | UX-MKT | Marketing page set | Partial | Most `(marketing)` routes live; Enterprise/Contact depth varies | Keep |
 | UX-ONB-8 | 8-step conversation onboarding | **Built** | `welcome → identity → targets → strengths → evidence → working_style → review → path`; claim labels, skippable non-essentials, explained recommendation (PACK-E6 / B5) | Keep |
 | UX-HOME | Today/journey/PI snapshot/experience/≤3 recs | Partial | `/hub` + profile-centre; not pack zone layout 1:1 | Modify |
@@ -189,7 +189,7 @@ Evidence paths verified present unless noted.
 | **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M · **Shipped** | FR-007 remainder / FLOW-REVIEWER / M5 review | — |
 | **B5** | Onboarding shape — evolved to the 8-step conversation | M · **Shipped** | FR-003 / UX-ONB-8 / M3 | — |
 | **B6** | Xperience entry ceremony screens | M · **Shipped** | FR-005 / FLOW-XP-ENTRY / M4 | — |
-| **B7** | App-shell global search + help (no Insights product) | M | UX-SHELL / PACK-E7 | FD-PACK-8 |
+| **B7** | App-shell global search + help (no Insights product) | M · **Shipped** | UX-SHELL / PACK-E7 | — |
 | **B8** | Thin admin org/project config for pilot | M | FR-011 / FLOW-ADMIN / M4 admin | Founder OK depth |
 | **B9** | Pack-aligned NFR polish (rate limit, failure recovery, activity SM honesty) | M | NFR-SEC rate / FLOW-FAIL / TRD-SM-ACTIVITY | Prefer after TD-018 for CI proof |
 
@@ -346,18 +346,18 @@ Evidence paths verified present unless noted.
 1. **Objective / value:** Find profile/evidence/projects without new product Home.  
 2. **IDs:** UX-SHELL, PACK-E7; CX-05 reject Insights product.  
 3. **Reuse:** ProductSuiteNav, notifications, settings.  
-4. **Code areas:** `src/components/dx/` shell; search API limited to own resources.  
-5. **DB:** None (or extend existing search indexes later).  
+4. **Code areas:** `src/components/dx/` shell; `src/lib/global-search/`; search API limited to own resources.  
+5. **DB:** None.  
 6. **APIs:** `GET /api/pi/search?q=` self-only.  
 7. **AI:** None required.  
 8. **UX:** Search + help link; **no Insights nav item**.  
-9. **Deps/risks:** Data leak if search ignores RLS.  
-10. **AC/tests:** Cross-user search negatives; a11y for dialog.  
-11. **Flag:** `DELIVERX_GLOBAL_SEARCH=on`.  
-12. **DoD:** Search self-only; help page linked.  
-13. **Size / approval:** M · **blocked FD-PACK-8**.
+9. **Deps/risks:** Data leak if search ignores RLS — mitigated by explicit `user_id` / `created_by` filters.  
+10. **AC/tests:** Cross-user search negatives; a11y for dialog; catalogue filter + keyboard index units.  
+11. **Flag:** `DELIVERX_GLOBAL_SEARCH` kill-switch **defaults ON**; set `off` to roll back.  
+12. **DoD:** **Met** — Search self-only; help page linked (`/help`).  
+13. **Size / approval:** M · **FD-PACK-8 settled (PD-2026-07-26k)**.
 
-**Pack theme:** UX shell (not M-series).
+**Pack theme:** UX shell (not M-series). **Shipped 2026-07-26.**
 
 ---
 
@@ -414,7 +414,7 @@ Evidence paths verified present unless noted.
 | FD-PACK-5 | Human reviewer ops path (non-Verified)? | **Settled — yes (PD-2026-07-26h)** | — |
 | FD-PACK-6 | Formal recommendation SM now? | **Settled — yes (PD-2026-07-26f)** | — |
 | FD-PACK-7 | PostHog vs Vercel Analytics | Stay Vercel | B3 PostHog sink |
-| FD-PACK-8 | Global search/help (no Insights product)? | Defer search | B7 |
+| FD-PACK-8 | Global search/help (no Insights product)? | **Settled — build search + help (PD-2026-07-26k)** | — |
 
 ### 4.2 Founder ops (not Bn)
 
@@ -443,11 +443,11 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1–B6 shipped.** Next eng candidate: **B7 (shell search + help)** only with FD-PACK-8, or **B8 (thin admin config)** with founder OK on depth. Otherwise founder-ops/residual hardening (**B9** needs no new PD if scoped to R-P2-06 + failure polish). PostHog remains deferred pending FD-PACK-7.
+**B1–B7 shipped.** Next eng candidate: **B8 (thin admin config)** with founder OK on depth, or residual founder-ops/hardening (**B9** needs no new PD if scoped to R-P2-06 + failure polish). PostHog remains deferred pending FD-PACK-7.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
-Do **not** start B7 without FD-PACK-8. Do **not** treat Stripe as next eng work.
+Do **not** start B8 without founder OK on admin depth. Do **not** treat Stripe as next eng work.
 
 ---
 

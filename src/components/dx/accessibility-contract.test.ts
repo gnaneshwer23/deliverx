@@ -17,10 +17,23 @@ describe("primary shell accessibility contracts", () => {
   });
 
   it("provides skip links on signed-in shells", () => {
-    expect(source("./product-suite-shell.tsx")).toContain(
+    expect(source("./product-suite-shell-frame.tsx")).toContain(
       "Skip to main content",
     );
     expect(source("./app-shell.tsx")).toContain("Skip to main content");
+  });
+
+  it("wires global search dialog a11y contracts", () => {
+    const chrome = source("./global-search-chrome.tsx");
+    expect(chrome).toContain('aria-label="Open search"');
+    expect(chrome).toContain('aria-keyshortcuts="Meta+K Control+K"');
+    expect(chrome).toContain('role="combobox"');
+    expect(chrome).toContain('role="listbox"');
+    expect(chrome).toContain('role="option"');
+    expect(chrome).toContain("ArrowDown");
+    expect(chrome).toContain("ArrowUp");
+    expect(chrome).toContain('href="/help"');
+    expect(chrome.toLowerCase()).not.toMatch(/\binsights\b/);
   });
 
   it("announces login errors", () => {

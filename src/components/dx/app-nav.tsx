@@ -7,7 +7,7 @@ import { Brain, Compass, Menu, Plus, X } from "lucide-react";
 import { HELM_NAME } from "@/config/helm-copilot";
 import { useAiDrawer } from "@/components/dx/ai-drawer-context";
 import { DxLogo } from "@/components/dx/dx-logo";
-import { ProductSuiteNav } from "@/components/dx/product-suite-shell";
+import { ProductSuiteNav } from "@/components/dx/product-suite-shell-frame";
 import { UserMenu } from "@/components/dx/user-menu";
 import { AlertBellDropdown } from "@/components/dx/alert-bell-dropdown";
 import type { DeliveryAlert } from "@/services/alerts";
