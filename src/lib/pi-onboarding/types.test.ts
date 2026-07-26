@@ -218,6 +218,32 @@ describe("explainRecommendation", () => {
       true,
     );
   });
+
+  it("still flags limited data after v2 identity when evidence was skipped", () => {
+    const result = explainRecommendation({
+      currentSituation: "student",
+      targetRole: "Associate Product Manager",
+      skippedSteps: ["strengths", "evidence", "working_style"],
+    });
+    expect(result.path).toBe("experience");
+    expect(result.dataSufficiency).toBe("limited");
+    expect(result.reasons.some((reason) => reason.includes("skipped the optional steps"))).toBe(
+      true,
+    );
+  });
+
+  it("does not flag limited data when experience posture is present", () => {
+    const result = explainRecommendation({
+      currentSituation: "student",
+      targetRole: "Associate Product Manager",
+      existingExperienceSummary: "Led a campus product club shipping two apps.",
+      skippedSteps: ["strengths", "working_style"],
+    });
+    expect(result.dataSufficiency).toBe("sufficient");
+    expect(result.reasons.some((reason) => reason.includes("default starter Experience"))).toBe(
+      false,
+    );
+  });
 });
 
 describe("summariseForReview", () => {

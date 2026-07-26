@@ -303,14 +303,21 @@ export function explainRecommendation(payload: PiOnboardingPayload): Recommendat
   const targetRole = payload.targetRole?.trim();
   if (targetRole) reasons.push(`You are targeting ${targetRole}.`);
 
+  // Experience posture (summary or explicit "none yet") is what makes a path
+  // tailored. Situation alone is not enough — otherwise the eight-step flow
+  // never shows a limited-data caveat after skipping optional steps, because
+  // identity already collected currentSituation.
   const dataSufficiency: RecommendationExplanation["dataSufficiency"] =
-    !payload.noPriorExperience && !hasSummary && !payload.currentSituation
-      ? "limited"
-      : "sufficient";
+    !payload.noPriorExperience && !hasSummary ? "limited" : "sufficient";
 
   if (dataSufficiency === "limited") {
+    const skippedOptional = (payload.skippedSteps ?? []).some((step) =>
+      step === "strengths" || step === "evidence" || step === "working_style",
+    );
     reasons.push(
-      "You skipped the optional steps, so this is a default starter Experience rather than a tailored match.",
+      skippedOptional
+        ? "You skipped the optional steps, so this is a default starter Experience rather than a tailored match."
+        : "We have limited detail so far, so this is a default starter Experience rather than a tailored match.",
     );
   }
 
