@@ -11,11 +11,11 @@
 | Check | Result |
 | --- | --- |
 | Branch | `main` |
-| Working tree | Clean |
-| Sync | `main` == `origin/main` (not ahead/behind) |
-| HEAD | `98b77ae2b2cf273e10e91cdfb12a04981654c16f` — `docs: establish first governed screen pack` |
+| Working tree | Clean at audit (then this note committed) |
+| Sync | `main` tracked `origin/main` |
+| Product HEAD at audit | `98b77ae2b2cf273e10e91cdfb12a04981654c16f` — `docs: establish first governed screen pack` |
 
-No uncommitted product or docs work at audit time. No secrets staged.
+No leftover uncommitted product work. No secrets staged. This status note is docs-only and was committed + pushed after the audit.
 
 ---
 
@@ -24,12 +24,11 @@ No uncommitted product or docs work at audit time. No secrets staged.
 | Field | Value |
 | --- | --- |
 | Vercel project | `deliverx` / `prj_9abkAXxjypDbXQTEqq7YQMMj0GPI` |
-| Production deployment | `dpl_6rL3uWb3rnGHz8b8Quzqm6Ugx34s` |
-| Deployment URL | `https://deliverx-movj7xbo6-gnaneshwerjadav-gmailcoms-projects.vercel.app` |
-| Status | **Ready** |
-| Git SHA | `98b77ae2b2cf273e10e91cdfb12a04981654c16f` |
-| Matches HEAD? | **Yes** |
-| Aliases | `www.deliverx.dev`, `deliverx.dev` (and Vercel project aliases) |
+| Production (product audit) | `dpl_6rL3uWb3rnGHz8b8Quzqm6Ugx34s` @ `98b77ae` — **Ready** |
+| Aliases | `www.deliverx.dev`, `deliverx.dev` pointed at that SHA at audit time |
+| Post-note redeploy | Confirmed Ready + alias after pushing this note (`224609c` and successors) |
+
+Product code/docs through Screen Pack 01 were on production before this note. Pushing the note triggers a docs-only production redeploy (expected).
 
 ### HTTP smoke (`www.deliverx.dev`)
 
@@ -82,7 +81,7 @@ No flag flips performed in this audit.
 
 ## Built-so-far inventory vs HEAD + prod SHA
 
-Both at `98b77ae`.
+Product inventory verified at `98b77ae` (committed + on prod at audit).
 
 | Ship | Commit / evidence | Committed | On prod |
 | --- | --- | --- | --- |
@@ -112,4 +111,4 @@ Both at `98b77ae`.
 
 ## Overall
 
-**YES — all committed & deployed.** HEAD == `origin/main` == production alias SHA `98b77ae`; migrations through `0102` on prod; pilot flags match intent.
+**YES — all committed & deployed.** Product HEAD `98b77ae` matched production at audit; migrations through `0102` on prod; pilot flags match intent. Status note commit is docs-only and redeploys production as expected.
