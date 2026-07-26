@@ -57,6 +57,7 @@
 | “Core evidence loop works” | **True** (app path, automated live) |
 | “Capability Engine is the only ScoreRun writer” | **True in app and DB** after `0095` |
 | “Verified requires attestation” | **True in app and DB** after `0095` |
+| “Observation requires consent” | **True in app and DB** after `0096` |
 | “T8 shipped” | **True** (code/docs/`0094`) |
 | “T8 E2E verified” | **True — Batch 4** (live attestor → Verified 10/10) |
 | “Ready for pilot users” | **Closer** — DB + honesty/legal + UX language + T8 E2E + Next security + nav/a11y Batches 1–5 shipped; remaining gates are founder ops (CI/TD-006) and residual a11y QA |
