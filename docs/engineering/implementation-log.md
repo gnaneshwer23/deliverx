@@ -1,4 +1,18 @@
-## 2026-07-26 — B9 rate-limit concurrency fix (`0102`)
+## 2026-07-26 — Professional Workspace suite parity (thin)
+
+Founder request: enhance Professional Workspace to match signed-in suite pages (Profile, Experience, Launchpad, Portfolio, Help).
+
+**Scope:** UX/polish vertical slice only — not deep Team Copilot / programmes / executive reporting (Screen Pack 01 still build-gated).
+
+Shape:
+- `/workspace` layout defaults to `ProductSuiteShell` (Cmd/Ctrl+K search, Help, suite nav). Legacy `AppShell` + Mission Control sidebar restores only when `DELIVERX_LEGACY_WORKSPACE_NAV` / `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV` is on.
+- Workspace home rebuilt with where/what/next orientation, honest empty/partial/error, screen-bound context rail (consent, guidance, related — not floating AI chat), thin meetings + org-structure summary without decorative scores.
+- Module chrome + Team page copy aligned to calm suite patterns; Workspace error copy no longer points at “command centre”.
+
+Verification: focused unit + accessibility contracts; lint on touched files; `npm run build`.
+
+---
+
 
 Production verification found `checkPiApiRateLimit` used read→compute→`update(count+1)` (last-writer-wins). A concurrent burst (130 @ concurrency 8) returned ~129×200 / 0×429 while the DB counter only advanced to ~58.
 

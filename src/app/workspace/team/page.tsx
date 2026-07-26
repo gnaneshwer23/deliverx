@@ -32,12 +32,12 @@ export default async function WorkspaceTeamPage() {
   return (
     <>
       <DxPageHeader
-        breadcrumb="DeliverX · Workspace"
+        breadcrumb="DeliverX · Professional Workspace"
         title="Team"
-        titleEm="& governance"
+        subtitle="See members, thin org structure, and invitations. This is not executive mission control — membership and structure only."
         action={
-          <Link href="/workspace/governance" className={`${dxClass.btnGhost} text-[10px]`}>
-            Governance rollup →
+          <Link href="/workspace" className={`${dxClass.btnGhost} text-[10px]`}>
+            Back to Workspace
           </Link>
         }
       />

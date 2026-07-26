@@ -23,6 +23,13 @@ describe("primary shell accessibility contracts", () => {
     expect(source("./app-shell.tsx")).toContain("Skip to main content");
   });
 
+  it("keeps Workspace on ProductSuiteShell by default", () => {
+    const layout = source("../../app/workspace/layout.tsx");
+    expect(layout).toContain("ProductSuiteShell");
+    expect(layout).toContain("isLegacyWorkspaceNavEnabled");
+    expect(layout).toMatch(/Default chrome is ProductSuiteShell/);
+  });
+
   it("wires global search dialog a11y contracts", () => {
     const chrome = source("./global-search-chrome.tsx");
     expect(chrome).toContain('aria-label="Open search"');

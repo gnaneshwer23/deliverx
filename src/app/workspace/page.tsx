@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { requireCompleteOnboarding } from "@/lib/auth/require-onboarding";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -7,11 +6,14 @@ import {
   resolveActiveProject,
 } from "@/lib/professional-workspace/list-projects";
 import { parseWorkspaceProjectParam } from "@/lib/professional-workspace/project-context";
+import { getWorkspaceObservationConsent } from "@/lib/workspace-observation/consent";
+import { loadOrgStructure } from "@/lib/org-structure";
+import { listOrgMeetingsRecent } from "@/services/governance";
 import {
-  ProjectSwitcher,
-  WorkspaceHomeModules,
-} from "@/components/professional-workspace/project-switcher";
-import { AI_AUTONOMY_POLICY } from "@/lib/professional-workspace/modules";
+  WorkspaceHome,
+  type WorkspaceHomeMeeting,
+  type WorkspaceHomeTeamSummary,
+} from "@/components/professional-workspace/workspace-home";
 
 export const metadata: Metadata = {
   title: "Professional Workspace · DeliverX",
@@ -26,7 +28,7 @@ export default async function ProfessionalWorkspaceHome({
 }: {
   searchParams: Promise<{ project?: string }>;
 }) {
-  const { user } = await requireCompleteOnboarding();
+  const { user, profile } = await requireCompleteOnboarding();
   const supabase = await createClient();
   const params = await searchParams;
   const parsed = parseWorkspaceProjectParam(params.project ?? null);
@@ -38,44 +40,56 @@ export default async function ProfessionalWorkspaceHome({
     parsed?.id ?? null,
   );
 
+  const contextErrors: string[] = [];
+
+  let observationAllowed = false;
+  try {
+    const consent = await getWorkspaceObservationConsent(supabase, user.id, active);
+    observationAllowed = consent.allowed;
+  } catch (err) {
+    contextErrors.push(
+      err instanceof Error ? err.message : "Could not load observation consent.",
+    );
+  }
+
+  let teamSummary: WorkspaceHomeTeamSummary | null = null;
+  if (profile.organisation_id) {
+    try {
+      const structure = await loadOrgStructure(supabase, profile.organisation_id);
+      teamSummary = {
+        departmentCount: structure.departments.length,
+        teamCount: structure.teams.length,
+        memberCount: structure.departmentMembers.length + structure.teamMembers.length,
+      };
+    } catch {
+      teamSummary = null;
+      contextErrors.push("Organisation structure unavailable.");
+    }
+  }
+
+  let meetings: WorkspaceHomeMeeting[] = [];
+  try {
+    const recent = await listOrgMeetingsRecent(4);
+    meetings = recent.map((m) => ({
+      id: m.id,
+      title: m.title,
+      projectId: m.project_id,
+      projectName: m.project_name,
+      scheduledAt: m.scheduled_at,
+      status: m.status,
+    }));
+  } catch {
+    meetings = [];
+  }
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <header className="mb-8">
-        <p className="font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
-          DeliverX · Succeed in the role
-        </p>
-        <h1 className="mt-1 font-[family-name:var(--font-display)] text-3xl text-[#1A1A18]">
-          Professional Workspace
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-[#4A4A45]">
-          Work with role-based AI teammates across meetings, stakeholders, artefacts, decisions and
-          risks. This is not a chatbot — AI drafts and suggests; you own what ships.
-        </p>
-        <p className="mt-2 text-xs text-[#6B6B64]">
-          Autonomy policy: auto-submit {String(AI_AUTONOMY_POLICY.mayAutoSubmit)} · auto-decide{" "}
-          {String(AI_AUTONOMY_POLICY.mayAutoDecide)} · capability assignment{" "}
-          {String(AI_AUTONOMY_POLICY.mayAssignCapability)}.
-        </p>
-      </header>
-
-      <ProjectSwitcher projects={projects} active={active} />
-
-      {active?.kind === "experience" ? (
-        <div className="mt-4 rounded-lg border border-[#C5D9CE] bg-[#EEF5F1] px-4 py-3 text-sm text-[#1C4A2E]">
-          Experience project selected. Continue the live simulation in{" "}
-          <Link href="/experience/app" className="font-medium underline">
-            Experience
-          </Link>{" "}
-          or use Workspace modules to review team, risks, and evidence around that run.
-        </div>
-      ) : null}
-
-      <WorkspaceHomeModules project={active} />
-
-      <p className="mt-10 text-xs text-[#6B6B64]">
-        These modules are the primary day-to-day surface for multidisciplinary work. Capability is
-        never assigned here — practice evidence is interpreted by assessment on your Evidence Ledger.
-      </p>
-    </div>
+    <WorkspaceHome
+      projects={projects}
+      active={active}
+      observationAllowed={observationAllowed}
+      teamSummary={teamSummary}
+      meetings={meetings}
+      loadError={contextErrors[0] ?? null}
+    />
   );
 }
