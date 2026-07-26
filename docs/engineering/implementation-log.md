@@ -389,7 +389,7 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 **No schema migration** — validation reason logged in existing `ai_interactions.error_message` + `guardrail_flags` JSON. Do not take `0096` (consent owns it; already shipped).
 
-**Verification:** `orchestration.test.ts` 26 PASS · observation units PASS · `npm run test:release-gate` PASS · `npm run build` PASS.
+**Verification:** `orchestration.test.ts` 26 PASS · observation units PASS · `npm run test:release-gate` PASS · `npm run build` PASS. Production deploy **Ready** `dpl_Gvr1H56hZQLKZPyuKAuPfMQ5yyYd` (`41a290b`) → https://www.deliverx.dev.
 
 **Verdict:** AI citation requirements — shipped. **T9 not started.**
 
