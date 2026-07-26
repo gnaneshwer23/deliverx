@@ -1,3 +1,15 @@
+## 2026-07-26 — Marketing header stability + beta readiness
+
+Founder: header/page jumping, responsiveness audit, honest beta-ready verdict (payments may stay off).
+
+**Fixes:** Shared `(marketing)/layout` shell + sticky nav (no remount); full `PRIMARY_NAV` on every product page (removed current-link filter that shortened the bar); stable header CTA “Start”; `aria-current` active state; Next `Link` prefetch; hero motion no longer starts at `opacity: 0`; removed marketing `content-visibility` intrinsic-size scroll jumps; font `display: swap`; reserved `mkt-product-hero` min-heights; primary links from `lg` (hamburger through tablet); footer columns less crushed below `xl`.
+
+**Docs:** [`beta-launch-readiness.md`](./beta-launch-readiness.md) — verdict **Ready with conditions**; canvas `deliverx-beta-launch-readiness.canvas.tsx`. Billing enforce left off.
+
+Verification: marketing honesty units (nav stability); lint; build; browser/Playwright screenshots under `/tmp/deliverx-marketing-header-audit/`.
+
+---
+
 ## 2026-07-26 — Marketing footer enhance + shipped-product sync
 
 Founder: enhance marketing footer; sync landing pages with shipped backend/product.

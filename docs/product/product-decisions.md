@@ -569,6 +569,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26q — Marketing header shell + invite-only beta gate
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Marketing chrome (shell + sticky primary nav) lives in `(marketing)/layout` so route changes do not remount/jump the header. Primary nav always shows the full four links (How it works · Experience · Launchpad · Professional Workspace) with active page indication — never filter out the current route. Header CTA stays **Start → /signup**; product-specific CTAs remain in heroes. Invite-only beta may proceed with payments off; founder ops (SMTP, TD-006, invite list) gate invites. |
+| **Why** | Founder reported jumpy/incomplete header pages and asked for a production-ready beta verdict. |
+| **Consequence** | [`beta-launch-readiness.md`](../engineering/beta-launch-readiness.md). Does not enable billing, reviewer queue, or claim WCAG AA without AT lab. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
