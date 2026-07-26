@@ -1,6 +1,10 @@
+## 2026-07-26 — B2 flag on in production
+
+Founder request to deploy all built work enabled Vercel `DELIVERX_RECOMMENDATION_SM=on` for Production + Preview. Redeployed production so the env takes effect. `DELIVERX_BILLING_ENFORCE` left unset (payments still off). Migration `0098` already on `jibmyxaldetyycmtlxet`. Code HEAD already on `main` (`b48a790` and predecessors B1/B2/deploy fix) — no new feature commit required for enablement.
+
 ## 2026-07-26 — B2 prod DB: migration `0098` applied
 
-Applied `0098_pi_recommendations` to production Supabase `jibmyxaldetyycmtlxet` via plugin-supabase MCP (`apply_migration`; `user-supabase` was linked to wrong project `acakthpxhnymdqtprocz` and was not used). Verified: tables `pi_recommendations` / `pi_recommendation_evidence` / `pi_recommendation_events` exist; RLS on (3+2+2 policies); triggers `trg_pi_recommendation_guard_update` + `trg_pi_recommendation_audit_insert`; purge EXECUTE anon=false, authenticated=false, service_role=true; SM helper allows generated→viewed and accepted→completed, rejects generated→completed. Advisors: no new CRITICAL; new WARN `function_search_path_mutable` on `pi_recommendation_transition_allowed` (immutable SQL helper); TD-006 leaked-password WARN unchanged. **Flag left off** — enable Vercel `DELIVERX_RECOMMENDATION_SM=on` only when founder wants B2 pilot UI.
+Applied `0098_pi_recommendations` to production Supabase `jibmyxaldetyycmtlxet` via plugin-supabase MCP (`apply_migration`; `user-supabase` was linked to wrong project `acakthpxhnymdqtprocz` and was not used). Verified: tables `pi_recommendations` / `pi_recommendation_evidence` / `pi_recommendation_events` exist; RLS on (3+2+2 policies); triggers `trg_pi_recommendation_guard_update` + `trg_pi_recommendation_audit_insert`; purge EXECUTE anon=false, authenticated=false, service_role=true; SM helper allows generated→viewed and accepted→completed, rejects generated→completed. Advisors: no new CRITICAL; new WARN `function_search_path_mutable` on `pi_recommendation_transition_allowed` (immutable SQL helper); TD-006 leaked-password WARN unchanged. Flag later enabled 2026-07-26 (see entry above).
 
 ## 2026-07-26 — B2: Recommendation state machine (founder-authorized)
 

@@ -9,7 +9,7 @@
 
 **Status of this doc:** Build-out plan for Missing + Partial remainder. **B1 and B2 shipped** (founder `Start Building B1`; founder reply `B2` = FD-PACK-6 / PD-2026-07-26f, 2026-07-26). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0098_pi_recommendations.sql` (applied 2026-07-26). New migrations continue at `0099+`. B2 pilot still needs Vercel `DELIVERX_RECOMMENDATION_SM=on` (default off).
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0098_pi_recommendations.sql` (applied 2026-07-26). New migrations continue at `0099+`. B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26).
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -247,7 +247,7 @@ Evidence paths verified present unless noted.
 8. **UX:** Profile + Career “Recommended next actions” with why + accept/dismiss.  
 9. **Deps/risks:** Must not mutate verified evidence; recommendations reversible. Depends on B1 if bands cited (payload may include band algorithm version).  
 10. **AC/tests:** State transition unit tests; SQL contract / RLS negatives; `test:pi`; release-gate PASS.  
-11. **Flag:** `DELIVERX_RECOMMENDATION_SM=on` default off until pilot.  
+11. **Flag:** `DELIVERX_RECOMMENDATION_SM=on` — enabled in Vercel Production + Preview (2026-07-26).  
 12. **DoD:** **Met** — SM persisted; UI wired; dismiss does not alter evidence; tests pass.  
 13. **Size / approval:** M · founder reply `B2` = **FD-PACK-6** (PD-2026-07-26f).
 
