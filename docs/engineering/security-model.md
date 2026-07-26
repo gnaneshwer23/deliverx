@@ -92,6 +92,14 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `pi_evidence_status_transitions`: owner inserts remain for ordinary statuses; both RLS and a trigger reject direct `platform_verified`. T8 calls `pi_append_platform_verified_transition`, executable only by `service_role`.
 - New functions are `SECURITY DEFINER`, fixed `search_path = public`; anon/authenticated EXECUTE is false. Post-migration advisors introduced no new findings.
 
+### Observation consent enforcement (`0096`)
+
+- `workspace_observations` BEFORE INSERT trigger requires effective consent (project-scope row wins when present; else global; missing row = OFF).
+- `pi_evidence_records` BEFORE INSERT trigger applies the same rule only when `source_type = workspace_observation` (Experience/baseline/reflection untouched).
+- No service-role GUC bypass — consent is a product invariant for observation creation; service_role inserts are also denied without active consent.
+- `workspace_observations_no_capability_chk` keeps `capability_assigned = false`.
+- Helper + guard functions: fixed `search_path = public`; EXECUTE revoked from anon/authenticated/service_role (TD-016 posture; triggers still fire).
+
 Production inventory (`anon / authenticated / service_role`, before → after):
 
 | Function | Before | After | Decision |

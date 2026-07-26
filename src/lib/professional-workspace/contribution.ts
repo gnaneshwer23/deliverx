@@ -7,6 +7,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { WorkspaceModuleId } from "@/lib/professional-workspace/modules";
 import type { WorkspaceProjectRef } from "@/lib/professional-workspace/project-context";
+import { isObservationConsentDbError } from "@/lib/workspace-observation/consent-errors";
 import { observeWorkspaceContribution } from "@/lib/workspace-observation/observe";
 import type { ObserveWorkspaceContributionResult } from "@/lib/workspace-observation/observe";
 
@@ -105,7 +106,15 @@ export async function recordWorkspaceContribution(
       artefactRef: input.artefactRef,
     });
   } catch (err) {
-    console.error("[workspace] observation dual-write failed", err);
+    if (isObservationConsentDbError(err)) {
+      observation = {
+        observed: false,
+        reason: "consent_denied",
+        capabilityAssigned: false,
+      };
+    } else {
+      console.error("[workspace] observation dual-write failed", err);
+    }
   }
 
   return {

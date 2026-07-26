@@ -2,7 +2,7 @@
 
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
 
-**Source of truth:** `supabase/migrations/0066`–`0095` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown) on project `jibmyxaldetyycmtlxet`
+**Source of truth:** `supabase/migrations/0066`–`0096` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown; DB consent enforcement) on project `jibmyxaldetyycmtlxet`
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -170,6 +170,14 @@ erDiagram
 - `pi_evidence_status_transitions`: authenticated INSERT policy excludes `platform_verified`; a second trigger rejects direct elevated inserts. `pi_append_platform_verified_transition` is the service-role-only attestation append.
 - Both privileged RPCs are `SECURITY DEFINER`, `search_path = public`, with anon/authenticated EXECUTE revoked.
 
+### Observation consent enforcement — `0096` (R-P1-11 / DB-P1-01)
+
+- `pi_workspace_observation_consent_allows(user, project_kind, project_id)` mirrors app effective-consent (project override wins; missing = deny).
+- `trg_workspace_observations_consent` blocks NEW observation rows without active consent; does not delete history.
+- `trg_pi_evidence_workspace_observation_consent` blocks NEW `workspace_observation` ledger rows without the same consent (other source types unchanged).
+- No service-role bypass GUC; `workspace_observations_no_capability_chk` enforces `capability_assigned = false`.
+- Functions are `SECURITY DEFINER`, `search_path = public`, EXECUTE revoked from anon/authenticated/service_role.
+
 ---
 
 ## Advisor notes
@@ -189,7 +197,7 @@ erDiagram
 | Framework pin | `framework_version_id` on ScoreRuns when published pin exists |
 | Rubric resolve provenance (T2) | `rubric_resolve_source` + labelled API `rubricSource`; DB preferred |
 | `run_kind` ∈ standard/baseline/final/transfer | Persist + assessment paths |
-| Consent default deny | No `pi_observation_consent` row ⇒ observation denied |
+| Consent default deny | No `pi_observation_consent` row ⇒ observation denied in app **and** DB (`0096` INSERT triggers) |
 | Learning ≠ competency | Learning persist never writes ScoreRuns |
 | Outcomes ≠ external verification without attestation | Strength derivation + T8 attestation path only |
 | `deliverxVerified` gate | `externally_attested` + `externally_verified` + kill switch; protected DB columns mutate only through service-role attestation RPC |

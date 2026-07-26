@@ -545,4 +545,288 @@ describe.skipIf(!LIVE)("T6 security — live RLS / purge / privacy negatives", (
       .eq("user_id", attackerId);
     expect(after ?? 0).toBe(before ?? 0);
   }, STEP_TIMEOUT);
+
+  it("DB consent OFF blocks observation and workspace_observation evidence inserts", async () => {
+    const projectId = `t6-consent-${runTs}`;
+    const observationPayload = {
+      user_id: victimId,
+      module_id: "decisions",
+      project_kind: "experience",
+      project_id: projectId,
+      sequence_kind: "decision",
+      context: { note: "t6-consent-off" },
+      behaviour: { kind: "user_submitted" },
+      outcome: { status: "recorded" },
+      capability_assigned: false,
+    };
+
+    const { error: ownerObsError } = await victimClient!
+      .from("workspace_observations")
+      .insert(observationPayload as never);
+    expect(
+      ownerObsError,
+      "owner observation INSERT without consent must be denied",
+    ).toBeTruthy();
+    expect(String(ownerObsError?.message ?? "").toLowerCase()).toMatch(
+      /consent/,
+    );
+
+    const { error: serviceObsError } = await admin!
+      .from("workspace_observations")
+      .insert(observationPayload as never);
+    expect(
+      serviceObsError,
+      "service-role observation INSERT without consent must be denied",
+    ).toBeTruthy();
+
+    const { error: ownerEvidenceError } = await victimClient!
+      .from("pi_evidence_records")
+      .insert({
+        user_id: victimId,
+        source_type: "workspace_observation",
+        category: "practice",
+        title: "Forged workspace observation evidence",
+        summary: "Must be blocked without consent",
+        raw_content: {
+          context: { projectKind: "experience", projectId },
+        },
+        content_hash: `t6-obs-evidence-off-${runTs}`,
+        confidentiality: "private",
+        consent_status: "analysis_allowed",
+      } as never);
+    expect(
+      ownerEvidenceError,
+      "owner workspace_observation evidence without consent must be denied",
+    ).toBeTruthy();
+
+    const { error: otherSourceError } = await victimClient!
+      .from("pi_evidence_records")
+      .insert({
+        user_id: victimId,
+        source_type: "reflection",
+        category: "practice",
+        title: "Non-observation evidence still allowed",
+        summary: "Consent guard must not block other sources",
+        raw_content: { note: "t6-other-source" },
+        content_hash: `t6-other-source-${runTs}`,
+        confidentiality: "private",
+        consent_status: "analysis_allowed",
+      } as never);
+    expect(otherSourceError).toBeNull();
+
+    const { count: obsCount } = await admin!
+      .from("workspace_observations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", victimId)
+      .eq("project_id", projectId);
+    expect(obsCount ?? 0).toBe(0);
+  }, STEP_TIMEOUT);
+
+  it("global consent ON allows insert; project OFF override blocks; revoke keeps history", async () => {
+    const projectId = `t6-consent-on-${runTs}`;
+    const now = new Date().toISOString();
+
+    const { data: globalConsent, error: globalConsentError } =
+      await victimClient!
+        .from("pi_observation_consent")
+        .insert({
+          user_id: victimId,
+          scope: "global",
+          source: "workspace",
+          consented: true,
+          consented_at: now,
+          plain_language_version: "workspace-observation-v1",
+        } as never)
+        .select("id")
+        .single();
+    expect(globalConsentError).toBeNull();
+    expect(globalConsent?.id).toBeTruthy();
+
+    const { data: allowedObs, error: allowedObsError } = await victimClient!
+      .from("workspace_observations")
+      .insert({
+        user_id: victimId,
+        module_id: "decisions",
+        project_kind: "experience",
+        project_id: projectId,
+        sequence_kind: "decision",
+        context: { note: "t6-consent-global-on" },
+        behaviour: { kind: "user_submitted" },
+        outcome: { status: "recorded" },
+        capability_assigned: false,
+        consent_id: globalConsent!.id,
+      } as never)
+      .select("id")
+      .single();
+    expect(allowedObsError).toBeNull();
+    expect(allowedObs?.id).toBeTruthy();
+    const historyId = allowedObs!.id as string;
+
+    const { error: projectOffError } = await victimClient!
+      .from("pi_observation_consent")
+      .insert({
+        user_id: victimId,
+        scope: "project",
+        source: "workspace",
+        project_kind: "experience",
+        project_id: projectId,
+        consented: false,
+        revoked_at: now,
+        plain_language_version: "workspace-observation-v1",
+      } as never);
+    expect(projectOffError).toBeNull();
+
+    const { error: blockedByProjectOverride } = await victimClient!
+      .from("workspace_observations")
+      .insert({
+        user_id: victimId,
+        module_id: "decisions",
+        project_kind: "experience",
+        project_id: projectId,
+        sequence_kind: "decision",
+        context: { note: "t6-project-override-off" },
+        behaviour: { kind: "user_submitted" },
+        outcome: { status: "recorded" },
+        capability_assigned: false,
+      } as never);
+    expect(
+      blockedByProjectOverride,
+      "project consent OFF must override global ON",
+    ).toBeTruthy();
+
+    const { error: projectOnError } = await victimClient!
+      .from("pi_observation_consent")
+      .update({
+        consented: true,
+        consented_at: now,
+        revoked_at: null,
+        updated_at: now,
+      } as never)
+      .eq("user_id", victimId)
+      .eq("scope", "project")
+      .eq("project_kind", "experience")
+      .eq("project_id", projectId);
+    expect(projectOnError).toBeNull();
+
+    const { error: projectOnObsError } = await victimClient!
+      .from("workspace_observations")
+      .insert({
+        user_id: victimId,
+        module_id: "decisions",
+        project_kind: "experience",
+        project_id: projectId,
+        sequence_kind: "decision",
+        context: { note: "t6-project-override-on" },
+        behaviour: { kind: "user_submitted" },
+        outcome: { status: "recorded" },
+        capability_assigned: false,
+      } as never);
+    expect(projectOnObsError).toBeNull();
+
+    const { error: revokeError } = await victimClient!
+      .from("pi_observation_consent")
+      .update({
+        consented: false,
+        revoked_at: now,
+        consented_at: null,
+        updated_at: now,
+      } as never)
+      .eq("id", globalConsent!.id);
+    expect(revokeError).toBeNull();
+
+    // Project override still ON — revoke global alone must not delete history
+    // and must not block this project while project consent remains true.
+    const { data: historyRow } = await admin!
+      .from("workspace_observations")
+      .select("id")
+      .eq("id", historyId)
+      .maybeSingle();
+    expect(historyRow?.id).toBe(historyId);
+
+    const { error: revokeProjectError } = await victimClient!
+      .from("pi_observation_consent")
+      .update({
+        consented: false,
+        revoked_at: now,
+        consented_at: null,
+        updated_at: now,
+      } as never)
+      .eq("user_id", victimId)
+      .eq("scope", "project")
+      .eq("project_kind", "experience")
+      .eq("project_id", projectId);
+    expect(revokeProjectError).toBeNull();
+
+    const { error: afterRevokeError } = await victimClient!
+      .from("workspace_observations")
+      .insert({
+        user_id: victimId,
+        module_id: "decisions",
+        project_kind: "experience",
+        project_id: projectId,
+        sequence_kind: "decision",
+        context: { note: "t6-after-revoke" },
+        behaviour: { kind: "user_submitted" },
+        outcome: { status: "recorded" },
+        capability_assigned: false,
+      } as never);
+    expect(
+      afterRevokeError,
+      "revoked consent must block future observation inserts",
+    ).toBeTruthy();
+
+    const { data: historyStill } = await admin!
+      .from("workspace_observations")
+      .select("id")
+      .eq("id", historyId)
+      .maybeSingle();
+    expect(historyStill?.id).toBe(historyId);
+
+    const { error: crossUserError } = await attackerClient!
+      .from("workspace_observations")
+      .insert({
+        user_id: victimId,
+        module_id: "decisions",
+        project_kind: "experience",
+        project_id: projectId,
+        sequence_kind: "decision",
+        context: { note: "t6-cross-user" },
+        behaviour: { kind: "user_submitted" },
+        outcome: { status: "recorded" },
+        capability_assigned: false,
+      } as never);
+    expect(
+      crossUserError,
+      "cross-user observation INSERT must be denied",
+    ).toBeTruthy();
+
+    const { error: reconsentError } = await victimClient!
+      .from("pi_observation_consent")
+      .update({
+        consented: true,
+        consented_at: now,
+        revoked_at: null,
+        updated_at: now,
+      } as never)
+      .eq("id", globalConsent!.id);
+    expect(reconsentError).toBeNull();
+
+    const { error: capabilityError } = await victimClient!
+      .from("workspace_observations")
+      .insert({
+        user_id: victimId,
+        module_id: "decisions",
+        project_kind: "experience",
+        project_id: `t6-cap-${runTs}`,
+        sequence_kind: "decision",
+        context: { note: "t6-capability" },
+        behaviour: { kind: "user_submitted" },
+        outcome: { status: "recorded" },
+        capability_assigned: true,
+      } as never);
+    expect(
+      capabilityError,
+      "capability_assigned=true must be rejected",
+    ).toBeTruthy();
+  }, STEP_TIMEOUT);
 });

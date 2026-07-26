@@ -15,7 +15,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 | Track | Status |
 | --- | --- |
 | Product P0–P8 | **Shipped** — candidate PI loop + external attestation (attestation→Verified live E2E, Batch 4) |
-| Technology T0–T8 | **Shipped** — migrations through `0095`; T8 founder-authorized 2026-07-25, E2E-verified in Batch 4 |
+| Technology T0–T8 | **Shipped** — migrations through `0096`; T8 founder-authorized 2026-07-25, E2E-verified in Batch 4; DB consent enforcement (`0096`) shipped 2026-07-26 |
 | Next.js | **`16.2.12`** (≥16.2.11) — audited proxy/SSRF/DoS advisories closed (Batch 4) |
 | T9 | **Blocked** — separate founder approval required |
 | TD-001 | **Closed** (T6 signed-in E2E) |

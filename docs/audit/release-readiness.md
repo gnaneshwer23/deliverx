@@ -29,7 +29,7 @@
 | Core loop E2E (app) | Batch 4 live gate 40/40 (18 loop + 12 security + 10 T8 attestation) | Pass |
 | Release gate manual | 263 PI + unauth + security | Pass |
 | Full `npm test` | 941 pass / 25 skip | Pass |
-| Migrations head | `0095_db_trust_rail_lockdown` on prod | Pass (head) |
+| Migrations head | `0096_consent_enforcement` on prod | Pass (head) |
 | Unauth pages/APIs | LIVE + HTTP | Pass |
 | Purge / anon EXECUTE | Prod SQL | Pass |
 | Learning ≠ capability | LIVE + CHECK | Pass |
@@ -67,6 +67,7 @@
 ## Path to controlled pilot (minimum)
 
 1. **Completed:** Batch 1 — DB trust-rail lockdown (`0095` + live RLS tests).
+1b. **Completed:** DB observation consent enforcement (`0096` + T6 live consent RLS).
 2. **Completed:** Batch 2 — product honesty + legal surface (pilot access; no money-back; decorative % removed; illustrative stories; Launchpad includes; interim Privacy/Terms/Cookies).
 3. **Completed:** Batch 3 — UX language (ScoreRun→assessment; Command Centre demotion on Workspace home; Career Intelligence naming; review seed removed; metadata; readiness labels).
 4. **Completed:** Batch 4 — pilot seal engineering (Next `16.2.9`→`16.2.12` closing proxy/SSRF/DoS advisories; T8 attestation→Verified live E2E in the release gate).

@@ -359,6 +359,66 @@ describe("no capability writes outside engine", () => {
     expect(result.observed).toBe(false);
   });
 
+  it("maps DB consent guard failures to consent_denied", async () => {
+    const { observeWorkspaceContribution } = await import(
+      "@/lib/workspace-observation/observe"
+    );
+    const supabase = {
+      from: (table: string) => {
+        if (table === "pi_observation_consent") {
+          return makeConsentQuery({
+            id: "consent-1",
+            user_id: "u1",
+            scope: "global",
+            project_kind: null,
+            project_id: null,
+            consented: true,
+            plain_language_version: "workspace-observation-v1",
+            consented_at: "2026-07-26T00:00:00.000Z",
+            revoked_at: null,
+          });
+        }
+        if (table === "pi_evidence_records") {
+          return {
+            select: () => ({
+              eq: () => ({
+                eq: () => ({
+                  maybeSingle: async () => ({ data: null, error: null }),
+                }),
+              }),
+            }),
+            insert: () => ({
+              select: () => ({
+                single: async () => ({
+                  data: null,
+                  error: {
+                    code: "42501",
+                    message:
+                      "observation consent required: workspace_observation evidence insert denied without active consent",
+                  },
+                }),
+              }),
+            }),
+          };
+        }
+        throw new Error(`unexpected table ${table}`);
+      },
+    };
+    const result = await observeWorkspaceContribution(supabase as never, {
+      userId: "u1",
+      contributionId: "c-db-deny",
+      moduleId: "decisions",
+      kind: "user_submitted",
+      project: { kind: "org", id: "p1", name: "A", href: "/p" },
+      title: "Decide",
+    });
+    expect(result).toEqual({
+      observed: false,
+      reason: "consent_denied",
+      capabilityAssigned: false,
+    });
+  });
+
   it("intervention drafts never claim capability assignment", () => {
     const drafts = mapGapsToInterventionDrafts({
       gaps: ["comp.delivery_execution: emerging — scope"],

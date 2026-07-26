@@ -358,6 +358,22 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## DB consent enforcement — `0096` (2026-07-26)
+
+| Artefact | Summary |
+| --- | --- |
+| `0096_consent_enforcement.sql` | INSERT triggers on `workspace_observations` + `workspace_observation` evidence; effective-consent helper; no service-role bypass; capability CHECK |
+| App | `consent-errors.ts`; observe/contribution map DB consent denials to `consent_denied` |
+| Tests | `consent-enforcement.test.ts`; T6 live consent OFF/ON/override/revoke/cross-user/capability negatives |
+
+**Bypass audit (pre-0096):** Authenticated PostgREST own-row `ALL` on `workspace_observations` and direct `pi_evidence_records` insert with `source_type=workspace_observation` skipped app consent. Service-role likewise bypassed RLS (not triggers). After `0096`, both paths require active consent; other evidence sources unchanged.
+
+**Verification:** focused observation units PASS; migration applied to `jibmyxaldetyycmtlxet`; triggers + EXECUTE=false confirmed; advisors introduce no new consent-function findings.
+
+**Verdict:** DB consent enforcement shipped. T9 not started.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

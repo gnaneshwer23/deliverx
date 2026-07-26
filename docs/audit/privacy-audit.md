@@ -19,7 +19,7 @@ Pilot privacy design is coherent: **observation consent defaults OFF**, evidence
 | Account | email/auth | Supabase Auth |
 | Professional profile | onboarding, career prefs | Self |
 | Evidence ledger | `pi_evidence_*` | Self; confidentiality enum private default |
-| Observations | `workspace_observations` | Self; gated by consent in app |
+| Observations | `workspace_observations` | Self; gated by consent in app **and DB** (`0096`) |
 | Capability | ScoreRuns / judgements | Self |
 | Artefacts | versions + content | Self; private default |
 | Portfolio / claims | `vpp_*` | Self; share tokens filtered |
@@ -33,10 +33,10 @@ Pilot privacy design is coherent: **observation consent defaults OFF**, evidence
 
 ## Consent & observation
 
-- Missing `pi_observation_consent` row ⇒ **denied** (`consent.ts`)  
+- Missing `pi_observation_consent` row ⇒ **denied** (`consent.ts` + `0096` INSERT triggers)  
 - Column default `consented=false` (`0080`)  
 - Revoke stops new observation; does not rewrite ledger history (documented)  
-- Gap: DB does not enforce consent on insert (DB-P1-01)
+- Closed: DB enforces consent on insert (DB-P1-01 / `0096`)
 
 ---
 
@@ -94,7 +94,7 @@ Pilot privacy design is coherent: **observation consent defaults OFF**, evidence
 | ID | Sev | Finding | Disposition |
 | --- | --- | --- | --- |
 | PRIV-P0-01 | P0 | Trust-metadata self-write undermines “Verified” meaning for third parties | Same as SEC/DB-P0-02 |
-| PRIV-P1-01 | P1 | Observation consent app-only | DB trigger recommended |
+| PRIV-P1-01 | P1 | Observation consent app-only | **Closed (`0096`)** — INSERT triggers + no service-role bypass |
 | PRIV-P1-02 | P1 | TD-006 weak passwords | Founder |
 | PRIV-P2-01 | P2 | Tombstones + pre-pivot residue | Document retention; expand cascade if needed |
 | PRIV-P2-02 | P2 | Model provider sees professional context | DPA/ops; minimise payloads |

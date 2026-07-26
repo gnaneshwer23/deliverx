@@ -3,7 +3,7 @@
 **Date:** 2026-07-25  
 **Authority:** Build Charter · Current Scope · Product Bible `00`/`13`/`15` · specialist audits under `docs/audit/`  
 **Constraint:** Audit synthesis only — **no product code or migrations in this pass**  
-**Migration head:** `0095_db_trust_rail_lockdown.sql` (production, 2026-07-25)
+**Migration head:** `0096_consent_enforcement.sql` (production, 2026-07-26)
 **T8 status:** **Shipped + E2E-verified** (`0094`, attestation store, Verified gate). Batch 4 added `e2e/t8-attestation.test.ts` and wired it into the live release gate — the live attestor → Verified-on journey is now automated and passing (10/10 live). Prior "unverified E2E" caveat is closed.
 
 Severity (this roadmap):
@@ -49,7 +49,7 @@ Severity (this roadmap):
 | **R-P1-08 — Closed** | Workspace points at Command Centre | Undermines T7 demotion | UX P1-2 | Remove pointer; hide demoted routes | `workspace/page.tsx` | — | No Command Centre pitch on home | S | **Resolved — Batch 3** |
 | **R-P1-09 — Closed** | Launchpad vs Career Intelligence naming | Confused SKU | UX P1-5 | Hub/Launchpad single primary label | Hub, career-intelligence-app | — | Consistent product name | S | **Resolved — Batch 3** |
 | **R-P1-10 — Closed** | PI review “Seed sample finding” | Demo affordance in trust surface | UX P1-4 | Gate to admin/dev or remove | `review-queue-app.tsx` | — | No seed in production UX | S | **Resolved — Batch 3** |
-| **R-P1-11** | `workspace_observations` ALL without SQL consent | Consent bypass via PostgREST | DB-P1-01 | INSERT trigger requiring consented row | **`0096+`** after batch 1 | Batch 1 | No observe without consent row | M | After batch 1 |
+| **R-P1-11 — Closed** | `workspace_observations` ALL without SQL consent | Consent bypass via PostgREST | DB-P1-01 | INSERT trigger requiring consented row | **`0096_consent_enforcement.sql`** + app error mapping + T6 live RLS | Batch 1 | No observe without consent row; history retained on revoke | M | **Resolved — DB consent enforcement** |
 | **R-P1-12** | Judgements/snapshots INSERT own under invented ScoreRuns | Capability child fabrication | DB-P1-03 | Bind to engine role / signed run | Migration + persist | R-P0-01 | Child rows only via engine | M | With/after batch 1 |
 | **R-P1-13** | AI injection = regex lists; bypass flag | Jailbreak / skipped T4 guarantees | AI-P1-01/02 | Keep bypass off prod; expand patterns + red-team | `guardrails.ts`, `run.ts` | — | Bypass off; tests for known injections | M | Now (config) / later (red-team) |
 | **R-P1-14** | Empty citations allowed on coach outputs | Fake evidence-backed feel | AI-P1-03 | Require citations when evidence bound; UI “uncited” | Coach validators + UI | — | Uncited labelled | M | Soon |
@@ -121,14 +121,14 @@ Severity (this roadmap):
 ### 2. Core workflow fixes
 
 - T8 E2E harness (R-P1-02)  
-- Consent SQL (R-P1-11) + judgement binding (R-P1-12)  
+- Consent SQL (R-P1-11) — **shipped in `0096`** + judgement binding (R-P1-12)  
 - Readiness label audit (R-P1-16)  
 - Password-reset ops proof (R-P1-15)
 
 ### 3. Data / security fixes
 
 - Batch 1 migration `0095`  
-- Follow-on observation consent trigger  
+- Follow-on observation consent trigger — **shipped `0096`**  
 - Advisors: search_path, rate-limit explicit deny policies  
 - npm audit Next bump
 

@@ -20,6 +20,8 @@ export {
   isObservationAllowedFromConsent,
 } from "@/lib/workspace-observation/consent";
 
+export { isObservationConsentDbError } from "@/lib/workspace-observation/consent-errors";
+
 export {
   observeWorkspaceContribution,
 } from "@/lib/workspace-observation/observe";

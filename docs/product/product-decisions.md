@@ -368,6 +368,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26c — Observation consent enforced at Postgres
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Workspace observation consent (default OFF; project override wins; revoke blocks NEW rows only) is enforced at the database boundary via migration `0096_consent_enforcement.sql`. Direct PostgREST and service-role inserts of `workspace_observations` or `workspace_observation` evidence without active consent are denied. There is no service-role GUC bypass for observation creation. Observation remains distinct from evidence and capability. |
+| **Why** | Audit DB-P1-01 / R-P1-11 / PRIV-P1-01 — consent was app-only while RLS allowed own-row inserts. |
+| **Consequence** | App maps DB consent errors to `consent_denied`; T6 live RLS covers consent negatives; T9 remains blocked. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g.

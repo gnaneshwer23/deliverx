@@ -9,6 +9,7 @@ import type { ContributionKind } from "@/lib/professional-workspace/contribution
 import type { WorkspaceModuleId } from "@/lib/professional-workspace/modules";
 import type { WorkspaceProjectRef } from "@/lib/professional-workspace/project-context";
 import { getWorkspaceObservationConsent } from "@/lib/workspace-observation/consent";
+import { isObservationConsentDbError } from "@/lib/workspace-observation/consent-errors";
 import {
   getObservationContract,
   isSignificantContribution,
@@ -107,57 +108,65 @@ export async function observeWorkspaceContribution(
     note: "Observation only — Capability Engine interprets on next ScoreRun. No capability level assigned.",
   };
 
-  const ledger = await appendEvidence(supabase, {
-    userId: input.userId,
-    sourceType: "workspace_observation",
-    category: contract.sequenceKind === "artefact" ? "packaging" : "practice",
-    title: `Workspace: ${input.title}`,
-    summary: input.summary?.slice(0, 240) ?? `${contract.sequenceKind} in ${input.moduleId}`,
-    rawContent: {
-      note: "Workspace behavioural sequence observation — not a capability assignment.",
-      capabilityAssigned: false,
-      sequenceKind: contract.sequenceKind,
-      context,
-      behaviour,
-      outcome,
-      competencyHints: contract.competencyHints,
-      indicatorHints: contract.indicatorHints,
-      aiAuthored,
-      contributionId: input.contributionId,
-      payload: input.payload ?? {},
-    },
-    sourceRecordType: "workspace_contributions",
-    sourceRecordId: input.contributionId,
-    idempotencyKey: `workspace-obs:${input.contributionId}`,
-    confidentiality: "private",
-    consentStatus: "analysis_allowed",
-    provenance: {
-      actorType: aiAuthored ? "ai" : "user",
-      actorUserId: input.userId,
-      userContribution: {
-        ...(input.userContribution ?? {}),
-        kind: input.kind,
-        title: input.title,
-        summary: input.summary ?? null,
-      },
-      aiContribution: {
-        ...(input.aiContribution ?? {}),
-        ...(aiAuthored
-          ? {
-              note: "AI-authored draft elements preserved. No capability level written by observer.",
-            }
-          : {}),
-      },
-      promptSlug: aiAuthored ? "workspace-observation-ai" : null,
-      promptVersion: aiAuthored ? "workspace-obs-v1" : null,
-      rawRef: {
-        contributionId: input.contributionId,
-        consentId: consent.effective?.id ?? null,
-        moduleId: input.moduleId,
+  let ledger;
+  try {
+    ledger = await appendEvidence(supabase, {
+      userId: input.userId,
+      sourceType: "workspace_observation",
+      category: contract.sequenceKind === "artefact" ? "packaging" : "practice",
+      title: `Workspace: ${input.title}`,
+      summary: input.summary?.slice(0, 240) ?? `${contract.sequenceKind} in ${input.moduleId}`,
+      rawContent: {
+        note: "Workspace behavioural sequence observation — not a capability assignment.",
+        capabilityAssigned: false,
         sequenceKind: contract.sequenceKind,
+        context,
+        behaviour,
+        outcome,
+        competencyHints: contract.competencyHints,
+        indicatorHints: contract.indicatorHints,
+        aiAuthored,
+        contributionId: input.contributionId,
+        payload: input.payload ?? {},
       },
-    },
-  });
+      sourceRecordType: "workspace_contributions",
+      sourceRecordId: input.contributionId,
+      idempotencyKey: `workspace-obs:${input.contributionId}`,
+      confidentiality: "private",
+      consentStatus: "analysis_allowed",
+      provenance: {
+        actorType: aiAuthored ? "ai" : "user",
+        actorUserId: input.userId,
+        userContribution: {
+          ...(input.userContribution ?? {}),
+          kind: input.kind,
+          title: input.title,
+          summary: input.summary ?? null,
+        },
+        aiContribution: {
+          ...(input.aiContribution ?? {}),
+          ...(aiAuthored
+            ? {
+                note: "AI-authored draft elements preserved. No capability level written by observer.",
+              }
+            : {}),
+        },
+        promptSlug: aiAuthored ? "workspace-observation-ai" : null,
+        promptVersion: aiAuthored ? "workspace-obs-v1" : null,
+        rawRef: {
+          contributionId: input.contributionId,
+          consentId: consent.effective?.id ?? null,
+          moduleId: input.moduleId,
+          sequenceKind: contract.sequenceKind,
+        },
+      },
+    });
+  } catch (err) {
+    if (isObservationConsentDbError(err)) {
+      return { observed: false, reason: "consent_denied", capabilityAssigned: false };
+    }
+    throw err;
+  }
 
   const { data: observation, error: obsError } = await supabase
     .from("workspace_observations")
@@ -186,7 +195,12 @@ export async function observeWorkspaceContribution(
     .select("id")
     .single();
 
-  if (obsError) throw obsError;
+  if (obsError) {
+    if (isObservationConsentDbError(obsError)) {
+      return { observed: false, reason: "consent_denied", capabilityAssigned: false };
+    }
+    throw obsError;
+  }
 
   await supabase
     .from("workspace_contributions")

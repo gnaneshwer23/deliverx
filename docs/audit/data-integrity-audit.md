@@ -21,7 +21,7 @@ Person PI tables largely encode the intended domain separation (profile · claim
 | --- | --- | --- | --- |
 | Profile | `users`, `pi_onboarding_sessions`, aggregates | Yes | Soft identity; not capability |
 | Claim | SnapshotClaims / VPP narrative fields | Yes | Packaging, not ledger truth |
-| Observation | `workspace_observations`, AI observer drafts | Yes in types | App consent gate; DB `ALL` RLS allows insert without consent row |
+| Observation | `workspace_observations`, AI observer drafts | Yes in types | App + DB consent gate (`0096`); missing/revoked consent blocks NEW inserts |
 | Evidence | `pi_evidence_records` + provenance / transitions | Yes | Body append-only; status via transitions |
 | Capability | `pi_capability_score_runs` / judgements / snapshots | Yes | Judgements/snapshots immutable after write; **score runs writable** |
 | Recommendation | interventions, learning paths, AI outputs | Yes | Labelled drafts; notifications refuse capability fields |
@@ -46,7 +46,7 @@ Production: all listed PI / AI / artefact / VPP / org-structure tables have **RL
 | Learning ≠ capability | `CHECK (capability_assigned = false)` + `learning_not_capability = true` |
 | Outcomes never auto-verified | `CHECK (externally_verified = false)` + `capability_assigned = false` |
 | Artefact-cited evidence | `pi_evidence_provenance_artefact_version_check` |
-| Consent column default | `pi_observation_consent.consented default false`; missing row = deny in app |
+| Consent column default | `pi_observation_consent.consented default false`; missing row = deny in app **and DB** (`0096` INSERT triggers) |
 | Purge privileged | `pi_privacy_purge_person_data` anon/auth EXECUTE = **false**, service_role = **true** |
 | Anon SECURITY DEFINER | All inventoried definer funcs: anon EXECUTE = **false** |
 
@@ -80,7 +80,7 @@ Production: all listed PI / AI / artefact / VPP / org-structure tables have **RL
 
 | Question | Result | Severity |
 | --- | --- | --- |
-| Can observations silently become evidence? | App observation path dual-writes ledger only after consent; **DB does not require consent** for `workspace_observations` insert. Status `platform_verified` can be inserted on transitions via RLS without API guard. | **P0** (status) / **P1** (consent) |
+| Can observations silently become evidence? | App observation path dual-writes ledger only after consent; **DB requires consent** for `workspace_observations` and `workspace_observation` evidence inserts (`0096`). Status `platform_verified` elevated path closed by `0095`. | **Hold** (consent + elevated status) |
 | Do AI outputs lack provenance? | T4 `ai_interactions` logs model, prompt hash/version, tokens, latency, cost when `runAgent` persists. Legacy `/api/ai/*` paths may bypass if `DELIVERX_AI_ORCHESTRATION_BYPASS=1`. | P2 when bypass |
 | Can capability be assigned without evidence / engine? | **Yes via PostgREST:** `pi_capability_score_runs` policy `ALL` own-row; **no** immutability trigger on score runs. Judgements allow INSERT. App engine is not the only writer. | **P0** |
 | Can recommendations lack supporting evidence? | Allowed by design for coach drafts; contracts encourage citations but do not require non-empty citations. | Accepted / Low |
