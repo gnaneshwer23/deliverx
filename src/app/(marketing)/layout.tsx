@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { MarketingPageShell } from "@/components/marketing/marketing-layout";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { marketingFontClassName, mktSans } from "@/lib/marketing/marketing-fonts";
 
 const appUrl =
@@ -34,8 +36,17 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Shared marketing chrome — shell + sticky header live here so primary nav
+ * does not remount (and jump) between routes.
+ */
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
-    <div className={`${marketingFontClassName} ${mktSans.className}`}>{children}</div>
+    <div className={`${marketingFontClassName} ${mktSans.className}`}>
+      <MarketingPageShell>
+        <MarketingNav />
+        {children}
+      </MarketingPageShell>
+    </div>
   );
 }

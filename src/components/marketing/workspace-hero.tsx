@@ -14,7 +14,7 @@ export function WorkspaceHero({ content }: { content: ProductPageContent }) {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[var(--mkt-navh)]"
+      className="mkt-product-hero relative overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[var(--mkt-navh)]"
     >
       <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
       <div

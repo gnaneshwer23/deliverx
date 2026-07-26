@@ -3,10 +3,8 @@ import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import {
   MarketingContainer,
-  MarketingPageShell,
   MarketingSection,
 } from "@/components/marketing/marketing-layout";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingReveal } from "@/components/marketing/marketing-reveal";
 import {
   CAREER_PROGRESSION_LINE,
@@ -22,8 +20,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <MarketingPageShell>
-      <MarketingNav />
+    <>
       <main id="main-content">
         <MarketingSection
           tone="cream"
@@ -68,6 +65,6 @@ export default function AboutPage() {
           label: "Start Free",
         }}
       />
-    </MarketingPageShell>
+    </>
   );
 }

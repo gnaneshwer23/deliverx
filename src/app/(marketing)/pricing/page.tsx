@@ -8,11 +8,9 @@ import {
 } from "@/components/marketing/marketing-includes";
 import {
   MarketingContainer,
-  MarketingPageShell,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 import {
   MarketingHeroItem,
   MarketingHeroMotion,
@@ -126,9 +124,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 
 export default function PricingPage() {
   return (
-    <MarketingPageShell>
-      <MarketingNav primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: CAREER_BUNDLE.cta }} />
-
+    <>
       <main id="main-content">
         <section
           id="hero"
@@ -279,6 +275,6 @@ export default function PricingPage() {
           label: CAREER_BUNDLE.cta,
         }}
       />
-    </MarketingPageShell>
+    </>
   );
 }

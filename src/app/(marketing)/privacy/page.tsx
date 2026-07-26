@@ -1,10 +1,8 @@
 import Link from "next/link";
 import {
   MarketingContainer,
-  MarketingPageShell,
 } from "@/components/marketing/marketing-layout";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 
 export const metadata = {
   title: "Privacy Policy — DeliverX",
@@ -93,8 +91,7 @@ const sections = [
 
 export default function PrivacyPage() {
   return (
-    <MarketingPageShell>
-      <MarketingNav />
+    <>
       <main id="main-content" className="pt-[calc(var(--mkt-navh)+64px)] pb-24">
         <MarketingContainer className="max-w-2xl">
           <p className="font-[family-name:var(--font-mkt-mono)] text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--mkt-text3)]">
@@ -139,6 +136,6 @@ export default function PrivacyPage() {
         </MarketingContainer>
       </main>
       <MarketingFooter />
-    </MarketingPageShell>
+    </>
   );
 }

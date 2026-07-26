@@ -98,6 +98,11 @@ export type ProductPageContent = {
   };
 };
 
-export function productPageNav(currentPath: string) {
-  return PRIMARY_NAV.filter((link) => link.href !== currentPath);
+/**
+ * Primary marketing links for product pages.
+ * Always returns the full set — filtering the current route caused header
+ * width jumps when navigating between product pages.
+ */
+export function productPageNav() {
+  return PRIMARY_NAV;
 }

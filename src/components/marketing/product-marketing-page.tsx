@@ -3,11 +3,9 @@ import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import {
   MarketingContainer,
-  MarketingPageShell,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 import {
   MarketingHeroItem,
   MarketingHeroMotion,
@@ -17,11 +15,7 @@ import { LaunchpadHero } from "@/components/marketing/launchpad-hero";
 import { WorkspaceHero } from "@/components/marketing/workspace-hero";
 import { XperienceHero } from "@/components/marketing/xperience-hero";
 import { mktClass } from "@/lib/marketing/landing-theme";
-import {
-  productPageNav,
-  type ProductNarrativeSection,
-  type ProductPageContent,
-} from "@/lib/marketing/product-page";
+import type { ProductNarrativeSection, ProductPageContent } from "@/lib/marketing/product-page";
 
 function DefaultProductHero({ content }: { content: ProductPageContent }) {
   const secondary = content.secondaryCta ?? { href: "/how-it-works", label: "See how it works" };
@@ -29,7 +23,7 @@ function DefaultProductHero({ content }: { content: ProductPageContent }) {
   return (
     <section
       id="hero"
-      className="relative flex min-h-[min(72svh,640px)] flex-col justify-end overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:min-h-[min(78svh,720px)] md:pb-20"
+      className="mkt-product-hero relative flex flex-col justify-end overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[calc(var(--mkt-navh)+48px)] pb-16 md:pb-20"
     >
       <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
       <div
@@ -119,7 +113,6 @@ function NarrativeSection({
 }
 
 export function ProductMarketingPage({ content }: { content: ProductPageContent }) {
-  const nav = productPageNav(content.path);
   const bundleHref = content.pricing.bundleHref ?? "/pricing#bundle";
   const bundleLabel = content.pricing.bundleLabel ?? "Or get the Complete Journey";
   const finalSecondary = {
@@ -138,15 +131,7 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
     );
 
   return (
-    <MarketingPageShell>
-      <MarketingNav
-        links={nav}
-        primaryCta={{
-          href: content.primaryCta.href,
-          label: content.primaryCta.label,
-        }}
-      />
-
+    <>
       <main id="main-content">
         {hero}
 
@@ -261,6 +246,6 @@ export function ProductMarketingPage({ content }: { content: ProductPageContent 
       </main>
 
       <MarketingFooter cta={content.footerCta} />
-    </MarketingPageShell>
+    </>
   );
 }

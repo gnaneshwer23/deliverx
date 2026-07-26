@@ -116,8 +116,8 @@ export function ProductDashboardMock({ variant }: { variant: ProductMockVariant 
 
   return (
     <ProductChromeFrame variant={variant}>
-      <div className="flex min-h-[340px] sm:min-h-[380px]">
-        <aside className="hidden w-[108px] shrink-0 flex-col gap-1 border-r border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 p-2.5 sm:flex">
+      <div className="flex min-h-[300px] sm:min-h-[340px] md:min-h-[380px]">
+        <aside className="hidden w-[100px] shrink-0 flex-col gap-1 border-r border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 p-2.5 md:flex lg:w-[108px]">
           <div
             className="mb-2 flex size-7 items-center justify-center rounded-lg text-[0.6rem] font-semibold text-white"
             style={{ background: cfg.accent }}

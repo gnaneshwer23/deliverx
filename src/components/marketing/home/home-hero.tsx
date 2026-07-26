@@ -14,7 +14,7 @@ export function HomeHero() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[var(--mkt-navh)]"
+      className="mkt-product-hero relative overflow-hidden bg-gradient-to-b from-[var(--mkt-mist)] via-[var(--mkt-ink)] to-[var(--mkt-cream)] pt-[var(--mkt-navh)]"
     >
       <div className="pointer-events-none absolute inset-0 z-0 mkt-hero-mesh" aria-hidden />
       <MarketingContainer className="relative z-[1] !max-w-[1180px] py-14 md:py-20 lg:py-24">

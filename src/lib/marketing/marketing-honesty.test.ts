@@ -27,6 +27,8 @@ import {
 import { HOW_IT_WORKS_PAGE } from "@/lib/marketing/how-it-works-data";
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 import { PILOT_QUOTE } from "@/lib/marketing/landing-data";
+import { productPageNav } from "@/lib/marketing/product-page";
+import { PRIMARY_NAV } from "@/lib/marketing/suite-data";
 import { TEAM_COPILOT_PAGE } from "@/lib/marketing/team-copilot-data";
 import { XPERIENCE_PAGE } from "@/lib/marketing/xperience-page";
 
@@ -195,6 +197,17 @@ describe("marketing honesty — footer + shipped sync", () => {
     expect(workspace).toMatch(/not an enterprise mission-control/);
     expect(TEAM_COPILOT_INCLUDES.join(" | ").toLowerCase()).not.toMatch(/\binsights\b/);
     expect(TEAM_COPILOT_INCLUDES.join(" | ").toLowerCase()).toMatch(/mission-control nav opt-in/);
+  });
+  it("primary nav stays complete across product pages (no filtered jump)", () => {
+    expect(PRIMARY_NAV.map((l) => l.href)).toEqual([
+      "/how-it-works",
+      "/experience",
+      "/launchpad",
+      "/professional-workspace",
+    ]);
+    expect(productPageNav()).toEqual(PRIMARY_NAV);
+    expect(productPageNav()).toHaveLength(PRIMARY_NAV.length);
+    expect(productPageNav().map((l) => l.label)).toContain("Experience");
   });
 });
 

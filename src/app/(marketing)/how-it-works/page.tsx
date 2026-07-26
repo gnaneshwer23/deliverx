@@ -5,16 +5,13 @@ import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import {
   MarketingContainer,
-  MarketingPageShell,
   MarketingSection,
   MarketingSectionIntro,
 } from "@/components/marketing/marketing-layout";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingReveal } from "@/components/marketing/marketing-reveal";
 import { ProductDashboardMock } from "@/components/marketing/product-dashboard-mock";
 import { HOW_IT_WORKS_PAGE } from "@/lib/marketing/how-it-works-data";
 import { mktClass } from "@/lib/marketing/landing-theme";
-import { productPageNav } from "@/lib/marketing/product-page";
 
 export const metadata: Metadata = {
   title: "How it works — DeliverX",
@@ -67,18 +64,9 @@ function NarrativeBlock({
 
 export default function HowItWorksPage() {
   const content = HOW_IT_WORKS_PAGE;
-  const nav = productPageNav(content.path);
 
   return (
-    <MarketingPageShell>
-      <MarketingNav
-        links={nav}
-        primaryCta={{
-          href: content.primaryCta.href,
-          label: content.primaryCta.label,
-        }}
-      />
-
+    <>
       <main id="main-content">
         <HowItWorksHero content={content} />
 
@@ -342,6 +330,6 @@ export default function HowItWorksPage() {
       </main>
 
       <MarketingFooter cta={content.footerCta} />
-    </MarketingPageShell>
+    </>
   );
 }

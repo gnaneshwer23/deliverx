@@ -14,8 +14,6 @@ import {
   HomeStories,
 } from "@/components/marketing/home/home-sections";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
-import { MarketingPageShell } from "@/components/marketing/marketing-layout";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 import {
   CAREER_PROGRESSION_LINE,
   COMPANY_MISSION,
@@ -33,9 +31,7 @@ export const metadata: Metadata = {
 
 export default function SuiteHomePage() {
   return (
-    <MarketingPageShell>
-      <MarketingNav primaryCta={{ href: "/signup", label: "Start" }} />
-
+    <>
       <main id="main-content">
         <HomeHero />
         <HomeBuiltFor />
@@ -52,6 +48,6 @@ export default function SuiteHomePage() {
       </main>
 
       <MarketingFooter cta={null} />
-    </MarketingPageShell>
+    </>
   );
 }

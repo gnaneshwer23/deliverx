@@ -3,10 +3,8 @@ import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import {
   MarketingContainer,
-  MarketingPageShell,
   MarketingSection,
 } from "@/components/marketing/marketing-layout";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { MarketingReveal } from "@/components/marketing/marketing-reveal";
 import { COMPANY_MISSION } from "@/lib/marketing/career-suite";
 import { mktClass } from "@/lib/marketing/landing-theme";
@@ -46,8 +44,7 @@ const RESOURCES = [
 
 export default function ResourcesPage() {
   return (
-    <MarketingPageShell>
-      <MarketingNav />
+    <>
       <main id="main-content">
         <MarketingSection
           tone="cream"
@@ -99,6 +96,6 @@ export default function ResourcesPage() {
           label: "Start Free",
         }}
       />
-    </MarketingPageShell>
+    </>
   );
 }

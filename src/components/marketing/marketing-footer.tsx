@@ -101,8 +101,8 @@ export function MarketingFooter({
       ) : null}
 
       <MarketingContainer className="py-12 md:py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.35fr)_repeat(4,minmax(0,1fr))] lg:gap-10 xl:gap-14">
-          <div className="sm:col-span-2 lg:col-span-1">
+        <div className="grid gap-10 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] xl:gap-12">
+          <div className="sm:col-span-2 xl:col-span-1">
             <MarketingLogo light />
             <p
               className={`mt-5 max-w-sm text-[1.05rem] leading-snug tracking-[-0.015em] text-white ${mktClass.serif}`}
@@ -113,7 +113,7 @@ export function MarketingFooter({
               DeliverX Ltd — an evidence-driven professional growth platform. Experience, Launchpad
               and Professional Workspace share one Professional Intelligence record.
             </p>
-            <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2 lg:hidden" aria-label="Legal">
+            <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2 xl:hidden" aria-label="Legal">
               {FOOTER_LEGAL_LINKS.map((link) => (
                 <li key={link.href}>
                   <FooterLink {...link} />
@@ -132,10 +132,10 @@ export function MarketingFooter({
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 md:flex-row md:items-center md:justify-between">
+        <div className="mt-12 flex flex-col gap-5 border-t border-white/10 pt-8 md:flex-row md:items-start md:justify-between lg:items-center">
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2">
             <p className="text-xs text-white/45">© 2026 DeliverX Ltd. All rights reserved.</p>
-            <ul className="hidden flex-wrap gap-x-4 gap-y-2 lg:flex" aria-label="Legal">
+            <ul className="hidden flex-wrap gap-x-4 gap-y-2 xl:flex" aria-label="Legal">
               {FOOTER_LEGAL_LINKS.map((link) => (
                 <li key={`bar-${link.href}`}>
                   <FooterLink {...link} />
@@ -143,14 +143,16 @@ export function MarketingFooter({
               ))}
             </ul>
           </div>
-          <TrustChecklist
-            light
-            items={[
-              "Privacy export and delete",
-              "Observation consent default OFF",
-              "Human approval on AI changes",
-            ]}
-          />
+          <div className="min-w-0 max-w-full md:max-w-md lg:max-w-none">
+            <TrustChecklist
+              light
+              items={[
+                "Privacy export and delete",
+                "Observation consent default OFF",
+                "Human approval on AI changes",
+              ]}
+            />
+          </div>
         </div>
       </MarketingContainer>
     </footer>

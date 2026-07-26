@@ -24,17 +24,20 @@ export function MarketingReveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0.92, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-72px" }}
-      transition={{ duration: 0.55, delay, ease }}
+      viewport={{ once: true, margin: "-48px", amount: 0.15 }}
+      transition={{ duration: 0.45, delay, ease }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** Staggered hero entrance for brand-first compositions. */
+/**
+ * Staggered hero entrance — keep content painted (no opacity:0) so route
+ * transitions and slow hydration never flash a blank hero.
+ */
 export function MarketingHeroMotion({
   children,
   className = "",
@@ -55,7 +58,7 @@ export function MarketingHeroMotion({
       animate="visible"
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: 0.1, delayChildren: 0.06 } },
+        visible: { transition: { staggerChildren: 0.06, delayChildren: 0.02 } },
       }}
     >
       {children}
@@ -80,8 +83,8 @@ export function MarketingHeroItem({
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 16 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+        hidden: { opacity: 1, y: 10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease } },
       }}
     >
       {children}

@@ -627,10 +627,18 @@
   }
 }
 
-/* Marketing landing — soft, airy SaaS polish */
-.marketing-page main > section:not(#hero):not(#quick-start) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 480px;
+/* Marketing landing — soft, airy SaaS polish.
+   Avoid content-visibility on marketing sections: estimated intrinsic
+   sizes caused scroll/header jumps when real section height differed. */
+
+.mkt-product-hero {
+  min-height: min(70svh, 620px);
+}
+
+@media (min-width: 1024px) {
+  .mkt-product-hero {
+    min-height: min(78svh, 720px);
+  }
 }
 
 .mkt-hero-mesh {
