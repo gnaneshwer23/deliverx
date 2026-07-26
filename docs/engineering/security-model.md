@@ -82,6 +82,15 @@ Known residual: anonymous RSC often lacks `x-pathname` when proxy anon guards do
 - `pi_ai_usage_daily` is `security_invoker`, so authenticated reads remain constrained by underlying `ai_interactions` RLS
 - T1 export/purge includes notifications; the purge RPC remains `service_role` only after the T5 wrapper
 
+### Recommendations (B2)
+
+- `pi_recommendations` / `pi_recommendation_evidence` / `pi_recommendation_events` are self-only (SELECT/INSERT; UPDATE on recommendations only; no authenticated DELETE)
+- Events and evidence links revoke UPDATE/DELETE from authenticated — append-only audit and citations
+- DB trigger enforces the deterministic lifecycle and blocks mutation of title/rationale/source after insert
+- `capability_assigned` and `verification_changed` are CHECKed false; application guards refuse payloads that claim capability or Verified
+- Feature flag `DELIVERX_RECOMMENDATION_SM` defaults off; when off the API returns empty/`enabled:false` and refuses transitions
+- T1 export/purge includes all three tables; B2 purge wrapper remains `service_role` only
+
 ### Organisation structure (T7)
 
 - `departments` / `teams` — org-scoped RLS (`organisation_id = current_org_id()`); SELECT for org members; INSERT/UPDATE/DELETE for org admins (`is_org_admin`)

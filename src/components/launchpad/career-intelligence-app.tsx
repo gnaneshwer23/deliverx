@@ -9,6 +9,7 @@ import {
   type RequirementSupportLevel,
 } from "@/lib/career-intelligence/types";
 import { explainReadiness } from "@/lib/career-intelligence/workflows";
+import { RecommendationsPanel } from "@/components/pi/recommendations-panel";
 import { readinessSourceChip } from "@/lib/career-intelligence/readiness-honesty";
 import {
   readinessKindAbbrev,
@@ -396,6 +397,16 @@ export function CareerIntelligenceApp({
               <p className="mt-1 text-sm text-[#4A4A45]">
                 Which Experience would close the most important gap?
               </p>
+              <div className="mt-4 rounded-xl border border-[#E5E2D9] bg-white p-4">
+                <p className="text-sm font-medium">Recommended next actions</p>
+                <p className="mt-1 text-xs text-[#6B6B64]">
+                  From your latest capability assessment, with the reason retained. Accepting or
+                  dismissing never changes your capability record.
+                </p>
+                <div className="mt-3">
+                  <RecommendationsPanel />
+                </div>
+              </div>
               <ul className="mt-4 space-y-3">
                 {snap.roadmap.map((a) => (
                   <li key={a.id} className="rounded-lg border border-[#E5E2D9] bg-white p-4">

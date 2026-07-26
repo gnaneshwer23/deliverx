@@ -49,6 +49,7 @@ This document lists **PI-relevant and adjacent** contracts. The repo also contai
 | GET, POST | `/api/pi/review/admin` | Admin | Admin review queue |
 | GET, POST | `/api/pi/review/notifications` | User | Legacy compatibility route backed by the T5 consolidated inbox |
 | GET, PATCH | `/api/pi/notifications` | User | T5 — list own contextual in-app notifications; mark selected or all read; idempotently sync privacy domain events |
+| GET, POST, PATCH | `/api/pi/recommendations` | User | B2 — list/sync own recommendations from latest capability snapshot; accept / dismiss / complete / mark viewed. Flag `DELIVERX_RECOMMENDATION_SM` (default off). Never assigns capability or Verified. |
 | GET, POST | `/api/pi/privacy/export` | User | T1 — person PI export JSON; GET lists requests |
 | POST | `/api/pi/privacy/delete` | User | T1 — re-auth + confirm phrase; purges person PI |
 | GET, POST | `/api/pi/artefacts` | User | T3 — list / create artefact (optional initial version); private by default |

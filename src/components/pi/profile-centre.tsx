@@ -12,6 +12,7 @@ import {
 } from "@/lib/capability-engine/confidence-bands";
 import { DevelopmentLoopPanel } from "@/components/pi/development-loop-panel";
 import { NotificationInbox } from "@/components/pi/notification-inbox";
+import { RecommendationsPanel } from "@/components/pi/recommendations-panel";
 
 export function ProfileCentre() {
   const [profile, setProfile] = useState<PiProfileAggregate | null>(null);
@@ -393,6 +394,14 @@ export function ProfileCentre() {
           ) : (
             <p className="text-sm text-[#6B6B64]">No next action yet.</p>
           )}
+          <div className="mt-5">
+            <p className="mb-2 text-xs font-medium text-[#1A1A18]">Recommended next actions</p>
+            <p className="mb-3 text-[11px] text-[#6B6B64]">
+              Generated from your latest capability assessment with the reason retained. Accept
+              or dismiss — your choice is kept, and nothing changes your capability record.
+            </p>
+            <RecommendationsPanel />
+          </div>
           <div className="mt-5">
             <p className="mb-2 text-xs font-medium text-[#1A1A18]">Development loop</p>
             <p className="mb-3 text-[11px] text-[#6B6B64]">

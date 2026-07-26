@@ -149,7 +149,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | ID | Item | Status | Verdict | Effort | Notes |
 | --- | --- | --- | --- | --- | --- |
 | **PACK-E1** | Optional copy of six docs into `docs/build-pack/` + SoT note | **Open** — founder OK | Defer | S | Docs-only; pack Index requests path; Bible remains higher SoT than pack |
-| **PACK-E2** | Formal recommendation entity + state machine (generated→viewed→accepted/dismissed) | **Open** | Modify / founder OK | M | FR-010 / TRD SM; today Profile/Career CTAs only |
+| **PACK-E2** | Formal recommendation entity + state machine (generated→viewed→accepted/dismissed) | **Done (B2)** | Keep | M | `0098` + `src/lib/recommendations/`; flag `DELIVERX_RECOMMENDATION_SM`; PD-2026-07-26f |
 | **PACK-E3** | Documented, versioned confidence-band algorithm (Schema §5.1) | **Done (B1)** | Keep | S | `confidence-bands@2026.1` — algorithm doc + typed SoT + UI why-copy |
 | **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Open** | Defer | M | Day-1 + catalogue already prove loop; ceremony is UX depth |
 | **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Open** | Defer — clarify vs R-P2-09 | M | Pack centres human reviewer; shipped Verified = T8 attestation |

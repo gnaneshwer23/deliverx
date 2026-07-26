@@ -1,3 +1,7 @@
+## 2026-07-26 — B2: Recommendation state machine (founder-authorized)
+
+Founder reply `B2` (after being told B2 requires FD-PACK-6) authorized six-doc phase B2 and closed FD-PACK-6 (PD-2026-07-26f). Shipped migration `0098_pi_recommendations.sql` (entity + evidence links + append-only events; self-only RLS; immutable rationale; privacy purge wrapper over T9); typed SoT `src/lib/recommendations/` (lifecycle `generated → viewed → accepted | dismissed`, plus `accepted → completed | dismissed`); deterministic generation from SnapshotClaims; `GET/POST/PATCH /api/pi/recommendations`; Profile + Career next-action panels; flag `DELIVERX_RECOMMENDATION_SM` default off. Accept/dismiss never mutate capability or Verified. Focused 15 tests + `test:pi` 320 PASS; release-gate PASS; local SQL validation PASS. Production apply of `0098` + flag enablement remain founder/ops. Next candidate: B3 (FD-PACK-7 only for PostHog sink).
+
 ## 2026-07-26 — B1: Confidence-band algorithm (founder-authorized)
 
 Founder utterance `Start Building B1` authorized six-doc phase B1. Shipped versioned algorithm `confidence-bands@2026.1` (`docs/engineering/confidence-band-algorithm.md`); typed SoT `src/lib/capability-engine/confidence-bands.ts` (mapping + labels + why-copy); rubric-judge uses `mapSignalsToCapabilityBand`; SnapshotClaims / Profile / Career expose `confidenceBandAlgorithmVersion`; Profile, Career, Portfolio, Evidence surfaces show “Why this band”; unit tests + `test:pi`. No DB migration. Does not light Verified. Next candidate: B2 (needs FD-PACK-6).

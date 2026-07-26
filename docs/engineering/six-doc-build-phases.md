@@ -7,9 +7,9 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1 shipped** (founder `Start Building B1`, 2026-07-26). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1 and B2 shipped** (founder `Start Building B1`; founder reply `B2` = FD-PACK-6 / PD-2026-07-26f, 2026-07-26). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified):** `supabase/migrations/0097_stripe_entitlements.sql`. New migrations would continue at `0098+`.
+**Migration head (verified in-repo):** `supabase/migrations/0098_pi_recommendations.sql`. New migrations continue at `0099+`. Production apply of `0098` is a founder/ops step if the linked Supabase project has not yet received it.
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -42,9 +42,9 @@
 
 | Status | Count | Notes |
 | --- | ---: | --- |
-| Built | 28 | Core evidence loop + trust rails + T0–T9 code |
-| Partial | 28 | Remains mapped into Bn or remaining-work A/B |
-| Missing | 9 | Aligns with PACK-E1…E9 |
+| Built | 30 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendation SM |
+| Partial | 27 | Remains mapped into Bn or remaining-work A/B |
+| Missing | 8 | Aligns with PACK-E1, E4–E9 (E2/E3 done) |
 | Conflicts | 5 | Reject / modify-with-PD |
 | Out of charter | 4 | Marketplace, third SKU depth, multi-profession, microservices |
 | **Total material rows** | **74** | De-duplicated across docs 01–06 |
@@ -68,13 +68,13 @@ Evidence paths verified present unless noted.
 | FR-007 | Reviewer/controlled rule verifies → evidence | Partial | Built: Capability Engine persist; consent `0096`; T8 attestation `0094` for Verified. Remainder: human reviewer queue thin (`0073`, `src/lib/pi-review/`) — PACK-E5 | Modify |
 | FR-008 | Evidence maps to capability definitions | Built | ScoreRuns pin `pm-core@2026.1`; `src/lib/capability-engine/` | Keep |
 | FR-009 | PI updates with explanation | Built | Growth reports; SnapshotClaims; AI citations `src/lib/ai-orchestration/citations.ts` | Keep |
-| FR-010 | Next action with rationale (goal/evidence/gap) | Partial | Built: Profile/Career CTAs; capability snapshot recommendations fields. Remainder: formal recommendation SM (PACK-E2) | Modify |
+| FR-010 | Next action with rationale (goal/evidence/gap) | **Built** | Formal SM `0098` + `src/lib/recommendations/`; Profile/Career panels (PACK-E2 / B2) | Keep |
 | FR-011 | Admin manages org/project config | Partial | Built: thin admin framework seed. Remainder: ops console depth | Defer |
 | FR-012 | Launchpad consumes evidence | Partial | Built: T7 readiness honesty; `/launchpad/app`, `/career`, `/portfolio`. Remainder: CV/interview depth; marketplace deferred | Keep |
 | BR-001 | Observation ≠ evidence until verification | Built | `0095`, `0096`; observation modules | Keep |
 | BR-002 | AI may observe/feedback; not high-confidence verified evidence | Built | AI orchestration `0090`; citations; Capability Engine–only writes | Keep |
 | BR-003 | Evidence stores provenance/context/verifier | Built | Evidence ledger + attestation provenance | Keep |
-| BR-004 | Capability from evidence; explainable recommendations | Built / Partial | Capability path Built; recommendation SM Partial (FR-010) | Keep |
+| BR-004 | Capability from evidence; explainable recommendations | Built | Capability path + recommendation SM (FR-010 / B2) | Keep |
 | BR-005 | User visibility control | Built | Privacy settings; export/delete `0086` | Keep |
 | BR-006 | No marketing of mocked/unbuilt as available | Partial | Batch 2 honesty; residual matrix copy items | Keep |
 | NFR-SEC | RLS, least privilege, secrets, rate limits | Partial | Built: RLS/trust rails. Remainder: PI API rate limit R-P2-06; CI secret scanning when TD-018 | Keep |
@@ -97,7 +97,7 @@ Evidence paths verified present unless noted.
 | TRD-AI-AGENTS | Manager/Stakeholder/Observer; structured + provenance | Built | `0090`; citations enforcement | Keep |
 | TRD-AI-BOUND | Agents propose; verification creates evidence | Built | Consent + engine + T8 rules | Keep |
 | TRD-SM-ARTEFACT | draft→submitted→superseded immutable | Built | `0088` | Keep |
-| TRD-SM-REC | Recommendation generated→viewed→accepted/dismissed | Missing | No first-class recommendation entity SM (PACK-E2) | Modify |
+| TRD-SM-REC | Recommendation generated→viewed→accepted/dismissed | **Built** | `0098` + typed SM; accepted→completed|dismissed for close-out (PACK-E2 / B2) | Keep |
 | TRD-SM-ACTIVITY | Activity + reviewer state machine | Partial | Experience/workspace models differ; human under_review path thin | Modify |
 | TRD-SEC-RLS | RLS + service-role server-only | Built | `0092`/`0095`; T6 security | Keep |
 | TRD-SEC-RATE | Rate limits auth/AI/uploads | Partial | R-P2-06 open | Keep |
@@ -184,7 +184,7 @@ Evidence paths verified present unless noted.
 | --- | --- | --- | --- | --- |
 | **B0** | Archive pack into `docs/build-pack/` + advisory SoT note | S | Index / IMPL-PATH | FD-PACK-1/2 (optional) |
 | **B1** | Document + label versioned confidence-band algorithm | S · **Shipped** | Schema 5.1 / SCH-BANDS / explainability | — |
-| **B2** | Formal recommendation entity + state machine | M | FR-010 / TRD-SM-REC / M7 “next action” | FD-PACK-6 |
+| **B2** | Formal recommendation entity + state machine | M · **Shipped** | FR-010 / TRD-SM-REC / M7 “next action” | — |
 | **B3** | Pilot KPI event layer (provider-agnostic; PostHog optional) | M | METRICS / NFR-OBS / PACK-E8 | FD-PACK-7 for PostHog sink only |
 | **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M | FR-007 remainder / FLOW-REVIEWER / M5 review | FD-PACK-5 |
 | **B5** | Onboarding shape (keep 6-step **or** rebuild toward 8-step) | M | FR-003 / UX-ONB-8 / M3 | FD-PACK-3 |
@@ -235,23 +235,25 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B2 — Recommendation state machine
+### B2 — Recommendation state machine (**shipped** 2026-07-26)
 
 1. **Objective / value:** Explainable, dismissible next actions with retained rationale (FR-010 literal).  
 2. **IDs:** FR-010, TRD-SM-REC, PACK-E2, UX-HOME (≤3 recs).  
 3. **Reuse:** Capability snapshot `recommendations`, Career matching recommendations, Profile CTAs.  
 4. **Code areas:** `src/lib/recommendations/` (new), Profile/Hub surfaces, notifications optional.  
-5. **DB:** `0098` or `0099_pi_recommendations.sql` — entity + status enum + evidence link table; RLS self-only; append-only rationale.  
-6. **APIs:** `GET/POST/PATCH /api/pi/recommendations` (list, accept, dismiss, complete).  
-7. **AI:** Optional wording assist only; outputs must cite goal/evidence/gap IDs; no capability writes.  
-8. **UX:** Hub/Profile “next actions” with why + accept/dismiss.  
-9. **Deps/risks:** Must not mutate verified evidence; recommendations reversible. Depends on B1 if bands cited.  
-10. **AC/tests:** State transition unit tests; RLS negatives; `test:pi`; release-gate if ledger-adjacent.  
+5. **DB:** `0098_pi_recommendations.sql` — entity + status enum + evidence link table + append-only events; RLS self-only; immutable rationale.  
+6. **APIs:** `GET/POST/PATCH /api/pi/recommendations` (list/sync, accept, dismiss, complete, viewed).  
+7. **AI:** None in this slice — generation is deterministic from SnapshotClaims; no capability writes.  
+8. **UX:** Profile + Career “Recommended next actions” with why + accept/dismiss.  
+9. **Deps/risks:** Must not mutate verified evidence; recommendations reversible. Depends on B1 if bands cited (payload may include band algorithm version).  
+10. **AC/tests:** State transition unit tests; SQL contract / RLS negatives; `test:pi`; release-gate PASS.  
 11. **Flag:** `DELIVERX_RECOMMENDATION_SM=on` default off until pilot.  
-12. **DoD:** SM persisted; UI wired; dismiss does not alter evidence; tests pass.  
-13. **Size / approval:** M · **needs FD-PACK-6**.
+12. **DoD:** **Met** — SM persisted; UI wired; dismiss does not alter evidence; tests pass.  
+13. **Size / approval:** M · founder reply `B2` = **FD-PACK-6** (PD-2026-07-26f).
 
 **Pack theme:** M7 next-action / TRD recommendation SM.
+
+**Ship artefact:** Lifecycle `generated → viewed → accepted | dismissed` (+ `accepted → completed | dismissed`); migration `0098`.
 
 ---
 
@@ -406,7 +408,7 @@ Evidence paths verified present unless noted.
 | FD-PACK-3 | Keep 6-step vs 8-step onboarding | Keep 6-step | B5 |
 | FD-PACK-4 | Xperience entry ceremony vs Day-1 enough | Day-1 enough | B6 |
 | FD-PACK-5 | Human reviewer ops path (non-Verified)? | Leave thin | B4 |
-| FD-PACK-6 | Formal recommendation SM now? | Defer | B2 |
+| FD-PACK-6 | Formal recommendation SM now? | **Settled — yes (PD-2026-07-26f)** | — |
 | FD-PACK-7 | PostHog vs Vercel Analytics | Stay Vercel | B3 PostHog sink |
 | FD-PACK-8 | Global search/help (no Insights product)? | Defer search | B7 |
 
@@ -437,11 +439,11 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1 shipped.** Next eng candidate: **B2 (recommendation state machine)** — only with **FD-PACK-6**.
+**B1 and B2 shipped.** Next eng candidate: **B3 (pilot KPI instrumentation)** — Vercel-only path can proceed without FD-PACK-7; PostHog sink needs **FD-PACK-7**.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
-Do **not** start B2–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
+Do **not** start B4–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
 
 ---
 

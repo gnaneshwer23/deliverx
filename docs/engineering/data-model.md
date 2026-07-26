@@ -157,6 +157,15 @@ erDiagram
 - `pi_ai_usage_daily` — `security_invoker` daily interaction/token/cost/latency read model; underlying `ai_interactions` self-only RLS remains authoritative
 - Purge/export cascade includes `pi_notifications`; the service-role-only privacy RPC wrapper deletes it before domain events
 
+### Recommendations — `0098` (B2)
+
+- `pi_recommendations` — canonical Professional Intelligence next-action entity; status lifecycle `generated → viewed → accepted | dismissed` (+ `accepted → completed | dismissed`); mandatory non-empty `rationale`; internal `href`; `(user_id, dedupe_key)` idempotency; `capability_assigned` / `verification_changed` CHECKed false
+- `pi_recommendation_evidence` — recommendation → evidence/claim reference links (citations kept verbatim)
+- `pi_recommendation_events` — append-only lifecycle audit (authenticated UPDATE/DELETE revoked); insert/update triggers write events; core fields (title/rationale/source) immutable after insert
+- Typed SoT: `src/lib/recommendations/`; generation is deterministic from SnapshotClaims (no AI capability writes)
+- Feature flag `DELIVERX_RECOMMENDATION_SM` (default off) gates API/UI surfaces
+- Purge/export cascade includes all three tables; B2 privacy RPC wrapper deletes them before the T9 cascade
+
 ### SECURITY DEFINER grant hardening — `0092`
 
 - Anonymous EXECUTE is false for every production SECURITY DEFINER function

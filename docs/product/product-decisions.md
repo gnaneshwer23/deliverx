@@ -407,13 +407,26 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26f — FD-PACK-6 approved; B2 recommendation state machine
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder reply **`B2`** (after being told B2 requires FD-PACK-6) is treated as **explicit approval of FD-PACK-6** and authorization to build six-doc phase **B2**. Ship a canonical Professional Intelligence recommendation entity with lifecycle **`generated → viewed → accepted \| dismissed`**, plus **`accepted → completed \| dismissed`** so an accepted next action can be closed without silently mutating capability. One typed SoT (`src/lib/recommendations/`); products consume it and must not invent parallel recommendation truth. |
+| **Chosen behavior** | Materialise recommendations from the latest capability snapshot (rationale + evidence references retained). User actions: mark viewed, accept, dismiss, complete. Accepting records intent and offers a deterministic internal `href` — it does **not** create plans, write capability, or light Verified. Feature flag `DELIVERX_RECOMMENDATION_SM` defaults **off** until pilot. Append-only `pi_recommendation_events` audit. Self-only RLS. Migration `0098_pi_recommendations.sql`. |
+| **Why** | FR-010 / TRD-SM-REC / PACK-E2 require explainable, dismissible next actions with retained rationale; Profile/Career CTAs alone were Partial. |
+| **Consequence** | B2 authorized and shipped under this decision. FD-PACK-6 closes. Remaining FD-PACK-* stay pending. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
-Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1 shipped**; no Bn beyond B1 should start without the matching decision.
+Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1 and B2 shipped**; no Bn beyond those should start without the matching decision.
 
 | ID | Decision | Default if silent | Blocks |
 | --- | --- | --- | --- |
@@ -422,8 +435,8 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-3** | Keep shipped 6-step PI onboarding vs rebuild toward pack 8-step conversation? | Keep 6-step | B5 |
 | **FD-PACK-4** | Invest in Xperience entry ceremony vs Day-1 sufficiency for pilot? | Day-1 enough | B6 |
 | **FD-PACK-5** | Human reviewer queue as pilot ops path (**not** Verified badge path)? | Leave thin; T8 = Verified | B4 |
-| **FD-PACK-6** | Formal recommendation state machine (FR-010) now? | Defer; keep CTAs | B2 |
+| **FD-PACK-6** | Formal recommendation state machine (FR-010) now? | **Settled — yes (PD-2026-07-26f)** | — |
 | **FD-PACK-7** | PostHog vs stay on Vercel Analytics for pilot KPIs? | Stay Vercel; PostHog optional later | B3 PostHog sink |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | Defer search | B7 |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**.
