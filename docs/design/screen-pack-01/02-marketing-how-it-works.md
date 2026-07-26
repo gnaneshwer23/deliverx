@@ -1,68 +1,69 @@
 # 02 — Marketing: How It Works
 
-**Implementation status:** **Pack-1 implementable now**
+**Implementation status:** **Shipped** (visual parity with product marketing pages)
 
 ## Screen: How DeliverX works
 
-**Product area:** Marketing
-**Route:** `/how-it-works` (legacy `/solutions` permanently redirects here)
-**Primary user:** Professional comparing DeliverX with courses, simulations and career tools
+**Product area:** Marketing  
+**Route:** `/how-it-works` (legacy `/solutions` permanently redirects here; `#journey` and `#workflow` anchors retained)  
+**Primary user:** Professional comparing DeliverX with courses, simulations and career tools  
 **Purpose:** Explain the complete evidence lifecycle without turning it into a technical architecture diagram.
 
-**Primary user question:** “What will I actually do, and what will I have afterwards?”
+**Primary user question:** “What will I actually do, and what will I have afterwards?”  
 **Immediate understanding:** I map a direction, work in a realistic context, retain evidence, receive explainable judgements, and use them in Experience, Launchpad and Workspace.
 
-**Primary action:** Start your experience
-**Secondary action:** Explore Professional Intelligence
-**Required data / source / permissions:** Static product truth from Product Bible; no auth; no private profile examples; illustrative artefacts must be labelled.
-**Layout:** Header; outcome-led hero; five-step lifecycle; evidence-source explainer; product hand-offs; example record; FAQ; CTA; footer.
-**Components:** StepRail, EvidenceSourceLegend, ProductHandoff, IllustrativeRecord, TrustFaq, FinalCta.
+**Primary action:** Start your experience  
+**Secondary action:** Explore Experience  
+**Required data / source / permissions:** Static product truth from Product Bible; no auth; no private profile examples; illustrative dashboard mocks labelled via sr-only captions.  
+**Layout:** Header; split product hero with Professional Intelligence dashboard mock; what DeliverX is; what to do first; at-a-glance pipeline; five-step loop with shared product dashboard mocks; evidence sources; product hand-offs; FAQ; pilot access; CTA; footer.  
+**Components:** HowItWorksHero, ProductDashboardMock (intelligence / experience / launchpad), NarrativeBlock, StepRail (ordered list), EvidenceSourceLegend, ProductHandoff, TrustFaq, AccessPanel, FinalCta — same shell and visual rhythm as `/experience`, `/launchpad`, `/professional-workspace`.
 
 **States**
-- **Loading:** Static text first; progressive enhancement for step rail.
-- **Empty:** Omit illustrative record if no approved fixture.
-- **Partial:** If an example lacks external attestation, show “Not externally verified”.
+- **Loading:** Static text first; progressive enhancement for hero motion.
+- **Empty:** Omit illustrative mock only if mock component unavailable (not expected).
+- **Partial:** Source labels remain plain text; Verified always claim-specific.
 - **Success:** CTA preserves Experience intent.
-- **Error:** Interactive diagram degrades to ordered text.
+- **Error:** Motion degrades; ordered text remains.
 - **Permission denied:** Not applicable.
 
 ### Desktop wireframe
 
 ```text
-┌ Header ┐
-│ How DeliverX works                     [Start your experience]          │
-├ 1 Map direction → 2 Join context → 3 Do work → 4 Review → 5 Use it     │
-├ Evidence sources: self-report | import | observation | evidence | attest│
-├ Experience generates ─ PI interprets ─ Launchpad/Workspace consume      │
-├ Illustrative claim record + citations + status                          │
-├ FAQ: assessment, AI, privacy, Verified                                  │
-└ Final CTA + footer                                                       │
+┌ Header (How it works · Experience · Launchpad · Professional Workspace) ┐
+│ [Brand: How it works]  headline + CTAs     │  ProductDashboardMock (PI) │
+├ What DeliverX is — one evidence-driven loop                              │
+├ What to do first — map direction → company context                       │
+├ At a glance: Work → Evidence → Capability → Next step                    │
+├ Steps 01–05 alternating copy + shared dashboard mocks                    │
+├ Evidence sources: self-report | import | observation | evidence | attest │
+├ Experience / Launchpad / Workspace hand-offs                             │
+├ FAQ · Pilot access · Final CTA · footer                                  │
 ```
 
 ### Mobile wireframe
 
 ```text
 ┌ Header ┐
-│ H1 + support + CTA                    │
-├ Steps 1–5, vertically ordered         │
-├ Source labels, horizontally scrollable│
-├ Product hand-offs, stacked            │
-├ Illustrative record                   │
-├ FAQ disclosures                       │
-└ CTA + footer                           │
+│ Hero copy + CTAs                         │
+│ Dashboard mock beneath                   │
+├ Intro + first-step bullets stacked       │
+├ Pipeline cards stacked                   │
+├ Steps 1–5 with mock under each           │
+├ Sources / hand-offs / FAQ / access / CTA │
 ```
 
-**Accessibility:** Lifecycle is an ordered list; diagrams have text equivalents; source labels are plain text; FAQ uses native buttons with `aria-expanded`; no meaning by colour alone.
-**Analytics events:** Proposed `marketing_primary_cta_clicked(surface=how_it_works)`; `marketing_product_link_clicked(product)`; canonical `account_created`, `onboarding_pi_completed`, `experience_started` remain downstream.
+**Accessibility:** Lifecycle is an ordered list; dashboard mocks have text equivalents; source labels are plain text; FAQ headings are readable without colour alone.  
+**Analytics events:** Proposed `marketing_primary_cta_clicked(surface=how_it_works)`; `marketing_product_link_clicked(product)`; canonical `account_created`, `onboarding_pi_completed`, `experience_started` remain downstream.  
 **Acceptance criteria**
 - User can describe the five-step lifecycle after scanning the page.
 - Page explicitly states AI drafts do not become evidence automatically.
 - External verification is claim-specific and independent.
 - Baseline assessment is described as optional.
 - No decorative score, unsupported outcome, or marketplace promise.
+- Visual system matches Experience / Launchpad / Professional Workspace (hero mesh, brand-scale name, ProductDashboardMock, soft-panel sections, access + dark CTA).
 
-**Related screens:** Home, PI brief, Experience marketing, Onboarding welcome.
-**Cursor implementation notes:** Reframe existing `/solutions`; keep route stable. Use static content and current marketing shell. Do not create a new backend or analytics sink.
+**Related screens:** Home, PI brief, Experience marketing, Onboarding welcome.  
+**Cursor implementation notes:** Reuse `ProductMarketingPage` section rhythm and `ProductDashboardMock`. Do not invent a separate SVG diagram language. Keep `/solutions` redirect. Do not create a new backend or analytics sink.
 
 ## FINAL COPY
 
@@ -84,6 +85,6 @@
 - **Evidence:** A provenance-bearing record available for judgement.
 - **Externally verified:** A named independent attestor confirmed a specific claim.
 
-**Final CTA heading:** Begin with a clear first step.
-**Primary CTA:** Start your experience
-**Secondary CTA:** Explore Experience
+**Final CTA heading:** Begin with a clear first step.  
+**Primary CTA:** Start your experience  
+**Secondary CTA:** Explore Complete Journey (or Explore Experience from the hero)

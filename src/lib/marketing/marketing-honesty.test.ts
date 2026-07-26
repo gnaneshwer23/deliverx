@@ -13,6 +13,7 @@ import {
   HOME_FAQ,
   HOME_PRICING,
 } from "@/lib/marketing/homepage-data";
+import { HOW_IT_WORKS_PAGE } from "@/lib/marketing/how-it-works-data";
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 import { PILOT_QUOTE } from "@/lib/marketing/landing-data";
 
@@ -98,6 +99,27 @@ describe("marketing honesty — Batch 2", () => {
     const cost = HOME_FAQ.find((item) => item.q.toLowerCase().includes("cost"));
     expect(cost?.a).toMatch(/pilot|checkout/i);
     expect(cost?.a).not.toMatch(BANNED_PRICE);
+  });
+
+  it("How it works keeps trust rails and the five-step loop", () => {
+    expect(HOW_IT_WORKS_PAGE.steps).toHaveLength(5);
+    expect(HOW_IT_WORKS_PAGE.steps.map((s) => s.id)).toEqual([
+      "direction",
+      "context",
+      "work",
+      "review",
+      "use",
+    ]);
+    const blob = collectStrings(HOW_IT_WORKS_PAGE).join(" | ").toLowerCase();
+    expect(blob).toMatch(/scoreruns? never light verified/);
+    expect(blob).toMatch(/ai drafts?/);
+    expect(blob).toMatch(/self-reported/);
+    expect(blob).not.toMatch(/100% money-back/);
+    expect(blob).not.toMatch(BANNED_PRICE);
+    expect(HOW_IT_WORKS_PAGE.pricing.price).toBe(PILOT_ACCESS_LABEL);
+    for (const step of HOW_IT_WORKS_PAGE.steps) {
+      expect(["experience", "launchpad", "workspace", "intelligence"]).toContain(step.mock);
+    }
   });
 });
 

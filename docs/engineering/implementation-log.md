@@ -1,3 +1,13 @@
+## 2026-07-26 — How it works visual parity with product pages
+
+Founder: `/how-it-works` UI did not match Experience / Launchpad / Professional Workspace.
+
+**Scope:** Refactor How it works onto the same marketing visual system — split hero with brand-scale name, shared `ProductDashboardMock` (new `intelligence` variant + experience/launchpad on steps), narrative sections, pilot access panel, dark CTA. Clear new-visitor guidance: what DeliverX is, what to do first, five-step loop. Removed bespoke SVG diagram language. `/solutions` redirect and `#journey` / `#workflow` anchors retained. No billing or trust-rail changes.
+
+Verification: marketing honesty units; lint/typecheck on touched files; `npm run build`; production `/how-it-works` 200.
+
+---
+
 ## 2026-07-26 — Marketing IA simplify (founder request)
 
 Founder: primary marketing nav = How it works · Experience · Launchpad · Professional Workspace (+ Start / Sign in). Secondary links demoted to footer. Experience/Launchpad/Workspace heroes strengthened with product-frame dashboard mocks (no unexplained score theatre). New `/how-it-works` with end-to-end workflow + per-step SVG diagrams; `/solutions` redirects there. Homepage fold trimmed (pricing / Team Copilot mission-control preview off main story).

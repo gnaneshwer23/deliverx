@@ -1,7 +1,11 @@
 import type { ReactNode } from "react";
 import { mktClass } from "@/lib/marketing/landing-theme";
 
-type ProductMockVariant = "experience" | "launchpad" | "workspace";
+export type ProductMockVariant =
+  | "experience"
+  | "launchpad"
+  | "workspace"
+  | "intelligence";
 
 const CHROME = {
   experience: {
@@ -49,6 +53,21 @@ const CHROME = {
     ],
     footer: "AI drafts · humans decide and submit",
   },
+  intelligence: {
+    product: "Professional Intelligence",
+    accent: "var(--mkt-green)",
+    accentSoft: "rgba(28,74,46,0.08)",
+    accentBorder: "rgba(28,74,46,0.22)",
+    company: "Your professional record",
+    role: "Evidence-backed",
+    rail: ["Profile", "Evidence", "Capability", "Attest", "Next"],
+    panels: [
+      { title: "Direction", body: "Self-reported · guides recommendations" },
+      { title: "Evidence", body: "Provenance retained · not auto-Verified" },
+      { title: "Capability", body: "Framework ScoreRun · explainable band" },
+    ],
+    footer: "AI drafts labelled · Verified needs attestation",
+  },
 } as const;
 
 function ProductChromeFrame({
@@ -78,7 +97,12 @@ function ProductChromeFrame({
           <p
             className={`${mktClass.mono} ml-1 truncate text-[0.6rem] uppercase tracking-[0.12em] text-[var(--mkt-text3)]`}
           >
-            deliverx.dev/{variant === "workspace" ? "workspace" : variant}
+            deliverx.dev/
+            {variant === "workspace"
+              ? "workspace"
+              : variant === "intelligence"
+                ? "profile"
+                : variant}
           </p>
         </div>
         {children}
