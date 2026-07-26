@@ -106,8 +106,11 @@ Dependency audit reports **no critical**, but **high** issues including **Next.j
 | SEC-P0-03 | P0 | Evidence `platform_verified` transition insertable via PostgREST (DB-P0-03) |
 | SEC-P1-01 | P1 | Next.js high advisories on locked 16.2.9 |
 | SEC-P1-02 | P1 | TD-006 leaked-password protection off |
+| SEC-P1-03 | P1 | Observation consent app-only (DB-P1-01) — **Closed `0096`** |
 | SEC-P2-01 | P2 | No dedicated PI API rate limiting |
 | SEC-P2-02 | P2 | Mutable search_path advisors |
 | SEC-OK | Info | Unauth gates, purge grants, anon RLS |
+
+**Follow-up (2026-07-26):** Observation consent is enforced at Postgres (`0096`): INSERT triggers on `workspace_observations` and `workspace_observation` evidence; no service-role GUC bypass; EXECUTE revoked on helper/guards. Batch 1 (`0095`) closed SEC-P0-01…03 at DB.
 
 See [`privacy-audit.md`](./privacy-audit.md), [`../qa/security-findings.md`](../qa/security-findings.md)
