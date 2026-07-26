@@ -127,6 +127,10 @@
   html {
     @apply font-sans;
   }
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid #3d9660;
+    outline-offset: 3px;
+  }
 }
 
 /* DeliverX design tokens — light SaaS dashboard (Brief v2 + Dribbble-inspired) */
@@ -136,7 +140,7 @@
   --dx-ink2: #1a1a17;
   --dx-ink3: #2c2c28;
   --dx-mut: #6b7280;
-  --dx-fnt: #9ca3af;
+  --dx-fnt: #6b7280;
   --dx-rul: #e8eaed;
   --dx-rul2: #f0f1f4;
   --dx-srf: #f3f4f6;

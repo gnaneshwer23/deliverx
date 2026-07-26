@@ -5,7 +5,7 @@
   --xp-muted: rgba(16, 32, 24, 0.62);
   --xp-line: rgba(16, 32, 24, 0.1);
   --xp-surface: #fffdf8;
-  --xp-accent: #1584c7;
+  --xp-accent: #1c4a2e;
   color: var(--xp-ink);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -70,9 +70,17 @@
   transform: none;
 }
 
+.xp-root a:focus-visible,
+.xp-root button:focus-visible,
+.xp-root input:focus-visible,
+.xp-root textarea:focus-visible {
+  outline: 3px solid #3d9660;
+  outline-offset: 3px;
+}
+
 .xp-onboarding-layout {
   display: grid;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
   grid-template-columns: 340px 1fr;
 }
 
@@ -314,7 +322,7 @@
 
 .xp-workspace {
   display: grid;
-  min-height: 100vh;
+  min-height: calc(100vh - 60px);
   grid-template-columns: 220px 1fr;
 }
 

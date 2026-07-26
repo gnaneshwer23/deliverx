@@ -116,7 +116,11 @@ export function SignupForm({
       />
 
       {error ? (
-        <p className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
+        <p
+          className="border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]"
+          role="alert"
+          aria-live="assertive"
+        >
           {error}
         </p>
       ) : null}

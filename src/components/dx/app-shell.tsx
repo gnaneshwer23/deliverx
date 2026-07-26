@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, Home, Settings, X } from "lucide-react";
@@ -9,6 +9,7 @@ import { SignOutButton } from "@/components/auth/sign-out-button";
 import { AiDrawer } from "@/components/dx/ai-drawer";
 import { AiDrawerProvider } from "@/components/dx/ai-drawer-context";
 import { AppNav } from "@/components/dx/app-nav";
+import { ProductSuiteNav } from "@/components/dx/product-suite-shell";
 import type { DeliveryAlert } from "@/services/alerts";
 import { professionalWorkspaceNav } from "@/config/professional-workspace-nav";
 import {
@@ -67,15 +68,18 @@ function NavLink({
             : dxClass.navLinkInactive
       }
     >
-      <Icon size={16} className={active ? "text-[#1C4A2E]" : "opacity-60"} />
+      <Icon size={16} className={active ? "text-[#1C4A2E]" : "opacity-60"} aria-hidden />
       <span className="flex-1">{item.label}</span>
       {prominent && !active ? (
-        <span className="rounded bg-[#EEF5F1] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-wide text-[#1C4A2E]">
+        <span className="rounded bg-[#EEF5F1] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-wide text-[#1C4A2E]">
           You
         </span>
       ) : null}
       {badge && badge > 0 ? (
-        <span className="min-w-[18px] rounded-full bg-[#B7620A] px-1.5 py-0.5 text-center font-[family-name:var(--font-dx-mono)] text-[9px] font-medium text-white">
+        <span
+          className="min-w-[20px] rounded-full bg-[#B7620A] px-1.5 py-0.5 text-center font-[family-name:var(--font-dx-mono)] text-xs font-medium text-white"
+          aria-label={`${badge} pending items for ${item.label}`}
+        >
           {badge > 99 ? "99+" : badge}
         </span>
       ) : null}
@@ -117,7 +121,7 @@ function PersonaHomeNavLink({
         <span className="block font-medium">{meta.roleLabel} home</span>
         <span className="block truncate text-[10px] text-[#6B6B64]">{meta.navLabel}</span>
       </span>
-      <span className="rounded bg-[#EEF5F1] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-wide text-[#1C4A2E]">
+      <span className="rounded bg-[#EEF5F1] px-1.5 py-0.5 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-wide text-[#1C4A2E]">
         You
       </span>
     </Link>
@@ -222,11 +226,14 @@ function CoreNavSection({
           >
             {showOtherMissions ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             Other mission controls
-            <span className="font-[family-name:var(--font-dx-mono)] text-[9px]">
+            <span className="font-[family-name:var(--font-dx-mono)] text-xs">
               ({otherMissions.length})
             </span>
             {otherMissionPendingTotal > 0 ? (
-              <span className="ml-auto min-w-[18px] rounded-full bg-[#B7620A] px-1.5 py-0.5 text-center font-[family-name:var(--font-dx-mono)] text-[9px] font-medium text-white">
+              <span
+                className="ml-auto min-w-[20px] rounded-full bg-[#B7620A] px-1.5 py-0.5 text-center font-[family-name:var(--font-dx-mono)] text-xs font-medium text-white"
+                aria-label={`${otherMissionPendingTotal} pending items in other mission controls`}
+              >
                 {otherMissionPendingTotal > 99 ? "99+" : otherMissionPendingTotal}
               </span>
             ) : null}
@@ -370,14 +377,43 @@ function WorkspaceMobileNavDrawer({
   userRole?: string | null;
   missionBadgeCounts?: Partial<Record<MissionPersonaId, number>>;
 }) {
+  const navRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const nav = navRef.current;
+    const focusable = nav?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    focusable?.[0]?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
     return () => {
       document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKeyDown);
+      document.getElementById("workspace-mobile-nav-trigger")?.focus();
     };
-  }, [open]);
+  }, [onClose, open]);
 
   if (!open) return null;
 
@@ -390,13 +426,14 @@ function WorkspaceMobileNavDrawer({
         onClick={onClose}
       />
       <nav
+        ref={navRef}
         id="workspace-mobile-nav"
         aria-label="Workspace navigation"
         className="fixed inset-y-0 left-0 z-[60] flex w-[min(100%,var(--dx-sbw))] flex-col rounded-r-[var(--dx-radius-xl)] bg-white shadow-2xl lg:hidden"
         style={{ top: "var(--dx-navh)" }}
       >
         <div className="flex items-center justify-between border-b border-[#E4E4DC] px-3.5 py-2.5">
-          <span className="font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[#A8A89E]">
+          <span className="font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.12em] text-[#4B5563]">
             Navigation
           </span>
           <button
@@ -407,6 +444,9 @@ function WorkspaceMobileNavDrawer({
           >
             <X size={16} aria-hidden />
           </button>
+        </div>
+        <div className="overflow-x-auto border-b border-[#E4E4DC] px-2 py-1">
+          <ProductSuiteNav compact onNavigate={onClose} />
         </div>
         <WorkspaceSidebarContent
           pendingApprovals={pendingApprovals}
@@ -466,6 +506,12 @@ function AppShellLayout({
 
   return (
     <>
+      <a
+        href="#app-main-content"
+        className="fixed left-3 top-3 z-[100] -translate-y-24 rounded-md bg-[#0D0D0B] px-4 py-2 text-sm font-medium text-white transition focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-[#3D9660] focus:ring-offset-2"
+      >
+        Skip to main content
+      </a>
       <AppNav
         userEmail={userEmail}
         orgName={orgName}
@@ -493,7 +539,9 @@ function AppShellLayout({
         </>
       ) : null}
       <AiDrawer projects={assistantProjects} userRole={userRole} />
-      {children}
+      <div id="app-main-content" tabIndex={-1}>
+        {children}
+      </div>
     </>
   );
 }

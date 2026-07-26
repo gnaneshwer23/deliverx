@@ -261,15 +261,19 @@ export function ProductApp({
       {!isDashboard ? (
         <div className="xp-onboarding-layout">
           <aside className="xp-onboarding-sidebar">
-            <a href="/experience" className="xp-brand">
-              Experience
-            </a>
+            <p className="xp-brand">Experience setup</p>
             <p className="xp-eyebrow">Application progress</p>
             <h2>Apply for Associate Product Manager</h2>
             <p>Complete onboarding before the workspace is created.</p>
             <div className="xp-step-list">
               {steps.map((step, index) => (
-                <button key={step.key} type="button" onClick={() => setScreen(step.key)} className={index === activeIndex ? "is-active" : ""}>
+                <button
+                  key={step.key}
+                  type="button"
+                  onClick={() => setScreen(step.key)}
+                  className={index === activeIndex ? "is-active" : ""}
+                  aria-current={index === activeIndex ? "step" : undefined}
+                >
                   <span>{index + 1}</span>
                   {step.label}
                 </button>
@@ -346,12 +350,18 @@ export function ProductApp({
       ) : (
         <section className="xp-workspace">
           <aside className="xp-workspace-rail">
-            <a href="/experience" className="xp-brand">
-              Experience
-            </a>
-            <nav>
+            <p className="xp-brand">Experience tools</p>
+            <nav aria-label="Experience tools">
               {(["Home", "Inbox", "Calendar", "Decisions", "Documents", "AI Coach", "Evidence"] as DashboardTool[]).map((item) => (
-                <button key={item} type="button" onClick={() => activateTool(item)} className={activeTool === item ? "is-active" : ""}>{item}</button>
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => activateTool(item)}
+                  className={activeTool === item ? "is-active" : ""}
+                  aria-pressed={activeTool === item}
+                >
+                  {item}
+                </button>
               ))}
             </nav>
             <button type="button" className="xp-logout" onClick={logout}>Logout</button>
@@ -371,7 +381,9 @@ export function ProductApp({
               </div>
             </header>
 
-            <div className="xp-session-notice">{notice}</div>
+            <div className="xp-session-notice" role="status" aria-live="polite">
+              {notice}
+            </div>
 
             <section className="xp-pulse-grid">
               {[

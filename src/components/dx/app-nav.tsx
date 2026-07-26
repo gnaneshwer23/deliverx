@@ -7,6 +7,7 @@ import { Brain, Compass, Menu, Plus, X } from "lucide-react";
 import { HELM_NAME } from "@/config/helm-copilot";
 import { useAiDrawer } from "@/components/dx/ai-drawer-context";
 import { DxLogo } from "@/components/dx/dx-logo";
+import { ProductSuiteNav } from "@/components/dx/product-suite-shell";
 import { UserMenu } from "@/components/dx/user-menu";
 import { AlertBellDropdown } from "@/components/dx/alert-bell-dropdown";
 import type { DeliveryAlert } from "@/services/alerts";
@@ -25,10 +26,11 @@ function NavSearch() {
   return (
     <form onSubmit={onSubmit} className="relative hidden max-w-[340px] flex-1 md:block">
       <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[#A8A89E]">
-        <Brain size={13} />
+        <Brain size={13} aria-hidden />
       </span>
       <input
         type="search"
+        aria-label="Search workspace"
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search projects, tasks, docs…"
@@ -63,6 +65,7 @@ export function AppNav({
     <header className={`fixed inset-x-0 top-0 z-50 flex h-[var(--dx-navh)] items-center gap-2 ${dxClass.navBar} px-3 md:gap-3 md:px-5`}>
       {showMobileNavToggle ? (
         <button
+          id="workspace-mobile-nav-trigger"
           type="button"
           aria-expanded={mobileNavOpen}
           aria-controls="workspace-mobile-nav"
@@ -79,7 +82,11 @@ export function AppNav({
       ) : null}
 
       <div className={`shrink-0 border-r border-[#E4E4DC] pr-3 ${showMobileNavToggle ? "" : "mr-1"}`}>
-        <DxLogo href="/workspace/dashboard" showTag />
+        <DxLogo href="/hub" showTag />
+      </div>
+
+      <div className="hidden xl:block">
+        <ProductSuiteNav compact />
       </div>
 
       <NavSearch />
@@ -87,39 +94,29 @@ export function AppNav({
       <div className="ml-auto flex items-center gap-2">
         <AlertBellDropdown alerts={alerts} unreadCount={alertCount} />
         <Link
-          href="/workspace/alerts"
-          className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] lg:inline-flex`}
-        >
-          Alerts
-        </Link>
-        <Link
           href="/workspace/proposals"
-          className={`${dxClass.btnGhost} relative hidden px-3 py-1.5 text-[9px] sm:inline-flex`}
+          className={`${dxClass.btnGhost} relative hidden px-3 py-2 text-xs sm:inline-flex`}
         >
           AI review
           {pendingApprovals > 0 ? (
-            <span className="absolute -right-1 -top-1 min-w-[16px] rounded-full bg-[#B7620A] px-1 text-center font-[family-name:var(--font-dx-mono)] text-[8px] font-medium leading-4 text-white">
+            <span
+              className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-[#B7620A] px-1 text-center font-[family-name:var(--font-dx-mono)] text-xs font-medium leading-[18px] text-white"
+              aria-label={`${pendingApprovals} pending AI reviews`}
+            >
               {pendingApprovals > 99 ? "99+" : pendingApprovals}
             </span>
           ) : null}
         </Link>
-        <Link href="/project/new" className={`${dxClass.btnGhost} hidden px-3 py-1.5 text-[9px] md:inline-flex`}>
-          <Plus size={12} /> New project
+        <Link href="/project/new" className={`${dxClass.btnGhost} hidden px-3 py-2 text-xs md:inline-flex`}>
+          <Plus size={14} aria-hidden /> New project
         </Link>
         <button
           type="button"
           onClick={toggleDrawer}
           className={`${dxClass.btnSm} hidden sm:inline-flex`}
         >
-          <Compass size={12} /> Ask {HELM_NAME}
+          <Compass size={14} aria-hidden /> Ask {HELM_NAME}
         </button>
-        <Link
-          href="/workspace/assistant"
-          className={`${dxClass.btnGhost} hidden px-2 py-1.5 text-[8px] lg:inline-flex`}
-          title="Open full AI workspace"
-        >
-          Full view
-        </Link>
         <div className="hidden h-5 w-px bg-[#E4E4DC] sm:block" />
         <UserMenu userEmail={userEmail} orgName={orgName} />
       </div>

@@ -40,11 +40,12 @@
 | Marketing commercial honesty | Pilot access; no £ checkout prices; no money-back offer; Launchpad includes match Career Intelligence | **Pass — Batch 2** |
 | Privacy / Terms / Cookies | Interim pilot policies with practice-accurate markers | **Pass — Batch 2** |
 | UX language honesty | ScoreRun→assessment labels; Career Intelligence naming; review seed removed; readiness source labels | **Pass — Batch 3** |
+| Navigation coherence | Shared suite nav across Hub/Profile/Experience/Launchpad/Workspace/Portfolio; dead dark sidebar removed | **Pass — Batch 5** |
 | T8 E2E Verified-on | `e2e/t8-attestation.test.ts` in live gate; attestor confirm → Verified; negatives + private-leak + Batch-1 DB denial | **Pass — Batch 4** (10/10 live) |
 | Next.js security advisories | Upgraded `16.2.9`→`16.2.12` (≥16.2.11); proxy/SSRF/DoS class closed | **Pass — Batch 4** |
 | Continuous CI | TD-018 disabled workflows | **Fail** (founder) |
 | TD-006 HIBP | Advisor WARN | **Fail** (ops, founder) |
-| WCAG 2.2 AA | A11y audit | **Fail** (do not claim) |
+| WCAG 2.2 AA | Core chrome/auth AA slice Batch 5; full-product claim deferred | **Partial — Batch 5** (do not claim whole-product AA) |
 | T9 / Stripe | Charter block | N/A (correctly absent) |
 
 ---
@@ -58,7 +59,7 @@
 | “Verified requires attestation” | **True in app and DB** after `0095` |
 | “T8 shipped” | **True** (code/docs/`0094`) |
 | “T8 E2E verified” | **True — Batch 4** (live attestor → Verified 10/10) |
-| “Ready for pilot users” | **Closer** — DB + honesty/legal + UX language + T8 E2E + Next security Batches 1–4 shipped; remaining gates are founder ops (CI/TD-006) and a11y |
+| “Ready for pilot users” | **Closer** — DB + honesty/legal + UX language + T8 E2E + Next security + nav/a11y Batches 1–5 shipped; remaining gates are founder ops (CI/TD-006) and residual a11y QA |
 | “Ready to sell” | **False** — T9 blocked; prices must not imply purchase |
 
 ---
@@ -69,8 +70,9 @@
 2. **Completed:** Batch 2 — product honesty + legal surface (pilot access; no money-back; decorative % removed; illustrative stories; Launchpad includes; interim Privacy/Terms/Cookies).
 3. **Completed:** Batch 3 — UX language (ScoreRun→assessment; Command Centre demotion on Workspace home; Career Intelligence naming; review seed removed; metadata; readiness labels).
 4. **Completed:** Batch 4 — pilot seal engineering (Next `16.2.9`→`16.2.12` closing proxy/SSRF/DoS advisories; T8 attestation→Verified live E2E in the release gate).
-5. Founder: TD-006 and either restore CI or named manual gate cadence.
-6. Invite-only cohort; no public paid CTA.
+5. **Completed:** Batch 5 — navigation coherence + WCAG 2.2 AA core (shared suite shell; Launchpad mobile nav; auth/live-region/skip-link/focus; tiny-text chrome fix).
+6. Founder: TD-006 and either restore CI or named manual gate cadence.
+7. Invite-only cohort; no public paid CTA.
 
 Detail: [`release-plan.md`](./release-plan.md) exit criteria **B**.
 

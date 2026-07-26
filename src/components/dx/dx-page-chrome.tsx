@@ -44,7 +44,7 @@ export function DxPageHeader({
         />
       ) : null}
       <div className="min-w-0 flex-1">
-        {breadcrumbNode ?? <DxCaps className="mb-1 text-[8px]">{breadcrumb}</DxCaps>}
+        {breadcrumbNode ?? <DxCaps className="mb-1 text-xs">{breadcrumb}</DxCaps>}
         <h1 className={dxClass.pageTitle}>
           {title}
           {titleEm ? (
@@ -90,12 +90,12 @@ export function DxStatCard({
 
   return (
     <div className={`${dxClass.card} p-4 md:p-[18px]`}>
-      <div className="mb-1.5 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.14em] text-[#A8A89E]">
+      <div className="mb-1.5 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.1em] text-[#4B5563]">
         {label}
       </div>
       <div className={`${dxClass.display} text-[2rem] leading-none ${valueColor}`}>{value}</div>
       {hint ? (
-        <div className="mt-1 font-[family-name:var(--font-dx-mono)] text-[8px] text-[#6B6B64]">
+        <div className="mt-1 font-[family-name:var(--font-dx-mono)] text-xs text-[#4B5563]">
           {hint}
         </div>
       ) : null}
@@ -126,7 +126,7 @@ export function AuthBrandPanel() {
           <br />
           <em className="text-[#3D9660] not-italic">evidence first.</em>
         </h2>
-        <p className="mt-3.5 max-w-xs text-base font-light leading-relaxed text-white/40">
+        <p className="mt-3.5 max-w-xs text-base font-light leading-relaxed text-white/75">
           Experience, Launchpad and Professional Workspace share one intelligence layer — not chat history as the database.
         </p>
         <ul className="mt-11 space-y-3">
@@ -140,7 +140,7 @@ export function AuthBrandPanel() {
           ))}
         </ul>
       </div>
-      <DxCaps className="relative z-10 text-[7px] text-white/15">
+      <DxCaps className="relative z-10 text-xs text-white/70">
         DeliverX © 2026 — Privacy controls in product — See /privacy
       </DxCaps>
     </div>

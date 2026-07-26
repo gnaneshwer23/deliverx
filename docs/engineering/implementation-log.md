@@ -321,6 +321,26 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ---
 
+## Remediation Batch 5 — Navigation coherence + accessibility (2026-07-26)
+
+| Artefact | Summary |
+| --- | --- |
+| `ProductSuiteShell` / `product-suite-nav` | Shared journey nav: Hub · Profile · Experience · Launchpad · Workspace · Portfolio |
+| Layouts | Hub, Profile, Learning, Career outcomes, Experience app, Launchpad app, Portfolio (auth only) wrap shared shell |
+| Workspace chrome | Suite nav in AppNav (xl+) + mobile drawer; skip link; focus trap/Escape on drawer; removed duplicate Alerts/`Full view` |
+| Launchpad | MVP-only module nav; mobile horizontal switcher; `h1` = Launchpad |
+| Experience | Tool rail under shared shell; green accent alignment; status live region |
+| A11y | Named user menu; Escape menus; auth error alerts; skip links; ≥12px chrome labels; auth contrast; focus-visible |
+| Dead chrome | Removed unused dark `WorkspaceSidebar` + `sidebar-nav-section` |
+| Tests | `product-suite-nav.test.ts`, `accessibility-contract.test.ts` |
+| Decision | PD-2026-07-26a |
+
+**Verification:** new units PASS; `npm run test:release-gate` PASS; `npm run build` PASS.
+
+**Batch 5 verdict:** Shipped. Next remediation batch requires founder approval; T9 remains blocked.
+
+---
+
 ## Not started (charter)
 
 - **P9 / T9** — Commercial (requires separate founder approval)  

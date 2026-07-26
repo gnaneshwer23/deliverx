@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { MarketingButtonLink } from "@/components/marketing/marketing-buttons";
+import { ProductSuiteShell } from "@/components/dx/product-suite-shell";
 import {
   MarketingContainer,
   MarketingPageShell,
   MarketingSection,
 } from "@/components/marketing/marketing-layout";
-import { MarketingLogo } from "@/components/marketing/marketing-logo";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { marketingFontClassName, mktSans } from "@/lib/marketing/marketing-fonts";
 import { createClient } from "@/lib/supabase/server";
@@ -56,10 +55,10 @@ const HUB_JOURNEY = [
   {
     id: "career",
     stage: "Land the opportunity",
-    name: "Career Intelligence",
+    name: "Launchpad",
     progress: "Evidence-backed readiness, roadmap, interview lab, applications",
     href: "/launchpad/app",
-    cta: "Open Career Intelligence",
+    cta: "Open Launchpad",
   },
   {
     id: "outcomes",
@@ -121,20 +120,9 @@ export default async function HubPage() {
   const hasOrg = Boolean(profile?.organisation_id);
 
   return (
-    <div className={`${marketingFontClassName} ${mktSans.className}`}>
-      <MarketingPageShell>
-        <header className="flex h-[var(--mkt-navh)] items-center justify-between border-b border-[var(--mkt-border)] px-5 md:px-10 lg:px-12">
-          <MarketingLogo href="/hub" />
-          <div className="flex items-center gap-3">
-            <span className="hidden text-[0.8125rem] text-[var(--mkt-text3)] sm:inline">
-              DeliverX Hub
-            </span>
-            <MarketingButtonLink href="/pricing" variant="ghost">
-              Pricing
-            </MarketingButtonLink>
-          </div>
-        </header>
-
+    <ProductSuiteShell>
+      <div className={`${marketingFontClassName} ${mktSans.className}`}>
+        <MarketingPageShell showSkipLink={false}>
         <main id="main-content">
           <MarketingSection
             tone="cream"
@@ -204,7 +192,8 @@ export default async function HubPage() {
             </MarketingContainer>
           </MarketingSection>
         </main>
-      </MarketingPageShell>
-    </div>
+        </MarketingPageShell>
+      </div>
+    </ProductSuiteShell>
   );
 }

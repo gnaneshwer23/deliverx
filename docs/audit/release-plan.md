@@ -53,8 +53,9 @@ All of B plus:
 - Cookie/consent posture decided with legal  
 - ScoreRun jargon + dual naming cleaned on primary surfaces  
 - T8 E2E in release gate  
-- Accessibility: critical auth/marketing AA gaps closed (A0-*)  
+- Accessibility: critical auth/marketing AA gaps closed (A0-*) — **Batch 5 core shipped**; residual deferred in a11y audit  
 - No unexplained readiness % on Career UI
+- Shared suite navigation across primary signed-in surfaces (Batch 5)
 
 ### D → Production
 

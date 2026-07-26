@@ -23,27 +23,39 @@ export function AlertBellDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
     document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (
     <div ref={rootRef} className="relative hidden sm:block">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`${dxClass.btnGhost} relative px-2.5 py-1.5`}
+        className={`${dxClass.btnGhost} relative px-2.5 py-2`}
         aria-label={`Alerts${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
         aria-expanded={open}
+        aria-haspopup="menu"
       >
-        <Bell size={14} />
+        <Bell size={14} aria-hidden />
         {unreadCount > 0 ? (
-          <span className="absolute -right-0.5 -top-0.5 min-w-[16px] rounded-full bg-[#C0392B] px-1 text-center font-[family-name:var(--font-dx-mono)] text-[8px] font-medium leading-4 text-white">
+          <span className="absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full bg-[#C0392B] px-1 text-center font-[family-name:var(--font-dx-mono)] text-xs font-medium leading-[18px] text-white">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         ) : null}
@@ -96,7 +108,7 @@ function AlertRow({ alert }: { alert: DeliveryAlert }) {
     <div>
       <div className="mb-0.5 flex items-center gap-1.5">
         <DxBadge tone={TONE[alert.severity]}>{alert.severity}</DxBadge>
-        <span className="font-[family-name:var(--font-dx-mono)] text-[7px] uppercase text-[#A8A89E]">
+        <span className="font-[family-name:var(--font-dx-mono)] text-xs uppercase text-[#4B5563]">
           {alert.category}
         </span>
       </div>

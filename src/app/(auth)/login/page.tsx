@@ -63,7 +63,11 @@ export default async function LoginPage({
       ) : null}
 
       {error ? (
-        <div className="mb-4 border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]">
+        <div
+          className="mb-4 border border-[#C0392B]/30 bg-[#FDF1F0] px-3 py-2 text-sm text-[#C0392B]"
+          role="alert"
+          aria-live="assertive"
+        >
           {error}
         </div>
       ) : null}
@@ -76,8 +80,8 @@ export default async function LoginPage({
           Create one
         </Link>
       </p>
-      <DxCaps className="mt-8 block text-center text-[7px] text-[#A8A89E]">
-        30-day free trial · No credit card
+      <DxCaps className="mt-8 block text-center text-xs text-[#4B5563]">
+        Pilot access · No payment required
       </DxCaps>
     </div>
   );

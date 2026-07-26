@@ -15,24 +15,37 @@ export function UserMenu({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const initial = (userEmail ?? "?").charAt(0).toUpperCase();
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
     document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 rounded-full outline-none ring-[#1C4A2E]/30 focus-visible:ring-2"
         aria-expanded={open}
         aria-haspopup="menu"
+        aria-controls="user-account-menu"
+        aria-label={open ? "Close account menu" : "Open account menu"}
       >
         <span
           className={`flex size-7 items-center justify-center rounded-full ${dxClass.avatar} text-[13px]`}
@@ -40,11 +53,12 @@ export function UserMenu({
         >
           {initial}
         </span>
-        <ChevronDown size={12} className="hidden text-[#6B6B64] sm:block" />
+        <ChevronDown size={12} className="hidden text-[#6B6B64] sm:block" aria-hidden />
       </button>
 
       {open ? (
         <div
+          id="user-account-menu"
           role="menu"
           className="absolute right-0 top-full z-50 mt-2 min-w-[220px] border border-[#E4E4DC] bg-white py-1 shadow-lg"
         >
@@ -66,7 +80,7 @@ export function UserMenu({
             className="flex items-center gap-2 px-3 py-2 text-sm text-[#2C2C28] hover:bg-[#F7F7F2]"
             onClick={() => setOpen(false)}
           >
-            <Settings size={14} /> Settings
+            <Settings size={14} aria-hidden /> Settings
           </Link>
           <SignOutButton
             showIcon

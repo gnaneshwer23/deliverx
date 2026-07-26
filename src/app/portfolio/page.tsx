@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { ProductSuiteShell } from "@/components/dx/product-suite-shell";
 import { VerifiedPortfolioApp } from "@/components/verified-portfolio/portfolio-app";
 import { createClient } from "@/lib/supabase/server";
 
@@ -21,8 +22,10 @@ export default async function PortfolioPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAFAF7]">
-      <VerifiedPortfolioApp />
-    </main>
+    <ProductSuiteShell>
+      <main className="min-h-screen bg-[#FAFAF7]">
+        <VerifiedPortfolioApp />
+      </main>
+    </ProductSuiteShell>
   );
 }

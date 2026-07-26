@@ -5,7 +5,7 @@ export const dx = {
   ink2: "#1A1A17",
   ink3: "#2C2C28",
   mut: "#6B7280",
-  fnt: "#9CA3AF",
+  fnt: "#6B7280",
   rul: "#E8EAED",
   rul2: "#F0F1F4",
   srf: "#F3F4F6",
@@ -51,7 +51,7 @@ export const dxClass = {
   navLinkProminent:
     "mx-2 flex items-center gap-2.5 rounded-[var(--dx-radius-md)] px-3 py-2 text-[13px] font-medium text-[#2C2C28] transition hover:bg-[var(--dx-srf)] hover:text-[#0D0D0B]",
   navSectionLabel:
-    "mb-1.5 px-4 font-[family-name:var(--font-dx-mono)] text-[7px] uppercase tracking-[0.2em] text-[var(--dx-fnt)]",
+    "mb-1.5 px-4 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.12em] text-[var(--dx-mut)]",
   workspaceContent: "dx-workspace-content",
   avatar:
     "bg-[#1C4A2E] font-[family-name:var(--font-dx-display)] text-white",
@@ -64,17 +64,17 @@ export const dxClass = {
   sectionTitle:
     "font-[family-name:var(--font-dx-display)] text-3xl leading-tight tracking-tight text-[#0D0D0B] md:text-4xl lg:text-5xl",
   btnPrimary:
-    "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[#1C4A2E] bg-[#1C4A2E] px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-white transition hover:bg-[#2D7048]",
+    "inline-flex min-h-11 items-center justify-center gap-1.5 border-[1.5px] border-[#1C4A2E] bg-[#1C4A2E] px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.1em] text-white transition hover:bg-[#2D7048]",
   btnGhost:
-    "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[var(--dx-rul)] bg-white px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-[11px] uppercase tracking-[0.12em] text-[#0D0D0B] shadow-[var(--dx-shadow-sm)] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]",
+    "inline-flex min-h-11 items-center justify-center gap-1.5 border-[1.5px] border-[var(--dx-rul)] bg-white px-5 py-2.5 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.1em] text-[#0D0D0B] shadow-[var(--dx-shadow-sm)] transition hover:border-[#1C4A2E] hover:text-[#1C4A2E]",
   btnSm:
-    "inline-flex items-center justify-center gap-1.5 border-[1.5px] border-[#1C4A2E] bg-[#1C4A2E] px-3.5 py-1.5 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.12em] text-white transition hover:bg-[#2D7048]",
+    "inline-flex min-h-11 items-center justify-center gap-1.5 border-[1.5px] border-[#1C4A2E] bg-[#1C4A2E] px-3.5 py-2 font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.1em] text-white transition hover:bg-[#2D7048]",
   input:
     "w-full rounded-lg border border-[var(--dx-rul)] bg-white px-3 py-2.5 text-[15px] text-[#0D0D0B] shadow-[var(--dx-shadow-sm)] outline-none transition placeholder:text-[var(--dx-fnt)] focus:border-[#1C4A2E] focus:ring-2 focus:ring-[#1C4A2E]/10",
   label:
-    "font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.18em] text-[var(--dx-mut)]",
+    "font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.12em] text-[var(--dx-mut)]",
   panelTitle:
-    "font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-[0.18em] text-[var(--dx-mut)]",
+    "font-[family-name:var(--font-dx-mono)] text-xs uppercase tracking-[0.12em] text-[var(--dx-mut)]",
   stickyHeader:
     "sticky top-0 z-20 border-b border-[var(--dx-rul)]/80 bg-white/95 px-6 py-6 shadow-[var(--dx-shadow-nav)] backdrop-blur-md md:px-8",
   panelShellBody:

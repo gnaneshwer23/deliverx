@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { ProductSuiteShell } from "@/components/dx/product-suite-shell";
 import { requireXperienceAuth } from "@/lib/xperience/require-auth";
 
 export const metadata: Metadata = {
@@ -13,5 +14,5 @@ export default async function XperienceAppLayout({
   children: ReactNode;
 }) {
   await requireXperienceAuth();
-  return children;
+  return <ProductSuiteShell>{children}</ProductSuiteShell>;
 }

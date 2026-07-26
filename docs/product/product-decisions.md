@@ -344,6 +344,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26a — One signed-in suite navigation; Launchpad is product chrome
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `approve batch 5` authorizes Remediation Batch 5 only: (1) Signed-in primary surfaces share one journey nav — Hub · Profile · Experience · Launchpad · Workspace · Portfolio — via `ProductSuiteShell` / AppShell strip. Local side/rail navigation remains contextual (Workspace modules, Experience tools, Launchpad MVP modules). (2) **Launchpad** is the product chrome name in suite nav/Hub CTA; **Career Intelligence** remains the capability language *inside* Launchpad (clarifies PD-2026-07-25f dual naming). (3) Non-MVP Launchpad modules stay out of primary nav (routes may remain). (4) Public share/attest portfolio token routes stay outside the signed-in shell. (5) WCAG 2.2 AA core chrome/auth gaps close (named controls, skip links, auth live regions, readable chrome type, Launchpad mobile nav, Escape/focus on primary menus); whole-product AA is not claimed. Stable URLs and redirects are preserved. |
+| **Why** | Audit R-P1-07 / R-P2-15: competing shells made DeliverX feel stitched together; accessibility gaps blocked a public-beta honesty bar. |
+| **Consequence** | Shared suite shell; dead dark WorkspaceSidebar removed; a11y unit contracts; docs updated. Follow-ups: residual AT/axe live QA, dense legacy toolbar a11y, Experience decorative % honesty. Does not authorize T9. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g.

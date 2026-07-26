@@ -1,18 +1,26 @@
 import type { CSSProperties, ReactNode } from "react";
 import { mkt, mktClass, mktCssVars } from "@/lib/marketing/landing-theme";
 
-export function MarketingPageShell({ children }: { children: ReactNode }) {
+export function MarketingPageShell({
+  children,
+  showSkipLink = true,
+}: {
+  children: ReactNode;
+  showSkipLink?: boolean;
+}) {
   return (
     <div
       className="marketing-page min-h-screen overflow-x-clip bg-[var(--mkt-ink)] text-[var(--mkt-text1)] antialiased"
       style={mktCssVars as CSSProperties}
     >
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:border focus:border-[var(--mkt-green-l)] focus:bg-[var(--mkt-s1)] focus:px-4 focus:py-2 focus:text-xs focus:text-[var(--mkt-green-l)]"
-      >
-        Skip to content
-      </a>
+      {showSkipLink ? (
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:border focus:border-[var(--mkt-green-l)] focus:bg-[var(--mkt-s1)] focus:px-4 focus:py-2 focus:text-xs focus:text-[var(--mkt-green-l)]"
+        >
+          Skip to content
+        </a>
+      ) : null}
       {children}
     </div>
   );

@@ -118,6 +118,8 @@ export function CareerIntelligenceApp({
   }, []);
 
   useEffect(() => {
+    // Client-side API hydration intentionally updates this view after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, [load]);
 
@@ -174,6 +176,7 @@ export function CareerIntelligenceApp({
   const explanation = snap?.topRole
     ? explainReadiness(snap.topRole as never)
     : null;
+  const visibleModules = CAREER_MODULES.filter((module) => module.mvp);
 
   return (
     <div className="min-h-screen bg-[#F7F6F2] text-[#1A1A18]">
@@ -182,9 +185,9 @@ export function CareerIntelligenceApp({
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
             DeliverX · Launchpad
           </p>
-          <h1 className="mt-1 text-lg font-semibold">Career Intelligence</h1>
+          <p className="mt-1 text-lg font-semibold">Launchpad tools</p>
           <nav className="mt-6 space-y-1">
-            {CAREER_MODULES.map((m) => (
+            {visibleModules.map((m) => (
               <Link
                 key={m.id}
                 href={m.href}
@@ -195,9 +198,6 @@ export function CareerIntelligenceApp({
                 }
               >
                 {m.label}
-                {!m.mvp ? (
-                  <span className="ml-1 text-[9px] opacity-70">later</span>
-                ) : null}
               </Link>
             ))}
           </nav>
@@ -208,8 +208,18 @@ export function CareerIntelligenceApp({
 
         <main className="min-w-0 flex-1">
           <header className="mb-6 border-b border-[#E5E2D9] pb-4">
-            <p className="text-sm text-[#1C4A2E]">{notice}</p>
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
+            <p className="font-mono text-xs uppercase tracking-[0.12em] text-[#1C4A2E]">
+              DeliverX
+            </p>
+            <h1 className="mt-1 text-2xl font-semibold">Launchpad</h1>
+            <p className="mt-2 text-sm text-[#1C4A2E]" role="status" aria-live="polite">
+              {notice}
+            </p>
+            {error ? (
+              <p className="text-sm text-red-700" role="alert">
+                {error}
+              </p>
+            ) : null}
             {snap ? (
               <p className="mt-2 text-xs text-[#6B6B64]">
                 Profile: {snap.profile.firstName || "—"} · target{" "}
@@ -219,6 +229,28 @@ export function CareerIntelligenceApp({
                 {readinessSourceChip(snap.readinessSource)}
               </p>
             ) : null}
+            <nav
+              aria-label="Launchpad modules"
+              className="-mx-1 mt-4 overflow-x-auto pb-1 lg:hidden"
+            >
+              <ul className="flex min-w-max gap-1 px-1">
+                {visibleModules.map((module) => (
+                  <li key={module.id}>
+                    <Link
+                      href={module.href}
+                      aria-current={activeModule === module.id ? "page" : undefined}
+                      className={
+                        activeModule === module.id
+                          ? "inline-flex min-h-11 items-center rounded-md bg-[#1C4A2E] px-3 text-sm text-white"
+                          : "inline-flex min-h-11 items-center rounded-md px-3 text-sm text-[#4A4A45] hover:bg-white"
+                      }
+                    >
+                      {module.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </header>
 
           {!snap && !error ? <p className="text-sm">Loading…</p> : null}
@@ -431,13 +463,16 @@ export function CareerIntelligenceApp({
                   Gaps to address: {snap.interviewPlan.gapsToAddress.join("; ")}
                 </p>
               ) : null}
-              <textarea
-                className="w-full rounded border border-[#E5E2D9] p-3 text-sm"
-                rows={4}
-                placeholder="Session notes…"
-                value={interviewNotes}
-                onChange={(e) => setInterviewNotes(e.target.value)}
-              />
+              <label className="block text-sm font-medium">
+                Session notes
+                <textarea
+                  className="mt-2 w-full rounded border border-[#E5E2D9] p-3 text-sm"
+                  rows={4}
+                  placeholder="Add observations from your practice session"
+                  value={interviewNotes}
+                  onChange={(e) => setInterviewNotes(e.target.value)}
+                />
+              </label>
               <button
                 type="button"
                 onClick={() => void saveInterview()}

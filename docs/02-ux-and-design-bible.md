@@ -23,7 +23,7 @@ Align with existing calm professional UI already shipped — do not introduce a 
 
 ## Navigation model (person journey)
 
-Prefer journey over product silos:
+Prefer journey over product silos. **Batch 5:** signed-in primary surfaces share one suite nav (Hub · Profile · Experience · Launchpad · Workspace · Portfolio). Local side/rail navigation is contextual only.
 
 | Area | Route(s) | Purpose |
 | --- | --- | --- |

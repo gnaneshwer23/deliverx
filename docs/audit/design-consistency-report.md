@@ -39,14 +39,14 @@ Display-name helpers in `product-intent.ts` correctly map to Experience / Launch
 | Surface | Primary nav | Cross-links to rest of suite |
 | --- | --- | --- |
 | Marketing | Products dropdown + site links | Signup with product intent |
-| Hub | Journey cards | Explicit suite map — **best continuity** |
-| Profile | Action chips | Partial suite links |
-| Experience app | Internal tools only | Weak link back to Hub/Profile |
-| Launchpad | Module aside | Link to Profile; ScoreRun re-run |
-| Workspace AppShell | Professional Workspace modules (+ optional legacy) | User menu → Profile/Settings; “Back to site” |
-| Dark WorkspaceSidebar | Separate advanced list | Settings only |
+| Hub | Shared suite nav + journey cards | Explicit suite map |
+| Profile / Learning / Outcomes | Shared suite nav | Action chips remain contextual |
+| Experience app | Shared suite nav + tool rail | Same product chrome |
+| Launchpad | Shared suite nav + MVP module nav (desktop + mobile) | Profile / Portfolio links |
+| Workspace AppShell | Shared suite nav (xl+) + Professional Workspace sidebar | User menu → Profile/Settings |
+| Dark WorkspaceSidebar | **Removed** (Batch 5) | Was unused competing chrome |
 
-**Duplication:** Alerts appear as bell + “Alerts” link (`app-nav.tsx`). AI appears as Ask HELM + Full view + Coach module + Assistant route.
+**Batch 5 model:** ONE primary journey nav — Hub · Profile · Experience · Launchpad · Workspace · Portfolio. Local side/rail navigation is contextual only. Duplicate Alerts text link and “Full view” AI entry removed from AppNav.
 
 ---
 
@@ -54,7 +54,7 @@ Display-name helpers in `product-intent.ts` correctly map to Experience / Launch
 
 | Pattern | Issue |
 | --- | --- |
-| `dxClass.label` / `navSectionLabel` at **7–9px** | Below comfortable reading size; feels like internal tooling |
+| `dxClass.label` / `navSectionLabel` | **Batch 5:** raised to ≥12px (`text-xs`) on primary chrome |
 | Marketing `text-[10px]` mono eyebrows | OK as micro-labels if contrast holds |
 | Mixed display fonts | DX display + marketing display + Geist fallbacks in root layout |
 | Button case | App: uppercase mono tracking; PI: sentence-case rounded buttons — two CTA dialects |
@@ -101,22 +101,22 @@ Spacing: PI surfaces use generous `max-w-3xl` / `max-w-5xl` — good. Mission/Tw
 
 ## 8. Recommendations (design system only)
 
-1. **Freeze one app shell** for signed-in candidates: Hub-aware top nav (Profile · Experience · Launchpad · Workspace · Portfolio) + contextual side nav.  
-2. **Retire dark sidebar + indigo Twin/PMO styling** from default pilot builds (or gate behind legacy flag including routes).  
-3. **Single CTA language**: sentence case, one green, min 14px body / 12px labels.  
-4. **Glossary for UI**: ban ScoreRun, Brief v2, Phase letters, Command Centre from candidate-facing strings.  
-5. **Marketing mocks**: watermark “Illustrative” or replace percentages with qualitative bands.
+1. ~~**Freeze one app shell**~~ — **Done Batch 5** (`ProductSuiteShell` + Workspace suite strip).  
+2. ~~**Retire dark sidebar**~~ — **Done Batch 5**. Indigo Twin/PMO still demoted via legacy flag.  
+3. **Single CTA language**: sentence case progressing; chrome labels ≥12px.  
+4. **Glossary for UI**: ScoreRun banned from primary CTAs (Batch 3); Launchpad is product chrome name (Batch 5); Career Intelligence = capability language inside Launchpad.  
+5. **Marketing mocks**: watermark “Illustrative” / qualitative bands (Batch 2 advanced).
 
 ---
 
 ## 9. Consistency scorecard
 
-| Area | Score (1–5) |
-| --- | --- |
-| Visual dialect unity | 2 |
-| Terminology | 2 |
-| Navigation continuity | 2 |
-| Typography hierarchy | 3 |
-| Honesty / scores | 2 |
-| Calm professionalism (PI core) | 4 |
-| Calm professionalism (whole product) | 2 |
+| Area | Score (1–5) | Batch 5 note |
+| --- | --- | --- |
+| Visual dialect unity | 3 | Shared chrome; Experience CSS still a dialect |
+| Terminology | 4 | Launchpad product chrome; assessment language |
+| Navigation continuity | 4 | Shared suite nav across primary surfaces |
+| Typography hierarchy | 4 | Chrome labels raised to ≥12px |
+| Honesty / scores | 4 | Prior batches; residual Experience decorative % |
+| Calm professionalism (PI core) | 4 | Unchanged strength |
+| Calm professionalism (whole product) | 3 | Chrome coherent; legacy routes remain bookmarkable |
