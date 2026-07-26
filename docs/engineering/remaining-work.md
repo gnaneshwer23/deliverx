@@ -12,6 +12,8 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
+**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan for Missing + Partial remainder — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **Not** authorised Charter scope until founder selects a Bn. Recommended next: **B1** (confidence-band algorithm doc).
+
 ---
 
 ## Shipped baseline (do not re-open without evidence)
@@ -153,12 +155,14 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Open** | Defer — clarify vs R-P2-09 | M | Pack centres human reviewer; shipped Verified = T8 attestation |
 | **PACK-E6** | Onboarding shape: keep 6-step PI vs rebuild toward pack 8-step conversation | **Pending decision** | Defer | M | Shipped `/onboarding/profile` steps differ; no rebuild without FD |
 | **PACK-E7** | App-shell global search (+ help) | **Open** | Defer | M | Suite nav exists; search/help not inventoried before |
-| **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Open** | Defer | M | PRD targets exist; product analytics thin |
-| **PACK-E9** | PostHog vs keep Vercel Analytics | **Pending decision** | Reject default | M | TRD preference only; not required for pilot |
+| **PACK-E8** | Pilot success-metric instrumentation (activation / loop completion KPIs) | **Open** | Defer | M | PRD targets exist; product analytics thin → phase **B3**; provider-agnostic |
+| **PACK-E9** | PostHog vs keep Vercel Analytics | **Pending decision** | Reject default (Vercel) | M | PostHog MCP authenticated in workspace — still **FD-PACK-7**; do not assume PostHog |
 
 **Explicitly rejected from pack (do not add as build work):** money-back / guarantee terms on Pricing; schema rename to pack table names; restart M0–M7 greenfield; “one company” seed replacing 12-company catalogue (PD-2026-07-03); Insights as a third product Home; Prisma alongside typed Supabase client.
 
 **Conflicts flagged (founder):** pack SoT order under-ranks Product Bible; Team Copilot “architecture only” vs shipped Workspace alias (keep alias, refuse third SKU); human-reviewer-primary verification vs Capability Engine + T8 Verified rules.
+
+**Build-out sequencing:** See [`six-doc-build-phases.md`](./six-doc-build-phases.md) for the full Built/Partial/Missing ledger and dependency-ordered **B0–B9** phases (not pack M0–M7).
 
 ---
 
@@ -183,7 +187,9 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 
 - [`../product/current-scope.md`](../product/current-scope.md)  
 - [`next-steps.md`](./next-steps.md)  
+- [`six-doc-build-phases.md`](./six-doc-build-phases.md)  
 - [`../audit/release-readiness.md`](../audit/release-readiness.md)  
 - [`../audit/missing-functionality-register.md`](../audit/missing-functionality-register.md)  
 - [`../15-delivery-roadmap.md`](../15-delivery-roadmap.md)  
 - Six-doc gap check: [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)  
+- Six-doc B phases: [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  

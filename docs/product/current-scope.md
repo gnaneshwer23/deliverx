@@ -74,11 +74,14 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 
 Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-work.md) · ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
+**Candidate next scope (not authorised until founder picks a Bn):** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — Built vs Missing ledger from the founder six-doc pack + build-out phases **B0–B9**. Recommended first eng slice if approved: **B1** (confidence-band algorithm documentation). Does **not** authorise pack M0–M7 restart or live payments.
+
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
 3. **Founder / ops:** prove SMTP password-reset delivery; optional VoiceOver/keyboard AT lab before claiming whole-product AA.
 4. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
 5. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
+6. **Engineering (candidate, six-doc):** After FD-PACK decisions as needed — B1 bands doc (unblocked), then B2–B7 only with matching founder decisions.
 
 Defer marketplace, graph DB, multi-profession expansion, and microservice splits without new approval.
 
@@ -92,3 +95,4 @@ Defer marketplace, graph DB, multi-profession expansion, and microservice splits
 4. Update this file when the active phase changes.
 5. T9 commercial code is shipped; **payments later** — do not claim live payments until Stripe founder ops and production smoke pass; do not invent eng work whose only goal is enabling Stripe.
 6. Follow [`../engineering/remaining-work.md`](../engineering/remaining-work.md) and [`../engineering/next-steps.md`](../engineering/next-steps.md) for residual hardening.
+7. Treat [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) as **candidate** scope only — implement a Bn only after founder selection and Charter fit.
