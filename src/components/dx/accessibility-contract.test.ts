@@ -36,6 +36,20 @@ describe("primary shell accessibility contracts", () => {
     expect(chrome.toLowerCase()).not.toMatch(/\binsights\b/);
   });
 
+  it("keeps pilot admin calm and honest about trust rails", () => {
+    const page = source("../../app/settings/admin/page.tsx");
+    expect(page).toContain('role="note"');
+    expect(page).toContain("PILOT_ADMIN_AUDIT_NOTE");
+    expect(page).toContain("PILOT_ADMIN_FRAMEWORK_PIN");
+    expect(page).toContain("/workspace/audit");
+    expect(page).not.toMatch(/mission.control depth/i);
+    const forms = source("../pilot-admin/admin-forms.tsx");
+    expect(forms).toContain('role="alert"');
+    const rails = source("../../lib/pilot-admin/types.ts");
+    expect(rails).toMatch(/does not rewrite verified evidence/i);
+    expect(rails).toContain('lightsVerified: false');
+  });
+
   it("announces login errors", () => {
     const loginForm = source("../../app/(auth)/login/login-form.tsx");
     expect(loginForm).toContain('role="alert"');

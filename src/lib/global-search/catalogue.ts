@@ -103,6 +103,14 @@ export const SEARCH_DESTINATIONS: readonly SearchHit[] = [
     keywords: ["account", "privacy", "consent", "password"],
   },
   {
+    id: "dest-pilot-admin",
+    kind: "destination",
+    title: "Pilot admin",
+    description: "Thin org and project config for operators. Does not rewrite verified evidence.",
+    href: "/settings/admin",
+    keywords: ["admin", "organisation", "project", "department", "team"],
+  },
+  {
     id: "dest-billing",
     kind: "destination",
     title: "Billing",

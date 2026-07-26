@@ -1,3 +1,15 @@
+## 2026-07-26 — B8: Thin admin org/project config
+
+Founder reply `B8` (after being shown B8 as needing founder OK on depth) authorized six-doc phase B8 at **thin** pilot depth only — not enterprise mission-control, not a third SKU, not marketplace liquidity (PD-2026-07-26l).
+
+Shape: first-class Pilot admin at `/settings/admin` consolidating org config, project config (name/goal/delivery type/status), org structure (departments/teams via existing `0093`), and membership assign. Typed SoT `src/lib/pilot-admin/`; permissioned `GET/PATCH /api/org/config`, `GET /api/org/projects`, `PATCH /api/org/projects/[id]`; audited mutations append `audit_events` (`event_type=updated`, `source=pilot_admin|org_structure`) with explicit no-evidence / no-Verified metadata. Framework pin shown read-only as `pm-core@2026.1` (reuses admin-framework seed — no full CMS).
+
+Trust rails: org-admin role gate (pm | executive) + kill-switch `DELIVERX_PILOT_ADMIN` defaults **on**; never writes evidence, ScoreRuns, or Verified; no PostHog; no payments; no migration (`0099` remains prod head — avoid schema churn).
+
+Verification: focused pilot-admin + a11y units PASS; `test:pi` includes `src/lib/pilot-admin`; lint + build PASS.
+
+Next candidate: **B9** (residual NFR polish / R-P2-06; no new PD if scoped) or founder-ops (TD-018, TD-006, SMTP, AT lab). PostHog remains deferred behind FD-PACK-7.
+
 ## 2026-07-26 — B7: App-shell global search + help
 
 Founder reply `B7` (after being shown B7 as gated on FD-PACK-8, default if silent "Defer search") authorized six-doc phase B7 and closed FD-PACK-8 / PACK-E7 (PD-2026-07-26k). Selecting the phase cannot mean the defer default, so shell search + help were **added** as utilities — not an Insights product Home (CX-05).

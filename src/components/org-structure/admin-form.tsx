@@ -55,6 +55,10 @@ export function OrgStructureAdminForm({ departments }: { departments: DeptOption
       <p className="text-xs font-medium uppercase tracking-wide text-[#6B6B64]">
         Admin — create structure
       </p>
+      <p className="text-xs text-[#6B6B64]">
+        Changes are audited for your organisation. Structure does not rewrite verified evidence
+        or assign capability.
+      </p>
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
       <div className="flex flex-wrap items-end gap-2">
         <label className="text-xs text-[#6B6B64]">

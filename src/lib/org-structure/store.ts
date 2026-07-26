@@ -55,6 +55,36 @@ export class OrgStructureError extends Error {
   }
 }
 
+async function appendOrgStructureAudit(
+  supabase: Db,
+  actor: OrgActor,
+  input: {
+    entityType: string;
+    entityId: string;
+    metadata: Record<string, unknown>;
+  },
+): Promise<void> {
+  const { error } = await supabase.from("audit_events").insert({
+    organisation_id: actor.organisationId,
+    project_id: null,
+    actor_id: actor.userId,
+    event_type: "updated",
+    entity_type: input.entityType,
+    entity_id: input.entityId,
+    metadata: {
+      ...input.metadata,
+      source: "org_structure",
+      writesEvidence: false,
+      writesScoreRuns: false,
+      lightsVerified: false,
+    },
+  });
+  if (error && error.code !== "42P01") {
+    // Non-blocking for structure create — config still succeeded.
+    console.error("[org-structure] audit append failed", error.message);
+  }
+}
+
 /** Hard rule: org structure never writes capability or verified evidence. */
 export const ORG_STRUCTURE_INVARIANTS = {
   capabilityAssigned: false as const,
@@ -138,7 +168,13 @@ export async function createDepartment(
   if (error || !data) {
     throw new OrgStructureError(error?.message ?? "Could not create department", 400);
   }
-  return mapDepartment(data as Record<string, unknown>);
+  const department = mapDepartment(data as Record<string, unknown>);
+  await appendOrgStructureAudit(supabase, actor, {
+    entityType: "department",
+    entityId: department.id,
+    metadata: { action: "department_create", name: department.name },
+  });
+  return department;
 }
 
 export async function createTeam(
@@ -171,7 +207,13 @@ export async function createTeam(
   if (error || !data) {
     throw new OrgStructureError(error?.message ?? "Could not create team", 400);
   }
-  return mapTeam(data as Record<string, unknown>);
+  const team = mapTeam(data as Record<string, unknown>);
+  await appendOrgStructureAudit(supabase, actor, {
+    entityType: "team",
+    entityId: team.id,
+    metadata: { action: "team_create", name: team.name, departmentId: team.departmentId },
+  });
+  return team;
 }
 
 export async function addDepartmentMember(

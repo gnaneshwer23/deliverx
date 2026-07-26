@@ -92,6 +92,13 @@ export async function OrgStructurePanel() {
       )}
       {admin ? (
         <div className="mt-6 border-t border-[#F0F0E8] pt-4">
+          <p className="mb-3 text-xs text-[#6B6B64]">
+            Prefer the first-class{" "}
+            <a href="/settings/admin" className="underline underline-offset-2">
+              Pilot admin
+            </a>{" "}
+            surface for audited org and project config.
+          </p>
           <OrgStructureAdminForm
             departments={(snapshot?.departments ?? []).map((d) => ({
               id: d.id,

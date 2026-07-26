@@ -493,13 +493,29 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26l — B8 thin admin org/project config (founder OK on depth)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder reply **`B8`** (after being shown B8 as needing founder OK on depth) is treated as **authorization to build six-doc phase B8 at the thin depth** specified in the phase plan — not enterprise mission-control, not a third SKU, not marketplace liquidity, not a full competency CMS. |
+| **Chosen shape** | First-class Pilot admin at `/settings/admin`: organisation config, project config (name/goal/delivery type/status), departments/teams (reuse `0093` org-structure), membership assign. Typed SoT `src/lib/pilot-admin/`; permissioned `/api/org/config` + `/api/org/projects`; audited via existing `audit_events`. Framework pin `pm-core@2026.1` shown read-only (reuses admin-framework seed). |
+| **Trust rails** | Org-admin gate (pm \| executive) + kill-switch `DELIVERX_PILOT_ADMIN` (default on). Config mutations never write evidence, ScoreRuns, or light Verified. Explicit audit note on the surface. No PostHog; no payments; no migration. |
+| **DB / API** | **No migration** (`0099` remains prod head). New permissioned APIs only; org-structure create paths also append audit metadata. |
+| **Rollback / flag** | `DELIVERX_PILOT_ADMIN=off` (or `0`/`false`/`disabled`) hides `/settings/admin` and 404s config APIs with no redeploy. |
+| **Why** | FR-011 / FLOW-ADMIN required a permissioned, audited pilot operator path. Existing pieces were scattered (settings org form, workspace team structure, framework seed APIs) without a first-class thin admin surface. |
+| **Consequence** | B8 authorized and shipped under this decision. FR-011 / FLOW-ADMIN marked Built (thin). Remaining FD-PACK-* (1/2/7) stay pending. Enterprise CMS / mission-control depth stays founder-gated. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
-Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B5 shipped**; no Bn beyond those should start without the matching decision.
+Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1–B8 shipped**; no Bn beyond those should start without the matching decision.
 
 | ID | Decision | Default if silent | Blocks |
 | --- | --- | --- | --- |
@@ -512,4 +528,4 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-7** | Add a PostHog product analytics sink after the Vercel pilot path? | Stay Vercel; PostHog optional later | PostHog sink only (B3 Vercel path shipped) |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | **Settled — build search + help (PD-2026-07-26k)** | — |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**; **B7 shell search + help (FD-PACK-8)**.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**; **B2 recommendation SM (FD-PACK-6)**; **B4 reviewer ops non-Verified (FD-PACK-5)**; **B5 eight-step onboarding (FD-PACK-3)**; **B6 Xperience entry ceremony (FD-PACK-4)**; **B7 shell search + help (FD-PACK-8)**; **B8 thin pilot admin (PD-2026-07-26l)**.

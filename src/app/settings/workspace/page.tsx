@@ -67,6 +67,13 @@ export default async function WorkspaceSettingsPage() {
         <SettingsNav isAdmin isDeveloper={developer} />
         <section className={`${dxClass.cardPad}`}>
           <h2 className="mb-4 font-semibold">Organisation</h2>
+          <p className="mb-4 text-sm text-[#6B6B64]">
+            For pilot org structure, project status, and audited config, use{" "}
+            <a href="/settings/admin" className="underline underline-offset-2">
+              Pilot admin
+            </a>
+            .
+          </p>
           {org?.name ? (
             <OrganisationSettingsForm
               org={{

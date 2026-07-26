@@ -7,9 +7,9 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B6 shipped** (B6 founder-authorized 2026-07-26 via reply `B6` = FD-PACK-4). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1–B8 shipped** (B8 founder-authorized 2026-07-26 via reply `B8` = thin depth). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
-**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0099_pi_onboarding_step_sets.sql` (applied 2026-07-26). New migrations continue at `0100+`. B6 added **no migration** (UI-only ceremony over existing entities). B4 reused `0073` `pi_review_*` (no new migration). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back.
+**Migration head (verified in-repo + prod `jibmyxaldetyycmtlxet`):** `supabase/migrations/0099_pi_onboarding_step_sets.sql` (applied 2026-07-26). New migrations continue at `0100+`. B6–B8 added **no migration** (UI/API over existing entities). B2 pilot flag **on** in Vercel Production + Preview (`DELIVERX_RECOMMENDATION_SM=on`, 2026-07-26). B4 flag `DELIVERX_REVIEWER_QUEUE` defaults **off** until founder enables. B5 flag `DELIVERX_ONBOARDING_STEP_SET` defaults to the shipped 8-step set; set `v1-six-step` to roll back. B6 flag `DELIVERX_XP_ENTRY_CEREMONY` is a kill-switch defaulting **on**; set `off` to roll back. B7 flag `DELIVERX_GLOBAL_SEARCH` defaults **on**. B8 flag `DELIVERX_PILOT_ADMIN` defaults **on** (+ org-admin role gate).
 
 **Payments:** Deferred founder ops. T9 code shipped; no Bn phase enables live Stripe.
 
@@ -42,8 +42,8 @@
 
 | Status | Count | Notes |
 | --- | ---: | --- |
-| Built | 34 | Core evidence loop + trust rails + T0–T9 code + B1 bands + B2 recommendations + B3 KPI events + B4 reviewer ops + B5 onboarding shape |
-| Partial | 25 | Remains mapped into Bn or remaining-work A/B |
+| Built | 36 | Core evidence loop + trust rails + T0–T9 code + B1–B8 (bands, recommendations, KPIs, reviewer ops, onboarding, ceremony, search, thin admin) |
+| Partial | 23 | Remains mapped into Bn or remaining-work A/B |
 | Missing | 5 | Aligns with PACK-E1, E4, E7/E9 (E2/E3/E5/E6/E8 done) |
 | Conflicts | 5 | Reject / modify-with-PD |
 | Out of charter | 4 | Marketplace, third SKU depth, multi-profession, microservices |
@@ -69,7 +69,7 @@ Evidence paths verified present unless noted.
 | FR-008 | Evidence maps to capability definitions | Built | ScoreRuns pin `pm-core@2026.1`; `src/lib/capability-engine/` | Keep |
 | FR-009 | PI updates with explanation | Built | Growth reports; SnapshotClaims; AI citations `src/lib/ai-orchestration/citations.ts` | Keep |
 | FR-010 | Next action with rationale (goal/evidence/gap) | **Built** | Formal SM `0098` + `src/lib/recommendations/`; Profile/Career panels (PACK-E2 / B2) | Keep |
-| FR-011 | Admin manages org/project config | Partial | Built: thin admin framework seed. Remainder: ops console depth | Defer |
+| FR-011 | Admin manages org/project config | **Built** (thin) | `/settings/admin` + `src/lib/pilot-admin/` + permissioned `/api/org/config` + `/api/org/projects`; audited; no evidence rewrite (PACK B8) | Keep |
 | FR-012 | Launchpad consumes evidence | Partial | Built: T7 readiness honesty; `/launchpad/app`, `/career`, `/portfolio`. Remainder: CV/interview depth; marketplace deferred | Keep |
 | BR-001 | Observation ≠ evidence until verification | Built | `0095`, `0096`; observation modules | Keep |
 | BR-002 | AI may observe/feedback; not high-confidence verified evidence | Built | AI orchestration `0090`; citations; Capability Engine–only writes | Keep |
@@ -128,7 +128,7 @@ Evidence paths verified present unless noted.
 | FLOW-PUBLIC | Marketing→signup with product context | Partial | `postSignupPath` / `start/*`; residual polish | Keep |
 | FLOW-XP-ENTRY | Welcome→role→team→project→activity | Partial | Catalogue + Day-1; ceremony Missing (PACK-E4) | Modify |
 | FLOW-REVIEWER | Human reviewer queue workflow | **Built** (ops) | `pi_review_*` + playbook + flag; Verified ≠ this path (PACK-E5 / B4) | Keep |
-| FLOW-ADMIN | Admin configures org/role/project/activities | Partial | Seed + thin admin (FR-011) | Defer |
+| FLOW-ADMIN | Admin configures org/role/project/activities | **Built** (thin) | Pilot admin org/project/structure + membership; activities remain Experience/workspace create paths — not enterprise CMS (B8) | Keep |
 | FLOW-LP-UNLOCK | Launchpad after min evidence or choice | Partial | Entitlements `0097` + readiness honesty; unlock rules not pack-literal | Keep |
 | FLOW-FAIL | AI timeout, upload, duplicate submit, session recovery | Partial | AI fallback units; idempotency/recovery polish residual | Keep |
 
@@ -190,7 +190,7 @@ Evidence paths verified present unless noted.
 | **B5** | Onboarding shape — evolved to the 8-step conversation | M · **Shipped** | FR-003 / UX-ONB-8 / M3 | — |
 | **B6** | Xperience entry ceremony screens | M · **Shipped** | FR-005 / FLOW-XP-ENTRY / M4 | — |
 | **B7** | App-shell global search + help (no Insights product) | M · **Shipped** | UX-SHELL / PACK-E7 | — |
-| **B8** | Thin admin org/project config for pilot | M | FR-011 / FLOW-ADMIN / M4 admin | Founder OK depth |
+| **B8** | Thin admin org/project config for pilot | M | FR-011 / FLOW-ADMIN / M4 admin | **Shipped** (founder reply `B8`) |
 | **B9** | Pack-aligned NFR polish (rate limit, failure recovery, activity SM honesty) | M | NFR-SEC rate / FLOW-FAIL / TRD-SM-ACTIVITY | Prefer after TD-018 for CI proof |
 
 ---
@@ -365,19 +365,19 @@ Evidence paths verified present unless noted.
 
 1. **Objective / value:** Operate one pilot org/project safely without enterprise CMS.  
 2. **IDs:** FR-011, FLOW-ADMIN.  
-3. **Reuse:** Admin framework seed, org structure `0093`.  
-4. **Code areas:** Admin settings surfaces.  
-5. **DB:** Seed scripts; avoid schema churn.  
-6. **APIs:** Permissioned admin routes only.  
+3. **Reuse:** Admin framework seed, org structure `0093`, existing `/api/org/*`, Settings shell.  
+4. **Code areas:** `src/lib/pilot-admin/`; `/settings/admin`; `/api/org/config`; `/api/org/projects`.  
+5. **DB:** None — seed documentation only; avoid schema churn (`0099` remains head).  
+6. **APIs:** Permissioned admin routes only (org-admin + flag).  
 7. **AI:** None.  
-8. **UX:** Calm admin forms; audit note on changes.  
-9. **Deps/risks:** Admin must not rewrite verified evidence (pack rule).  
-10. **AC/tests:** Permission tests; no evidence mutation.  
-11. **Flag:** admin role gate.  
-12. **DoD:** Pilot operator can edit allowed config.  
-13. **Size / approval:** M · founder OK for depth.
+8. **UX:** Calm admin forms; audit note on changes; link to `/workspace/audit`.  
+9. **Deps/risks:** Admin must not rewrite verified evidence (pack rule) — enforced by invariants + audit metadata.  
+10. **AC/tests:** Permission tests; no evidence mutation; a11y note + alerts.  
+11. **Flag:** `DELIVERX_PILOT_ADMIN` kill-switch defaults **on** + org-admin role gate.  
+12. **DoD:** **Met** — Pilot operator can edit allowed org/project/structure config.  
+13. **Size / approval:** M · **founder OK depth (PD-2026-07-26l)**.
 
-**Pack theme:** M4 admin.
+**Pack theme:** M4 admin. **Shipped 2026-07-26.**
 
 ---
 
@@ -443,11 +443,11 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**B1–B7 shipped.** Next eng candidate: **B8 (thin admin config)** with founder OK on depth, or residual founder-ops/hardening (**B9** needs no new PD if scoped to R-P2-06 + failure polish). PostHog remains deferred pending FD-PACK-7.
+**B1–B8 shipped.** Next eng candidate: **B9** (residual NFR polish / R-P2-06; no new PD if scoped), or residual founder-ops. PostHog remains deferred pending FD-PACK-7.
 
 Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
-Do **not** start B8 without founder OK on admin depth. Do **not** treat Stripe as next eng work.
+Do **not** expand B8 into enterprise mission-control without new founder approval. Do **not** treat Stripe as next eng work.
 
 ---
 
