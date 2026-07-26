@@ -8,6 +8,11 @@ import {
   EVIDENCE_STRENGTH_DISPLAY,
   type EvidenceStrengthLabel,
 } from "@/lib/verified-portfolio/types";
+import {
+  formatCapabilityBandLabel,
+  formatConfidenceDisplayLabel,
+  whyThisCapabilityBand,
+} from "@/lib/capability-engine/confidence-bands";
 
 type EvidenceRow = {
   id: string;
@@ -35,7 +40,7 @@ type SnapshotView = {
   judgements?: Array<{
     competencyId: string;
     indicatorId: string;
-    levelProposed: number;
+    levelProposed: string;
     evidenceReferences: string[];
     reasoningSummary: string;
     confidence: number;
@@ -303,20 +308,34 @@ export function EvidenceCapabilityApp() {
                 <div>
                   <p className="text-xs font-medium text-[#1A1A18]">Levels (evidence-cited)</p>
                   <ul className="mt-1 space-y-2 text-xs text-[#4A4A45]">
-                    {snapshot.judgements.slice(0, 8).map((j) => (
-                      <li key={`${j.competencyId}-${j.indicatorId}`}>
-                        <span className="font-medium text-[#1A1A18]">
-                          {j.competencyId} · L{j.levelProposed}
-                        </span>
-                        {" — "}
-                        {j.reasoningSummary}
-                        {j.evidenceReferences?.length ? (
-                          <span className="block text-[10px] text-[#6B6B64]">
-                            Evidence: {j.evidenceReferences.slice(0, 3).join(", ")}
+                    {snapshot.judgements.slice(0, 8).map((j) => {
+                      const bandWhy = whyThisCapabilityBand(String(j.levelProposed));
+                      return (
+                        <li key={`${j.competencyId}-${j.indicatorId}`}>
+                          <span className="font-medium text-[#1A1A18]">
+                            {j.competencyId} ·{" "}
+                            {formatCapabilityBandLabel(String(j.levelProposed))}
                           </span>
-                        ) : null}
-                      </li>
-                    ))}
+                          {" — "}
+                          {formatConfidenceDisplayLabel(j.confidence)}
+                          {bandWhy ? (
+                            <span className="block text-[10px] text-[#6B6B64]">
+                              Why this band: {bandWhy}
+                            </span>
+                          ) : null}
+                          {j.reasoningSummary ? (
+                            <span className="block text-[10px] text-[#6B6B64]">
+                              {j.reasoningSummary}
+                            </span>
+                          ) : null}
+                          {j.evidenceReferences?.length ? (
+                            <span className="block text-[10px] text-[#6B6B64]">
+                              Evidence: {j.evidenceReferences.slice(0, 3).join(", ")}
+                            </span>
+                          ) : null}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               ) : null}

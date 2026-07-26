@@ -271,6 +271,7 @@ describe("profile next action after Experience", () => {
             rubricSlug: claims.rubricSlug,
             rubricVersion: claims.rubricVersion,
             frameworkVersionId: claims.frameworkVersionId,
+            confidenceBandAlgorithmVersion: claims.confidenceBandAlgorithmVersion,
             readinessSignal: claims.readiness,
             strengths: claims.strengths,
             gaps: claims.gaps,

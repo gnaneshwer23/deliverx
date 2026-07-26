@@ -395,13 +395,25 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26e — B1 confidence-band algorithm pinned
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `Start Building B1` authorizes six-doc phase **B1**. Pin versioned confidence-band algorithm **`confidence-bands@2026.1`**. Capability bands remain existing engine levels (`emerging` / `developing` / `proficient` / `advanced` / `insufficient_evidence`). Internal confidence `[0,1]` maps only to display bands (`higher` / `moderate` / `lower`) — never decorative confidence %. Typed SoT: `src/lib/capability-engine/confidence-bands.ts`. Doc: [`../engineering/confidence-band-algorithm.md`](../engineering/confidence-band-algorithm.md). Extends PD-2026-07-05. |
+| **Why** | Unexplained scores destroy trust; Schema §5.1 / SCH-BANDS / PACK-E3 required a versioned, explainable mapping before recommendation SM (B2) cites bands. |
+| **Consequence** | SnapshotClaims / Profile / Career expose `confidenceBandAlgorithmVersion`. UI shows “Why this band”. No DB migration. ScoreRun / band mapping alone never lights Verified. Bump version string + doc together when thresholds change. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e.
 
 ### Pending — Six-doc pack build-out (FD-PACK-*, 2026-07-26)
 
-Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; no Bn beyond B1 should start without the matching decision.
+Recorded from the founder Six Document Build Pack gap check + [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md). Defaults apply if silent; **B1 shipped**; no Bn beyond B1 should start without the matching decision.
 
 | ID | Decision | Default if silent | Blocks |
 | --- | --- | --- | --- |
@@ -414,4 +426,4 @@ Recorded from the founder Six Document Build Pack gap check + [`../engineering/s
 | **FD-PACK-7** | PostHog vs stay on Vercel Analytics for pilot KPIs? | Stay Vercel; PostHog optional later | B3 PostHog sink |
 | **FD-PACK-8** | App-shell global search/help (explicitly **no** Insights product Home)? | Defer search | B7 |
 
-**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops.
+**Already settled (do not reopen via pack):** money-back/guarantee rejected; 12-company catalogue; Verified = T8 attestation; Team Copilot = Workspace alias not third SKU; learning ≠ capability; consent default OFF; T9 SKUs / payments-later ops; **B1 confidence bands `confidence-bands@2026.1`**.

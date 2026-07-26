@@ -234,6 +234,8 @@ export type ScoreRunCareerContext = {
   frameworkVersionId: string | null;
   rubricSlug: string | null;
   rubricVersion: string | null;
+  /** Confidence-band algorithm pin (SCH-BANDS / B1). */
+  confidenceBandAlgorithmVersion: string | null;
 };
 
 export type CareerIntelligenceSnapshot = {

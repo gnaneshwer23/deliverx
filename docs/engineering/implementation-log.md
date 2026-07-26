@@ -1,3 +1,7 @@
+## 2026-07-26 — B1: Confidence-band algorithm (founder-authorized)
+
+Founder utterance `Start Building B1` authorized six-doc phase B1. Shipped versioned algorithm `confidence-bands@2026.1` (`docs/engineering/confidence-band-algorithm.md`); typed SoT `src/lib/capability-engine/confidence-bands.ts` (mapping + labels + why-copy); rubric-judge uses `mapSignalsToCapabilityBand`; SnapshotClaims / Profile / Career expose `confidenceBandAlgorithmVersion`; Profile, Career, Portfolio, Evidence surfaces show “Why this band”; unit tests + `test:pi`. No DB migration. Does not light Verified. Next candidate: B2 (needs FD-PACK-6).
+
 ## 2026-07-26 — Technology T9: Stripe commercial packaging (founder-authorized)
 
 Founder utterance `approve t9` authorized P9/T9. Implemented migration `0097_stripe_entitlements.sql`; `src/lib/billing/`; Stripe Checkout + Customer Portal + raw-signature webhook; idempotent subscription sync; Experience/Launchpad entitlement gates; Settings billing; privacy export/purge; commercial honesty tests. Pricing decision: Experience £39/month, Launchpad £39/month, Complete Journey £59/month including Professional Workspace. No money-back guarantee and no card/PAN storage.

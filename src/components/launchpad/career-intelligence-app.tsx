@@ -15,6 +15,11 @@ import {
   readinessKindTitle,
   readinessKindUserLabel,
 } from "@/lib/ux/capability-assessment-copy";
+import {
+  formatCapabilityBandLabel,
+  formatConfidenceDisplayLabel,
+  whyThisCapabilityBand,
+} from "@/lib/capability-engine/confidence-bands";
 import { AiCitationStrip } from "@/components/dx/ai-citation-strip";
 
 type Snapshot = {
@@ -84,6 +89,7 @@ type Snapshot = {
     strengths: string[];
     gaps: string[];
     capturedAt: string;
+    confidenceBandAlgorithmVersion?: string | null;
     levels?: Array<{
       competencyId: string;
       level: string;
@@ -276,16 +282,35 @@ export function CareerIntelligenceApp({
                     </Link>
                   </p>
                   {snap.scoreRun.levels?.length ? (
-                    <ul className="mt-2 space-y-1 text-xs text-[#4A4A45]">
-                      {snap.scoreRun.levels.slice(0, 4).map((l) => (
-                        <li key={l.competencyId}>
-                          {l.competencyId}: {l.level.replace(/_/g, " ")}
-                          {l.evidenceReferences.length
-                            ? ` · cites ${l.evidenceReferences.slice(0, 2).join(", ")}`
-                            : ""}
-                        </li>
-                      ))}
+                    <ul className="mt-2 space-y-2 text-xs text-[#4A4A45]">
+                      {snap.scoreRun.levels.slice(0, 4).map((l) => {
+                        const bandWhy = whyThisCapabilityBand(l.level);
+                        return (
+                          <li key={l.competencyId}>
+                            <span className="font-medium text-[#1A1A18]">
+                              {l.competencyId}: {formatCapabilityBandLabel(l.level)}
+                            </span>
+                            {" — "}
+                            {formatConfidenceDisplayLabel(l.confidence)}
+                            {bandWhy ? (
+                              <span className="block text-[10px] text-[#6B6B64]">
+                                Why this band: {bandWhy}
+                              </span>
+                            ) : null}
+                            {l.evidenceReferences.length ? (
+                              <span className="block text-[10px] text-[#6B6B64]">
+                                Evidence: {l.evidenceReferences.slice(0, 2).join(", ")}
+                              </span>
+                            ) : null}
+                          </li>
+                        );
+                      })}
                     </ul>
+                  ) : null}
+                  {snap.scoreRun.confidenceBandAlgorithmVersion ? (
+                    <p className="mt-2 text-[10px] text-[#6B6B64]">
+                      Bands {snap.scoreRun.confidenceBandAlgorithmVersion}
+                    </p>
                   ) : null}
                   {snap.scoreRun.gaps.length > 0 ? (
                     <ul className="mt-2 list-disc pl-5 text-xs text-[#4A4A45]">

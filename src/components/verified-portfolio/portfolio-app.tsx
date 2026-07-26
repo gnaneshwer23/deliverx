@@ -7,6 +7,10 @@ import {
   EVIDENCE_STRENGTH_DISPLAY,
   type EvidenceStrengthLabel,
 } from "@/lib/verified-portfolio/types";
+import {
+  formatCapabilityBandLabel,
+  whyThisCapabilityBand,
+} from "@/lib/capability-engine/confidence-bands";
 
 type EvidenceItem = {
   id: string;
@@ -294,25 +298,38 @@ export function VerifiedPortfolioApp() {
             these claims externally.
           </p>
           <ul className="mt-3 space-y-2 text-sm text-[#4A4A45]">
-            {capabilityClaims.slice(0, 8).map((c) => (
-              <li key={`${c.competencyId}-${c.level}`}>
-                <span className="font-medium text-[#1A1A18]">
-                  {c.competencyId} · {c.level.replace(/_/g, " ")}
-                </span>
-                {c.evidenceCitations.length ? (
-                  <span className="block text-[10px] text-[#6B6B64]">
-                    Evidence:{" "}
-                    {c.evidenceCitations
-                      .slice(0, 3)
-                      .map((e) => e.evidenceId)
-                      .join(", ")}
+            {capabilityClaims.slice(0, 8).map((c) => {
+              const bandWhy = whyThisCapabilityBand(c.level);
+              return (
+                <li key={`${c.competencyId}-${c.level}`}>
+                  <span className="font-medium text-[#1A1A18]">
+                    {c.competencyId} · {formatCapabilityBandLabel(c.level)}
                   </span>
-                ) : null}
-                {c.deliverxVerified ? null : (
-                  <span className="block text-[10px] text-[#6B6B64]">Not DeliverX-verified</span>
-                )}
-              </li>
-            ))}
+                  {bandWhy ? (
+                    <span className="block text-[10px] text-[#6B6B64]">
+                      Why this band: {bandWhy}
+                    </span>
+                  ) : null}
+                  {c.reasoningSummary ? (
+                    <span className="block text-[10px] text-[#6B6B64]">
+                      {c.reasoningSummary}
+                    </span>
+                  ) : null}
+                  {c.evidenceCitations.length ? (
+                    <span className="block text-[10px] text-[#6B6B64]">
+                      Evidence:{" "}
+                      {c.evidenceCitations
+                        .slice(0, 3)
+                        .map((e) => e.evidenceId)
+                        .join(", ")}
+                    </span>
+                  ) : null}
+                  {c.deliverxVerified ? null : (
+                    <span className="block text-[10px] text-[#6B6B64]">Not DeliverX-verified</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
@@ -582,7 +599,7 @@ export function VerifiedPortfolioApp() {
                   .slice(0, 4)
                   .map((c) => (
                     <li key={c.competencyId}>
-                      {c.competencyId}: {c.level.replace(/_/g, " ")}
+                      {c.competencyId}: {formatCapabilityBandLabel(c.level)}
                       {c.deliverxVerified ? "" : " · not verified"}
                     </li>
                   ))}

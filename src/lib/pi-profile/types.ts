@@ -49,6 +49,8 @@ export type PiProfileScoreRun = {
   rubricSlug: string | null;
   rubricVersion: string | null;
   frameworkVersionId: string | null;
+  /** Confidence-band algorithm pin (SCH-BANDS / B1). */
+  confidenceBandAlgorithmVersion: string | null;
   readinessSignal: number | null;
   strengths: string[];
   gaps: string[];

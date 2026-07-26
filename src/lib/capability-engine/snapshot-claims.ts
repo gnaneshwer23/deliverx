@@ -6,6 +6,10 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { compareGrowth } from "@/lib/capability-engine/growth-and-recommendations";
+import {
+  CONFIDENCE_BAND_ALGORITHM_VERSION,
+  type ConfidenceBandAlgorithmVersion,
+} from "@/lib/capability-engine/confidence-bands";
 import type {
   CapabilityLevel,
   CapabilitySnapshotProfile,
@@ -30,6 +34,10 @@ export type SnapshotClaims = {
   scoreRunId: string | null;
   capturedAt: string;
   schemaVersion: string;
+  /** Capability Engine orchestration pin (e.g. capability-engine-v1). */
+  algorithmVersion: string | null;
+  /** Confidence-band algorithm pin (SCH-BANDS / B1). */
+  confidenceBandAlgorithmVersion: ConfidenceBandAlgorithmVersion;
   rubricSlug: string | null;
   rubricVersion: string | null;
   frameworkVersionId: string | null;
@@ -145,6 +153,11 @@ export function projectSnapshotClaims(
     scoreRunId: row.score_run_id,
     capturedAt: row.captured_at,
     schemaVersion: profile.schemaVersion ?? "1",
+    algorithmVersion:
+      typeof profile.algorithmVersion === "string"
+        ? profile.algorithmVersion
+        : null,
+    confidenceBandAlgorithmVersion: CONFIDENCE_BAND_ALGORITHM_VERSION,
     rubricSlug: pin?.rubricSlug ?? profile.rubricSlug ?? null,
     rubricVersion: pin?.rubricVersion ?? profile.rubricVersion ?? null,
     frameworkVersionId:
@@ -326,6 +339,7 @@ export function toPiProfileScoreRun(claims: SnapshotClaims): PiProfileScoreRun {
     rubricSlug: claims.rubricSlug,
     rubricVersion: claims.rubricVersion,
     frameworkVersionId: claims.frameworkVersionId,
+    confidenceBandAlgorithmVersion: claims.confidenceBandAlgorithmVersion,
     readinessSignal: claims.readiness,
     strengths: claims.strengths,
     gaps: claims.gaps,
@@ -364,6 +378,7 @@ export function toScoreRunCareerContext(
     frameworkVersionId: claims.frameworkVersionId,
     rubricSlug: claims.rubricSlug,
     rubricVersion: claims.rubricVersion,
+    confidenceBandAlgorithmVersion: claims.confidenceBandAlgorithmVersion,
   };
 }
 

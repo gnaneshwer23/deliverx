@@ -1,5 +1,6 @@
 import type { RubricDefinition } from "@/lib/capability-engine/rubric";
 import { levelRank } from "@/lib/capability-engine/rubric";
+import { mapSignalsToCapabilityBand } from "@/lib/capability-engine/confidence-bands";
 import type {
   CapabilityLevel,
   MappedIndicator,
@@ -10,21 +11,6 @@ import {
   DEFAULT_MODEL_VERSION,
   DEFAULT_PROMPT_VERSION,
 } from "@/lib/capability-engine/types";
-
-function proposeLevel(
-  strength: number,
-  count: number,
-  hasVerified: boolean,
-  knowledgeOnly: boolean,
-): CapabilityLevel {
-  if (knowledgeOnly || count === 0) return "insufficient_evidence";
-  if (hasVerified && strength >= 0.75 && count >= 2) return "advanced";
-  if (hasVerified && strength >= 0.6) return "proficient";
-  if (strength >= 0.55 && count >= 2) return "proficient";
-  if (strength >= 0.4 || count >= 2) return "developing";
-  if (strength >= 0.25) return "emerging";
-  return "insufficient_evidence";
-}
 
 /** Rubric Judge — judges against versioned anchors; returns structured judgements only. */
 export function judgeAgainstRubric(input: {
@@ -79,12 +65,12 @@ export function judgeAgainstRubric(input: {
     const avgStrength =
       group.reduce((s, g) => s + g.strengthHint, 0) / Math.max(group.length, 1);
 
-    const level = proposeLevel(
+    const level = mapSignalsToCapabilityBand({
       avgStrength,
-      items.filter((i) => !i.isKnowledgeOnly).length,
+      practiceEvidenceCount: items.filter((i) => !i.isKnowledgeOnly).length,
       hasVerified,
       knowledgeOnly,
-    );
+    });
 
     const indicatorKey = Object.keys(input.rubric.indicators).find(
       (k) => input.rubric.indicators[k]?.indicatorId === first.indicatorId,

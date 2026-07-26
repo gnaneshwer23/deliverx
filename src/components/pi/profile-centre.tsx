@@ -4,18 +4,14 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import type { PiProfileAggregate } from "@/lib/pi-profile/types";
 import { PI_EVIDENCE_PATH } from "@/lib/pi-profile/paths";
+import {
+  formatCapabilityBandLabel,
+  formatConfidenceDisplayLabel,
+  whyThisCapabilityBand,
+  whyThisConfidenceDisplayBand,
+} from "@/lib/capability-engine/confidence-bands";
 import { DevelopmentLoopPanel } from "@/components/pi/development-loop-panel";
 import { NotificationInbox } from "@/components/pi/notification-inbox";
-
-function confidenceLabel(confidence: number): string {
-  if (confidence >= 0.75) return "higher confidence";
-  if (confidence >= 0.45) return "moderate confidence";
-  return "lower confidence";
-}
-
-function levelLabel(level: string): string {
-  return level.replace(/_/g, " ");
-}
 
 export function ProfileCentre() {
   const [profile, setProfile] = useState<PiProfileAggregate | null>(null);
@@ -322,27 +318,49 @@ export function ProfileCentre() {
             <div className="mt-4">
               <p className="text-xs font-medium text-[#1A1A18]">Levels (evidence-cited)</p>
               <ul className="mt-2 space-y-2 text-xs text-[#4A4A45]">
-                {profile.scoreRun.levels.slice(0, 6).map((l) => (
-                  <li key={`${l.competencyId}-${l.indicatorId}`}>
-                    <span className="font-medium text-[#1A1A18]">
-                      {l.competencyId} · {levelLabel(String(l.level))}
-                    </span>
-                    {" — "}
-                    {confidenceLabel(l.confidence)}
-                    {l.evidenceReferences.length ? (
-                      <span className="block text-[10px] text-[#6B6B64]">
-                        Evidence: {l.evidenceReferences.slice(0, 3).join(", ")}
+                {profile.scoreRun.levels.slice(0, 6).map((l) => {
+                  const bandWhy = whyThisCapabilityBand(String(l.level));
+                  return (
+                    <li key={`${l.competencyId}-${l.indicatorId}`}>
+                      <span className="font-medium text-[#1A1A18]">
+                        {l.competencyId} · {formatCapabilityBandLabel(String(l.level))}
                       </span>
-                    ) : null}
-                  </li>
-                ))}
+                      {" — "}
+                      {formatConfidenceDisplayLabel(l.confidence)}
+                      {bandWhy ? (
+                        <span className="block text-[10px] text-[#6B6B64]">
+                          Why this band: {bandWhy}
+                        </span>
+                      ) : null}
+                      <span className="block text-[10px] text-[#6B6B64]">
+                        Why this confidence: {whyThisConfidenceDisplayBand(l.confidence)}
+                      </span>
+                      {l.reasoningSummary ? (
+                        <span className="block text-[10px] text-[#6B6B64]">
+                          {l.reasoningSummary}
+                        </span>
+                      ) : null}
+                      {l.evidenceReferences.length ? (
+                        <span className="block text-[10px] text-[#6B6B64]">
+                          Evidence: {l.evidenceReferences.slice(0, 3).join(", ")}
+                        </span>
+                      ) : null}
+                    </li>
+                  );
+                })}
               </ul>
-              {profile.scoreRun.frameworkVersionId || profile.scoreRun.rubricVersion ? (
+              {profile.scoreRun.frameworkVersionId ||
+              profile.scoreRun.rubricVersion ||
+              profile.scoreRun.confidenceBandAlgorithmVersion ? (
                 <p className="mt-3 text-[10px] text-[#6B6B64]">
                   Scored under{" "}
-                  {profile.scoreRun.rubricSlug ?? "rubric"}@{profile.scoreRun.rubricVersion ?? "?"}
+                  {profile.scoreRun.rubricSlug ?? "rubric"}@
+                  {profile.scoreRun.rubricVersion ?? "?"}
                   {profile.scoreRun.frameworkVersionId
                     ? ` · framework ${profile.scoreRun.frameworkVersionId.slice(0, 8)}`
+                    : ""}
+                  {profile.scoreRun.confidenceBandAlgorithmVersion
+                    ? ` · bands ${profile.scoreRun.confidenceBandAlgorithmVersion}`
                     : ""}
                 </p>
               ) : null}

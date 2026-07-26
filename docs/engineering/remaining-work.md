@@ -12,7 +12,7 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
-**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan for Missing + Partial remainder — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **Not** authorised Charter scope until founder selects a Bn. Recommended next: **B1** (confidence-band algorithm doc).
+**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1 shipped** (`confidence-bands@2026.1`). Other Bn not authorised until founder selects. Recommended next: **B2** (needs FD-PACK-6).
 
 ---
 
@@ -150,7 +150,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | --- | --- | --- | --- | --- | --- |
 | **PACK-E1** | Optional copy of six docs into `docs/build-pack/` + SoT note | **Open** — founder OK | Defer | S | Docs-only; pack Index requests path; Bible remains higher SoT than pack |
 | **PACK-E2** | Formal recommendation entity + state machine (generated→viewed→accepted/dismissed) | **Open** | Modify / founder OK | M | FR-010 / TRD SM; today Profile/Career CTAs only |
-| **PACK-E3** | Documented, versioned confidence-band algorithm (Schema §5.1) | **Open** | Keep | S | PD-2026-07-05 prefers bands; algorithm doc incomplete |
+| **PACK-E3** | Documented, versioned confidence-band algorithm (Schema §5.1) | **Done (B1)** | Keep | S | `confidence-bands@2026.1` — algorithm doc + typed SoT + UI why-copy |
 | **PACK-E4** | Xperience entry ceremony (company welcome→role→team→project→activity) | **Open** | Defer | M | Day-1 + catalogue already prove loop; ceremony is UX depth |
 | **PACK-E5** | Human reviewer ops playbook + queue usage (not Verified path) | **Open** | Defer — clarify vs R-P2-09 | M | Pack centres human reviewer; shipped Verified = T8 attestation |
 | **PACK-E6** | Onboarding shape: keep 6-step PI vs rebuild toward pack 8-step conversation | **Pending decision** | Defer | M | Shipped `/onboarding/profile` steps differ; no rebuild without FD |

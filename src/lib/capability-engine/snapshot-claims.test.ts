@@ -121,6 +121,8 @@ describe("SnapshotClaims shared contract", () => {
       profile.levels.map((l) => l.competencyId),
     );
     expect(claims.capabilityAssigned).toBe(false);
+    expect(claims.confidenceBandAlgorithmVersion).toBe("confidence-bands@2026.1");
+    expect(profile.confidenceBandAlgorithmVersion).toBe("confidence-bands@2026.1");
     expect(portfolio.every((c) => c.deliverxVerified === false)).toBe(true);
     expect(portfolio.every((c) => c.snapshotId === claims.snapshotId)).toBe(true);
   });

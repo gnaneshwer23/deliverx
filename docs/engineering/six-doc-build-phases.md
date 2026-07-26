@@ -7,7 +7,7 @@
 **Companion canvas:** Cursor IDE [`deliverx-six-doc-build-phases.canvas.tsx`](../../../.cursor/projects/Users-gnaneshwerjadav-Workspace-deliverx/canvases/deliverx-six-doc-build-phases.canvas.tsx) · repo [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx)  
 **Prior gap check:** [`remaining-work.md` §E](./remaining-work.md) · [`canvases/deliverx-six-doc-gap-check.canvas.tsx`](./canvases/deliverx-six-doc-gap-check.canvas.tsx)
 
-**Status of this doc:** Candidate next-scope plan. **Not** authorised Build Charter scope until founder selects a B-phase. Does **not** restart pack greenfield M0–M7.
+**Status of this doc:** Build-out plan for Missing + Partial remainder. **B1 shipped** (founder `Start Building B1`, 2026-07-26). Other Bn phases remain **not** authorised until founder selection. Does **not** restart pack greenfield M0–M7.
 
 **Migration head (verified):** `supabase/migrations/0097_stripe_entitlements.sql`. New migrations would continue at `0098+`.
 
@@ -138,7 +138,7 @@ Evidence paths verified present unless noted.
 | --- | --- | --- | --- | --- |
 | SCH-PRINCIPLES | Postgres SoT; claims≠obs≠evidence≠capability; immutability | Built | Bible 12; `0095`/`0088` | Keep |
 | SCH-NAMING | Pack generic table names | Partial | Shipped `pi_*` / ScoreRun — conceptual map only; **do not rename** | Modify |
-| SCH-BANDS | Versioned confidence-band algorithm | Partial | Levels/`emerging` in capability engine; documented versioned algo Missing (PACK-E3) | Keep |
+| SCH-BANDS | Versioned confidence-band algorithm | **Built** | `confidence-bands@2026.1` — [`confidence-band-algorithm.md`](./confidence-band-algorithm.md) + `src/lib/capability-engine/confidence-bands.ts` (PACK-E3 / B1) | Keep |
 | SCH-AI-PROV | AI provenance fields | Built | `0090` ai_agents / prompts / interactions | Keep |
 | SCH-DELETE | Export/delete + storage cascade | Built | `0086` + cascade maps | Keep |
 | SCH-SEED-ONE | Seed one company + three activities | Conflicts | `0079` 12-company catalogue; PD-2026-07-03 | Reject |
@@ -183,7 +183,7 @@ Evidence paths verified present unless noted.
 | Phase | One-liner | Size | Pack themes satisfied | Blocked on |
 | --- | --- | --- | --- | --- |
 | **B0** | Archive pack into `docs/build-pack/` + advisory SoT note | S | Index / IMPL-PATH | FD-PACK-1/2 (optional) |
-| **B1** | Document + label versioned confidence-band algorithm | S | Schema 5.1 / SCH-BANDS / explainability | — |
+| **B1** | Document + label versioned confidence-band algorithm | S · **Shipped** | Schema 5.1 / SCH-BANDS / explainability | — |
 | **B2** | Formal recommendation entity + state machine | M | FR-010 / TRD-SM-REC / M7 “next action” | FD-PACK-6 |
 | **B3** | Pilot KPI event layer (provider-agnostic; PostHog optional) | M | METRICS / NFR-OBS / PACK-E8 | FD-PACK-7 for PostHog sink only |
 | **B4** | Human reviewer ops playbook + thin queue (non-Verified) | M | FR-007 remainder / FLOW-REVIEWER / M5 review | FD-PACK-5 |
@@ -213,23 +213,25 @@ Evidence paths verified present unless noted.
 
 ---
 
-### B1 — Confidence-band algorithm (recommended next)
+### B1 — Confidence-band algorithm (**shipped** 2026-07-26)
 
 1. **Objective / value:** Candidates and employers can understand confidence bands without pseudo-% theatre.  
 2. **IDs:** SCH-BANDS, PACK-E3, BR-004 (explainability), UX-PRINCIPLES.  
 3. **Reuse:** `src/lib/capability-engine/` levels (`emerging`, etc.), SnapshotClaims, PD-2026-07-05.  
-4. **Code areas:** `docs/engineering/` algorithm note; optional UI label strings in profile/career claim surfaces.  
-5. **DB:** Prefer **none**. If bands become persisted enums: `0098_confidence_band_algorithm.sql` (version pin only).  
-6. **APIs:** None required; read paths may expose `algorithmVersion`.  
-7. **AI:** No new agents; if coach cites bands, citations already required.  
-8. **UX:** “Why this band” copy where bands appear; no decorative %.  
+4. **Code areas:** [`confidence-band-algorithm.md`](./confidence-band-algorithm.md); `confidence-bands.ts`; Profile / Career / Portfolio / Evidence label strings.  
+5. **DB:** **None** (no enum migration).  
+6. **APIs:** None required; SnapshotClaims / Profile / Career expose `confidenceBandAlgorithmVersion`.  
+7. **AI:** No new agents.  
+8. **UX:** “Why this band” copy where bands appear; no decorative confidence %.  
 9. **Deps/risks:** Must not invent unexplained scores; must not light Verified.  
-10. **AC/tests:** Unit tests for band mapping; `test:pi` if engine touch; release-gate if trust-adjacent.  
-11. **Flag:** `DELIVERX_BAND_ALGORITHM_DOC=on` unnecessary if docs-only; UI copy behind env only if contentious.  
-12. **DoD:** Versioned algorithm documented; UI labels match; tests green.  
-13. **Size / approval:** S · **no founder approval** for docs-first slice.
+10. **AC/tests:** Unit tests for band mapping + algorithm version; `test:pi`.  
+11. **Flag:** None.  
+12. **DoD:** **Met** — versioned algorithm documented; UI labels match; tests green.  
+13. **Size / approval:** S · founder selected B1 (`Start Building B1`).
 
 **Pack milestone theme:** M7 explainability / Schema §5.1 — without rebuilding M7.
+
+**Ship artefact:** Algorithm version `confidence-bands@2026.1` (PD-2026-07-26e).
 
 ---
 
@@ -435,11 +437,9 @@ Evidence paths verified present unless noted.
 
 ## 5. Recommended next phase
 
-**Ship B1 (confidence-band algorithm documentation + label audit) next.**
+**B1 shipped.** Next eng candidate: **B2 (recommendation state machine)** — only with **FD-PACK-6**.
 
-Why: unblocked by founder decisions, size S, strengthens the constitution’s “no unexplained scores” and pack Schema §5.1, reuses Capability Engine without new trust-rail risk, and clarifies language before any B2 recommendation SM cites bands.
-
-If founder prefers docs intake first: **B0** in parallel (also S).
+Optional parallel: **B0** (pack archive) if founder wants docs intake.
 
 Do **not** start B2–B7 without the matching FD-PACK decision. Do **not** treat Stripe as next eng work.
 
