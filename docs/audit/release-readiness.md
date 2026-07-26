@@ -30,6 +30,7 @@
 | Release gate manual | 263 PI + unauth + security | Pass |
 | Full `npm test` | 941 pass / 25 skip | Pass |
 | Migrations head | `0096_consent_enforcement` on prod | Pass (head) |
+| “Observation requires consent” | **True in app and DB** after `0096` |
 | Unauth pages/APIs | LIVE + HTTP | Pass |
 | Purge / anon EXECUTE | Prod SQL | Pass |
 | Learning ≠ capability | LIVE + CHECK | Pass |

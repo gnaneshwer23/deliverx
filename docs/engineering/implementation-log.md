@@ -368,7 +368,7 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 **Bypass audit (pre-0096):** Authenticated PostgREST own-row `ALL` on `workspace_observations` and direct `pi_evidence_records` insert with `source_type=workspace_observation` skipped app consent. Service-role likewise bypassed RLS (not triggers). After `0096`, both paths require active consent; other evidence sources unchanged.
 
-**Verification:** focused observation units PASS; migration applied to `jibmyxaldetyycmtlxet`; triggers + EXECUTE=false confirmed; advisors introduce no new consent-function findings.
+**Verification:** focused observation units PASS (30); migration applied to `jibmyxaldetyycmtlxet`; triggers + EXECUTE=false confirmed; advisors introduce no new consent-function findings; non-live release gate PASS (268 PI); build PASS; production deploy Ready (`005f0a9` / follow-up docs `37d3b63`); live release gate PASS (18 signed-in + 14 security incl. consent DB negatives + 10 T8).
 
 **Verdict:** DB consent enforcement shipped. T9 not started.
 
