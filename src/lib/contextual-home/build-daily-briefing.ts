@@ -318,15 +318,19 @@ function buildLaunchpadPrimary(signals: HomeStateSignals): Omit<
 > {
   const href =
     signals.interviewPrepHref ??
-    signals.nextAction?.href ??
+    (signals.nextAction?.kind === "career" ? signals.nextAction.href : null) ??
     "/launchpad/app";
+  // Do not reuse Experience nextAction titles on a Launchpad-primary Home —
+  // label/href must stay career-coherent (spot-check found "Start Experience Day 1"
+  // pointing at /launchpad/app/interview).
   const primaryAction: HomePrimaryAction = {
-    label:
-      signals.hasInterviewPrepRoadmap
-        ? signals.nextAction?.kind === "career"
-          ? signals.nextAction.title
-          : "Continue interview prep"
-        : signals.nextAction?.title ?? "Open Career Intelligence",
+    label: signals.hasInterviewPrepRoadmap
+      ? signals.nextAction?.kind === "career"
+        ? signals.nextAction.title
+        : "Continue interview prep"
+      : signals.nextAction?.kind === "career"
+        ? signals.nextAction.title
+        : "Open Career Intelligence",
     href,
     kind: "career",
   };
@@ -410,8 +414,9 @@ function buildLaunchpadPrimary(signals: HomeStateSignals): Omit<
       : "You are in a Launchpad-primary stretch of the journey.",
     whatToday: primaryAction.label,
     whyItMatters:
-      signals.nextAction?.rationale ??
-      "Career prep should cite real evidence and outcomes — not decorative readiness scores.",
+      signals.nextAction?.kind === "career" && signals.nextAction.rationale
+        ? signals.nextAction.rationale
+        : "Career prep should cite real evidence and outcomes — not decorative readiness scores.",
     howProgressing: outcomeParts.length
       ? `Outcomes on record: ${outcomeParts.join(", ")}.`
       : signals.confidenceBandLabel

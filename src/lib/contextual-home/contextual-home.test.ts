@@ -185,6 +185,28 @@ describe("buildDailyBriefing", () => {
     expect(JSON.stringify(briefing)).not.toMatch(/\d+%/);
   });
 
+  it("D — career CTA label not Experience nextAction title", () => {
+    const briefing = buildDailyBriefing(
+      baseSignals({
+        productIntent: "launchpad",
+        hasExperienceEvidence: true,
+        experienceEvidenceCount: 2,
+        nextAction: {
+          title: "Start Experience Day 1",
+          rationale: "Practice decisions create durable evidence.",
+          href: "/experience/app",
+          kind: "experience",
+        },
+      }),
+    );
+    expect(briefing.stateLetter).toBe("D");
+    expect(briefing.primaryAction.href).toMatch(/launchpad/);
+    expect(briefing.primaryAction.label).not.toMatch(/Experience/i);
+    expect(briefing.primaryAction.label).toMatch(/Career|interview/i);
+    expect(briefing.whatToday).toBe(briefing.primaryAction.label);
+    expect(briefing.whyItMatters).not.toMatch(/Practice decisions/i);
+  });
+
   it("C — cites enrolment and evidence counts", () => {
     const briefing = buildDailyBriefing(
       baseSignals({
