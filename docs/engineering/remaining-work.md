@@ -12,7 +12,7 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 
 **Six-doc pack intake (2026-07-26):** Founder *DeliverX Six Document Build Pack* gap-checked against shipped reality. Most pack requirements are already **Shipped** or **Partial** and map to §A/§B/§C below. Section **E** lists only genuinely new pack-sourced items. Do **not** restart greenfield M0–M7 from the pack Implementation Plan.
 
-**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1 shipped** (`confidence-bands@2026.1`). Other Bn not authorised until founder selects. Recommended next: **B2** (needs FD-PACK-6).
+**Six-doc build-out phases (2026-07-26):** Candidate B0–B9 plan — [`six-doc-build-phases.md`](./six-doc-build-phases.md) · canvas [`canvases/deliverx-six-doc-build-phases.canvas.tsx`](./canvases/deliverx-six-doc-build-phases.canvas.tsx). **B1 shipped** (`confidence-bands@2026.1`). **B2 shipped** (code on `main`; migration `0098` applied to prod `jibmyxaldetyycmtlxet`; flag `DELIVERX_RECOMMENDATION_SM` still off until founder pilot). Other Bn not authorised until founder selects.
 
 ---
 

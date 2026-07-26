@@ -84,7 +84,7 @@ Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-wo
 1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
 3. **Founder / ops:** prove SMTP password-reset delivery; optional VoiceOver/keyboard AT lab before claiming whole-product AA.
-4. **Founder / ops (B2 pilot):** apply migration `0098` if not yet on the linked Supabase project; set Vercel `DELIVERX_RECOMMENDATION_SM=on` when ready to show next-action cards.
+4. **Founder / ops (B2 pilot):** migration `0098` is on prod `jibmyxaldetyycmtlxet`; set Vercel Production `DELIVERX_RECOMMENDATION_SM=on` (then redeploy) when ready to show next-action cards.
 5. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
 6. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
 7. **Engineering (candidate, six-doc):** **B1 + B2 done.** B3–B7 only with matching founder FD-PACK decisions; B0 optional docs archive.
