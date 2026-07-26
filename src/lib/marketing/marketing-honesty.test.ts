@@ -5,6 +5,7 @@ import {
   CAREER_TIERS,
   LAUNCHPAD_INCLUDES,
   PILOT_ACCESS_LABEL,
+  careerTiersForEnv,
 } from "@/lib/marketing/career-suite";
 import {
   DEMO_STORIES,
@@ -35,7 +36,7 @@ function collectStrings(value: unknown, out: string[] = []): string[] {
 }
 
 describe("marketing honesty — Batch 2", () => {
-  it("uses pilot access labels instead of purchasable pound prices", () => {
+  it("uses pilot labels unless Stripe checkout is fully configured", () => {
     for (const tier of [...CAREER_TIERS, CAREER_BUNDLE]) {
       expect(tier.price).toBe(PILOT_ACCESS_LABEL);
       expect(tier.price).not.toMatch(BANNED_PRICE);
@@ -47,9 +48,25 @@ describe("marketing honesty — Batch 2", () => {
     }
   });
 
+  it("allows real prices only alongside working Stripe purchase CTAs", () => {
+    const commercial = careerTiersForEnv({
+      STRIPE_SECRET_KEY: "sk_test_fixture",
+      STRIPE_PRICE_EXPERIENCE: "price_exp",
+      STRIPE_PRICE_LAUNCHPAD: "price_launch",
+      STRIPE_PRICE_PROFESSIONAL: "price_pro",
+    });
+    expect(commercial.checkoutReady).toBe(true);
+    for (const tier of [...commercial.tiers, commercial.bundle]) {
+      if (tier.price.match(BANNED_PRICE)) {
+        expect(tier.cta).toBe("Start checkout");
+        expect(tier.ctaHref).toMatch(/^\/billing\/checkout\?sku=/);
+      }
+    }
+  });
+
   it("does not offer money-back or refund language", () => {
     expect(GUARANTEE.title.toLowerCase()).toContain("pilot");
-    expect(GUARANTEE.body.toLowerCase()).toMatch(/no checkout|without payment|paid plans/);
+    expect(GUARANTEE.body.toLowerCase()).toMatch(/without payment|prices appear/);
     expect(GUARANTEE.body).not.toMatch(/100% money-back|we'll refund your money/i);
     expect(CAREER_PROMISE.guaranteeTitle.toLowerCase()).toContain("pilot");
     expect(CAREER_PROMISE.guaranteeBody).toMatch(/no paid checkout|no money-back offer/i);
@@ -79,7 +96,7 @@ describe("marketing honesty — Batch 2", () => {
 
   it("FAQ answers pilot cost honestly", () => {
     const cost = HOME_FAQ.find((item) => item.q.toLowerCase().includes("cost"));
-    expect(cost?.a).toMatch(/pilot|free|no paid checkout/i);
+    expect(cost?.a).toMatch(/pilot|checkout/i);
     expect(cost?.a).not.toMatch(BANNED_PRICE);
   });
 });

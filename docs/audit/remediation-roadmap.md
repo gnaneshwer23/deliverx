@@ -96,7 +96,7 @@ Severity (this roadmap):
 
 | ID | Item | Why |
 | --- | --- | --- |
-| R-P4-01 | T9 Stripe / commercial packaging | Charter — separate founder approval |
+| R-P4-01 — Closed in code | T9 Stripe / commercial packaging | Founder authorized 2026-07-26; `0097`, Checkout, Portal, webhooks and entitlements shipped. Founder Stripe ops remain before live payments. |
 | R-P4-02 | Employer marketplace liquidity | Out of scope |
 | R-P4-03 | Mission-control depth | T7 demoted |
 | R-P4-04 | Multi-profession frameworks | Founder gate |
@@ -195,6 +195,6 @@ DB-P1 consent + judgement binding · **AI citations (shipped)** · residual AT/a
 (Only with founder): T9 commercial
 ```
 
-**Do not start T9.** Do not expand marketplace / mission-control / multi-profession without approval.
+**T9 is founder-authorized and shipped in code.** Do not expand marketplace / mission-control / multi-profession without approval.
 
 **Batch 6 shipped. DB consent `0096` shipped. AI citation requirements shipped.** Next remediation batch requires founder approval. TD-006 and TD-018 remain founder-owned (document only — not flipped).

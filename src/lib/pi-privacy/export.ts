@@ -8,6 +8,9 @@ import type { PersonPrivacyExport, PrivacyRequestRecord } from "@/lib/pi-privacy
 type DbClient = SupabaseClient;
 
 const EXPORT_TABLES_DIRECT: string[] = [
+  "billing_entitlements",
+  "billing_subscriptions",
+  "billing_customers",
   "pi_observation_consent",
   "pi_interventions",
   "pi_intervention_outcomes",

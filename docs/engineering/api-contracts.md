@@ -8,6 +8,17 @@
 
 This document lists **PI-relevant and adjacent** contracts. The repo also contains a large pre-pivot delivery/org API surface (`/api/project/*`, `/api/ai/*`, twin, platform, etc.) that is not the Professional Intelligence source of truth.
 
+## Billing and entitlements — `/api/billing/*` (T9)
+
+| Method | Route | Auth | Contract |
+| --- | --- | --- | --- |
+| POST | `/api/billing/checkout` | User | Body `{ sku: experience \| launchpad \| professional }`; creates Stripe subscription Checkout session; returns `{ url, sessionId }`; 503 if price/env config incomplete |
+| POST | `/api/billing/portal` | User | Creates Stripe Customer Portal session; returns `{ url }` |
+| GET | `/api/billing/entitlements` | User | Returns own active entitlements + checkout/enforcement state |
+| POST | `/api/billing/webhook` | Stripe signature | Raw-body signature verification; idempotently handles Checkout complete and subscription create/update/delete; service-role DB writes |
+
+`/billing/checkout?sku=…` is the server redirect entry used by public purchase CTAs. `/billing/success` explains that access unlocks only after webhook proof. Product APIs may use `assertApiEntitlement`, returning **402** when `DELIVERX_BILLING_ENFORCE=on` and access is unpaid. Product app layouts redirect unpaid signed-in users to `/pricing`.
+
 ---
 
 ## Professional Intelligence — `/api/pi/*`

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, Code2, User } from "lucide-react";
+import { Building2, Code2, CreditCard, User } from "lucide-react";
 import { dxClass } from "@/lib/dx-theme";
 import {
+  SETTINGS_BILLING_PATH,
   SETTINGS_DEVELOPER_PATH,
   SETTINGS_PROFILE_PATH,
   SETTINGS_WORKSPACE_PATH,
@@ -12,6 +13,7 @@ import {
 
 const TABS = [
   { href: SETTINGS_PROFILE_PATH, label: "Profile & notifications", icon: User },
+  { href: SETTINGS_BILLING_PATH, label: "Billing", icon: CreditCard },
   {
     href: SETTINGS_WORKSPACE_PATH,
     label: "Workspace & organisation",

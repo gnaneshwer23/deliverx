@@ -1,3 +1,9 @@
+## 2026-07-26 — Technology T9: Stripe commercial packaging (founder-authorized)
+
+Founder utterance `approve t9` authorized P9/T9. Implemented migration `0097_stripe_entitlements.sql`; `src/lib/billing/`; Stripe Checkout + Customer Portal + raw-signature webhook; idempotent subscription sync; Experience/Launchpad entitlement gates; Settings billing; privacy export/purge; commercial honesty tests. Pricing decision: Experience £39/month, Launchpad £39/month, Complete Journey £59/month including Professional Workspace. No money-back guarantee and no card/PAN storage.
+
+Live payments remain **TEST-ONLY / OFF** until founder creates Stripe prices, sets Vercel keys, registers the production webhook, enables Customer Portal, proves test checkout, and turns on `DELIVERX_BILLING_ENFORCE`.
+
 # Implementation Log — PI Pivot P0–P7
 
 Ship log for the Professional Intelligence candidate loop. SHAs are from `main` history (July 2026).

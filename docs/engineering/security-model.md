@@ -1,3 +1,14 @@
+## T9 billing boundary
+
+- Stripe hosts card collection; DeliverX never stores full PAN, CVC, or payment method payloads.
+- `/api/billing/webhook` reads the raw body and verifies `Stripe-Signature` with `STRIPE_WEBHOOK_SECRET` before parsing/processing.
+- `billing_webhook_events.stripe_event_id` is unique. Duplicate deliveries are successful no-ops; concurrent duplicates rely on the unique constraint.
+- Only `service_role` may write customers, subscriptions, entitlements, or webhook audit. Users can SELECT only rows where `user_id = auth.uid()`.
+- Checkout requires an authenticated user and records `deliverx_user_id` + bounded SKU metadata on the Stripe session/subscription.
+- Access grants follow subscription state: `active`, `trialing`, and `past_due` remain active; canceled/unpaid/incomplete-expired/paused revoke subscription-derived entitlements.
+- `DELIVERX_BILLING_ENFORCE` defaults off. Enable only after production migration, Stripe price/webhook/portal config, and test-mode proof.
+- Billing identifiers are personal data and included in privacy export/purge. Operational webhook audit retains event IDs/digests only.
+
 # Security Model
 
 **As of:** 2026-07-25 · post-ship audit

@@ -29,6 +29,7 @@ const PROTECTED_GET = [
   "/api/career/intelligence",
   "/api/portfolio/entries",
   "/api/org/structure",
+  "/api/billing/entitlements",
 ];
 
 const PROTECTED_POST = [
@@ -41,6 +42,8 @@ const PROTECTED_POST = [
   "/api/org/departments",
   "/api/org/teams",
   "/api/org/members",
+  "/api/billing/checkout",
+  "/api/billing/portal",
 ];
 
 async function hit(path: string, method: "GET" | "POST" = "GET") {
@@ -81,6 +84,8 @@ describe("T6 unauth gates", () => {
       "/career/outcomes",
       "/portfolio",
       "/settings",
+      "/experience/app",
+      "/launchpad/app",
     ]) {
       const res = await fetch(`${BASE_URL}${path}`, { redirect: "manual" });
       expect([307, 302, 303].includes(res.status), `${path} → ${res.status}`).toBe(true);

@@ -52,6 +52,7 @@ const PI_UNITS = [
   "src/lib/ai-orchestration",
   "src/lib/artefacts",
   "src/lib/notifications",
+  "src/lib/billing",
   "src/lib/access",
   "src/lib/auth",
 ].join(" ");

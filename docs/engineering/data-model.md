@@ -1,3 +1,12 @@
+## T9 billing and entitlements (`0097`)
+
+- `billing_customers`: one user ↔ Stripe customer identifier; optional billing email; no card/PAN data.
+- `billing_subscriptions`: Stripe subscription mirror with price, SKU, lifecycle status, period end, cancellation intent.
+- `billing_entitlements`: derived product access. SKUs are `experience`, `launchpad`, `professional`; Complete Journey writes all three entitlement rows.
+- `billing_webhook_events`: unique Stripe event ID, type, mode, processing result, payload digest, error. Idempotency and ops audit only; no full payload/payment method.
+
+RLS exposes self-only SELECT for customers, subscriptions and entitlements. Authenticated clients cannot mutate billing rows. Webhook/checkout writers use `service_role`. Billing person rows are in T1 export/purge; webhook operational audit is retained and does not carry PANs.
+
 # Data Model
 
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.

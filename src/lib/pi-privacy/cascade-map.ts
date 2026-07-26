@@ -24,6 +24,30 @@ export type PrivacyCascadeEntry = {
 
 /** Ordered for documentation; SQL RPC has the authoritative delete order. */
 export const PRIVACY_CASCADE_MAP: readonly PrivacyCascadeEntry[] = [
+  {
+    table: "billing_entitlements",
+    kind: "person_row",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "T9 product access grants; purge before subscriptions",
+  },
+  {
+    table: "billing_subscriptions",
+    kind: "person_row",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "T9 Stripe subscription mirror (no card data)",
+  },
+  {
+    table: "billing_customers",
+    kind: "person_row",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "T9 Stripe customer identifier; personal billing linkage",
+  },
   { table: "pi_intervention_outcomes", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "pi_interventions", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "workspace_observations", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
@@ -269,6 +293,7 @@ export const PRIVACY_PURGE_EXCLUSIONS = [
   "ai_prompt_versions",
   "departments",
   "teams",
+  "billing_webhook_events",
 ] as const;
 
 export const DELETE_CONFIRM_PHRASE = "DELETE_MY_PI_DATA";

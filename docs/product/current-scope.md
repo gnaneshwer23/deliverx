@@ -2,8 +2,8 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** Post-P7 pilot hardening — **Technology T8 shipped** (founder-authorized 2026-07-25); T0–T7 shipped; TD-001/TD-016 closed  
-**As of:** 2026-07-25  
+**Active phase:** **Technology T9 commercial packaging shipped in code** (founder-authorized 2026-07-26); live payments remain test/config-gated pending founder Stripe ops
+**As of:** 2026-07-26
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
 **T0 status:** **PASS (automated)** — signed-in P0–P7 loop verified by T6 harness (`docs/qa/t0-results.md`). Optional founder visual review remains.  
@@ -14,7 +14,8 @@
 **T5 status:** **Shipped** — person PI notifications + observability (`0091`; `pi_notifications`; legacy review migration; intervention/privacy sources; `GET/PATCH /api/pi/notifications`; Profile inbox; `pi_ai_usage_daily`).  
 **T6 status:** **Shipped** — signed-in E2E + release gates (`e2e/t0-signed-in-loop.test.ts`, `e2e/t6-security-journeys.test.ts`, `e2e/t6-unauth-gates.test.ts`, `npm run test:release-gate`); TD-001 closed.  
 **T7 status:** **Shipped (founder-authorized 2026-07-25)** — org departments/teams (`0093`); Launchpad readiness honesty (`mixed` source); Professional Workspace nav demotion (legacy opt-in); Team Copilot = Workspace alias (not third SKU); membership privacy cascade.  
-**T8 status:** **Shipped (founder-authorized 2026-07-25)** — external attestation (`0094`); tokenised attestor flow; `deliverxVerified` only when `externally_attested` + `externally_verified`; kill switch `DELIVERX_VERIFIED_BADGE`; dispute → review case; attestation privacy cascade. **T9 still requires separate founder approval.**  
+**T8 status:** **Shipped (founder-authorized 2026-07-25)** — external attestation (`0094`); tokenised attestor flow; `deliverxVerified` only when `externally_attested` + `externally_verified`; kill switch `DELIVERX_VERIFIED_BADGE`; dispute → review case; attestation privacy cascade.
+**T9 status:** **Shipped in code (founder-authorized 2026-07-26, `approve t9`)** — migration `0097`; Stripe Checkout + Customer Portal; idempotent subscription webhooks; Experience / Launchpad / Complete Journey entitlements; optional enforcement via `DELIVERX_BILLING_ENFORCE=on`; honest prices appear only when all Stripe price IDs exist. **Live Stripe is TEST-ONLY / OFF until founder configures Stripe + Vercel env and webhook.**
 **Post-T5 security hardening:** **Shipped** — TD-016 closed by `0092`; anonymous EXECUTE removed from all SECURITY DEFINER functions while three authenticated RLS helpers remain intentionally callable and regression-tested.
 
 ---
@@ -42,14 +43,13 @@
 
 ## Out of scope (this phase)
 
-- P9 / **T9** commercial / packaging expansion / Stripe
 - Multi-profession framework expansion beyond thin pilot seed
 - Bulk employer accounts / dashboards / networking scrape / marketplace liquidity
 - Team Co-pilot enterprise mission-control depth as a separate Home / third SKU
 - Speculative intelligence microservices
 - Rewriting pre-PI delivery/org engines unless required to protect the candidate loop
 - First-class `messages` table (reuse meetings / contributions / notifications)
-- **T9** until separate founder approval
+- Enterprise pricing depth, annual contracts, discounts beyond Stripe promotion codes, tax/VAT automation, and a fourth Workspace SKU
 
 ---
 
@@ -60,10 +60,10 @@ These block roadmap weight and copy honesty (defaults if silent are in the hypot
 | ID | Decision | Impact if undecided |
 | --- | --- | --- |
 | **ICP** | Pre-job / early PM vs employed teams for next 90 days | Career vs Workspace investment weight |
-| **Product count / SKU** | **Settled for T7 (alias):** Team Co-pilot = Professional Workspace; not a third SKU. Full pricing SKU ADR still open for commercial (T9). | Nav prefers Professional Workspace |
+| **Product count / SKU** | **Settled for T9:** Experience £39/mo; Launchpad £39/mo; Complete Journey £59/mo includes Experience + Launchpad + Professional Workspace. Workspace is not sold separately. | Three Stripe prices; no fourth SKU |
 | **Verification meaning** | **Settled for T8 (PD-2026-07-25c):** Verified = named third-party attestation of a specific claim; kill switch available | Marketing copy must match |
 | **Workspace scope** | Employed Workspace in pilot via Professional Workspace modules; mission-control demoted | Observation/coach remain; legacy nav opt-in |
-| **Roadmap approval** | **T7 + T8 authorized 2026-07-25.** Explicit authorisation still required for **T9** (P9) | No commercial expansion until approved |
+| **Roadmap approval** | **T7 + T8 authorized 2026-07-25; T9 authorized 2026-07-26.** | T9 bounded to Stripe + entitlements |
 | **Framework breadth** | Single seeded domain (`pm-core`) enough for pilot? | Admin seed depth |
 | **Marketing vs ledger** | Suite marketing aspirational vs committed scope | Copy audit (TD-011) |
 
@@ -79,7 +79,7 @@ Full plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 4. **Engineering (now):** clear TD-017 test-fixture ESLint / `tsc` debt so returning CI stays honest.
 5. **Engineering (now):** Founder ops (TD-018 CI, TD-006 HIBP) + T8 E2E + Next bump — UX language Batch 3 shipped.
 
-Do **not** start **T9** (commercial). Defer marketplace, Stripe, graph DB, multi-profession expansion, and microservice splits.
+Founder ops remaining: create/confirm three Stripe recurring prices; set Vercel env vars; register `/api/billing/webhook`; enable Customer Portal; run test-mode checkout; only then set `DELIVERX_BILLING_ENFORCE=on`. Defer marketplace, graph DB, multi-profession expansion, and microservice splits.
 
 ---
 
@@ -87,7 +87,7 @@ Do **not** start **T9** (commercial). Defer marketplace, Stripe, graph DB, multi
 
 1. Read this file + Build Charter before implementing.
 2. Prefer smallest change that hardens the shipped loop.
-3. Do not start P9 / T9 without founder approval recorded in `product-decisions.md`.
+3. T9 is authorized and recorded in `product-decisions.md`; do not expand beyond its bounded SKU/entitlement decision.
 4. Update this file when the active phase changes.
-5. T8 is shipped; do not start **T9** until separate founder approval.
+5. T9 commercial code is shipped; do not claim live payments until Stripe founder ops and production smoke pass.
 6. Follow [`../engineering/next-steps.md`](../engineering/next-steps.md) for ordered post-T8 hardening.

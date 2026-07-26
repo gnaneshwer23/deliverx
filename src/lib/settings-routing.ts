@@ -3,6 +3,7 @@ import { hasDeveloperAccess } from "@/lib/developer-access";
 import { isOrgAdmin } from "@/lib/org-admin";
 
 export const SETTINGS_PROFILE_PATH = "/settings/profile";
+export const SETTINGS_BILLING_PATH = "/settings/billing";
 export const SETTINGS_WORKSPACE_PATH = "/settings/workspace";
 export const SETTINGS_DEVELOPER_PATH = "/settings/developer";
 

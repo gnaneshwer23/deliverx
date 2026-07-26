@@ -3,7 +3,7 @@
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
 
 **Status:** Active engineering plan (technology-oriented)  
-**As of:** 2026-07-25 · T8 shipped (founder-authorized) · migrations head `0094`  
+**As of:** 2026-07-26 · T9 shipped in code (founder-authorized) · migrations head `0097`
 **Governed by:** [`../product/build-charter.md`](../product/build-charter.md)  
 **Companion canvas:** `canvases/deliverx-technology-build-phases.canvas.tsx`  
 **Contrasts with:** Product phases P0–P9 (feature journey). This plan is **modules · schema · AI · QA · ops**.
@@ -18,11 +18,11 @@ This plan does **not** re-build P0–P8. It maps every founder module, entity, a
 
 | Charter posture | Technology phases |
 | --- | --- |
-| **Authorized / shipped** | T0–T8 (pilot seal through external attestation) |
-| **Requires founder approval** | T9 (P9 commercial) |
+| **Authorized / shipped** | T0–T9 (pilot seal through commercial entitlements) |
+| **Requires founder approval** | Expansion beyond bounded T9 model |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** **T8 shipped.** Follow [`next-steps.md`](./next-steps.md) — TD-018 CI restore, TD-006 founder Auth toggle, TD-017 fixture debt, TD-011 honesty copy. Do **not** start T9 without separate founder approval (charter).
+**Recommended next engineering action:** T9 founder ops — configure Stripe test/live prices, webhook and Customer Portal; run a test checkout; then enable `DELIVERX_BILLING_ENFORCE=on`. Continue TD-018 CI restore and TD-006 Auth toggle.
 
 ---
 
@@ -324,7 +324,7 @@ T1–T8 migrations are shipped through `0094`. Remaining migration numbers are i
 | --- | --- |
 | **Objective** | Harden foundations **without** marketplace or enterprise mission-control. |
 | **§15 / modules** | Steps 5, 13, 14 · Organisation · Launchpad · Projects |
-| **Charter** | **Authorized 2026-07-25 by founder** (`t7`). Launchpad packaging honesty + Team Copilot / Workspace foundations. **T8/T9 still require separate approval.** |
+| **Charter** | **Authorized 2026-07-25 by founder** (`t7`). Launchpad packaging honesty + Team Copilot / Workspace foundations. (T8/T9 were separately authorized later.) |
 | **Entry** | T6 gates green; founder `t7` |
 | **Status (2026-07-25)** | **Shipped**. Migration `0093_org_structure.sql` (`departments`, `teams`, `department_members`, `team_members`); `src/lib/org-structure/`; `GET /api/org/structure`, `POST /api/org/departments|teams|members`; org-admin write gates + org RLS; Launchpad readiness `mixed` honesty; legacy Mission Control / Ecosystem nav demoted (opt-in `NEXT_PUBLIC_DELIVERX_LEGACY_WORKSPACE_NAV`); Team Copilot = Professional Workspace alias (not third SKU); membership privacy cascade; no messages table; no marketplace; Verified still off. |
 | **Work packages** | Label heuristic readiness (`mixed`); demote non-MVP workspace modules; thin `departments`/`teams` |
@@ -339,7 +339,7 @@ T1–T8 migrations are shipped through `0094`. Remaining migration numbers are i
 | Field | Content |
 | --- | --- |
 | **Objective** | Employer/attestor path so `deliverxVerified` can light honestly. |
-| **Charter** | **Authorized 2026-07-25 by founder** (`t8`). Verified meaning frozen in PD-2026-07-25c. **T9 still requires separate approval.** |
+| **Charter** | **Authorized 2026-07-25 by founder** (`t8`). Verified meaning frozen in PD-2026-07-25c. T9 was separately authorized 2026-07-26. |
 | **Entry** | T7 shipped; founder `t8` |
 | **Status (2026-07-25)** | **Shipped**. Migration `0094_external_attestation.sql` (`vpp_attestation_requests`, `vpp_attestations`, `vpp_attestation_events`); `src/lib/external-attestation/`; owner APIs + tokenised attestor portal; confirm → ledger `external_verification`; dispute → `pi_review_case`; kill switch `DELIVERX_VERIFIED_BADGE`; privacy cascade; no marketplace / networking / Stripe. |
 | **Schema** | `0094_external_attestation.sql` (indicative canvas said `0092`/`0093` — superseded; head after T7 is `0094`) |
@@ -354,8 +354,14 @@ T1–T8 migrations are shipped through `0094`. Remaining migration numbers are i
 | Field | Content |
 | --- | --- |
 | **Objective** | Entitlements / monetisation beyond hardcoded `open`. |
-| **Charter** | **Requires founder approval** |
-| **Exit** | Honest pricing + entitlement checks; no trust regressions |
+| **Charter** | **Authorized 2026-07-26 by founder** (`approve t9`) |
+| **Status** | **Shipped in code.** Migration `0097`; Stripe Checkout, Customer Portal, signature-verified idempotent webhook, user entitlements, Experience/Launchpad gates, Settings billing, privacy export/purge, honest pricing. Production payments remain config-gated pending founder Stripe ops. |
+| **SKUs** | Experience £39/mo · Launchpad £39/mo · Complete Journey £59/mo (grants Experience + Launchpad + Professional Workspace). Workspace is included, not a fourth SKU. |
+| **Schema** | `billing_customers`, `billing_subscriptions`, `billing_entitlements`, `billing_webhook_events` |
+| **API** | `POST /api/billing/checkout`; `POST /api/billing/portal`; `GET /api/billing/entitlements`; `POST /api/billing/webhook` |
+| **Security** | Stripe raw-body signature; unique event idempotency; service-role writes; self-only customer/subscription/entitlement reads; no PANs; billing person rows in privacy cascade |
+| **Enforcement** | `DELIVERX_BILLING_ENFORCE=off` by default. Turn on only after Stripe prices + webhook + portal + test checkout are verified. |
+| **Exit** | Honest pricing + entitlement checks; no trust regressions — code/tests met; live-payment exit awaits founder Stripe ops |
 
 ---
 
@@ -429,7 +435,7 @@ T1–T8 migrations are shipped through `0094`. Remaining migration numbers are i
 
 ### Migration / versioning strategy
 
-- Additive migrations only for person PI; next free number is **`0095`** (head `0094`).
+- Additive migrations only for person PI; next free number is **`0098`** (head `0097`).
 - Framework versions immutable after publish; ScoreRuns pin `framework_version_id`.
 - Artefact versions immutable; new upload = new version row.
 - Prompt versions immutable; `ai_interactions` reference `prompt_version`.
@@ -484,7 +490,7 @@ T1–T8 migrations are shipped through `0094`. Remaining migration numbers are i
 | **Graph database** | Explicit relational schemas + typed contracts preferred; graph adds ops cost without active use case. |
 | **Employer marketplace liquidity / opportunity OS** | Deferred vs Launchpad packaging + readiness loop; charter blocks broad marketplace. |
 | **Agent swarms / chat-as-DB** | Intelligence belongs to the platform; agents consume structured context; chat history is not the primary database. |
-| **P8 / P9 without approval** | Verified badge and monetisation must not outrun trust and legal meaning. |
+| **Expansion beyond P9 decision** | Verified badge, marketplace, and enterprise packaging must not outrun trust and legal meaning. |
 | **Multi-profession framework platforms** | Pilot is `pm-core`; expansion is a founder decision. |
 
 ---

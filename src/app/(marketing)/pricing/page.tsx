@@ -20,6 +20,7 @@ import {
 } from "@/components/marketing/marketing-reveal";
 import {
   CAREER_BUNDLE,
+  COMMERCIAL_CHECKOUT_READY,
   CAREER_PROGRESSION_LINE,
   CAREER_PROMISE,
   CAREER_TIERS,
@@ -28,9 +29,9 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "Pilot access — Complete Journey | DeliverX",
+  title: "Plans and pricing | DeliverX",
   description:
-    "Open pilot access to Experience, Launchpad and Professional Workspace. Paid plans are not live yet — join the pilot to explore the connected career path.",
+    "DeliverX plans for Experience, Launchpad and the Complete Journey. Purchasable prices appear only when Stripe Checkout is configured.",
   openGraph: {
     title: "DeliverX Pilot Access",
     description: CAREER_PROGRESSION_LINE,
@@ -113,7 +114,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 
       <div className="mt-9 flex flex-wrap gap-3">
         <MarketingButtonLink href={tier.ctaHref} variant="ctaLight">
-          Join the pilot
+          {tier.cta}
         </MarketingButtonLink>
         <MarketingButtonLink href="/#products" variant="ctaOutline">
           Compare products
@@ -126,7 +127,7 @@ function BundleBlock({ tier }: { tier: CareerTier }) {
 export default function PricingPage() {
   return (
     <MarketingPageShell>
-      <MarketingNav primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: "Join the pilot" }} />
+      <MarketingNav primaryCta={{ href: CAREER_BUNDLE.ctaHref, label: CAREER_BUNDLE.cta }} />
 
       <main id="main-content">
         <section
@@ -138,19 +139,20 @@ export default function PricingPage() {
             <MarketingHeroMotion>
               <div className="mx-auto max-w-2xl text-center">
                 <MarketingHeroItem>
-                  <p className={mktClass.label}>DeliverX · Pilot access</p>
+                  <p className={mktClass.label}>DeliverX · Plans</p>
                 </MarketingHeroItem>
                 <MarketingHeroItem>
                   <h1
                     className={`mt-4 text-[clamp(2.5rem,6.5vw,3.75rem)] leading-[1.02] tracking-[-0.035em] text-[var(--mkt-text1)] ${mktClass.serif}`}
                   >
-                    Open pilot. Paid plans later.
+                    Choose the path you need.
                   </h1>
                 </MarketingHeroItem>
                 <MarketingHeroItem>
                   <p className="mx-auto mt-5 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                    Create an account and explore Experience, Launchpad and Professional Workspace.
-                    There is no checkout and no money-back offer until commercial packaging ships.
+                    {COMMERCIAL_CHECKOUT_READY
+                      ? "Stripe Checkout secures payment and webhooks grant access. There is no money-back guarantee."
+                      : "Pilot access remains available. Purchasable prices appear only when Stripe Checkout is configured."}
                   </p>
                 </MarketingHeroItem>
               </div>
@@ -165,7 +167,7 @@ export default function PricingPage() {
                 align="center"
                 label="Progression"
                 title="Choose a stage — or the full path."
-                subtitle="Each product stands alone during the pilot. The Complete Journey is the recommended path for the full career arc."
+                subtitle="Experience and Launchpad stand alone. Complete Journey adds both plus Professional Workspace."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -185,7 +187,7 @@ export default function PricingPage() {
                 align="center"
                 label="Complete Journey"
                 title="Experience. Opportunity. Delivery."
-                subtitle="Everything in Experience, Launchpad and Professional Workspace — open pilot access across the connected path."
+                subtitle="Everything in Experience, Launchpad and Professional Workspace — one connected subscription."
               />
             </MarketingReveal>
             <MarketingReveal delay={0.08}>
@@ -249,11 +251,13 @@ export default function PricingPage() {
                 {CAREER_PROGRESSION_LINE}
               </h2>
               <p className="mx-auto mt-4 max-w-md text-[0.9375rem] font-light leading-relaxed text-white/65">
-                Join one product — or explore the Complete Journey. No payment required during the pilot.
+                {COMMERCIAL_CHECKOUT_READY
+                  ? "Start one product — or choose the Complete Journey. Billing is managed securely in Stripe."
+                  : "Join the pilot now. Paid prices stay hidden until checkout is fully configured."}
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                 <MarketingButtonLink href={CAREER_BUNDLE.ctaHref} variant="ctaLight">
-                  Join the pilot
+                  {CAREER_BUNDLE.cta}
                 </MarketingButtonLink>
                 <MarketingButtonLink href="#xperience" variant="ctaOutline">
                   Explore a single product
@@ -268,9 +272,11 @@ export default function PricingPage() {
         cta={{
           title: "Start your career journey",
           subtitle:
-            "Open pilot access across Experience, Launchpad and Professional Workspace — paid plans not yet live.",
+            COMMERCIAL_CHECKOUT_READY
+              ? "Stripe-secured monthly plans with entitlement-backed access."
+              : "Pilot access remains open until Stripe Checkout is configured.",
           href: CAREER_BUNDLE.ctaHref,
-          label: "Join the pilot",
+          label: CAREER_BUNDLE.cta,
         }}
       />
     </MarketingPageShell>

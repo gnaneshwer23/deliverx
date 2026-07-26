@@ -47,7 +47,7 @@
 | TD-006 HIBP | Advisor WARN | **Fail** (ops, founder) |
 | WCAG 2.2 AA | Core chrome/auth AA Batch 5; residual demoted/Experience honesty Batch 6; full-product claim deferred | **Partial — Batch 5–6** (do not claim whole-product AA) |
 | AI citation requirements | `enforceCitations` on all live T4 contracts; missing/unknown → non-claiming fallback; UI strip | **Pass — 2026-07-26** |
-| T9 / Stripe | Charter block | N/A (correctly absent) |
+| T9 / Stripe | Founder-authorized; code + `0097` shipped | **Conditional** — test/live Stripe Dashboard + Vercel env ops pending |
 
 ---
 
@@ -62,7 +62,7 @@
 | “T8 shipped” | **True** (code/docs/`0094`) |
 | “T8 E2E verified” | **True — Batch 4** (live attestor → Verified 10/10) |
 | “Ready for pilot users” | **Closer** — DB + honesty/legal + UX language + T8 E2E + Next security + nav/a11y Batches 1–5 shipped; remaining gates are founder ops (CI/TD-006) and residual a11y QA |
-| “Ready to sell” | **False** — T9 blocked; prices must not imply purchase |
+| “Ready to sell” | **Not yet live** — billing code is ready; public prices remain pilot fallback until Stripe config makes checkout operational |
 
 ---
 

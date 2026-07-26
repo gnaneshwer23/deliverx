@@ -6,6 +6,7 @@ import {
   MarketingSection,
 } from "@/components/marketing/marketing-layout";
 import { LAUNCHPAD_APP_PATH } from "@/lib/launchpad/auth";
+import { isBillingEnforceOn } from "@/lib/billing/catalog";
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { createClient } from "@/lib/supabase/server";
 
@@ -67,7 +68,9 @@ export default async function StartLaunchpadPage({
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">
-            Open pilot access — paid checkout and entitlements are not live yet.
+            {isBillingEnforceOn()
+              ? "An active Launchpad or Complete Journey entitlement is required."
+              : "Pilot access is open; paid entitlement enforcement is currently off."}
           </p>
         </MarketingContainer>
       </MarketingSection>

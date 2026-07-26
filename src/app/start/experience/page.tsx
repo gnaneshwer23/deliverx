@@ -8,6 +8,7 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 import { createClient } from "@/lib/supabase/server";
 import { XPERIENCE_APP_PATH } from "@/lib/xperience/auth";
+import { isBillingEnforceOn } from "@/lib/billing/catalog";
 
 export const metadata: Metadata = {
   title: "Welcome to Experience | DeliverX",
@@ -53,7 +54,9 @@ export default async function StartXperiencePage() {
             </MarketingButtonLink>
           </div>
           <p className="mt-6 text-sm text-[var(--mkt-text3)]">
-            Open pilot access — paid checkout and entitlements are not live yet.
+            {isBillingEnforceOn()
+              ? "An active Experience or Complete Journey entitlement is required."
+              : "Pilot access is open; paid entitlement enforcement is currently off."}
           </p>
         </MarketingContainer>
       </MarketingSection>

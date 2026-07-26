@@ -2,11 +2,11 @@
 
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
 
-**As of:** 2026-07-25  
+**As of:** 2026-07-26
 **Authority:** [`../product/build-charter.md`](../product/build-charter.md) · [`../product/current-scope.md`](../product/current-scope.md)  
 **Companion canvas:** Cursor IDE `canvases/deliverx-next-steps.canvas.tsx` (open beside chat)
 
-This plan is grounded in **shipped reality**, not a greenfield vision. It does **not** authorize T9, marketplace, Stripe, or microservice splits. T8 attestation is shipped (founder-authorized 2026-07-25).
+This plan is grounded in **shipped reality**, not a greenfield vision. T9 is founder-authorized and shipped in code; Stripe payments remain disabled/config-gated until founder ops complete. Marketplace and microservice splits remain unauthorized.
 
 ---
 
@@ -15,9 +15,9 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 | Track | Status |
 | --- | --- |
 | Product P0–P8 | **Shipped** — candidate PI loop + external attestation (attestation→Verified live E2E, Batch 4) |
-| Technology T0–T8 | **Shipped** — migrations through `0096`; T8 founder-authorized 2026-07-25, E2E-verified in Batch 4; DB consent enforcement (`0096`) shipped 2026-07-26 |
+| Technology T0–T9 | **Shipped in code** — migrations through `0097`; T9 founder-authorized 2026-07-26 |
 | Next.js | **`16.2.12`** (≥16.2.11) — audited proxy/SSRF/DoS advisories closed (Batch 4) |
-| T9 | **Blocked** — separate founder approval required |
+| T9 | **Founder-authorized; code shipped** — Stripe live enablement pending founder ops |
 | TD-001 | **Closed** (T6 signed-in E2E) |
 | TD-016 | **Closed** (`0092`) |
 | TD-006 | **Open** — founder Auth leaked-password toggle |
@@ -27,7 +27,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 | TD-018 | **Open** — GitHub Actions minutes exhausted; workflows disabled |
 | Production | **Healthy** — Vercel READY · https://www.deliverx.dev |
 | CI | **Disabled** (`verify.yml`, `ci-e2e.yml`) to stop 0-job failure spam |
-| Not authorized | Stripe/checkout · marketplace liquidity · intelligence microservices |
+| Not authorized | Marketplace liquidity · intelligence microservices · fourth Workspace SKU / enterprise mission-control depth |
 
 ---
 
@@ -50,7 +50,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. It does *
 
 ## B. Harden before expanding — authorized under charter
 
-Do these **after or in parallel with A** where noted. No T9.
+Do these **after or in parallel with A** where noted.
 
 | # | Step | Owner | Effort | Objective | Why now | Dependency | Acceptance check |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -62,13 +62,22 @@ Do these **after or in parallel with A** where noted. No T9.
 
 ---
 
-## C. Requires founder approval
+## C. Founder ops — enable T9 payments
+
+1. In Stripe test mode, create three recurring monthly prices matching PD-2026-07-26d.
+2. Set `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, and all `STRIPE_PRICE_*` values in Vercel.
+3. Register `https://www.deliverx.dev/api/billing/webhook` for checkout + subscription events and set `STRIPE_WEBHOOK_SECRET`.
+4. Enable Stripe Customer Portal cancellation.
+5. Complete a test-mode checkout; verify webhook event + subscription + entitlement rows and product unlock.
+6. Promote equivalent live-mode prices/keys/webhook. Only then set `DELIVERX_BILLING_ENFORCE=on`.
+
+## D. Requires founder approval
 
 Do **not** start without an explicit decision recorded in [`../product/product-decisions.md`](../product/product-decisions.md).
 
 | Item | What it unlocks | Primary risks if rushed |
 | --- | --- | --- |
-| **T9 — Commercial packaging (P9)** | Entitlements / pricing beyond hardcoded open | Monetisation before pilot trust; SKU ADR still open |
+| **Expansion beyond PD-2026-07-26d T9** | Annual/enterprise packaging, tax/VAT automation, fourth SKU | Scope and legal/ops depth |
 | **ICP weight (90 days)** | Career vs Workspace investment priority | Wrong surface depth for the actual pilot user |
 | **Framework breadth** | Whether TD-007 deepen is enough or multi-profession is needed | Scope explosion outside charter |
 
@@ -76,12 +85,12 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 
 ---
 
-## D. Explicitly defer
+## E. Explicitly defer
 
 | Deferred | Why |
 | --- | --- |
 | Employer marketplace liquidity / opportunity OS | Charter; Launchpad packaging honesty already shipped in T7 |
-| Stripe / checkout / paywalls | T9-gated; not authorized |
+| Stripe custom card forms | Checkout + Portal are the approved payment surface |
 | Lighting `deliverxVerified` without attestation | PD-2026-07-06 / PD-2026-07-25c |
 | Graph database | Relational + typed contracts preferred |
 | Multi-profession framework platforms | Pilot is `pm-core` |

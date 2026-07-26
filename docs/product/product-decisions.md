@@ -380,6 +380,21 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26d — T9 authorized; Stripe-derived entitlements
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Founder utterance `approve t9` authorizes Technology Phase T9 / product P9. Pilot commercial model: **Experience £39/month**, **Launchpad £39/month**, **Complete Journey £59/month**. Complete Journey grants Experience + Launchpad + Professional Workspace. Professional Workspace / Team Copilot remains an included alias, **not a separately sold fourth SKU**. Stripe Checkout collects payment; Stripe Customer Portal manages cancellation. Webhook-confirmed subscriptions are the source of paid entitlements. Price IDs are env configuration. Experience and Launchpad enforce entitlements only when `DELIVERX_BILLING_ENFORCE=on`; default stays off until Stripe ops and test-mode smoke complete. |
+| **Honesty / legal** | Public £ prices and “Start checkout” appear only when `STRIPE_SECRET_KEY` and all three `STRIPE_PRICE_*` IDs are configured. Otherwise marketing falls back to pilot access copy. There is **no money-back guarantee**. DeliverX stores Stripe customer/subscription identifiers but never full card numbers. |
+| **Webhook policy** | Handle `checkout.session.completed` and `customer.subscription.created|updated|deleted`; verify Stripe signatures against raw request body; persist each Stripe event ID once; grant on active/trialing/past_due and revoke on terminal/non-access statuses. Webhook writes use service role; users have self-only billing reads. |
+| **Privacy** | `billing_customers`, `billing_subscriptions`, and `billing_entitlements` are included in export/purge. Operational webhook idempotency rows are retained as non-person-owned audit records and contain no payment method/PAN payload. |
+| **Why** | Restore an honest commercial surface only when checkout and access control work together; avoid decorative prices and avoid custom card handling. |
+| **Consequence** | Migration `0097_stripe_entitlements.sql`; `src/lib/billing/`; `/api/billing/checkout|portal|entitlements|webhook`; `/billing/checkout|success`; Settings → Billing; Experience/Launchpad entitlement gates. Founder ops must create Stripe prices, configure Vercel env, register the webhook, enable portal, run test checkout, then enable enforcement. No marketplace or enterprise mission-control depth is authorized. |
+
+---
+
 ## Pending founder (not decided)
 
-See `current-scope.md` — ICP weight, commercial SKU packaging (**T9**), TD-006 (leaked-password protection), TD-018 (Actions minutes). **T9** requires explicit separate approval. T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g.
+See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d.

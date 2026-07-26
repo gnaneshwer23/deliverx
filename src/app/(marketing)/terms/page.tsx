@@ -9,14 +9,14 @@ import { MarketingNav } from "@/components/marketing/marketing-nav";
 export const metadata = {
   title: "Terms of Service — DeliverX",
   description:
-    "Interim pilot terms for DeliverX open access — no paid checkout, evidence honesty, and acceptable use.",
+    "DeliverX pilot and subscription terms — Stripe billing, entitlement access, evidence honesty, and acceptable use.",
 };
 
 const sections = [
   {
-    title: "1. Interim pilot terms",
+    title: "1. Pilot and subscription terms",
     body: [
-      "These interim terms apply while DeliverX is offered as an open pilot. They are not a finished commercial contract and do not create a paid subscription. Paid plans, entitlements and refund terms will ship only after founder-approved commercial packaging (T9). For legal enquiries: legal@deliverx.dev",
+      "These terms apply to DeliverX pilot access and paid subscriptions. Paid plans use Stripe Checkout and Customer Portal; access is granted through product entitlements after Stripe confirms subscription state. For legal enquiries: legal@deliverx.dev",
     ],
   },
   {
@@ -28,13 +28,13 @@ const sections = [
   {
     title: "3. Accounts and access",
     body: [
-      "You must provide accurate account information and keep credentials secure. Access during the pilot is open subject to reasonable abuse controls and any allowlist gates the operator enables. We may suspend accounts that threaten platform integrity or other users.",
+      "You must provide accurate account information and keep credentials secure. Pilot access may remain open while commercial enforcement is off. When enforcement is on, Experience and Launchpad require an active entitlement. We may suspend accounts that threaten platform integrity or other users.",
     ],
   },
   {
-    title: "4. No purchase during the pilot",
+    title: "4. Billing, cancellation and refunds",
     body: [
-      "There is no working paid checkout. Displayed access is pilot access, not a priced purchase. There is no money-back guarantee because there is no payment to refund. Do not rely on historical marketing that showed pound prices or refund language — that copy has been removed.",
+      "Paid plans renew monthly through Stripe. DeliverX does not store full card numbers. You can cancel through Settings → Billing; access normally continues through the current paid period and then the corresponding entitlement is revoked. DeliverX does not offer a money-back guarantee. Any legally required refund rights still apply.",
     ],
   },
   {

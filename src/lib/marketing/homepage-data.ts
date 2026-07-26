@@ -1,10 +1,9 @@
 /**
  * Story-driven homepage content — Complete Career Intelligence Platform.
- * Commercial honesty: no purchasable prices or refunds until T9.
+ * Commercial honesty: purchasable prices only with working Stripe Checkout.
  */
 
 import {
-  BUNDLE_SIGNUP_HREF,
   CAREER_BUNDLE,
   CAREER_TIERS,
   LAUNCHPAD_SIGNUP_HREF,
@@ -221,17 +220,19 @@ export const HOME_PRICING = [
     stage: CAREER_BUNDLE.stage,
     price: CAREER_BUNDLE.price,
     cadence: CAREER_BUNDLE.cadence,
-    summary: "Experience + Launchpad + Professional Workspace — open pilot access.",
+    summary: "Experience + Launchpad + Professional Workspace in one connected plan.",
     href: "/pricing#bundle",
-    ctaHref: BUNDLE_SIGNUP_HREF,
+    ctaHref: CAREER_BUNDLE.ctaHref,
     featured: true,
   },
 ] as const;
 
-/** Pilot honesty band — not a commercial refund offer. */
+/** Commercial honesty band — never a refund guarantee. */
 export const GUARANTEE = {
-  title: "Open pilot — no checkout yet",
-  body: "DeliverX is in an open pilot. Create an account and explore Experience, Launchpad and Professional Workspace without payment. Paid plans and refunds will arrive only when commercial packaging (T9) ships.",
+  title: CAREER_BUNDLE.checkoutReady ? "Stripe-secured checkout" : "Pilot access",
+  body: CAREER_BUNDLE.checkoutReady
+    ? "Paid plans use Stripe Checkout and Customer Portal. DeliverX does not store full card numbers. There is no money-back guarantee; cancel via Settings → Billing."
+    : "Paid prices appear only when Stripe Checkout is configured. Until then, create an account for pilot access without payment. There is no money-back offer.",
 };
 
 /**
@@ -272,7 +273,9 @@ export const HOME_FAQ = [
   },
   {
     q: "How much does it cost?",
-    a: "During the open pilot, access is free — there is no paid checkout yet. Experience, Launchpad and Professional Workspace are available when you create an account. Commercial pricing will ship only after founder-approved packaging (T9).",
+    a: CAREER_BUNDLE.checkoutReady
+      ? "Experience and Launchpad are £39/month each. Complete Journey is £59/month and includes Experience, Launchpad and Professional Workspace. Prices are shown only when Stripe Checkout is configured."
+      : "Pilot access is available while Stripe Checkout is not configured. Purchasable prices appear only alongside a working checkout.",
   },
   {
     q: "Is the AI company experience realistic?",
@@ -284,7 +287,7 @@ export const HOME_FAQ = [
   },
   {
     q: "Is there a money-back guarantee?",
-    a: "No. There is no paid product and therefore no money-back offer during the pilot. When paid plans launch, refund terms will be published with those commercial terms.",
+    a: "No. DeliverX does not offer a money-back guarantee. Paid subscribers can cancel through Stripe Customer Portal; access continues through the current paid period.",
   },
   {
     q: "Is this a job guarantee?",
