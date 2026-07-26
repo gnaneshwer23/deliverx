@@ -34,7 +34,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       title: "A living organisation from day one.",
       body: "You join a realistic company with product, customers, stakeholders and business pressure. Onboarding, role expectations and team dynamics mirror how modern product organisations actually work.",
       items: [
-        "AI recruitment and onboarding into your company",
+        "Company welcome into your organisation context",
         "Industry contexts across Healthcare, AI, FinTech, EdTech and SaaS",
         "Stakeholders who push back, customers who change their minds, and launches that matter",
       ],
@@ -82,7 +82,7 @@ export const XPERIENCE_PAGE: ProductPageContent = {
       {
         question: "How does this connect to Launchpad and Professional Workspace?",
         answer:
-          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. During the pilot you can explore any stage — paid packaging comes later (T9).",
+          "Experience builds the experience. Launchpad helps you present it and land opportunities. Professional Workspace supports you once you are delivering in a real organisation. During the pilot you can explore any stage — purchasable prices appear only when Stripe Checkout is configured.",
       },
       {
         question: "What do I get from the pilot?",

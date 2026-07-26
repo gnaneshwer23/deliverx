@@ -1,3 +1,15 @@
+## 2026-07-26 — Marketing footer enhance + shipped-product sync
+
+Founder: enhance marketing footer; sync landing pages with shipped backend/product.
+
+**Scope:** Footer columns Product / Platform / Company / Account (no fake Contact/Portfolio links). Homepage + Experience / Launchpad / Workspace / How it works / Resources copy and platform mocks aligned to shipped loop — remove decorative readiness %, Hiring Partners, Career Twin, mission-control theatre; mention Daily Briefing + explainable recommendations where accurate; payments remain pilot-access until Stripe configured.
+
+Docs: PD-2026-07-26p; screen-pack footer IA note.
+
+Verification: marketing honesty units; lint/typecheck; `npm run build`; Vercel Ready after push.
+
+---
+
 ## 2026-07-26 — How it works visual parity with product pages
 
 Founder: `/how-it-works` UI did not match Experience / Launchpad / Professional Workspace.

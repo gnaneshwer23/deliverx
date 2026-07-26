@@ -276,6 +276,11 @@ export const HOW_IT_WORKS_PAGE: HowItWorksPageContent = {
         answer:
           "No. Continuous observation defaults OFF. When enabled with consent, observations remain distinct from evidence and capability.",
       },
+      {
+        question: "Where do I go after signup?",
+        answer:
+          "After onboarding you land on Profile with a Daily Briefing that adapts to your journey. Explainable recommendations can suggest a next action — accepting or dismissing them never changes capability or Verified status.",
+      },
     ],
   },
   pricing: {

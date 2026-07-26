@@ -291,7 +291,7 @@ export function HomePlatformPreview() {
             align="center"
             label="Platform"
             title="One hub across experience, career and delivery"
-            subtitle="Switch views — the same career intelligence, different lenses."
+            subtitle="Switch views — the same Professional Intelligence record, different lenses. No unexplained scores."
           />
         </MarketingReveal>
 
@@ -331,7 +331,7 @@ export function HomePlatformPreview() {
             <div className="grid gap-4 p-5 md:grid-cols-3 md:p-6" key={tab}>
               {tab === "experience" ? (
                 <>
-                  <MockPanel title="Active company" body="MediFlow · Product Manager · 72%">
+                  <MockPanel title="Active company" body="MediFlow · Product Manager">
                     <div className="space-y-2.5">
                       <div className="flex flex-wrap gap-1.5">
                         <MockChip>Day 18</MockChip>
@@ -340,21 +340,8 @@ export function HomePlatformPreview() {
                           Active
                         </MockChip>
                       </div>
-                      <div
-                        className="h-1.5 overflow-hidden rounded-full bg-[var(--mkt-s3)]"
-                        role="progressbar"
-                        aria-valuenow={72}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label="Company progress"
-                      >
-                        <div
-                          className="mkt-hub-progress h-full rounded-full bg-[var(--mkt-green-l)]"
-                          style={{ width: "72%" }}
-                        />
-                      </div>
                       <p className={`${mktClass.mono} text-[0.65rem] text-[var(--mkt-text3)]`}>
-                        Month 3 of 6 · On track
+                        Month 3 · Company context · evidence in progress
                       </p>
                     </div>
                   </MockPanel>
@@ -407,38 +394,31 @@ export function HomePlatformPreview() {
               ) : null}
               {tab === "career" ? (
                 <>
-                  <MockPanel title="Career Score" body="87 · Excellent readiness">
-                    <div className="flex items-center gap-3">
-                      <div className="relative flex size-12 shrink-0 items-center justify-center">
-                        <span className="mkt-hub-score absolute inset-0 rounded-full" aria-hidden />
-                        <span
-                          className={`relative text-[1.05rem] leading-none text-[var(--mkt-text1)] ${mktClass.serif}`}
-                        >
-                          87
-                        </span>
+                  <MockPanel title="Role readiness" body="Source labelled · ScoreRun projection">
+                    <div className="space-y-2.5">
+                      <div className="flex flex-wrap gap-1.5">
+                        <MockChip tone="live">Developing</MockChip>
+                        <MockChip>Why this band</MockChip>
                       </div>
-                      <div className="min-w-0 space-y-1.5">
-                        <MockChip tone="live">Excellent</MockChip>
-                        <p className="text-[0.7rem] text-[var(--mkt-text3)]">+4 this month</p>
-                      </div>
+                      <p className="text-[0.7rem] leading-relaxed text-[var(--mkt-text3)]">
+                        Not a decorative score — band explains evidence coverage against the pinned
+                        framework.
+                      </p>
                     </div>
                   </MockPanel>
                   <MockPanel title="Career Intelligence" body="Labelled readiness, stories and gaps">
                     <ul className="space-y-2">
-                      {CAREER_TWIN_SKILLS.map((skill) => (
-                        <li key={skill.label} className="space-y-1">
-                          <div className="flex items-center justify-between gap-2 text-[0.7rem]">
-                            <span className="truncate text-[var(--mkt-text2)]">{skill.label}</span>
-                            <span className={`${mktClass.mono} text-[var(--mkt-text3)]`}>
-                              {skill.pct}%
-                            </span>
-                          </div>
-                          <div className="h-1 overflow-hidden rounded-full bg-[var(--mkt-s3)]">
-                            <div
-                              className="mkt-hub-progress h-full rounded-full bg-[var(--mkt-green-l)]"
-                              style={{ width: `${skill.pct}%` }}
-                            />
-                          </div>
+                      {CAREER_SKILL_BANDS.map((skill) => (
+                        <li
+                          key={skill.label}
+                          className="flex items-center justify-between gap-2 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 px-2.5 py-1.5"
+                        >
+                          <span className="truncate text-[0.75rem] text-[var(--mkt-text2)]">
+                            {skill.label}
+                          </span>
+                          <span className={`${mktClass.mono} shrink-0 text-[0.6rem] text-[var(--mkt-text3)]`}>
+                            {skill.band}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -462,28 +442,18 @@ export function HomePlatformPreview() {
               ) : null}
               {tab === "delivery" ? (
                 <>
-                  <MockPanel title="Sprint confidence" body="78% · 2 risks flagged">
+                  <MockPanel title="Attention" body="Risks and decisions needing a human">
                     <div className="space-y-2.5">
-                      <div
-                        className="h-1.5 overflow-hidden rounded-full bg-[var(--mkt-s3)]"
-                        role="progressbar"
-                        aria-valuenow={78}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label="Sprint confidence"
-                      >
-                        <div
-                          className="mkt-hub-progress h-full rounded-full bg-[var(--mkt-green-l)]"
-                          style={{ width: "78%" }}
-                        />
-                      </div>
                       <div className="flex flex-wrap gap-1.5">
                         <MockChip tone="warn">2 risks</MockChip>
-                        <MockChip>Day 7 / 14</MockChip>
+                        <MockChip>3 open decisions</MockChip>
                       </div>
+                      <p className="text-[0.7rem] leading-relaxed text-[var(--mkt-text3)]">
+                        Thin Workspace summary — not an executive mission-control dashboard.
+                      </p>
                     </div>
                   </MockPanel>
-                  <MockPanel title="Roadmap" body="Q3 releases with dependency graph">
+                  <MockPanel title="Timeline" body="Milestones tied to the active project">
                     <ul className="space-y-2">
                       {ROADMAP_MILESTONES.map((m, i) => (
                         <li key={m.label} className="flex items-center gap-2.5 text-[0.75rem]">
@@ -511,29 +481,17 @@ export function HomePlatformPreview() {
                       ))}
                     </ul>
                   </MockPanel>
-                  <MockPanel title="Executive view" body="Health, blockers and decisions">
-                    <ul className="grid grid-cols-3 gap-1.5">
-                      {EXEC_HEALTH.map((item) => (
+                  <MockPanel title="Contribution trail" body="Authored · AI draft · submitted">
+                    <ul className="space-y-1.5">
+                      {WORKSPACE_TRAIL.map((item) => (
                         <li
                           key={item.label}
-                          className="rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 px-2 py-2 text-center"
+                          className="flex items-center justify-between gap-2 rounded-lg border border-[var(--mkt-border)] bg-[var(--mkt-s2)]/60 px-2.5 py-1.5"
                         >
-                          <span
-                            className={`mx-auto mb-1.5 block size-1.5 rounded-full ${
-                              item.tone === "ok"
-                                ? "bg-[var(--mkt-green-l)]"
-                                : item.tone === "warn"
-                                  ? "bg-[var(--mkt-amber)]"
-                                  : "bg-[var(--mkt-red)]"
-                            }`}
-                            aria-hidden
-                          />
-                          <p className={`${mktClass.mono} text-[0.55rem] uppercase tracking-[0.1em] text-[var(--mkt-text3)]`}>
+                          <span className="truncate text-[0.75rem] text-[var(--mkt-text1)]">
                             {item.label}
-                          </p>
-                          <p className="mt-0.5 text-[0.7rem] font-medium text-[var(--mkt-text1)]">
-                            {item.value}
-                          </p>
+                          </span>
+                          <MockChip>{item.tag}</MockChip>
                         </li>
                       ))}
                     </ul>
@@ -560,10 +518,10 @@ const PLATFORM_ARTEFACTS = [
   { name: "Risk register", status: "draft" as const },
 ];
 
-const CAREER_TWIN_SKILLS = [
-  { label: "Product sense", pct: 88 },
-  { label: "Stakeholder mgmt", pct: 74 },
-  { label: "Delivery", pct: 81 },
+const CAREER_SKILL_BANDS = [
+  { label: "Product sense", band: "Developing" },
+  { label: "Stakeholder mgmt", band: "Emerging" },
+  { label: "Delivery craft", band: "Developing" },
 ];
 
 const INTERVIEW_STORIES = [
@@ -575,13 +533,13 @@ const INTERVIEW_STORIES = [
 const ROADMAP_MILESTONES = [
   { label: "Beta launch", when: "Jul", done: true },
   { label: "GA release", when: "Aug", done: false },
-  { label: "Enterprise pack", when: "Sep", done: false },
+  { label: "Discovery wrap", when: "Sep", done: false },
 ];
 
-const EXEC_HEALTH = [
-  { label: "Health", value: "Green", tone: "ok" as const },
-  { label: "Blockers", value: "1", tone: "warn" as const },
-  { label: "Decisions", value: "3", tone: "ok" as const },
+const WORKSPACE_TRAIL = [
+  { label: "Risk note", tag: "Submitted" },
+  { label: "Meeting agenda", tag: "AI draft" },
+  { label: "Decision log", tag: "Authored" },
 ];
 
 function MockChip({
@@ -742,11 +700,10 @@ function TeamCopilotVisual({ title }: { title: (typeof TEAM_COPILOT_PANELS)[numb
     case "Tasks":
       return (
         <div className={`${shell} flex-col justify-center gap-1.5 py-2`} aria-hidden>
-          {["72%", "55%", "40%"].map((w, i) => (
+          {["w-[72%]", "w-[55%]", "w-[40%]"].map((w, i) => (
             <div key={w} className="h-1.5 w-full rounded-full bg-white/10">
               <div
-                className={`h-full rounded-full ${i === 0 ? "bg-sky-400/70" : i === 1 ? "bg-emerald-400/65" : "bg-white/30"}`}
-                style={{ width: w }}
+                className={`h-full rounded-full ${i === 0 ? "bg-sky-400/70" : i === 1 ? "bg-emerald-400/65" : "bg-white/30"} ${w}`}
               />
             </div>
           ))}

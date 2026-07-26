@@ -5,21 +5,36 @@ import {
   CAREER_TIERS,
   LAUNCHPAD_INCLUDES,
   PILOT_ACCESS_LABEL,
+  TEAM_COPILOT_INCLUDES,
   careerTiersForEnv,
 } from "@/lib/marketing/career-suite";
 import {
+  FOOTER_ACCOUNT_LINKS,
+  FOOTER_COLUMNS,
+  FOOTER_COMPANY_LINKS,
+  FOOTER_PLATFORM_LINKS,
+  FOOTER_PRODUCT_LINKS,
+  FOOTER_PUBLIC_PATHS,
+} from "@/lib/marketing/footer-data";
+import {
+  BUILT_FOR,
   DEMO_STORIES,
   GUARANTEE,
   HOME_FAQ,
   HOME_PRICING,
+  PLATFORM_TABS,
 } from "@/lib/marketing/homepage-data";
 import { HOW_IT_WORKS_PAGE } from "@/lib/marketing/how-it-works-data";
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 import { PILOT_QUOTE } from "@/lib/marketing/landing-data";
+import { TEAM_COPILOT_PAGE } from "@/lib/marketing/team-copilot-data";
+import { XPERIENCE_PAGE } from "@/lib/marketing/xperience-page";
 
 const BANNED_PRICE = /£\d+/;
 const BANNED_BUY = /\bBuy\b/;
 const BANNED_PLACEHOLDER = /placeholder while our full/i;
+const BANNED_SCORE_THEATRE = /\b(87|72%|78%|Excellent readiness|Career Score|sprint confidence)\b/i;
+const BANNED_MARKETPLACE = /employer marketplace|hiring partners|Career Twin/i;
 
 function collectStrings(value: unknown, out: string[] = []): string[] {
   if (typeof value === "string") {
@@ -114,12 +129,72 @@ describe("marketing honesty — Batch 2", () => {
     expect(blob).toMatch(/scoreruns? never light verified/);
     expect(blob).toMatch(/ai drafts?/);
     expect(blob).toMatch(/self-reported/);
+    expect(blob).toMatch(/daily briefing/);
     expect(blob).not.toMatch(/100% money-back/);
     expect(blob).not.toMatch(BANNED_PRICE);
     expect(HOW_IT_WORKS_PAGE.pricing.price).toBe(PILOT_ACCESS_LABEL);
     for (const step of HOW_IT_WORKS_PAGE.steps) {
       expect(["experience", "launchpad", "workspace", "intelligence"]).toContain(step.mock);
     }
+  });
+});
+
+describe("marketing honesty — footer + shipped sync", () => {
+  it("footer columns match simplified IA and only public routes", () => {
+    expect(FOOTER_COLUMNS.map((c) => c.id)).toEqual([
+      "product",
+      "platform",
+      "company",
+      "account",
+    ]);
+    expect(FOOTER_PRODUCT_LINKS.map((l) => l.label)).toEqual([
+      "Experience",
+      "Launchpad",
+      "Professional Workspace",
+      "How it works",
+    ]);
+    expect(FOOTER_ACCOUNT_LINKS.map((l) => l.href)).toEqual(["/login", "/signup"]);
+    expect(FOOTER_COMPANY_LINKS.some((l) => l.href === "/about")).toBe(true);
+    expect(FOOTER_COMPANY_LINKS.some((l) => l.href === "/privacy")).toBe(true);
+    expect(FOOTER_PLATFORM_LINKS.some((l) => l.label === "Team Copilot")).toBe(true);
+    expect(FOOTER_PLATFORM_LINKS.find((l) => l.label === "Team Copilot")?.href).toBe(
+      "/professional-workspace",
+    );
+
+    const hrefs = FOOTER_COLUMNS.flatMap((c) => c.links.map((l) => l.href));
+    for (const href of hrefs) {
+      expect(FOOTER_PUBLIC_PATHS).toContain(href);
+    }
+    expect(hrefs).not.toContain("/portfolio");
+    expect(hrefs).not.toContain("/contact");
+    expect(hrefs).not.toContain("/workspace/marketplace");
+  });
+
+  it("homepage audience and platform copy stay inside shipped scope", () => {
+    const audience = BUILT_FOR.join(" | ").toLowerCase();
+    expect(audience).not.toMatch(/hiring partners/);
+    expect(audience).not.toMatch(/universities/);
+
+    const tabs = collectStrings(PLATFORM_TABS).join(" | ");
+    expect(tabs).not.toMatch(BANNED_SCORE_THEATRE);
+    expect(tabs.toLowerCase()).toMatch(/mission control/);
+
+    const homeBlob = collectStrings({ HOME_FAQ, DEMO_STORIES, PLATFORM_TABS }).join(" | ");
+    expect(homeBlob).not.toMatch(BANNED_MARKETPLACE);
+    expect(homeBlob.toLowerCase()).toMatch(/daily briefing/);
+    expect(homeBlob.toLowerCase()).toMatch(/verified/);
+  });
+
+  it("product pages do not overclaim payments, Insights product, or mission-control SKU", () => {
+    const xp = collectStrings(XPERIENCE_PAGE).join(" | ");
+    expect(xp).not.toMatch(/paid packaging comes later \(t9\)/i);
+    expect(xp).toMatch(/Stripe Checkout|checkout is configured/i);
+    expect(xp).not.toMatch(/AI recruitment/i);
+
+    const workspace = collectStrings(TEAM_COPILOT_PAGE).join(" | ").toLowerCase();
+    expect(workspace).toMatch(/not an enterprise mission-control/);
+    expect(TEAM_COPILOT_INCLUDES.join(" | ").toLowerCase()).not.toMatch(/\binsights\b/);
+    expect(TEAM_COPILOT_INCLUDES.join(" | ").toLowerCase()).toMatch(/mission-control nav opt-in/);
   });
 });
 

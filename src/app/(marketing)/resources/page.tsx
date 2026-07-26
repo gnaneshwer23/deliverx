@@ -26,13 +26,13 @@ const RESOURCES = [
   },
   {
     title: "Prepare with Launchpad",
-    body: "Turn experience into interviews — Career Twin, CV, portfolio and mock interviews.",
+    body: "Turn experience into interviews — Career Intelligence, evidence CV packaging, portfolio and interview lab.",
     href: "/launchpad",
     label: "Explore Launchpad",
   },
   {
     title: "Deliver with Professional Workspace",
-    body: "Collaborate across Product, Engineering, QA and leadership in one AI delivery workspace.",
+    body: "Work with role-based AI teammates on meetings, artefacts, decisions and evidence — AI drafts; you decide.",
     href: "/professional-workspace",
     label: "Explore Professional Workspace",
   },

@@ -68,7 +68,7 @@ DESKTOP
 ├──────────────────────────────────────────────────────────────────────────┤
 │                         page content                                     │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Product links · Trust explanation · Legal · Contact                      │
+│ Product links · Platform · Company/legal · Account                       │
 └──────────────────────────────────────────────────────────────────────────┘
 
 MOBILE
@@ -76,9 +76,11 @@ MOBILE
 ├────────────────────────────────────────────────────────────┤
 │ page content                                               │
 ├────────────────────────────────────────────────────────────┤
-│ stacked footer groups                                      │
+│ stacked footer groups (Product → Platform → Company → Account) │
 └────────────────────────────────────────────────────────────┘
 ```
+
+**Footer columns (shipped):** Product · Platform · Company · Account. Demoted alias: Team Copilot → Professional Workspace. Omit Contact / public Portfolio until those pages exist.
 
 ### Signed-in shell
 

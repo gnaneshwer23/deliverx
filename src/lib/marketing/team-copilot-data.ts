@@ -43,11 +43,11 @@ export const TEAM_COPILOT_PAGE: ProductPageContent = {
       tone: "white",
       label: "Shared shell",
       title: "One workspace for Experience and delivery projects.",
-      body: "Switch between Experience simulations and organisation delivery projects. Modules stay the same across Project Overview, Team, Stakeholders, Inbox, Meetings, Tasks, Artefacts, Decisions, Risks, Timeline, Insights, Coach and Evidence Review.",
+      body: "Switch between Experience simulations and organisation delivery projects. Core modules stay coherent across Overview, Team, Stakeholders, Inbox, Meetings, Tasks, Artefacts, Decisions, Risks, Timeline, Coach and Evidence Review. Legacy mission-control depth stays opt-in and demoted.",
       items: [
         "Project Overview and Timeline",
         "Meetings, Inbox, Tasks and Artefacts",
-        "Decisions, Risks, Insights and Evidence Review",
+        "Decisions, Risks, Coach and Evidence Review",
       ],
     },
     {

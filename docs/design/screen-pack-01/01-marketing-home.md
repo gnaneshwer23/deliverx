@@ -67,6 +67,8 @@
 └ Footer groups                                 │
 ```
 
+**Footer IA (implemented):** Brand blurb + four columns — **Product** (Experience, Launchpad, Professional Workspace, How it works); **Platform** (Professional Intelligence `#professional-intelligence`, Pilot access, Resources, Team Copilot → Workspace alias); **Company** (About, Privacy, Terms, Cookies); **Account** (Sign in, Start `/signup`). No Contact or public Portfolio links until those marketing routes exist. No employer marketplace CTAs. Trust checklist: privacy export/delete, observation consent default OFF, human approval on AI changes.
+
 **Accessibility:** One H1; visible skip link; CTAs have unique names; journey is an ordered list; any product image has descriptive alt text or is decorative; credibility line is text, not logo-only proof; no autoplay.
 **Analytics events:** `marketing_primary_cta_clicked` (proposed: `surface=home`, `destination=signup`); `marketing_how_it_works_clicked` (proposed); downstream canonical `account_created`. No free-text properties.
 **Acceptance criteria**

@@ -66,10 +66,10 @@ export const TEAM_COPILOT_INCLUDES = [
   "Experience + delivery project switcher",
   "Role-based AI teammates (draft only)",
   "Meetings, Inbox, Tasks, Artefacts",
-  "Decisions, Risks, Timeline, Insights",
-  "Coach and Evidence Review",
-  "Contribution trail (authored → outcome)",
+  "Decisions, Risks, Timeline, Coach",
+  "Evidence Review and contribution trails",
   "Observation consent default OFF",
+  "Legacy mission-control nav opt-in only",
 ] as const;
 
 export const BUNDLE_INCLUDES = [

@@ -556,6 +556,19 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-07-26p — Marketing footer IA + shipped-product sync
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-07-26 |
+| **Status** | Accepted |
+| **Decision** | Public marketing footer follows the simplified IA: **Product** (Experience, Launchpad, Professional Workspace, How it works), **Platform** (Professional Intelligence anchor, Pilot access, Resources, Team Copilot as Workspace alias), **Company** (About + Privacy / Terms / Cookies), **Account** (Sign in / Start). No Contact or public Portfolio footer links until those routes exist. Marketing homepage + product pages sync to **verified shipped** capabilities only. |
+| **Sync rules** | May mention Daily Briefing on `/profile`, explainable recommendations (B2 flag on), evidence ledger, Capability Engine bands, Experience ceremony/sim, Launchpad Career Intelligence modules, thin Professional Workspace, privacy export/delete, observation consent default OFF. Must not present live purchasable £ checkout, employer marketplace liquidity, Insights-as-product, Career Twin naming, decorative readiness %, or enterprise mission-control as shipped depth. Team Copilot remains alias — not a third SKU. |
+| **Why** | Founder asked to enhance the footer and keep landing copy honest against the backend/product that is actually shipped. |
+| **Consequence** | `src/lib/marketing/footer-data.ts` + `MarketingFooter`; honesty tests cover footer routes + sync claims; screen-pack footer notes updated. Does not authorize Stripe live enablement, marketplace, or deep Team Copilot. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.

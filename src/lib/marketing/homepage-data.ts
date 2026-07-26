@@ -21,8 +21,6 @@ export const BUILT_FOR = [
   "Graduates",
   "Product Managers",
   "Delivery Teams",
-  "Universities",
-  "Hiring Partners",
 ] as const;
 
 export const PROBLEM = {
@@ -122,7 +120,7 @@ export const PLATFORM_TABS = [
     id: "experience",
     label: "Experience",
     title: "Work inside AI companies",
-    caption: "Priorities, stakeholders and product progress in one hub.",
+    caption: "Company context, priorities and artefacts — you own every submission.",
   },
   {
     id: "career",
@@ -133,8 +131,8 @@ export const PLATFORM_TABS = [
   {
     id: "delivery",
     label: "Delivery",
-    title: "Team delivery workspace",
-    caption: "Roadmaps, risks and sprint confidence for real product teams.",
+    title: "Professional Workspace",
+    caption: "Meetings, risks and decisions with AI drafts — not enterprise mission control.",
   },
 ] as const;
 
@@ -258,7 +256,7 @@ export const DEMO_STORIES = [
   {
     archetype: "Engineering Manager",
     journey:
-      "Brought Professional Workspace into the squad for dependency visibility, risk tracking and shared sprint confidence across roles.",
+      "Used Professional Workspace with the squad for shared tasks, risk notes and meeting context — AI drafts labelled; people decide.",
   },
 ] as const;
 
@@ -283,7 +281,11 @@ export const HOME_FAQ = [
   },
   {
     q: "What do I walk away with?",
-    a: "A portfolio of artefacts, an Experience Record, Career Intelligence profile, interview stories and delivery habits you can use in real teams. Verified badges require independent attestation.",
+    a: "A portfolio of artefacts, an Experience Record, Career Intelligence profile, interview stories and delivery habits you can use in real teams. Verified badges require independent attestation — ScoreRuns alone never light Verified.",
+  },
+  {
+    q: "What happens after I sign in?",
+    a: "You land on your Profile home with a Daily Briefing that adapts to your journey — guided next actions from explainable recommendations when available. Learning completion never becomes capability.",
   },
   {
     q: "Is there a money-back guarantee?",
