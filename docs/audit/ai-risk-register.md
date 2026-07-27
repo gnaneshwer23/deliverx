@@ -4,8 +4,8 @@
 
 | ID | Sev | Risk | Evidence | Mitigation / disposition |
 | --- | --- | --- | --- | --- |
-| AI-P1-01 | P1 | Prompt-injection defenses are regex allow/deny lists; novel jailbreaks may pass | `guardrails.ts` `INJECTION_PATTERNS` | Expand patterns + structured content separation already present; add red-team suite |
-| AI-P1-02 | P1 | Legacy AI paths with `DELIVERX_AI_ORCHESTRATION_BYPASS=1` skip T4 guarantees | `run.ts` `orchestrationBypassEnabled` | Keep bypass off in prod; migrate remaining callers |
+| AI-P1-01 | P1 | Prompt-injection defenses are still pattern-based; novel jailbreaks may pass | `guardrails.ts` `INJECTION_PATTERNS` | **Reduced — Phase 6:** expanded red-team variants and fixture coverage; semantic/model eval remains future quality work |
+| AI-P1-02 | P1 | Legacy AI paths with `DELIVERX_AI_ORCHESTRATION_BYPASS=1` skip T4 guarantees | `run.ts` `orchestrationBypassEnabled` | **Closed for prod bypass risk — Phase 6:** bypass fails closed in production and Vercel Production env was verified absent; remaining work is legacy caller migration only |
 | AI-P1-03 — **Closed** | P1 | Empty citations allowed — recommendations may appear evidence-backed without ids | Was coach/line_manager validators | **Shipped 2026-07-26:** `enforceCitations` requires ≥1 citation resolving to run context for all live contracts; missing/unknown → validation_failed + non-claiming fallback; UI `AiCitationStrip` |
 | AI-P2-01 | P2 | Hallucinated company/project facts when context sparse | Prompt-only control | Fail closed via citation requirement + “insufficient context” fallback (partial close with AI-P1-03) |
 | AI-P2-02 | P2 | No PI-level rate limit on `runAgent` / interactions insert | No rate-limit in `src/app/api/pi/**` | Reuse `org_ai_rate_limits` or per-user quota |

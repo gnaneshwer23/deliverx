@@ -63,7 +63,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | ID | Item | Status | Why it matters | Owner | Effort | Blocks |
 | --- | --- | --- | --- | --- | --- | --- |
 | **R-P1-12** | Bind judgements/snapshots INSERT to Capability Engine / signed ScoreRun (DB-P1-03 follow-on) | **Done (Phase 5)** — `0103` removes authenticated child insert policies/DML; `0104` removes anon SELECT grants; owner reads retained; privacy purge bypass preserved | Child-row fabrication residual after ScoreRun lockdown | Engineering | M | Stronger DB trust (ScoreRuns already locked) |
-| **R-P1-13** | AI injection red-team beyond regex lists; keep `DELIVERX_AI_ORCHESTRATION_BYPASS` off in prod | **Partial** (bypass = config; red-team open) | Jailbreak / skipped T4 guarantees | Engineering | M | Stronger AI trust claims |
+| **R-P1-13** | AI injection red-team beyond regex lists; keep `DELIVERX_AI_ORCHESTRATION_BYPASS` off in prod | **Done (Phase 6)** — expanded red-team fixtures/patterns and production bypass fail-closed guard; Vercel env verified absent in Production | Jailbreak / skipped T4 guarantees | Engineering | M | Stronger AI trust claims |
 | **R-P2-04** | Bound evidence child selects | **Done (Phase 3)** — product/UI evidence child reads capped with shared limits + regression guard | Latent payload / perf risk | Engineering | S | Scale readiness |
 | **R-P2-05** | AI route `maxDuration` | **Done (Phase 2)** — explicit 30s route caps + regression guard | Long hangs / cost | Engineering | S | Ops reliability |
 | **R-P2-06** | Explicit PI API rate limit | **Done (B9)** — `0101` + atomic `0102` increment RPC; kill-switch + thresholds | Abuse / cost | Engineering | M | Abuse resistance |
@@ -180,7 +180,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | 4 | A | VoiceOver/keyboard AT lab (before AA claims) |
 | 5 | A | Stripe ops + enforce **when founder chooses “payments later” is now** |
 | 6 | B | R-P1-12 judgements/snapshots INSERT binding — **Done (Phase 5)** |
-| 7 | B | R-P1-13 AI injection red-team (bypass stays off) |
+| 7 | B | R-P1-13 AI injection red-team (bypass stays off) — **Done (Phase 6)** |
 | 8 | B | R-P2-16 coverage/Playwright CI after TD-018 |
 | 9 | B | R-P2-06 PI API rate limit | **Done (B9)** |
 | 10 | C | Marketplace / mission-control / multi-profession — stay deferred |

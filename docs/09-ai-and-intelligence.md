@@ -35,7 +35,7 @@ As a user, I want AI coaching and observation that cite context and never preten
 | API | `GET /api/pi/ai/interactions` |
 | Agents | Manager / Stakeholder / Observer + consolidated coaches (prompt **v2** citation-aware) |
 | UI | `AiCitationStrip` on PI interventions, Interview Lab, opportunity matching, recommendations |
-| Legacy AI | Pre-pivot `/api/ai/*` — may remain; bypass flag `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy only |
+| Legacy AI | Pre-pivot `/api/ai/*` — may remain; bypass flag `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy only outside production |
 
 ---
 

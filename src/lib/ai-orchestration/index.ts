@@ -85,11 +85,13 @@ export {
 
 export {
   createMockModelInvoker,
+  orchestrationBypassEnabled,
   runAgent,
   runResultToEvidenceProvenance,
 } from "@/lib/ai-orchestration/run";
 export type {
   AiEvidenceProvenance,
+  AiOrchestrationBypassEnv,
   ModelInvoker,
   RunAgentInput,
   RunAgentResult,

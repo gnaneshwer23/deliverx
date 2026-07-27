@@ -11,14 +11,42 @@ export type GuardrailVerdict =
 
 /** Patterns that attempt to override system instructions or exfiltrate secrets. */
 const INJECTION_PATTERNS: Array<{ id: string; re: RegExp }> = [
-  { id: "ignore_previous", re: /ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?|rules?)/i },
-  { id: "disregard_system", re: /disregard\s+(the\s+)?(system|developer)\s+(prompt|message|instructions?)/i },
-  { id: "you_are_now", re: /\byou\s+are\s+now\b.{0,40}\b(unrestricted|jailbroken|DAN|root)\b/i },
-  { id: "reveal_system", re: /(reveal|show|print|dump)\s+(your\s+)?(system\s+prompt|hidden\s+instructions?|developer\s+message)/i },
-  { id: "exfil_secrets", re: /(api[_-]?key|secret|password|bearer\s+token|authorization\s*:\s*bearer)/i },
-  { id: "role_override", re: /\b(system|developer)\s*:\s*/i },
-  { id: "end_system_tag", re: /<\/?\s*(system|assistant|instructions?)\s*>/i },
-  { id: "capability_write", re: /\b(write|persist|assign|set)\b.{0,40}\b(capability|score\s*run|competenc(y|ies)|verified\s+evidence)\b/i },
+  {
+    id: "ignore_previous",
+    re: /\b(ignore|forget|discard|skip|override|bypass)\b.{0,80}\b(previous|prior|above|earlier|system|developer)\b.{0,80}\b(instructions?|prompts?|rules?|messages?|directions?|policy|policies)\b/i,
+  },
+  {
+    id: "disregard_system",
+    re: /\b(disregard|override|bypass|disable|drop|forget)\b.{0,80}\b(system|developer|safety|policy|policies|guardrails?)\b.{0,80}\b(prompt|message|instructions?|rules?|constraints?)\b/i,
+  },
+  {
+    id: "you_are_now",
+    re: /\b(you\s+are\s+now|act\s+as|pretend\s+to\s+be|switch\s+to)\b.{0,80}\b(unrestricted|jailbroken|DAN|root|developer\s+mode|god\s+mode|no\s+rules)\b/i,
+  },
+  {
+    id: "reveal_system",
+    re: /\b(reveal|show|print|dump|display|repeat|copy|summari[sz]e|export|base64\s+encode)\b.{0,80}\b(system\s+prompt|hidden\s+instructions?|developer\s+message|internal\s+rules?|prompt\s+chain|messages?\s+above)\b/i,
+  },
+  {
+    id: "exfil_secrets",
+    re: /\b(api[_-]?key|secret|password|bearer\s+token|authorization\s*:\s*bearer|service[_-]?role|private\s+key|connection\s+string)\b/i,
+  },
+  {
+    id: "role_override",
+    re: /(^|[\n\r])\s*(system|developer|assistant)\s*:\s*/i,
+  },
+  {
+    id: "end_system_tag",
+    re: /<\/?\s*(system|assistant|developer|instructions?|prompt)\s*>/i,
+  },
+  {
+    id: "tool_injection",
+    re: /\b(tool|function|browser|database|supabase|vercel|shell)\s+(output|result|message)\b.{0,80}\b(ignore|override|run|execute|exfiltrate|reveal)\b/i,
+  },
+  {
+    id: "capability_write",
+    re: /\b(write|persist|assign|set|upgrade|mark|verify|light)\b.{0,60}\b(capability|score\s*run|competenc(y|ies)|verified\s+evidence|deliverxverified|platform_verified)\b/i,
+  },
 ];
 
 const MAX_USER_MESSAGE_CHARS = 8_000;

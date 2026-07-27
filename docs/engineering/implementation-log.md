@@ -644,3 +644,7 @@ Do not append ship rows for P9 until Build Charter authorises them.
 ## 2026-07-27 — Phase 5 capability child insert lockdown
 
 Closed R-P1-12 by adding migrations `0103_capability_child_insert_lockdown.sql` and `0104_capability_child_anon_select_revoke.sql`. Authenticated users now retain owner SELECT on `pi_capability_judgements` and `pi_capability_snapshots`, but client INSERT/UPDATE/DELETE/TRUNCATE is revoked, old owner insert policies are removed, and leftover anon SELECT grants are removed. The shared child immutability trigger now honours the existing transaction-local `app.pi_privacy_delete` delete bypass so service-role privacy purge remains compatible with append-only capability artefacts. Applied to production Supabase `jibmyxaldetyycmtlxet` on 2026-07-27; live verification showed only authenticated SELECT grants on both child tables.
+
+## 2026-07-27 — Phase 6 AI injection red-team hardening
+
+Closed R-P1-13 by expanding prompt-injection pattern coverage for instruction override, developer-mode roleplay, prompt exfiltration, tool-output injection and capability/Verified mutation attempts. Added red-team fixtures to the orchestration and T6 security suites. Hardened `orchestrationBypassEnabled` so `DELIVERX_AI_ORCHESTRATION_BYPASS=1` fails closed in production; verified Vercel Production has no bypass env var configured.

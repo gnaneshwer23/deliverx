@@ -80,8 +80,23 @@ export type RunAgentResult = {
   usage: AiUsageMetrics | null;
 };
 
-function orchestrationBypassEnabled(): boolean {
-  return (process.env.DELIVERX_AI_ORCHESTRATION_BYPASS ?? "").toLowerCase() === "1";
+export type AiOrchestrationBypassEnv = Partial<
+  Pick<NodeJS.ProcessEnv, "DELIVERX_AI_ORCHESTRATION_BYPASS" | "VERCEL_ENV" | "NODE_ENV">
+>;
+
+export function orchestrationBypassEnabled(env: AiOrchestrationBypassEnv = process.env): boolean {
+  const flag = (env.DELIVERX_AI_ORCHESTRATION_BYPASS ?? "").trim().toLowerCase();
+  if (flag !== "1") return false;
+
+  const vercelEnv = (env.VERCEL_ENV ?? "").trim().toLowerCase();
+  if (vercelEnv === "production") return false;
+
+  // If Vercel did not provide an environment label, still fail closed for a
+  // production Node runtime. Local development and explicit preview remain the
+  // only places where the legacy fallback can be used.
+  if (!vercelEnv && env.NODE_ENV === "production") return false;
+
+  return true;
 }
 
 /** Deterministic mock model for CI — returns contract-shaped JSON per agent. */

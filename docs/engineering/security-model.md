@@ -84,7 +84,7 @@ Do **not** claim CI continuous rate-limit proof while TD-018 keeps Actions dark 
 - Observation drafts never auto-verify; cost/latency logged on every `runAgent` call
 - **Citation requirement (2026-07-26):** material outputs must cite the exact run context (`citations.ts` / `enforceCitations`); missing/unknown → `validation_failed` + honest non-claiming fallback; logged via `guardrail_flags`
 - AI observation provenance may carry model / prompt / contextSourceIds / citationIds — never capability or Verified
-- Rollback: `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy delivery AI only
+- Rollback: `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy delivery AI only outside production; production fails closed even if the flag is accidentally set
 
 ### Person notifications (T5)
 
