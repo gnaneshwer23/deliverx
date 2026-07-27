@@ -648,3 +648,7 @@ Closed R-P1-12 by adding migrations `0103_capability_child_insert_lockdown.sql` 
 ## 2026-07-27 — Phase 6 AI injection red-team hardening
 
 Closed R-P1-13 by expanding prompt-injection pattern coverage for instruction override, developer-mode roleplay, prompt exfiltration, tool-output injection and capability/Verified mutation attempts. Added red-team fixtures to the orchestration and T6 security suites. Hardened `orchestrationBypassEnabled` so `DELIVERX_AI_ORCHESTRATION_BYPASS=1` fails closed in production; verified Vercel Production has no bypass env var configured.
+
+## 2026-07-27 — Phase 7 mutable search_path advisor hygiene
+
+Closed R-P2-07 / DB-P2-01 with `0105_fix_mutable_search_path_residuals.sql`. The residual SECURITY INVOKER functions `match_project_memory_chunks`, `match_org_memory_chunks`, and `pi_cf_version_is_immutable` now pin `search_path=public`, clearing the mutable search_path advisor class without expanding function privileges. Applied to production Supabase `jibmyxaldetyycmtlxet` on 2026-07-27; live verification showed `proconfig={search_path=public}` on all three functions.

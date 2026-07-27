@@ -66,7 +66,7 @@ Severity (this roadmap):
 | R-P2-04 — Closed | Unbounded child selects on evidence | S | **Resolved — Phase 3** (bounded evidence list/detail/portfolio child reads) |
 | R-P2-05 — Closed | AI `maxDuration` absent | S | **Resolved — Phase 2** (explicit 30s route caps + regression guard) |
 | R-P2-06 | No PI API rate limit | M | Soon |
-| R-P2-07 | Mutable `search_path` advisors | S | Soon |
+| R-P2-07 — Closed | Mutable `search_path` advisors | S | **Resolved — Phase 7** (`0105` pins residual function `search_path=public`) |
 | R-P2-08 | Framework seed thin (TD-007) | M | Founder |
 | R-P2-09 | Human review workflow unused | M | Later |
 | R-P2-10 | Org departments/teams 0 rows | S | When Workspace pilot |

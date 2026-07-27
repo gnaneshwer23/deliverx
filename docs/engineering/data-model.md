@@ -11,7 +11,7 @@ RLS exposes self-only SELECT for customers, subscriptions and entitlements. Auth
 
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
 
-**Source of truth:** `supabase/migrations/0066`–`0104` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown; DB consent enforcement; Phase 5 capability child lockdown) on project `jibmyxaldetyycmtlxet`
+**Source of truth:** `supabase/migrations/0066`–`0105` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown; DB consent enforcement; Phase 5 capability child lockdown; Phase 7 search_path hygiene) on project `jibmyxaldetyycmtlxet`
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).

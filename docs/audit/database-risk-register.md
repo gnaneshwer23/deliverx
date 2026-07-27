@@ -12,7 +12,7 @@
 | DB-P1-02 | P1 | `framework_version_id` nullable on ScoreRuns; pin not DB-mandatory | `information_schema.is_nullable=YES`; app asserts when `DELIVERX_RUBRIC_REQUIRE_DB` | Fail-closed CHECK or NOT NULL after backfill |
 | DB-P1-03 | P1 | Judgements/snapshots INSERT own still allows fabricating child rows tied to invented ScoreRuns | Policies `*_insert_own` + immutable after write | Bind inserts to engine role or signed run token |
 | DB-P1-04 | P1 | TD-006 leaked-password protection disabled | Advisor `auth_leaked_password_protection` WARN | Founder Auth toggle |
-| DB-P2-01 | P2 | Advisor: mutable `search_path` on `match_project_memory_chunks`, `match_org_memory_chunks`, `pi_cf_version_is_immutable` | Advisors + function defs (SECURITY INVOKER) | Set `search_path=public` |
+| DB-P2-01 | P2 | Advisor: mutable `search_path` on `match_project_memory_chunks`, `match_org_memory_chunks`, `pi_cf_version_is_immutable` | Advisors + function defs (SECURITY INVOKER); production `proconfig` verified after `0105` | **Closed (0105, 2026-07-27)** — `search_path=public` pinned on all three residual functions |
 | DB-P2-02 | P2 | Advisor INFO: RLS on `org_ai_rate_limits`, `platform_api_rate_limits` with **no** policies | Effective deny for non-bypass roles | Add explicit deny policies for clarity |
 | DB-P2-03 | P2 | Six authenticated-callable SECURITY DEFINER helpers (3 from TD-016 + 3 from T7) | Prod grants; advisors 0029 | **Accepted** if kept read-only / auth.uid()-scoped; document expansion vs TD-016 “three helpers” note |
 | DB-P2-04 | P2 | Pre-pivot delivery tables large vs PI purge map — org residue possible after person purge | Cascade map vs `list_tables` volume | Track as privacy residual; not PI ledger rewrite |

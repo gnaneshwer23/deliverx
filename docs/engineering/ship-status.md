@@ -45,8 +45,8 @@ Product code/docs through Screen Pack 01 were on production before this note. Pu
 
 | Scope | Head |
 | --- | --- |
-| Repo | `supabase/migrations/0104_capability_child_anon_select_revoke.sql` |
-| Prod applied | Includes `0098_pi_recommendations` … `pi_api_rate_limit_atomic` |
+| Repo | `supabase/migrations/0105_fix_mutable_search_path_residuals.sql` |
+| Prod applied | Includes `0098_pi_recommendations` through `0105_fix_mutable_search_path_residuals` |
 
 | Migration | Prod |
 | --- | --- |
@@ -55,8 +55,11 @@ Product code/docs through Screen Pack 01 were on production before this note. Pu
 | `0100` / `organisations_org_admin_update` | Applied |
 | `0101` / `pi_api_rate_limits` | Applied |
 | `0102` / `pi_api_rate_limit_atomic` | Applied |
+| `0103` / `capability_child_insert_lockdown` | Applied |
+| `0104` / `capability_child_anon_select_revoke` | Applied |
+| `0105` / `fix_mutable_search_path_residuals` | Applied |
 
-**Gap:** none — repo head matches prod applied set through 0104.
+**Gap:** none — repo head matches prod applied set through 0105.
 
 ---
 

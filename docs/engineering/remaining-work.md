@@ -67,7 +67,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | **R-P2-04** | Bound evidence child selects | **Done (Phase 3)** — product/UI evidence child reads capped with shared limits + regression guard | Latent payload / perf risk | Engineering | S | Scale readiness |
 | **R-P2-05** | AI route `maxDuration` | **Done (Phase 2)** — explicit 30s route caps + regression guard | Long hangs / cost | Engineering | S | Ops reliability |
 | **R-P2-06** | Explicit PI API rate limit | **Done (B9)** — `0101` + atomic `0102` increment RPC; kill-switch + thresholds | Abuse / cost | Engineering | M | Abuse resistance |
-| **R-P2-07** | Mutable `search_path` advisor residuals | **Open** | Advisor hygiene | Engineering | S | Clean security advisors |
+| **R-P2-07** | Mutable `search_path` advisor residuals | **Done (Phase 7)** — `0105` pins `search_path=public` on the residual memory-match and PI immutability functions | Advisor hygiene | Engineering | S | Clean security advisors |
 | **R-P2-01** | Auth RLS initplan WARN ×N | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
 | **R-P2-02** | Unindexed PI FKs | **Open** (defer until load) | Latent query cost | Engineering | M | Perf at scale |
 | **R-P2-03** | Profile/Career aggregate fan-out | **Open** (defer) | Read-path cost | Engineering | M | Perf polish |
