@@ -243,9 +243,9 @@ Live payments remain **TEST-ONLY / OFF** until founder creates Stripe prices, se
 
 Ship log for the Professional Intelligence candidate loop. SHAs are from `main` history (July 2026).
 
-**Production:** https://www.deliverx.dev  
-**Supabase:** `jibmyxaldetyycmtlxet`  
-**Migrations:** `0066`–`0091`  
+**Production:** https://www.deliverx.dev
+**Supabase:** `jibmyxaldetyycmtlxet`
+**Migrations:** `0066`–`0091`
 **Post-ship HEAD (audit):** `f3ac383`
 
 ---
@@ -267,10 +267,10 @@ Ship log for the Professional Intelligence candidate loop. SHAs are from `main` 
 | `6da1b50` | feat(experience): expand P3 planner to 12-company catalogue | `0079` |
 | `3409ec1` | fix(experience): re-export MediFlow generator for production build | build fix |
 
-**P0** — Profile centre, framework pin, evidence relocate  
-**P1** — SnapshotClaims coherence  
-**P2** — Baseline assessment  
-**P3** — Experience planner + 12-company catalogue  
+**P0** — Profile centre, framework pin, evidence relocate
+**P1** — SnapshotClaims coherence
+**P2** — Baseline assessment
+**P3** — Experience planner + 12-company catalogue
 
 ---
 
@@ -638,6 +638,9 @@ Do not mark TD-006 Closed until advisors clear after the dashboard (or PAT) enab
 
 ## Not started (charter)
 
-- **P9 / T9** — Commercial (requires separate founder approval)  
+- **P9 / T9** — Commercial (requires separate founder approval)
 
 Do not append ship rows for P9 until Build Charter authorises them.
+## 2026-07-27 — Phase 5 capability child insert lockdown
+
+Closed R-P1-12 by adding migration `0103_capability_child_insert_lockdown.sql`. Authenticated users now retain owner SELECT on `pi_capability_judgements` and `pi_capability_snapshots`, but client INSERT/UPDATE/DELETE/TRUNCATE is revoked and the old owner insert policies are removed. The shared child immutability trigger now honours the existing transaction-local `app.pi_privacy_delete` delete bypass so service-role privacy purge remains compatible with append-only capability artefacts.

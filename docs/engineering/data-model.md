@@ -215,7 +215,7 @@ erDiagram
 | Invariant | How |
 | --- | --- |
 | Append-oriented evidence history | Ledger transitions + provenance tables; forbid silent capability invent |
-| Capability only via ScoreRun persist | `0095` SELECT-only client RLS + authenticated DML revoke + immutable trigger; engine callers use service role |
+| Capability only via ScoreRun persist | `0095` SELECT-only client RLS + authenticated DML revoke + immutable trigger; `0103` removes authenticated judgement/snapshot child inserts; engine callers use service role |
 | Framework pin | `framework_version_id` on ScoreRuns when published pin exists |
 | Rubric resolve provenance (T2) | `rubric_resolve_source` + labelled API `rubricSource`; DB preferred |
 | `run_kind` ∈ standard/baseline/final/transfer | Persist + assessment paths |
@@ -238,7 +238,7 @@ Exact CHECK constraint names live in the migration SQL — treat migrations as a
 
 ## RLS posture (summary)
 
-- Person PI tables: **self-only** (auth.uid() ownership) for candidate data, including `pi_notifications`; ScoreRuns are self-readable but service-role/engine-writable only
+- Person PI tables: **self-only** (auth.uid() ownership) for candidate data, including `pi_notifications`; ScoreRuns, capability judgements, and capability snapshots are self-readable but service-role/engine-writable only
 - Org-admin / framework admin: elevated paths for `pi_cf_*` and review admin APIs
 - Public portfolio share: tokenised views that filter non-shareable / private evidence
 - `pi_cf_audit_events`: authenticated deny-all (T1); service role only
