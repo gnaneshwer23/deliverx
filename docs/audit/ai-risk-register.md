@@ -9,7 +9,7 @@
 | AI-P1-03 — **Closed** | P1 | Empty citations allowed — recommendations may appear evidence-backed without ids | Was coach/line_manager validators | **Shipped 2026-07-26:** `enforceCitations` requires ≥1 citation resolving to run context for all live contracts; missing/unknown → validation_failed + non-claiming fallback; UI `AiCitationStrip` |
 | AI-P2-01 | P2 | Hallucinated company/project facts when context sparse | Prompt-only control | Fail closed via citation requirement + “insufficient context” fallback (partial close with AI-P1-03) |
 | AI-P2-02 | P2 | No PI-level rate limit on `runAgent` / interactions insert | No rate-limit in `src/app/api/pi/**` | Reuse `org_ai_rate_limits` or per-user quota |
-| AI-P2-03 | P2 | Cost estimates are heuristic token math, not provider billing | `usage-log.ts` | Label as estimate; reconcile later |
+| AI-P2-03 | P2 | Cost estimates are heuristic token math, not provider billing | `usage-log.ts` | **Closed — Phase 4:** API/record disclosure labels estimate semantics; provider reconciliation remains future ops |
 | AI-P2-04 | P2 | Soft confirmation on coach agents (`requiresConfirmation: false`) | Prompt registry coach templates | OK for hints; ensure no auto-mutations downstream |
 | AI-P2-05 | P2 | Cross-user leakage if caller builds context from wrong user/project | Context builder trust boundary | Audit all production call sites; never accept client-supplied foreign userId without auth check |
 | AI-OK-01 | Info | Observer cannot mark evidence/verified in validated output | `validateObserver` | Hold |

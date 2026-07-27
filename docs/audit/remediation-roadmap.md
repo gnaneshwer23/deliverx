@@ -76,7 +76,7 @@ Severity (this roadmap):
 | R-P2-14 — Closed | Root metadata “AI Delivery Platform” | S | **Resolved — Batch 3** |
 | R-P2-15 — Closed | WCAG gaps (icon name, alerts, tiny text, demoted surfaces) | M | **Resolved — Batch 5–6** (core AA + residual primary/demoted; see a11y audit deferred for AT lab) |
 | R-P2-16 | No coverage tooling / Playwright CI | M | After TD-018 |
-| R-P2-17 | Soft AI rate / cost estimate honesty | S | Later |
+| R-P2-17 — Closed | Soft AI rate / cost estimate honesty | S | **Resolved — Phase 4** (usage records/API disclose heuristic estimate semantics) |
 | R-P2-18 | Pre-pivot purge residue (org/delivery) | M | Privacy residual track |
 
 ### P3 Minor (8)

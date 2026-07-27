@@ -76,7 +76,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | **R-P2-10** | Org departments/teams seed for Workspace pilot | **Open** (0 rows) | Structure unused | Engineering | S | Workspace org demos |
 | **R-P2-11** / TD-012 | Experience → workspace dual-write on remaining pages | **Open** / deferred | Observation coverage gaps | Engineering | M | Full observation coverage |
 | **R-P2-16** | Coverage % tooling + Playwright/axe in CI | **Open** | Coverage unmeasured; CI still off | Engineering | M | Continuous quality signal (needs TD-018) |
-| **R-P2-17** | Soft AI rate / cost-estimate honesty | **Open** | Heuristic cost copy | Engineering | S | Cost honesty |
+| **R-P2-17** | Soft AI rate / cost-estimate honesty | **Done (Phase 4)** — AI usage records/API disclose heuristic estimates, not provider billing | Heuristic cost copy | Engineering | S | Cost honesty |
 | **R-P2-18** | Pre-pivot purge residue (org/delivery) | **Open** | Privacy residual track | Engineering | M | Full purge completeness |
 | **TD-003** | Edge proxy anonymous path-guards | **Documented defer** | Layouts own redirects | Engineering | M | Proxy purity (not pilot-blocking) |
 | **TD-013** | Full Mermaid ER publish | **Open** / deferred | Docs polish | Engineering | S | Schema docs completeness |

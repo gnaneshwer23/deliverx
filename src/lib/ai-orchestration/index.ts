@@ -73,6 +73,9 @@ export {
 export type { OutputValidationResult } from "@/lib/ai-orchestration/output-contracts";
 
 export {
+  AI_COST_ESTIMATE_DISCLOSURE,
+  AI_COST_ESTIMATE_KIND,
+  costEstimateDisclosure,
   estimateCostUsd,
   estimateTokens,
   hashPayload,

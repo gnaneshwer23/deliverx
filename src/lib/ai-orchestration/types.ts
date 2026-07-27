@@ -150,10 +150,13 @@ export function isAiCitationSourceType(v: string): v is AiCitationSourceType {
   return (AI_CITATION_SOURCE_TYPES as readonly string[]).includes(v);
 }
 
+export type AiCostEstimateKind = "heuristic_estimate";
+
 export type AiUsageMetrics = {
   inputTokens: number;
   outputTokens: number;
   latencyMs: number;
+  /** Heuristic pilot estimate, not provider billing. */
   costEstimateUsd: number | null;
   model: string;
   provider: string | null;
@@ -177,6 +180,8 @@ export type AiInteractionRecord = {
   outputTokens: number | null;
   latencyMs: number | null;
   costEstimateUsd: number | null;
+  costEstimateKind: AiCostEstimateKind | null;
+  costEstimateDisclosure: string;
   output: Record<string, unknown> | null;
   errorMessage: string | null;
   requiresConfirmation: boolean;

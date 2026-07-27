@@ -1,4 +1,8 @@
 
+## 2026-07-27 — Phase 4 AI cost-estimate honesty
+
+Founder requested Phase 4 after evidence query bounds. Implemented residual engineering hardening **R-P2-17**: AI usage records and `GET /api/pi/ai/interactions` now disclose that `costEstimateUsd` is a heuristic pilot estimate, not provider billing. Added `src/lib/ai-orchestration/usage-log.test.ts` to lock the semantics.
+
 ## 2026-07-27 — Phase 3 evidence query bound hardening
 
 Founder requested Phase 3 after route timeout hardening. Implemented residual engineering hardening **R-P2-04**: product-facing Evidence Ledger list/detail and Portfolio evidence selection reads now use shared caps in `src/lib/evidence-ledger/query-limits.ts`, with a Vitest guard at `src/lib/evidence-ledger/query-limits.test.ts`. Privacy export remains complete rather than silently truncated.

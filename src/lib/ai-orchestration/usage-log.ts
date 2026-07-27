@@ -8,12 +8,27 @@ import {
   AI_ORCHESTRATION_EVENT,
   type AiBoundSurface,
   type AiContextSource,
+  type AiCostEstimateKind,
   type AiInteractionRecord,
   type AiInteractionStatus,
   type AiUsageMetrics,
 } from "@/lib/ai-orchestration/types";
 
 type DbClient = SupabaseClient;
+
+export const AI_COST_ESTIMATE_KIND: AiCostEstimateKind = "heuristic_estimate";
+export const AI_COST_ESTIMATE_DISCLOSURE =
+  "Estimated from token counts and pilot rates for operational visibility. This is not provider billing.";
+
+export function costEstimateDisclosure(costEstimateUsd: number | null): {
+  costEstimateKind: AiCostEstimateKind | null;
+  costEstimateDisclosure: string;
+} {
+  return {
+    costEstimateKind: costEstimateUsd == null ? null : AI_COST_ESTIMATE_KIND,
+    costEstimateDisclosure: AI_COST_ESTIMATE_DISCLOSURE,
+  };
+}
 
 export function hashPayload(value: unknown): string {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 32);
@@ -55,6 +70,7 @@ export type LogInteractionInput = {
 };
 
 function mapRow(row: Record<string, unknown>): AiInteractionRecord {
+  const costEstimateUsd = row.cost_estimate_usd == null ? null : Number(row.cost_estimate_usd);
   return {
     id: String(row.id),
     userId: String(row.user_id),
@@ -72,7 +88,8 @@ function mapRow(row: Record<string, unknown>): AiInteractionRecord {
     inputTokens: row.input_tokens == null ? null : Number(row.input_tokens),
     outputTokens: row.output_tokens == null ? null : Number(row.output_tokens),
     latencyMs: row.latency_ms == null ? null : Number(row.latency_ms),
-    costEstimateUsd: row.cost_estimate_usd == null ? null : Number(row.cost_estimate_usd),
+    costEstimateUsd,
+    ...costEstimateDisclosure(costEstimateUsd),
     output: (row.output as Record<string, unknown> | null) ?? null,
     errorMessage: (row.error_message as string | null) ?? null,
     requiresConfirmation: Boolean(row.requires_confirmation),
@@ -134,6 +151,8 @@ export async function logAiInteraction(
       status: input.status,
       latencyMs: usage?.latencyMs ?? null,
       costEstimateUsd: usage?.costEstimateUsd ?? null,
+      costEstimateKind: usage?.costEstimateUsd == null ? null : AI_COST_ESTIMATE_KIND,
+      costEstimateDisclosure: AI_COST_ESTIMATE_DISCLOSURE,
       model: input.model,
     },
   });

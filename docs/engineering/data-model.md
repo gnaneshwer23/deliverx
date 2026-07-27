@@ -147,7 +147,7 @@ erDiagram
 
 - `ai_agents` — platform catalogue (line_manager / stakeholder / observer / coach); not person PI; readable by authenticated
 - `ai_prompt_versions` — **immutable** prompt rows (`agent_slug`, `prompt_slug`, `version`, `prompt_hash`, `output_contract`); app registry is runtime SoT (v2 citation-aware templates live in app; v1 DB seeds retained)
-- `ai_interactions` — person append-only log (model, provider, tokens, latency_ms, cost_estimate_usd, prompt version, context_sources, input/output hashes, guardrail_flags); self-only RLS
+- `ai_interactions` — person append-only log (model, provider, tokens, latency_ms, cost_estimate_usd, prompt version, context_sources, input/output hashes, guardrail_flags); self-only RLS. App/API projections label `cost_estimate_usd` as a heuristic pilot estimate, not provider billing.
 - **Citations (2026-07-26):** structured `AiCitation` in output JSON; `enforceCitations` validates against `context_sources` / evidence ids for the same run; failures logged in `error_message` + `guardrail_flags` — **no new columns / migration**
 - Purge cascade extended: `ai_interactions` deleted with person data; `ai_agents` / `ai_prompt_versions` retained (catalogue exclusions)
 

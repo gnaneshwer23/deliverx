@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { assertPiAccess } from "@/lib/access/gate";
-import { listAiInteractions } from "@/lib/ai-orchestration";
+import {
+  AI_COST_ESTIMATE_DISCLOSURE,
+  AI_COST_ESTIMATE_KIND,
+  listAiInteractions,
+} from "@/lib/ai-orchestration";
 
 export async function GET(request: Request) {
   const supabase = await createClient();
@@ -31,7 +35,14 @@ export async function GET(request: Request) {
       limit,
       agentSlug: agentSlug || undefined,
     });
-    return NextResponse.json({ ok: true, interactions });
+    return NextResponse.json({
+      ok: true,
+      interactions,
+      costEstimate: {
+        kind: AI_COST_ESTIMATE_KIND,
+        disclosure: AI_COST_ESTIMATE_DISCLOSURE,
+      },
+    });
   } catch (error) {
     console.error("[pi/ai/interactions] list failed", error);
     return NextResponse.json({ error: "Could not list AI interactions" }, { status: 500 });
