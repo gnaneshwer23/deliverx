@@ -45,7 +45,7 @@ Product code/docs through Screen Pack 01 were on production before this note. Pu
 
 | Scope | Head |
 | --- | --- |
-| Repo | `supabase/migrations/0102_pi_api_rate_limit_atomic.sql` (102 files) |
+| Repo | `supabase/migrations/0104_capability_child_anon_select_revoke.sql` |
 | Prod applied | Includes `0098_pi_recommendations` … `pi_api_rate_limit_atomic` |
 
 | Migration | Prod |
@@ -56,7 +56,7 @@ Product code/docs through Screen Pack 01 were on production before this note. Pu
 | `0101` / `pi_api_rate_limits` | Applied |
 | `0102` / `pi_api_rate_limit_atomic` | Applied |
 
-**Gap:** none — repo head matches prod applied set through 0102.
+**Gap:** none — repo head matches prod applied set through 0104.
 
 ---
 

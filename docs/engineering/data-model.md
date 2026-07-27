@@ -11,7 +11,7 @@ RLS exposes self-only SELECT for customers, subscriptions and entitlements. Auth
 
 > **Product Bible:** Orientation in [`../README.md`](../README.md). This engineering doc is **canonical detail** for schema/APIs/phases when implementing.
 
-**Source of truth:** `supabase/migrations/0066`–`0096` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown; DB consent enforcement) on project `jibmyxaldetyycmtlxet`
+**Source of truth:** `supabase/migrations/0066`–`0104` (PI pivot through T8 external attestation; Batch 1 DB trust lockdown; DB consent enforcement; Phase 5 capability child lockdown) on project `jibmyxaldetyycmtlxet`
 **As of:** 2026-07-25
 
 Mermaid ER diagram: **TODO** (compact domain sketch below until a full ER export is generated).
@@ -215,7 +215,7 @@ erDiagram
 | Invariant | How |
 | --- | --- |
 | Append-oriented evidence history | Ledger transitions + provenance tables; forbid silent capability invent |
-| Capability only via ScoreRun persist | `0095` SELECT-only client RLS + authenticated DML revoke + immutable trigger; `0103` removes authenticated judgement/snapshot child inserts; engine callers use service role |
+| Capability only via ScoreRun persist | `0095` SELECT-only client RLS + authenticated DML revoke + immutable trigger; `0103` removes authenticated judgement/snapshot child inserts; `0104` removes anon child SELECT grants; engine callers use service role |
 | Framework pin | `framework_version_id` on ScoreRuns when published pin exists |
 | Rubric resolve provenance (T2) | `rubric_resolve_source` + labelled API `rubricSource`; DB preferred |
 | `run_kind` ∈ standard/baseline/final/transfer | Persist + assessment paths |
