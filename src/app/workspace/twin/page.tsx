@@ -42,14 +42,14 @@ export default async function DigitalTwinPage() {
           </p>
           <p className="mt-1">
             The twin builds on top of the portfolio model — set one up first, or
-            return to Hub for the pilot journey.
+            return to Professional Home for the pilot journey.
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/hub"
+              href="/profile"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:bg-slate-50"
             >
-              Back to Hub
+              Back to Professional Home
             </Link>
             <Link
               href="/workspace/portfolio"

@@ -48,8 +48,8 @@ export default async function PiReviewAdminPage() {
           <p className="rounded-md border border-[#E5E2D9] bg-white px-3 py-2 text-sm text-[#4A4A45]">
             {REVIEW_DOES_NOT_GRANT_VERIFIED}
           </p>
-          <Link href="/hub" className="inline-block text-sm text-[#1C4A2E] underline">
-            Back to hub
+          <Link href="/profile" className="inline-block text-sm text-[#1C4A2E] underline">
+            Back to Professional Home
           </Link>
         </div>
       </main>

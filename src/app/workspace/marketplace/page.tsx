@@ -49,10 +49,10 @@ export default async function MarketplacePage() {
                 reuse; employer liquidity is out of charter.
               </p>
               <Link
-                href="/hub"
+                href="/profile"
                 className="mt-4 inline-flex min-h-11 items-center justify-center text-sm font-medium text-[#1C4A2E] underline-offset-2 hover:underline"
               >
-                Back to Hub
+                Back to Professional Home
               </Link>
             </div>
           ) : (

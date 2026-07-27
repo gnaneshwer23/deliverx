@@ -886,7 +886,7 @@ export function PiOnboardingWizard({
                   [
                     ["experience", "Start Experience"],
                     ["launchpad", "Start Launchpad"],
-                    ["hub", "Open Hub"],
+                    ["hub", "Open Journey map"],
                   ] as const
                 ).map(([path, label]) => (
                   <DxButton

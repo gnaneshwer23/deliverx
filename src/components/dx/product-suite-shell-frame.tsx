@@ -64,7 +64,7 @@ export function ProductSuiteShellFrame({
       <header className="sticky top-0 z-50 border-b border-[var(--dx-rul)] bg-white/95 shadow-[var(--dx-shadow-nav)] backdrop-blur">
         <div className="flex min-h-[60px] items-center gap-4 px-4 md:px-6">
           <div className="shrink-0 border-r border-[var(--dx-rul)] pr-4">
-            <DxLogo href="/hub" />
+            <DxLogo href="/profile" />
           </div>
           <div className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <ProductSuiteNav />

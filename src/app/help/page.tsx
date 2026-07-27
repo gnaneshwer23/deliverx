@@ -16,19 +16,19 @@ const SECTIONS = [
   {
     id: "where-am-i",
     title: "Where am I?",
-    body: "Signed-in DeliverX uses one suite navigation: Hub, Profile, Experience, Launchpad, Workspace, and Portfolio. Settings and Help sit in the shell chrome. There is no separate Insights product — search and help are utilities that route into these surfaces.",
+    body: "Signed-in DeliverX uses one suite navigation: Home, Experience, Launchpad, Portfolio, Workspace, and Journey map. Settings and Help sit in the shell chrome. There is no separate Insights product — search and help are utilities that route into these surfaces.",
     links: [
-      { href: "/hub", label: "Open Hub" },
-      { href: "/profile", label: "Open Profile" },
+      { href: "/profile", label: "Open Professional Home" },
+      { href: "/hub", label: "Open Journey map" },
     ],
   },
   {
     id: "what-next",
     title: "What should I do next?",
-    body: "Start from Profile for recommended next actions grounded in your Professional Intelligence, or from Hub to choose a product surface. Recommendations explain their rationale; they do not invent capability levels or Verified status.",
+    body: "Start from Professional Home for recommended next actions grounded in your Professional Intelligence, or use Journey map when you want to choose a product surface. Recommendations explain their rationale; they do not invent capability levels or Verified status.",
     links: [
-      { href: "/profile", label: "Profile next actions" },
-      { href: "/hub", label: "Hub journey" },
+      { href: "/profile", label: "Home next actions" },
+      { href: "/hub", label: "Journey map" },
     ],
   },
   {

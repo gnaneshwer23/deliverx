@@ -45,14 +45,20 @@ export function ProfileCentre() {
   }, []);
 
   if (loading) {
-    return <p className="p-8 text-sm text-[#6B6B64]">Loading Professional Intelligence Profile…</p>;
+    return (
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        <div className="rounded-xl border border-[#E5E2D9] bg-white p-5 text-sm text-[#6B6B64] shadow-sm">
+          Loading Professional Intelligence Profile...
+        </div>
+      </div>
+    );
   }
   if (error || !profile) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-8">
+      <div className="mx-auto max-w-5xl px-4 py-8">
         <p className="text-sm text-red-700">{error || "Profile unavailable"}</p>
         <Link href="/hub" className="mt-4 inline-block text-sm text-[#1C4A2E] underline">
-          Back to Hub
+          Open Journey map
         </Link>
       </div>
     );
@@ -61,25 +67,79 @@ export function ProfileCentre() {
   const name =
     [profile.identity.firstName, profile.identity.lastName].filter(Boolean).join(" ") ||
     "Your profile";
+  const experienceHref = profile.experiencePlan?.href ?? "/experience/app";
+  const homeActions = [
+    {
+      label: "Build evidence",
+      title: "Experience",
+      body: "Practice and create evidence that can be judged later.",
+      href: experienceHref,
+    },
+    {
+      label: "Close gaps",
+      title: "Learning",
+      body: "Study only where knowledge gaps are holding you back.",
+      href: "/learning",
+    },
+    {
+      label: "Package readiness",
+      title: "Launchpad",
+      body: "Turn evidence into opportunities, interviews, and outcomes.",
+      href: "/launchpad/app",
+    },
+    {
+      label: "Share proof",
+      title: "Portfolio",
+      body: "Package cited claims and attestation for external use.",
+      href: "/portfolio",
+    },
+  ];
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <header className="mb-8 border-b border-[#E5E2D9] pb-5">
-        <p className="font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
-          Professional Intelligence · Home
-        </p>
-        <div className="mt-1 flex items-start justify-between gap-4">
-          <h1 className="font-[family-name:var(--font-display)] text-2xl text-[#1A1A18]">
-            {name}
-          </h1>
-          <NotificationInbox />
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <header className="mb-8 border-b border-[#E5E2D9] pb-6">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="font-[family-name:var(--font-dx-mono)] text-[10px] uppercase tracking-[0.16em] text-[#6B6B64]">
+              Professional Home
+            </p>
+            <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight text-[#1A1A18] sm:text-4xl">
+              {name}
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-[#4A4A45]">
+              {profile.homeBriefing
+                ? "Where you are, what matters today, and what comes next from evidence."
+                : "One centre for identity, evidence, gaps, next actions, and opportunity fit - from evidence, not invention."}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/hub"
+              className="inline-flex min-h-11 items-center rounded-lg border border-[#D6D3C8] bg-white px-3 text-sm font-medium text-[#1A1A18] hover:bg-[#F7F7F2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1C4A2E]"
+            >
+              Journey map
+            </Link>
+            <NotificationInbox />
+          </div>
         </div>
-        <p className="mt-2 max-w-xl text-sm text-[#4A4A45]">
-          {profile.homeBriefing
-            ? "Your professional home — where you are, what to do today, and what comes next from evidence."
-            : "One centre for who you are, what you can prove, what is holding you back, what to do next, and which opportunities fit — from evidence, not invention."}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {homeActions.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="group rounded-xl border border-[#E5E2D9] bg-white p-4 shadow-sm transition-colors hover:border-[#BFD8C9] hover:bg-[#F8FBF9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1C4A2E]"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8B4A2F]">
+                {action.label}
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[#1A1A18]">{action.title}</p>
+              <p className="mt-1 text-xs leading-5 text-[#6B6B64]">{action.body}</p>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
           <Link
             href={PI_EVIDENCE_PATH}
             className="rounded-md bg-[#1C4A2E] px-3 py-2 text-xs font-medium text-white"
@@ -99,22 +159,10 @@ export function ProfileCentre() {
             Final / transfer
           </Link>
           <Link
-            href={profile.experiencePlan?.href ?? "/experience/app"}
+            href="/career/outcomes"
             className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
           >
-            Experience
-          </Link>
-          <Link
-            href="/launchpad/app"
-            className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
-          >
-            Career
-          </Link>
-          <Link
-            href="/portfolio"
-            className="rounded-md border border-[#D6D3C8] bg-white px-3 py-2 text-xs font-medium text-[#1A1A18]"
-          >
-            Portfolio
+            Outcomes
           </Link>
         </div>
       </header>

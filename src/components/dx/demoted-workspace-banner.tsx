@@ -20,10 +20,10 @@ export function DemotedWorkspaceBanner({
       <p className="font-medium text-[#0D0D0B]">{title}</p>
       <p className="mt-1">{body}</p>
       <Link
-        href="/hub"
+        href="/profile"
         className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-[#1C4A2E] underline-offset-2 hover:underline"
       >
-        Back to Hub
+        Back to Professional Home
       </Link>
     </aside>
   );

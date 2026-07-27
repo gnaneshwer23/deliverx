@@ -2,19 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ProductSuiteShell } from "@/components/dx/product-suite-shell";
-import {
-  MarketingContainer,
-  MarketingPageShell,
-  MarketingSection,
-} from "@/components/marketing/marketing-layout";
-import { mktClass } from "@/lib/marketing/landing-theme";
-import { marketingFontClassName, mktSans } from "@/lib/marketing/marketing-fonts";
 import { createClient } from "@/lib/supabase/server";
 import { parseSuiteProduct, productDisplayName } from "@/lib/marketing/product-intent";
 
 export const metadata: Metadata = {
-  title: "DeliverX Hub",
-  description: "Your DeliverX journey — Experience, Career and Team in one place.",
+  title: "Journey map | DeliverX",
+  description: "Choose where to go next in the DeliverX product suite.",
 };
 
 export const dynamic = "force-dynamic";
@@ -22,65 +15,41 @@ export const dynamic = "force-dynamic";
 const HUB_JOURNEY = [
   {
     id: "profile",
-    stage: "Your Professional Intelligence",
-    name: "Profile",
-    progress: "Who you are · evidence · gaps · next path",
+    stage: "Start here",
+    name: "Professional Home",
+    progress: "Daily briefing, next action, evidence health, gaps, and fit.",
     href: "/profile",
-    cta: "Open Profile",
+    cta: "Open home",
   },
   {
     id: "experience",
-    stage: "Build the experience",
+    stage: "Build evidence",
     name: "Experience",
-    progress: "Continue your journey",
+    progress: "Practice inside a simulated company and create work evidence.",
     href: "/experience/app",
-    cta: "Open Experience",
+    cta: "Continue practice",
   },
   {
-    id: "evidence",
-    stage: "See what you demonstrated",
-    name: "Evidence & capability",
-    progress: "Ledger evidence → capability assessment",
-    href: "/profile/evidence",
-    cta: "Open Evidence",
-  },
-  {
-    id: "learning",
-    stage: "Close knowledge gaps",
-    name: "Learning Intelligence",
-    progress: "Log learning → reflect → apply in Experience (not competency)",
-    href: "/learning",
-    cta: "Open Learning",
-  },
-  {
-    id: "career",
+    id: "launchpad",
     stage: "Land the opportunity",
     name: "Launchpad",
-    progress: "Evidence-backed readiness, roadmap, interview lab, applications",
+    progress: "Turn evidence into readiness, interviews, applications, and outcomes.",
     href: "/launchpad/app",
     cta: "Open Launchpad",
   },
   {
-    id: "outcomes",
-    stage: "Close the loop",
-    name: "Real-world outcomes",
-    progress: "Log applications, interviews, offers — self-reported (not capability)",
-    href: "/career/outcomes",
-    cta: "Log outcomes",
-  },
-  {
     id: "portfolio",
-    stage: "Evidence-linked record",
+    stage: "Package proof",
     name: "Verified Portfolio",
-    progress: "Package claims with evidence",
+    progress: "Share claims with cited evidence and named attestation where available.",
     href: "/portfolio",
     cta: "Open Portfolio",
   },
   {
-    id: "team",
-    stage: "Succeed in the role",
+    id: "workspace",
+    stage: "Succeed at work",
     name: "Professional Workspace",
-    progress: "Continue your journey",
+    progress: "Collaborative delivery work after organisation setup.",
     href: "/workspace",
     onboardingHref: "/onboarding/organisation",
     cta: "Open Workspace",
@@ -121,79 +90,85 @@ export default async function HubPage() {
 
   return (
     <ProductSuiteShell>
-      <div className={`${marketingFontClassName} ${mktSans.className}`}>
-        <MarketingPageShell showSkipLink={false}>
-        <main id="main-content">
-          <MarketingSection
-            tone="cream"
-            className="!pt-12 md:!pt-16"
-          >
-            <MarketingContainer className="max-w-2xl">
-              <p className={mktClass.label}>DeliverX Hub</p>
-              <h1
-                className={`mt-4 text-[clamp(2rem,5vw,3rem)] tracking-[-0.03em] text-[var(--mkt-text1)] ${mktClass.serif}`}
-              >
-                Welcome back, {firstName}.
-              </h1>
-              <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                Build the experience → Land the opportunity → Succeed in the role. Pick up any stage
-                of your journey.
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+        <section className="grid gap-8 border-b border-[var(--dx-rul)] pb-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8B4A2F]">
+              DeliverX journey map
+            </p>
+            <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-display)] text-4xl font-semibold leading-[0.95] tracking-tight text-[#0D0D0B] sm:text-5xl lg:text-6xl">
+              Welcome back, {firstName}.
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-[#4B5563]">
+              Professional Home is your default starting point. Use this map when you want to jump
+              to a specific DeliverX surface without losing the bigger journey.
+            </p>
+          </div>
+          <div className="rounded-xl border border-[var(--dx-rul)] bg-white p-5 shadow-sm">
+            <p className="text-sm font-semibold text-[#0D0D0B]">Today starts at Home</p>
+            <p className="mt-2 text-sm leading-6 text-[#4B5563]">
+              Home answers where you are, what matters, and what comes next from your evidence.
+            </p>
+            {product ? (
+              <p className="mt-4 rounded-lg bg-[#F7F7F2] px-3 py-2 text-xs text-[#4B5563]">
+                Signed up for {productDisplayName(product)}.
               </p>
-              {product ? (
-                <p className="mt-3 text-[0.8125rem] text-[var(--mkt-text3)]">
-                  Signed up for{" "}
-                  <span className="text-[var(--mkt-text2)]">
-                    {productDisplayName(product)}
-                  </span>
-                  .
-                </p>
-              ) : null}
-            </MarketingContainer>
-          </MarketingSection>
+            ) : null}
+            <Link
+              href="/profile"
+              className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-[#0D2B1E] px-4 text-sm font-semibold text-white hover:bg-[#143A29] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1C4A2E]"
+            >
+              Open Professional Home
+            </Link>
+          </div>
+        </section>
 
-          <MarketingSection tone="white">
-            <MarketingContainer>
-              <ul>
-                {HUB_JOURNEY.map((item, index) => {
-                  const href =
-                    item.id === "team"
-                      ? hasOrg
-                        ? item.href
-                        : item.onboardingHref
-                      : item.href;
+        <section className="py-10" aria-labelledby="journey-map-title">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B6B64]">
+                Product surfaces
+              </p>
+              <h2 id="journey-map-title" className="mt-2 text-2xl font-semibold text-[#0D0D0B]">
+                One route, five surfaces.
+              </h2>
+            </div>
+            <p className="max-w-lg text-sm leading-6 text-[#4B5563]">
+              Dashboard-style work stays inside the signed-in product. This page is only for
+              orientation and navigation.
+            </p>
+          </div>
 
-                  return (
-                    <li key={item.id}>
-                      <Link
-                        href={href}
-                        className="mkt-product-row group grid gap-4 border-t border-[var(--mkt-border)] py-10 no-underline md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-12"
-                      >
-                        <div>
-                          <p className={`${mktClass.label} text-[var(--mkt-green)]`}>
-                            {String(index + 1).padStart(2, "0")} · {item.stage}
-                          </p>
-                          <h2
-                            className={`mt-3 text-[clamp(1.75rem,3.5vw,2.25rem)] tracking-[-0.03em] text-[var(--mkt-text1)] transition-colors group-hover:text-[var(--mkt-green)] ${mktClass.serif}`}
-                          >
-                            {item.name}
-                          </h2>
-                          <p className="mt-2 text-[0.875rem] text-[var(--mkt-text3)]">
-                            {item.progress}
-                          </p>
-                        </div>
-                        <span className="text-[0.875rem] font-medium text-[var(--mkt-green)] transition-transform group-hover:translate-x-1">
-                          {item.cta} →
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </MarketingContainer>
-          </MarketingSection>
-        </main>
-        </MarketingPageShell>
-      </div>
+          <ul className="mt-8 grid gap-4 md:grid-cols-2">
+            {HUB_JOURNEY.map((item, index) => {
+              const href =
+                item.id === "workspace"
+                  ? hasOrg
+                    ? item.href
+                    : item.onboardingHref
+                  : item.href;
+
+              return (
+                <li key={item.id}>
+                  <Link
+                    href={href}
+                    className="group block min-h-full rounded-xl border border-[var(--dx-rul)] bg-white p-5 shadow-sm transition-colors hover:border-[#BFD8C9] hover:bg-[#F8FBF9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1C4A2E]"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#8B4A2F]">
+                        {String(index + 1).padStart(2, "0")} / {item.stage}
+                      </p>
+                      <span className="text-sm font-semibold text-[#1C4A2E]">{item.cta}</span>
+                    </div>
+                    <h3 className="mt-4 text-xl font-semibold text-[#0D0D0B]">{item.name}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[#4B5563]">{item.progress}</p>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      </main>
     </ProductSuiteShell>
   );
 }

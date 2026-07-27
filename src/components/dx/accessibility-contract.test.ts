@@ -73,7 +73,7 @@ describe("primary shell accessibility contracts", () => {
   it("frames demoted Twin/PMO/Marketplace surfaces honestly", () => {
     const banner = source("./demoted-workspace-banner.tsx");
     expect(banner).toContain("role=\"note\"");
-    expect(banner).toContain("Back to Hub");
+    expect(banner).toContain("Back to Professional Home");
     expect(source("../../app/workspace/twin/page.tsx")).toContain(
       "DemotedWorkspaceBanner",
     );

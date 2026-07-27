@@ -48,10 +48,10 @@ export default async function BillingSuccessPage({
               View billing
             </MarketingButtonLink>
             <Link
-              href="/hub"
+              href="/profile"
               className="text-[0.875rem] font-medium text-[var(--mkt-green)] underline-offset-4 hover:underline"
             >
-              Go to Hub
+              Go to Professional Home
             </Link>
           </div>
         </MarketingContainer>
