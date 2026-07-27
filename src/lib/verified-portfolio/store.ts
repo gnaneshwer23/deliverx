@@ -1,6 +1,12 @@
 import { randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { compilePortfolioDraft } from "@/lib/verified-portfolio/compile";
+import {
+  EVIDENCE_LIST_LIMIT,
+  EVIDENCE_LIST_PROVENANCE_LIMIT,
+  EVIDENCE_LIST_STATUS_TRANSITION_LIMIT,
+  PORTFOLIO_ENTRY_EVIDENCE_LINK_LIMIT,
+} from "@/lib/evidence-ledger/query-limits";
 import { shareBaseUrl } from "@/lib/share-url";
 import type {
   ConfidentialFieldKey,
@@ -65,7 +71,8 @@ async function loadLinks(
   const { data } = await supabase
     .from("vpp_entry_evidence")
     .select("*")
-    .eq("entry_id", entryId);
+    .eq("entry_id", entryId)
+    .limit(PORTFOLIO_ENTRY_EVIDENCE_LINK_LIMIT);
   return (data ?? []).map((r) => ({
     evidenceId: r.evidence_id as string,
     claimField: r.claim_field as string,
@@ -89,7 +96,7 @@ export async function listUserEvidenceForPortfolio(
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
-    .limit(100);
+    .limit(EVIDENCE_LIST_LIMIT);
 
   const ids = (records ?? []).map((r) => r.id as string);
   const statusById: Record<string, string> = {};
@@ -100,11 +107,13 @@ export async function listUserEvidenceForPortfolio(
         .from("pi_evidence_status_transitions")
         .select("evidence_id, to_status, created_at")
         .in("evidence_id", ids)
-        .order("created_at", { ascending: false }),
+        .order("created_at", { ascending: false })
+        .limit(EVIDENCE_LIST_STATUS_TRANSITION_LIMIT),
       supabase
         .from("pi_evidence_provenance")
         .select("evidence_id, actor_type")
-        .in("evidence_id", ids),
+        .in("evidence_id", ids)
+        .limit(EVIDENCE_LIST_PROVENANCE_LIMIT),
     ]);
     for (const t of transitions ?? []) {
       const eid = t.evidence_id as string;

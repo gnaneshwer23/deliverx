@@ -63,7 +63,7 @@ Severity (this roadmap):
 | R-P2-01 | Auth RLS initplan WARN ×106 (latent) | M | Defer until load |
 | R-P2-02 | Unindexed PI FKs (~61) | M | Defer until load |
 | R-P2-03 | Profile/Career aggregate fan-out | M | Defer |
-| R-P2-04 | Unbounded child selects on evidence | S | Soon |
+| R-P2-04 — Closed | Unbounded child selects on evidence | S | **Resolved — Phase 3** (bounded evidence list/detail/portfolio child reads) |
 | R-P2-05 — Closed | AI `maxDuration` absent | S | **Resolved — Phase 2** (explicit 30s route caps + regression guard) |
 | R-P2-06 | No PI API rate limit | M | Soon |
 | R-P2-07 | Mutable `search_path` advisors | S | Soon |

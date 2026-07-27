@@ -1,4 +1,8 @@
 
+## 2026-07-27 — Phase 3 evidence query bound hardening
+
+Founder requested Phase 3 after route timeout hardening. Implemented residual engineering hardening **R-P2-04**: product-facing Evidence Ledger list/detail and Portfolio evidence selection reads now use shared caps in `src/lib/evidence-ledger/query-limits.ts`, with a Vitest guard at `src/lib/evidence-ledger/query-limits.test.ts`. Privacy export remains complete rather than silently truncated.
+
 ## 2026-07-27 — Phase 2 AI route timeout hardening
 
 Founder requested Phase 2 after the signed-in Product Home slice. Implemented residual engineering hardening **R-P2-05**: AI, transcription, embedding, and agent/orchestration API routes now export an explicit 30s `maxDuration`, with a Vitest source guard at `src/lib/api/ai-route-max-duration.test.ts`. This closes the long-hang / cost-control gap without requiring founder ops or expanding product scope.

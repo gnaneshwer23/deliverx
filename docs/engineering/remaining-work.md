@@ -64,7 +64,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | --- | --- | --- | --- | --- | --- | --- |
 | **R-P1-12** | Bind judgements/snapshots INSERT to Capability Engine / signed ScoreRun (DB-P1-03 follow-on) | **Open** | Child-row fabrication residual after ScoreRun lockdown | Engineering | M | Stronger DB trust (ScoreRuns already locked) |
 | **R-P1-13** | AI injection red-team beyond regex lists; keep `DELIVERX_AI_ORCHESTRATION_BYPASS` off in prod | **Partial** (bypass = config; red-team open) | Jailbreak / skipped T4 guarantees | Engineering | M | Stronger AI trust claims |
-| **R-P2-04** | Bound evidence child selects | **Open** | Latent payload / perf risk | Engineering | S | Scale readiness |
+| **R-P2-04** | Bound evidence child selects | **Done (Phase 3)** — product/UI evidence child reads capped with shared limits + regression guard | Latent payload / perf risk | Engineering | S | Scale readiness |
 | **R-P2-05** | AI route `maxDuration` | **Done (Phase 2)** — explicit 30s route caps + regression guard | Long hangs / cost | Engineering | S | Ops reliability |
 | **R-P2-06** | Explicit PI API rate limit | **Done (B9)** — `0101` + atomic `0102` increment RPC; kill-switch + thresholds | Abuse / cost | Engineering | M | Abuse resistance |
 | **R-P2-07** | Mutable `search_path` advisor residuals | **Open** | Advisor hygiene | Engineering | S | Clean security advisors |

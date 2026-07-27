@@ -1,0 +1,10 @@
+/** Pilot-safe evidence query caps for product/UI reads. Privacy export stays complete. */
+export const EVIDENCE_LIST_LIMIT = 100;
+export const EVIDENCE_LIST_STATUS_TRANSITION_LIMIT = EVIDENCE_LIST_LIMIT * 5;
+export const EVIDENCE_LIST_PROVENANCE_LIMIT = EVIDENCE_LIST_LIMIT;
+
+export const EVIDENCE_DETAIL_STATUS_TRANSITION_LIMIT = 50;
+export const EVIDENCE_DETAIL_INTERPRETATION_LIMIT = 20;
+export const EVIDENCE_DETAIL_COMPETENCY_LINK_LIMIT = 50;
+
+export const PORTFOLIO_ENTRY_EVIDENCE_LINK_LIMIT = 50;

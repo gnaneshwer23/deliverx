@@ -2,6 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { appendStatusTransition, latestStatus } from "@/lib/evidence-ledger/append";
 import { isPiEvidenceStatus } from "@/lib/evidence-ledger/types";
+import {
+  EVIDENCE_DETAIL_COMPETENCY_LINK_LIMIT,
+  EVIDENCE_DETAIL_INTERPRETATION_LIMIT,
+  EVIDENCE_DETAIL_STATUS_TRANSITION_LIMIT,
+} from "@/lib/evidence-ledger/query-limits";
 
 export const dynamic = "force-dynamic";
 
@@ -32,13 +37,19 @@ export async function GET(_request: Request, context: Ctx) {
         .from("pi_evidence_status_transitions")
         .select("*")
         .eq("evidence_id", id)
-        .order("created_at", { ascending: true }),
+        .order("created_at", { ascending: true })
+        .limit(EVIDENCE_DETAIL_STATUS_TRANSITION_LIMIT),
       supabase
         .from("pi_evidence_interpretations")
         .select("*")
         .eq("evidence_id", id)
-        .order("version", { ascending: true }),
-      supabase.from("pi_evidence_competency_links").select("*").eq("evidence_id", id),
+        .order("version", { ascending: true })
+        .limit(EVIDENCE_DETAIL_INTERPRETATION_LIMIT),
+      supabase
+        .from("pi_evidence_competency_links")
+        .select("*")
+        .eq("evidence_id", id)
+        .limit(EVIDENCE_DETAIL_COMPETENCY_LINK_LIMIT),
     ]);
 
   const status = await latestStatus(supabase, id);

@@ -11,6 +11,11 @@ import {
 import { deriveEvidenceStrength } from "@/lib/verified-portfolio/types";
 import { emitPilotKpi } from "@/lib/analytics/server";
 import { enforcePiApiRateLimit } from "@/services/piApiRateLimit";
+import {
+  EVIDENCE_LIST_LIMIT,
+  EVIDENCE_LIST_PROVENANCE_LIMIT,
+  EVIDENCE_LIST_STATUS_TRANSITION_LIMIT,
+} from "@/lib/evidence-ledger/query-limits";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +36,7 @@ export async function GET() {
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
-    .limit(100);
+    .limit(EVIDENCE_LIST_LIMIT);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -46,11 +51,13 @@ export async function GET() {
         .from("pi_evidence_status_transitions")
         .select("evidence_id, to_status, created_at")
         .in("evidence_id", ids)
-        .order("created_at", { ascending: false }),
+        .order("created_at", { ascending: false })
+        .limit(EVIDENCE_LIST_STATUS_TRANSITION_LIMIT),
       supabase
         .from("pi_evidence_provenance")
         .select("evidence_id, actor_type")
-        .in("evidence_id", ids),
+        .in("evidence_id", ids)
+        .limit(EVIDENCE_LIST_PROVENANCE_LIMIT),
     ]);
     for (const t of transitions ?? []) {
       const eid = t.evidence_id as string;
