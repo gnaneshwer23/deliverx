@@ -4,6 +4,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { extractRequirementsForProject } from "@/services/aiBaRequirements";
 import { upsertBaProjectContext } from "@/services/baRequirements";
 
+export const maxDuration = 30;
+
 type Body = {
   projectType?: string;
   content?: string;

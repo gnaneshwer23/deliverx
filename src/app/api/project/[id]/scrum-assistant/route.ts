@@ -5,6 +5,8 @@ import { askScrumAssistant } from "@/services/aiScrum";
 import { getScrumContext } from "@/services/scrumContext";
 import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(

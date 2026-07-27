@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { recordAiReview } from "@/services/recommendations";
 
+export const maxDuration = 30;
+
 type ReviewPayload = {
   projectId?: string;
   id?: string;

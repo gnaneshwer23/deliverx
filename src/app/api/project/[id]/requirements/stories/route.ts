@@ -4,6 +4,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { generateStoryForRequirement } from "@/services/aiBaRequirements";
 import { listRequirements } from "@/services/baRequirements";
 
+export const maxDuration = 30;
+
 type Body = { requirementId?: string };
 
 export async function POST(

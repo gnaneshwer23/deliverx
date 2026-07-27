@@ -80,7 +80,7 @@ Evidence paths verified present unless noted.
 | NFR-SEC | RLS, least privilege, secrets, rate limits | **Built** (pilot) | Built: RLS/trust rails + PI API rate limit R-P2-06 / B9. Remainder: CI secret scanning when TD-018 | Keep |
 | NFR-PRIV | Consent, export, deletion | Built | `0086`, `0096`; settings privacy | Keep |
 | NFR-A11Y | WCAG 2.2 AA target | Partial | Batch 5–6 core chrome; whole-product AA needs AT lab (ops) | Keep |
-| NFR-PERF | Responsive pages; AI non-blocking | Partial | Generally met; AI `maxDuration` R-P2-05 open | Keep |
+| NFR-PERF | Responsive pages; AI non-blocking | **Built** (pilot) | AI route `maxDuration` R-P2-05 closed in Phase 2; remaining perf work is scale/CI-led | Keep |
 | NFR-OBS | Logs, analytics, AI cost/latency | Partial | AI interactions logged; product funnel KPIs thin (PACK-E8) | Modify |
 | NFR-QA | Typed contracts, tests, no placeholder release actions | Partial | Release-gate + units; CI dark TD-018 | Keep |
 | METRICS | Activation ≥70%, loop ≥50%, etc. | Missing | Targets in PRD only; not instrumented as product KPIs (PACK-E8) | Defer |

@@ -3,6 +3,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { requireProjectAccess } from "@/lib/api/auth";
 import { generateDeliveryNarratorScript } from "@/services/deliveryNarrator";
 
+export const maxDuration = 30;
+
 export async function POST(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },

@@ -6,6 +6,8 @@ import { upsertScrumContext } from "@/services/scrumContext";
 import { listOrgTasks } from "@/services/delivery";
 import { listUserStories } from "@/services/baRequirements";
 
+export const maxDuration = 30;
+
 type Body = {
   agileFramework?: string;
   teamConfig?: string;

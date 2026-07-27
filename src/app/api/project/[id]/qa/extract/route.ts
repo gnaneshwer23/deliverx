@@ -6,6 +6,8 @@ import { upsertQaContext } from "@/services/qaContext";
 import { buildTraceabilityMatrix, listRequirements, listUserStories } from "@/services/baRequirements";
 import { listRaidItems } from "@/services/governance";
 
+export const maxDuration = 30;
+
 type Body = {
   specialisation?: string;
   testingTools?: string[];

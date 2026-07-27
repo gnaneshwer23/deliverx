@@ -9,6 +9,8 @@ import {
   getProjectBootstrapStatus,
 } from "@/services/projectBootstrap";
 
+export const maxDuration = 30;
+
 type Body = {
   brief?: string;
   bcReport?: string;

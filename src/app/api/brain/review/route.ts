@@ -7,6 +7,8 @@ import {
   type BrainReviewAction,
 } from "@/services/brainIngestService";
 
+export const maxDuration = 30;
+
 type ReviewPayload = {
   documentId?: string;
   action?: BrainReviewAction;

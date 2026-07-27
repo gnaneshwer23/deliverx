@@ -3,6 +3,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { OpenAiConfigError, OpenAiRequestError } from "@/lib/ai/openai";
 import { transcribeMeetingRecording } from "@/services/meetingTranscription";
 
+export const maxDuration = 30;
+
 export async function POST(req: Request) {
   let form: FormData;
   try {

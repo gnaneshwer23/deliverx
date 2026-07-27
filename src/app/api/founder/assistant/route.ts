@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { askFounderAssistant } from "@/services/aiFounder";
 import { getFounderContext } from "@/services/founderContext";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(req: Request) {

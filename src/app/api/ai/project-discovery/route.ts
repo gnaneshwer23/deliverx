@@ -2,6 +2,8 @@ import { requireAuth } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { runProjectDiscovery } from "@/services/aiProjectStructuring";
 
+export const maxDuration = 30;
+
 type Body = { brief?: string; answers?: Record<string, string> };
 
 export async function POST(req: Request) {

@@ -4,6 +4,8 @@ import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { reviewBusinessCase } from "@/services/aiBusinessCaseReview";
 import { getCurrentOrganisationProfile } from "@/services/organisationProfile";
 
+export const maxDuration = 30;
+
 type Body = { content?: string };
 
 export async function POST(req: Request) {

@@ -1,6 +1,8 @@
 import { requireAuth, apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { orchestrateProjectAgents } from "@/services/agentOrchestration";
 
+export const maxDuration = 30;
+
 type Body = {
   projectId?: string;
   query?: string;

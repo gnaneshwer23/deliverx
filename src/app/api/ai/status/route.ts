@@ -1,6 +1,8 @@
 import { getEnvDiagnostics } from "@/lib/env-check";
 import { requireAuth } from "@/lib/api/auth";
 
+export const maxDuration = 30;
+
 export async function GET() {
   try {
     await requireAuth();

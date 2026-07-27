@@ -4,6 +4,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { analyseDeliveryForProject } from "@/services/aiDeliveryPm";
 import { upsertPmDeliveryContext } from "@/services/deliveryPmContext";
 
+export const maxDuration = 30;
+
 type Body = { projectType?: string; content?: string };
 
 export async function POST(

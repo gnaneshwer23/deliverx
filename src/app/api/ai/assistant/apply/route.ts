@@ -4,6 +4,8 @@ import {
   type ProposedAction,
 } from "@/services/assistantActions";
 
+export const maxDuration = 30;
+
 export async function POST(req: Request) {
   try {
     await requireAuth();

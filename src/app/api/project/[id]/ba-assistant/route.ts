@@ -5,6 +5,8 @@ import { askBaAssistant } from "@/services/aiBaRequirements";
 import { getActiveCharter } from "@/services/charter";
 import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(

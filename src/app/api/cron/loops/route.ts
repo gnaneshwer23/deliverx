@@ -5,6 +5,8 @@ import { captureAllGlobalContributions } from "@/services/global";
 import { sweepOrgAgentOrchestration } from "@/services/agentOrchestration";
 import { syncProposalQualityScores } from "@/services/continuousLearning";
 
+export const maxDuration = 30;
+
 /**
  * Vercel cron (07:00 UTC) — coordination snapshots + global network contributions.
  * Authorization: Bearer CRON_SECRET

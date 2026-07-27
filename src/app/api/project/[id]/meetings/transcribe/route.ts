@@ -6,6 +6,8 @@ import { MeetingAudioValidationError } from "@/lib/meetings/audio-upload";
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 import { transcribeAndIngestMeetingAudio } from "@/services/meetingWhisperIngest";
 
+export const maxDuration = 30;
+
 const VALID_CEREMONIES = new Set([
   "general",
   "standup",

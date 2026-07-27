@@ -4,6 +4,8 @@ import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { proposeAssistantActions } from "@/services/assistantActions";
 import { runAssistantChat, type ChatMessage } from "@/services/assistant";
 
+export const maxDuration = 30;
+
 type Body = {
   messages?: ChatMessage[];
   projectId?: string;

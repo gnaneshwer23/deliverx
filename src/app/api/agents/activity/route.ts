@@ -1,6 +1,8 @@
 import { requireAuth, apiErrorResponse } from "@/lib/api/auth";
 import { listAgentActivityFeed } from "@/services/agentOrchestration";
 
+export const maxDuration = 30;
+
 export async function GET(req: Request) {
   try {
     await requireAuth();

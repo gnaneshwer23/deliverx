@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { searchProjectMemory } from "@/services/projectMemoryRag";
 
+export const maxDuration = 30;
+
 export async function GET(
   req: Request,
   ctx: { params: Promise<{ id: string }> },

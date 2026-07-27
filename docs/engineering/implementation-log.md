@@ -1,3 +1,8 @@
+
+## 2026-07-27 — Phase 2 AI route timeout hardening
+
+Founder requested Phase 2 after the signed-in Product Home slice. Implemented residual engineering hardening **R-P2-05**: AI, transcription, embedding, and agent/orchestration API routes now export an explicit 30s `maxDuration`, with a Vitest source guard at `src/lib/api/ai-route-max-duration.test.ts`. This closes the long-hang / cost-control gap without requiring founder ops or expanding product scope.
+
 ## 2026-07-26 — Marketing de-AI copy pass
 
 Founder: remove em dashes, emojis, and anything that looks/sounds like generic AI marketing.

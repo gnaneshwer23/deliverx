@@ -5,6 +5,8 @@ import { askQaAssistant } from "@/services/aiQa";
 import { getQaContext } from "@/services/qaContext";
 import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(

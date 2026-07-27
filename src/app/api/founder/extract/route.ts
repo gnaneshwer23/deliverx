@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { analyseFounderContext } from "@/services/aiFounder";
 import { upsertFounderContext } from "@/services/founderContext";
 
+export const maxDuration = 30;
+
 type Body = {
   companyType?: string;
   businessGoals?: string[];

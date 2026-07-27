@@ -4,6 +4,8 @@ import { refreshProjectDashboards } from "@/lib/dashboard-refresh";
 import { runMeetingIntelPipeline } from "@/services/meetingIntelPipeline";
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 
+export const maxDuration = 30;
+
 type Body = {
   meetingId?: string;
   title?: string;

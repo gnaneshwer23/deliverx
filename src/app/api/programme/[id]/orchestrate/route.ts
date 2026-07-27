@@ -1,6 +1,8 @@
 import { requireAuth, apiErrorResponse } from "@/lib/api/auth";
 import { orchestrateProgrammePortfolio } from "@/services/programmeOrchestration";
 
+export const maxDuration = 30;
+
 export async function POST(
   _req: Request,
   ctx: { params: Promise<{ id: string }> },

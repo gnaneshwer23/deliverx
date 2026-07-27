@@ -5,6 +5,8 @@ import { askEngineerAssistant } from "@/services/aiEngineer";
 import { getEngineerContext } from "@/services/engineerContext";
 import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(

@@ -4,6 +4,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { extractProductForProject } from "@/services/aiPmProduct";
 import { upsertPmProductContext } from "@/services/pmProduct";
 
+export const maxDuration = 30;
+
 type Body = { productType?: string; content?: string };
 
 export async function POST(

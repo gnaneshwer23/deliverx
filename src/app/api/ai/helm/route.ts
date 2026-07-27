@@ -4,6 +4,8 @@ import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import type { MissionPersonaId } from "@/lib/mission-nav";
 import { buildHelmContext, runHelmChat, type HelmChatMessage } from "@/services/helmCopilot";
 
+export const maxDuration = 30;
+
 type Body = {
   messages?: HelmChatMessage[];
   personaId?: MissionPersonaId;

@@ -5,6 +5,8 @@ import { summarizeMeetingNotes } from "@/services/aiGovernance";
 import { getMeeting } from "@/services/governance";
 import type { MeetingCeremonyType } from "@/lib/ai/prompts/meeting-ceremonies";
 
+export const maxDuration = 30;
+
 type Body = {
   projectId?: string;
   meetingId?: string;

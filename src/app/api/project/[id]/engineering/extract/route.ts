@@ -6,6 +6,8 @@ import { upsertEngineerContext } from "@/services/engineerContext";
 import { listUserStories } from "@/services/baRequirements";
 import { createClient } from "@/lib/supabase/server";
 
+export const maxDuration = 30;
+
 type Body = {
   specialisation?: string;
   techStack?: Record<string, string[]>;

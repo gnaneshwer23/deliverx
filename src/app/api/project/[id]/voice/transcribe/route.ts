@@ -3,6 +3,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { OpenAiConfigError } from "@/lib/ai/openai";
 import { transcribeProjectVoice } from "@/services/voiceProjectUpdate";
 
+export const maxDuration = 30;
+
 export async function POST(
   req: Request,
   ctx: { params: Promise<{ id: string }> },

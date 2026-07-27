@@ -4,6 +4,8 @@ import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { enrichRecommendationRationales } from "@/services/aiGovernance";
 import { getProjectIntelligence } from "@/services/intelligence";
 
+export const maxDuration = 30;
+
 type Body = { projectId?: string };
 
 export async function POST(req: Request) {

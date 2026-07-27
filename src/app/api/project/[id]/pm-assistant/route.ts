@@ -5,6 +5,8 @@ import { askPmAssistant } from "@/services/aiDeliveryPm";
 import { getPmDeliveryContext } from "@/services/deliveryPmContext";
 import { enrichAssistantContext } from "@/services/projectMemoryRag";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(

@@ -3,6 +3,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { requireProjectAccess } from "@/lib/api/auth";
 import { answerDeliveryBriefingQuestion } from "@/services/deliveryNarrator";
 
+export const maxDuration = 30;
+
 type Body = { question?: string };
 
 export async function POST(

@@ -3,6 +3,8 @@ import { requireProjectAccess } from "@/lib/api/auth";
 import { generateClosurePackage, saveClosurePackage } from "@/services/closurePackage";
 import { buildProjectDeliverySnapshot } from "@/services/projectSnapshot";
 
+export const maxDuration = 30;
+
 type Body = { projectId?: string; persist?: boolean };
 
 export async function POST(req: Request) {

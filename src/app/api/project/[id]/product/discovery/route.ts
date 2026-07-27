@@ -3,6 +3,8 @@ import { apiErrorResponse, requireProjectAccess } from "@/lib/api/auth";
 import { aiRouteError } from "@/lib/api/ai-route";
 import { extractCustomerDiscovery } from "@/services/aiPmProduct";
 
+export const maxDuration = 30;
+
 type Body = { content?: string; source?: string };
 
 export async function POST(

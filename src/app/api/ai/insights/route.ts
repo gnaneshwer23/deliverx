@@ -3,6 +3,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { generateDashboardNarrative } from "@/services/aiGovernance";
 
+export const maxDuration = 30;
+
 type Body = { projectId?: string };
 
 export async function POST(req: Request) {

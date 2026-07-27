@@ -3,6 +3,8 @@ import { aiRouteError } from "@/lib/api/ai-route";
 import { DEFAULT_AI_MODEL } from "@/lib/ai/anthropic";
 import { computeProjectAlignment } from "@/services/alignment";
 
+export const maxDuration = 30;
+
 type Body = {
   projectId?: string;
   meetingId?: string;
