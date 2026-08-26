@@ -1,10 +1,8 @@
 name: CI
 
 on:
-  # Push trigger temporarily off while private-repo Actions minutes are exhausted
-  # (TD-018). Runs were failing in 0s with zero jobs and emailing on every main
-  # push. Re-enable `push: branches: [main, cursor/**]` after minutes/spending
-  # limit are restored at https://github.com/settings/billing
+  push:
+    branches: [main, cursor/**]
   pull_request:
     branches: [main]
   workflow_dispatch:

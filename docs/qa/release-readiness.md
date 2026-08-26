@@ -46,7 +46,7 @@
 | Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Manual — `.github/workflows/ci-e2e.yml` (`workflow_dispatch`) |
 | Production build | `npm run build` | Yes |
 
-**CI policy (2026-07-25):** Default CI lives in `.github/workflows/verify.yml` (unit + `test:release-gate` + build; lint advisory). Playwright is `.github/workflows/ci-e2e.yml` (manual). **Both workflows are currently `disabled_manually`** because private-repo Actions minutes are exhausted (TD-018) — GitHub was synthesizing 0-job failure runs (and emails) on every push even after `on.push` was removed. After restoring minutes at [GitHub billing](https://github.com/settings/billing): `gh workflow enable ".github/workflows/verify.yml"` and `gh workflow enable "CI E2E (Playwright)"`, then re-add `on.push` to `verify.yml`.
+**CI policy (updated 2026-08-26):** Default CI lives in `.github/workflows/verify.yml` (unit + `test:release-gate` + build; lint advisory) on `push`/`pull_request`/`workflow_dispatch`. Playwright is `.github/workflows/ci-e2e.yml` (manual `workflow_dispatch`). **TD-018 closed:** workflows re-enabled; first green verify after restore is [run 32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790). Optional next: add Actions secrets `T6_SUPABASE_*` for live signed-in job; consider dropping lint `continue-on-error` once canvas lint noise is cleared.
 
 ---
 

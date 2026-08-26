@@ -43,7 +43,7 @@ Blocks live commercial enablement, continuous CI, and/or auth hygiene. Engineeri
 
 | ID | Item | Status | Why it matters | Owner | Effort | Blocks |
 | --- | --- | --- | --- | --- | --- | --- |
-| **TD-018** / R-P0-07 / MF-003 | Restore GitHub Actions minutes; re-enable `verify.yml` + `ci-e2e.yml` + `on.push` | **Open** | CI is dark; regressions are silent on `main` | Founder → Engineering enable | S | Continuous verification; Playwright/axe in CI |
+| **TD-018** / R-P0-07 / MF-003 | Restore GitHub Actions minutes; re-enable `verify.yml` + `ci-e2e.yml` + `on.push` | **Closed 2026-08-26** — workflows active; green dispatch [32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790); `on.push` restored | Continuous CI back | Founder minutes + eng enable | S | Was: silent regressions on `main` |
 | **TD-006** / R-P1-01 / MF-011 | Enable Auth leaked-password protection (HIBP) | **Open** | Advisor WARN; weak passwords accepted | Founder (Auth Attack Protection) | S | Auth hygiene for pilot / beta |
 | **T9 Stripe ops** | Stripe Dashboard prices (test then live); Vercel `STRIPE_*` env; webhook endpoint + secret; Customer Portal; test checkout smoke | **Deferred ops** (code ready) | Without this, checkout stays config-gated; public £ prices stay pilot fallback | Founder | M | Live paid access; honest public pricing |
 | **`DELIVERX_BILLING_ENFORCE=on`** | Flip entitlement enforcement after smoke | **Deferred ops** (default off) | Enforcement before ops would lock users out of Experience/Launchpad incorrectly | Founder (after smoke) | S | Paid-product gate behaviour |
