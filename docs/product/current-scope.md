@@ -97,7 +97,7 @@ Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-wo
 
 **Candidate next scope:** Contextual Home shipped (PD-2026-07-26o). Optional follow-ups: tighten Launchpad-primary heuristics; founder-authorized Team Copilot executive later. [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) — **B1–B9 shipped.** Other candidates: optional **B0** pack archive, residual founder-ops, or FD-PACK-7 PostHog. Does **not** authorise pack M0–M7 restart or live payments.
 
-1. **Founder:** restore GitHub Actions minutes / spending (TD-018), then engineering re-enables `verify.yml` + `ci-e2e.yml` and `on.push`.
+1. **Founder:** ~~restore GitHub Actions minutes / spending (TD-018)~~ **Done 2026-08-26** — CI active; green verify after restore. Residual: optional `T6_SUPABASE_*` Actions secrets for live signed-in job.
 2. **Founder:** enable Auth leaked-password protection (TD-006) — [Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection).
 3. **Founder / ops:** prove SMTP password-reset delivery; optional VoiceOver/keyboard AT lab before claiming whole-product AA.
 4. **B2 pilot UI:** **Done (ops)** — migration `0098` on prod `jibmyxaldetyycmtlxet`; Vercel Production + Preview `DELIVERX_RECOMMENDATION_SM=on` (redeployed 2026-07-26).
