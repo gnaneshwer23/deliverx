@@ -17,6 +17,11 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    # secrets context is not valid inside `if:` expressions; map to env first.
+    env:
+      T6_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.T6_SUPABASE_SERVICE_ROLE_KEY }}
+      T6_SUPABASE_URL: ${{ secrets.T6_SUPABASE_URL }}
+      T6_SUPABASE_ANON_KEY: ${{ secrets.T6_SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -43,14 +48,14 @@ jobs:
           T6_BASE_URL: https://www.deliverx.dev
 
       - name: T6 signed-in loop (optional secrets)
-        if: ${{ secrets.T6_SUPABASE_SERVICE_ROLE_KEY != '' }}
+        if: ${{ env.T6_SUPABASE_SERVICE_ROLE_KEY != '' }}
         run: npm run test:release-gate:live
         env:
           T6_E2E: "1"
           T6_BASE_URL: https://www.deliverx.dev
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.T6_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.T6_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.T6_SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ env.T6_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ env.T6_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.T6_SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Production build
         run: npm run build
