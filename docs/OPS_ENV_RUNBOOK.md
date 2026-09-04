@@ -184,6 +184,20 @@ supabase db push
 | Preview invite secret | Vercel | Add `INVITE_JWT_SECRET` for **all Preview** branches (not one branch only) |
 | Auth redirect allowlist | Supabase → Auth → URL Configuration | Confirm Site URL + callback URLs for prod and preview |
 | Rotate invite secret | Vercel Production | New `INVITE_JWT_SECRET` → redeploy (invalidates outstanding invite JWTs) |
+| **Google Search Console — submit sitemap** | [search.google.com/search-console](https://search.google.com/search-console) | See §7a below (agent cannot log into founder GSC) |
+
+### 7a. Google Search Console — sitemap submit
+
+Live sitemap (verified 200): `https://www.deliverx.dev/sitemap.xml`  
+Robots: `https://www.deliverx.dev/robots.txt` (points at the sitemap; auth/app paths stay disallowed)
+
+1. Open [Google Search Console](https://search.google.com/search-console) with the property owner account.
+2. Select (or add) the property for **`https://www.deliverx.dev`** — prefer the **URL-prefix** property on `www` (canonical host). If only the apex domain exists, add `www` as well so Google sees the same host users hit.
+3. Left nav → **Sitemaps**.
+4. Under **Add a new sitemap**, enter: `sitemap.xml` (or the full URL `https://www.deliverx.dev/sitemap.xml`).
+5. Click **Submit**. Status should move to **Success** after Google fetches it (may take minutes–hours).
+6. Optional: **URL Inspection** → paste `https://www.deliverx.dev/` → **Request indexing** for the homepage once; do not mass-request auth URLs.
+7. Re-check **Sitemaps** later for discovered URL count (~11 marketing URLs expected; auth stays out via robots/`noindex`).
 
 ---
 
