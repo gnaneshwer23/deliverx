@@ -2,8 +2,8 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **Contextual Home + Daily Briefing — shipped** (PD-2026-07-26o). B1–B9 remain live. T9 commercial code remains shipped; **payments later**.
-**As of:** 2026-07-26  
+**Active phase:** **Phase 1 — Soft launch hardening** (R-P2-16 coverage + axe smoke in CI). Contextual Home + Daily Briefing remain shipped (PD-2026-07-26o). B1–B9 remain live. T9 commercial code remains shipped; **payments later**.
+**As of:** 2026-09-04  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
@@ -103,7 +103,7 @@ Full inventory: [`../engineering/remaining-work.md`](../engineering/remaining-wo
 4. **B2 pilot UI:** **Done (ops)** — migration `0098` on prod `jibmyxaldetyycmtlxet`; Vercel Production + Preview `DELIVERX_RECOMMENDATION_SM=on` (redeployed 2026-07-26).
 5. **B4 pilot queue:** **Code shipped** — set Vercel `DELIVERX_REVIEWER_QUEUE=on` (Production ± Preview) and redeploy when ready to open the ops queue. Default remains off.
 6. **Payments later (founder ops, when ready):** Stripe test then live prices; Vercel `STRIPE_*`; webhook + Customer Portal; test checkout smoke; only then `DELIVERX_BILLING_ENFORCE=on`. Not an engineering blocker.
-7. **Engineering (optional residual):** R-P1-12 judgement/snapshot INSERT binding; AI red-team; coverage tooling after CI returns — see remaining-work §B.
+7. **Engineering (Phase 1 soft launch):** R-P2-16 started — trust coverage floors in `verify.yml` + public axe critical smoke in `ci-e2e.yml`. Residual: ledger append/process floors, marketing serious contrast, AT lab. Do **not** flip `DELIVERX_REVIEWER_QUEUE` without staffing.
 8. **Engineering (optional):** **B0** pack archive if founder wants docs intake; FD-PACK-7 if PostHog sink desired.
 
 Defer marketplace, graph DB, multi-profession expansion, and microservice splits without new approval.

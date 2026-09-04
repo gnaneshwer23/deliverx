@@ -75,13 +75,13 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | **R-P2-09** | Human review / challenge workflow usage | **Done (B4)** — playbook + queue + flag; Verified ≠ this path | Dispute path usable | Engineering / ops | M | Review ops maturity |
 | **R-P2-10** | Org departments/teams seed for Workspace pilot | **Open** (0 rows) | Structure unused | Engineering | S | Workspace org demos |
 | **R-P2-11** / TD-012 | Experience → workspace dual-write on remaining pages | **Open** / deferred | Observation coverage gaps | Engineering | M | Full observation coverage |
-| **R-P2-16** | Coverage % tooling + Playwright/axe in CI | **Open** | Coverage unmeasured; CI still off | Engineering | M | Continuous quality signal (needs TD-018) |
+| **R-P2-16** | Coverage % tooling + Playwright/axe in CI | **In progress (Phase 1 soft launch)** — `@vitest/coverage-v8` floors on capability-engine / ai-orchestration / evidence `query-limits` in `verify.yml`; Playwright axe critical smoke on `/` + `/login` in `ci-e2e.yml` (`npm run test:a11y`). Residual: evidence `append`/`process` behavioural coverage; marketing serious color-contrast; AT lab | Continuous quality signal | Engineering | M | Soft-launch CI quality |
 | **R-P2-17** | Soft AI rate / cost-estimate honesty | **Done (Phase 4)** — AI usage records/API disclose heuristic estimates, not provider billing | Heuristic cost copy | Engineering | S | Cost honesty |
 | **R-P2-18** | Pre-pivot purge residue (org/delivery) | **Open** | Privacy residual track | Engineering | M | Full purge completeness |
 | **TD-003** | Edge proxy anonymous path-guards | **Documented defer** | Layouts own redirects | Engineering | M | Proxy purity (not pilot-blocking) |
 | **TD-013** | Full Mermaid ER publish | **Open** / deferred | Docs polish | Engineering | S | Schema docs completeness |
 | **Mission Control density** | Further demotion / honesty outside Twin/PMO/Marketplace Batch 6 slice | **Residual** | Pre-pivot surfaces can confuse | Engineering | S–M | UX clarity (not charter expansion) |
-| **CI enable follow-through** | After TD-018: enable workflows, drop lint `continue-on-error`, wire live secrets | **Blocked on A** | Makes seal continuous | Engineering | S | Continuous CI |
+| **CI enable follow-through** | After TD-018: enable workflows, drop lint `continue-on-error`, wire live secrets | **Partial** — TD-018 closed; coverage floors on verify; axe in ci-e2e. Residual: lint still advisory; `T6_SUPABASE_*` secrets optional | Makes seal continuous | Engineering | S | Continuous CI |
 
 **Closed — do not list as remaining:** R-P0-01…06/08, R-P1-02…11/14/16, R-P2-12…15 (core), Batches 1–6, citations, `0095`/`0096`, T8 E2E, Next 16.2.12, TD-017.
 
@@ -181,7 +181,7 @@ Source: Desktop `DeliverX_Six_Document_Build_Pack` (docs 00–06). Full requirem
 | 5 | A | Stripe ops + enforce **when founder chooses “payments later” is now** |
 | 6 | B | R-P1-12 judgements/snapshots INSERT binding — **Done (Phase 5)** |
 | 7 | B | R-P1-13 AI injection red-team (bypass stays off) — **Done (Phase 6)** |
-| 8 | B | R-P2-16 coverage/Playwright CI after TD-018 |
+| 8 | B | R-P2-16 coverage/Playwright CI after TD-018 — **Phase 1 slice in progress** (floors + axe critical smoke) |
 | 9 | B | R-P2-06 PI API rate limit | **Done (B9)** |
 | 10 | C | Marketplace / mission-control / multi-profession — stay deferred |
 

@@ -55,7 +55,7 @@ function FooterColumn({
   const headingId = `footer-${id}`;
   return (
     <nav aria-labelledby={headingId}>
-      <h3 id={headingId} className={`${mktClass.label} !text-white/55`}>
+      <h3 id={headingId} className={`${mktClass.label} !text-white/75`}>
         {title}
       </h3>
       <ul className="mt-4 flex flex-col gap-2.5">
@@ -63,7 +63,7 @@ function FooterColumn({
           <li key={`${link.href}-${link.label}`}>
             <FooterLink href={link.href} label={link.label} external={link.external} />
             {"note" in link && link.note ? (
-              <p className="mt-0.5 text-[0.6875rem] leading-snug text-white/40">{link.note}</p>
+              <p className="mt-0.5 text-[0.6875rem] leading-snug text-white/65">{link.note}</p>
             ) : null}
           </li>
         ))}
@@ -109,7 +109,7 @@ export function MarketingFooter({
             >
               AI Product Experience Company
             </p>
-            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/60">
+            <p className="mt-3 max-w-sm text-[0.8125rem] leading-relaxed text-white/75">
               DeliverX Ltd is an evidence-driven professional growth platform. Experience, Launchpad
               and Professional Workspace share one Professional Intelligence record.
             </p>
@@ -134,7 +134,7 @@ export function MarketingFooter({
 
         <div className="mt-12 flex flex-col gap-5 border-t border-white/10 pt-8 md:flex-row md:items-start md:justify-between lg:items-center">
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-2">
-            <p className="text-xs text-white/45">© 2026 DeliverX Ltd. All rights reserved.</p>
+            <p className="text-xs text-white/70">© 2026 DeliverX Ltd. All rights reserved.</p>
             <ul className="hidden flex-wrap gap-x-4 gap-y-2 xl:flex" aria-label="Legal">
               {FOOTER_LEGAL_LINKS.map((link) => (
                 <li key={`bar-${link.href}`}>

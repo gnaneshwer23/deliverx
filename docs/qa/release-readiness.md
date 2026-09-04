@@ -46,7 +46,7 @@
 | Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Manual — `.github/workflows/ci-e2e.yml` (`workflow_dispatch`) |
 | Production build | `npm run build` | Yes |
 
-**CI policy (updated 2026-08-26):** Default CI lives in `.github/workflows/verify.yml` (unit + `test:release-gate` + build; lint advisory) on `push`/`pull_request`/`workflow_dispatch`. Playwright is `.github/workflows/ci-e2e.yml` (manual `workflow_dispatch`). **TD-018 closed:** workflows re-enabled; first green verify after restore is [run 32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790). Optional next: add Actions secrets `T6_SUPABASE_*` for live signed-in job; consider dropping lint `continue-on-error` once canvas lint noise is cleared.
+**CI policy (updated 2026-09-04 — Phase 1 soft launch):** Default CI lives in `.github/workflows/verify.yml` (unit + **trust-rail coverage floors** (`npm run test:coverage`) + `test:release-gate` + build; lint advisory) on `push`/`pull_request`/`workflow_dispatch`. Playwright smoke/acceptance **and public axe critical smoke** (`npm run test:a11y`) live in `.github/workflows/ci-e2e.yml` (`workflow_dispatch`). **TD-018 closed:** workflows re-enabled; first green verify after restore is [run 32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790). Optional next: add Actions secrets `T6_SUPABASE_*` for live signed-in job; consider dropping lint `continue-on-error` once canvas lint noise is cleared; raise coverage floors after ledger append behavioural tests.
 
 ---
 

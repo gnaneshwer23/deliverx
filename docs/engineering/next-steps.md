@@ -73,7 +73,7 @@ Not blocking payments later. Full table: [`remaining-work.md`](./remaining-work.
 | --- | --- | --- | --- | --- | --- | --- |
 | C1 | **R-P1-12** judgements/snapshots INSERT binding | Engineering | M | Child rows only via engine | Batch 1 done | PostgREST cannot invent children under forged runs |
 | C2 | **R-P1-13** AI injection red-team; bypass off prod | Engineering | M | Stronger jailbreak resistance | Config verify | Known injections blocked; bypass off in prod |
-| C3 | **R-P2-16** coverage tooling + Playwright/axe in CI | Engineering | M | Continuous quality signal | TD-018 / A2 | Coverage report or axe smoke in CI |
+| C3 | **R-P2-16** coverage tooling + Playwright/axe in CI | Engineering | M | Continuous quality signal | TD-018 closed | **Phase 1 started:** `npm run test:coverage` floors in `verify.yml`; `npm run test:a11y` axe critical smoke in `ci-e2e.yml`. Residual: ledger append/process floors, marketing serious contrast, AT lab |
 | C4 | **R-P2-06** PI API rate limit | Engineering | M | Abuse / cost resistance | — | **Done (B9)** — `0101` + documented 429 |
 | C5 | **TD-007 deepen** thin `pm-core` seed | Engineering | M | Richer explainability, same pin | **Founder OK** | Seed expanded; pin `pm-core@2026.1` holds |
 | C6 | Defect-driven UX from A6/A7 notes | Engineering | S–M | Clarity fixes | Founder notes | Repro + regression where applicable |

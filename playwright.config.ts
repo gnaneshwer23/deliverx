@@ -11,7 +11,11 @@ const useExternalServer = Boolean(
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: ["smoke/**/*.spec.ts", "acceptance/**/*.spec.ts"],
+  testMatch: [
+    "smoke/**/*.spec.ts",
+    "acceptance/**/*.spec.ts",
+    "a11y/**/*.spec.ts",
+  ],
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,

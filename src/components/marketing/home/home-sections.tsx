@@ -242,9 +242,10 @@ export function HomeJourney() {
                           ? "border-[var(--mkt-green)] bg-[var(--mkt-green)] text-white shadow-[0_0_0_4px_rgba(61,150,96,0.15)]"
                           : "border-[var(--mkt-border)] bg-[var(--mkt-s1)] text-[var(--mkt-text3)] hover:border-[var(--mkt-green-l)]"
                       }`}
+                      aria-label={node.label}
                       aria-expanded={isActive}
                     >
-                      <span className="size-1.5 rounded-full bg-current" />
+                      <span className="size-1.5 rounded-full bg-current" aria-hidden />
                     </button>
                     <p
                       className={`mt-3 text-center text-[0.7rem] leading-snug md:text-[0.75rem] ${

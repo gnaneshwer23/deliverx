@@ -7,10 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Blocking gate: T6 release-gate + production build.
+# Blocking gate: T6 release-gate + trust coverage floors + production build.
 # Full-repo ESLint remains advisory (baseline debt — docs/qa/release-readiness.md).
-# Playwright smoke/acceptance lives in ci-e2e.yml (manual) to conserve
-# Actions minutes on a private repo.
+# Playwright smoke/acceptance + axe live in ci-e2e.yml (manual) to conserve
+# Actions minutes on a private repo. R-P2-16: coverage thresholds here; axe in ci-e2e.
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -37,6 +37,11 @@ jobs:
 
       - name: Unit tests
         run: npm test
+        env:
+          INVITE_JWT_SECRET: ci-invite-jwt-secret
+
+      - name: Trust-rail coverage floors (R-P2-16)
+        run: npm run test:coverage
         env:
           INVITE_JWT_SECRET: ci-invite-jwt-secret
 
