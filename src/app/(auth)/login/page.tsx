@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { LoginForm } from "./login-form";
 import { DxCaps } from "@/components/dx/dx-logo";
@@ -7,6 +8,13 @@ import {
   productMarketingPath,
 } from "@/lib/marketing/product-intent";
 import { dxClass } from "@/lib/dx-theme";
+
+export const metadata: Metadata = {
+  title: "Sign in | DeliverX",
+  description:
+    "Sign in to your DeliverX account for Experience, Launchpad, or Professional Workspace.",
+  alternates: { canonical: "/login" },
+};
 
 type Search = Promise<{
   next?: string;

@@ -12,27 +12,20 @@ export const metadata: Metadata = {
   title: "DeliverX | AI Product Experience Company",
   description:
     "DeliverX is an evidence-driven professional growth platform that supports Product Managers from their first practical experience through to successful product delivery in real organisations.",
+  // Image URLs come from `opengraph-image.tsx` (file convention). Do not set
+  // `/opengraph-image` literally — that path 404s; Next serves a hashed route.
   openGraph: {
     title: "DeliverX | AI Product Experience Company",
     description:
       "Build the experience → Land the opportunity → Succeed in the role. Experience, Launchpad and Professional Workspace.",
     type: "website",
     siteName: "DeliverX",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "DeliverX · AI Product Experience Company",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "DeliverX | AI Product Experience Company",
     description:
       "Experience, Launchpad and Professional Workspace: build the experience, land the opportunity, succeed in the role.",
-    images: ["/opengraph-image"],
   },
 };
 

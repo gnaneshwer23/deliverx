@@ -5,9 +5,10 @@ import {
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 
 export const metadata = {
-  title: "Privacy Policy | DeliverX",
+  title: "Privacy Policy | How DeliverX handles your data",
   description:
     "Interim pilot privacy policy describing how DeliverX handles Professional Intelligence data, consent, evidence, export and delete.",
+  alternates: { canonical: "/privacy" },
 };
 
 const sections = [

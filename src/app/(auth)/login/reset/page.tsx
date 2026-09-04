@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ResetPasswordForm } from "./reset-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
+
+export const metadata: Metadata = {
+  title: "Choose a new password | DeliverX",
+  description: "Set a new password for your DeliverX account.",
+};
 
 export default async function ResetPasswordPage() {
   const supabase = await createClient();

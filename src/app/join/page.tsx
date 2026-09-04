@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { JoinClient } from "./join-client";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Join with invite | DeliverX",
+  description:
+    "Redeem a DeliverX invite to join the open pilot. Access is invite-gated.",
+  robots: { index: false, follow: false },
+};
 
 export default async function JoinPage() {
   const supabase = await createClient();

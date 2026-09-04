@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SignupForm } from "./signup-form";
 import { DxCaps } from "@/components/dx/dx-logo";
@@ -14,6 +15,13 @@ import {
   signupCopy,
 } from "@/lib/marketing/product-intent";
 import { dxClass } from "@/lib/dx-theme";
+
+export const metadata: Metadata = {
+  title: "Create your account | DeliverX",
+  description:
+    "Create a DeliverX account for the open pilot. Invite or join links may be required depending on access rules.",
+  alternates: { canonical: "/signup" },
+};
 
 type Search = Promise<{
   invite?: string;

@@ -27,11 +27,12 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "Plans and pricing | DeliverX",
+  title: "DeliverX plans and pricing | Open pilot access",
   description:
     "DeliverX plans for Experience, Launchpad and the Complete Journey. Purchasable prices appear only when Stripe Checkout is configured.",
+  alternates: { canonical: "/pricing" },
   openGraph: {
-    title: "DeliverX Pilot Access",
+    title: "DeliverX plans and pricing | Open pilot access",
     description: CAREER_PROGRESSION_LINE,
   },
 };

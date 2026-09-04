@@ -5,9 +5,10 @@ import {
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 
 export const metadata = {
-  title: "Terms of Service | DeliverX",
+  title: "Terms of Service | DeliverX pilot and subscriptions",
   description:
     "DeliverX pilot and subscription terms: Stripe billing, entitlement access, evidence honesty, and acceptable use.",
+  alternates: { canonical: "/terms" },
 };
 
 const sections = [

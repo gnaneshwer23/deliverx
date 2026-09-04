@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ForgotPasswordForm } from "./forgot-form";
 import { DxCaps } from "@/components/dx/dx-logo";
 import { dxClass } from "@/lib/dx-theme";
+
+export const metadata: Metadata = {
+  title: "Reset password | DeliverX",
+  description: "Request a password reset link for your DeliverX account.",
+  alternates: { canonical: "/login/forgot" },
+};
 
 export default function ForgotPasswordPage() {
   return (

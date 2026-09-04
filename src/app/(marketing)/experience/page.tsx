@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Experience | Build the experience employers expect | DeliverX",
   description:
     "Join a company with AI colleagues and work as a Product Manager from day one. Open pilot access. Build practical experience before you apply.",
+  alternates: { canonical: "/experience" },
   openGraph: {
     title: "Experience | Build the experience | DeliverX",
     description:

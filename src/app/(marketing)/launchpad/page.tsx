@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Launchpad | Turn your experience into opportunities | DeliverX",
   description:
     "Career Intelligence: labelled readiness, evidence-backed CV packaging, interview lab and application tracking. Open pilot access.",
+  alternates: { canonical: "/launchpad" },
   openGraph: {
     title: "Launchpad | Land the opportunity | DeliverX",
     description:

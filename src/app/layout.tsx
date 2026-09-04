@@ -15,7 +15,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.deliverx.dev";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(appUrl),
   title: "DeliverX — Professional Intelligence Platform",
   description:
     "DeliverX builds evidence-backed Professional Intelligence — Experience, Career Intelligence, and Professional Workspace.",

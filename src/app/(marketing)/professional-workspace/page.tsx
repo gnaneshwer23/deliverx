@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Professional Workspace | Deliver with AI teammates | DeliverX",
   description:
     "Multidisciplinary Professional Workspace for real work with AI teammates: meetings, stakeholders, artefacts, decisions, risks and evidence. Open pilot access.",
+  alternates: { canonical: "/professional-workspace" },
   openGraph: {
     title: "Professional Workspace | Succeed in the role | DeliverX",
     description: "AI drafts. Humans decide. Pilot access; paid plans not yet live.",

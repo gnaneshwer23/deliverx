@@ -14,8 +14,9 @@ import {
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "About | DeliverX",
+  title: "About DeliverX | Evidence-driven professional growth",
   description: COMPANY_MISSION,
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

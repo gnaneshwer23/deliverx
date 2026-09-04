@@ -10,9 +10,10 @@ import { COMPANY_MISSION } from "@/lib/marketing/career-suite";
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
-  title: "Resources | DeliverX",
+  title: "Resources | Getting started with DeliverX",
   description:
     "Guides and starting points for building product experience, landing opportunities and succeeding in the role.",
+  alternates: { canonical: "/resources" },
 };
 
 const RESOURCES = [
