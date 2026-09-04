@@ -8,17 +8,18 @@ import {
 } from "@/components/marketing/marketing-layout";
 import { MarketingReveal } from "@/components/marketing/marketing-reveal";
 import { COMPANY_MISSION } from "@/lib/marketing/career-suite";
+import { FLAGSHIP_GUIDES } from "@/lib/marketing/guides";
 import { mktClass } from "@/lib/marketing/landing-theme";
 
 export const metadata: Metadata = {
   title: "Resources | PM portfolio, evidence and STAR practice | DeliverX",
   description:
-    "Starting points for building a Product Manager portfolio employers can evaluate, packaging evidence and STAR stories, and practising AI product experience — without treating learning as capability.",
+    "Flagship guides on building a Product Manager portfolio employers can evaluate, grounding STAR stories in evidence, and using Experience and Launchpad without treating learning as capability.",
   alternates: { canonical: "/resources" },
   openGraph: {
     title: "Resources | PM portfolio, evidence and STAR practice | DeliverX",
     description:
-      "Guides and product paths for evidence-backed PM growth: Experience, Launchpad, Professional Workspace, and trust rails.",
+      "Flagship guides and product paths for evidence-backed PM growth: Experience, Launchpad, Professional Workspace, and trust rails.",
   },
 };
 
@@ -49,39 +50,25 @@ const PRODUCT_PATHS = [
   },
 ] as const;
 
-const GUIDES = [
-  {
-    id: "portfolio",
-    title: "How to build a PM portfolio employers can evaluate",
-    body: "A strong Product Manager portfolio is not a gallery of certificates. It is a trail of work: problem framing, decisions, artefacts, and outcomes someone else can inspect. Prefer PRDs, discovery notes, trade-off memos, and delivery records over self-declared skill lists. Label what is self-reported versus demonstrated. DeliverX Experience is designed so completed work can feed that trail; Launchpad packages it for applications without inventing unexplained scores.",
-    href: "/launchpad",
-    linkLabel: "See Launchpad packaging",
-  },
+const ORIENTATION_NOTES = [
   {
     id: "evidence",
     title: "Evidence vs claims vs learning",
-    body: "Knowledge is exposure. Evidence is a provenance-backed record of work. Capability is a judgement over evidence — not a course completion tick. AI observations and coach drafts are assistants, not verified proof. In DeliverX, learning paths never light Verified and never write competency levels. That separation keeps career packaging honest when you talk to hiring managers.",
+    body: "Knowledge is exposure. Evidence is a provenance-backed record of work. Capability is a judgement over evidence — not a course completion tick. AI observations and coach drafts are assistants, not verified proof. In DeliverX, learning paths never light Verified and never write competency levels.",
     href: "/how-it-works",
     linkLabel: "Read how DeliverX works",
   },
   {
-    id: "star",
-    title: "STAR interview stories grounded in real artefacts",
-    body: "STAR works best when Situation, Task, Action, and Result point to something you actually produced. Vague stories collapse under follow-up questions. Build stories from artefacts and decisions in your evidence record, then practise in Launchpad Interview Lab. Avoid fabricating placement outcomes or claiming Verified status without external attestation.",
-    href: "/launchpad",
-    linkLabel: "Open Launchpad",
-  },
-  {
     id: "ai-experience",
     title: "AI product experience without theatre",
-    body: "Simulated company work can develop judgement when the loop is explicit: realistic challenges, human decisions, and an append-oriented evidence ledger. It is not a shortcut that turns AI chat into a job offer. Observation consent defaults off. Recommendations explain their rationale. Readiness bands say whether they come from assessment, mixed sources, or heuristics — so you always know what you are looking at.",
+    body: "Simulated company work can develop judgement when the loop is explicit: realistic challenges, human decisions, and an append-oriented evidence ledger. Observation consent defaults off. Readiness bands say whether they come from assessment, mixed sources, or heuristics.",
     href: "/experience",
     linkLabel: "Explore Experience",
   },
   {
     id: "trust",
     title: "What Verified means here",
-    body: "deliverxVerified is an attestation signal, not a vanity badge and not the output of a ScoreRun alone. External attestation is the path that can light Verified. Privacy stays least-privilege: evidence private by default, export and delete available for your Professional Intelligence data. We do not sell employer marketplace liquidity in the current pilot.",
+    body: "deliverxVerified is an attestation signal, not a vanity badge and not the output of a ScoreRun alone. External attestation is the path that can light Verified. We do not sell employer marketplace liquidity in the current pilot.",
     href: "/about",
     linkLabel: "About DeliverX",
   },
@@ -109,10 +96,9 @@ export default function ResourcesPage() {
                 Evidence-backed starting points.
               </h1>
               <p className="mt-5 text-[0.9375rem] leading-[1.75] text-[var(--mkt-text2)]">
-                Short paths into the DeliverX products, plus charter-honest guides on PM portfolios,
-                evidence, STAR practice, and AI product experience. No job-board listings, no
-                unexplained readiness percentages, and no claim that finishing a course equals
-                capability.
+                Short paths into the DeliverX products, plus flagship guides on PM portfolios and STAR
+                stories grounded in evidence. No job-board listings, no unexplained readiness
+                percentages, and no claim that finishing a course equals capability.
               </p>
             </MarketingReveal>
           </MarketingContainer>
@@ -161,16 +147,16 @@ export default function ResourcesPage() {
               <h2
                 className={`text-[clamp(1.35rem,2.5vw,1.75rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
               >
-                Guides
+                Flagship guides
               </h2>
               <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
-                Practical framing aligned to Professional Intelligence. These are orientation guides
-                — not placement guarantees or marketplace pitches.
+                Full articles for organic discovery. Charter-honest orientation — not placement
+                guarantees, readiness theatre, or marketplace pitches.
               </p>
             </MarketingReveal>
             <ol className="mt-10 space-y-8">
-              {GUIDES.map((guide, index) => (
-                <li key={guide.id} id={guide.id}>
+              {FLAGSHIP_GUIDES.map((guide, index) => (
+                <li key={guide.slug} id={guide.slug}>
                   <MarketingReveal delay={index * 0.03}>
                     <article className={`${mktClass.softPanelLight} p-7 md:p-8`}>
                       <p className={`${mktClass.mono} text-[0.65rem] text-[var(--mkt-green-m)]`}>
@@ -182,13 +168,13 @@ export default function ResourcesPage() {
                         {guide.title}
                       </h3>
                       <p className="mt-4 text-[0.9375rem] leading-[1.75] text-[var(--mkt-text2)]">
-                        {guide.body}
+                        {guide.lede}
                       </p>
                       <Link
-                        href={guide.href}
+                        href={guide.path}
                         className="mt-5 inline-block text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
                       >
-                        {guide.linkLabel} →
+                        Read the guide →
                       </Link>
                     </article>
                   </MarketingReveal>
@@ -199,6 +185,48 @@ export default function ResourcesPage() {
         </MarketingSection>
 
         <MarketingSection tone="white">
+          <MarketingContainer className="max-w-3xl">
+            <MarketingReveal>
+              <h2
+                className={`text-[clamp(1.35rem,2.5vw,1.75rem)] tracking-[-0.025em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+              >
+                Orientation notes
+              </h2>
+              <p className="mt-3 text-[0.9375rem] leading-relaxed text-[var(--mkt-text2)]">
+                Short trust framing that sits beside the flagship guides.
+              </p>
+            </MarketingReveal>
+            <ol className="mt-10 space-y-8">
+              {ORIENTATION_NOTES.map((note, index) => (
+                <li key={note.id} id={note.id}>
+                  <MarketingReveal delay={index * 0.03}>
+                    <article className={`${mktClass.softPanelLight} p-7 md:p-8`}>
+                      <p className={`${mktClass.mono} text-[0.65rem] text-[var(--mkt-green-m)]`}>
+                        {String(index + 1).padStart(2, "0")}
+                      </p>
+                      <h3
+                        className={`mt-3 text-[1.25rem] tracking-[-0.02em] text-[var(--mkt-text1)] ${mktClass.serif}`}
+                      >
+                        {note.title}
+                      </h3>
+                      <p className="mt-4 text-[0.9375rem] leading-[1.75] text-[var(--mkt-text2)]">
+                        {note.body}
+                      </p>
+                      <Link
+                        href={note.href}
+                        className="mt-5 inline-block text-[0.8125rem] font-medium text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
+                      >
+                        {note.linkLabel} →
+                      </Link>
+                    </article>
+                  </MarketingReveal>
+                </li>
+              ))}
+            </ol>
+          </MarketingContainer>
+        </MarketingSection>
+
+        <MarketingSection tone="cream">
           <MarketingContainer className="max-w-2xl">
             <MarketingReveal>
               <h2
@@ -219,9 +247,21 @@ export default function ResourcesPage() {
                 ))}
               </ul>
               <p className="mt-8 text-[0.875rem] leading-relaxed text-[var(--mkt-text3)]">
-                Deeper flagship articles (full portfolio walkthroughs, Interview Lab deep dives) will
-                land here as the pilot publishes them. Until then, product pages and the guides above
-                are the source of truth.
+                Flagship guides live at{" "}
+                <Link
+                  href="/resources/pm-portfolio"
+                  className="text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
+                >
+                  PM portfolio
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/resources/star-interview-stories"
+                  className="text-[var(--mkt-green)] no-underline underline-offset-4 hover:underline"
+                >
+                  STAR interview stories
+                </Link>
+                . Product pages remain the source of truth for what the pilot ships.
               </p>
             </MarketingReveal>
           </MarketingContainer>

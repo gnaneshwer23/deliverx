@@ -18,6 +18,12 @@ const MARKETING_PATHS: Array<{
   { path: "/pricing", changeFrequency: "monthly", priority: 0.8 },
   { path: "/about", changeFrequency: "monthly", priority: 0.7 },
   { path: "/resources", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/resources/pm-portfolio", changeFrequency: "monthly", priority: 0.65 },
+  {
+    path: "/resources/star-interview-stories",
+    changeFrequency: "monthly",
+    priority: 0.65,
+  },
   { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
   { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
   { path: "/cookies", changeFrequency: "yearly", priority: 0.3 },

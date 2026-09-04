@@ -2,7 +2,7 @@
 
 > **Product Bible:** [`../README.md`](../README.md) (`docs/00`–`docs/15`) is the canonical reading path. This charter/scope/decisions file remains binding in the SoT hierarchy.
 
-**Active phase:** **Phase 1 — Soft launch hardening** (R-P2-16 coverage + axe smoke in CI). Contextual Home + Daily Briefing remain shipped (PD-2026-07-26o). B1–B9 remain live. T9 commercial code remains shipped; **payments later**.
+**Active phase:** **Phase 2 — Discovery content** (flagship Resources guides shipped; GSC submit + keyword retarget remain founder ops). Phase 1 soft-launch CI (R-P2-16 coverage + axe smoke) remains live. Contextual Home + Daily Briefing remain shipped (PD-2026-07-26o). B1–B9 remain live. T9 commercial code remains shipped; **payments later**.
 **As of:** 2026-09-04  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  

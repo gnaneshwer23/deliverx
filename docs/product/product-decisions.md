@@ -605,6 +605,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-09-04 — Phase 2 discovery flagship guides
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-09-04 |
+| **Status** | Accepted |
+| **Decision** | Ship two charter-honest flagship marketing guides under Resources: `/resources/pm-portfolio` and `/resources/star-interview-stories`. Link from Resources, About, home CTA band, and Launchpad secondary CTA. Add both paths to `sitemap.ts`. No billing, marketplace, fake scores, or Phase 3 payments work. |
+| **Why** | Founder authorized Phase 2 discovery content after soft-launch SEO tech work; organic reach needs depth without inventing product capabilities. |
+| **Consequence** | GSC sitemap resubmit + Ubersuggest keyword retarget remain founder ops. Honesty tests cover guide copy. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.

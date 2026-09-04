@@ -16,8 +16,8 @@ export const LAUNCHPAD_PAGE: ProductPageContent = {
     label: "Join the pilot",
   },
   secondaryCta: {
-    href: "/how-it-works",
-    label: "See how it works",
+    href: "/resources/star-interview-stories",
+    label: "STAR stories from evidence",
   },
   sections: [
     {

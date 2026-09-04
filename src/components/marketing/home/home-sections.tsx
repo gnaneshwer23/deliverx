@@ -1069,6 +1069,22 @@ export function HomeFinalCta() {
               See how it works
             </MarketingButtonLink>
           </div>
+          <p className="mx-auto mt-6 max-w-md text-[0.8125rem] leading-relaxed text-white/55">
+            Prefer reading first?{" "}
+            <Link
+              href="/resources/pm-portfolio"
+              className="text-white/80 underline-offset-4 hover:text-white hover:underline"
+            >
+              PM portfolio guide
+            </Link>
+            {" · "}
+            <Link
+              href="/resources"
+              className="text-white/80 underline-offset-4 hover:text-white hover:underline"
+            >
+              Resources
+            </Link>
+          </p>
         </MarketingReveal>
       </MarketingContainer>
     </MarketingSection>

@@ -227,6 +227,9 @@ export default function AboutPage() {
                 <MarketingButtonLink href="/resources" variant="ghostLg">
                   Resources
                 </MarketingButtonLink>
+                <MarketingButtonLink href="/resources/pm-portfolio" variant="ghostLg">
+                  PM portfolio guide
+                </MarketingButtonLink>
                 <MarketingButtonLink href="/pricing" variant="ghostLg">
                   See pilot access
                 </MarketingButtonLink>

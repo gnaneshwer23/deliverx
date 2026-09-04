@@ -25,6 +25,7 @@ import {
   PLATFORM_TABS,
 } from "@/lib/marketing/homepage-data";
 import { HOW_IT_WORKS_PAGE } from "@/lib/marketing/how-it-works-data";
+import { FLAGSHIP_GUIDES } from "@/lib/marketing/guides";
 import { LAUNCHPAD_PAGE } from "@/lib/marketing/launchpad-page";
 import { PILOT_QUOTE } from "@/lib/marketing/landing-data";
 import { productPageNav } from "@/lib/marketing/product-page";
@@ -138,6 +139,23 @@ describe("marketing honesty — Batch 2", () => {
     for (const step of HOW_IT_WORKS_PAGE.steps) {
       expect(["experience", "launchpad", "workspace", "intelligence"]).toContain(step.mock);
     }
+  });
+
+  it("flagship discovery guides stay charter-honest", () => {
+    expect(FLAGSHIP_GUIDES).toHaveLength(2);
+    expect(FLAGSHIP_GUIDES.map((g) => g.path)).toEqual([
+      "/resources/pm-portfolio",
+      "/resources/star-interview-stories",
+    ]);
+    const blob = collectStrings(FLAGSHIP_GUIDES).join(" | ");
+    expect(blob.toLowerCase()).toMatch(/learning/);
+    expect(blob.toLowerCase()).toMatch(/attestation/);
+    expect(blob.toLowerCase()).toMatch(/interview lab/);
+    expect(blob).not.toMatch(BANNED_SCORE_THEATRE);
+    expect(blob).not.toMatch(BANNED_MARKETPLACE);
+    expect(blob).not.toMatch(/100% money-back|money-back guarantee/i);
+    expect(blob).not.toMatch(BANNED_PRICE);
+    expect(blob.toLowerCase()).toMatch(/scoreruns? alone never light verified|scoreruns? never light/);
   });
 });
 

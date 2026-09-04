@@ -197,7 +197,7 @@ Robots: `https://www.deliverx.dev/robots.txt` (points at the sitemap; auth/app p
 4. Under **Add a new sitemap**, enter: `sitemap.xml` (or the full URL `https://www.deliverx.dev/sitemap.xml`).
 5. Click **Submit**. Status should move to **Success** after Google fetches it (may take minutes–hours).
 6. Optional: **URL Inspection** → paste `https://www.deliverx.dev/` → **Request indexing** for the homepage once; do not mass-request auth URLs.
-7. Re-check **Sitemaps** later for discovered URL count (~11 marketing URLs expected; auth stays out via robots/`noindex`).
+7. Re-check **Sitemaps** later for discovered URL count (~13 marketing URLs expected after Phase 2 guides; auth stays out via robots/`noindex`).
 
 ---
 
