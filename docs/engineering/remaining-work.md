@@ -81,7 +81,7 @@ Authorized under charter hardening. **Not** blocking “payments later.” Only 
 | **TD-003** | Edge proxy anonymous path-guards | **Documented defer** | Layouts own redirects | Engineering | M | Proxy purity (not pilot-blocking) |
 | **TD-013** | Full Mermaid ER publish | **Open** / deferred | Docs polish | Engineering | S | Schema docs completeness |
 | **Mission Control density** | Further demotion / honesty outside Twin/PMO/Marketplace Batch 6 slice | **Residual** | Pre-pivot surfaces can confuse | Engineering | S–M | UX clarity (not charter expansion) |
-| **CI enable follow-through** | After TD-018: enable workflows, drop lint `continue-on-error`, wire live secrets | **Partial** — TD-018 closed; coverage floors on verify; axe in ci-e2e. Residual: lint still advisory; `T6_SUPABASE_*` secrets optional | Makes seal continuous | Engineering | S | Continuous CI |
+| **CI enable follow-through** | After TD-018: keep verify truthful, wire live secrets, raise trust floors | **Partial** — TD-018 closed; coverage floors on verify; axe in ci-e2e; lint now blocks over live code while archived imports/canvas artifacts are ignored. Residual: `T6_SUPABASE_*` secrets and deeper ledger append/process coverage | Makes seal continuous | Engineering | S | Continuous CI |
 
 **Closed — do not list as remaining:** R-P0-01…06/08, R-P1-02…11/14/16, R-P2-12…15 (core), Batches 1–6, citations, `0095`/`0096`, T8 E2E, Next 16.2.12, TD-017.
 

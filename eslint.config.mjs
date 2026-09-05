@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Repo archives and Cursor canvases are documentation artifacts, not live app code.
+    "imports/**",
+    "**/*.canvas.tsx",
   ]),
 ]);
 

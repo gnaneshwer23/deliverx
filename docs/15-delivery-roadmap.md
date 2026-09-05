@@ -11,7 +11,7 @@
 | Band | Items |
 | --- | --- |
 | **Shipped** | P0–P7 product loop · T0–T8 technology · migrations `0066`–`0094` |
-| **Authorized next** | Ops + trust hardening (TD-018, TD-006, TD-017, TD-011, …) |
+| **Authorized next** | Ops + trust hardening (TD-006, SMTP proof, AT lab, CI secrets / coverage follow-through, …) |
 | **Gated** | T9 / P9 commercial |
 | **Deferred** | Marketplace, mission-control depth, multi-profession, graph DB, agent swarms, Stripe |
 
@@ -61,19 +61,7 @@ Do not rebuild shipped phases. Prompts request the **next vertical slice** only.
 
 Each item: goal · scope · deps · acceptance · risks · demo · deferred.
 
-### A1 / TD-018 — Restore GitHub Actions minutes
-
-| Field | Content |
-| --- | --- |
-| Goal | CI runs real jobs again |
-| Scope | Founder billing; enable `verify.yml` + Playwright workflow; restore `on.push` |
-| Deps | Founder |
-| Acceptance | `gh workflow list` enabled; jobs ≠ synthetic 0 |
-| Risks | Cost |
-| Demo | Green verify run |
-| Deferred | — |
-
-### A3 / TD-006 — Leaked-password protection
+### A1 / TD-006 — Leaked-password protection
 
 | Field | Content |
 | --- | --- |
@@ -83,6 +71,30 @@ Each item: goal · scope · deps · acceptance · risks · demo · deferred.
 | Acceptance | Advisor clear; runbook followed |
 | Risks | None significant |
 | Demo | Dashboard screenshot / advisor |
+| Deferred | — |
+
+### A2 / SMTP password-reset proof
+
+| Field | Content |
+| --- | --- |
+| Goal | Recovery path is proven in production |
+| Scope | Founder sends a real password-reset email and records proof |
+| Deps | SMTP provider / inbox access |
+| Acceptance | Reset email received successfully |
+| Risks | Invitees can get stuck without recovery |
+| Demo | Received reset email / note filed |
+| Deferred | — |
+
+### B1 / CI follow-through — Live signed-in secrets + coverage
+
+| Field | Content |
+| --- | --- |
+| Goal | Continuous CI matches shipped trust claims |
+| Scope | Add `T6_SUPABASE_*` Actions secrets so the live signed-in job can run; optionally raise coverage floors with targeted ledger tests |
+| Deps | Founder / ops secrets for live job |
+| Acceptance | `test:release-gate:live` green in CI at least once when secrets are present |
+| Risks | Secret handling; over-tight floors without focused tests |
+| Demo | Green CI run with live leg enabled |
 | Deferred | — |
 
 ### B1 / TD-017 — Test fixture lint/tsc
@@ -170,11 +182,10 @@ Each item: goal · scope · deps · acceptance · risks · demo · deferred.
 
 ## Ordered execution
 
-1. Founder: TD-018 minutes + TD-006 Auth toggle  
-2. Engineering: re-enable CI; TD-017; TD-011 honesty  
-3. Wire T6 live secrets  
-4. Optional founder visual QA  
-5. TD-007 only with founder OK  
-6. T9 only with separate approval  
+1. Founder: TD-006 Auth toggle + SMTP proof  
+2. Engineering / ops: wire T6 live secrets and keep CI truthful  
+3. Optional founder visual QA / AT lab  
+4. TD-007 only with founder OK  
+5. T9 live Stripe ops only when founder is ready  
 
 Detail checklist: [`engineering/next-steps.md`](./engineering/next-steps.md).

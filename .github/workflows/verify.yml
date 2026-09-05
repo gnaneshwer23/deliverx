@@ -7,8 +7,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Blocking gate: T6 release-gate + trust coverage floors + production build.
-# Full-repo ESLint remains advisory (baseline debt — docs/qa/release-readiness.md).
+# Blocking gate: lint + T6 release-gate + trust coverage floors + production build.
+# Repo lint targets live app code; archived imports and repo canvas artifacts are ignored.
 # Playwright smoke/acceptance + axe live in ci-e2e.yml (manual) to conserve
 # Actions minutes on a private repo. R-P2-16: coverage thresholds here; axe in ci-e2e.
 jobs:
@@ -31,9 +31,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint (advisory — baseline debt classified in docs/qa/release-readiness.md)
+      - name: Lint (live app + docs, archives ignored)
         run: npm run lint
-        continue-on-error: true
 
       - name: Unit tests
         run: npm test

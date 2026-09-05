@@ -422,7 +422,7 @@ Evidence paths verified present unless noted.
 
 | Item | Blocks |
 | --- | --- |
-| TD-018 CI minutes / re-enable workflows | Continuous proof for B9; release confidence |
+| CI follow-through (`T6_SUPABASE_*` live secrets) | Continuous proof for B9; release confidence |
 | TD-006 leaked-password Auth | Pilot auth hygiene |
 | SMTP password-reset proof | Recovery confidence |
 | AT lab (VoiceOver/keyboard) | Whole-product AA claim |

@@ -46,7 +46,7 @@
 | Playwright smoke/acceptance | `npm run test:smoke` / `test:e2e:acceptance` | Manual — `.github/workflows/ci-e2e.yml` (`workflow_dispatch`) |
 | Production build | `npm run build` | Yes |
 
-**CI policy (updated 2026-09-04 — Phase 1 soft launch):** Default CI lives in `.github/workflows/verify.yml` (unit + **trust-rail coverage floors** (`npm run test:coverage`) + `test:release-gate` + build; lint advisory) on `push`/`pull_request`/`workflow_dispatch`. Playwright smoke/acceptance **and public axe critical smoke** (`npm run test:a11y`) live in `.github/workflows/ci-e2e.yml` (`workflow_dispatch`). **TD-018 closed:** workflows re-enabled; first green verify after restore is [run 32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790). Optional next: add Actions secrets `T6_SUPABASE_*` for live signed-in job; consider dropping lint `continue-on-error` once canvas lint noise is cleared; raise coverage floors after ledger append behavioural tests.
+**CI policy (updated 2026-09-05 — Phase 1 soft launch):** Default CI lives in `.github/workflows/verify.yml` (blocking lint over live app code and active docs, unit + **trust-rail coverage floors** (`npm run test:coverage`) + `test:release-gate` + build) on `push`/`pull_request`/`workflow_dispatch`. Archived repo imports and repo canvas artifacts are ignored by lint because they are documentation/history, not shipped app code. Playwright smoke/acceptance **and public axe critical smoke** (`npm run test:a11y`) live in `.github/workflows/ci-e2e.yml` (`workflow_dispatch`). **TD-018 closed:** workflows re-enabled; first green verify after restore is [run 32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790). Optional next: add Actions secrets `T6_SUPABASE_*` for the live signed-in job and raise coverage floors after ledger append behavioural tests.
 
 ---
 
@@ -54,8 +54,8 @@
 
 Ordered plan: [`../engineering/next-steps.md`](../engineering/next-steps.md).
 
-1. Founder restores Actions minutes / spending (TD-018), then re-enable workflows.  
-2. Founder enables TD-006 leaked-password protection.  
-3. Configure GitHub Actions secrets `T6_SUPABASE_URL`, `T6_SUPABASE_ANON_KEY`, `T6_SUPABASE_SERVICE_ROLE_KEY` so CI runs the live signed-in job.  
-4. Engineering clears TD-017 fixture lint/tsc debt.  
+1. Founder enables TD-006 leaked-password protection.  
+2. Configure GitHub Actions secrets `T6_SUPABASE_URL`, `T6_SUPABASE_ANON_KEY`, `T6_SUPABASE_SERVICE_ROLE_KEY` so CI runs the live signed-in job.  
+3. Prove SMTP password-reset delivery in production.  
+4. Raise trust-rail coverage floors after focused ledger append/process behavioural tests.  
 5. When disk allows: stand up Option A (local Supabase) and point `T6_BASE_URL=http://localhost:3000`.

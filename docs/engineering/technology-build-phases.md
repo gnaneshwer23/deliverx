@@ -22,7 +22,7 @@ This plan does **not** re-build P0–P8. It maps every founder module, entity, a
 | **Requires founder approval** | Expansion beyond bounded T9 model |
 | **Explicit non-goals** | Microservices split of ten intelligence domains; graph DB; employer marketplace liquidity; agent swarms |
 
-**Recommended next engineering action:** T9 founder ops — configure Stripe test/live prices, webhook and Customer Portal; run a test checkout; then enable `DELIVERX_BILLING_ENFORCE=on`. Continue TD-018 CI restore and TD-006 Auth toggle.
+**Recommended next engineering action:** finish non-Stripe pilot hardening first: founder TD-006 leaked-password toggle, SMTP password-reset proof, optional AT evidence, and CI follow-through (`T6_SUPABASE_*` secrets / trust-floor growth). T9 founder Stripe ops remain deferred until the founder is ready to sell.
 
 ---
 

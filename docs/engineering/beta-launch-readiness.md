@@ -13,7 +13,7 @@
 
 The P0–P7 Professional Intelligence candidate loop is shipped and trust-railed. Marketing IA now matches the four primary destinations (How it works · Experience · Launchpad · Professional Workspace). Payments may stay off for beta.
 
-It is **not** “ready for open public launch”: CI is dark (TD-018), leaked-password protection is still WARN (TD-006), password-reset SMTP is unproven, AT lab is open, and the human reviewer queue remains flag-off.
+It is **not** “ready for open public launch”: leaked-password protection is still WARN (TD-006), password-reset SMTP is unproven, AT lab is open, and the human reviewer queue remains flag-off. CI is restored for the default verify path, but the live signed-in leg still depends on Actions secrets.
 
 ---
 
@@ -32,7 +32,7 @@ It is **not** “ready for open public launch”: CI is dark (TD-018), leaked-pa
 | Item | Status | Notes |
 | --- | --- | --- |
 | **Payments / `DELIVERX_BILLING_ENFORCE`** | Off by design | Correct for beta — pilot access, no Stripe chase |
-| **TD-018 CI minutes** | Open | Regressions caught locally; restore when Actions minutes available |
+| **CI follow-through (`T6_SUPABASE_*`)** | Partial | Default CI is back; live signed-in release-gate still skips until Actions secrets are present |
 | **`DELIVERX_REVIEWER_QUEUE`** | Off | Human review path exists; Verified still requires attestation (T8) |
 | **AT lab (VoiceOver/NVDA)** | Open | Engineering a11y core closed; do not claim WCAG 2.2 AA whole-product |
 | **PostHog / FD-PACK-7** | Deferred | Optional analytics sink |
@@ -77,8 +77,8 @@ Residual product risk: **Hub vs contextual Profile home** can still confuse firs
 
 ## Known residual risks
 
-1. **CI dark (TD-018)** — no automatic gate on `main`.
-2. **Auth hygiene (TD-006 + SMTP)** — recovery and breached-password path incomplete.
+1. **Auth hygiene (TD-006 + SMTP)** — recovery and breached-password path incomplete.
+2. **Live signed-in CI leg** — `test:release-gate:live` still skips in Actions until `T6_SUPABASE_*` secrets are set.
 3. **Reviewer queue off** — human review workflow not the default path; Verified still attestation-only.
 4. **Hub vs Profile home** — competing signed-in landings.
 5. **Marketing polish residual** — tablet hamburger until `lg`; long “Professional Workspace” label; mock chrome rail hidden below `md`.
@@ -116,7 +116,7 @@ Residual product risk: **Hub vs contextual Profile home** can still confuse firs
 3. **Invite list** — named emails only; share a support contact (founder email / Slack).
 4. **Briefing note** — after signup go to Profile / Daily Briefing; observation consent stays OFF unless they opt in; Verified needs attestation.
 5. **Confirm flags** — `DELIVERX_BILLING_ENFORCE` unset; `DELIVERX_RECOMMENDATION_SM` on; reviewer queue intentionally off unless you want to staff it.
-6. **Optional** — restore GitHub Actions minutes (TD-018) before a second invite wave.
+6. **Optional** — add GitHub Actions secrets `T6_SUPABASE_URL`, `T6_SUPABASE_ANON_KEY`, and `T6_SUPABASE_SERVICE_ROLE_KEY` before a second invite wave so live signed-in CI runs automatically.
 7. **Do not** enable live billing for this beta wave.
 
 ---

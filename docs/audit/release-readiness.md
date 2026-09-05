@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | Not testable | No | Core loop is live-verified |
 | **Testable internally** | **Yes — selected** | T6 + units prove app-path loop; founders/engineers can exercise product |
-| Ready for controlled pilot | **No** | Honesty/legal P0s closed in Batch 2; CI still off, T8 E2E and founder ops remain |
+| Ready for controlled pilot | **Not yet** | Honesty/legal P0s are closed and default CI is restored, but founder auth/SMTP proof and residual pilot-readiness ops remain |
 | Ready for public beta | **No** | Above + a11y/Next/cookie/ops gaps |
 | Ready for production | **No** | Charter + evidence |
 
@@ -43,11 +43,11 @@
 | Navigation coherence | Shared suite nav across Hub/Profile/Experience/Launchpad/Workspace/Portfolio; dead dark sidebar removed | **Pass — Batch 5** |
 | T8 E2E Verified-on | `e2e/t8-attestation.test.ts` in live gate; attestor confirm → Verified; negatives + private-leak + Batch-1 DB denial | **Pass — Batch 4** (10/10 live) |
 | Next.js security advisories | Upgraded `16.2.9`→`16.2.12` (≥16.2.11); proxy/SSRF/DoS class closed | **Pass — Batch 4** |
-| Continuous CI | TD-018 disabled workflows | **Fail** (founder) |
+| Continuous CI | `verify.yml` restored; live signed-in leg still depends on `T6_SUPABASE_*` secrets | **Partial** |
 | TD-006 HIBP | Advisor WARN | **Fail** (ops, founder) |
 | WCAG 2.2 AA | Core chrome/auth AA Batch 5; residual demoted/Experience honesty Batch 6; full-product claim deferred | **Partial — Batch 5–6** (do not claim whole-product AA) |
 | AI citation requirements | `enforceCitations` on all live T4 contracts; missing/unknown → non-claiming fallback; UI strip | **Pass — 2026-07-26** |
-| T9 / Stripe | Founder-authorized; code + `0097` shipped | **Conditional** — test/live Stripe Dashboard + Vercel env ops pending |
+| T9 / Stripe | Founder-authorized; code + `0097` shipped | **Deferred by choice** — founder test/live Stripe Dashboard + Vercel env ops later |
 
 ---
 
@@ -74,8 +74,9 @@
 3. **Completed:** Batch 3 — UX language (ScoreRun→assessment; Command Centre demotion on Workspace home; Career Intelligence naming; review seed removed; metadata; readiness labels).
 4. **Completed:** Batch 4 — pilot seal engineering (Next `16.2.9`→`16.2.12` closing proxy/SSRF/DoS advisories; T8 attestation→Verified live E2E in the release gate).
 5. **Completed:** Batch 5 — navigation coherence + WCAG 2.2 AA core (shared suite shell; Launchpad mobile nav; auth/live-region/skip-link/focus; tiny-text chrome fix).
-6. Founder: TD-006 and either restore CI or named manual gate cadence.
-7. Invite-only cohort; no public paid CTA.
+6. Founder: TD-006, SMTP proof, and optional AT evidence before broader claims.
+7. Engineering / ops: add `T6_SUPABASE_*` Actions secrets when ready for live signed-in CI.
+8. Invite-only cohort; no public paid CTA.
 
 Detail: [`release-plan.md`](./release-plan.md) exit criteria **B**.
 
@@ -113,4 +114,4 @@ T6_BASE_URL=https://www.deliverx.dev npm run test:release-gate:live # full live 
 npm run build
 ```
 
-Do not treat a green manual gate as continuous assurance while workflows remain disabled.
+Do not treat the restored default CI path as full continuous assurance until the live signed-in leg is wired with Actions secrets.

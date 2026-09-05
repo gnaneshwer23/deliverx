@@ -24,7 +24,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. T9 is fou
 | T9 payments | **Deferred founder ops** — code ready; Stripe Dashboard/env/enforce off until founder chooses |
 | TD-001 / TD-011 / TD-017 / TD-019 | **Closed** |
 | TD-006 | **Open** — founder Auth leaked-password toggle |
-| TD-018 | **Open** — GitHub Actions minutes exhausted; workflows disabled |
+| TD-018 | **Closed 2026-08-26** — Actions restored; `verify.yml` + `ci-e2e.yml` re-enabled; first green verify [32986767790](https://github.com/gnaneshwer23/deliverx/actions/runs/32986767790) |
 | Production | **Healthy** — Vercel READY · https://www.deliverx.dev |
 | CI | **Disabled** (`verify.yml`, `ci-e2e.yml`) to stop 0-job failure spam |
 | Not authorized | Marketplace liquidity · intelligence microservices · fourth Workspace SKU / enterprise mission-control depth |
@@ -35,10 +35,8 @@ This plan is grounded in **shipped reality**, not a greenfield vision. T9 is fou
 
 | # | Step | Owner | Effort | Objective | Why now | Dependency | Acceptance check |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| A1 | **Restore GitHub Actions minutes / spending** (TD-018) | **Founder** | S | Billing allows private-repo workflow jobs again | CI is dark; every push previously emailed synthetic failures | None | GitHub billing shows available minutes; new workflow runs can schedule jobs |
-| A2 | **Re-enable workflows + restore `on.push`** | Engineering (after A1) | S | `verify.yml` and `ci-e2e.yml` active again | Ops signal without email spam | A1 | `gh workflow list` shows enabled; PR/dispatch (then push) runs real jobs, not 0s |
-| A3 | **Enable leaked-password protection** (TD-006) | **Founder** | S | HaveIBeenPwned Auth protection ON | Advisor WARN; pilot auth hygiene; not automatable via agent/MCP | None (parallel to A1) | Supabase advisors clear `auth_leaked_password_protection`; TD-006 marked Closed |
-| A4 | **Configure T6 live CI secrets** | Founder / ops + Engineering | S | Live signed-in release-gate job can run in CI | Local/manual live gate exists; CI still skips without secrets | A2 preferred | Secrets set; `test:release-gate:live` (or CI live job) green once |
+| A1 | **Enable leaked-password protection** (TD-006) | **Founder** | S | HaveIBeenPwned Auth protection ON | Advisor WARN; pilot auth hygiene; not automatable via agent/MCP | None | Supabase advisors clear `auth_leaked_password_protection`; TD-006 marked Closed |
+| A2 | **Configure T6 live CI secrets** | Founder / ops + Engineering | S | Live signed-in release-gate job can run in CI | Default CI is restored; live signed-in job still skips without secrets | None | Secrets set; `test:release-gate:live` (or CI live job) green once |
 | A5 | **SMTP password-reset proof** (R-P1-15) | **Founder** / ops | S | Recovery email received in prod | Forms exist; delivery unproven | None | Reset mail received; note filed |
 | A6 | **VoiceOver/keyboard AT lab** (optional before AA claim) | **Founder** (+ eng) | M | Human AT evidence on Hub→Profile→Evidence | Core a11y engineering closed Batch 5–6; whole-product AA not claimed | Prod healthy | Notes filed; no AA claim without this |
 | A7 | **Founder visual QA of candidate loop** (optional polish) | **Founder** | M | Human judgement of clarity, trust copy, next-action UX | Automated T0 PASS; subjective UI remains open | Prod healthy | Notes filed (defects or “no change”) |
@@ -50,18 +48,18 @@ This plan is grounded in **shipped reality**, not a greenfield vision. T9 is fou
 
 ---
 
-## B. Payments later — founder Stripe ops (not eng backlog)
+## B. Phase 3 — Stripe TEST smoke (founder ops; not eng backlog)
 
-Do **when founder is ready to take payments**. Product code is already shipped (`0097`, Checkout, Portal, webhooks, entitlements). Default `DELIVERX_BILLING_ENFORCE` stays **off**.
+Product code is shipped (`0097`, Checkout, Portal, webhooks, entitlements). **Vercel has no `STRIPE_*` yet** (audited 2026-09-04). Keep `DELIVERX_BILLING_ENFORCE` **unset/off** until smoke succeeds and founder says `approve billing enforce`. Full checklist: [`../OPS_ENV_RUNBOOK.md`](../OPS_ENV_RUNBOOK.md) §9.
 
-1. In Stripe test mode, create three recurring monthly prices matching PD-2026-07-26d.
-2. Set `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, and all `STRIPE_PRICE_*` values in Vercel.
-3. Register `https://www.deliverx.dev/api/billing/webhook` for checkout + subscription events and set `STRIPE_WEBHOOK_SECRET`.
+1. Stripe **TEST** mode: three GBP monthly recurring Prices — Experience £39 → `STRIPE_PRICE_EXPERIENCE`; Launchpad £39 → `STRIPE_PRICE_LAUNCHPAD`; Complete Journey £59 → `STRIPE_PRICE_PROFESSIONAL` (app SKU `professional`).
+2. Vercel Production: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, and all three `STRIPE_PRICE_*`. Redeploy. **No Payment Links.**
+3. Webhook: `https://www.deliverx.dev/api/billing/webhook` — events `checkout.session.completed`, `customer.subscription.created|updated|deleted`.
 4. Enable Stripe Customer Portal cancellation.
-5. Complete a test-mode checkout; verify webhook event + subscription + entitlement rows and product unlock.
-6. Promote equivalent live-mode prices/keys/webhook. Only then set `DELIVERX_BILLING_ENFORCE=on`.
+5. Smoke: signed-in → `/billing/checkout?sku=experience` → test card → confirm `billing_entitlements` + Settings → Billing. Reply `stripe test smoke` when env ready; `stripe smoke proven` after success.
+6. Later (live money): promote live prices/keys/webhook. Only then `approve billing enforce` → `DELIVERX_BILLING_ENFORCE=on`.
 
-Until then: public marketing correctly falls back to pilot access when Stripe price IDs are absent. Do not schedule engineering slices whose only goal is “turn Stripe on.”
+Until Stripe price IDs exist: marketing correctly shows pilot access (no £ checkout CTAs).
 
 ---
 
@@ -130,14 +128,14 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 
 ## Top recommended next actions
 
-1. **Restore GitHub Actions minutes and re-enable workflows (TD-018)** — founder billing first, then engineering enable.  
-2. **Enable Supabase leaked-password protection (TD-006)** — founder one-click; clears Auth advisor WARN.  
-3. **Prove SMTP password-reset** — founder send test.  
+1. **Enable Supabase leaked-password protection (TD-006)** — founder one-click; clears Auth advisor WARN.  
+2. **Prove SMTP password-reset** — founder send test.  
+3. **Configure GitHub Actions secrets `T6_SUPABASE_*`** — restores the live signed-in CI leg.  
 4. **Optional AT lab** — before claiming whole-product WCAG AA.  
 5. **Payments later** — founder Stripe ops when ready; do not invent eng work for it.  
-6. **Optional eng:** R-P1-12 judgement binding after trust priority.
+6. **Optional eng:** raise trust-rail coverage floors or add ledger append/process behavioural coverage.
 
-**Founder-only before continuous CI / auth seal:** A1 (minutes), A3 (Auth toggle).  
+**Founder-only before full auth seal:** A1 (Auth toggle) plus SMTP proof.  
 **Payments:** founder calendar, not engineering sprint.  
 **Document intake:** when new docs arrive, gap-check with [`remaining-work.md`](./remaining-work.md) §D.
 
