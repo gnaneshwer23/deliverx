@@ -33,6 +33,7 @@ import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilo
 import { listPendingArtifactReviewsForPersona } from "@/services/artifactReviews";
 import { filterReviewsByProject } from "@/lib/approval/persona-reviews";
 import { listOrgImpactEvents } from "@/services/deliveryImpact";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -57,15 +58,16 @@ export default async function FounderMissionControlPage({
   }
 
   const params = await searchParams;
+  const projectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, , pendingReviewsRaw, impactEventsRaw] = await Promise.all([
-    getFounderMissionControl(params.project),
+    getFounderMissionControl(projectId ?? undefined),
     getFounderContext().catch(() => null),
     listPendingArtifactReviewsForPersona("founder").catch(() => []),
-    listOrgImpactEvents({ limit: 20, projectId: params.project }).catch(() => []),
+    listOrgImpactEvents({ limit: 20, projectId: projectId ?? undefined }).catch(() => []),
   ]);
 
-  const projectId = data.primaryProject?.id;
-  const projectPendingReviews = filterReviewsByProject(pendingReviewsRaw, projectId);
+  const activeProjectId = data.primaryProject?.id;
+  const projectPendingReviews = filterReviewsByProject(pendingReviewsRaw, activeProjectId);
 
   let bootstrapSummary: ProjectBootstrapSummary | null = null;
   let hasBootstrapSummary = false;
@@ -80,7 +82,7 @@ export default async function FounderMissionControlPage({
 
   const pendingDecisionsCount = data.decisionsNeeded.length;
   const serverFounderMode = resolveFounderDashboardMode({
-    projectId,
+    projectId: activeProjectId,
     hasBootstrapSummary,
     pendingReviewCount: projectPendingReviews.length,
     pendingDecisionsCount,
@@ -116,14 +118,14 @@ export default async function FounderMissionControlPage({
   const dayOneDecisionItems = buildFounderDecisionCentreItems({
     decisions: data.decisionsNeeded,
     pendingReviews: projectPendingReviews,
-    projectId,
+    projectId: activeProjectId,
     mode: "day-one",
   });
 
   const steadyStateDecisionItems = buildFounderDecisionCentreItems({
     decisions: data.decisionsNeeded,
     pendingReviews: projectPendingReviews,
-    projectId,
+    projectId: activeProjectId,
     mode: "steady-state",
   });
 
@@ -135,12 +137,12 @@ export default async function FounderMissionControlPage({
         dayOneDecisionItems.length > 0 ? (
           <FounderDecisionCentre
             items={dayOneDecisionItems}
-            projectId={projectId}
+            projectId={activeProjectId}
             dataSource={data.dataSources.decisions}
           />
         ) : null
       }
-      footer={<FounderGetOrientedCard projectId={projectId} />}
+      footer={<FounderGetOrientedCard projectId={activeProjectId} />}
     />
   );
 
@@ -152,7 +154,7 @@ export default async function FounderMissionControlPage({
         steadyStateDecisionItems.length > 0 ? (
           <FounderDecisionCentre
             items={steadyStateDecisionItems}
-            projectId={projectId}
+            projectId={activeProjectId}
             dataSource={data.dataSources.decisions}
           />
         ) : null
@@ -173,7 +175,7 @@ export default async function FounderMissionControlPage({
       }}
       headerActions={
         <FounderMissionHeaderActions
-          projectId={projectId}
+          projectId={activeProjectId}
           hasBootstrapSummary={hasBootstrapSummary}
           pendingReviewCount={projectPendingReviews.length}
           pendingDecisionsCount={pendingDecisionsCount}
@@ -181,7 +183,7 @@ export default async function FounderMissionControlPage({
       }
     >
       <FounderMissionShell
-        projectId={projectId}
+        projectId={activeProjectId}
         hasBootstrapSummary={hasBootstrapSummary}
         pendingReviewCount={projectPendingReviews.length}
         pendingDecisionsCount={pendingDecisionsCount}
@@ -190,7 +192,7 @@ export default async function FounderMissionControlPage({
         <div className="space-y-4 p-6 md:p-8">
           <MissionBootstrapBanner
             personaId="founder"
-            projectId={projectId}
+            projectId={activeProjectId}
             showFallback={data.dataSources.financials === "fallback"}
           />
           {data.primaryProject ? (
@@ -203,8 +205,8 @@ export default async function FounderMissionControlPage({
             />
           ) : null}
           <FounderMissionPanelSwitch dayOne={dayOneBoardMemo} steadyState={steadyStateBoardMemo} />
-          <FounderLiveSignalsPanel events={impactEventsRaw} projectId={projectId} />
-          <MissionHelmCopilotSlot personaId="founder" projectId={projectId} />
+          <FounderLiveSignalsPanel events={impactEventsRaw} projectId={activeProjectId} />
+          <MissionHelmCopilotSlot personaId="founder" projectId={activeProjectId} />
         </div>
       </FounderMissionShell>
     </MissionDashboardChrome>

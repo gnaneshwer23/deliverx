@@ -84,6 +84,7 @@ import { getOnboardingProfile } from "@/lib/auth/onboarding";
 import { ensurePmOnboardProject } from "@/services/pmOnboardProject";
 import { buildPmOnboardMissionPath } from "@/services/gatewayOnboardingEngine";
 import { PmOnboardErrorToast } from "@/components/delivery-pm/pm-onboard-error-toast";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,7 @@ export default async function PmMissionControlPage({
 
   const params = await searchParams;
   const onboardMode = params.onboard === "1";
+  const orgProjectId = resolveWorkspaceOrgProjectId(params.project);
 
   const { user: onboardUser, profile: onboardProfile } = await getOnboardingProfile();
   if (onboardMode) {
@@ -135,13 +137,13 @@ export default async function PmMissionControlPage({
 
   const [data, pendingReviews, pendingInvites, orgMembers, governanceStats, orgChanges, collaborativeLoop, orgProfile] =
     await Promise.all([
-      getPmMissionControl(params.project),
+      getPmMissionControl(orgProjectId ?? undefined),
       listPendingArtifactReviewsForPersona("pm-mission").catch(() => []),
       listPendingInvitations().catch(() => []),
       listOrgMembers().catch(() => []),
       getOrgGovernanceStats().catch(() => ({ openChanges: 0, pendingDecisions: 0, openRisks: 0, openIssues: 0 })),
       listOrgChangeRequests({ status: ["draft", "submitted"], limit: 20 }).catch(() => []),
-      getCollaborativeLoopSnapshot("pm", params.project).catch(() => null),
+      getCollaborativeLoopSnapshot("pm", orgProjectId ?? undefined).catch(() => null),
       getCurrentOrganisationProfile().catch(() => ({ industry: null, deliveryType: null })),
     ]);
 

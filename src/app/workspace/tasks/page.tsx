@@ -33,6 +33,7 @@ import {
   WorkspacePageHeader,
   WorkspaceProductShell,
 } from "@/components/professional-workspace/workspace-product-shell";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -59,12 +60,13 @@ export default async function WorkspaceTasksPage({
   searchParams: Search;
 }) {
   const {
-    project: projectId,
+    project: rawProject,
     status: statusFilter,
     page: pageRaw,
     view: viewRaw,
     source: sourceFilter,
   } = await searchParams;
+  const projectId = resolveWorkspaceOrgProjectId(rawProject);
   const view = viewRaw === "kanban" ? "kanban" : "table";
   const standupSourceActive = sourceFilter === "standup";
   const page = parsePageParam(pageRaw);

@@ -29,6 +29,7 @@ import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildEngineerShippingSynthesis } from "@/lib/engineer-shipping-kpis";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -52,8 +53,9 @@ export default async function EngineerMissionControlPage({
   }
 
   const params = await searchParams;
+  const projectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getEngineerMissionControl(params.project),
+    getEngineerMissionControl(projectId ?? undefined),
     listPendingArtifactReviewsForPersona("engineer").catch(() => []),
   ]);
 

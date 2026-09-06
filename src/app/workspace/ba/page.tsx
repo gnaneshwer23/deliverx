@@ -29,6 +29,7 @@ import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilo
 import { dxClass } from "@/lib/dx-theme";
 import { Suspense } from "react";
 import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -48,8 +49,9 @@ export default async function BaMissionControlPage({
   }
 
   const params = await searchParams;
+  const projectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getBaMissionControl(params.project),
+    getBaMissionControl(projectId ?? undefined),
     listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 

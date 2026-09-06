@@ -26,6 +26,34 @@ export function encodeWorkspaceProjectParam(ref: Pick<WorkspaceProjectRef, "kind
   return `${ref.kind}:${ref.id}`;
 }
 
+/**
+ * Compatibility helper for routes that still expect a raw org project UUID.
+ * Accepts both the new encoded workspace param (`org:id` / `experience:id`)
+ * and older plain project IDs. Experience refs intentionally resolve to null
+ * for org-scoped pages.
+ */
+export function resolveWorkspaceOrgProjectId(
+  raw: string | null | undefined,
+): string | null {
+  if (!raw) return null;
+  const parsed = parseWorkspaceProjectParam(raw);
+  if (parsed) {
+    return parsed.kind === "org" ? parsed.id : null;
+  }
+  const legacyProjectId = raw.trim();
+  return legacyProjectId ? legacyProjectId : null;
+}
+
+export function withWorkspaceProjectParam(
+  href: string,
+  projectParam: string | null | undefined,
+): string {
+  const value = projectParam?.trim();
+  if (!value) return href;
+  const sep = href.includes("?") ? "&" : "?";
+  return `${href}${sep}project=${encodeURIComponent(value)}`;
+}
+
 export function withProjectQuery(href: string, ref: WorkspaceProjectRef | null): string {
   if (!ref) return href;
   const q = encodeWorkspaceProjectParam(ref);

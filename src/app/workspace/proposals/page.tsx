@@ -23,6 +23,7 @@ import {
   filterProposalsByProject,
 } from "@/lib/approval/proposals-filter";
 import type { MissionPersonaId } from "@/lib/mission-nav";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export default async function ProposalsPage({
 }) {
   const params = await searchParams;
   const persona = parsePersona(params.persona);
-  const projectId = params.project ?? null;
+  const projectId = resolveWorkspaceOrgProjectId(params.project);
   const highlightReviewId = params.review ?? null;
 
   const [proposals, artifactReviews, impactEvents, projects] = await Promise.all([

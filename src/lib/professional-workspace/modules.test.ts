@@ -7,6 +7,8 @@ import {
 import {
   encodeWorkspaceProjectParam,
   parseWorkspaceProjectParam,
+  resolveWorkspaceOrgProjectId,
+  withWorkspaceProjectParam,
   withProjectQuery,
 } from "@/lib/professional-workspace/project-context";
 import { contributionTrailLabel } from "@/lib/professional-workspace/contribution";
@@ -48,6 +50,15 @@ describe("Workspace project context", () => {
       name: "Alpha",
       href: "/project/p1",
     })).toContain("project=org%3Ap1");
+  });
+
+  it("normalizes encoded project params for org-scoped pages", () => {
+    expect(resolveWorkspaceOrgProjectId("org:p1")).toBe("p1");
+    expect(resolveWorkspaceOrgProjectId("experience:xp1")).toBeNull();
+    expect(resolveWorkspaceOrgProjectId("legacy-project-id")).toBe("legacy-project-id");
+    expect(withWorkspaceProjectParam("/workspace", "org:p1")).toBe(
+      "/workspace?project=org%3Ap1",
+    );
   });
 });
 

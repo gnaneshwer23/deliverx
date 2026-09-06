@@ -10,6 +10,7 @@ import {
   WorkspacePageHeader,
   WorkspaceProductShell,
 } from "@/components/professional-workspace/workspace-product-shell";
+import { withWorkspaceProjectParam } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,12 @@ const ROLE_LABEL: Record<string, string> = {
   product_manager: "Product Manager",
 };
 
-export default async function WorkspaceTeamPage() {
+export default async function WorkspaceTeamPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ project?: string }>;
+}) {
+  const params = await searchParams;
   const [members, pending, bootstrapProject] = await Promise.all([
     listOrgMembers(),
     listPendingInvitations().catch(() => []),
@@ -57,7 +63,10 @@ export default async function WorkspaceTeamPage() {
         title="Team"
         lead="See members, thin org structure, and invitations. This is not executive mission control — membership and structure only."
         actions={
-          <Link href="/workspace" className="pw-button secondary">
+          <Link
+            href={withWorkspaceProjectParam("/workspace", params.project)}
+            className="pw-button secondary"
+          >
             Back to Workspace
           </Link>
         }

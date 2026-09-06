@@ -6,6 +6,7 @@ import {
   AuditTrailTimeline,
 } from "@/components/approvals/audit-trail-timeline";
 import { DxPageHeader } from "@/components/dx/dx-page-chrome";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function AuditTrailPage({
   searchParams: Promise<{ project?: string }>;
 }) {
   const params = await searchParams;
-  const projectId = params.project ?? null;
+  const projectId = resolveWorkspaceOrgProjectId(params.project);
 
   const [events, projects] = await Promise.all([
     listOrgAuditEvents({ projectId, limit: 80 }).catch(() => []),

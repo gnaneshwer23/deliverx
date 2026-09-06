@@ -23,6 +23,7 @@ import { getMissionPersonaAccent } from "@/config/mission-persona-accent";
 import { buildQaReleaseSynthesis } from "@/lib/qa-release-kpis";
 import { MissionHelmCopilotSlot } from "@/components/copilot/mission-helm-copilot-slot";
 import { PersonaStandupTasks } from "@/components/tasks/persona-standup-tasks";
+import { resolveWorkspaceOrgProjectId } from "@/lib/professional-workspace/project-context";
 
 export const dynamic = "force-dynamic";
 
@@ -46,8 +47,9 @@ export default async function QaMissionControlPage({
   }
 
   const params = await searchParams;
+  const projectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getQaMissionControl(params.project),
+    getQaMissionControl(projectId ?? undefined),
     listPendingArtifactReviewsForPersona("qa").catch(() => []),
   ]);
 
