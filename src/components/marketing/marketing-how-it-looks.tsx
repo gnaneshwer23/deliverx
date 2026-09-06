@@ -91,7 +91,7 @@ function DashboardBackdrop() {
             <span className="size-2 rounded-full bg-[#FFBD2E]" />
             <span className="size-2 rounded-full bg-[#28CA41]" />
             <span className="ml-1 text-[0.55rem] font-medium text-[var(--mkt-text3)]">
-              Mission Control · Example
+              Professional Workspace · Example
             </span>
           </div>
           <div className="grid grid-cols-3 gap-2 p-3">
@@ -184,7 +184,7 @@ export function MarketingHowItLooksSection() {
               Real dashboards. <em>Not slide decks.</em>
             </>
           }
-          subtitle="Every role gets a mission control built for how they work: kanban, tables, review queues, and KPI strips. Example data from an NHS EHR programme."
+          subtitle="Every role gets a workspace view built for how they work: kanban, tables, review queues, and KPI strips. Example data from an NHS EHR programme."
         />
 
         <div className="relative mt-10 min-h-[480px] md:min-h-[520px]">

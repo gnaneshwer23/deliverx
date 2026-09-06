@@ -363,7 +363,7 @@ export function LandingPricing() {
                 Open pilot. <em className="text-[#1C4A2E] not-italic">Paid plans later.</em>
               </>
             }
-            description="No credit card. No money-back guarantee. Commercial packaging requires founder approval (T9)."
+            description="No credit card. No money-back guarantee. Commercial packaging appears when billing is live."
           />
         </LandingReveal>
         <div className="grid items-stretch gap-6 lg:grid-cols-3">
@@ -495,7 +495,7 @@ export function LandingFooter() {
       title: "Product",
       links: [
         { href: "#how", label: "How it works" },
-        { href: "#platform", label: "Command centre" },
+        { href: "#platform", label: "Product overview" },
         { href: "#features", label: "Features" },
         { href: "#capabilities", label: "Capabilities" },
       ],
@@ -506,7 +506,7 @@ export function LandingFooter() {
         { href: "#faq", label: "FAQ" },
         { href: "#price", label: "Pricing" },
         { href: "/login", label: "Sign in" },
-        { href: "/signup", label: "Start trial" },
+        { href: "/signup", label: "Join the pilot" },
       ],
     },
   ];
@@ -518,8 +518,7 @@ export function LandingFooter() {
           <div>
             <DxLogo dark />
             <p className="mt-4 max-w-xs text-sm font-light leading-relaxed text-white/40">
-              AI-native delivery OS — from business case to lessons learned, with human approval
-              on every change.
+              Professional intelligence for delivery teams, with human approval on every AI draft.
             </p>
           </div>
           {columns.map((col) => (
@@ -543,7 +542,7 @@ export function LandingFooter() {
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
           <DxCaps className="text-[8px] text-white/25">© 2026 DeliverX Ltd.</DxCaps>
           <p className="font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.14em] text-white/25">
-            GDPR-ready · EU data practices
+            Pilot privacy posture · EU data practices
           </p>
         </div>
       </LandingContainer>

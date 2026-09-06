@@ -25,7 +25,7 @@ export default async function DigitalTwinPage() {
       <main className="p-8">
         <DemotedWorkspaceBanner
           title="Digital Twin is outside the primary pilot journey"
-          body="This Mission Control surface remains bookmarkable for legacy org work, but it is not part of Profile → Evidence → Experience → Launchpad. No portfolio is configured, so there is nothing to chart."
+          body="This legacy workspace surface remains bookmarkable for org work, but it is not part of Profile → Evidence → Experience → Launchpad. No portfolio is configured, so there is nothing to chart."
         />
         <header className="mb-8">
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">

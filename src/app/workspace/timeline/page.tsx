@@ -10,7 +10,7 @@ export default async function Page({
       moduleId="timeline"
       searchParams={searchParams}
       legacyHref="/workspace/pm-mission"
-      legacyLabel="PM Mission Control"
+      legacyLabel="PM delivery workspace"
     />
   );
 }

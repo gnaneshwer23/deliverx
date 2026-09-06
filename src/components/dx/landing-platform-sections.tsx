@@ -30,7 +30,7 @@ const JOURNEY = [
   {
     step: "02",
     title: "Run delivery",
-    body: "Tasks, standups, and velocity feed one command centre. See health, blockers, and what needs attention today.",
+    body: "Tasks, standups, and velocity feed one shared workspace. See health, blockers, and what needs attention today.",
   },
   {
     step: "03",
@@ -48,7 +48,7 @@ const PILLARS = [
   {
     icon: FolderKanban,
     title: "Delivery",
-    points: ["Project command centre", "Tasks & standups", "Capacity & benefits"],
+    points: ["Project workspace", "Tasks & standups", "Capacity & benefits"],
   },
   {
     icon: ShieldCheck,
@@ -144,7 +144,7 @@ function platformMetrics(preview: LandingPreviewStats) {
       {
         k: String(preview.atRisk),
         l: "Programmes at risk",
-        sub: "Tracked in command centre",
+        sub: "Tracked in workspace",
       },
       {
         k: String(preview.blocked),
@@ -185,12 +185,12 @@ export function LandingPlatform({ preview }: { preview: LandingPreviewStats }) {
                 <DxCaps accent>Inside DeliverX</DxCaps>
               </div>
               <h2 className={`${dxClass.display} text-2xl leading-snug text-[#0D0D0B] md:text-[1.75rem]`}>
-                Command centre + modules —{" "}
+                Professional Workspace + modules —{" "}
                 <em className="text-[#1C4A2E] not-italic">one surface</em>
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-[#6B6B64]">
-                Live portfolio signals in the command centre; delivery, governance, and
-                intelligence plug into the same graph.
+                Shared delivery signals stay connected across delivery, governance, and
+                intelligence in one calm workspace.
               </p>
             </div>
             <div className="flex flex-wrap gap-2 md:justify-end">

@@ -61,7 +61,7 @@ export const ROLES: Record<RoleId, RoleDashboard> = {
     "code": "SP",
     "accent": "#3D9660",
     "accentBg": "rgba(61,150,96,.12)",
-    "title": "Founder / Sponsor · Command Centre",
+    "title": "Founder / Sponsor · Professional Workspace",
     "badge": "Portfolio Healthy",
     "tagline": "Portfolio, decisions, and runway in one view",
     "kpis": [
@@ -756,7 +756,7 @@ export type DeliveryStage = {
 /** Marketing copy keyed to `WORKSPACE_FLOW_STEPS` — same PM-first path as mission control. */
 const DELIVERY_STAGE_DETAILS: Record<WorkspaceFlowStepId, string> = {
   upload:
-    "Upload business case, charter, or plain text on PM Mission Control. Delivery Brain extracts scope, timeline, team, and objectives.",
+    "Upload a business case, charter, or plain text in the PM workspace. Delivery Brain extracts scope, timeline, team, and objectives.",
   extract:
     "AI proposes workstreams, milestones, and initial RAID. Nothing is applied until you accept, edit, or reject each item in the AI Review Queue.",
   invite_ba:
@@ -830,7 +830,7 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
     category: "onboarding",
     title: "PM business case upload + AI review",
     description:
-      "Upload a business case or charter on PM Mission Control. Delivery Brain extracts scope, milestones, and RAID: every proposal lands in the AI Review Queue for your approval.",
+      "Upload a business case or charter in the PM workspace. Delivery Brain extracts scope, milestones, and RAID: every proposal lands in the AI Review Queue for your approval.",
   },
   {
     category: "onboarding",
@@ -846,9 +846,9 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
   },
   {
     category: "ai-meetings",
-    title: "Ask Helm on mission pages",
+    title: "Ask Helm in role workspaces",
     description:
-      "Ask Helm: your delivery copilot: on every persona mission-control page. Context-aware answers grounded in your project data.",
+      "Ask Helm, your delivery copilot, inside each role workspace. Context-aware answers stay grounded in your project data.",
   },
   {
     category: "ai-meetings",
@@ -864,15 +864,15 @@ export const LIVE_FEATURES: readonly LiveFeature[] = [
   },
   {
     category: "ai-meetings",
-    title: "Standup tasks on persona missions",
+    title: "Standup tasks in role workspaces",
     description:
-      "Standup intelligence surfaces on each persona mission-control page: action items scoped to how that role works.",
+      "Standup intelligence surfaces in each role workspace, with action items scoped to how that role works.",
   },
   {
     category: "visibility",
     title: "Delivery signals across roles",
     description:
-      "PM Command Centre surfaces blockers, risks, and sprint health: propagated across persona dashboards after approval via delivery impact events.",
+      "PM workspace views surface blockers, risks, and sprint health: propagated across role dashboards after approval via delivery impact events.",
   },
   {
     category: "visibility",
@@ -922,7 +922,7 @@ export const PROOF_STATS = [
   {
     n: "7",
     label: "Persona workspaces",
-    desc: "Sponsor, PM, BA, PO, Engineer, QA, and Scrum Master: each with a mission-control layout matched to how that role works, not a shared generic board.",
+    desc: "Sponsor, PM, BA, PO, Engineer, QA, and Scrum Master: each with a workspace view matched to how that role works, not a shared generic board.",
   },
   {
     n: "1",
@@ -947,7 +947,7 @@ export const QUICK_START_STEPS: readonly QuickStartStep[] = [
   {
     step: "01",
     label: "Upload business case",
-    detail: "PM Mission Control extracts scope, milestones, and RAID into the Review Queue.",
+    detail: "The PM workspace extracts scope, milestones, and RAID into the Review Queue.",
   },
   {
     step: "02",
@@ -964,10 +964,10 @@ export const QUICK_START_STEPS: readonly QuickStartStep[] = [
 export const PRICING_TIERS = [
   {
     "tier": "Early access",
-    "name": "Free trial",
+    "name": "Open pilot",
     "price": "Coming soon",
     "period": "",
-    "desc": "Full platform during early access: all seven role dashboards, AI Review Queue, and connected delivery signals.",
+    "desc": "Pilot access while billing stays off: all seven role dashboards, AI Review Queue, and connected delivery signals.",
     "features": [
       "All 7 role dashboards",
       "AI document analysis + Review Queue",

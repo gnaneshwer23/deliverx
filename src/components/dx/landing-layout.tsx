@@ -212,11 +212,11 @@ export function SocialProofStrip({ className = "" }: { className?: string }) {
         </li>
         <li className="flex items-center gap-1.5">
           <span className="size-1 bg-[#3D9660]" aria-hidden />
-          GDPR ready
+          Privacy controls live
         </li>
         <li className="flex items-center gap-1.5">
           <span className="size-1 bg-[#3D9660]" aria-hidden />
-          Free trial
+          Open pilot access
         </li>
       </ul>
     </div>
@@ -354,7 +354,7 @@ export function LandingDashboardMockup({
   return (
     <div
       className={`relative ${float ? "landing-mock-float" : ""} ${className}`}
-      aria-label="DeliverX dashboard preview"
+      aria-label="DeliverX workspace preview"
     >
       {!compact ? (
         <div
@@ -378,7 +378,7 @@ export function LandingDashboardMockup({
             <span className="size-2 rounded-full bg-[#1A6B3A]/80" />
           </div>
           <span className="ml-4 font-[family-name:var(--font-dx-mono)] text-[9px] uppercase tracking-[0.2em] text-[#9ca3af]">
-            DeliverX · Command centre
+            DeliverX · Professional Workspace
           </span>
           <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-[#1A6B3A]/30 bg-[#1A6B3A]/10 px-2 py-0.5 font-[family-name:var(--font-dx-mono)] text-[8px] uppercase tracking-wide text-[#3D9660]">
             <span className="size-1.5 animate-pulse rounded-full bg-[#1A6B3A]" />

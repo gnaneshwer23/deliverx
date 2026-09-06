@@ -47,7 +47,7 @@ export function LandingMobileNav() {
           </ul>
           <div className="mt-4 flex flex-col gap-2 border-t border-[#F0F0E8] pt-4">
             <DxButtonLink href="/signup" className="w-full justify-center">
-              Start trial
+              Join the pilot
             </DxButtonLink>
             <Link
               href="/login"

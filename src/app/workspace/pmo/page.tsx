@@ -30,7 +30,7 @@ export default async function PmoPage() {
       <main className="p-8">
         <DemotedWorkspaceBanner
           title="PMO Dashboard is outside the primary pilot journey"
-          body="This Mission Control surface remains bookmarkable for legacy org work. No portfolio is configured, so there are no charts to interpret."
+          body="This legacy workspace surface remains bookmarkable for org work. No portfolio is configured, so there are no charts to interpret."
         />
         <header className="mb-8">
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
@@ -74,7 +74,7 @@ export default async function PmoPage() {
     <main className="p-8">
       <DemotedWorkspaceBanner
         title="PMO Dashboard is outside the primary pilot journey"
-        body="Risks, bottlenecks and forecasts below are legacy portfolio signals. They are not Professional Intelligence capability scores."
+        body="Risks, bottlenecks, and forecasts below are legacy portfolio signals. They are not Professional Intelligence capability scores."
       />
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
@@ -83,8 +83,8 @@ export default async function PmoPage() {
             Dashboard
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Cross-programme command centre — risks, bottlenecks, blast radius,
-            forecasts.
+            Cross-programme workspace view for risks, bottlenecks, blast radius,
+            and forecasts.
           </p>
         </div>
         <Link

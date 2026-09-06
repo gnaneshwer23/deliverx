@@ -471,7 +471,7 @@ export default async function DashboardPage({
       <div className="mb-6">
         <DashboardPanelShell
           panelId="command-centre-intelligence"
-          title="Command Centre intelligence"
+          title="Workspace intelligence"
           href="/workspace/proposals"
           card
         >
