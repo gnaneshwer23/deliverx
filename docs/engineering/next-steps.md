@@ -44,6 +44,7 @@ This plan is grounded in **shipped reality**, not a greenfield vision. T9 is fou
 **Founder one-clicks**
 
 - TD-006: [Auth → Attack Protection](https://supabase.com/dashboard/project/jibmyxaldetyycmtlxet/auth/protection) · runbook [`runbook-leaked-password-protection.md`](./runbook-leaked-password-protection.md)
+- R-P1-15: prod reset proof · runbook [`runbook-password-reset-proof.md`](./runbook-password-reset-proof.md)
 - TD-018: [GitHub billing](https://github.com/settings/billing) → then `gh workflow enable` both workflows → re-add `on.push` to `verify.yml`
 
 ---

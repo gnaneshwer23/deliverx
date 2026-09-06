@@ -40,8 +40,12 @@ export function ForgotPasswordForm() {
 
   if (sent) {
     return (
-      <div className="border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-3 text-sm text-[#1C4A2E]">
-        If an account exists for that email, we&apos;ve sent a reset link.
+      <div className="space-y-2 border border-[#C6DDD0] bg-[#EEF5F1] px-3 py-3 text-sm text-[#1C4A2E]">
+        <p>If an account exists for that email, we&apos;ve sent a reset link.</p>
+        <p className="text-xs text-[#2F5A42]">
+          Open the link in the same browser where you requested it, and check spam if it
+          doesn&apos;t arrive.
+        </p>
       </div>
     );
   }
