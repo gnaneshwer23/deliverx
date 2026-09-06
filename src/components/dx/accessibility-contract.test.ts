@@ -73,7 +73,7 @@ describe("primary shell accessibility contracts", () => {
   it("frames demoted Twin/PMO/Marketplace surfaces honestly", () => {
     const banner = source("./demoted-workspace-banner.tsx");
     expect(banner).toContain("role=\"note\"");
-    expect(banner).toContain("Back to Professional Home");
+    expect(banner).toContain("Back to Profile");
     expect(source("../../app/workspace/twin/page.tsx")).toContain(
       "DemotedWorkspaceBanner",
     );
@@ -83,5 +83,17 @@ describe("primary shell accessibility contracts", () => {
     expect(source("../../app/workspace/marketplace/page.tsx")).toContain(
       "DemotedWorkspaceBanner",
     );
+  });
+
+  it("names workspace quick actions and hides decorative icons", () => {
+    const quickActions = source("../dashboard/quick-actions-bar.tsx");
+    expect(quickActions).toContain('aria-label="Workspace quick actions"');
+    expect(quickActions).toContain("aria-hidden");
+  });
+
+  it("announces empty workspace role views as status", () => {
+    const emptyBanner = source("./mission-control-empty.tsx");
+    expect(emptyBanner).toContain('role="status"');
+    expect(emptyBanner).toContain("workspace view needs at least one project");
   });
 });

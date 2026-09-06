@@ -29,27 +29,27 @@ export default async function PmoPage() {
     return (
       <main className="p-8">
         <DemotedWorkspaceBanner
-          title="PMO Dashboard is outside the primary pilot journey"
+          title="Portfolio operations is outside the primary pilot journey"
           body="This legacy workspace surface remains bookmarkable for org work. No portfolio is configured, so there are no charts to interpret."
         />
         <header className="mb-8">
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-            <Command size={20} className="text-indigo-600" aria-hidden /> PMO
-            Dashboard
+            <Command size={20} className="text-indigo-600" aria-hidden /> Portfolio
+            operations
           </h1>
         </header>
         <div className="rounded-2xl border border-dashed border-slate-300 p-10 text-center text-sm text-slate-500">
           <p className="font-medium text-slate-700">Portfolio not configured.</p>
           <p className="mt-1">
             Create a portfolio to unlock organisation-wide intelligence, or
-            return to Professional Home for the pilot journey.
+            return to Profile for the pilot journey.
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/profile"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:bg-slate-50"
             >
-              Back to Professional Home
+              Back to Profile
             </Link>
             <Link
               href="/workspace/portfolio"
@@ -73,14 +73,14 @@ export default async function PmoPage() {
   return (
     <main className="p-8">
       <DemotedWorkspaceBanner
-        title="PMO Dashboard is outside the primary pilot journey"
+        title="Portfolio operations is outside the primary pilot journey"
         body="Risks, bottlenecks, and forecasts below are legacy portfolio signals. They are not Professional Intelligence capability scores."
       />
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-            <Command size={20} className="text-indigo-600" aria-hidden /> PMO
-            Dashboard
+            <Command size={20} className="text-indigo-600" aria-hidden /> Portfolio
+            operations
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             Cross-programme workspace view for risks, bottlenecks, blast radius,

@@ -24,13 +24,13 @@ export default async function DigitalTwinPage() {
     return (
       <main className="p-8">
         <DemotedWorkspaceBanner
-          title="Digital Twin is outside the primary pilot journey"
+          title="Organisation simulation is outside the primary pilot journey"
           body="This legacy workspace surface remains bookmarkable for org work, but it is not part of Profile → Evidence → Experience → Launchpad. No portfolio is configured, so there is nothing to chart."
         />
         <header className="mb-8">
           <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
             <Telescope size={20} className="text-indigo-600" aria-hidden />{" "}
-            Digital Twin
+            Organisation simulation
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             A live model of how your organisation delivers work.
@@ -42,14 +42,14 @@ export default async function DigitalTwinPage() {
           </p>
           <p className="mt-1">
             The twin builds on top of the portfolio model — set one up first, or
-            return to Professional Home for the pilot journey.
+            return to Profile for the pilot journey.
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/profile"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-slate-800 hover:bg-slate-50"
             >
-              Back to Professional Home
+              Back to Profile
             </Link>
             <Link
               href="/workspace/portfolio"
@@ -70,14 +70,14 @@ export default async function DigitalTwinPage() {
     <IntelligenceLiveRefresh table="twin_snapshots">
       <main className="p-8">
         <DemotedWorkspaceBanner
-          title="Digital Twin is outside the primary pilot journey"
+          title="Organisation simulation is outside the primary pilot journey"
           body="Charts below summarise legacy portfolio simulation signals. They are not Professional Intelligence capability scores. Prefer Hub for the charter loop."
         />
         <header className="mb-8 flex items-start justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
               <Telescope size={20} className="text-indigo-600" aria-hidden />{" "}
-              Digital Twin
+              Organisation simulation
             </h1>
             <p className="mt-1 text-sm text-slate-500">
               A live simulation of enterprise delivery — predicts behaviour, runs

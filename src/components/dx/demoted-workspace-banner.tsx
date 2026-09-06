@@ -23,7 +23,7 @@ export function DemotedWorkspaceBanner({
         href="/profile"
         className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-[#1C4A2E] underline-offset-2 hover:underline"
       >
-        Back to Professional Home
+        Back to Profile
       </Link>
     </aside>
   );

@@ -261,8 +261,8 @@ export default async function DashboardPage({
 
       <DashboardPanelShell
         panelId="mission-workspaces"
-        title="Mission workspaces"
-        subtitle="Jump to persona mission control with live signal counts"
+        title="Role workspaces"
+        subtitle="Jump to role views with live signal counts"
         className="mb-6"
         card
       >

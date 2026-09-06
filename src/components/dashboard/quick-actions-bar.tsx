@@ -35,45 +35,45 @@ const ACTIONS: Action[] = [
   { href: "/workspace/governance", label: "Governance", icon: ShieldCheck },
   { href: "/workspace/standups", label: "Standups", icon: Users },
   { href: "/workspace/reports", label: "Reports", icon: FileBarChart2 },
-  { href: "/workspace/ba", label: "BA Mission Control", icon: NotebookPen, roles: ["ba", "pm"] },
+  { href: "/workspace/ba", label: "BA workspace", icon: NotebookPen, roles: ["ba", "pm"] },
   {
     href: "/workspace/product",
-    label: "Product Mission Control",
+    label: "Product workspace",
     icon: TrendingUp,
     roles: ["product_manager", "pm", "executive"],
   },
   {
     href: "/workspace/pm-mission",
-    label: "PM Mission Control",
+    label: "PM workspace",
     icon: CalendarClock,
     roles: ["pm", "executive"],
   },
   {
     href: "/workspace/engineer",
-    label: "Engineer Mission Control",
+    label: "Engineer workspace",
     icon: Code2,
     roles: ["engineer", "team_member"],
   },
   {
     href: "/workspace/scrum-mission",
-    label: "Scrum Mission Control",
+    label: "Scrum workspace",
     icon: Kanban,
     roles: ["scrum_master", "pm", "team_member"],
   },
   {
     href: "/workspace/qa",
-    label: "QA Mission Control",
+    label: "QA workspace",
     icon: ShieldCheck,
     roles: ["qa", "pm", "team_member"],
   },
   {
     href: "/workspace/founder",
-    label: "Founder Mission Control",
+    label: "Founder workspace",
     icon: Crown,
     roles: ["executive"],
   },
-  { href: "/workspace/pmo", label: "PMO view", icon: Command, roles: ["pm", "executive"] },
-  { href: "/workspace/twin", label: "Digital twin", icon: Cpu, roles: ["pm", "executive"] },
+  { href: "/workspace/pmo", label: "Portfolio operations", icon: Command, roles: ["pm", "executive"] },
+  { href: "/workspace/twin", label: "Organisation simulation", icon: Cpu, roles: ["pm", "executive"] },
   { href: "/workspace/portfolio", label: "Portfolio", icon: ClipboardList, roles: ["pm", "executive"] },
   { href: DELIVERY_PATTERNS_HREF, label: DELIVERY_PATTERNS_NAV_LABEL, icon: Calendar, roles: ["executive"] },
 ];
@@ -82,7 +82,7 @@ export function QuickActionsBar({ role }: { role: UserRole }) {
   const visible = ACTIONS.filter((a) => !a.roles || a.roles.includes(role));
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <nav aria-label="Workspace quick actions" className="flex flex-wrap gap-1.5">
       {visible.map((action) => {
         const Icon = action.icon;
         return (
@@ -91,11 +91,11 @@ export function QuickActionsBar({ role }: { role: UserRole }) {
             href={action.href}
             className="inline-flex min-h-9 touch-manipulation items-center gap-1.5 border border-[#E4E4DC] bg-white px-3 py-1.5 text-xs text-[#6B6B64] transition hover:border-[#1C4A2E] hover:text-[#0D0D0B]"
           >
-            <Icon size={13} />
+            <Icon size={13} aria-hidden />
             {action.label}
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }
