@@ -47,9 +47,9 @@ export default async function QaMissionControlPage({
   }
 
   const params = await searchParams;
-  const projectId = resolveWorkspaceOrgProjectId(params.project);
+  const requestedProjectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getQaMissionControl(projectId ?? undefined),
+    getQaMissionControl(requestedProjectId ?? undefined),
     listPendingArtifactReviewsForPersona("qa").catch(() => []),
   ]);
 

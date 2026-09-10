@@ -67,7 +67,7 @@ Full notes: [`engineering/api-contracts.md`](./engineering/api-contracts.md).
 
 ## Events
 
-Sim events (`experience_sim_events`), including `HiringInterviewStarted` / `Turn` / `Completed` / `Skipped`; contributions may emit/process into ledger jobs — never skip provenance. Hiring-interview events are not capability or Verified writes.
+Sim events (`experience_sim_events`), including `HiringInterviewStarted` / `HiringInterviewTurn` / `HiringInterviewCompleted` / `HiringInterviewSkipped`; contributions may emit/process into ledger jobs — never skip provenance. Hiring-interview events are not capability or Verified writes.
 
 ## AI behaviour
 

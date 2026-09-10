@@ -219,7 +219,6 @@ export function HiringInterview({
               <button
                 type="button"
                 className="xp-ceremony-skip"
-                disabled={busy}
                 onClick={() => void post({ action: "skip" })}
               >
                 Skip interview and join anyway

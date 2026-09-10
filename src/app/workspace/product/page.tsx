@@ -52,9 +52,9 @@ export default async function ProductMissionControlPage({
   }
 
   const params = await searchParams;
-  const projectId = resolveWorkspaceOrgProjectId(params.project);
+  const requestedProjectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getProductMissionControl(projectId ?? undefined),
+    getProductMissionControl(requestedProjectId ?? undefined),
     listPendingArtifactReviewsForPersona("product").catch(() => []),
   ]);
 

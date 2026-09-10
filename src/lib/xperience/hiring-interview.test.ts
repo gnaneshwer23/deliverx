@@ -12,6 +12,7 @@ import {
   isXpHiringInterviewEnabled,
   makeHiringTurn,
   nextHiringSpeakerRole,
+  normaliseHiringClaims,
   prepareHiringInterviewState,
   selectHiringPanel,
   shouldAutoCompleteHiringInterview,
@@ -30,11 +31,17 @@ describe("Experience hiring interview (slice 1)", () => {
   });
 
   it("attaches a pending interview without assigning capability", () => {
-    const state = attachPendingHiringInterview(generateMediFlowExperience({}));
+    const generated = generateMediFlowExperience({});
+    const state = attachPendingHiringInterview(generated);
     expect(state.hiringInterview?.status).toBe("pending");
     expect(shouldShowHiringInterview(state)).toBe(true);
     expect(isHiringInterviewFinished(state)).toBe(false);
     expect(state.hiringInterview?.placement).toBeNull();
+    const { hiringInterview: _attached, ...rest } = state;
+    expect(rest).toEqual(generated);
+    expect(JSON.stringify(state.hiringInterview)).not.toMatch(
+      /mayWriteCapability|scoreRun|deliverxVerified/i,
+    );
   });
 
   it("does not re-attach over an existing interview", () => {
@@ -150,6 +157,22 @@ describe("Experience hiring interview (slice 1)", () => {
         "claim:background",
       ]),
     );
+  });
+
+  it("discards non-string claim fields instead of throwing", () => {
+    expect(
+      normaliseHiringClaims({
+        background: 12,
+        targetRole: "APM",
+        selectedSkill: null,
+        workStyle: { nested: true },
+      }),
+    ).toEqual({
+      background: undefined,
+      targetRole: "APM",
+      selectedSkill: undefined,
+      workStyle: undefined,
+    });
   });
 
   it("kill-switch defaults on and rolls back for off/0/false/disabled", () => {

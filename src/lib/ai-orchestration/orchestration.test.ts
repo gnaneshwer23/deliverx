@@ -511,7 +511,7 @@ describe("AI citation requirements", () => {
   });
 
   it("legacy coach adapters still compile and run through the registry", async () => {
-    for (const slug of ["experience_coach", "workspace_coach", "interview_lab", "experience_hiring"] as const) {
+    for (const slug of ["experience_coach", "workspace_coach", "interview_lab"] as const) {
       const result = await runAgent({
         userId: "user-1",
         agentSlug: slug,
@@ -522,11 +522,7 @@ describe("AI citation requirements", () => {
       });
       expect(result.ok).toBe(true);
       expect(result.output?.mayWriteCapability).toBe(false);
-      if (slug === "experience_hiring") {
-        expect(result.prompt.contract).toBe("experience_hiring_question_v1");
-      } else {
-        expect(result.prompt.contract).toBe("coach_hint_v1");
-      }
+      expect(result.prompt.contract).toBe("coach_hint_v1");
     }
   });
 

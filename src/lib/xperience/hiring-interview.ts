@@ -200,12 +200,26 @@ export function makeHiringTurn(input: {
   };
 }
 
-export function labelledClaims(claims: HiringClaims): Record<string, string> {
+export function normaliseHiringClaims(raw: unknown): HiringClaims {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const row = raw as Record<string, unknown>;
+  const pick = (key: keyof HiringClaims) =>
+    typeof row[key] === "string" ? row[key] : undefined;
+  return {
+    background: pick("background"),
+    targetRole: pick("targetRole"),
+    selectedSkill: pick("selectedSkill"),
+    workStyle: pick("workStyle"),
+  };
+}
+
+export function labelledClaims(claims: unknown): Record<string, string> {
+  const normalised = normaliseHiringClaims(claims);
   const out: Record<string, string> = {};
-  if (claims.background?.trim()) out.background = claims.background.trim();
-  if (claims.targetRole?.trim()) out.targetRole = claims.targetRole.trim();
-  if (claims.selectedSkill?.trim()) out.selectedSkill = claims.selectedSkill.trim();
-  if (claims.workStyle?.trim()) out.workStyle = claims.workStyle.trim();
+  if (normalised.background?.trim()) out.background = normalised.background.trim();
+  if (normalised.targetRole?.trim()) out.targetRole = normalised.targetRole.trim();
+  if (normalised.selectedSkill?.trim()) out.selectedSkill = normalised.selectedSkill.trim();
+  if (normalised.workStyle?.trim()) out.workStyle = normalised.workStyle.trim();
   return out;
 }
 

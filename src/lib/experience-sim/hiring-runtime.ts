@@ -16,6 +16,7 @@ import {
   hiringContextSources,
   isXpHiringInterviewEnabled,
   labelledClaims,
+  normaliseHiringClaims,
   makeHiringTurn,
   nextHiringSpeakerRole,
   panelMemberForRole,
@@ -40,6 +41,33 @@ function finishInterview(
       completedAt: new Date().toISOString(),
     },
   };
+}
+
+function isTerminalInterview(state: ExperienceSimState): boolean {
+  const status = state.hiringInterview?.status;
+  return status === "completed" || status === "skipped";
+}
+
+/** Skip wins over in-flight turns. Do not resurrect a closed interview. */
+async function persistUnlessInterviewClosed(
+  supabase: SupabaseClient,
+  enrolmentId: string,
+  userId: string,
+  next: ExperienceSimState,
+): Promise<ExperienceSimState> {
+  const latest = await ensureSimState(supabase, enrolmentId, userId);
+  const latestStatus = latest.hiringInterview?.status;
+  if (latestStatus === "skipped") return latest;
+  const nextStatus = next.hiringInterview?.status;
+  if (latestStatus === "completed" && nextStatus !== "skipped") {
+    return latest;
+  }
+  const toWrite =
+    nextStatus === "skipped" && latest.hiringInterview
+      ? finishInterview(latest, "skipped")
+      : next;
+  await persistSimState(supabase, enrolmentId, toWrite);
+  return toWrite;
 }
 
 function asCitations(raw: unknown): HiringInterviewTurn["citations"] {
@@ -136,7 +164,7 @@ export async function runHiringInterviewAction(
   }
 
   let state = await ensureSimState(supabase, input.enrolmentId, user.id);
-  const claims = input.claims ?? {};
+  const claims = normaliseHiringClaims(input.claims);
 
   if (input.action === "open") {
     if (!state.hiringInterview) {
@@ -161,7 +189,10 @@ export async function runHiringInterviewAction(
           turns: [question],
         },
       };
-      await persistSimState(supabase, input.enrolmentId, state);
+      state = await persistUnlessInterviewClosed(supabase, input.enrolmentId, user.id, state);
+      if (isTerminalInterview(state)) {
+        return { ok: true, state, capabilityAssigned: false };
+      }
       await appendSimEvent(supabase, {
         enrolmentId: input.enrolmentId,
         userId: user.id,
@@ -185,13 +216,15 @@ export async function runHiringInterviewAction(
       return { ok: true, state, capabilityAssigned: false };
     }
     state = finishInterview(state, "skipped");
-    await persistSimState(supabase, input.enrolmentId, state);
-    await appendSimEvent(supabase, {
-      enrolmentId: input.enrolmentId,
-      userId: user.id,
-      eventType: "HiringInterviewSkipped",
-      payload: { placement: state.hiringInterview.placement },
-    });
+    state = await persistUnlessInterviewClosed(supabase, input.enrolmentId, user.id, state);
+    if (state.hiringInterview?.status === "skipped") {
+      await appendSimEvent(supabase, {
+        enrolmentId: input.enrolmentId,
+        userId: user.id,
+        eventType: "HiringInterviewSkipped",
+        payload: { placement: state.hiringInterview.placement },
+      });
+    }
     return { ok: true, state, capabilityAssigned: false };
   }
 
@@ -207,16 +240,18 @@ export async function runHiringInterviewAction(
       return { ok: false, error: "hiring_interview_too_short", state };
     }
     state = finishInterview(state, "completed");
-    await persistSimState(supabase, input.enrolmentId, state);
-    await appendSimEvent(supabase, {
-      enrolmentId: input.enrolmentId,
-      userId: user.id,
-      eventType: "HiringInterviewCompleted",
-      payload: {
-        placement: state.hiringInterview.placement,
-        answers: candidateAnswerCount(state.hiringInterview),
-      },
-    });
+    state = await persistUnlessInterviewClosed(supabase, input.enrolmentId, user.id, state);
+    if (state.hiringInterview?.status === "completed") {
+      await appendSimEvent(supabase, {
+        enrolmentId: input.enrolmentId,
+        userId: user.id,
+        eventType: "HiringInterviewCompleted",
+        payload: {
+          placement: state.hiringInterview.placement,
+          answers: candidateAnswerCount(state.hiringInterview),
+        },
+      });
+    }
     return { ok: true, state, capabilityAssigned: false };
   }
 
@@ -262,17 +297,19 @@ export async function runHiringInterviewAction(
 
     if (shouldAutoCompleteHiringInterview(next.hiringInterview)) {
       next = finishInterview(next, "completed");
-      await persistSimState(supabase, input.enrolmentId, next);
-      await appendSimEvent(supabase, {
-        enrolmentId: input.enrolmentId,
-        userId: user.id,
-        eventType: "HiringInterviewCompleted",
-        payload: {
-          placement: next.hiringInterview?.placement ?? null,
-          answers: candidateAnswerCount(next.hiringInterview),
-          autoCompleted: true,
-        },
-      });
+      next = await persistUnlessInterviewClosed(supabase, input.enrolmentId, user.id, next);
+      if (next.hiringInterview?.status === "completed") {
+        await appendSimEvent(supabase, {
+          enrolmentId: input.enrolmentId,
+          userId: user.id,
+          eventType: "HiringInterviewCompleted",
+          payload: {
+            placement: next.hiringInterview?.placement ?? null,
+            answers: candidateAnswerCount(next.hiringInterview),
+            autoCompleted: true,
+          },
+        });
+      }
       return { ok: true, state: next, capabilityAssigned: false };
     }
 
@@ -284,7 +321,7 @@ export async function runHiringInterviewAction(
         turns: [...next.hiringInterview!.turns, question],
       },
     };
-    await persistSimState(supabase, input.enrolmentId, next);
+    next = await persistUnlessInterviewClosed(supabase, input.enrolmentId, user.id, next);
     return { ok: true, state: next, capabilityAssigned: false };
   }
 

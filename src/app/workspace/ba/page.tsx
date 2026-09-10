@@ -49,9 +49,9 @@ export default async function BaMissionControlPage({
   }
 
   const params = await searchParams;
-  const projectId = resolveWorkspaceOrgProjectId(params.project);
+  const requestedProjectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getBaMissionControl(projectId ?? undefined),
+    getBaMissionControl(requestedProjectId ?? undefined),
     listPendingArtifactReviewsForPersona("ba").catch(() => []),
   ]);
 

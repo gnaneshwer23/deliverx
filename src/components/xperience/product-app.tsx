@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -125,7 +125,6 @@ export function ProductApp({
   const [agentRecommendation, setAgentRecommendation] = useState(
     "The system will recommend the next action after your first decision.",
   );
-  const hiringResumeChecked = useRef(false);
   const [form, setForm] = useState({
     firstName: initialProfile?.firstName || initialUser?.firstName || "",
     lastName: initialProfile?.lastName || initialUser?.lastName || "",
@@ -151,22 +150,36 @@ export function ProductApp({
   const firstName = form.firstName.trim() || "there";
 
   useEffect(() => {
-    if (hiringResumeChecked.current) return;
     if (!hiringInterviewEnabled || !initialEnrolmentId) return;
-    hiringResumeChecked.current = true;
     let cancelled = false;
-    void fetch(`/api/xperience/sim/state?enrolmentId=${encodeURIComponent(initialEnrolmentId)}`)
-      .then((response) => response.json())
-      .then((result: { state?: ExperienceSimState }) => {
-        if (cancelled || !result.state) return;
-        setSimState(result.state);
-        if (shouldResumeHiringInterview(result.state)) setScreen("Interview");
-      })
-      .catch(() => {
-        /* Returning users without a pending interview stay on the dashboard. */
-      });
+    let attempts = 0;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const load = () => {
+      if (cancelled) return;
+      void fetch(`/api/xperience/sim/state?enrolmentId=${encodeURIComponent(initialEnrolmentId)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error("resume_failed");
+          return response.json() as Promise<{ state?: ExperienceSimState }>;
+        })
+        .then((result) => {
+          if (cancelled || !result.state) return;
+          setSimState(result.state);
+          if (shouldResumeHiringInterview(result.state)) setScreen("Interview");
+        })
+        .catch(() => {
+          if (cancelled) return;
+          attempts += 1;
+          if (attempts < 3) {
+            retryTimer = setTimeout(load, 600 * attempts);
+          }
+        });
+    };
+
+    load();
     return () => {
       cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
     };
   }, [hiringInterviewEnabled, initialEnrolmentId]);
 
