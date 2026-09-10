@@ -640,6 +640,46 @@
   color: var(--xp-ink);
 }
 
+.xp-hire-transcript {
+  display: grid;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.xp-hire-transcript li {
+  border: 1px solid var(--xp-line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+.xp-hire-transcript li.is-candidate {
+  background: rgba(28, 25, 23, 0.03);
+}
+
+.xp-hire-transcript p {
+  margin: 6px 0 0;
+  line-height: 1.55;
+}
+
+.xp-hire-compose {
+  margin-top: 8px;
+}
+
+.xp-hire-placement {
+  margin: 12px 0 22px;
+  border: 1px solid var(--xp-line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  background: #fff;
+}
+
+.xp-hire-placement p + p {
+  margin-top: 8px;
+}
+
 @media (max-width: 860px) {
   .xp-two-col,
   .xp-identity-preview,

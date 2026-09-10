@@ -76,6 +76,14 @@ export const CITATION_POLICIES: Record<string, CitationPolicy> = {
     reason:
       "Coach and interview hints reference project/experience/career evidence and must cite it.",
   },
+  experience_hiring_question_v1: {
+    contractId: "experience_hiring_question_v1",
+    citationClass: "required",
+    field: "citations",
+    classification: "organisation/project factual question tied to Experience sim state",
+    reason:
+      "Hiring-panel questions assert company, role, and project facts and must cite the supplied Experience context.",
+  },
   /**
    * Documented-only optional example. Not attached to any live agent. Exists so
    * the machinery + optional-class test path is exercised without weakening a

@@ -71,6 +71,7 @@ Vercel Production env (readable keys only; encrypted values not decrypted in thi
 | --- | --- | --- | --- |
 | `DELIVERX_RECOMMENDATION_SM` | **on** | Set for Production + Preview (encrypted; documented on 2026-07-26) | Yes |
 | `DELIVERX_XP_ENTRY_CEREMONY` | default **on** | Unset → code default on | Yes |
+| `DELIVERX_XP_HIRING_INTERVIEW` | default **on** | Unset → code default on | Yes |
 | `DELIVERX_GLOBAL_SEARCH` | default **on** | Unset → code default on | Yes |
 | `DELIVERX_PILOT_ADMIN` | default **on** | Unset → code default on | Yes |
 | `DELIVERX_PI_RATE_LIMIT` | default **on** | Unset → code default on | Yes |

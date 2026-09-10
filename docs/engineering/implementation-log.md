@@ -1,4 +1,12 @@
 
+## 2026-09-10 — Experience hiring interview (slice 1)
+
+Founder authorized slice 1 after the SimulateCareer integration plan: a skippable Experience hiring interview after offer accept and before the B6 ceremony. MediFlow-first panel (highest-trust stakeholder + lowest-trust counterpart). Placement is derived from existing sim state — never a score, capability, Verified stamp, or Launchpad Interview Lab reuse.
+
+**Scope:** `src/lib/xperience/hiring-interview.ts`, `src/lib/experience-sim/hiring-runtime.ts`, `POST /api/xperience/sim/hire`, UI in `/experience/app`. New T4 agent `experience_hiring` with cited `experience_hiring_question_v1`. Persist optional `state.hiringInterview` (schemaVersion still 2) + append-only sim events. **No migration. No new SKU. No theory gate.** Kill-switch `DELIVERX_XP_HIRING_INTERVIEW` defaults **on**.
+
+Docs: PD-2026-09-10; `docs/06-experience-platform.md`; `docs/09-ai-and-intelligence.md`.
+
 ## 2026-07-27 — Phase 4 AI cost-estimate honesty
 
 Founder requested Phase 4 after evidence query bounds. Implemented residual engineering hardening **R-P2-17**: AI usage records and `GET /api/pi/ai/interactions` now disclose that `costEstimateUsd` is a heuristic pilot estimate, not provider billing. Added `src/lib/ai-orchestration/usage-log.test.ts` to lock the semantics.

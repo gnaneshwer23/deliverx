@@ -21,6 +21,7 @@ As a candidate, I want to practice PM work inside realistic company scenarios ma
 4. Simulation events are not automatically verified capability  
 5. Observation of workspace work requires consent (default OFF)  
 6. No silent capability writes from Experience UI  
+7. Hiring interview is practice placement into the simulated company (skip always allowed). It does not score capability, light Verified, or replace Launchpad Interview Lab.  
 
 ---
 
@@ -31,6 +32,7 @@ As a candidate, I want to practice PM work inside realistic company scenarios ma
 | Planner | `src/lib/experience-planner` · `GET|POST /api/pi/experience-plan` |
 | Catalogue seed | Migrations `0078`–`0079` · `experience_scenarios` / `experience_plans` |
 | Day-1 sim | `src/lib/experience-sim` · `/api/xperience/sim/*`, decide/start routes |
+| Hiring interview (slice 1) | `src/lib/xperience/hiring-interview` · `POST /api/xperience/sim/hire` · UI after offer accept |
 | App shell | `/experience/app`, marketing `/experience`, `/start/experience` |
 | Contributions | `professional-workspace` · `POST /api/workspace/contributions` |
 
@@ -42,6 +44,7 @@ As a candidate, I want to practice PM work inside realistic company scenarios ma
 | --- | --- |
 | No plan | Explain ranking inputs; CTA to generate plan |
 | Plan ready | Ranked scenarios with gap rationale |
+| Hiring interview | Optional panel after offer accept; skip allowed; placement note is not a score |
 | In sim | Clear company context; next task; reflect path |
 | Evidence submitted | Link to profile evidence; not instant Verified |
 | Empty catalogue (should not happen in prod) | Fail soft with ops message |
@@ -52,7 +55,7 @@ As a candidate, I want to practice PM work inside realistic company scenarios ma
 
 - `GET|POST /api/pi/experience-plan`  
 - `GET /api/xperience/me` · `POST /api/xperience/onboarding` · `POST /api/xperience/experience/start` · `POST /api/xperience/scenarios/decide`  
-- `GET /api/xperience/sim/state` · `POST /api/xperience/sim/reflect`  
+- `GET /api/xperience/sim/state` · `POST /api/xperience/sim/reflect` · `POST /api/xperience/sim/hire`  
 - `POST /api/workspace/contributions`  
 
 Full notes: [`engineering/api-contracts.md`](./engineering/api-contracts.md).
@@ -64,11 +67,11 @@ Full notes: [`engineering/api-contracts.md`](./engineering/api-contracts.md).
 
 ## Events
 
-Sim events (`experience_sim_events`); contributions may emit/process into ledger jobs — never skip provenance.
+Sim events (`experience_sim_events`), including `HiringInterviewStarted` / `Turn` / `Completed` / `Skipped`; contributions may emit/process into ledger jobs — never skip provenance. Hiring-interview events are not capability or Verified writes.
 
 ## AI behaviour
 
-Stakeholders / manager agents may coach inside Experience under orchestration; drafts ≠ verified evidence.
+Stakeholders / manager agents may coach inside Experience under orchestration; drafts ≠ verified evidence. The Experience hiring panel (`experience_hiring`) asks cited placement questions only — never capability, scores, or Verified.
 
 ---
 
@@ -76,6 +79,7 @@ Stakeholders / manager agents may coach inside Experience under orchestration; d
 
 - [ ] User can generate a ranked plan against catalogue  
 - [ ] Starting a scenario does not require baseline  
+- [ ] Hiring interview can be completed or skipped; neither writes capability or Verified  
 - [ ] Reflections/contributions can become ledger evidence with provenance  
 - [ ] No Experience path writes capability directly  
 

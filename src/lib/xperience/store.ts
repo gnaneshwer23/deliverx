@@ -2,6 +2,7 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { scenarioBySlug } from "@/lib/experience-planner/catalog";
 import { generateExperience } from "@/lib/experience-sim/generate";
 import { calculateCareerScore } from "@/lib/xperience/score";
+import { prepareHiringInterviewState } from "@/lib/xperience/hiring-interview";
 
 export type CandidateProfileInput = {
   firstName: string;
@@ -137,22 +138,24 @@ export async function startExperience(
   const resolvedSlug = scenarioSlug || "mediflow-trustcare";
   const scenario = scenarioBySlug(resolvedSlug);
 
-  const simState = generateExperience({
-    userRole: input.targetRole || input.role || scenario?.candidateRole || "Associate Product Manager",
-    personalisedBy: {
-      workStyle: input.workStyle,
-      learningStyle: input.learningStyle,
-      confidence: input.confidence,
-      targetRole: input.targetRole || input.role,
+  const simState = prepareHiringInterviewState(
+    generateExperience({
+      userRole: input.targetRole || input.role || scenario?.candidateRole || "Associate Product Manager",
+      personalisedBy: {
+        workStyle: input.workStyle,
+        learningStyle: input.learningStyle,
+        confidence: input.confidence,
+        targetRole: input.targetRole || input.role,
+        plannerEmphasis: planEmphasis,
+        planId: input.planId ?? null,
+        scenarioSlug: resolvedSlug,
+      },
       plannerEmphasis: planEmphasis,
       planId: input.planId ?? null,
+      planRationale,
       scenarioSlug: resolvedSlug,
-    },
-    plannerEmphasis: planEmphasis,
-    planId: input.planId ?? null,
-    planRationale,
-    scenarioSlug: resolvedSlug,
-  });
+    }),
+  );
 
   const { data: enrolment, error } = await supabase
     .from("xperience_enrolments")

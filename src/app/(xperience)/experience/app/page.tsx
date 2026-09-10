@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { ProductApp } from "@/components/xperience/product-app";
 import { requireXperienceAuth } from "@/lib/xperience/require-auth";
 import { isXpEntryCeremonyEnabled } from "@/lib/xperience/entry-ceremony";
+import { isXpHiringInterviewEnabled } from "@/lib/xperience/hiring-interview";
 
 export default async function XperienceAppPage() {
   const { user, profile, enrolment } = await requireXperienceAuth();
@@ -38,6 +39,7 @@ export default async function XperienceAppPage() {
         initialEnrolmentId={enrolment?.id ?? null}
         initialScreen={enrolment ? "Dashboard" : "Profile"}
         ceremonyEnabled={isXpEntryCeremonyEnabled()}
+        hiringInterviewEnabled={isXpHiringInterviewEnabled()}
       />
     </Suspense>
   );

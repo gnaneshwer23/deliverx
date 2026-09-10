@@ -101,6 +101,7 @@ Public token view is a **page** (`/portfolio/v/[token]`). Attestor UX is `/portf
 | POST | `/api/xperience/scenarios/decide` | User |
 | GET | `/api/xperience/sim/state` | User |
 | POST | `/api/xperience/sim/reflect` | User |
+| POST | `/api/xperience/sim/hire` | User — Experience hiring interview (`open` / `turn` / `complete` / `skip`); kill-switch `DELIVERX_XP_HIRING_INTERVIEW` |
 | POST | `/api/workspace/contributions` | User |
 
 ## Launchpad (career app)

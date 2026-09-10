@@ -47,6 +47,7 @@ describe("T4 AI agent registry", () => {
     expect(getAgent("observer")?.role).toBe("observer");
     expect(listAgentsByRole("coach").map((a) => a.slug).sort()).toEqual([
       "experience_coach",
+      "experience_hiring",
       "interview_lab",
       "workspace_coach",
     ]);
@@ -510,7 +511,7 @@ describe("AI citation requirements", () => {
   });
 
   it("legacy coach adapters still compile and run through the registry", async () => {
-    for (const slug of ["experience_coach", "workspace_coach", "interview_lab"] as const) {
+    for (const slug of ["experience_coach", "workspace_coach", "interview_lab", "experience_hiring"] as const) {
       const result = await runAgent({
         userId: "user-1",
         agentSlug: slug,
@@ -520,9 +521,44 @@ describe("AI citation requirements", () => {
         skipPersist: true,
       });
       expect(result.ok).toBe(true);
-      expect(result.prompt.contract).toBe("coach_hint_v1");
       expect(result.output?.mayWriteCapability).toBe(false);
+      if (slug === "experience_hiring") {
+        expect(result.prompt.contract).toBe("experience_hiring_question_v1");
+      } else {
+        expect(result.prompt.contract).toBe("coach_hint_v1");
+      }
     }
+  });
+
+  it("Experience hiring panel asks a cited question and cannot write capability", async () => {
+    const result = await runAgent({
+      userId: "user-1",
+      agentSlug: "experience_hiring",
+      context: {
+        boundSurface: "experience",
+        boundRef: { projectId: "proj-1", companyId: "co-1" },
+        extraSources: [
+          { kind: "experience_state", ref: "co-1", summary: "MediFlow" },
+          { kind: "project", ref: "proj-1", summary: "TrustCare" },
+        ],
+        userMessage: "Open the hiring conversation as Sarah Chen (CEO, manager).",
+      },
+      confirmationGranted: true,
+      modelInvoker: createMockModelInvoker({
+        experience_hiring: {
+          speakerRole: "manager",
+          question: "What would you want to understand in week one on this project?",
+          citations: [{ sourceType: "project", sourceId: "proj-1" }],
+          mayWriteCapability: false,
+          mayModifyVerifiedEvidence: false,
+        },
+      }),
+      skipPersist: true,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.output?.mayWriteCapability).toBe(false);
+    expect(result.output?.mayModifyVerifiedEvidence).toBe(false);
+    expect(String(result.output?.question)).toMatch(/week one/i);
   });
 });
 

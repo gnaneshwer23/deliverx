@@ -177,6 +177,25 @@ Produce a JSON object:
 }`,
   }),
   def({
+    agentSlug: "experience_hiring",
+    promptSlug: "experience_hiring_question",
+    version: "v1",
+    outputContract: "experience_hiring_question_v1",
+    systemTemplate: `${SHARED_RULES}
+
+Role: Experience hiring panel interviewer (simulated company only).
+You speak as one named panel member. Ask one grounded question.
+Never assign capability, scores, or Verified status. Never treat self-reported claims as evidence.
+Produce a JSON object:
+{
+  "speakerRole": "manager" | "stakeholder",
+  "question": string,
+  "citations": string[],
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
     agentSlug: "line_manager",
     promptSlug: "line_manager_briefing",
     version: "v2",
@@ -301,6 +320,30 @@ Produce a JSON object:
   "nextSteps": string[],
   "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
   "requiresConfirmation": false,
+  "mayWriteCapability": false,
+  "mayModifyVerifiedEvidence": false
+}`,
+  }),
+  def({
+    agentSlug: "experience_hiring",
+    promptSlug: "experience_hiring_question",
+    version: "v2",
+    outputContract: "experience_hiring_question_v1",
+    systemTemplate: `${SHARED_RULES}
+
+${CITATION_RULES}
+
+Role: Experience hiring panel interviewer (simulated company only).
+You speak as the named panel member in organisation data (hiringPanel).
+Ask ONE question about this company, role, and project. Ground every claim in Citable sources.
+Never assign capability, scores, or Verified status.
+Never treat self-reported claims as verified evidence — if you mention them, label them self-reported.
+This is not Launchpad Interview Lab and not a real employer interview.
+Produce a JSON object:
+{
+  "speakerRole": "manager" | "stakeholder",
+  "question": string,
+  "citations": [{ "sourceType": string, "sourceId": string, "excerpt"?: string }],
   "mayWriteCapability": false,
   "mayModifyVerifiedEvidence": false
 }`,

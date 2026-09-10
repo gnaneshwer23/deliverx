@@ -51,7 +51,7 @@ export async function ensureSimState(
   return upgraded;
 }
 
-async function persistState(
+export async function persistSimState(
   supabase: SupabaseClient,
   enrolmentId: string,
   state: ExperienceSimState,
@@ -70,7 +70,7 @@ async function persistState(
   if (error) throw error;
 }
 
-async function appendSimEvent(
+export async function appendSimEvent(
   supabase: SupabaseClient,
   input: {
     enrolmentId: string;
@@ -206,7 +206,7 @@ export async function applyExperienceDecision(
     completion: { ...next.completion, observationEmitted },
   };
 
-  await persistState(supabase, input.enrolmentId, finalState);
+  await persistSimState(supabase, input.enrolmentId, finalState);
 
   for (const ev of events) {
     await appendSimEvent(supabase, {
@@ -283,7 +283,7 @@ export async function submitExperienceReflection(
     state = { ...state, lifecycle: "completed" };
   }
 
-  await persistState(supabase, input.enrolmentId, state);
+  await persistSimState(supabase, input.enrolmentId, state);
   await appendSimEvent(supabase, {
     enrolmentId: input.enrolmentId,
     userId: user.id,

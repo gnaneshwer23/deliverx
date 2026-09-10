@@ -109,6 +109,21 @@ export const AI_AGENT_CATALOGUE: readonly AiAgentDefinition[] = [
     defaultPromptSlug: "interview_lab_hint",
     active: true,
   },
+  {
+    slug: "experience_hiring",
+    role: "coach",
+    displayName: "Experience Hiring Panel",
+    description:
+      "Simulated company hiring panel (manager + stakeholder). Placement into Experience only — never capability, scores, or Verified. Distinct from Launchpad Interview Lab.",
+    wraps: ["lib/xperience/hiring-interview", "lib/experience-sim", "/experience/app"],
+    authority: authority({
+      mayDraftObservation: false,
+      maySuggestIntervention: false,
+      maxTokensPerCall: 1024,
+    }),
+    defaultPromptSlug: "experience_hiring_question",
+    active: true,
+  },
 ] as const;
 
 const bySlug = new Map(AI_AGENT_CATALOGUE.map((a) => [a.slug, a]));

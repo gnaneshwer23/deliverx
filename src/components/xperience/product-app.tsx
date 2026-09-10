@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -10,6 +10,11 @@ import {
 } from "@/lib/xperience/setup-signal";
 import type { ExperienceSimState } from "@/lib/experience-sim/types";
 import { EntryCeremony } from "@/components/xperience/entry-ceremony";
+import { HiringInterview } from "@/components/xperience/hiring-interview";
+import {
+  shouldResumeHiringInterview,
+  shouldShowHiringInterview,
+} from "@/lib/xperience/hiring-interview";
 import "./xperience-app.css";
 
 type Screen =
@@ -18,11 +23,15 @@ type Screen =
   | "Baseline"
   | "WorkStyle"
   | "Offer"
+  | "Interview"
   | "Ceremony"
   | "Dashboard";
 type DashboardTool = "Home" | "Inbox" | "Calendar" | "Decisions" | "Documents" | "AI Coach" | "Evidence";
 
-const steps: Array<{ key: Exclude<Screen, "Dashboard">; label: string }> = [
+const steps: Array<{
+  key: Exclude<Screen, "Dashboard" | "Interview" | "Ceremony">;
+  label: string;
+}> = [
   { key: "Profile", label: "Create account" },
   { key: "Goals", label: "Career goals" },
   { key: "Baseline", label: "Baseline" },
@@ -76,6 +85,7 @@ export function ProductApp({
   initialProfile,
   initialEnrolmentId,
   ceremonyEnabled = false,
+  hiringInterviewEnabled = false,
 }: {
   initialScreen?: Screen;
   initialUser?: ProductAppInitialUser;
@@ -83,6 +93,8 @@ export function ProductApp({
   initialEnrolmentId?: string | null;
   /** B6 entry ceremony kill-switch, resolved server-side. */
   ceremonyEnabled?: boolean;
+  /** Slice 1 hiring interview kill-switch, resolved server-side. */
+  hiringInterviewEnabled?: boolean;
 }) {
   const searchParams = useSearchParams();
   const planId = searchParams.get("planId");
@@ -113,6 +125,7 @@ export function ProductApp({
   const [agentRecommendation, setAgentRecommendation] = useState(
     "The system will recommend the next action after your first decision.",
   );
+  const hiringResumeChecked = useRef(false);
   const [form, setForm] = useState({
     firstName: initialProfile?.firstName || initialUser?.firstName || "",
     lastName: initialProfile?.lastName || initialUser?.lastName || "",
@@ -134,7 +147,28 @@ export function ProductApp({
   );
   const isDashboard = screen === "Dashboard";
   const isCeremony = screen === "Ceremony";
+  const isInterview = screen === "Interview";
   const firstName = form.firstName.trim() || "there";
+
+  useEffect(() => {
+    if (hiringResumeChecked.current) return;
+    if (!hiringInterviewEnabled || !initialEnrolmentId) return;
+    hiringResumeChecked.current = true;
+    let cancelled = false;
+    void fetch(`/api/xperience/sim/state?enrolmentId=${encodeURIComponent(initialEnrolmentId)}`)
+      .then((response) => response.json())
+      .then((result: { state?: ExperienceSimState }) => {
+        if (cancelled || !result.state) return;
+        setSimState(result.state);
+        if (shouldResumeHiringInterview(result.state)) setScreen("Interview");
+      })
+      .catch(() => {
+        /* Returning users without a pending interview stay on the dashboard. */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [hiringInterviewEnabled, initialEnrolmentId]);
 
   const identity = useMemo(() => {
     const focus = setupSignalFocus({
@@ -208,7 +242,13 @@ export function ProductApp({
       setNotice(
         `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "your company"} is ready.${emphasisNote}`,
       );
-      setScreen(ceremonyEnabled ? "Ceremony" : "Dashboard");
+      if (hiringInterviewEnabled && shouldShowHiringInterview(nextState)) {
+        setScreen("Interview");
+      } else if (ceremonyEnabled) {
+        setScreen("Ceremony");
+      } else {
+        setScreen("Dashboard");
+      }
     } catch {
       setNotice("Could not persist your workspace. Check your connection and try again.");
     } finally {
@@ -286,6 +326,24 @@ export function ProductApp({
     } catch {
       setNotice(`${action} selected. Evidence will sync when the backend is available.`);
     }
+  }
+
+  if (isInterview && enrolmentId) {
+    return (
+      <HiringInterview
+        enrolmentId={enrolmentId}
+        state={simState}
+        firstName={firstName}
+        claims={{
+          background: form.background,
+          targetRole: form.targetRole,
+          selectedSkill: form.selectedSkill,
+          workStyle: form.workStyle,
+        }}
+        onState={setSimState}
+        onContinue={() => setScreen(ceremonyEnabled ? "Ceremony" : "Dashboard")}
+      />
+    );
   }
 
   if (isCeremony) {
