@@ -144,7 +144,7 @@ export default async function WorkspaceTasksPage({
 
       <TaskViewToggle
         view={view}
-        projectId={projectId}
+        projectId={projectId ?? undefined}
         statusFilter={statusFilter}
         sourceFilter={sourceFilter}
       />
