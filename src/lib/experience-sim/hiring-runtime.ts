@@ -190,7 +190,7 @@ export async function runHiringInterviewAction(
         },
       };
       state = await persistUnlessInterviewClosed(supabase, input.enrolmentId, user.id, state);
-      if (isTerminalInterview(state)) {
+      if (isTerminalInterview(state) || !state.hiringInterview) {
         return { ok: true, state, capabilityAssigned: false };
       }
       await appendSimEvent(supabase, {

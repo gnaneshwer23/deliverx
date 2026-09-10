@@ -37,8 +37,10 @@ describe("Experience hiring interview (slice 1)", () => {
     expect(shouldShowHiringInterview(state)).toBe(true);
     expect(isHiringInterviewFinished(state)).toBe(false);
     expect(state.hiringInterview?.placement).toBeNull();
-    const { hiringInterview: _attached, ...rest } = state;
-    expect(rest).toEqual(generated);
+    expect({ ...state, hiringInterview: undefined }).toEqual({
+      ...generated,
+      hiringInterview: undefined,
+    });
     expect(JSON.stringify(state.hiringInterview)).not.toMatch(
       /mayWriteCapability|scoreRun|deliverxVerified/i,
     );
