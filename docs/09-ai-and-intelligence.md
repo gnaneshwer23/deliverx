@@ -33,8 +33,8 @@ As a user, I want AI coaching and observation that cite context and never preten
 | Citations | `citations.ts` — policy matrix, `enforceCitations`, structured `AiCitation` |
 | Schema | `ai_agents`, `ai_prompt_versions`, `ai_interactions` (`0090`); usage rollup `pi_ai_usage_daily` — **no new migration for citations** (JSON fields) |
 | API | `GET /api/pi/ai/interactions` |
-| Agents | Manager / Stakeholder / Observer + consolidated coaches (prompt **v2** citation-aware) |
-| UI | `AiCitationStrip` on PI interventions, Interview Lab, opportunity matching, recommendations |
+| Agents | Manager / Stakeholder / Observer + consolidated coaches + Experience hiring panel (`experience_hiring`) |
+| UI | `AiCitationStrip` on PI interventions, Interview Lab, Experience hiring, opportunity matching, recommendations |
 | Legacy AI | Pre-pivot `/api/ai/*` — may remain; bypass flag `DELIVERX_AI_ORCHESTRATION_BYPASS=1` for legacy only outside production |
 
 ---

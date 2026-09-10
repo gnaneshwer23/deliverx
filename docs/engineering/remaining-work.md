@@ -31,6 +31,7 @@ This is the **master remaining-work inventory**. It is docs-only truth for what 
 | DB trust rails `0095` | Shipped |
 | Observation consent SQL `0096` | Shipped |
 | AI citation enforcement | Shipped |
+| Experience hiring interview (slice 1) | Shipped — skippable placement panel; no capability/Verified; PD-2026-09-10 |
 | TD-001, TD-011, TD-017, TD-019 | Closed |
 
 **Release posture:** Testable internally. Controlled pilot still gated primarily by **founder ops** (CI, Auth hygiene), not by missing T9 product code.

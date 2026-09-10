@@ -53,9 +53,9 @@ export default async function EngineerMissionControlPage({
   }
 
   const params = await searchParams;
-  const projectId = resolveWorkspaceOrgProjectId(params.project);
+  const requestedProjectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getEngineerMissionControl(projectId ?? undefined),
+    getEngineerMissionControl(requestedProjectId ?? undefined),
     listPendingArtifactReviewsForPersona("engineer").catch(() => []),
   ]);
 

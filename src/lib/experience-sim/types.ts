@@ -94,6 +94,44 @@ export type ProjectMetrics = {
   roadmapHealth: number;
 };
 
+export type HiringInterviewStatus = "pending" | "in_progress" | "completed" | "skipped";
+
+export type HiringInterviewSpeakerRole = "manager" | "stakeholder" | "candidate";
+
+export type HiringInterviewTurn = {
+  id: string;
+  role: HiringInterviewSpeakerRole;
+  speakerId: string;
+  speakerName: string;
+  text: string;
+  citations: Array<{ sourceType: string; sourceId: string; excerpt?: string; label?: string }>;
+  at: string;
+};
+
+export type HiringPanelMember = {
+  id: string;
+  name: string;
+  role: string;
+  kind: "teammate" | "stakeholder";
+};
+
+export type HiringPlacement = {
+  companyName: string;
+  roleTitle: string;
+  projectName: string;
+  teamSummary: string;
+  firstWeekFocus: string;
+  honesty: string;
+};
+
+export type HiringInterviewState = {
+  status: HiringInterviewStatus;
+  panel: { manager: HiringPanelMember; stakeholder: HiringPanelMember };
+  turns: HiringInterviewTurn[];
+  placement: HiringPlacement | null;
+  completedAt?: string;
+};
+
 export type ExperienceSimState = {
   schemaVersion: typeof EXPERIENCE_STATE_VERSION;
   lifecycle: ExperienceLifecycle;
@@ -146,6 +184,11 @@ export type ExperienceSimState = {
     rationale: string | null;
     experienceKey: string;
   };
+  /**
+   * Optional Experience hiring interview (slice 1). Placement only — never
+   * capability, scores, or Verified. Absent on enrolments started before this slice.
+   */
+  hiringInterview?: HiringInterviewState;
   /** Multi-company catalogue metadata for shared consequence copy. */
   scenarioMeta?: {
     slug: string;
@@ -167,6 +210,10 @@ export type ExperienceSimState = {
 
 export type ExperienceSimEventType =
   | "ExperienceStarted"
+  | "HiringInterviewStarted"
+  | "HiringInterviewTurn"
+  | "HiringInterviewCompleted"
+  | "HiringInterviewSkipped"
   | "DecisionRecorded"
   | "ConsequenceApplied"
   | "TaskUpdated"

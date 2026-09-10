@@ -160,6 +160,13 @@ export function createMockModelInvoker(
         mayWriteCapability: false,
         mayModifyVerifiedEvidence: false,
       },
+      experience_hiring: {
+        speakerRole: "manager",
+        question: "What would you want to understand in week one on this project?",
+        citations: [{ sourceType: "evidence", sourceId: "ev-mock" }],
+        mayWriteCapability: false,
+        mayModifyVerifiedEvidence: false,
+      },
     };
     const payload = overrides?.[agentSlug] ?? defaults[agentSlug] ?? defaults.workspace_coach;
     return {

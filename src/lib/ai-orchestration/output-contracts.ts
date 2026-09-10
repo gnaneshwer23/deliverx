@@ -198,6 +198,48 @@ function coachFallback(partial?: Record<string, unknown>): Record<string, unknow
   });
 }
 
+function validateHiringQuestion(raw: unknown): OutputValidationResult {
+  const errors: string[] = [];
+  if (!isRecord(raw)) {
+    return { ok: false, errors: ["output must be an object"], fallback: hiringQuestionFallback() };
+  }
+  requireString(raw, "question", errors);
+  const speakerRole = raw.speakerRole;
+  if (speakerRole !== "manager" && speakerRole !== "stakeholder") {
+    errors.push("speakerRole must be manager or stakeholder");
+  }
+  if (raw.citations !== undefined && !Array.isArray(raw.citations)) {
+    errors.push("citations must be an array");
+  }
+  if (errors.length) return { ok: false, errors, fallback: hiringQuestionFallback(raw) };
+  return {
+    ok: true,
+    data: applyBaseGuards({
+      speakerRole,
+      question: String(raw.question).trim(),
+      citations: normaliseCitations(raw.citations),
+      mayWriteCapability: false,
+      mayModifyVerifiedEvidence: false,
+    }),
+  };
+}
+
+function hiringQuestionFallback(partial?: Record<string, unknown>): Record<string, unknown> {
+  const speakerRole =
+    partial?.speakerRole === "stakeholder" || partial?.speakerRole === "manager"
+      ? partial.speakerRole
+      : "manager";
+  return applyBaseGuards({
+    speakerRole,
+    question:
+      typeof partial?.question === "string" && partial.question.trim()
+        ? partial.question.trim()
+        : "I need the company and project context before asking a hiring question. This placement interview does not score capability.",
+    citations: [],
+    fallback: true,
+  });
+}
+
 /**
  * Deterministic fallback used when a citation-required output arrives with
  * missing / empty / unknown citations. Starts from the contract fallback and
@@ -219,6 +261,7 @@ export function citationInsufficientFallback(
   if (typeof overlaid.perspective === "string") overlaid.perspective = message;
   if (typeof overlaid.observation === "string") overlaid.observation = message;
   if (typeof overlaid.hint === "string") overlaid.hint = message;
+  if (typeof overlaid.question === "string") overlaid.question = message;
 
   overlaid.citations = [];
   overlaid.fallback = true;
@@ -261,6 +304,12 @@ export const OUTPUT_CONTRACTS: Record<
     description: "Experience / workspace / interview coach hint",
     validate: validateCoach,
     fallback: () => coachFallback(),
+  },
+  experience_hiring_question_v1: {
+    id: "experience_hiring_question_v1",
+    description: "Experience hiring-panel question (placement only; never capability)",
+    validate: validateHiringQuestion,
+    fallback: () => hiringQuestionFallback(),
   },
 };
 

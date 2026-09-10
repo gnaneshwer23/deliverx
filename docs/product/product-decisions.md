@@ -617,6 +617,22 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-09-10 — Experience hiring interview (slice 1)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-09-10 |
+| **Status** | Accepted |
+| **Decision** | After offer accept, and before the B6 entry ceremony, show a skippable **Experience hiring interview** into the already-generated simulated company. This is practice placement, not a real hire, not a capability score, and not Verified. It is not Launchpad Interview Lab and not a third SKU. SimulateCareer / academy theory is **not** imported and is **not** a required gate. |
+| **Chosen shape** | Flow: Profile → Goals → Baseline → WorkStyle → Offer → **Interview** → Ceremony → Dashboard. Panel = highest-trust stakeholder (hiring manager) + lowest-trust other stakeholder (MediFlow: Sarah Chen / CEO + James Wilson / Sales). Skip always allowed. Finish after **2** candidate answers; auto-complete at **4**. Placement is deterministic from sim state (role, company, project, first-week focus). Honesty copy is always visible. |
+| **Trust rails** | Agent `experience_hiring` (role `coach`) cannot write capability, ledger evidence, or Verified. Self-reported setup answers are labelled claims, not evidence. ScoreRun is untouched. Observation consent stays default OFF. |
+| **DB / API** | **No migration.** Optional `hiringInterview` on existing `xperience_enrolments.state` (schemaVersion remains 2). Events `HiringInterviewStarted` / `Turn` / `Completed` / `Skipped` on append-only `experience_sim_events`. New `POST /api/xperience/sim/hire` (`open` / `turn` / `complete` / `skip`). Legacy enrolments without `hiringInterview` are not trapped. |
+| **Rollback / flag** | `DELIVERX_XP_HIRING_INTERVIEW` is a kill-switch that **defaults ON**. Set `off` (or `0`/`false`/`disabled`) to restore offer → ceremony/dashboard with no redeploy. When off, new enrolments do not attach a pending interview. |
+| **Why** | Founder authorized slice 1 after a plan to strengthen Experience as simulated employment. The interview makes joining the company feel real without treating theory or a model score as capability. |
+| **Consequence** | Slice 1 shipped under this decision. Optional later slices (role brief, employed work with AI teammates) remain unauthorized until asked. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.

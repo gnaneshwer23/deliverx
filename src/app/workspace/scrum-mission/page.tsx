@@ -55,9 +55,9 @@ export default async function ScrumMissionControlPage({
   }
 
   const params = await searchParams;
-  const projectId = resolveWorkspaceOrgProjectId(params.project);
+  const requestedProjectId = resolveWorkspaceOrgProjectId(params.project);
   const [data, pendingReviews] = await Promise.all([
-    getScrumMissionControl(projectId ?? undefined),
+    getScrumMissionControl(requestedProjectId ?? undefined),
     listPendingArtifactReviewsForPersona("scrum").catch(() => []),
   ]);
 

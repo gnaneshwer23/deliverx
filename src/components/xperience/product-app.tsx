@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -10,6 +10,11 @@ import {
 } from "@/lib/xperience/setup-signal";
 import type { ExperienceSimState } from "@/lib/experience-sim/types";
 import { EntryCeremony } from "@/components/xperience/entry-ceremony";
+import { HiringInterview } from "@/components/xperience/hiring-interview";
+import {
+  shouldResumeHiringInterview,
+  shouldShowHiringInterview,
+} from "@/lib/xperience/hiring-interview";
 import "./xperience-app.css";
 
 type Screen =
@@ -18,11 +23,15 @@ type Screen =
   | "Baseline"
   | "WorkStyle"
   | "Offer"
+  | "Interview"
   | "Ceremony"
   | "Dashboard";
 type DashboardTool = "Home" | "Inbox" | "Calendar" | "Decisions" | "Documents" | "AI Coach" | "Evidence";
 
-const steps: Array<{ key: Exclude<Screen, "Dashboard">; label: string }> = [
+const steps: Array<{
+  key: Exclude<Screen, "Dashboard" | "Interview" | "Ceremony">;
+  label: string;
+}> = [
   { key: "Profile", label: "Create account" },
   { key: "Goals", label: "Career goals" },
   { key: "Baseline", label: "Baseline" },
@@ -76,6 +85,7 @@ export function ProductApp({
   initialProfile,
   initialEnrolmentId,
   ceremonyEnabled = false,
+  hiringInterviewEnabled = false,
 }: {
   initialScreen?: Screen;
   initialUser?: ProductAppInitialUser;
@@ -83,6 +93,8 @@ export function ProductApp({
   initialEnrolmentId?: string | null;
   /** B6 entry ceremony kill-switch, resolved server-side. */
   ceremonyEnabled?: boolean;
+  /** Slice 1 hiring interview kill-switch, resolved server-side. */
+  hiringInterviewEnabled?: boolean;
 }) {
   const searchParams = useSearchParams();
   const planId = searchParams.get("planId");
@@ -134,7 +146,42 @@ export function ProductApp({
   );
   const isDashboard = screen === "Dashboard";
   const isCeremony = screen === "Ceremony";
+  const isInterview = screen === "Interview";
   const firstName = form.firstName.trim() || "there";
+
+  useEffect(() => {
+    if (!hiringInterviewEnabled || !initialEnrolmentId) return;
+    let cancelled = false;
+    let attempts = 0;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const load = () => {
+      if (cancelled) return;
+      void fetch(`/api/xperience/sim/state?enrolmentId=${encodeURIComponent(initialEnrolmentId)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error("resume_failed");
+          return response.json() as Promise<{ state?: ExperienceSimState }>;
+        })
+        .then((result) => {
+          if (cancelled || !result.state) return;
+          setSimState(result.state);
+          if (shouldResumeHiringInterview(result.state)) setScreen("Interview");
+        })
+        .catch(() => {
+          if (cancelled) return;
+          attempts += 1;
+          if (attempts < 3) {
+            retryTimer = setTimeout(load, 600 * attempts);
+          }
+        });
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+      if (retryTimer) clearTimeout(retryTimer);
+    };
+  }, [hiringInterviewEnabled, initialEnrolmentId]);
 
   const identity = useMemo(() => {
     const focus = setupSignalFocus({
@@ -208,7 +255,13 @@ export function ProductApp({
       setNotice(
         `Workspace created. Day ${experience.day ?? 1} at ${experience.company ?? "your company"} is ready.${emphasisNote}`,
       );
-      setScreen(ceremonyEnabled ? "Ceremony" : "Dashboard");
+      if (hiringInterviewEnabled && shouldShowHiringInterview(nextState)) {
+        setScreen("Interview");
+      } else if (ceremonyEnabled) {
+        setScreen("Ceremony");
+      } else {
+        setScreen("Dashboard");
+      }
     } catch {
       setNotice("Could not persist your workspace. Check your connection and try again.");
     } finally {
@@ -286,6 +339,24 @@ export function ProductApp({
     } catch {
       setNotice(`${action} selected. Evidence will sync when the backend is available.`);
     }
+  }
+
+  if (isInterview && enrolmentId) {
+    return (
+      <HiringInterview
+        enrolmentId={enrolmentId}
+        state={simState}
+        firstName={firstName}
+        claims={{
+          background: form.background,
+          targetRole: form.targetRole,
+          selectedSkill: form.selectedSkill,
+          workStyle: form.workStyle,
+        }}
+        onState={setSimState}
+        onContinue={() => setScreen(ceremonyEnabled ? "Ceremony" : "Dashboard")}
+      />
+    );
   }
 
   if (isCeremony) {
