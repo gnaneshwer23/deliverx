@@ -22,7 +22,7 @@
 | Goal | Start here |
 | --- | --- |
 | Understand the product | `00` → `01` → `05`–`09` |
-| End-to-end journey (founder / new engineers) | [`product/end-to-end-journey.md`](./product/end-to-end-journey.md) |
+| End-to-end journey (founder / new engineers) | [`product/end-to-end-journey.md`](./product/end-to-end-journey.md) · PRD [`product/prd-end-to-end-journey.md`](./product/prd-end-to-end-journey.md) |
 | Design / UX | `02` → architecture `06` |
 | Marketing site | `03` |
 | Auth / first session | `04` |
@@ -81,7 +81,7 @@ Long-term architecture describes where DeliverX **may** evolve. It does **not** 
 | Path | Role after Product Bible |
 | --- | --- |
 | `docs/00`–`15` + this README | **Primary** reading path for agents and humans |
-| `docs/product/*` | Charter, scope, decisions, [end-to-end journey](./product/end-to-end-journey.md) — still binding |
+| `docs/product/*` | Charter, scope, decisions, [end-to-end journey](./product/end-to-end-journey.md), [e2e journey PRD](./product/prd-end-to-end-journey.md) — still binding |
 | `docs/engineering/*` | **Canonical detail** for schema, APIs, security, phases, next steps |
 | `docs/architecture/*` | Long-term vision extracts; aspirational where not marked shipped |
 | `docs/qa/*` | Release evidence, checklists, findings |

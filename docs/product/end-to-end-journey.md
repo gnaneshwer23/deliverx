@@ -3,7 +3,7 @@
 **Audience:** Founder, product team, new engineers  
 **Status:** Orientation (not a Build Charter expansion)  
 **As of:** 2026-09-10  
-**Authority:** Follow the [source-of-truth hierarchy](../README.md#source-of-truth-hierarchy). This document **summarises** how DeliverX should work under the current charter. It does not authorise new scope.
+**Authority:** Follow the [source-of-truth hierarchy](../README.md#source-of-truth-hierarchy). This document **summarises** how DeliverX should work under the current charter. It does not authorise new scope. Founder-facing PRD: [`prd-end-to-end-journey.md`](./prd-end-to-end-journey.md).
 
 When this narrative conflicts with other docs, prefer:
 
@@ -224,8 +224,9 @@ Long-term architecture may describe fuller Experience OS, delivery intelligence,
 
 | Need | Document |
 | --- | --- |
+| Founder-facing e2e PRD | [PRD — End-to-End Journey](./prd-end-to-end-journey.md) |
 | What may be built now | [Build Charter](./build-charter.md) |
-| What is shipped vs out of scope | [Current Scope](./current-scope.md) |
+| What is shipped vs out of scope | [Current Scope](./current-scope.md)
 | Why / refuse filter | [Vision & Principles](../00-vision-and-principles.md) |
 | PI / Experience / Launchpad / Workspace / AI detail | Bible `05`–`09` |
 | Recorded decisions (incl. hiring interview) | [Product Decisions](./product-decisions.md) — see **PD-2026-09-10** |
