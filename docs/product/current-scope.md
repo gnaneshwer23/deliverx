@@ -6,6 +6,7 @@
 **As of:** 2026-09-10  
 **Remaining work SoT:** [`../engineering/remaining-work.md`](../engineering/remaining-work.md)
 **Charter:** [`build-charter.md`](./build-charter.md)  
+**End-to-end journey:** [`end-to-end-journey.md`](./end-to-end-journey.md)  
 **Technology plan:** [`../engineering/technology-build-phases.md`](../engineering/technology-build-phases.md) (T0–T9)  
 **Six-doc build-out:** [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) (B0–B9)  
 **T0 status:** **PASS (automated)** — signed-in P0–P7 loop verified by T6 harness (`docs/qa/t0-results.md`). Optional founder visual review remains.  
