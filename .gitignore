@@ -25,10 +25,12 @@
 /build
 
 # misc
-# Ignore Cursor local state, but keep project rules in version control.
+# Ignore Cursor local state, but keep project rules and the Cloud Agent
+# environment definition in version control.
 .cursor/**
 !.cursor/rules/
 !.cursor/rules/**
+!.cursor/environment.json
 .DS_Store
 *.pem
 
