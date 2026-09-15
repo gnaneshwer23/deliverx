@@ -633,6 +633,18 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-09-15c — Phase 4 coaching evidence workflow (human-confirm → `supported`, non-Verified)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-09-15 |
+| **Status** | Accepted (founder signed off this phase) |
+| **Decision** | Ship the Lovable-derived Phase 4 coaching evidence workflow: a learner submits practice (captured as an immutable artefact version), a **human** coach/reviewer reviews it, and **only** their confirmation appends **one** append-only Evidence Ledger record at `supported` strength via a new `coach_confirmation` source, citing the `artefact_version_id` with human provenance. AI may draft/assist (labelled) but can **never** confirm. Reject / request-changes append no evidence. |
+| **Why** | Harvest the prototype's coaching surface natively while preserving trust rails: human confirmation is the only path to evidence; coach confirmation is attestation-adjacent, **not** external verification. |
+| **Consequence** | Migration `0106_coaching_evidence.sql` — **authored but NOT applied** (no prod, no local DB; founder-gated apply is a separate step). Adds `coach_confirmation` to `pi_evidence_source_type` + catalogue seed; new `coaching_programmes` / `coaching_exercises` (org-shared catalogue, `enabled` default false) and `coaching_submissions` / `coaching_submission_reviews` (person, self-only RLS; learner INSERT pinned to honest initial state so no self-confirm; reviews append-only). Typed SoT `src/lib/coaching-evidence/` (added to `test:pi`); routes `GET /api/pi/coaching/programmes`, `GET/POST /api/pi/coaching/submissions`, `GET /api/pi/coaching/submissions/[id]`, `GET /api/pi/coaching/review`, `POST /api/pi/coaching/review/[id]`; learner surface `/pi/coaching` + coach surface `/pi/coaching/review` (coach/reviewer-gated). Kill-switch `DELIVERX_COACHING_EVIDENCE` default **off** (surfaces hidden, APIs 404) + per-programme enable. **Never** writes capability (`pi_capability_*`/`score_runs`) and **never** lights `deliverxVerified` (T8 attestation remains the only Verified path). Privacy export/purge cascade extended to the two new person tables; catalogue excluded. Pinned to `pm-core@2026.1`. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
