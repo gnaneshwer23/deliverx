@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { ProductSuiteShell } from "@/components/dx/product-suite-shell";
 import { VerifiedPortfolioApp } from "@/components/verified-portfolio/portfolio-app";
 import { createClient } from "@/lib/supabase/server";
+import { isPortfolioShareControlsEnabled } from "@/lib/verified-portfolio/share-controls";
 
 export const metadata: Metadata = {
   title: "Verified Professional Portfolio · DeliverX",
@@ -24,7 +25,7 @@ export default async function PortfolioPage() {
   return (
     <ProductSuiteShell>
       <main className="min-h-screen bg-[#FAFAF7]">
-        <VerifiedPortfolioApp />
+        <VerifiedPortfolioApp shareControlsEnabled={isPortfolioShareControlsEnabled()} />
       </main>
     </ProductSuiteShell>
   );

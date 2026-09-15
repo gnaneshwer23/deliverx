@@ -11,6 +11,7 @@ import {
   formatCapabilityBandLabel,
   whyThisCapabilityBand,
 } from "@/lib/capability-engine/confidence-bands";
+import { ShareControlsPanel } from "@/components/verified-portfolio/share-controls-panel";
 
 type EvidenceItem = {
   id: string;
@@ -30,7 +31,11 @@ type EntrySummary = {
   evidenceLinks: Array<{ title: string; strength: string }>;
 };
 
-export function VerifiedPortfolioApp() {
+export function VerifiedPortfolioApp({
+  shareControlsEnabled = false,
+}: {
+  shareControlsEnabled?: boolean;
+} = {}) {
   const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
   const [entries, setEntries] = useState<EntrySummary[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -520,6 +525,8 @@ export function VerifiedPortfolioApp() {
               ))}
             </ul>
           </div>
+
+          {shareControlsEnabled ? <ShareControlsPanel entryId={activeId} /> : null}
 
           <div className="rounded-lg border border-[#C5D9CE] bg-[#EEF5F1] p-4">
             <p className="text-xs uppercase tracking-wide text-[#1C4A2E]">
