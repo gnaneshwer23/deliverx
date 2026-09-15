@@ -72,6 +72,22 @@ export const PRIVACY_CASCADE_MAP: readonly PrivacyCascadeEntry[] = [
     purge: true,
     notes: "B2 canonical recommendation entity; never capability or Verified truth",
   },
+  {
+    table: "coaching_submission_reviews",
+    kind: "append_only_person",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "Phase 4 append-only coach decisions; purged before submissions",
+  },
+  {
+    table: "coaching_submissions",
+    kind: "person_row",
+    ownerColumn: "user_id",
+    export: true,
+    purge: true,
+    notes: "Phase 4 learner coaching submissions; purged before artefacts/evidence (RESTRICT FK)",
+  },
   { table: "pi_intervention_outcomes", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "pi_interventions", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
   { table: "workspace_observations", kind: "person_row", ownerColumn: "user_id", export: true, purge: true },
@@ -318,6 +334,8 @@ export const PRIVACY_PURGE_EXCLUSIONS = [
   "departments",
   "teams",
   "billing_webhook_events",
+  "coaching_programmes",
+  "coaching_exercises",
 ] as const;
 
 export const DELETE_CONFIRM_PHRASE = "DELETE_MY_PI_DATA";
