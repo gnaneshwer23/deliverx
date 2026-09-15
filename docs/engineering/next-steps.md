@@ -145,6 +145,7 @@ Do **not** start without an explicit decision recorded in [`../product/product-d
 ## Related
 
 - [`remaining-work.md`](./remaining-work.md)  
+- [`lovable-enhancement-phases.md`](./lovable-enhancement-phases.md) — phased plan to harvest `swift-deliveries` value additively  
 - [`technical-debt-register.md`](./technical-debt-register.md)  
 - [`technology-build-phases.md`](./technology-build-phases.md)  
 - [`implementation-log.md`](./implementation-log.md)  
