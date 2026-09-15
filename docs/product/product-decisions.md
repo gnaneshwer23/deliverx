@@ -633,6 +633,21 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-09-15b — Verified Portfolio owner share controls (Phase 3)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-09-15 |
+| **Status** | Accepted |
+| **Decision** | Add an owner-facing surface + thin API to manage Verified Portfolio share links (create with an optional expiry window, list with status/expiry/view-count/last-viewed, copy, revoke). Phase 3 of [`../engineering/lovable-enhancement-phases.md`](../engineering/lovable-enhancement-phases.md). Purely additive over the existing `vpp_shares` rails — it surfaces `store.ts` (create/list/revoke) and the `public.ts` expiry + `view_count` behaviour that already existed but had no owner UI/API. |
+| **Trust rails** | Self-only: every read/write is scoped to the signed-in owner via `getUser()` + `user_id`-scoped store functions + existing RLS (anon → 401). Creating/revoking a share never writes capability, never appends evidence, and never changes `verifier_status`/`evidence_strength`/`deliverxVerified`. The public view (`/portfolio/v/[token]`) is untouched and still strips private evidence + attestor PII. |
+| **DB / API** | **No migration.** New `GET`/`POST`/`DELETE` `src/app/api/portfolio/entries/[id]/shares`. New pure view-model helpers in `src/lib/verified-portfolio/share-controls.ts` (colocated tests join `test:pi`). |
+| **Rollback / flag** | `DELIVERX_PORTFOLIO_SHARE_CONTROLS` kill-switch **defaults OFF** (on/1/true/enabled to enable). When off, the owner panel is hidden and the API 404s a disabled payload, with no redeploy and zero change to existing public share behaviour. |
+| **Why** | Harvested from the `swift-deliveries` Launchpad readiness-pack share as an enhancement to DeliverX's existing Verified Portfolio + T8 share, not a parallel share system. |
+| **Consequence** | Owner controls ship behind the default-off flag. No new token model, no new public route, no marketplace/networking, no T8 change. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
