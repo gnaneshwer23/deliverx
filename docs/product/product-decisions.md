@@ -633,7 +633,17 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
-## Pending founder (not decided)
+## PD-2026-09-15d — Phase 1 migration drift is verified-already-applied (no prod DDL)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-09-15 |
+| **Status** | Accepted |
+| **Decision** | Treat the Phase 1 "migration drift reconciliation" objective (`0103`–`0105`) as **verified already-applied** on prod `jibmyxaldetyycmtlxet` at the schema level, and **do not run any production DDL** to "apply" those migrations. Read-only inspection on 2026-09-15 confirmed the hardening is already enforced; the only outstanding item is optional, founder-gated migration-**ledger** reconciliation. |
+| **Evidence (read-only)** | `pi_capability_judgements` / `pi_capability_snapshots` expose only `*_select_own` SELECT policies for `authenticated` (no insert-own policies); `authenticated` has SELECT + REFERENCES/TRIGGER only (no INSERT/UPDATE/DELETE); `service_role` retains full DML; `anon` has no SELECT (only REFERENCES/TRIGGER) — matching `0103` (insert lockdown) + `0104` (anon SELECT revoke). The `pi_forbid_capability_mutation()` trigger exists (SECURITY DEFINER, `search_path=public`). `match_project_memory_chunks`, `match_org_memory_chunks`, and `pi_cf_version_is_immutable` already have `search_path=public` (matches `0105`) and are not flagged by the Supabase security advisor. |
+| **Ledger caveat** | `schema_migrations` stops at `0102` and uses timestamp-style versions that never matched the repo's numeric file prefixes (a pre-existing divergence). The ledger therefore does not list `0103`–`0105` even though their effect is live. This is a bookkeeping/tooling gap, not a security or functional gap. |
+| **Why** | Re-running `0103`–`0105` against prod is unnecessary (the end-state already exists) and applying them via MCP `apply_migration` would append fresh timestamp-style versions, deepening the ledger/file-prefix mismatch rather than resolving it. Production DDL stays an explicit, verified, founder-gated step — never routine testing/setup. |
+| **Consequence** | Phase 1 security objective marked "verified already-applied (2026-09-15)" in [`../engineering/lovable-enhancement-phases.md`](../engineering/lovable-enhancement-phases.md); [`../engineering/six-doc-build-phases.md`](../engineering/six-doc-build-phases.md) migration-head note distinguishes schema (confirmed) vs ledger (lags at `0102`); [`current-scope.md`](./current-scope.md) records the confirmation. Any optional ledger reconciliation must run **no DDL** and avoid MCP apply. |
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
 
