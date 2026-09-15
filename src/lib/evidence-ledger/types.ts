@@ -21,6 +21,8 @@ export const PI_EVIDENCE_SOURCE_TYPES = [
   "final_assessment",
   "transfer_assessment",
   "real_world_outcome",
+  // Phase 4: human coach/reviewer-confirmed coaching submission (supported, non-Verified).
+  "coach_confirmation",
 ] as const;
 
 export type PiEvidenceSourceType = (typeof PI_EVIDENCE_SOURCE_TYPES)[number];
