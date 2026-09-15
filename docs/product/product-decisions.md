@@ -633,6 +633,21 @@ Decisions already taken during the PI pivot build. New architectural decisions m
 
 ---
 
+## PD-2026-09-15 — Capability Coverage Map (read-only framework-wide basis)
+
+| Field | Value |
+| --- | --- |
+| **Date** | 2026-09-15 |
+| **Status** | Accepted |
+| **Decision** | Add a read-only **Capability Coverage Map** to `/profile/evidence`. For every competency in the pinned framework (`pm-core@2026.1`) it states an explainable basis: **assessed** (Capability Engine level + `confidence-bands@2026.1` capability band and confidence band + count of cited ledger evidence + rationale), **insufficient evidence** (a snapshot exists but the competency did not reach a level), or **not assessed yet** (no snapshot). Self-reported onboarding strengths render in a separate section labelled "not evidence". Idea adapted from the Lovable `swift-deliveries` Launchpad "capability story" surface, reimplemented natively; DeliverX previously only exposed judged competencies via SnapshotClaims, with no consolidated whole-framework coverage view including gaps and self-reported claims. |
+| **Trust rails** | Reads only. `capabilityAssigned: false`; every row `verified: false`; Verified remains T8 external attestation only and is not lit here. Bands come from the existing B1 algorithm — no decorative percentage. Reuses the shared SnapshotClaims projection; no parallel capability truth. |
+| **DB / API** | **No migration.** No new API route. Typed SoT `src/lib/capability-coverage/` (pure builder + server loader); UI `src/components/pi/capability-coverage-panel.tsx`; additive section on the existing evidence page. `src/lib/capability-coverage` joins the `test:pi` gate. |
+| **Rollback / flag** | `DELIVERX_CAPABILITY_COVERAGE` kill-switch **defaults on**; set `off` (or `0`/`false`/`disabled`) to hide the section with no redeploy and no data change. |
+| **Why** | The five candidate questions need a single honest "what have I demonstrated / what evidence supports it" surface that includes the capabilities with no or only self-reported support — the trust-forward gap view, not just judged claims. |
+| **Consequence** | Additive Profile depth only. No new SKU, no marketplace, no payments, no enterprise mission-control. Does not change the Capability Engine, ScoreRun, or Verified paths. |
+
+---
+
 ## Pending founder (not decided)
 
 See `current-scope.md` — ICP weight, TD-006 (leaked-password protection), TD-018 (Actions minutes). T8 Verified meaning is frozen in PD-2026-07-25c; its E2E gating is clarified in PD-2026-07-25g. T9 commercial packaging is settled in PD-2026-07-26d. B1 bands algorithm is settled in PD-2026-07-26e. **FD-PACK-6 / B2** is settled in PD-2026-07-26f. B3's Vercel path is settled in PD-2026-07-26g; **FD-PACK-7 remains pending only for a PostHog sink**. **FD-PACK-5 / B4** is settled in PD-2026-07-26h. **FD-PACK-3 / B5** is settled in PD-2026-07-26i. **FD-PACK-4 / B6** is settled in PD-2026-07-26j. **FD-PACK-8 / B7** is settled in PD-2026-07-26k. **B8 thin admin depth** is settled in PD-2026-07-26l. **B9 NFR polish** is settled in PD-2026-07-26m.
